@@ -1,0 +1,34 @@
+#ifndef DEF_L_Mutex
+#define DEF_L_Mutex
+
+#include <iostream>
+#include "../macros.h"
+
+#if defined L_WINDOWS
+    #include <windows.h>
+#elif defined L_UNIX
+    #include <pthread.h>
+#endif
+
+namespace L{
+    class Mutex{
+        private:
+            #if defined L_WINDOWS
+                HANDLE mutex;
+            #elif defined L_UNIX
+                pthread_mutex_t mutex;
+            #endif
+        public:
+            Mutex();
+            L_NoCopy(Mutex)
+            ~Mutex();
+            void lock();
+            void unlock();
+    };
+}
+
+#endif
+
+
+
+

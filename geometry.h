@@ -1,0 +1,5 @@
+#include "geometry/Interval.h"
+#include "geometry/Point.h"
+#include "geometry/Segment.h"
+#include "geometry/Surface.h"
+#include "geometry/Volume.h"
