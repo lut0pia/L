@@ -9,16 +9,16 @@
 namespace L{
     class PRS{
         public:
-            Point<3,double> position, rotation, scale;
+            Point<3,float> position, rotation, scale;
 
-            PRS(Point<3,double> position = Point<3,double>(),
-                Point<3,double> rotation = Point<3,double>(),
-                Point<3,double> scale = Point<3,double>(1,1,1));
+            PRS(Point3f position = Point3f(),
+                Point3f rotation = Point3f(),
+                Point3f scale = Point3f(1,1,1));
 
-            void move(const Point<3,double>&);
-            void relMove(const Point<3,double>&);
-            void rotate(const Point<3,double>&);
-            void relRotate(const Point<3,double>&);
+            void move(const Point3f&);
+            void relMove(const Point3f&);
+            void rotate(const Point3f&);
+            void relRotate(const Point3f&);
     };
 }
 

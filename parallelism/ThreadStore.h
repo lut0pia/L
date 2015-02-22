@@ -4,7 +4,6 @@
 #include "Thread.h"
 #include "../containers/Ref.h"
 #include "Mutex.h"
-#include "../system.h"
 
 namespace L{
     class ThreadStore{

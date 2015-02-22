@@ -4,29 +4,6 @@
 #include <cmath>
 #include <iostream>
 
-/*
-    // Returns a cartesian coord from a spherical one
-    template <class T>
-    Point3d<T> L_SpherToCart(Point3ds<T> const& p){
-        return Point3d<T>(p.rho * sin(p.theta*M_PI/180) * cos(p.phi*M_PI/180),
-                       p.rho * sin(p.theta*M_PI/180) * sin(p.phi*M_PI/180),
-                       p.rho * cos(p.theta*M_PI/180));
-    }
-
-    // Returns a spherical coord from a cartesian one
-    template <class T>
-    Point3ds<T> L_CartToSpher(Point3d<T> const& p){
-        Point3ds<T> wtr;
-        wtr.rho = sqrt((p.x*p.x)+(p.y*p.y)+(p.z*p.z));
-        wtr.theta = acos(p.z/wtr.rho)*180.0/M_PI;
-        wtr.phi = acos(p.x/sqrt((p.x*p.x)+(p.y*p.y)))*180.0/M_PI;
-        if(p.y<0)
-            wtr.phi = L_PMod(360.0 - wtr.phi,360.0);
-        if(wtr.theta<0.00001)wtr.theta = 0.00001; // Anti world-burning device
-        return wtr;
-    }
-*/
-
 namespace L {
   template <int d,class T>
   class Point {
@@ -45,6 +22,7 @@ namespace L {
       }
       Point(const T& x, const T& y) : v {x,y} {}
       Point(const T& x, const T& y, const T& z) : v {x,y,z} {}
+      Point(const T& x, const T& y, const T& z, const T& w) : v {x,y,z,w} {}
 
       Point& operator+=(const Point& other) {
         for(size_t i(0); i<d; i++)
@@ -116,6 +94,18 @@ namespace L {
         for(size_t i(0); i<d; i++)
           v[i] /= n;
       }
+      Point cross(const Point& other){
+        return Point(y()*other.z() - z()*other.y(),
+                     z()*other.x() - x()*other.z(),
+                     x()*other.y() - y()*other.x());
+      }
+      T dot(const Point& other){
+        T wtr(0);
+        for(size_t i(0);i<d;i++)
+          wtr += v[i]*other.v[i];
+        return wtr;
+      }
+
 
       inline const T& operator[](size_t i) const {return v[i];}
       inline const T& x() const {return v[0];}

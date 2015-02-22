@@ -1,5 +1,7 @@
 #include "ThreadStore.h"
 
+#include "../system.h"
+
 using namespace L;
 
 Dynamic::Var ThreadStore::garbageCollector(Thread* thread){

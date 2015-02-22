@@ -5,9 +5,8 @@ using namespace Network;
 
 #include <cstring>
 #include "../Exception.h"
-#include "../system.h"
+#include "../system/File.h"
 #include "Stream.h"
-#include "../stl.h"
 
 #if defined L_WINDOWS
     WSADATA WSAData;

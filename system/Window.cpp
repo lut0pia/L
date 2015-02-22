@@ -1,9 +1,9 @@
 #include "Window.h"
 
 #include <cstring>
+#include <GL/glew.h>
 #include "../stl.h"
 #include "../bytes/encoding.h"
-#include <GL/glew.h>
 
 #if defined L_WINDOWS
     #include <windows.h>

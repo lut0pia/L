@@ -2,7 +2,7 @@
 #define DEF_L_Font_Base
 
 #include "../image.h"
-#include "../geometry.h"
+#include "../geometry/Point.h"
 #include "../stl/Map.h"
 
 namespace L{
