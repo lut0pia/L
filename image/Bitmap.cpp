@@ -6,20 +6,20 @@
 using namespace L;
 using namespace Image;
 
-Bitmap::Bitmap(size_t width, size_t height) : Array<2,Color>(width,height){}
-Bitmap::Bitmap(size_t width, size_t height, const Image::Vector& v) : Array<2,Color>(width,height){
-    v.drawOn(*this);
+Bitmap::Bitmap(size_t width, size_t height) : Array<2,Color>(width,height) {}
+Bitmap::Bitmap(size_t width, size_t height, const Image::Vector& v) : Array<2,Color>(width,height) {
+  v.drawOn(*this);
 }
-Bitmap::Bitmap(String filePath) : Array<2,Color>(){
-    Interface<Bitmap>::fromFile(*this,filePath);
+Bitmap::Bitmap(const String& filePath) : Array<2,Color>() {
+  Interface<Bitmap>::fromFile(*this,filePath);
 }
-Bitmap& Bitmap::load(String filePath){
-    Interface<Bitmap>::fromFile(*this,filePath);
-    return *this;
+Bitmap& Bitmap::load(const String& filePath) {
+  Interface<Bitmap>::fromFile(*this,filePath);
+  return *this;
 }
-Bitmap& Bitmap::save(String filePath){
-    Interface<Bitmap>::toFile(*this,filePath);
-    return *this;
+Bitmap& Bitmap::save(const String& filePath) {
+  Interface<Bitmap>::toFile(*this,filePath);
+  return *this;
 }
 /*
 Color Bitmap::operator()(double x,double y) const{
@@ -49,125 +49,121 @@ Color Bitmap::operator()(double x,double y) const{
     return c;
 }
 */
-Bitmap Bitmap::sub(size_t x, size_t y, size_t width, size_t height) const{
-    Bitmap wtr;
-    wtr.resize(width,height);
-    for(size_t i=0;i<width;i++)
-        for(size_t j=0;j<height;j++)
-            wtr(i,j) = (*this)(x+i,y+j);
-    return wtr;
+Bitmap Bitmap::sub(size_t x, size_t y, size_t width, size_t height) const {
+  Bitmap wtr;
+  wtr.resize(width,height);
+  for(size_t i=0; i<width; i++)
+    for(size_t j=0; j<height; j++)
+      wtr(i,j) = (*this)(x+i,y+j);
+  return wtr;
 }
-Bitmap Bitmap::filter(Color c) const{
-    Bitmap wtr;
-    wtr.resize(width(),height());
-    float r = (float)c.r()/255.0,
-          g = (float)c.g()/255.0,
-          b = (float)c.b()/255.0,
-          a = (float)c.a()/255.0;
-    for(size_t x=0;x<width();x++)
-        for(size_t y=0;y<height();y++){
-            Color tmp((*this)(x,y));
-            wtr(x,y) = Color((float)tmp.r()*r,
-                             (float)tmp.g()*g,
-                             (float)tmp.b()*b,
-                             (float)tmp.a()*a);
-        }
-    return wtr;
-}
-Bitmap Bitmap::trim(Color c) const{
-    size_t left = 0, right = width()-1,
-           top = 0, bottom = height()-1,
-           x,y;
-
-    // Left
-    y = top;
-    while(c == (*this)(left,y)){
-        if(y<bottom) y++;
-        else{y = top; left++;}
+Bitmap Bitmap::filter(Color c) const {
+  Bitmap wtr;
+  wtr.resize(width(),height());
+  float r = (float)c.r()/255.0,
+        g = (float)c.g()/255.0,
+        b = (float)c.b()/255.0,
+        a = (float)c.a()/255.0;
+  for(size_t x=0; x<width(); x++)
+    for(size_t y=0; y<height(); y++) {
+      Color tmp((*this)(x,y));
+      wtr(x,y) = Color((float)tmp.r()*r,
+                       (float)tmp.g()*g,
+                       (float)tmp.b()*b,
+                       (float)tmp.a()*a);
     }
-    // Top
-    x = left;
-    while(c == (*this)(x,top)){
-        if(x<right) x++;
-        else{x = left; top++;}
+  return wtr;
+}
+Bitmap Bitmap::trim(Color c) const {
+  size_t left = 0, right = width()-1,
+         top = 0, bottom = height()-1,
+         x,y;
+  // Left
+  y = top;
+  while(c == (*this)(left,y)) {
+    if(y<bottom) y++;
+    else {y = top; left++;}
+  }
+  // Top
+  x = left;
+  while(c == (*this)(x,top)) {
+    if(x<right) x++;
+    else {x = left; top++;}
+  }
+  // Right
+  y = top;
+  while(c == (*this)(right,y)) {
+    if(y<bottom) y++;
+    else {y = top; right--;}
+  }
+  // Bottom
+  x = left;
+  while(c == (*this)(x,bottom)) {
+    if(x<right) x++;
+    else {x = left; bottom--;}
+  }
+  return trim(left,right+1,top,bottom+1);
+}
+Bitmap Bitmap::trim(size_t left, size_t right, size_t top, size_t bottom) const {
+  Bitmap wtr;
+  wtr.resize(right-left,bottom-top);
+  for(size_t x=left; x<right; x++)
+    for(size_t y=top; y<bottom; y++)
+      wtr(x-left,y-top) = (*this)(x,y);
+  return wtr;
+}
+void Bitmap::scale(size_t newWidth, size_t newHeight) {
+  double hf = (double)height()/(double)newHeight,
+         wf = (double)width()/(double)newWidth;
+  Bitmap copy(*this);
+  resize(newWidth,newHeight);
+  for(size_t x=0; x<newWidth; x++)
+    for(size_t y=0; y<newHeight; y++)
+      (*this)(x,y) = copy((double)x*wf,(double)y*hf);
+}
+void Bitmap::blur(int factor) {
+  uint rt, gt, bt;
+  double pixelCount, m;
+  Color c;
+  Bitmap copy(*this);
+  for(int x = 0; x<(int)width(); x++)
+    for(int y = 0; y<(int)height(); y++) {
+      pixelCount = 0.0;
+      rt = 0;
+      gt = 0;
+      bt = 0;
+      for(int i=x-factor; i<=x+factor; i++)
+        for(int j=y-factor; j<=y+factor; j++)
+          if(i>=0 && i<(int)width()
+              && j>=0 && j<(int)height()) {
+            m = (double)factor-sqrt(pow((double)(x-i),2)+pow((double)(y-j),2));
+            if(m>=1) {
+              pixelCount+=m;
+              c = copy(i,j);
+              rt += c.r()*m;
+              gt += c.g()*m;
+              bt += c.b()*m;
+            }
+          }
+      c.r() = rt / pixelCount;
+      c.g() = gt / pixelCount;
+      c.b() = bt / pixelCount;
+      (*this)(x,y) = c;
     }
-    // Right
-    y = top;
-    while(c == (*this)(right,y)){
-        if(y<bottom) y++;
-        else{y = top; right--;}
-    }
-    // Bottom
-    x = left;
-    while(c == (*this)(x,bottom)){
-        if(x<right) x++;
-        else{x = left; bottom--;}
-    }
-    return trim(left,right+1,top,bottom+1);
 }
-Bitmap Bitmap::trim(size_t left, size_t right, size_t top, size_t bottom) const{
-    Bitmap wtr;
-    wtr.resize(right-left,bottom-top);
-    for(size_t x=left;x<right;x++)
-        for(size_t y=top;y<bottom;y++)
-            wtr(x-left,y-top) = (*this)(x,y);
-    return wtr;
-}
-void Bitmap::scale(size_t newWidth, size_t newHeight){
-    double hf = (double)height()/(double)newHeight,
-           wf = (double)width()/(double)newWidth;
-    Bitmap copy(*this);
-
-    resize(newWidth,newHeight);
-    for(size_t x=0;x<newWidth;x++)
-        for(size_t y=0;y<newHeight;y++)
-            (*this)(x,y) = copy((double)x*wf,(double)y*hf);
-
-}
-void Bitmap::blur(int factor){
-    uint rt, gt, bt;
-    double pixelCount, m;
-    Color c;
-    Bitmap copy(*this);
-
-    for(int x = 0;x<(int)width();x++)
-        for(int y = 0;y<(int)height();y++){
-            pixelCount = 0.0;
-            rt = 0;
-            gt = 0;
-            bt = 0;
-            for(int i=x-factor;i<=x+factor;i++)
-                for(int j=y-factor;j<=y+factor;j++)
-                    if(i>=0 && i<(int)width()
-                    && j>=0 && j<(int)height()){
-                        m = (double)factor-sqrt(pow((double)(x-i),2)+pow((double)(y-j),2));
-                        if(m>=1){
-                            pixelCount+=m;
-                            c = copy(i,j);
-                            rt += c.r()*m;
-                            gt += c.g()*m;
-                            bt += c.b()*m;
-                        }
-                    }
-            c.r() = rt / pixelCount;
-            c.g() = gt / pixelCount;
-            c.b() = bt / pixelCount;
-            (*this)(x,y) = c;
-        }
-}
-void Bitmap::drawTriangle(Surface<2,double> s,Color c){
-    Interval<2,double> interval(s.gA(),s.gB());
-    interval.add(s.gC());
-    Point<2,size_t> p;
-    // Double loop testing all pixels inside the interval
-    for(p.x() = interval.gA().x();
-        p.x() < interval.gB().x();
-        p.x()++)
-        for(p.y() = interval.gA().y();
-            p.y() < interval.gB().y();
-            p.y()++)
-                if(s.contains(p))
-                    (*this)((size_t)p.x(),(size_t)p.y()) = c;
+void Bitmap::drawTriangle(Surface<2,double> s,Color c) {
+  Interval<2,double> interval(s.gA(),s.gB());
+  interval.add(s.gC());
+  Point<2,size_t> p;
+  // Double loop testing all pixels inside the interval
+  for(p.x() = interval.gA().x();
+      p.x() < interval.gB().x();
+      p.x()++)
+    for(p.y() = interval.gA().y();
+        p.y() < interval.gB().y();
+        p.y()++)
+      if(s.contains(p))
+        (*this)((size_t)p.x(),(size_t)p.y()) = c;
 }
 /*
 void Bitmap::drawTriangle(s2dD triangle, Bitmap *tex, s2dD texCoord){

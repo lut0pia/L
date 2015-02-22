@@ -13,7 +13,6 @@
 #include "Serializable.h"   // Indicates possibility of byte storing/sharing
 
 // Sublibraries
-#include "3d.h"             // 3D rendering classes
 #include "ai.h"             // Artifical Intelligence
 #include "audio.h"          // Audio I/O, Wave & Midi
 #include "burp.h"           // Interpreted scripting language
@@ -24,6 +23,7 @@
 #include "ecs.h"            // Entity/Component/System
 #include "font.h"           // Font handling
 #include "geometry.h"       // Points, intervals, surfaces, volumes, and all related functions
+#include "gl.h"             // Everything related to OpenGL
 #include "gui.h"            // 2D graphical user interface
 #include "image.h"          // Images, textures, colors
 #include "logic.h"          // Propositional logic

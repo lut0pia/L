@@ -4,7 +4,7 @@ using namespace L;
 using namespace AI;
 
 Perceptron::Perceptron(size_t is, float r)
-: inputSize(is), rate(r), weight(inputSize,0){}
+: inputSize(is), rate(r), weight(inputSize,0.0f){}
 
 bool Perceptron::learn(const Vector<bool>& input, bool result){
     if(answer(input) != result){

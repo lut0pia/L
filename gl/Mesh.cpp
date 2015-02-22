@@ -1,73 +1,74 @@
 #include "Mesh.h"
 
-#include <GL/gl.h>
-#include <GL/glu.h>
 #include "../Interface.h"
 
 using namespace L;
+using namespace GL;
 
-Mesh::Mesh(){}
-Mesh::Mesh(const String& filePath){
-    Interface<Mesh>::fromFile(*this,filePath);
+Mesh::Mesh()
+  : _vertexDesc(0),
+    _vertexBuffer(GL_ARRAY_BUFFER),
+    _indexBuffer(GL_ELEMENT_ARRAY_BUFFER),
+    _vertexCount(0),
+    _vertexSize(0),
+    _indexCount(0),
+    _primitive(0) {
 }
-void Mesh::draw(){
-    glBegin(GL_TRIANGLES);
-    for(size_t i=0;i<face.size();i++){
-        glNormal3d(normal[face[i].n].x(),normal[face[i].n].y(),normal[face[i].n].z());
-        glTexCoord2d(texCoord[face[i].t1].x(),texCoord[face[i].t1].y());  glVertex3d(vertex[face[i].v1].x(),vertex[face[i].v1].y(),vertex[face[i].v1].z());
-        glTexCoord2d(texCoord[face[i].t2].x(),texCoord[face[i].t2].y());  glVertex3d(vertex[face[i].v2].x(),vertex[face[i].v2].y(),vertex[face[i].v2].z());
-        glTexCoord2d(texCoord[face[i].t3].x(),texCoord[face[i].t3].y());  glVertex3d(vertex[face[i].v3].x(),vertex[face[i].v3].y(),vertex[face[i].v3].z());
-    }
-    glEnd();
+Mesh::Mesh(const MeshBuilder& builder, GLenum primitive)
+  : _vertexDesc(builder.vertexDesc()),
+    _vertexBuffer(GL_ARRAY_BUFFER),
+    _indexBuffer(GL_ELEMENT_ARRAY_BUFFER),
+    _vertexCount(builder.vertexCount()),
+    _vertexSize(vertexSize(_vertexDesc)),
+    _indexCount(builder.indexCount()),
+    _primitive(primitive) {
+  _vertexBuffer.data(_vertexCount*_vertexSize*sizeof(float),builder.vertices(),GL_STATIC_DRAW);
+  if(_indexCount)
+    _indexBuffer.data(_indexCount*sizeof(uint),builder.indices(),GL_STATIC_DRAW);
 }
-
-
 /*
-
-void L_Mesh::loadFromOBJ(String filePath){
-    ifstream file(filePath.c_str(), ios::in);
-    if(file){
-        String line;
-        Vector<String> linePart, linePartPart;
-        while(getline(file, line)){
-            linePart = L_Explode(line,' ');
-            if(linePart[0]=="v"){ // Vertex
-                buff3d.x = strtod(linePart[1].c_str(),NULL);
-                buff3d.y = strtod(linePart[2].c_str(),NULL);
-                buff3d.z = strtod(linePart[3].c_str(),NULL);
-                vertex.push_back(buff3d);
-            }
-            else if(linePart[0]=="vt"){ // TexCoord
-                buff2d.x = strtod(linePart[1].c_str(),NULL);
-                buff2d.y = strtod(linePart[2].c_str(),NULL);
-                texCoord.push_back(buff2d);
-            }
-            else if(linePart[0]=="vn"){ // Normal
-                buff3d.x = strtod(linePart[1].c_str(),NULL);
-                buff3d.y = strtod(linePart[2].c_str(),NULL);
-                buff3d.z = strtod(linePart[3].c_str(),NULL);
-                normal.push_back(buff3d);
-            }
-            else if(linePart[0]=="f"){ // Face abc:vertex; def:tex; g:normal;
-                linePartPart = L_Explode(linePart[1],'/');
-                buff7ul.a = atoi(linePartPart[0].c_str())-1;
-                buff7ul.d = atoi(linePartPart[1].c_str())-1;
-
-                linePartPart = L_Explode(linePart[2],'/');
-                buff7ul.b = atoi(linePartPart[0].c_str())-1;
-                buff7ul.e = atoi(linePartPart[1].c_str())-1;
-
-                linePartPart = L_Explode(linePart[3],'/');
-                buff7ul.c = atoi(linePartPart[0].c_str())-1;
-                buff7ul.f = atoi(linePartPart[1].c_str())-1;
-
-                buff7ul.g = atoi(linePartPart[2].c_str())-1;
-
-                face.push_back(buff7ul);
-            }
-        }
-    }
+Mesh::Mesh(byte vertexDesc, float* vertices, GLsizei count, GLenum primitive)
+  : _vertexDesc(vertexDesc), _vertexBuffer(GL_ARRAY_BUFFER), _vertexCount(count),
+    _vertexSize(vertexSize(_vertexDesc)), _primitive(primitive) {
+  _vertexBuffer.data(_vertexCount*_vertexSize*sizeof(float),vertices,GL_STATIC_DRAW);
 }
 */
 
+void Mesh::draw() {
+  if(!_vertexCount) return; // It's an empty mesh
+  _vertexBuffer.bind();
+  if(_indexCount)
+    _indexBuffer.bind();
+  if(_vertexDesc&VERTEX) glEnableClientState(GL_VERTEX_ARRAY);
+  if(_vertexDesc&COLOR) glEnableClientState(GL_COLOR_ARRAY);
+  if(_vertexDesc&NORMAL) glEnableClientState(GL_NORMAL_ARRAY);
+  if(_vertexDesc&VERTEX) glVertexPointer(3, GL_FLOAT, _vertexSize*sizeof(float), (void*)(attributePosition(_vertexDesc,VERTEX)*sizeof(float)));
+  if(_vertexDesc&COLOR) glColorPointer(4, GL_FLOAT, _vertexSize*sizeof(float), (void*)(attributePosition(_vertexDesc,COLOR)*sizeof(float)));
+  if(_vertexDesc&NORMAL) glNormalPointer(GL_FLOAT, _vertexSize*sizeof(float), (void*)(attributePosition(_vertexDesc,NORMAL)*sizeof(float)));
+  if(_indexCount) glDrawElements(_primitive, _indexCount, GL_UNSIGNED_INT, (void*)0);
+  else glDrawArrays(_primitive, 0, _vertexCount);
+  if(_vertexDesc&VERTEX) glDisableClientState(GL_VERTEX_ARRAY);
+  if(_vertexDesc&COLOR) glDisableClientState(GL_COLOR_ARRAY);
+  if(_vertexDesc&NORMAL) glDisableClientState(GL_NORMAL_ARRAY);
+}
 
+GLsizei Mesh::vertexSize(byte desc) {
+  GLsizei wtr(0);
+  if(desc&VERTEX) wtr += 3;
+  if(desc&COLOR) wtr += 4;
+  if(desc&NORMAL) wtr += 3;
+  if(desc&TEXCOORD) wtr += 2;
+  return wtr;
+}
+GLsizei Mesh::attributePosition(byte desc, byte type) {
+  GLsizei wtr(0);
+  if(type==VERTEX) return wtr;
+  if(desc&VERTEX) wtr += 3;
+  if(type==COLOR) return wtr;
+  if(desc&COLOR) wtr += 4;
+  if(type==NORMAL) return wtr;
+  if(desc&NORMAL) wtr += 3;
+  if(type==TEXCOORD) return wtr;
+  if(desc&TEXCOORD) wtr += 2;
+  throw Exception("Attribute could not be found in vertex description.");
+}

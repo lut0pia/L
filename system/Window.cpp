@@ -3,6 +3,7 @@
 #include <cstring>
 #include "../stl.h"
 #include "../bytes/encoding.h"
+#include <GL/glew.h>
 
 #if defined L_WINDOWS
     #include <windows.h>
@@ -10,7 +11,7 @@
 #elif defined L_UNIX
     #include<X11/X.h>
     #include<X11/Xlib.h>
-    #include<GL/gl.h>
+    #include<GL/glew.h>
     #include<GL/glx.h>
     #include<GL/glu.h>
 #endif
@@ -195,6 +196,7 @@ void Window::open(const String& title, size_t width, size_t height, size_t flags
         SetPixelFormat(hDC,format,&pfd);
         hRC = wglCreateContext(hDC); // create and enable the render context (RC)
         wglMakeCurrent(hDC,hRC);
+        glewInit();
     #elif defined L_UNIX
         if((dpy = XOpenDisplay(NULL)) == NULL)
             throw Exception("Cannot open X server display.");

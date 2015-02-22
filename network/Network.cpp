@@ -118,7 +118,7 @@ String Network::HTTPRequest(const String& url){
 }
 void Network::HTTPDownload(const String& url, const String& name){
     String answer(HTTPRequest(url));
-    std::ofstream file;
-    File(name).out(file,std::ios::binary | std::ios::trunc);
-    file << String(answer,answer.find("\r\n\r\n")+4);
+    File file(name);
+    file.open("w");
+    file.write(String(answer,answer.find("\r\n\r\n")+4));
 }

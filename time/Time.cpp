@@ -2,6 +2,7 @@
 
 #include <ctime>
 #include "../macros.h"
+#include "Timer.h"
 #if defined L_WINDOWS
     #include <sys/timeb.h>
 #elif defined L_UNIX
@@ -68,6 +69,10 @@ Time Time::now(){
         gettimeofday(&tv,NULL);
         return Time(tv.tv_usec,0,tv.tv_sec);
     #endif
+}
+Timer fpsTimer;
+float Time::fps(){
+  return 1.0/fpsTimer.frame().fSeconds();
 }
 String Time::format(String str, Time t){
     time_t timestamp(t.seconds());

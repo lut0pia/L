@@ -35,6 +35,7 @@ namespace L{
             double fSeconds() const;
 
             static Time now();
+            static float fps();
             static String format(String, Time = now());
     };
 }

@@ -6,7 +6,7 @@
 #include "Function.h"
 #include "../containers/Ref.h"
 #include "../dynamic.h"
-#include "../system.h"
+#include "../system/Directory.h"
 
 namespace L{
     namespace Burp{

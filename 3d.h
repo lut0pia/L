@@ -1,6 +1,0 @@
-#include "3d/Camera.h"
-#include "3d/Graphics.h"
-#include "3d/Mesh.h"
-#include "3d/Object.h"
-#include "3d/PRS.h"
-#include "3d/TargetPRS.h"

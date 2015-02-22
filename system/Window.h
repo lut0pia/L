@@ -4,7 +4,7 @@
 #include <iostream>
 #include "../geometry/Point.h"
 #include "../macros.h"
-#include "../system.h"
+#include "../stl/String.h"
 
 namespace L{
     class Window{

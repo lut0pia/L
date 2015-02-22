@@ -126,7 +126,7 @@ namespace L{
 
         public:
             virtual void from(T& v, const File& file){
-                std::ifstream is(file.gPath().c_str(),std::ios::binary);
+                std::ifstream is(file.path().c_str(),std::ios::binary);
                 from(v,is);
             }
             virtual void from(T& v, const String& str){
@@ -140,7 +140,7 @@ namespace L{
             }
 
             virtual void to(const T& v, const File& file){
-                std::ofstream os(file.gPath().c_str(),std::ios::binary);
+                std::ofstream os(file.path().c_str(),std::ios::binary);
                 to(v,os);
             }
             virtual void to(const T& v, String& str){

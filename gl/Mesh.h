@@ -1,29 +1,35 @@
-#ifndef DEF_L_Mesh
-#define DEF_L_Mesh
+#ifndef DEF_L_GL_Mesh
+#define DEF_L_GL_Mesh
 
-#include "../geometry.h"
-#include "../stl.h"
+#include "Buffer.h"
+#include "MeshBuilder.h"
+#include "../macros.h"
+#include "../stl/Vector.h"
 
-namespace L{
-    class Mesh{
-        public:
-            typedef struct{
-                size_t v1,v2,v3,
-                       t1,t2,t3,
-                       n;
-            } Face;
+namespace L {
+  namespace GL {
+    class Mesh {
+      public:
+        static const byte VERTEX = 0x01;
+        static const byte COLOR = 0x02;
+        static const byte NORMAL = 0x04;
+        static const byte TEXCOORD = 0x08;
+      private:
+        byte _vertexDesc;
+        Buffer _vertexBuffer, _indexBuffer;
+        GLsizei _vertexCount, _vertexSize, _indexCount;
+        GLenum _primitive;
+      public:
+        Mesh();
+        Mesh(const MeshBuilder&, GLenum primitive = GL_TRIANGLES);
+        //Mesh(byte vertexDesc, float* vertices, GLsizei count, GLenum primitive = GL_TRIANGLES);
+        L_NoCopy(Mesh)
+        void draw();
 
-            Vector<Point<3,double> > vertex, normal;
-            Vector<Point<2,double> > texCoord;
-            Vector<Face> face;
-
-            Mesh();
-            Mesh(const String&);
-            void draw();
-            //void draw(const Skeleton&);
-
-
+        static GLsizei vertexSize(byte desc);
+        static GLsizei attributePosition(byte desc, byte type);
     };
+  }
 }
 
 #endif

@@ -17,6 +17,10 @@ namespace L{
             Vector() : std::vector<T>(){}
             Vector(const std::vector<T>& v) : std::vector<T>(v){}
             Vector(size_t n, const T& val = T()) : std::vector<T>(n,val){}
+            Vector(T* a, size_t n) : std::vector<T>(n){
+              for(uint i(0);i<n;i++)
+                std::vector<T>::operator[](i) = a[i];
+            }
             template <class InputIterator> Vector(InputIterator first, InputIterator last) : std::vector<T>(first,last){}
 
             bool operator==(const Vector& other) const{

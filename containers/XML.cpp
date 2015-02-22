@@ -5,7 +5,7 @@ using namespace std;
 
 XML::XML(){}
 XML::XML(const File& f){
-    ifstream s(f.gPath());
+    ifstream s(f.path());
     read(s);
 }
 XML::XML(std::istream& s){
