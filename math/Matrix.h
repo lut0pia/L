@@ -17,8 +17,10 @@ namespace L {
         for(size_t i(0); i<l; i++)
           _m[i][0] = v[i];
       }
+
       inline T& operator()(int line, int column) {return _m[line][column];}
       inline const T& operator()(int line, int column) const {return _m[line][column];}
+      inline const T* array() const {return _a;}
       Matrix operator+(const Matrix<l,c,T>& other) const {
         Matrix wtr(*this);
         wtr += other;
@@ -107,6 +109,29 @@ namespace L {
         for(size_t x(0); x<c; x++)
           for(size_t y(0); y<l; y++)
             wtr(x,y) = ((x==y)?1:0);
+        return wtr;
+      }
+      static Matrix<3,3,float> rotation(Point3f axis, float angle) {
+        Matrix<3,3,float> wtr;
+        if(angle < 0.001 && angle > -0.001)
+          angle = 0;
+        float cosi = cos(angle);
+        float sinu = sin(angle);
+        float x = axis.x();
+        float y = axis.y();
+        float z = axis.z();
+        float x2 = axis.x()*axis.x();
+        float y2 = axis.y()*axis.y();
+        float z2 = axis.z()*axis.z();
+        wtr(0,0) = x2+(cosi*(1-x2));
+        wtr(1,0) = (x*y*(1-cosi))-(z*sinu);
+        wtr(2,0) = (x*z*(1-cosi))+(y*sinu);
+        wtr(0,1) = (x*y*(1-cosi))+(z*sinu);
+        wtr(1,1) = y2+(cosi*(1-y2));
+        wtr(2,1) = (y*z*(1-cosi))-(x*sinu);
+        wtr(0,2) = (x*z*(1-cosi))-(y*sinu);
+        wtr(1,2) = (y*z*(1-cosi))+(x*sinu);
+        wtr(2,2) = z2+(cosi*(1-z2));
         return wtr;
       }
   };

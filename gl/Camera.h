@@ -7,22 +7,30 @@
 namespace L {
   namespace GL {
     class Camera {
-      public:
-        Ref<PRS> prs;
       protected:
-        double fovy, aspect, nearLimit, farLimit;
+        Point3f _position, _lookat, _up, _forward, _right;
+        Matrix44f _view;
+        float _fovy, _aspect, _nearLimit, _farLimit;
 
       public:
-        Camera(const Ref<PRS>&, double fovy = 70, double aspect = 16.0/9.0, double nearLimit = .01, double farLimit = 512);
+        Camera(const Point3f& position, float fovy = 70, float aspect = 16.0/9.0, float nearLimit = .01, float farLimit = 512);
 
-        void sPRS(const Ref<PRS>&);
-        void sFovy(double fovy);
-        void sAspect(double aspect);
-        void sClipping(double near, double far);
+        void move(const Point3f& delta);
+        void position(const Point3f& position);
+        const Point3f& position() const{return _position;}
+        const Point3f& forward() const{return _forward;}
+        void lookat(const Point3f&);
 
-        void aPerspective();
+        void phi(float);
+        void theta(float);
+
+        void fovy(float fovy);
+        void aspect(float aspect);
+        void clipping(float near, float far);
+
+        void update();
         void place();
-
+        const Matrix44f& view() {return _view;}
     };
   }
 }

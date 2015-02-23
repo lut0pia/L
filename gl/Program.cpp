@@ -41,6 +41,9 @@ void Program::uniform(const String& name, float v) {
 void Program::uniform(const String& name, float x,float y,float z) {
   glUniform3f(uniformLocation(name),x,y,z);
 }
+void Program::uniform(const String& name, const Matrix44f& m){
+  glUniformMatrix4fv(uniformLocation(name),1,GL_TRUE,m.array());
+}
 
 void Program::unuse() {
   glUseProgram(0);

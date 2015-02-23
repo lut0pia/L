@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 #include "Shader.h"
 #include "../stl/Map.h"
+#include "../math/Matrix.h"
 
 namespace L {
   namespace GL {
@@ -21,6 +22,7 @@ namespace L {
         GLuint uniformLocation(const String& name);
         void uniform(const String& name, float);
         void uniform(const String& name, float,float,float);
+        void uniform(const String& name, const Matrix44f&);
 
         static void unuse();
     };
