@@ -27,6 +27,10 @@
 *.out
 *.app
 
+# Code::Blocks
+*.depend
+*.layout
+
 # Others
 *.xmind
 *.html
