@@ -111,12 +111,12 @@ namespace L {
             wtr(x,y) = ((x==y)?1:0);
         return wtr;
       }
-      static Matrix<3,3,float> rotation(Point3f axis, float angle) {
-        Matrix<3,3,float> wtr;
+      static Matrix<3,3,T> rotation(const Point3f& axis, float angle) {
+        Matrix<3,3,T> wtr;
         if(angle < 0.001 && angle > -0.001)
           angle = 0;
-        float cosi = cos(angle);
-        float sinu = sin(angle);
+        float cosi(cos(angle));
+        float sinu(sin(angle));
         float x = axis.x();
         float y = axis.y();
         float z = axis.z();
@@ -132,6 +132,26 @@ namespace L {
         wtr(0,2) = (x*z*(1-cosi))-(y*sinu);
         wtr(1,2) = (y*z*(1-cosi))+(x*sinu);
         wtr(2,2) = z2+(cosi*(1-z2));
+        return wtr;
+      }
+      static Matrix<4,4,T> translation(const Point3f& vector) {
+        Matrix<4,4,T> wtr(Matrix<4,4,T>::identity());
+        wtr(0,3) = vector.x();
+        wtr(1,3) = vector.y();
+        wtr(2,3) = vector.z();
+        return wtr;
+      }
+      static Matrix<4,4,T> orientation(const Point3f& right, const Point3f& up,const Point3f& forward) {
+        Matrix<4,4,T> wtr(Matrix<4,4,T>::identity());
+        wtr(0,0) = right.x();
+        wtr(0,1) = right.y();
+        wtr(0,2) = right.z();
+        wtr(1,0) = up.x();
+        wtr(1,1) = up.y();
+        wtr(1,2) = up.z();
+        wtr(2,0) = forward.x();
+        wtr(2,1) = forward.y();
+        wtr(2,2) = forward.z();
         return wtr;
       }
   };
