@@ -4,69 +4,72 @@
 #include "../general.h"
 #include "Point.h"
 
-namespace L{
-    template <int d,class T>
-    class Interval{
-        protected:
-            Point<d,T> a, b;
-            Interval(){}
-        public:
-            Interval(const Point<d,T>& a, const Point<d,T>& b){
-                this->a = this->b = a;
-                add(b);
-            }
+namespace L {
+  template <int d,class T>
+  class Interval {
+    protected:
+      Point<d,T> _min, _max;
+    public:
+      Interval() {
+        clear();
+      }
+      Interval(const Point<d,T>& a, const Point<d,T>& b) : _min(a), _max(a) {
+        add(b);
+      }
+      Interval(const Interval& a, const Interval& b) {
+        for(size_t i(0); i<d; i++) {
+          _min[i] = std::max(a._min[i],b._min[i]);
+          _max[i] = std::min(a._max[i],b._max[i]);
+        }
+      }
+      Interval operator*(const Interval& other) const {
+        return Interval(*this,other);
+      }
 
-            Interval operator*(const Interval& other) const{
-                Point<d,T> wtra, wtrb;
-                Interval wtr;
-                for(size_t i(0);i<d;i++){
-                    wtra[i] = std::max(a[i],other.a[i]);
-                    wtrb[i] = std::min(b[i],other.b[i]);
-                }
-                wtr.a = wtra;
-                wtr.b = wtrb;
-                return wtr;
-            }
+      void add(const Point<d,T>& p) {
+        for(size_t i(0); i<d; i++) {
+          if(_min[i] > p[i])
+            _min[i] = p[i];
+          if(_max[i] < p[i])
+            _max[i] = p[i];
+        }
+      }
+      bool contains(Point<d,T> p) const {
+        if(empty()) return false;
+        bool wtr(true);
+        for(size_t i(0); i<d&&wtr; i++)
+          if(!InBetween(p[i],_min[i],_max[i]))
+            wtr = false;
+        return wtr;
+      }
+      Point<d,T> closestTo(Point<d,T> p) const {
+        for(size_t i(0); i<d; i++) {
+          if(p[i]<_min[i])
+            p[i] = _min[i];
+          if(p[i]>_max[i])
+            p[i] = _max[i];
+        }
+        return p;
+      }
+      Point<d,T> size() const {
+        return _max - _min;
+      }
+      bool empty() const {
+        for(size_t i(0); i<d; i++)
+          if(_min[i]>_max[i])
+            return true;
+        return false;
+      }
+      void clear() {
+        _min = Point<d,T>::max();
+        _max = Point<d,T>::min();
+      }
 
-            void add(const Point<d,T>& p){
-                for(size_t i(0);i<d;i++){
-                    if(a[i] > p[i])
-                        a[i] = p[i];
-                    if(b[i] < p[i])
-                        b[i] = p[i];
-                }
-            }
-            bool contains(Point<d,T> p) const{
-                if(empty()) return false;
-                bool wtr(true);
-                for(size_t i(0);i<d&&wtr;i++)
-                    if(!InBetween(p[i],a[i],b[i]))
-                        wtr = false;
-                return wtr;
-            }
-            Point<d,T> closestTo(Point<d,T> p) const{
-                for(size_t i(0);i<d;i++){
-                    if(p[i]<a[i])
-                        p[i] = a[i];
-                    if(p[i]>b[i])
-                        p[i] = b[i];
-                }
-                return p;
-            }
-            Point<d,T> size() const{
-                return b - a;
-            }
-            bool empty() const{
-                for(size_t i(0);i<d;i++)
-                    if(a[i]>=b[i])
-                        return true;
-                return false;
-            }
-
-            inline const Point<d,T>& gA() const{return a;}
-            inline const Point<d,T>& gB() const{return b;}
-    };
-    typedef Interval<2,int> Interval2i;
+      inline const Point<d,T>& min() const {return _min;}
+      inline const Point<d,T>& max() const {return _max;}
+  };
+  typedef Interval<2,int> Interval2i;
+  typedef Interval<3,int> Interval3i;
 }
 
 #endif
