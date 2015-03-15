@@ -35,6 +35,7 @@ namespace L{
             byte& g();
             byte& b();
             byte& a();
+            const byte* bytes() const{return data;}
 
             void write(std::ostream&) const;
             void read(std::istream&);

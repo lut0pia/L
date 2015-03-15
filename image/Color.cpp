@@ -95,7 +95,7 @@ Color Color::from(float r, float g, float b, float a){
     return Color(r*255,g*255,b*255,a*255);
 }
 Color Color::random(){
-    return Color(Rand::nextByte(),Rand::nextByte(),Rand::nextByte());
+    return Color(Rand::nextByte(),Rand::nextByte(),Rand::nextByte(),Rand::nextByte());
 }
 
 

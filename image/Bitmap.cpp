@@ -156,11 +156,11 @@ void Bitmap::drawTriangle(Surface<2,double> s,Color c) {
   interval.add(s.gC());
   Point<2,size_t> p;
   // Double loop testing all pixels inside the interval
-  for(p.x() = interval.gA().x();
-      p.x() < interval.gB().x();
+  for(p.x() = interval.min().x();
+      p.x() < interval.max().x();
       p.x()++)
-    for(p.y() = interval.gA().y();
-        p.y() < interval.gB().y();
+    for(p.y() = interval.min().y();
+        p.y() < interval.max().y();
         p.y()++)
       if(s.contains(p))
         (*this)((size_t)p.x(),(size_t)p.y()) = c;
