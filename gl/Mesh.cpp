@@ -22,7 +22,7 @@ Mesh::Mesh(const MeshBuilder& builder, GLenum primitive)
     _vertexSize(vertexSize(_vertexDesc)),
     _indexCount(builder.indexCount()),
     _primitive(primitive) {
-  _vertexBuffer.data(_vertexCount*_vertexSize*sizeof(float),builder.vertices(),GL_STATIC_DRAW);
+  _vertexBuffer.data(_vertexCount*_vertexSize,builder.vertices(),GL_STATIC_DRAW);
   if(_indexCount)
     _indexBuffer.data(_indexCount*sizeof(uint),builder.indices(),GL_STATIC_DRAW);
 }
@@ -42,9 +42,9 @@ void Mesh::draw() {
   if(_vertexDesc&VERTEX) glEnableClientState(GL_VERTEX_ARRAY);
   if(_vertexDesc&COLOR) glEnableClientState(GL_COLOR_ARRAY);
   if(_vertexDesc&NORMAL) glEnableClientState(GL_NORMAL_ARRAY);
-  if(_vertexDesc&VERTEX) glVertexPointer(3, GL_FLOAT, _vertexSize*sizeof(float), (void*)(attributePosition(_vertexDesc,VERTEX)*sizeof(float)));
-  if(_vertexDesc&COLOR) glColorPointer(4, GL_FLOAT, _vertexSize*sizeof(float), (void*)(attributePosition(_vertexDesc,COLOR)*sizeof(float)));
-  if(_vertexDesc&NORMAL) glNormalPointer(GL_FLOAT, _vertexSize*sizeof(float), (void*)(attributePosition(_vertexDesc,NORMAL)*sizeof(float)));
+  if(_vertexDesc&VERTEX) glVertexPointer(3, GL_FLOAT, _vertexSize, (void*)(attributeOffset(_vertexDesc,VERTEX)));
+  if(_vertexDesc&COLOR) glColorPointer(4, GL_UNSIGNED_BYTE, _vertexSize, (void*)(attributeOffset(_vertexDesc,COLOR)));
+  if(_vertexDesc&NORMAL) glNormalPointer(GL_FLOAT, _vertexSize, (void*)(attributeOffset(_vertexDesc,NORMAL)));
   if(_indexCount) glDrawElements(_primitive, _indexCount, GL_UNSIGNED_INT, (void*)0);
   else glDrawArrays(_primitive, 0, _vertexCount);
   if(_vertexDesc&VERTEX) glDisableClientState(GL_VERTEX_ARRAY);
@@ -54,21 +54,21 @@ void Mesh::draw() {
 
 GLsizei Mesh::vertexSize(byte desc) {
   GLsizei wtr(0);
-  if(desc&VERTEX) wtr += 3;
+  if(desc&VERTEX) wtr += 3*sizeof(float);
   if(desc&COLOR) wtr += 4;
-  if(desc&NORMAL) wtr += 3;
-  if(desc&TEXCOORD) wtr += 2;
+  if(desc&NORMAL) wtr += 3*sizeof(float);
+  if(desc&TEXCOORD) wtr += 2*sizeof(float);
   return wtr;
 }
-GLsizei Mesh::attributePosition(byte desc, byte type) {
+GLsizei Mesh::attributeOffset(byte desc, byte type) {
   GLsizei wtr(0);
   if(type==VERTEX) return wtr;
-  if(desc&VERTEX) wtr += 3;
+  if(desc&VERTEX) wtr += 3*sizeof(float);
   if(type==COLOR) return wtr;
   if(desc&COLOR) wtr += 4;
   if(type==NORMAL) return wtr;
-  if(desc&NORMAL) wtr += 3;
+  if(desc&NORMAL) wtr += 3*sizeof(float);
   if(type==TEXCOORD) return wtr;
-  if(desc&TEXCOORD) wtr += 2;
+  if(desc&TEXCOORD) wtr += 2*sizeof(float);
   throw Exception("Attribute could not be found in vertex description.");
 }

@@ -1,14 +1,30 @@
 #include "Program.h"
 
+#include "Utils.h"
+
 using namespace L;
 using namespace GL;
 
+Program::Program(const Shader& s1) : _id(glCreateProgram()) {
+  attach(s1);
+  link();
+  detach(s1);
+}
 Program::Program(const Shader& s1, const Shader& s2) : _id(glCreateProgram()) {
   attach(s1);
   attach(s2);
   link();
   detach(s1);
   detach(s2);
+}
+Program::Program(const Shader& s1, const Shader& s2, const Shader& s3) : _id(glCreateProgram()) {
+  attach(s1);
+  attach(s2);
+  attach(s3);
+  link();
+  detach(s1);
+  detach(s2);
+  detach(s3);
 }
 Program::~Program() {
   glDeleteProgram(_id);
@@ -41,9 +57,18 @@ void Program::uniform(const String& name, float v) {
 void Program::uniform(const String& name, float x,float y,float z) {
   glUniform3f(uniformLocation(name),x,y,z);
 }
-void Program::uniform(const String& name, const Matrix44f& m){
+void Program::uniform(const String& name, const Point3f& p){
+  uniform(name,p.x(),p.y(),p.z());
+}
+void Program::uniform(const String& name, const Matrix44f& m) {
   glUniformMatrix4fv(uniformLocation(name),1,GL_TRUE,m.array());
 }
+void Program::uniform(const String& name, const Texture& texture, GLenum unit){
+  glUniform1i(uniformLocation(name), unit-GL_TEXTURE0);
+  glActiveTexture(unit);
+  texture.bind();
+}
+
 
 void Program::unuse() {
   glUseProgram(0);

@@ -1,5 +1,5 @@
-#ifndef DEF_L_Buffer
-#define DEF_L_Buffer
+#ifndef DEF_L_GL_Buffer
+#define DEF_L_GL_Buffer
 
 #include <GL/glew.h>
 

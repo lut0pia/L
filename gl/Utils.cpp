@@ -3,6 +3,29 @@
 using namespace L;
 using namespace GL;
 
+
+const char* Utils::error() {
+  static char invalidEnum[] = "GL_INVALID_ENUM";
+  static char invalidValue[] = "GL_INVALID_VALUE";
+  static char invalidOperation[] = "GL_INVALID_OPERATION";
+  static char invalidFramebufferOperation[] = "GL_INVALID_FRAMEBUFFER_OPERATION";
+  static char outOfMemory[] = "GL_OUT_OF_MEMORY";
+  GLenum error(glGetError());
+  switch(error) {
+    case GL_INVALID_ENUM:
+      return invalidEnum;
+    case GL_INVALID_VALUE:
+      return invalidValue;
+    case GL_INVALID_OPERATION:
+      return invalidOperation;
+    case GL_INVALID_FRAMEBUFFER_OPERATION:
+      return invalidFramebufferOperation;
+    case GL_OUT_OF_MEMORY:
+      return outOfMemory;
+    default:
+      return NULL;
+  }
+}
 void Utils::drawAxes() {
   glBegin(GL_LINES);
   glColor3f(1,0,0);

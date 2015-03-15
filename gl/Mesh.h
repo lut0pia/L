@@ -27,7 +27,7 @@ namespace L {
         void draw();
 
         static GLsizei vertexSize(byte desc);
-        static GLsizei attributePosition(byte desc, byte type);
+        static GLsizei attributeOffset(byte desc, byte type);
     };
   }
 }

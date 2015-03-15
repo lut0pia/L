@@ -8,6 +8,7 @@ namespace L {
   namespace GL {
     class Utils {
       public:
+        static const char* error();
         static void drawAxes();
         // Color drawing
         static void draw2dLine(Point<2,float>, Point<2,float>, int size, const Color& c);

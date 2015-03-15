@@ -12,11 +12,12 @@ namespace L {
         uint _width, _height;
       public:
         Texture(const Image::Bitmap&);
+        ~Texture();
         L_NoCopy(Texture)
+        void bind() const;
         inline GLuint id() const {return _id;}
         inline uint width() const {return _width;}
         inline uint height() const {return _height;}
-        ~Texture();
     };
   }
 }

@@ -19,9 +19,12 @@ MeshBuilder::~MeshBuilder() {
 void MeshBuilder::reset(byte vertexDesc, uint maxVertices, uint maxIndices) {
   _vertexDesc = vertexDesc;
   _vertexSize = Mesh::vertexSize(vertexDesc);
+  _offsetVertex = Mesh::attributeOffset(_vertexDesc,Mesh::VERTEX);
+  _offsetColor = Mesh::attributeOffset(_vertexDesc,Mesh::COLOR);
+  _offsetNormal = Mesh::attributeOffset(_vertexDesc,Mesh::NORMAL);
   if(_vertexBufferSize<maxVertices) {
     delete _vertexBuffer;
-    _vertexBuffer = new float[maxVertices*_vertexSize];
+    _vertexBuffer = new byte[maxVertices*_vertexSize];
     _vertexBufferSize = maxVertices;
   }
   if(_indexBufferSize<maxIndices) {
@@ -30,30 +33,39 @@ void MeshBuilder::reset(byte vertexDesc, uint maxVertices, uint maxIndices) {
     _indexBufferSize = maxIndices;
   }
   _vertexCount = _indexCount = 0;
+  _currentVertex = _vertexBuffer;
 }
-void MeshBuilder::setVertex(float x,float y,float z) {
-  int offset(Mesh::attributePosition(_vertexDesc,Mesh::VERTEX));
-  _currentVertex[offset] = x;
-  _currentVertex[offset+1] = y;
-  _currentVertex[offset+2] = z;
+void MeshBuilder::computeNormals() {
+  L_ErrorIf(!(_vertexDesc & Mesh::NORMAL),"There are no normals in this mesh.");
+  for(uint i(0); i<_vertexCount; i++)
+    normal(i) = Point3f(0,0,0);
+  for(uint i(0); i<_indexCount; i+=3) {
+    Point3f& a(vertex(_indexBuffer[i]));
+    Point3f n((vertex(_indexBuffer[i+1])-a)
+              .cross(vertex(_indexBuffer[i+2])-a));
+    n.normalize();
+    normal(_indexBuffer[i]) += n;
+    normal(_indexBuffer[i+1]) += n;
+    normal(_indexBuffer[i+2]) += n;
+  }
+  for(uint i(0); i<_vertexCount; i++)
+    normal(i).normalize();
 }
-void MeshBuilder::setVertexColor(float r,float g,float b, float a) {
-  int offset(Mesh::attributePosition(_vertexDesc,Mesh::COLOR));
-  _currentVertex[offset] = r;
-  _currentVertex[offset+1] = g;
-  _currentVertex[offset+2] = b;
-  _currentVertex[offset+3] = a;
+void MeshBuilder::setVertex(const Point3f& vertex) {
+  memcpy(_currentVertex+_offsetVertex,vertex.bytes(),sizeof(vertex));
+}
+void MeshBuilder::setVertexColor(const Color& color) {
+  memcpy(_currentVertex+_offsetColor,color.bytes(),sizeof(color));
 }
 uint MeshBuilder::addVertex() {
-  if(_vertexCount==_vertexBufferSize)
+  if(_vertexCount>=_vertexBufferSize)
     throw Exception("MeshBuilder vertex buffer too small.");
-  int offset(_vertexCount*_vertexSize);
-  memcpy(_vertexBuffer+offset,_currentVertex,_vertexSize*sizeof(float));
+  _currentVertex += _vertexSize;
   return _vertexCount++;
 }
 void MeshBuilder::addIndex(uint index) {
   _indexBuffer[_indexCount] = index;
-  if(++_indexCount==_indexBufferSize)
+  if(++_indexCount>=_indexBufferSize)
     throw Exception("MeshBuilder index buffer too small.");
 }
 void MeshBuilder::addTriangle(uint a, uint b, uint c) {
