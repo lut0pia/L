@@ -67,7 +67,7 @@ void Camera::update() {
   _up = _right.cross(_forward);
   _up.normalize();
   // Compute new view matrix
-  _view = Matrix44f::translation(-_position) * Matrix44f::orientation(_right,_up,-_forward);
+  _view = Matrix44f::orientation(_right,_up,-_forward).transpose() * Matrix44f::translation(-_position);
 }
 void Camera::place() {
   glMatrixMode(GL_MODELVIEW);

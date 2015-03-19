@@ -28,8 +28,14 @@ namespace L {
       Point(const T& x, const T& y) : v {x,y} {}
       Point(const T& x, const T& y, const T& z) : v {x,y,z} {}
       Point(const T& x, const T& y, const T& z, const T& w) : v {x,y,z,w} {}
-      Point(const Point<d-1,T>& p, const T& w) : v {p.v} {
+      Point(const Point<d-1,T>& p, const T& w = 1.0) {
+        for(int i(0); i<d-1; i++)
+          v[i] = p[i];
         v[d-1] = w;
+      }
+      Point(const Point<d+1,T>& p) {
+        for(int i(0); i<d; i++)
+          v[i] = p[i];
       }
 
       Point& operator+=(const Point& other) {
@@ -47,7 +53,7 @@ namespace L {
           v[i] *= other.v[i];
         return *this;
       }
-      Point& operator/=(const Point& other) const {
+      Point& operator/=(const Point& other) {
         for(size_t i(0); i<d; i++)
           v[i] /= other.v[i];
         return *this;
@@ -102,10 +108,11 @@ namespace L {
           wtr += v[i]*v[i];
         return sqrt(wtr);
       }
-      void normalize() {
+      Point& normalize() {
         T n(norm());
         for(size_t i(0); i<d; i++)
           v[i] /= n;
+        return *this;
       }
       T dist(const Point& other) const {
         return (*this-other).norm();
@@ -161,6 +168,7 @@ namespace L {
   typedef Point<2,int> Point2i;
   typedef Point<3,int> Point3i;
   typedef Point<3,float> Point3f;
+  typedef Point<4,float> Point4f;
 }
 
 #endif
