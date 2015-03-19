@@ -17,6 +17,7 @@
 				<Compiler>
 					<Add option="-Wall" />
 					<Add option="-g" />
+					<Add option="-DL_Debug" />
 				</Compiler>
 			</Target>
 			<Target title="Release (Win)">
@@ -27,6 +28,9 @@
 				<Option type="2" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-O3" />
+				</Compiler>
 				<Linker>
 					<Add option="-s" />
 				</Linker>
@@ -80,6 +84,7 @@
 		<Compiler>
 			<Add option="-Os" />
 			<Add option="-O3" />
+			<Add option="-std=c++11" />
 			<Add option="-std=gnu++0x" />
 		</Compiler>
 		<Unit filename="Exception.cpp" />
@@ -154,6 +159,7 @@
 		<Unit filename="containers.h" />
 		<Unit filename="containers/Array.h" />
 		<Unit filename="containers/BTree.h" />
+		<Unit filename="containers/Buffer.h" />
 		<Unit filename="containers/Ref.cpp" />
 		<Unit filename="containers/Ref.h" />
 		<Unit filename="containers/Tree.h" />
@@ -201,6 +207,8 @@
 		<Unit filename="gl/Buffer.h" />
 		<Unit filename="gl/Camera.cpp" />
 		<Unit filename="gl/Camera.h" />
+		<Unit filename="gl/FrameBuffer.cpp" />
+		<Unit filename="gl/FrameBuffer.h" />
 		<Unit filename="gl/Light.cpp" />
 		<Unit filename="gl/Light.h" />
 		<Unit filename="gl/Mesh.cpp" />
