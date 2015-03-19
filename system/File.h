@@ -26,6 +26,7 @@ namespace L {
 
       int read(char* buffer, int count);
       String read(int count);
+      String readLine();
       String readAll();
 
       int write(const char* buffer, int count);

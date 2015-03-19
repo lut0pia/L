@@ -65,6 +65,20 @@ String File::read(int count) {
   wtr.resize(read(&wtr[0],count));
   return wtr;
 }
+String File::readLine() {
+  String wtr;
+  char c;
+  while(true) {
+    c = fgetc(_fd);
+    if(c==EOF) break;
+    if(c=='\n'){
+      if(wtr.size()) return wtr;
+      else continue;
+    }
+    else wtr.push_back(c);
+  }
+  return wtr;
+}
 String File::readAll() {
   String wtr;
   size_t c;
