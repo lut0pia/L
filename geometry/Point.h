@@ -167,6 +167,7 @@ namespace L {
   };
   typedef Point<2,int> Point2i;
   typedef Point<3,int> Point3i;
+  typedef Point<2,float> Point2f;
   typedef Point<3,float> Point3f;
   typedef Point<4,float> Point4f;
 }

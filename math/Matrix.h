@@ -38,6 +38,7 @@ namespace L {
 
       inline T& operator()(int line, int column) {return _m[line][column];}
       inline const T& operator()(int line, int column) const {return _m[line][column];}
+      inline T* array() {return _a;}
       inline const T* array() const {return _a;}
       Matrix operator+(const Matrix& other) const {
         Matrix wtr(*this);
