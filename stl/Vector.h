@@ -4,7 +4,7 @@
 #include <cstdarg>
 #include <vector>
 
-#include "../macros.h"
+#include "../types.h"
 #include "../Rand.h"
 #include "../Serializable.h"
 #include "../stream.h"

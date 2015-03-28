@@ -6,8 +6,9 @@
 #include <fstream>
 #include <cmath>
 
-#include "../macros.h"
-#include "../stl.h"
+#include "../types.h"
+#include "../stl/String.h"
+#include "../stl/Vector.h"
 
 namespace L{
     Vector<byte> bytesFromFile(String filePath); // Returns a Vector containing every byte in a file

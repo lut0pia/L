@@ -10,7 +10,7 @@ namespace L {
   namespace GL {
     class Light {
       private:
-        float _position[4],_color[4];
+        Point4f _position, _color;
       public:
         Light();
         void position(float x, float y, float z, float w = 1);

@@ -1,15 +1,15 @@
 #include "Directory.h"
 
-#include <dirent.h>
-#include "../Exception.h"
-#include "../stl.h"
-#include "System.h"
-
 #if defined L_WINDOWS
     #include <windows.h>
 #else
     #include <sys/types.h>
 #endif
+
+//#include <dirent.h>
+#include "../Exception.h"
+#include "../stl.h"
+#include "System.h"
 
 using namespace L;
 

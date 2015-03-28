@@ -8,12 +8,9 @@
 #include <iostream>
 #include "../stl.h"
 
+#include "../systems.h"
 #include "../macros.h"
 #if defined L_WINDOWS
-    #undef _WIN32_WINNT
-    #define _WIN32_WINNT 0x501
-    #include <winsock2.h>
-    #include <ws2tcpip.h>
     typedef int socklen_t;
     #include <stdio.h>
 #elif defined L_UNIX

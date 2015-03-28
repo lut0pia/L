@@ -1,6 +1,8 @@
 #ifndef DEF_L_Interval
 #define DEF_L_Interval
 
+#include <algorithm>
+
 #include "../general.h"
 #include "Point.h"
 

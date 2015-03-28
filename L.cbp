@@ -4,7 +4,7 @@
 	<Project>
 		<Option title="L" />
 		<Option pch_mode="2" />
-		<Option compiler="gcc" />
+		<Option compiler="null" />
 		<Build>
 			<Target title="Debug (Win)">
 				<Option platforms="Windows;" />
@@ -12,11 +12,9 @@
 				<Option working_dir="" />
 				<Option object_output="obj/win/debug" />
 				<Option type="2" />
-				<Option compiler="gcc" />
+				<Option compiler="microsoft_visual_c_2012" />
 				<Option createDefFile="1" />
 				<Compiler>
-					<Add option="-Wall" />
-					<Add option="-g" />
 					<Add option="-DL_Debug" />
 				</Compiler>
 			</Target>
@@ -26,30 +24,41 @@
 				<Option working_dir="" />
 				<Option object_output="obj/win/release" />
 				<Option type="2" />
-				<Option compiler="gcc" />
+				<Option compiler="microsoft_visual_c_2012" />
 				<Option createDefFile="1" />
-				<Compiler>
-					<Add option="-O3" />
-				</Compiler>
 				<Linker>
 					<Add option="-s" />
 				</Linker>
 			</Target>
-			<Target title="Dynamic (Win)">
+			<Target title="Debug (MinGW)">
 				<Option platforms="Windows;" />
-				<Option output="L" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj/dynamic" />
-				<Option type="3" />
+				<Option output="bin/mingw/L" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="obj/mingw/debug" />
+				<Option type="2" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
-				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-std=gnu++0x" />
+					<Add option="-DL_Debug" />
+				</Compiler>
+			</Target>
+			<Target title="Release (MinGW)">
+				<Option platforms="Windows;" />
+				<Option output="bin/mingw/L" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="obj/mingw/release" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-std=gnu++0x" />
+				</Compiler>
 				<Linker>
-					<Add library="opengl32" />
-					<Add library="glu32" />
-					<Add library="winmm" />
-					<Add library="ws2_32" />
-					<Add library="user32" />
-					<Add library="gdi32" />
+					<Add option="-s" />
 				</Linker>
 			</Target>
 			<Target title="Debug (Unix)">
@@ -81,12 +90,6 @@
 				</Linker>
 			</Target>
 		</Build>
-		<Compiler>
-			<Add option="-Os" />
-			<Add option="-O3" />
-			<Add option="-std=c++11" />
-			<Add option="-std=gnu++0x" />
-		</Compiler>
 		<Unit filename="Exception.cpp" />
 		<Unit filename="Exception.h" />
 		<Unit filename="Interface.h" />
@@ -348,12 +351,14 @@
 		<Unit filename="system/System.h" />
 		<Unit filename="system/Window.cpp" />
 		<Unit filename="system/Window.h" />
+		<Unit filename="systems.h" />
 		<Unit filename="time.h" />
 		<Unit filename="time/Time.cpp" />
 		<Unit filename="time/Time.h" />
 		<Unit filename="time/Timer.cpp" />
 		<Unit filename="time/Timer.h" />
 		<Unit filename="tmp.h" />
+		<Unit filename="types.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />

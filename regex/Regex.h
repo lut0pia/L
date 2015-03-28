@@ -3,10 +3,10 @@
 
 #include "Base.h"
 
-namespace L{
-    namespace Regex{
-        Ref<Base> from(const L::String&, size_t qMin=1, size_t qMax=1);
-    }
+namespace L {
+  namespace Regex {
+    Ref<Base> from(const L::String&, size_t qMin=1, size_t qMax=1);
+  }
 }
 
 #endif

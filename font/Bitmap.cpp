@@ -14,7 +14,7 @@ Font::Bitmap::Bitmap(const Image::Bitmap& bmp){
         L::Font::Glyph glyph;
         glyph.advance = advance;
         glyph.origin.x() = 0;
-        glyph.origin.y() = -a;
+        glyph.origin.y() = -(int)a;
         glyph.bmp = bmp.sub(advance*(c%16),lh*(c/16),advance,lh);
         glyphs[c] = glyph;
     }

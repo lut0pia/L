@@ -2,7 +2,9 @@
 #define DEF_L
 
 // General definitions
-#include "macros.h"         // Useful defines and typedefs
+#include "macros.h"         // Useful macros
+#include "types.h"          // Useful typedefs
+#include "systems.h"          // Useful typedefs
 #include "tmp.h"            // Template Meta-Programming
 #include "general.h"        // Miscellaneous tools
 

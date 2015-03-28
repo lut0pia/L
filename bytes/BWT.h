@@ -1,7 +1,7 @@
 #ifndef DEF_L_BWT
 #define DEF_L_BWT
 
-#include "../macros.h"
+#include "../types.h"
 #include "../stl/Vector.h"
 
 namespace L{

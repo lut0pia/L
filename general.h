@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <cstring>
-#include "macros.h"
+#include "types.h"
 
 namespace L {
   // Number functions :

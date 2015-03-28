@@ -2,7 +2,7 @@
 
 using namespace L;
 
-Semaphore::Semaphore(size_t v){
+Semaphore::Semaphore(uint v){
     #if defined L_WINDOWS
         sem = CreateSemaphore(NULL,v,MAXLONG,NULL);
     #elif defined L_UNIX
@@ -23,7 +23,7 @@ void Semaphore::wait(){
         sem_wait(&sem);
     #endif
 }
-void Semaphore::wait(size_t n){
+void Semaphore::wait(uint n){
     while(n--)
         wait();
 }
@@ -34,7 +34,7 @@ void Semaphore::post(){
         sem_post(&sem);
     #endif
 }
-void Semaphore::post(size_t n){
+void Semaphore::post(uint n){
     while(n--)
         post();
 }

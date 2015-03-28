@@ -31,6 +31,15 @@
 *.depend
 *.layout
 
+# Visual Studio
+ipch/
+*.suo
+*.aps
+*.ncb
+*.opensdf
+*.sdf
+*.cachefile
+
 # Others
 *.xmind
 *.html

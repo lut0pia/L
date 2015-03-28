@@ -4,7 +4,7 @@
 #include <sstream>
 #include <string>
 #include "List.h"
-#include "../macros.h"
+#include "../types.h"
 
 namespace L{
     template <class T> class Set;

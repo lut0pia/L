@@ -3,6 +3,7 @@
 
 #include "../Exception.h"
 #include "../general.h"
+#include "../macros.h"
 
 namespace L {
   template <int n, class T>

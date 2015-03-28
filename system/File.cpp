@@ -1,16 +1,16 @@
 #include "File.h"
 
-#include "Directory.h"
-#include "../macros.h"
-#include "../stl.h"
-#include "System.h"
-
 #if defined L_WINDOWS
 #include <windows.h>
 #else
 #include <fstream>
 #include <sys/types.h>
 #endif
+
+#include "Directory.h"
+#include "../macros.h"
+#include "../stl.h"
+#include "System.h"
 
 using namespace L;
 using namespace std;

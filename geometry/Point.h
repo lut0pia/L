@@ -4,7 +4,7 @@
 #include <cmath>
 #include <iostream>
 #include <limits>
-#include "../macros.h"
+#include "../types.h"
 
 namespace L {
   template <int d,class T>
@@ -25,9 +25,21 @@ namespace L {
         for(size_t i(0); i<d; i++)
           v[i] = scalar;
       }
-      Point(const T& x, const T& y) : v {x,y} {}
-      Point(const T& x, const T& y, const T& z) : v {x,y,z} {}
-      Point(const T& x, const T& y, const T& z, const T& w) : v {x,y,z,w} {}
+      Point(const T& x, const T& y) {
+        v[0] = x;
+        v[1] = y;
+      }
+      Point(const T& x, const T& y, const T& z) {
+        v[0] = x;
+        v[1] = y;
+        v[2] = z;
+      }
+      Point(const T& x, const T& y, const T& z, const T& w) {
+        v[0] = x;
+        v[1] = y;
+        v[2] = z;
+        v[3] = w;
+      }
       Point(const Point<d-1,T>& p, const T& w = 1.0) {
         for(int i(0); i<d-1; i++)
           v[i] = p[i];
@@ -146,6 +158,7 @@ namespace L {
       inline const T& z() const {return v[2];}
       inline const T& w() const {return v[3];}
       inline const byte* bytes() const {return b;}
+      inline const T* array() const {return v;}
       inline T& operator[](size_t i) {return v[i];}
       inline T& x() {return v[0];}
       inline T& y() {return v[1];}

@@ -1,14 +1,15 @@
 #include "Time.h"
 
-#include <ctime>
-#include "../macros.h"
-#include "Timer.h"
 #if defined L_WINDOWS
 #include <windows.h>
 #include <sys/timeb.h>
 #elif defined L_UNIX
 #include <sys/time.h>
 #endif
+
+#include <ctime>
+#include "../systems.h"
+#include "Timer.h"
 
 using namespace L;
 

@@ -6,23 +6,23 @@
 #include "../stl/Vector.h"
 #include "../time.h"
 
-namespace L{
-    namespace Audio{
-        class Buffer{
-            private:
-                Format format;
-                Vector<byte> bytes;
-            public:
-                Buffer(const Format&, size_t);
-                Buffer(const Format&, const Time&);
-                Buffer(const Format&, const Buffer&);
+namespace L {
+  namespace Audio {
+    class Buffer {
+      private:
+        Format format;
+        Vector<byte> bytes;
+      public:
+        Buffer(const Format&, size_t);
+        Buffer(const Format&, const Time&);
+        Buffer(const Format&, const Buffer&);
 
-                inline const Format& gFormat() const{return format;}
-                inline const byte* gBytes() const{return &bytes[0];}
-                inline byte* gBytes(){return &bytes[0];}
-                inline uint size() const{return bytes.size();}
-        };
-    }
+        inline const Format& gFormat() const {return format;}
+        inline const byte* gBytes() const {return &bytes[0];}
+        inline byte* gBytes() {return &bytes[0];}
+        inline uint size() const {return bytes.size();}
+    };
+  }
 }
 
 #endif

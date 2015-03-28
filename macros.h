@@ -1,31 +1,19 @@
 #ifndef DEF_L_macros
 #define DEF_L_macros
 
-#if defined _WIN32 || _WIN64
-#define L_WINDOWS
-#elif defined __unix__
-#define L_UNIX
-#else
-#error Unknown OS
-#endif
-
 #define typeof __typeof__ // static operator replaced by type name of expression
-#if defined L_WINDOWS
-#define popen _popen
-#define pclose _pclose
-#endif
 
 // Assign value to automatically typed variable
 #define L_Auto(n,v) \
-  typeof(v) n(v)
+  auto n(v)
 
 // Iterate forwards inside collection
 #define L_Iter(name,it) \
-  for(L_Auto(it,(name).begin());it!=(name).end();++it)
+  for(auto it((name).begin());it!=(name).end();++it)
 
 // Iterate backwards inside collection
 #define L_RevIter(name,it) \
-  for(L_Auto(it,(name).rbegin());it!=(name).rend();++it)
+  for(auto it((name).rbegin());it!=(name).rend();++it)
 
 /*
 #define L_NoCopy(class) \
@@ -40,8 +28,8 @@
 
 // Start anew with an object by constructing it again (and calling the previous object's destructor)
 #define L_Reconstruct(class,name,parameters) \
-  ({(name).~class(); \
-    new (&(name)) class parameters;})
+  if(1){(name).~class(); \
+    new (&(name)) class parameters;}
 
 // Allows true stringify
 #define L_Stringify(n) L_Stringify_(n)
@@ -59,15 +47,6 @@
 #define L_ErrorIf(condition,msg) if(condition) L_Error(msg)
 #define L_Warning(msg) L_DebugOnly(L_Error(msg))
 #define L_WarningIf(condition,msg) L_DebugOnly(L_ErrorIf(condition, msg))
-
-
-namespace L {
-  typedef unsigned char byte;
-  typedef unsigned short ushort;
-  typedef unsigned int uint;
-  typedef unsigned long ulong;
-  typedef unsigned long long ullong;
-}
 
 #endif
 

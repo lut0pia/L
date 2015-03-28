@@ -6,25 +6,25 @@
 
 #include "Observer.h"
 
-namespace L{
-    class Observable{
-        private:
-            Set<Observer*> observers;
+namespace L {
+  class Observable {
+    private:
+      Set<Observer*> observers;
 
-        public:
-            void addObserver(Observer* o){
-                o->observed.insert(this);
-                observers.insert(o);
-            }
-            void removeObserver(Observer* o){
-                o->observed.erase(this);
-                observers.erase(o);
-            }
-            void notifyObservers(int msg = 0){
-                L_Iter(observers,it)
-                    (*it)->notification(this,msg);
-            }
-    };
+    public:
+      void addObserver(Observer* o) {
+        o->observed.insert(this);
+        observers.insert(o);
+      }
+      void removeObserver(Observer* o) {
+        o->observed.erase(this);
+        observers.erase(o);
+      }
+      void notifyObservers(int msg = 0) {
+        L_Iter(observers,observer)
+        (*observer)->notification(this,msg);
+      }
+  };
 }
 
 #endif

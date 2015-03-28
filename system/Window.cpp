@@ -1,20 +1,18 @@
 #include "Window.h"
 
-#include <cstring>
-#include <GL/glew.h>
-#include "../stl.h"
-#include "../bytes/encoding.h"
-
-#if defined L_WINDOWS
-#include <windows.h>
-#include <windowsx.h>
-#elif defined L_UNIX
+#include "../systems.h"
+/*
 #include<X11/X.h>
 #include<X11/Xlib.h>
 #include<GL/glew.h>
 #include<GL/glx.h>
 #include<GL/glu.h>
-#endif
+*/
+
+#include <cstring>
+#include <GL/glew.h>
+#include "../stl.h"
+#include "../bytes/encoding.h"
 
 using namespace L;
 using L::Window;
@@ -89,12 +87,9 @@ LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
           e.type = Window::Event::MOUSEMOVE;
           break;
       }
-      ({
-        Point2i pos;
-        e.x = pos.x() = GET_X_LPARAM(lParam);
-        e.y = pos.y() = GET_Y_LPARAM(lParam);
-        _mousePos = pos;
-      });
+      e.x = GET_X_LPARAM(lParam);
+      e.y = GET_Y_LPARAM(lParam);
+      _mousePos = Point2i(e.x,e.y);
       break;
     case WM_MOUSEWHEEL:
       e.type = Window::Event::MOUSEWHEEL;

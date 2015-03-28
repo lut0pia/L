@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 #include "../stl/String.h"
 #include "../system/File.h"
+#include "../macros.h"
 
 namespace L {
   namespace GL {
