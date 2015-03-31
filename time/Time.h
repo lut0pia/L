@@ -25,14 +25,14 @@ namespace L{
             Time& operator+=(const Time&);
             Time& operator-=(const Time&);
 
-            inline long days() const{return usec/86400000000LL;}
-            inline long hours() const{return usec/3600000000LL;}
-            inline long minutes() const{return usec/60000000LL;}
-            inline long seconds() const{return usec/1000000LL;}
+            inline long days() const{return (long)(usec/86400000000LL);}
+            inline long hours() const{return (long)(usec/3600000000LL);}
+            inline long minutes() const{return (long)(usec/60000000LL);}
+            inline long seconds() const{return (long)(usec/1000000LL);}
             inline long long milliseconds() const{return usec/1000LL;}
             inline long long microseconds() const{return usec;}
 
-            double fSeconds() const;
+            float fSeconds() const;
 
             static Time now();
             static float fps();

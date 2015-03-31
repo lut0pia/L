@@ -57,8 +57,8 @@ Time& Time::operator-=(const Time& other) {
   return *this;
 }
 
-double Time::fSeconds() const {
-  return ((double)seconds())+((double)(microseconds()%1000000LL)/1000000.0);
+float Time::fSeconds() const {
+  return ((float)seconds())+((float)(microseconds()%1000000LL)/1000000.f);
 }
 
 Time Time::now() {
@@ -77,7 +77,7 @@ Time Time::now() {
 }
 Timer fpsTimer;
 float Time::fps() {
-  return 1.0/fpsTimer.frame().fSeconds();
+  return 1.f/fpsTimer.frame().fSeconds();
 }
 String Time::format(String str, Time t) {
   time_t timestamp(t.seconds());

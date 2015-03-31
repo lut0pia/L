@@ -234,7 +234,7 @@ void Window::close() {
 }
 bool Window::opened() {
 #if defined L_WINDOWS
-  return (hWND);
+  return hWND!=0;
 #elif defined L_UNIX
   return (winOpened);
 #endif

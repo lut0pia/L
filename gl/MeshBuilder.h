@@ -15,7 +15,8 @@ namespace L {
         uint *_indexBuffer;
         uint _indexBufferSize, _indexCount;
 
-        uint _vertexDesc, _vertexSize,_offsetVertex, _offsetColor, _offsetNormal;
+        byte _vertexDesc;
+        uint _vertexSize,_offsetVertex, _offsetColor, _offsetNormal;
 
       public:
         MeshBuilder();

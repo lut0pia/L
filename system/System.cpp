@@ -40,7 +40,7 @@ void System::sleep(uint milliseconds) {
 #endif
 }
 void System::sleep(Time t) {
-  sleep(t.milliseconds());
+  sleep((uint)t.milliseconds());
 }
 void System::beep(uint frequency, uint milliseconds) {
 #if defined L_WINDOWS

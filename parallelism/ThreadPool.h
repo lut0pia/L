@@ -26,7 +26,7 @@ namespace L{
             L_NoCopy(ThreadPool)
             ~ThreadPool();
 
-            inline bool waiting(){return awaiting;}
+            inline bool waiting(){return awaiting!=0;}
             void push(Task, const Dynamic::Var& = Dynamic::Var());
             Dynamic::Var get();
     };
