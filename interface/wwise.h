@@ -19,9 +19,9 @@
 #include <AK/MusicEngine/Common/AkMusicEngine.h>      // Music Engine
 #include <AK/SoundEngine/Common/AkStreamMgrModule.h>  // AkStreamMgrModule
 #include <AK/Tools/Common/AkPlatformFuncs.h>          // Thread defines
-#include <../samples/SoundEngine/Win32/AkFilePackageLowLevelIOBlocking.h>          // Sample low-level I/O implementation
+//#include <../samples/SoundEngine/Win32/AkFilePackageLowLevelIOBlocking.h>          // Sample low-level I/O implementation
 #ifndef AK_OPTIMIZED
-#include <AK/Comm/AkCommunication.h>
+# include <AK/Comm/AkCommunication.h>
 #endif
 
 
@@ -43,7 +43,7 @@ namespace AK {
 namespace L {
   class Wwise {
     private:
-      AkDeviceID _deviceID;
+      //CAkFilePackageLowLevelIOBlocking _lowLevelIO;
     public:
       Wwise() {
         // Initialize memory manager
@@ -56,6 +56,13 @@ namespace L {
         AK::StreamMgr::GetDefaultSettings(stmSettings);
         if(!AK::StreamMgr::Create(stmSettings))
           L_Error("Wwise: StreamMgr init");
+        // Create streaming device
+        /*
+        AkDeviceSettings deviceSettings;
+        AK::StreamMgr::GetDefaultDeviceSettings(deviceSettings);
+        if(_lowLevelIO.Init(deviceSettings)!= AK_Success)
+          L_Error("Wwise: MusicEngine init");
+        */
         // Initialize sound engine
         AkInitSettings initSettings;
         AkPlatformInitSettings platformInitSettings;
@@ -63,22 +70,37 @@ namespace L {
         AK::SoundEngine::GetDefaultPlatformInitSettings(platformInitSettings);
         if(AK::SoundEngine::Init(&initSettings, &platformInitSettings) != AK_Success)
           L_Error("Wwise: SoundEngine init");
-        AkDeviceSettings deviceSettings;
+        // Initialize music engine
         AkMusicSettings musicInit;
-        AK::StreamMgr::GetDefaultDeviceSettings(deviceSettings);
         AK::MusicEngine::GetDefaultInitSettings(musicInit);
-        //_deviceID = AK::StreamMgr::CreateDevice(deviceSettings, this);
         if(AK::MusicEngine::Init(&musicInit)  != AK_Success)
           L_Error("Wwise: MusicEngine init");
 #ifndef AK_OPTIMIZED
+        // Initialize communication
         AkCommSettings commSettings;
         AK::Comm::GetDefaultInitSettings(commSettings);
         if(AK::Comm::Init(commSettings) != AK_Success)
           L_Error("Wwise: Comm init");
 #endif
       }
+      ~Wwise() {
+#ifndef AK_OPTIMIZED
+        // Terminate communication
+        AK::Comm::Term();
+#endif
+        AK::MusicEngine::Term();
+        AK::SoundEngine::Term();
+      }
+      void update() {
+        AK::SoundEngine::RenderAudio();
+      }
+      // Game objects
+      void registerObject(AkGameObjectID id) {
+        AK::SoundEngine::RegisterGameObj(id);
+      }
+      // Events
       void postEvent(const String& name) {
-        AK::SoundEngine::PostEvent((AkUniqueID)0, AK_INVALID_GAME_OBJECT);
+        AK::SoundEngine::PostEvent(name.c_str(),100);
       }
   };
 }
