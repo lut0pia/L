@@ -23,13 +23,14 @@ namespace L {
 
       File& open(const char* mode);
       void close();
+      bool error() const;
 
-      int read(char* buffer, int count);
+      size_t read(char* buffer, int count);
       String read(int count);
       String readLine();
       String readAll();
 
-      int write(const char* buffer, int count);
+      size_t write(const char* buffer, int count);
       void write(const String&);
   };
 }

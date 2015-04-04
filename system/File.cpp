@@ -56,8 +56,11 @@ void File::close() {
   if(_fd!=NULL)
     fclose(_fd);
 }
+bool File::error() const{
+  return ferror(_fd);
+}
 
-int File::read(char* buffer, int count) {
+size_t File::read(char* buffer, int count) {
   return fread(buffer,1,count,_fd);
 }
 String File::read(int count) {
@@ -89,7 +92,7 @@ String File::readAll() {
   return wtr;
 }
 
-int File::write(const char* buffer, int count) {
+size_t File::write(const char* buffer, int count) {
   return fwrite(buffer,1,count,_fd);
 }
 void File::write(const String& str) {
