@@ -50,8 +50,8 @@ class FTFont : public L::Font::Base {
       wtr.origin.x() = slot->bitmap_left;
       wtr.origin.y() = -slot->bitmap_top;
       wtr.bmp.resize(ftbmp->width,ftbmp->rows);
-      for(size_t x=0; x<ftbmp->width; x++)
-        for(size_t y=0; y<ftbmp->rows; y++)
+      for(int x(0); x<ftbmp->width; x++)
+        for(int y(0); y<ftbmp->rows; y++)
           wtr.bmp(x,y) = L::Color(255,255,255,*(ftbmp->buffer+x+(ftbmp->width*y)));
       return wtr;
     }
