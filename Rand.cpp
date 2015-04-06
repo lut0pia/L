@@ -15,8 +15,8 @@ ullong Rand::next(){
 byte Rand::nextByte(){
     return next()>>48;
 }
-double Rand::nextDouble(){
-    return next()/(double)(ullong)-1;
+float Rand::nextFloat(){
+    return next()/(float)(ullong)-1;
 }
 
 ullong Rand::next(ullong min, ullong max){
@@ -25,14 +25,14 @@ ullong Rand::next(ullong min, ullong max){
 int Rand::next(int min, int max){
     return ((next()>>32)%(max-min+1))+min;
 }
-double Rand::next(double min, double max){
-    return (nextDouble()*(max-min))+min;
+float Rand::next(float min, float max){
+    return (nextFloat()*(max-min))+min;
 }
 
-double Rand::gauss(uint i){
-    double wtr(0);
+float Rand::gauss(uint i){
+    float wtr(0);
     for(uint j(0);j<i;j++)
-        wtr += nextDouble();
+        wtr += nextFloat();
     return wtr/i;
 }
 ullong Rand::next(ullong ave){

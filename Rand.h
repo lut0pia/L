@@ -12,13 +12,13 @@ namespace L{
         public:
             static ullong next();
             static byte nextByte();
-            static double nextDouble();
+            static float nextFloat();
 
             static ullong next(ullong min, ullong max); // Returns a random unsigned integer between min and max
             static int next(int min, int max); // Returns a random integer between min and max
-            static double next(double min, double max); // Returns a random double between min and max
+            static float next(float min, float max); // Returns a random float between min and max
 
-            static double gauss(uint);
+            static float gauss(uint);
             static ullong next(ullong ave); // Random exp with an average n
 
             inline static const ullong& gState(){return last;}
