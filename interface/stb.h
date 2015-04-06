@@ -5891,6 +5891,7 @@ namespace L {
               unsigned char* c(a+4*(x+y*width));
               bmp(x,y) = Color(c[0],c[1],c[2],c[3]);
             }
+          return true;
         } else throw L::Exception("stb_image: Could not load image");
       }
   };
