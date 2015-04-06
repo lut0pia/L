@@ -10,7 +10,7 @@
 */
 
 #include <cstring>
-#include <GL/glew.h>
+#include "../gl/GL.h"
 #include "../stl.h"
 #include "../bytes/encoding.h"
 
@@ -199,7 +199,7 @@ void Window::open(const String& title, size_t width, size_t height, size_t flags
   SetPixelFormat(hDC,format,&pfd);
   hRC = wglCreateContext(hDC); // create and enable the render context (RC)
   wglMakeCurrent(hDC,hRC);
-  glewInit();
+  GL::init();
 #elif defined L_UNIX
   if((dpy = XOpenDisplay(NULL)) == NULL)
     throw Exception("Cannot open X server display.");
@@ -292,6 +292,12 @@ void Window::resize(int width, int height) {
   SetWindowPos(hWND,HWND_NOTOPMOST,0,0,width,height,SWP_NOMOVE|SWP_NOZORDER);
 #elif defined L_UNIX
 #endif
+}
+int Window::width(){
+  return _screenWidth;
+}
+int Window::height(){
+  return _screenHeight;
 }
 Point2i Window::mousePosition() {
   return _mousePos;

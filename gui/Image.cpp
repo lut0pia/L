@@ -1,6 +1,6 @@
 #include "Image.h"
 
-#include "../gl/Utils.h"
+#include "../gl/GL.h"
 
 using namespace L;
 using namespace GUI;
@@ -21,25 +21,23 @@ void GUI::Image::sBitmap(const Bitmap& bmp) {
 Point2i GUI::Image::gDimensions() {
   return dimensions;
 }
-void GUI::Image::draw() {
+void GUI::Image::draw(GL::Program& program) {
   if(tex && !clip.empty()) {
-    Vector<float> vertex(8), texCoord(8);
-    vertex[0] = (float)clip.min().x();
-    vertex[1] = (float)clip.min().y();
-    vertex[2] = (float)clip.max().x();
-    vertex[3] = (float)clip.min().y();
-    vertex[4] = (float)clip.max().x();
-    vertex[5] = (float)clip.max().y();
-    vertex[6] = (float)clip.min().x();
-    vertex[7] = (float)clip.max().y();
-    texCoord[0] = (clip.min().x()>pos.x()) ? (float)(clip.min().x()-pos.x())/dimensions.x() : 0.f;
-    texCoord[1] = (clip.min().y()>pos.y()) ? (float)(clip.min().y()-pos.y())/dimensions.y() : 0.f;
-    texCoord[2] = (clip.max().x()<pos.x()+dimensions.x()) ? (float)(clip.max().x()-pos.x())/dimensions.x() : 1.f;
-    texCoord[3] = (clip.min().y()>pos.y()) ? (float)(clip.min().y()-pos.y())/dimensions.y() : 0.f;
-    texCoord[4] = (clip.max().x()<pos.x()+dimensions.x()) ? (float)(clip.max().x()-pos.x())/dimensions.x() : 1.f;
-    texCoord[5] = (clip.max().y()<pos.y()+dimensions.y()) ? (float)(clip.max().y()-pos.y())/dimensions.y() : 1.f;
-    texCoord[6] = (clip.min().x()>pos.x()) ? (float)(clip.min().x()-pos.x())/dimensions.x() : 0.f;
-    texCoord[7] = (clip.max().y()<pos.y()+dimensions.y()) ? (float)(clip.max().y()-pos.y())/dimensions.y() : 1.f;
-    GL::Utils::draw2dTexQuad(vertex,texCoord,*tex);
+    program.uniform("texture",*tex);
+    glColor4ub(255,255,255,255);
+    glBegin(GL_QUADS);
+    glTexCoord2f((clip.min().x()>pos.x()) ? (float)(clip.min().x()-pos.x())/dimensions.x() : 0.f,
+                 (clip.min().y()>pos.y()) ? (float)(clip.min().y()-pos.y())/dimensions.y() : 0.f);
+    glVertex2i(clip.min().x(),clip.min().y());
+    glTexCoord2f((clip.min().x()>pos.x()) ? (float)(clip.min().x()-pos.x())/dimensions.x() : 0.f,
+                 (clip.max().y()<pos.y()+dimensions.y()) ? (float)(clip.max().y()-pos.y())/dimensions.y() : 1.f);
+    glVertex2i(clip.min().x(),clip.max().y());
+    glTexCoord2f((clip.max().x()<pos.x()+dimensions.x()) ? (float)(clip.max().x()-pos.x())/dimensions.x() : 1.f,
+                 (clip.max().y()<pos.y()+dimensions.y()) ? (float)(clip.max().y()-pos.y())/dimensions.y() : 1.f);
+    glVertex2i(clip.max().x(),clip.max().y());
+    glTexCoord2f((clip.max().x()<pos.x()+dimensions.x()) ? (float)(clip.max().x()-pos.x())/dimensions.x() : 1.f,
+                 (clip.min().y()>pos.y()) ? (float)(clip.min().y()-pos.y())/dimensions.y() : 0.f);
+    glVertex2i(clip.max().x(),clip.min().y());
+    glEnd();
   }
 }

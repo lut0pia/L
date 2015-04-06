@@ -55,9 +55,9 @@ void ListContainer::updateFromAbove(Point2i pos, Interval2i parentClip) {
       Base::dimensionsChanged(dimensions);
   }
 }
-void ListContainer::draw() {
+void ListContainer::draw(GL::Program& program) {
   L_Iter(elements,it)
-  (*it)->draw();
+  (*it)->draw(program);
 }
 bool ListContainer::event(const Window::Event& e) {
   L_Iter(elements,it)

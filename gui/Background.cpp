@@ -7,7 +7,7 @@ using namespace GUI;
 
 Background::Background(const Ref<Base>& inner, Color c) : Layer(inner), color(c) {}
 
-void Background::draw() {
+void Background::draw(GL::Program& program) {
   Interval2i clip(gClip());
   std::cout << clip.min().x() << " " << clip.min().y() << " "
             << clip.max().x() << " " << clip.max().y() << std::endl;
@@ -19,7 +19,7 @@ void Background::draw() {
     glVertex2i(clip.max().x(),clip.max().y());
     glVertex2i(clip.min().x(),clip.max().y());
     glEnd();
-    inner->draw();
+    inner->draw(program);
   }
 }
 

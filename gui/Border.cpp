@@ -23,7 +23,7 @@ void Border::dimensionsChanged(Base* e,Point2i newDim) {
 void Border::updateFromAbove(Point2i pos,Interval2i parentClip) {
   inner->updateFromAbove(pos+Point<2,int>(size,size),parentClip);
 }
-void Border::draw() {
+void Border::draw(GL::Program& program) {
   Interval2i clip(gClip());
   if(!clip.empty()) {
     /*
@@ -40,13 +40,13 @@ void Border::draw() {
     */
     std::cout << clip.min().x() << " " << clip.min().y() << " "
               << clip.max().x() << " " << clip.max().y() << std::endl;
-    glColor3ub(color.r(),color.g(),color.b());
+    glColor4ub(color.r(),color.g(),color.b(),color.a());
     glBegin(GL_QUADS);
     glVertex2i(clip.min().x(),clip.min().y());
     glVertex2i(clip.max().x(),clip.min().y());
     glVertex2i(clip.max().x(),clip.max().y());
     glVertex2i(clip.min().x(),clip.max().y());
     glEnd();
-    inner->draw();
+    inner->draw(program);
   }
 }

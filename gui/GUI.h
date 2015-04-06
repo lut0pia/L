@@ -4,13 +4,13 @@
 #include "Base.h"
 #include "../containers/XML.h"
 
-namespace L{
-    namespace GUI{
-        Base* from(const XML&);
-        Base* from(const XML&, Map<String,Base*>&);
+namespace L {
+  namespace GUI {
+    Base* from(const XML&);
+    Base* from(const XML&, Map<String,Base*>&);
 
-        Point2i point(const String&);
-    }
+    Point2i point(const String&);
+  }
 }
 
 

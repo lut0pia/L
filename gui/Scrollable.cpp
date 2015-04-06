@@ -39,8 +39,8 @@ void Scrollable::updateFromAbove(Point2i pos,Interval2i parentClip) {
   Solid::updateFromAbove(pos,parentClip);
   child->updateFromAbove(pos-modifier,clip);
 }
-void Scrollable::draw() {
-  child->draw();
+void Scrollable::draw(GL::Program& program) {
+  child->draw(program);
 }
 bool Scrollable::event(const Window::Event& e) {
   /*

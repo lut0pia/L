@@ -53,8 +53,10 @@ File& File::open(const char* mode) {
   return *this;
 }
 void File::close() {
-  if(_fd!=NULL)
+  if(_fd!=NULL){
     fclose(_fd);
+    _fd = NULL;
+  }
 }
 bool File::error() const{
   return ferror(_fd);

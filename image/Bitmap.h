@@ -19,6 +19,7 @@ namespace L {
       public:
         Bitmap() : Array<2,Color>() {}
         Bitmap(size_t width, size_t height);
+        Bitmap(size_t width, size_t height, const Color&);
         Bitmap(size_t width, size_t height, const Image::Vector&);
         Bitmap(const String& filePath);
         Bitmap& load(const String& filePath);

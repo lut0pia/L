@@ -8,7 +8,7 @@ namespace L {
     public:
       BMP() : Interface("bmp") {}
 
-      void to(const Image::Bitmap& bmp, std::ostream& os) {
+      bool to(const Image::Bitmap& bmp, std::ostream& os) {
         int width = bmp.width(), height = bmp.height(), size = bmp.width()*3, lineExcess;
         lineExcess = (4-(size%4))%4;
         size+=lineExcess;
@@ -55,8 +55,9 @@ namespace L {
           }
           os << Vector<byte>(lineExcess,0);
         }
+        return true;
       }
-      void from(Image::Bitmap& bmp, const File& file) {
+      bool from(Image::Bitmap& bmp, const File& file) {
         Vector<byte> bytes = bytesFromFile(file.path());
         int width, height, dataOffset, bitCount, x = 0, y;
         size_t i;
@@ -97,6 +98,7 @@ namespace L {
           default:
             throw "Tried to load a BMP with unhandled bitCount.";
         }
+        return true;
       }
   };
 }

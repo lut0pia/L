@@ -4,33 +4,33 @@
 #include <cstdlib>
 #include "Sizable.h"
 
-namespace L{
-    namespace GUI{
-        class Slider : public Sizable{
-            protected:
-                Ref<Base> thumb;
-                bool inMotion;
-                Point2i curDist, thumbPos;
-                Point<2,float> value;
+namespace L {
+  namespace GUI {
+    class Slider : public Sizable {
+      protected:
+        Ref<Base> thumb;
+        bool inMotion;
+        Point2i curDist, thumbPos;
+        Point<2,float> value;
 
-            public:
-                Slider(Point<2,int>, Ref<Base> thumb);
+      public:
+        Slider(Point<2,int>, Ref<Base> thumb);
 
-                // Setters
-                void sThumb(Ref<Base>);
-                void sValue(Point<2,float>);
-                // Getters
-                Point<2,float> gValue() const;
+        // Setters
+        void sThumb(Ref<Base>);
+        void sValue(Point<2,float>);
+        // Getters
+        Point<2,float> gValue() const;
 
-                void updateThumb();
-                void updateValue();
+        void updateThumb();
+        void updateValue();
 
-                void dimensionsChanged(Base*,Point<2,int>);
-                void updateFromAbove(Point<2,int>,Interval<2,int>);
-                void draw();
-                bool event(const Window::Event& e);
-        };
-    }
+        void dimensionsChanged(Base*,Point<2,int>);
+        void updateFromAbove(Point<2,int>,Interval<2,int>);
+        void draw(GL::Program&);
+        bool event(const Window::Event& e);
+    };
+  }
 }
 
 

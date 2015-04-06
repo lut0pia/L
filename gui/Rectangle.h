@@ -4,19 +4,19 @@
 #include <cstdlib>
 #include "Sizable.h"
 
-namespace L{
-    namespace GUI{
-        class Rectangle : public Sizable{
-            public:
-                Rectangle();
-                Rectangle(Point<2,int>,Color);
-                virtual ~Rectangle(){}
+namespace L {
+  namespace GUI {
+    class Rectangle : public Sizable {
+      public:
+        Rectangle();
+        Rectangle(Point2i,Color);
+        virtual ~Rectangle() {}
 
-                Color color;
-                void draw();
-                bool event(void* e){return false;}
-        };
-    }
+        Color color;
+        void draw(GL::Program&);
+        bool event(void* e) {return false;}
+    };
+  }
 }
 
 #endif

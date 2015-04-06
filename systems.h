@@ -15,8 +15,6 @@
 # include <windows.h>
 # include <windowsx.h>
 # include <mmsystem.h>
-# undef near
-# undef far
 # define popen _popen
 # define pclose _pclose
 #elif defined __unix__

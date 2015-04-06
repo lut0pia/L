@@ -212,6 +212,8 @@
 		<Unit filename="gl/Camera.h" />
 		<Unit filename="gl/FrameBuffer.cpp" />
 		<Unit filename="gl/FrameBuffer.h" />
+		<Unit filename="gl/GL.cpp" />
+		<Unit filename="gl/GL.h" />
 		<Unit filename="gl/Light.cpp" />
 		<Unit filename="gl/Light.h" />
 		<Unit filename="gl/Mesh.cpp" />
@@ -228,8 +230,6 @@
 		<Unit filename="gl/TargetPRS.h" />
 		<Unit filename="gl/Texture.cpp" />
 		<Unit filename="gl/Texture.h" />
-		<Unit filename="gl/Utils.cpp" />
-		<Unit filename="gl/Utils.h" />
 		<Unit filename="graph.h" />
 		<Unit filename="graph/Graph.cpp" />
 		<Unit filename="graph/Graph.h" />

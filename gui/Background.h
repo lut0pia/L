@@ -4,19 +4,19 @@
 #include <cstdlib>
 #include "Layer.h"
 
-namespace L{
-    namespace GUI{
-        class Background : public Layer{
-            protected:
-                Color color;
+namespace L {
+  namespace GUI {
+    class Background : public Layer {
+      protected:
+        Color color;
 
-            public:
-                Background(const Ref<Base>&, Color);
-                virtual ~Background(){}
+      public:
+        Background(const Ref<Base>&, Color);
+        virtual ~Background() {}
 
-                void draw();
-        };
-    }
+        void draw(GL::Program&);
+    };
+  }
 }
 
 #endif

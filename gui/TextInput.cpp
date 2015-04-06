@@ -83,7 +83,7 @@ bool TextInput::event(const Window::Event& e) {
     }
   }
   if(e.type == Window::Event::LBUTTONDOWN) {
-    if(clip.contains(Point<2,int>(e.x,e.y))) {
+    if(clip.contains(Point2i(e.x,e.y))) {
       if(!focus) {
         focus = true;
         updateText();
@@ -97,8 +97,8 @@ bool TextInput::event(const Window::Event& e) {
   }
   return false;
 }
-void TextInput::draw() {
-  textElement->draw();
+void TextInput::draw(GL::Program& program) {
+  textElement->draw(program);
 }
 void TextInput::dimensionsChanged(Base* e,Point2i newDim) {
   updateTextElement(newDim);

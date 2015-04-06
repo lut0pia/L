@@ -2,6 +2,7 @@
 
 #include <GL/glew.h>
 #include <GL/glu.h>
+#include "../system/Window.h"
 
 using namespace L;
 using namespace GL;
@@ -57,9 +58,16 @@ void Camera::perspective(float fovy, float aspect, float near, float far) {
   _projection(3,3) = 0;
 }
 void Camera::ortho(float left, float right, float bottom, float top, float near, float far) {
+  _projection = Matrix44f::identity();
+  _projection(0,0) = 2/(right-left);
+  _projection(1,1) = 2/(top-bottom);
+  _projection(2,2) = -2/(far-near);
+  _projection(0,3) = -(right+left)/(right-left);
+  _projection(1,3) = -(top+bottom)/(top-bottom);
+  _projection(2,3) = -(far+near)/(far-near);
 }
 void Camera::pixels() {
-  //ortho(0,Window::width(),0,Window::height());
+  ortho(0,Window::width(),Window::height(),0);
 }
 Point3f Camera::screenToRay(const Point2f& p) const {
   float fovx(_aspect*_fovy);

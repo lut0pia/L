@@ -21,6 +21,7 @@ namespace L {
         Program(const Shader&, const Shader&);
         Program(const Shader&, const Shader&, const Shader&);
         ~Program();
+        L_NoCopy(Program)
         void use();
         GLuint uniformLocation(const String& name);
         void uniform(const String& name, float);

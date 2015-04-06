@@ -4,33 +4,33 @@
 #include <cstdlib>
 #include "Solid.h"
 
-namespace L{
-    namespace GUI{
-        class ListContainer : public Solid{
-            protected:
-                List<Ref<Base> > elements;
-                int spacing;
-                Point2i dimensions;
-                bool blockInsert;
+namespace L {
+  namespace GUI {
+    class ListContainer : public Solid {
+      protected:
+        List<Ref<Base> > elements;
+        int spacing;
+        Point2i dimensions;
+        bool blockInsert;
 
-            public:
-                ListContainer();
-                ListContainer(int spacing);
-                virtual ~ListContainer(){}
+      public:
+        ListContainer();
+        ListContainer(int spacing);
+        virtual ~ListContainer() {}
 
-                void toggleBlockInsert();
-                void push_back(Ref<Base>);
-                void pop_back(size_t n = 1);
-                size_t size();
-                void clear();
+        void toggleBlockInsert();
+        void push_back(Ref<Base>);
+        void pop_back(size_t n = 1);
+        size_t size();
+        void clear();
 
-                Point2i gDimensions();
-                void dimensionsChanged(Base*,Point<2,int>);
-                void updateFromAbove(Point<2,int>,Interval<2,int>);
-                void draw();
-                bool event(const Window::Event&);
-        };
-    }
+        Point2i gDimensions();
+        void dimensionsChanged(Base*,Point<2,int>);
+        void updateFromAbove(Point<2,int>,Interval<2,int>);
+        void draw(GL::Program&);
+        bool event(const Window::Event&);
+    };
+  }
 }
 
 #endif

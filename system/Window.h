@@ -50,6 +50,8 @@ namespace L {
       // Setters & getters
       static void title(const String&);
       static void resize(int width, int height);
+      static int width();
+      static int height();
       static Point2i mousePosition();
       static Point2f normalizedMousePosition();
   };

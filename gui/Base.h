@@ -3,7 +3,8 @@
 
 #include <iostream>
 #include <cstdlib>
-#include "../gl/Utils.h"
+#include "../gl/Program.h"
+#include "../gl/GL.h"
 #include "../containers/Ref.h"
 #include "../dynamic.h"
 #include "../system/Window.h"
@@ -32,7 +33,7 @@ namespace L {
         virtual void updateFromAbove(Point<2,int>,Interval<2,int>) = 0; // Position and parent clip changed
         virtual void dimensionsChanged(Base* child, Point2i dimensions); // Dimensions of child changed
 
-        virtual void draw();
+        virtual void draw(GL::Program&);
         virtual bool event(const Window::Event&); // A return value of true means the event has been used
     };
   }

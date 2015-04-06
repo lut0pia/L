@@ -7,6 +7,11 @@ using namespace L;
 using namespace Image;
 
 Bitmap::Bitmap(size_t width, size_t height) : Array<2,Color>(width,height) {}
+Bitmap::Bitmap(size_t width, size_t height, const Color& c) : Array<2,Color>(width,height) {
+  for(size_t x(0); x<width; x++)
+    for(size_t y(0); y<height; y++)
+      (*this)(x,y) = c;
+}
 Bitmap::Bitmap(size_t width, size_t height, const Image::Vector& v) : Array<2,Color>(width,height) {
   v.drawOn(*this);
 }
