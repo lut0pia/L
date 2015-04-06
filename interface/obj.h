@@ -17,21 +17,21 @@ namespace L {
             List<String> linePart(line.explode(' '));
             if(linePart[0]=="v") { // Vertex
               Point3f tmp;
-              tmp.x() = FromString<double>(linePart[1]);
-              tmp.y() = FromString<double>(linePart[2]);
-              tmp.z() = FromString<double>(linePart[3]);
+              tmp.x() = FromString<float>(linePart[1]);
+              tmp.y() = FromString<float>(linePart[2]);
+              tmp.z() = FromString<float>(linePart[3]);
               mb.setVertex(tmp);
               mb.addVertex();
             }/* else if(linePart[0]=="vt") { // TexCoord
               Point2f tmp;
-              tmp.x() = FromString<double>(linePart[1]);
-              tmp.y() = FromString<double>(linePart[2]);
+              tmp.x() = FromString<float>(linePart[1]);
+              tmp.y() = FromString<float>(linePart[2]);
               mesh.texCoord.push_back(tmp);
             } else if(linePart[0]=="vn") { // Normal
               Point3f tmp;
-              tmp.x() = FromString<double>(linePart[1]);
-              tmp.y() = FromString<double>(linePart[2]);
-              tmp.z() = FromString<double>(linePart[3]);
+              tmp.x() = FromString<float>(linePart[1]);
+              tmp.y() = FromString<float>(linePart[2]);
+              tmp.z() = FromString<float>(linePart[3]);
               mesh.normal.push_back(tmp);
             }*/ else if(linePart[0]=="f") { // Face abc:vertex; def:tex; g:normal;
               if(1) {
