@@ -9,7 +9,6 @@ using namespace GL;
 
 Camera::Camera(const Point3f& position)
   : _position(position), _lookat(position+Point3f(0,0,-1)), _up(0,1,0) {
-  perspective(60,16.0/9.0,.01,512);
   update();
 }
 
@@ -44,10 +43,6 @@ void Camera::theta(float angle) {
 }
 
 void Camera::perspective(float fovy, float aspect, float near, float far) {
-  _fovy = fovy;
-  _aspect = aspect;
-  _near = near;
-  _far = far;
   _projection = Matrix44f::identity();
   float top(near*tan(fovy*(M_PI/360))), right(top*aspect);
   _projection(0,0) = near/right;
@@ -56,6 +51,7 @@ void Camera::perspective(float fovy, float aspect, float near, float far) {
   _projection(2,3) = (-2*far*near)/(far-near);
   _projection(3,2) = -1;
   _projection(3,3) = 0;
+  update();
 }
 void Camera::ortho(float left, float right, float bottom, float top, float near, float far) {
   _projection = Matrix44f::identity();
@@ -65,13 +61,13 @@ void Camera::ortho(float left, float right, float bottom, float top, float near,
   _projection(0,3) = -(right+left)/(right-left);
   _projection(1,3) = -(top+bottom)/(top-bottom);
   _projection(2,3) = -(far+near)/(far-near);
+  update();
 }
 void Camera::pixels() {
   ortho(0,Window::width(),Window::height(),0);
 }
 Point3f Camera::screenToRay(const Point2f& p) const {
-  float fovx(_aspect*_fovy);
-  return Matrix33f::rotation(_up,-fovx*(M_PI/360)*p.x()) * Matrix33f::rotation(_right,_fovy*(M_PI/360)*p.y()) * _forward;
+  return Point3f(_ray * Point4f(p.x(),p.y(),0,1));
 }
 
 void Camera::update() {
@@ -84,5 +80,7 @@ void Camera::update() {
   _up.normalize();
   // Compute new view matrix
   _view = Matrix44f::orientation(_right,_up,-_forward).transpose() * Matrix44f::translation(-_position);
+  _viewProjection = _projection*_view;
+  _ray = Matrix44f::orientation(_right,_up,-_forward)*_projection.inverse();
 }
 
