@@ -179,6 +179,9 @@ namespace L {
       }
   };
 
+  typedef Matrix<3,3,float> Matrix33f;
+  typedef Matrix<4,4,float> Matrix44f;
+
   template <int l, int c, class T>
   std::ostream& operator<<(std::ostream &stream, const Matrix<l,c,T>& m) {
     for(int li(0); li<l; li++) {
@@ -188,9 +191,6 @@ namespace L {
     }
     return stream;
   }
-
-  typedef Matrix<3,3,float> Matrix33f;
-  typedef Matrix<4,4,float> Matrix44f;
 }
 
 #endif

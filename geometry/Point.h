@@ -178,11 +178,24 @@ namespace L {
         return wtr;
       }
   };
+
   typedef Point<2,int> Point2i;
   typedef Point<3,int> Point3i;
   typedef Point<2,float> Point2f;
   typedef Point<3,float> Point3f;
   typedef Point<4,float> Point4f;
+
+  template <int d,class T>
+  std::ostream& operator<<(std::ostream &stream, const Point<d,T>& p) {
+    stream << '(';
+    for(int i(0); i<d; i++) {
+      stream << p[i];
+      if(i<d-1)
+        stream << ';';
+    }
+    stream << ')';
+    return stream;
+  }
 }
 
 #endif
