@@ -52,6 +52,7 @@ namespace L {
       static void resize(int width, int height);
       static int width();
       static int height();
+      static float aspect();
       static Point2i mousePosition();
       static Point2f normalizedMousePosition();
   };

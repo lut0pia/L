@@ -299,6 +299,9 @@ int Window::width(){
 int Window::height(){
   return _screenHeight;
 }
+float Window::aspect(){
+  return (float)_screenWidth/_screenHeight;
+}
 Point2i Window::mousePosition() {
   return _mousePos;
 }
