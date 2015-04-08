@@ -4,7 +4,5 @@
 #include "gl/Light.h"
 #include "gl/Mesh.h"
 #include "gl/MeshBuilder.h"
-#include "gl/PRS.h"
 #include "gl/Program.h"
-#include "gl/TargetPRS.h"
 #include "gl/Texture.h"

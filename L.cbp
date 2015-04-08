@@ -220,14 +220,10 @@
 		<Unit filename="gl/Mesh.h" />
 		<Unit filename="gl/MeshBuilder.cpp" />
 		<Unit filename="gl/MeshBuilder.h" />
-		<Unit filename="gl/PRS.cpp" />
-		<Unit filename="gl/PRS.h" />
 		<Unit filename="gl/Program.cpp" />
 		<Unit filename="gl/Program.h" />
 		<Unit filename="gl/Shader.cpp" />
 		<Unit filename="gl/Shader.h" />
-		<Unit filename="gl/TargetPRS.cpp" />
-		<Unit filename="gl/TargetPRS.h" />
 		<Unit filename="gl/Texture.cpp" />
 		<Unit filename="gl/Texture.h" />
 		<Unit filename="graph.h" />
