@@ -120,6 +120,12 @@ namespace L {
           wtr += v[i]*v[i];
         return sqrt(wtr);
       }
+      T manhattan() const{
+        T wtr(0);
+        for(size_t i(0); i<d; i++)
+          wtr += abs(v[i]);
+        return wtr;
+      }
       Point& normalize() {
         T n(norm());
         for(size_t i(0); i<d; i++)
