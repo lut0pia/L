@@ -72,6 +72,7 @@ namespace L {
   };
   typedef Interval<2,int> Interval2i;
   typedef Interval<3,int> Interval3i;
+  typedef Interval<3,float> Interval3f;
 }
 
 #endif
