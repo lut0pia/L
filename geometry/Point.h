@@ -18,11 +18,11 @@ namespace L {
       Point() {}
       template <class R>
       Point(const Point<d,R>& other) {
-        for(size_t i(0); i<d; i++)
+        for(int i(0); i<d; i++)
           v[i] = other[i];
       }
       Point(const T& scalar) {
-        for(size_t i(0); i<d; i++)
+        for(int i(0); i<d; i++)
           v[i] = scalar;
       }
       Point(const T& x, const T& y) {
@@ -51,22 +51,22 @@ namespace L {
       }
 
       Point& operator+=(const Point& other) {
-        for(size_t i(0); i<d; i++)
+        for(int i(0); i<d; i++)
           v[i] += other.v[i];
         return *this;
       }
       Point& operator-=(const Point& other) {
-        for(size_t i(0); i<d; i++)
+        for(int i(0); i<d; i++)
           v[i] -= other.v[i];
         return *this;
       }
       Point& operator*=(const Point& other) {
-        for(size_t i(0); i<d; i++)
+        for(int i(0); i<d; i++)
           v[i] *= other.v[i];
         return *this;
       }
       Point& operator/=(const Point& other) {
-        for(size_t i(0); i<d; i++)
+        for(int i(0); i<d; i++)
           v[i] /= other.v[i];
         return *this;
       }
@@ -82,7 +82,7 @@ namespace L {
       }
       Point operator-() const {
         Point wtr;
-        for(size_t i(0); i<d; i++)
+        for(int i(0); i<d; i++)
           wtr.v[i] = -v[i];
         return wtr;
       }
@@ -98,7 +98,7 @@ namespace L {
       }
 
       bool operator==(const Point& other) const {
-        for(size_t i(0); i<d; i++)
+        for(int i(0); i<d; i++)
           if(v[i] != other.v[i])
             return false;
         return true;
@@ -107,7 +107,7 @@ namespace L {
         return !(*this == other);
       }
       bool operator<(const Point& other) const {
-        for(size_t i(0); i<d; i++)
+        for(int i(0); i<d; i++)
           if(v[i] < other.v[i])
             return true;
           else if(v[i] > other.v[i])
@@ -116,19 +116,19 @@ namespace L {
       }
       T norm() const {
         T wtr(0);
-        for(size_t i(0); i<d; i++)
+        for(int i(0); i<d; i++)
           wtr += v[i]*v[i];
         return sqrt(wtr);
       }
-      T manhattan() const{
+      T manhattan() const {
         T wtr(0);
-        for(size_t i(0); i<d; i++)
+        for(int i(0); i<d; i++)
           wtr += abs(v[i]);
         return wtr;
       }
       Point& normalize() {
         T n(norm());
-        for(size_t i(0); i<d; i++)
+        for(int i(0); i<d; i++)
           v[i] /= n;
         return *this;
       }
@@ -142,12 +142,12 @@ namespace L {
       }
       T dot(const Point& other) const {
         T wtr(0);
-        for(size_t i(0); i<d; i++)
+        for(int i(0); i<d; i++)
           wtr += v[i]*other.v[i];
         return wtr;
       }
       bool increment(const Point& min,const Point& max, const T& delta = 1) {
-        for(size_t i(0); i<d; i++) {
+        for(int i(0); i<d; i++) {
           v[i] += delta;
           if(v[i]>=max.v[i]) {
             v[i] = min.v[i];
@@ -158,14 +158,14 @@ namespace L {
         return true;
       }
 
-      inline const T& operator[](size_t i) const {return v[i];}
+      inline const T& operator[](int i) const {return v[i];}
       inline const T& x() const {return v[0];}
       inline const T& y() const {return v[1];}
       inline const T& z() const {return v[2];}
       inline const T& w() const {return v[3];}
       inline const byte* bytes() const {return b;}
       inline const T* array() const {return v;}
-      inline T& operator[](size_t i) {return v[i];}
+      inline T& operator[](int i) {return v[i];}
       inline T& x() {return v[0];}
       inline T& y() {return v[1];}
       inline T& z() {return v[2];}

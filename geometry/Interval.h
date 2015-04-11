@@ -19,17 +19,27 @@ namespace L {
         add(b);
       }
       Interval(const Interval& a, const Interval& b) {
-        for(size_t i(0); i<d; i++) {
+        for(int i(0); i<d; i++) {
           _min[i] = std::max(a._min[i],b._min[i]);
           _max[i] = std::min(a._max[i],b._max[i]);
         }
       }
-      Interval operator*(const Interval& other) const {
+      inline Interval operator*(const Interval& other) const {
         return Interval(*this,other);
+      }
+      bool operator&&(const Interval& other) const {
+        for(int i(0); i<d; i++) {
+          if(std::max(_min[i],other._min[i]) > std::min(_max[i],other._max[i]))
+            return false;
+        }
+        return true;
+      }
+      inline bool overlaps(const Interval& other) const {
+        return (*this) && other;
       }
 
       void add(const Point<d,T>& p) {
-        for(size_t i(0); i<d; i++) {
+        for(int i(0); i<d; i++) {
           if(_min[i] > p[i])
             _min[i] = p[i];
           if(_max[i] < p[i])
