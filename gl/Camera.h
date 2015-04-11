@@ -1,8 +1,9 @@
 #ifndef DEF_L_GL_Camera
 #define DEF_L_GL_Camera
 
-#include "PRS.h"
-#include "../containers/Ref.h"
+#include "../geometry/Point.h"
+#include "../geometry/Interval.h"
+#include "../math/Matrix.h"
 
 namespace L {
   namespace GL {
@@ -12,22 +13,23 @@ namespace L {
         Matrix44f _view, _projection, _viewProjection, _ray;
 
       public:
-        Camera(const Point3f& = Point3f(0,0,0));
+        Camera(const Point3f& position = Point3f(0,0,0));
+        void update();
 
-        void move(const Point3f& delta);
-        void position(const Point3f& position);
-        void lookat(const Point3f&);
+        void move(const Point3f& delta); // Changes position of the camera relatively to its orientation
+        void position(const Point3f& position); // Directly sets position of the camera
+        void lookat(const Point3f&); // Directly sets the lookat point of the camera
 
         void phi(float); // Rotate camera left/right
         void theta(float); // Rotate camera down/up
 
-        void perspective(float fovy, float aspect, float near, float far);
+        void perspective(float fovy, float aspect, float near, float far); // 3D perspective
         void ortho(float left, float right, float bottom, float top, float near = -1, float far = 1);
-        void pixels();
+        void pixels(); // Maps to window's pixels (origins at top-left pixel)
 
-        Point3f screenToRay(const Point2f&) const;
+        Point3f screenToRay(const Point2f&) const; // Returns direction vector from normalized screen position
+        bool sees(const Interval3f&) const; // Checks if an interval can currently be seen by camera
 
-        void update();
         const Point3f& position() const {return _position;}
         const Point3f& forward() const {return _forward;}
         const Matrix44f& view() const {return _view;}

@@ -127,18 +127,18 @@ namespace L {
             wtr(x,y) = ((x==y)?1:0);
         return wtr;
       }
-      static Matrix<3,3,T> rotation(const Point<3,T>& axis, T angle) {
-        Matrix<3,3,T> wtr;
+      static Matrix<4,4,T> rotation(const Point<3,T>& axis, T angle) {
+        Matrix<4,4,T> wtr(Matrix<4,4,T>::identity());
         if(angle < 0.001 && angle > -0.001)
           angle = 0;
         T cosi(cos(angle));
         T sinu(sin(angle));
-        T x = axis.x();
-        T y = axis.y();
-        T z = axis.z();
-        T x2 = axis.x()*axis.x();
-        T y2 = axis.y()*axis.y();
-        T z2 = axis.z()*axis.z();
+        const T& x(axis.x());
+        const T& y(axis.y());
+        const T& z(axis.z());
+        T x2(axis.x()*axis.x());
+        T y2(axis.y()*axis.y());
+        T z2(axis.z()*axis.z());
         wtr(0,0) = x2+(cosi*(1-x2));
         wtr(0,1) = (x*y*(1-cosi))-(z*sinu);
         wtr(0,2) = (x*z*(1-cosi))+(y*sinu);
