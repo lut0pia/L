@@ -220,8 +220,12 @@
 		<Unit filename="gl/Mesh.h" />
 		<Unit filename="gl/MeshBuilder.cpp" />
 		<Unit filename="gl/MeshBuilder.h" />
+		<Unit filename="gl/PostProcess.cpp" />
+		<Unit filename="gl/PostProcess.h" />
 		<Unit filename="gl/Program.cpp" />
 		<Unit filename="gl/Program.h" />
+		<Unit filename="gl/RenderBuffer.cpp" />
+		<Unit filename="gl/RenderBuffer.h" />
 		<Unit filename="gl/Shader.cpp" />
 		<Unit filename="gl/Shader.h" />
 		<Unit filename="gl/Texture.cpp" />

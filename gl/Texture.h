@@ -9,15 +9,21 @@ namespace L {
     class Texture {
       private:
         GLuint _id;
-        uint _width, _height;
+        int _width, _height;
       public:
+        Texture();
         Texture(const Image::Bitmap&);
         ~Texture();
         L_NoCopy(Texture)
+        void load(const Image::Bitmap&);
+        void load(GLsizei width, GLsizei height, const void* data = NULL);
         void bind() const;
+        void unbind() const;
+        void parameter(GLenum name, GLint);
+
         inline GLuint id() const {return _id;}
-        inline uint width() const {return _width;}
-        inline uint height() const {return _height;}
+        inline int width() const {return _width;}
+        inline int height() const {return _height;}
     };
   }
 }

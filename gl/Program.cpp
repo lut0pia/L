@@ -39,8 +39,11 @@ void Program::detach(const Shader& shader) {
 void Program::link() {
   glLinkProgram(_id);
 }
-void Program::use() {
+void Program::use() const {
   glUseProgram(_id);
+}
+void Program::unuse() const {
+  glUseProgram(0);
 }
 GLuint Program::uniformLocation(const String& name) {
   Map<String,GLuint>::iterator it(_uniformLocation.find(name));
@@ -57,19 +60,14 @@ void Program::uniform(const String& name, float v) {
 void Program::uniform(const String& name, float x,float y,float z) {
   glUniform3f(uniformLocation(name),x,y,z);
 }
-void Program::uniform(const String& name, const Point3f& p){
+void Program::uniform(const String& name, const Point3f& p) {
   uniform(name,p.x(),p.y(),p.z());
 }
 void Program::uniform(const String& name, const Matrix44f& m) {
   glUniformMatrix4fv(uniformLocation(name),1,GL_TRUE,m.array());
 }
-void Program::uniform(const String& name, const Texture& texture, GLenum unit){
+void Program::uniform(const String& name, const Texture& texture, GLenum unit) {
   glUniform1i(uniformLocation(name), unit-GL_TEXTURE0);
   glActiveTexture(unit);
   texture.bind();
-}
-
-
-void Program::unuse() {
-  glUseProgram(0);
 }
