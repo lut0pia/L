@@ -13,7 +13,7 @@ PostProcess::PostProcess(int width, int height) : _frameBuffer(GL_FRAMEBUFFER) {
 }
 void PostProcess::resize(int width, int height) {
   _color.load(width,height);
-  _depth.storage(GL_DEPTH_COMPONENT16,width,height);
+  _depth.storage(GL_DEPTH_COMPONENT32F,width,height);
 }
 void PostProcess::prerender() {
   _frameBuffer.bind();
