@@ -43,9 +43,10 @@ namespace AK {
 namespace L {
   class Wwise {
     private:
-      CAkFilePackageLowLevelIOBlocking _lowLevelIO;
+      static bool initialized;
+      static CAkFilePackageLowLevelIOBlocking _lowLevelIO;
     public:
-      Wwise(const wchar_t* basePath) {
+      static void init(const wchar_t* basePath) {
         // Initialize memory manager
         AkMemSettings memSettings;
         memSettings.uMaxNumPools = 20;
@@ -83,7 +84,7 @@ namespace L {
           L_Error("Wwise: Comm init");
 #endif
       }
-      ~Wwise() {
+      static void term() {
 #ifndef AK_OPTIMIZED
         // Terminate communication
         AK::Comm::Term();
@@ -91,25 +92,27 @@ namespace L {
         AK::MusicEngine::Term();
         AK::SoundEngine::Term();
       }
-      void update() {
+      static void update() {
         AK::SoundEngine::RenderAudio();
       }
       // Game objects
-      void registerObject(AkGameObjectID id) {
+      static void registerObject(AkGameObjectID id) {
         AK::SoundEngine::RegisterGameObj(id);
       }
       // Events
-      void postEvent(const String& name) {
+      static void postEvent(const String& name) {
         AK::SoundEngine::PostEvent(name.c_str(),100);
       }
       // Sound banks
-      void loadBank(const wchar_t* name) {
+      static void loadBank(const wchar_t* name) {
         AkBankID bankID;
         if(AK::SoundEngine::LoadBank(name,AK_DEFAULT_POOL_ID,bankID) != AK_Success)
           L_Error("Wwise: couldn't load bank");
       }
   };
 }
+bool L::Wwise::initialized(false);
+CAkFilePackageLowLevelIOBlocking L::Wwise::_lowLevelIO;
 
 // Destroy file package and free memory / destroy pool.
 void CAkFilePackage::Destroy() {
