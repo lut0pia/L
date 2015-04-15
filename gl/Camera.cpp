@@ -92,9 +92,9 @@ bool Camera::sees(const Interval3f& i) const {
     Point4f q(_viewProjection*p);
     if(q.w()>0) { // We do not want values behind the camera
       Point3f r(Point3f(q)/q.w()); // Compute NDC coordinates
-      if(r.manhattan()<3) // The point is clearly in view
+      if(abs(r.x())<1 && abs(r.y())<1 && abs(r.z())<1) // The point is clearly in view
         return true;
-      else{ // The shape could go through the view
+      else { // The shape could go through the view
         projected.add(r);
         if(ndc.overlaps(projected))
           return true;
