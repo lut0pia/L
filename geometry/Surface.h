@@ -11,7 +11,6 @@ namespace L {
       Point<d,T> a, b, c;
     public:
       Surface() {
-        if(d<2) throw sex;
       }
       Surface(const Point<d,T>& a,
               const Point<d,T>& b,

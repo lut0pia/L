@@ -11,7 +11,6 @@ namespace L {
       Point<di,T> a, b, c, d;
     public:
       Volume() {
-        if(di<3) throw sex;
       }
       Volume(const Point<di,T>& a,
              const Point<di,T>& b,
