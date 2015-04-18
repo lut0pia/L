@@ -159,6 +159,7 @@
 		<Unit filename="bytes/bytes.h" />
 		<Unit filename="bytes/encoding.cpp" />
 		<Unit filename="bytes/encoding.h" />
+		<Unit filename="constants.h" />
 		<Unit filename="containers.h" />
 		<Unit filename="containers/Array.h" />
 		<Unit filename="containers/BTree.h" />

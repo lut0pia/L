@@ -2,6 +2,7 @@
 
 #include <GL/glew.h>
 #include <GL/glu.h>
+#include "../constants.h"
 #include "../system/Window.h"
 
 using namespace L;
@@ -56,7 +57,7 @@ void Camera::theta(float angle) {
 
 void Camera::perspective(float fovy, float aspect, float near, float far) {
   _projection = Matrix44f::identity();
-  float top(near*tan(fovy*((float)M_PI/360))), right(top*aspect);
+  float top(near*tan(fovy*(PI<float>()/360))), right(top*aspect);
   _projection(0,0) = near/right;
   _projection(1,1) = near/top;
   _projection(2,2) = (-far+near)/(far-near);
@@ -80,7 +81,7 @@ void Camera::pixels() {
 }
 
 Point3f Camera::screenToRay(const Point2f& p) const {
-  return _ray * Point4f(p.x(),p.y(),0,1);
+  return Point3f(_ray * Point4f(p.x(),p.y(),0,1));
 }
 bool Camera::sees(const Interval3f& i) const {
   static const Interval3f ndc(Point3f(-1,-1,-1),Point3f(1,1,1));

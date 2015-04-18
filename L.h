@@ -19,6 +19,7 @@
 #include "audio.h"          // Audio I/O, Wave & Midi
 #include "burp.h"           // Interpreted scripting language
 #include "bytes.h"          // Byte to byte functions, encoding
+#include "constants.h"      // Constant values
 #include "containers.h"     // Classes that hold other classes
 #include "dbms.h"           // Database Management System
 #include "dynamic.h"        // Dynamic typing/casting
