@@ -105,9 +105,18 @@ namespace L {
           }
         } while(zeroCount<d); // All positions have been done
       }
-
+      int indexOf(const Point<d,int>& point) const{
+        int wtr(point[0]);
+        for(int i(1);i<d;i++){
+          wtr *= _size[i];
+          wtr += point[i];
+        }
+        return wtr;
+      }
       T& operator()(int pos,...) {ACCESS}
       const T& operator()(int pos,...) const {ACCESS}
+      T& operator()(const Point<d,int>& point){return Vector<T>::operator[](indexOf(point));}
+      const T& operator()(const Point<d,int>& point) const{return Vector<T>::operator[](indexOf(point));}
       inline T& operator[](int i) {return Vector<T>::operator[](i);}
       inline const T& operator[](int i) const {return Vector<T>::operator[](i);}
       inline int size(int i) const {return _size[i];}

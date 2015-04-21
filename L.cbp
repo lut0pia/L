@@ -289,6 +289,7 @@
 		<Unit filename="math/Integer.cpp" />
 		<Unit filename="math/Integer.h" />
 		<Unit filename="math/Matrix.h" />
+		<Unit filename="math/Perlin.h" />
 		<Unit filename="math/Rational.cpp" />
 		<Unit filename="math/Rational.h" />
 		<Unit filename="math/Real.cpp" />
