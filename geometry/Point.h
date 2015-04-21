@@ -146,6 +146,12 @@ namespace L {
           wtr += v[i]*other.v[i];
         return wtr;
       }
+      T product() const {
+        T wtr(1);
+        for(int i(0); i<d; i++)
+          wtr *= v[i];
+        return wtr;
+      }
       bool increment(const Point& min,const Point& max, const T& delta = 1) {
         for(int i(0); i<d; i++) {
           v[i] += delta;
