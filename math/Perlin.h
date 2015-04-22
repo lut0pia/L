@@ -23,9 +23,6 @@ namespace L {
       float lerp(float a0, float a1, float w) const {
         return (1.f - w)*a0 + w*a1;
       }
-      float dotGridGradient(const Point<d,int>& ip, const Point<d,float>& p) const {
-        return _gradients(ip).dot(p-Point<d,float>(ip));
-      }
       float value(const Point<d,float>& point) const {
         // Determine grid cell coordinates
         Point<d,int> i0,i1;
@@ -41,16 +38,14 @@ namespace L {
         for(int i(0); i<d2; i++) {
           Point<d,int> ip;
           for(int j(0); j<d; j++)
-            ip[j] = (i&(1<<j))?i0[j]:i1[j];
-          values[i] = dotGridGradient(ip,point);
+            ip[j] = (i&(1<<j))?i1[j]:i0[j];
+          values[i] = _gradients(ip).dot(point-Point<d,float>(ip));
         }
         // Interpolate all dimensions
         int wd(d-1);
         for(int i(d2/2); i>0; i/=2) {
-          float w(s[wd]);
-          for(int j(0); j<i; j++) {
-            values[j] = lerp(values[j],values[j+i],w);
-          }
+          for(int j(0); j<i; j++)
+            values[j] = lerp(values[j],values[j+i],s[wd]);
           wd--;
         }
         return values[0];
