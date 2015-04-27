@@ -13,6 +13,7 @@
 #include "../gl/GL.h"
 #include "../stl.h"
 #include "../bytes/encoding.h"
+#include "System.h"
 
 using namespace L;
 using L::Window;
@@ -20,7 +21,7 @@ using L::Window;
 Vector<bool> keystate(Window::Event::LAST, false);
 List<Window::Event> events;
 Point2i _mousePos;
-int _screenWidth, _screenHeight;
+int _width, _height;
 
 Window::Event::Event() {
   memset(this,0,sizeof(*this));
@@ -151,10 +152,10 @@ void eventTranslate(const XEvent& xev) {
 }
 #endif
 
-void Window::open(const String& title, size_t width, size_t height, size_t flags) {
+void Window::open(const String& title, int width, int height, int flags) {
   if(opened()) return;
-  _screenWidth = width;
-  _screenHeight = height;
+  _width = width;
+  _height = height;
 #if defined L_WINDOWS
   WNDCLASS wc;
   PIXELFORMATDESCRIPTOR pfd;
@@ -171,11 +172,10 @@ void Window::open(const String& title, size_t width, size_t height, size_t flags
   wc.lpszMenuName = NULL;
   wc.lpszClassName = "LWC";
   RegisterClass(&wc);
-  DWORD wStyle = WS_CAPTION
-                 | WS_MINIMIZEBOX
+  DWORD wStyle = ((flags & borderless)?(WS_POPUP):(WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU))
                  | ((flags & resizable)?(WS_MAXIMIZEBOX):0)
                  | ((flags & resizable)?(WS_SIZEBOX):0)
-                 | WS_SYSMENU | WS_VISIBLE;
+                 | WS_VISIBLE;
   // Find out needed window size for wanted client area size
   RECT rect = {0,0,(int)width,(int)height};
   AdjustWindowRect(&rect,wStyle,false);
@@ -218,6 +218,10 @@ void Window::open(const String& title, size_t width, size_t height, size_t flags
   glXMakeCurrent(dpy, win, glc);
   winOpened = true;
 #endif
+}
+void Window::openFullscreen(const String& title) {
+  Point2i screenSize(System::screenSize());
+  open(title,screenSize.x(),screenSize.y(),borderless);
 }
 void Window::close() {
   if(!opened()) return;
@@ -286,25 +290,25 @@ void Window::title(const String& str) {
 }
 void Window::resize(int width, int height) {
   if(!opened()) return;
-  _screenWidth = width;
-  _screenHeight = height;
+  _width = width;
+  _height = height;
 #if defined L_WINDOWS
   SetWindowPos(hWND,HWND_NOTOPMOST,0,0,width,height,SWP_NOMOVE|SWP_NOZORDER);
 #elif defined L_UNIX
 #endif
 }
-int Window::width(){
-  return _screenWidth;
+int Window::width() {
+  return _width;
 }
-int Window::height(){
-  return _screenHeight;
+int Window::height() {
+  return _height;
 }
-float Window::aspect(){
-  return (float)_screenWidth/_screenHeight;
+float Window::aspect() {
+  return (float)_width/_height;
 }
 Point2i Window::mousePosition() {
   return _mousePos;
 }
 Point2f Window::normalizedMousePosition() {
-  return Point2f((2*(float)_mousePos.x()/_screenWidth)-1,-((2*(float)_mousePos.y()/_screenHeight)-1));
+  return Point2f((2*(float)_mousePos.x()/_width)-1,-((2*(float)_mousePos.y()/_height)-1));
 }

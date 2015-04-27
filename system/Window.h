@@ -37,9 +37,12 @@ namespace L {
           };
           Event();
       };
-      static const size_t resizable = 1;
+      static const int resizable = 0x1;
+      static const int borderless = 0x2;
+      static const int topmost = 0x4;
     public:
-      static void open(const String& title, size_t width = 800, size_t height = 600, size_t flags = 0);
+      static void open(const String& title, int width = 800, int height = 600, int flags = 0);
+      static void openFullscreen(const String& title);
       static void close();
       static bool opened();
       static bool loop();

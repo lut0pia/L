@@ -5,6 +5,7 @@
 #include "../macros.h"
 #include "../stl/String.h"
 #include "../time.h"
+#include "../geometry/Point.h"
 
 namespace L{
     namespace System{
@@ -16,6 +17,7 @@ namespace L{
         void toClipboard(const String&);
         String fromClipboard();
         String gEnv(const String&);
+        Point2i screenSize();
 
         void sConsoleCursorPosition(unsigned short x,unsigned short y);
         void clearConsole();
