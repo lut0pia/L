@@ -114,11 +114,14 @@ namespace L {
             return false;
         return false;
       }
-      T norm() const {
+      T normSquared() const {
         T wtr(0);
         for(int i(0); i<d; i++)
           wtr += v[i]*v[i];
-        return sqrt(wtr);
+        return wtr;
+      }
+      inline T norm() const {
+        return std::sqrt(normSquared());
       }
       T manhattan() const {
         T wtr(0);
@@ -132,8 +135,11 @@ namespace L {
           v[i] /= n;
         return *this;
       }
-      T dist(const Point& other) const {
+      inline T dist(const Point& other) const {
         return (*this-other).norm();
+      }
+      inline T distSquared(const Point& other) const {
+        return (*this-other).normSquared();
       }
       Point cross(const Point& other) {
         return Point(y()*other.z() - z()*other.y(),
