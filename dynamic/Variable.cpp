@@ -5,18 +5,33 @@
 
 using namespace L::Dynamic;
 
+const void* Variable::value() const {
+  if(local()) // Value is contained locally
+    return (void*)&_data;
+  else return _p; // Value has been dynamically allocated
+}
+
+Variable::Variable(const Variable& other) : _td(other._td) {
+  if(local()) // Value is to be contained locally
+    _data = other._data;
+  else _p = _td->cpy(other._p);
+}
 Variable& Variable::operator=(const Variable& other) {
   if(this != &other) {
-    td->del(p);
-    p = other.td->cpy(other.p);
-    td = other.td;
+    this->~Variable();
+    new(this) Variable(other);
   }
   return *this;
 }
+Variable::~Variable() {
+  if(_td->size<=sizeof(_data)) // Value is contained locally
+    _td->dtr(&_data);
+  else _td->del(_p); // Value has been dynamically allocated
+}
 
 bool Variable::operator==(const Variable& other) {
-  if(td == other.td && td->hascmp())
-    return (td->cmp(p,other.p) == 0);
+  if(_td == other._td && _td->hascmp())
+    return (_td->cmp(_p,other._p) == 0);
   else
     return false;
 }
@@ -24,14 +39,14 @@ bool Variable::operator!=(const Variable& other) {
   return !(*this == other);
 }
 bool Variable::operator>(const Variable& other) {
-  if(td == other.td && td->hascmp())
-    return (td->cmp(p,other.p) > 0);
+  if(_td == other._td && _td->hascmp())
+    return (_td->cmp(_p,other._p) > 0);
   else
     return false;
 }
 bool Variable::operator<(const Variable& other) {
-  if(td == other.td && td->hascmp())
-    return (td->cmp(p,other.p) < 0);
+  if(_td == other._td && _td->hascmp())
+    return (_td->cmp(_p,other._p) < 0);
   else
     return false;
 }
@@ -56,6 +71,7 @@ Variable& Variable::operator[](size_t i) {
 }
 
 std::ostream& L::Dynamic::operator<<(std::ostream& s, const Variable& v) {
-  v.td->out(s,v.p);
+  if(v._td->hasout())
+    v._td->out(s,v.value());
   return s;
 }
