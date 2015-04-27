@@ -85,7 +85,7 @@ namespace L {
       template <typename R>
       typename enable_if<is_serializable<R> >::type writeT(std::ostream& s) const {
         s << "{ ";
-        L_Iter(((std::set<T>&)*this),it) {
+        L_Iter(*((std::set<T>*)this),it) {
           Serializable::write(s,(*it));
           s << " ";
         }
