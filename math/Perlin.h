@@ -11,8 +11,9 @@ namespace L {
     private:
       static const int d2 = static_pow<2,d>::value;
       Array<d,Point<d,float> > _gradients;
+      float _size;
     public:
-      Perlin(int size) {
+      Perlin(int size) : _size(size) {
         _gradients.resize(Point<d,int>(size));
         for(int i(0); i<_gradients.size(); i++) {
           for(int j(0); j<d; j++)
@@ -23,10 +24,11 @@ namespace L {
       float lerp(float a0, float a1, float w) const {
         return (1.f - w)*a0 + w*a1;
       }
-      float value(const Point<d,float>& point) const {
+      float value(Point<d,float> point) const {
         // Determine grid cell coordinates
         Point<d,int> i0,i1;
         for(int i(0); i<d; i++) {
+          point[i] = PMod(point[i],_size); // Make sure the point falls into available values
           i0[i] = (int)point[i];
           if(point[i]<0)
             i0[i] -= 1;
@@ -38,7 +40,7 @@ namespace L {
         for(int i(0); i<d2; i++) {
           Point<d,int> ip;
           for(int j(0); j<d; j++)
-            ip[j] = (i&(1<<j))?i1[j]:i0[j];
+            ip[j] = ((i&(1<<j))?i1[j]:i0[j]);
           values[i] = _gradients(ip).dot(point-Point<d,float>(ip));
         }
         // Interpolate all dimensions
