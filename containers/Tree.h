@@ -5,88 +5,109 @@
 #include "../tmp.h"
 
 namespace L {
-  template <uint d,class K,class V>
+  template <int d,class K,class V>
   class Tree {
     protected:
-      static const uint n = static_pow<2,d>::value;
+      static const int n = static_pow<2,d>::value;
+      static const int mask = ~((~0)<<d);
       typedef Point<d,K> Key;
-      /*
       class Node {
-        protected:
-          V* value;
-          key_t key;
-          Node* children[n];
+        private:
+          V _value;
+          Key _key;
+          Node* _children[n];
         public:
-          Node(const key_t& key, V* value) : key(key), value(value) {
-            for(uint i(0); i<n; i++)  children[i] = NULL;
+          Node(const Key& key, const V& value) : _key(key), _value(value) {
+            for(int i(0); i<n; i++)
+              _children[i] = NULL;
           }
           ~Node() {
-            for(uint i(0); i<n; i++)
-              delete children;
-            delete value;
+            for(int i(0); i<n; i++)
+              delete _children[i];
           }
-          Node* insert(const key_t& key, V* value) {
-            uint child(cmp(this->key,key));
-            return (child!=-1) ? insert(children[child],key,value) : this;
-          }
-          Node* find(const key_t& key) {
-            uint child(cmp(this->key,key));
-            return (child!=-1) ? find(children[child],key) : this;
-          }
-          uint height() const {
-            uint wtr(1);
-            for(uint i(0); i<n; i++)
-              wtr = std::max(wtr,1+height(children[i]));
-            return wtr;
-          }
-          static uint cmp(const key_t& a, const key_t& b) {
-            uint eq(0), wtr(0);
-            for(uint i(0); i<d; i++) {
+          inline const Key& key() const {return _key;}
+          inline const V& value() const {return _value;}
+
+          int childIndex(const Key& key) const { // Returns the child index, returns -1 when both keys are equal
+            int eq(0), wtr(0);
+            for(int i(0); i<d; i++) {
               wtr <<= 1;
-              if(a[i]>b[i])       wtr++;
-              else if(a[i]==b[i]) eq++;
+              if(_key[i]>key[i])       wtr++;
+              else if(_key[i]==key[i]) eq++;
             }
             return (eq<d) ? wtr : -1;
           }
-          static Node* insert(Node*& node, const key_t& key, V* value) {
+          inline static int oppositeIndex(int index) {
+            return (~index)&mask;
+          }
+
+          static Node* insert(Node*& node, const Key& key, const V& value) {
             if(node) {
-              Node* wtr(node->insert(key,value));
-              // Self-balancing
-              return wtr;
+              int child(node->childIndex(key));
+              if(child>=0) {
+                Node* wtr(insert(node->_children[child],key,value));
+                // Self-balancing
+                return wtr;
+              } else node->_value = value;
             } else return node = new Node(key,value); // It's a leaf
           }
-          static Node* find(Node* node, const key_t& key) {
-            return (node) ? node->find(key) : NULL;
+          static const Node* find(const Node* node, const Key& key) {
+            if(node) {
+              int child(node->childIndex(key));
+              return (child>=0) ? find(node->_children[child],key) : node;
+            } else return NULL;
           }
-          static uint height(Node* node) {
-            return (node) ? node->height() : 0;
+          static const Node* nearest(const Node* node, const Key& key) {
+            if(node) {
+              K distance(node->key().distSquared(key));
+              int child(node->childIndex(key));
+              if(child<0) return node; // This node has this key (so it's nearest)
+              int oppositeChild(oppositeIndex(child));
+              const Node* wtr(node);
+              for(int i(0); i<n; i++)
+                if(i!=oppositeChild) {
+                  const Node* tmpNode(nearest(node->_children[i],key));
+                  if(tmpNode) {
+                    K tmpDistance(tmpNode->key().distSquared(key));
+                    //std::cout << tmpNode->key() << " ->" << tmpDistance << " (" << distance << ")" << std::endl;
+                    if(tmpDistance<distance) {
+                      wtr = tmpNode;
+                      distance = tmpDistance;
+                    }
+                  }
+                }
+              return wtr;
+            } else return NULL;
+          }
+          static int height(const Node* node) {
+            if(node) {
+              int wtr(1);
+              for(int i(0); i<n; i++) {
+                int tmp(1+height(node->_children[i]));
+                if(wtr<tmp)
+                  wtr = tmp;
+              }
+              return wtr;
+            } else return 0;
           }
       };
-      */
-      /*
-      class Node{
-          V* value;
-          Key key;
-          Node* children[n];
-      };
-      Node* root;
+      Node* _root;
 
     public:
-      Tree() : root(NULL) {}
-      ~Tree() {erase(root);}
-      Node* insert(const key_t& key, V* value = NULL) {
-        return Node::insert(root,key,value);
+      Tree() : _root(NULL) {}
+      ~Tree() {delete _root;}
+      inline Node* insert(const Key& key, const V& value) {
+        return Node::insert(_root,key,value);
       }
-      Node* insert(const key_t& key, const V& value) {
-        return Node::insert(root,key,new V(value));
+      inline const Node* find(const Key& key) const {
+        return Node::find(_root,key);
       }
-      Node* find(const key_t& key) const {
-        return Node::find(root,key);
+      inline const Node* nearest(const Key& key) const {
+        return Node::nearest(_root,key);
       }
-      uint height() const {
-        return Node::height(root);
+      inline int height() const {
+        return Node::height(_root);
       }
-      */
   };
   // Regular trees
   template <class K,class V> class BinaryTree : public Tree<1,K,V> {};
