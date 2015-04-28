@@ -41,7 +41,6 @@
 				<Compiler>
 					<Add option="-Wall" />
 					<Add option="-g" />
-					<Add option="-std=gnu++0x" />
 					<Add option="-DL_Debug" />
 				</Compiler>
 			</Target>
@@ -55,7 +54,6 @@
 				<Option createDefFile="1" />
 				<Compiler>
 					<Add option="-O3" />
-					<Add option="-std=gnu++0x" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
