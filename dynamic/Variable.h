@@ -7,20 +7,21 @@
 namespace L {
   namespace Dynamic {
     class Variable {
-      public:
+      private:
         union {
           int _data;
           void* _p;
         };
         const TypeDescription* _td;
 
+        void* value();
         const void* value() const;
 
       public:
-        Variable() : _data(NULL), _td(Type<void*>::description()) {}
+        Variable() : _data(0), _td(Type<int>::description()) {}
         template <class T> Variable(const T& v) : _td(Type<T>::description()) {
           if(local())  // Value is to be contained locally
-            (*(T*)&_data) = v;
+            new(&_data) T(v);
           else _p = new T(v);
         }
         Variable(const char* s) : _p(new String(s)), _td(Type<String>::description()) {}

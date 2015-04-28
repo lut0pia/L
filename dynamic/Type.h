@@ -14,6 +14,7 @@ namespace L {
       int size;
 
       void* (*cpy)(void*);
+      void (*cpyto)(void*,const void*);
       void (*dtr)(void*);
       void (*del)(void*);
 
@@ -33,6 +34,7 @@ namespace L {
         static inline const TypeDescription* description() {return &td;}
 
         static void* cpy(void* p) {return new T(*(T*)p);}
+        static void cpyto(void* dst, const void* src) {new((T*)dst) T(*(const T*)src);}
         static void dtr(void* p) {((T*)p)->~T();}
         static void del(void* p) {delete(T*)p;}
 
@@ -62,7 +64,7 @@ namespace L {
 
     // Instantiate structures
     template <class T> const TypeDescription Type<T>::td = {Type<T>::name(),sizeof(T),
-                                                            cpy,dtr,del,
+                                                            cpy,cpyto,dtr,del,
                                                             out,cmp,
                                                             hasout,hascmp
                                                            };

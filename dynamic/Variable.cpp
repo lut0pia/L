@@ -5,6 +5,11 @@
 
 using namespace L::Dynamic;
 
+void* Variable::value() {
+  if(local()) // Value is contained locally
+    return (void*)&_data;
+  else return _p; // Value has been dynamically allocated
+}
 const void* Variable::value() const {
   if(local()) // Value is contained locally
     return (void*)&_data;
@@ -13,7 +18,7 @@ const void* Variable::value() const {
 
 Variable::Variable(const Variable& other) : _td(other._td) {
   if(local()) // Value is to be contained locally
-    _data = other._data;
+    _td->cpyto(value(),other.value());
   else _p = _td->cpy(other._p);
 }
 Variable& Variable::operator=(const Variable& other) {
