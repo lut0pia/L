@@ -195,6 +195,13 @@ namespace L {
           wtr[i] = std::numeric_limits<T>::max();
         return wtr;
       }
+      static Point random(){
+        Point wtr;
+        for(int i(0);i<d;i++)
+          wtr[i] = Rand::next(-1,1);
+        wtr.normalize();
+        return wtr;
+      }
   };
 
   typedef Point<2,int> Point2i;
