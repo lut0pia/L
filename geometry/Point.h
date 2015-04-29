@@ -5,6 +5,7 @@
 #include <iostream>
 #include <limits>
 #include "../types.h"
+#include "../Rand.h"
 
 namespace L {
   template <int d,class T>
@@ -195,9 +196,9 @@ namespace L {
           wtr[i] = std::numeric_limits<T>::max();
         return wtr;
       }
-      static Point random(){
+      static Point random() {
         Point wtr;
-        for(int i(0);i<d;i++)
+        for(int i(0); i<d; i++)
           wtr[i] = Rand::next(-1,1);
         wtr.normalize();
         return wtr;
