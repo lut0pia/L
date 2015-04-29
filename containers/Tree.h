@@ -60,40 +60,24 @@ namespace L {
               return (child>=0) ? find(node->_children[child],key) : node;
             } else return NULL;
           }
-          static void nearestCmp(const Node*& currentNode, K& currentDistance, const Node* newNode, const Key& key) {
-            if(newNode) {
-              K newDistance(newNode->key().distSquared(key));
-              if(newDistance<currentDistance) {
-                currentNode = newNode;
-                currentDistance = newDistance;
-              }
-            }
-          }
-          static const Node* nearest(const Node* node, const Key& key) {
-            static int avoided(0), total(0);
+          static void nearest(const Node* node, const Node*& bestNode, K& bestDistance, const Key& key) {
             if(node) {
+              K distance(node->key().distSquared(key));
+              if(distance<bestDistance) {
+                bestNode = node;
+                bestDistance = distance;
+              }
               int bestChild(node->childIndex(key));
-              if(bestChild<0) return node; // This node has this key (so it's nearest of all)
-              const Node* wtr(node); // As far as we know this is the nearest
-              K distance(wtr->key().distSquared(key)); // Compute distance from key
-              nearestCmp(wtr,distance,nearest(node->_children[bestChild],key),key);// Have to test with the best child node first
-              for(int i(1); i<n; i++) { // For each possible combination of component mirroring
+              for(int i(0); i<n; i++) { // For each possible combination of component mirroring
                 Key nearestPossibleVector(key-node->key()); // Compute minimum vector coming from mirrored best child
                 for(int j(0); j<d; j++)
                   if(!(i&(1<<j)))
-                    nearestPossibleVector[d-j-1] = 0;
+                    nearestPossibleVector[(d-1)-j] = 0;
                 K nearestPossibleDistance(nearestPossibleVector.normSquared()); // Compute minimum distance from mirrored best child
-                if(distance>=nearestPossibleDistance) // Check if mirrored best child could return a node nearer than the current one
-                  nearestCmp(wtr,distance,nearest(node->_children[mirrorIndex(bestChild,i)],key),key);
-                else avoided++;
-                total++;
-                if(total==1000000) {
-                  //std::cout << ((float)avoided/total) << std::endl;
-                  avoided = total = 0;
-                }
+                if(bestDistance>=nearestPossibleDistance) // Check if mirrored best child could return a node nearer than the current one
+                  nearest(node->_children[mirrorIndex(bestChild,i)],bestNode,bestDistance,key);
               }
-              return wtr;
-            } else return NULL;
+            }
           }
           static int height(const Node* node) {
             if(node) {
@@ -127,8 +111,11 @@ namespace L {
       inline const Node* find(const Key& key) const {
         return Node::find(_root,key);
       }
-      inline const Node* nearest(const Key& key) const {
-        return Node::nearest(_root,key);
+      inline const Node* nearest(const Key& key, const K& maxDistance = std::numeric_limits<K>::max()) const {
+        const Node* best(NULL);
+        K distance(maxDistance*maxDistance); // All distances are squared in the algorithm
+        Node::nearest(_root,best,distance,key);
+        return best;
       }
       inline int height() const {
         return Node::height(_root);
