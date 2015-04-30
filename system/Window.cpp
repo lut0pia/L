@@ -19,9 +19,9 @@ using namespace L;
 using L::Window;
 
 Vector<bool> keystate(Window::Event::LAST, false);
-List<Window::Event> events;
+List<Window::Event> _events;
 Point2i _mousePos;
-int _width, _height;
+int _width, _height, _flags;
 
 Window::Event::Event() {
   memset(this,0,sizeof(*this));
@@ -107,11 +107,14 @@ LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         strcpy(e.text,ANSItoUTF8(String(1,wParam)).c_str());
       } else return 0;
       break;
+    case WM_SETCURSOR:
+      SetCursor((_flags & Window::nocursor)?NULL:LoadCursor(NULL,IDC_ARROW));
+      break;
     default:
       return DefWindowProc(hwnd, uMsg, wParam, lParam);
       break;
   }
-  events.push_back(e);
+  _events.push_back(e);
   return 0;
 }
 #elif defined L_UNIX
@@ -148,7 +151,7 @@ void eventTranslate(const XEvent& xev) {
       return;
       break;
   }
-  events.push_back(e);
+  _events.push_back(e);
 }
 #endif
 
@@ -156,6 +159,7 @@ void Window::open(const String& title, int width, int height, int flags) {
   if(opened()) return;
   _width = width;
   _height = height;
+  _flags = flags;
 #if defined L_WINDOWS
   WNDCLASS wc;
   PIXELFORMATDESCRIPTOR pfd;
@@ -167,7 +171,7 @@ void Window::open(const String& title, int width, int height, int flags) {
   wc.cbWndExtra = 0;
   wc.hInstance = GetModuleHandle(NULL);
   wc.hIcon = LoadIcon(NULL,IDI_APPLICATION);
-  wc.hCursor = LoadCursor(NULL,IDC_ARROW);
+  wc.hCursor = (flags & nocursor)?NULL:LoadCursor(NULL,IDC_ARROW);
   wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
   wc.lpszMenuName = NULL;
   wc.lpszClassName = "LWC";
@@ -219,9 +223,9 @@ void Window::open(const String& title, int width, int height, int flags) {
   winOpened = true;
 #endif
 }
-void Window::openFullscreen(const String& title) {
+void Window::openFullscreen(const String& title, int flags) {
   Point2i screenSize(System::screenSize());
-  open(title,screenSize.x(),screenSize.y(),borderless);
+  open(title,screenSize.x(),screenSize.y(),borderless | flags);
 }
 void Window::close() {
   if(!opened()) return;
@@ -261,11 +265,11 @@ bool Window::loop() {
   return opened();
 }
 bool Window::newEvent(Event& e) {
-  if(events.empty())
+  if(_events.empty())
     return false;
   else {
-    e = events.front();
-    events.pop_front();
+    e = _events.front();
+    _events.pop_front();
     return true;
   }
 }

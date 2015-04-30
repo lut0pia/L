@@ -39,10 +39,10 @@ namespace L {
       };
       static const int resizable = 0x1;
       static const int borderless = 0x2;
-      static const int topmost = 0x4;
+      static const int nocursor = 0x4;
     public:
       static void open(const String& title, int width = 800, int height = 600, int flags = 0);
-      static void openFullscreen(const String& title);
+      static void openFullscreen(const String& title, int flags = 0);
       static void close();
       static bool opened();
       static bool loop();
