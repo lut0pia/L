@@ -13,15 +13,17 @@ namespace L {
         Matrix44f _view, _projection, _viewProjection, _ray;
 
       public:
-        Camera(const Point3f& position = Point3f(0,0,0));
+        Camera(const Point3f& position = Point3f(0,0,1), const Point3f& lookat = Point3f(0,0,0));
         void update();
 
-        void move(const Point3f& delta); // Changes position of the camera relatively to its orientation
-        void position(const Point3f& position); // Directly sets position of the camera
+        void move(const Point3f&); // Changes position of the camera relatively to its orientation
+        void position(const Point3f&); // Directly sets position of the camera
         void lookat(const Point3f&); // Directly sets the lookat point of the camera
 
-        void phi(float); // Rotate camera left/right
-        void theta(float); // Rotate camera down/up
+        void phiLook(float); // Rotate camera left/right first person
+        void phiPosition(float); // Rotate camera left/right third person
+        void thetaLook(float); // Rotate camera down/up first person
+        void thetaPosition(float); // Rotate camera down/up third person
 
         void perspective(float fovy, float aspect, float near, float far); // 3D perspective
         void ortho(float left, float right, float bottom, float top, float near = -1, float far = 1);

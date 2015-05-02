@@ -8,8 +8,8 @@
 using namespace L;
 using namespace GL;
 
-Camera::Camera(const Point3f& position)
-  : _position(position), _lookat(position+Point3f(0,0,-1)) {
+Camera::Camera(const Point3f& position,const Point3f& lookat)
+  : _position(position), _lookat(lookat) {
   update();
 }
 void Camera::update() {
@@ -42,16 +42,28 @@ void Camera::lookat(const Point3f& lookat) {
   update();
 }
 
-void Camera::phi(float angle) {
+void Camera::phiLook(float angle) {
   _lookat -= _position;
   _lookat = Point3f(Matrix44f::rotation(Point3f(0,1,0),angle) * _lookat);
   _lookat += _position;
   update();
 }
-void Camera::theta(float angle) {
+void Camera::phiPosition(float angle) {
+  _position -= _lookat;
+  _position = Point3f(Matrix44f::rotation(Point3f(0,1,0),angle) * _position);
+  _position += _lookat;
+  update();
+}
+void Camera::thetaLook(float angle) {
   _lookat -= _position;
   _lookat = Point3f(Matrix44f::rotation(_right,angle) * _lookat);
   _lookat += _position;
+  update();
+}
+void Camera::thetaPosition(float angle) {
+  _position -= _lookat;
+  _position = Point3f(Matrix44f::rotation(_right,angle) * _position);
+  _position += _lookat;
   update();
 }
 
