@@ -66,6 +66,9 @@ namespace L {
       Point<d,T> size() const {
         return _max - _min;
       }
+      Point<d,T> center() const {
+        return (_min + _max)/2;
+      }
       bool empty() const {
         for(size_t i(0); i<d; i++)
           if(_min[i]>_max[i])
