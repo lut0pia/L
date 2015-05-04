@@ -199,7 +199,7 @@ namespace L {
       static Point random() {
         Point wtr;
         for(int i(0); i<d; i++)
-          wtr[i] = Rand::next(-1,1);
+          wtr[i] = Rand::nextFloat()-.5f;
         wtr.normalize();
         return wtr;
       }
