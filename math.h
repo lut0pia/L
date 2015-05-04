@@ -1,4 +1,5 @@
 #include "math/Integer.h"
+#include "math/Interpolation.h"
 #include "math/Matrix.h"
 #include "math/Perlin.h"
 #include "math/Rational.h"
