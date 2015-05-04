@@ -12,6 +12,7 @@ PostProcess::PostProcess(int width, int height) : _frameBuffer(GL_FRAMEBUFFER) {
   _frameBuffer.unbind();
 }
 void PostProcess::resize(int width, int height) {
+  _aspect = (float)width/height;
   _color.load(width,height);
   _depth.storage(GL_DEPTH_COMPONENT32F,width,height);
 }
@@ -22,6 +23,7 @@ void PostProcess::postrender(Program& program) {
   _frameBuffer.unbind();
   glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
   program.use();
+  program.uniform("aspect",_aspect);
   program.uniform("color",_color,GL_TEXTURE0);
   //program.uniform("depth",_depth,GL_TEXTURE1);
   glBegin(GL_QUADS);

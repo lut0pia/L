@@ -13,6 +13,7 @@ namespace L {
         FrameBuffer _frameBuffer;
         Texture _color;
         RenderBuffer _depth;
+        float _aspect;
       public:
         PostProcess(int width, int height);
         L_NoCopy(PostProcess)
