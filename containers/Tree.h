@@ -106,7 +106,7 @@ namespace L {
       ~Tree() {delete _root;}
       inline void insert(const Key& key, const V& value) {
         Node::insert(_root,key,value);
-        //std::cout << ((log(n)/log(size()))/height()) << std::endl;
+        //std::cout << balance() << std::endl;
       }
       inline const Node* find(const Key& key) const {
         return Node::find(_root,key);
@@ -123,7 +123,9 @@ namespace L {
       inline int size() const {
         return Node::size(_root);
       }
-
+      float balance() const {
+        return (log(size())/log(n))/height();
+      }
   };
   // Regular trees
   template <class K,class V> class BinaryTree : public Tree<1,K,V> {};
