@@ -4,6 +4,7 @@
 #include "../geometry/Point.h"
 #include "../containers/Array.h"
 #include "../tmp.h"
+#include "Interpolation.h"
 
 namespace L {
   template <int d>
@@ -35,7 +36,7 @@ namespace L {
           i1[i] = i0[i]+1;
         }
         // Compute values for near neighbors
-        Point<d,float> s(point-Point<d,float>(i0));
+        Point<d,float> weight(point-Point<d,float>(i0));
         float values[d2];
         for(int i(0); i<d2; i++) {
           Point<d,int> ip;
@@ -44,13 +45,7 @@ namespace L {
           values[i] = _gradients(ip).dot(point-Point<d,float>(ip));
         }
         // Interpolate all dimensions
-        int wd(d-1);
-        for(int i(d2/2); i>0; i/=2) {
-          for(int j(0); j<i; j++)
-            values[j] = lerp(values[j],values[j+i],s[wd]);
-          wd--;
-        }
-        return values[0];
+        return Interpolation<d,float>::linear(values,weight);
       }
   };
 }
