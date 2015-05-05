@@ -42,9 +42,6 @@ void Program::link() {
 void Program::use() const {
   glUseProgram(_id);
 }
-void Program::unuse() const {
-  glUseProgram(0);
-}
 GLuint Program::uniformLocation(const String& name) {
   Map<String,GLuint>::iterator it(_uniformLocation.find(name));
   if(it!=_uniformLocation.end()) return it->second;
@@ -70,4 +67,8 @@ void Program::uniform(const String& name, const Texture& texture, GLenum unit) {
   glUniform1i(uniformLocation(name), unit-GL_TEXTURE0);
   glActiveTexture(unit);
   texture.bind();
+}
+
+void Program::unuse() {
+  glUseProgram(0);
 }
