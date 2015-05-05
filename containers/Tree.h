@@ -44,15 +44,12 @@ namespace L {
             return (index^components)&mask;
           }
 
-          static Node* insert(Node*& node, const Key& key, const V& value) {
+          static void insert(Node*& node, const Key& key, const V& value) {
             if(node) {
               int child(node->childIndex(key));
-              if(child>=0) {
-                Node* wtr(insert(node->_children[child],key,value));
-                // Self-balancing
-                return wtr;
-              } else node->_value = value;
-            } else return node = new Node(key,value); // It's a leaf
+              if(child>=0) insert(node->_children[child],key,value);
+              else node->_value = value;
+            } else node = new Node(key,value); // It's a leaf
           }
           static const Node* find(const Node* node, const Key& key) {
             if(node) {
@@ -60,25 +57,69 @@ namespace L {
               return (child>=0) ? find(node->_children[child],key) : node;
             } else return NULL;
           }
-          static void nearest(const Node* node, const Node*& bestNode, K& bestDistance, const Key& key) {
+          static void nearest(const Node* node, const Node*& bestNode, K& bestDistance, const Key& target) {
             if(node) {
-              K distance(node->key().distSquared(key));
+              Key keyToTarget(target-node->key());
+              K distance(keyToTarget.normSquared());
               if(distance<bestDistance) {
                 bestNode = node;
                 bestDistance = distance;
               }
-              int bestChild(node->childIndex(key));
+              int bestChild(node->childIndex(target));
               for(int i(0); i<n; i++) { // For each possible combination of component mirroring
-                Key nearestPossibleVector(key-node->key()); // Compute minimum vector coming from mirrored best child
+                K nearestPossibleDistance(0); // Compute nearest possible distance by only taking some axes into account
                 for(int j(0); j<d; j++)
-                  if(!(i&(1<<j)))
-                    nearestPossibleVector[(d-1)-j] = 0;
-                K nearestPossibleDistance(nearestPossibleVector.normSquared()); // Compute minimum distance from mirrored best child
-                if(bestDistance>=nearestPossibleDistance) // Check if mirrored best child could return a node nearer than the current one
-                  nearest(node->_children[mirrorIndex(bestChild,i)],bestNode,bestDistance,key);
+                  if((i&(n>>j)))
+                    nearestPossibleDistance += keyToTarget[j]*keyToTarget[j];
+                if(bestDistance>nearestPossibleDistance) // Check if mirrored best child could return a node nearer than the current one
+                  nearest(node->_children[mirrorIndex(bestChild,i)],bestNode,bestDistance,target);
               }
             }
           }
+          static void construct(Node*& node, const Point<d,K>& center, const List<Node*>& nodes) {
+            if(!nodes.empty()) {
+              K distance(std::numeric_limits<K>::max());
+              for(auto&& i : nodes) { // Find node closest to the center of the current interval
+                K tmp(center.distSquared(i->key()));
+                if(tmp<distance) {
+                  node = i;
+                  distance = tmp;
+                }
+              }
+              for(int i(0); i<n; i++) { // Cycle through all children
+                Point<d,K> childCenter(0);
+                List<Node*> childNodes;
+                for(auto&& j : nodes)
+                  if(node->childIndex(j->key())==i) { // Find nodes that should go to that child
+                    childNodes.push_back(j);
+                    childCenter += j->key(); // Compute the average of that child's nodes
+                  }
+                if(!childNodes.empty())
+                  childCenter /= childNodes.size();
+                construct(node->_children[i],childCenter,childNodes);
+              }
+            }
+          }
+          static void destruct(Node* node, List<Node*>& nodes) { // This method collects all nodes in a list and removes all links between them
+            if(node) {
+              nodes.push_back(node); // Collect this now
+              for(int i(0); i<n; i++) {
+                destruct(node->_children[i],nodes); // Go through children
+                node->_children[i] = NULL; // Remove all links
+              }
+            }
+          }
+          static void balance(Node*& node) {
+            List<Node*> nodes;
+            Point<d,K> center(0);
+            destruct(node,nodes); // Start by collecting all nodes
+            for(auto&& i : nodes)
+              center += i->key();
+            if(!nodes.empty())
+              center /= nodes.size();
+            construct(node,center,nodes); // Feed all nodes back inside the tree
+          }
+
           static int height(const Node* node) {
             if(node) {
               int wtr(1);
@@ -106,25 +147,30 @@ namespace L {
       ~Tree() {delete _root;}
       inline void insert(const Key& key, const V& value) {
         Node::insert(_root,key,value);
-        //std::cout << balance() << std::endl;
       }
       inline const Node* find(const Key& key) const {
         return Node::find(_root,key);
       }
-      inline const Node* nearest(const Key& key, const K& maxDistance = std::numeric_limits<K>::max()) const {
+      inline const Node* nearest(const Key& key, const K& maxDistance) const {
         const Node* best(NULL);
         K distance(maxDistance*maxDistance); // All distances are squared in the algorithm
         Node::nearest(_root,best,distance,key);
         return best;
+      }
+      inline const Node* nearest(const Key& key) const {
+        const Node* best(NULL);
+        K distance(std::numeric_limits<K>::max());
+        Node::nearest(_root,best,distance,key);
+        return best;
+      }
+      inline void balance() {
+        Node::balance(_root);
       }
       inline int height() const {
         return Node::height(_root);
       }
       inline int size() const {
         return Node::size(_root);
-      }
-      float balance() const {
-        return (log(size())/log(n))/height();
       }
   };
   // Regular trees
