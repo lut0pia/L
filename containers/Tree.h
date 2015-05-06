@@ -69,7 +69,7 @@ namespace L {
               for(int i(0); i<n; i++) { // For each possible combination of component mirroring
                 K nearestPossibleDistance(0); // Compute nearest possible distance by only taking some axes into account
                 for(int j(0); j<d; j++)
-                  if((i&(n>>j)))
+                  if(i&(n>>(j+1)))
                     nearestPossibleDistance += keyToTarget[j]*keyToTarget[j];
                 if(bestDistance>nearestPossibleDistance) // Check if mirrored best child could return a node nearer than the current one
                   nearest(node->_children[mirrorIndex(bestChild,i)],bestNode,bestDistance,target);
