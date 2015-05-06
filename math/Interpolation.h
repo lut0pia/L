@@ -11,7 +11,7 @@ namespace L {
     public:
       static T linear(T values[d2], Point<d,float> weight) {
         int wd(d-1);
-        for(int i(d2/2); i>0; i>>=2) {
+        for(int i(d2/2); i>0; i>>=1) {
           for(int j(0); j<i; j++)
             values[j] = values[j]*(1.f - weight[wd]) + values[j+i]*weight[wd];
           wd--;
