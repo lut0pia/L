@@ -11,9 +11,10 @@ namespace L{
     namespace System{
         String callGet(const String&);      // Makes a system call and returns the result
         int call(const String&);                 // Only makes a system call
-        void sleep(uint milliseconds);
-        void sleep(Time);
+        void sleep(int milliseconds);
+        void sleep(const Time&);
         void beep(uint frequency, uint milliseconds);
+        ullong ticks();
         void toClipboard(const String&);
         String fromClipboard();
         String gEnv(const String&);

@@ -3,10 +3,7 @@
 using namespace L;
 using namespace System;
 
-#if defined L_WINDOWS
-#include <windows.h>
-#include <winsock2.h>
-#elif defined L_UNIX
+#if defined L_UNIX
 #include <unistd.h>
 #include <curses.h>
 #endif
@@ -32,21 +29,37 @@ String System::callGet(const String& cmd) {
 int System::call(const String& cmd) {
   return system(cmd.c_str());
 }
-void System::sleep(uint milliseconds) {
-#if defined L_WINDOWS
-  ::Sleep(milliseconds);
-#elif defined L_UNIX
-  usleep(milliseconds*1000);
-#endif
+void System::sleep(int milliseconds) {
+  sleep(Time(0,milliseconds));
 }
-void System::sleep(Time t) {
-  sleep((uint)t.milliseconds());
+void System::sleep(const Time& t) {
+#if defined L_WINDOWS
+  Sleep(t.milliseconds());
+#elif defined L_UNIX
+  usleep(t.microseconds());
+#endif
 }
 void System::beep(uint frequency, uint milliseconds) {
 #if defined L_WINDOWS
   ::Beep(frequency,milliseconds);
 #elif defined L_UNIX
   throw Exception("Cannot beep under UNIX.");
+#endif
+}
+ullong System::ticks() {
+#if defined _MSC_VER // MSVC
+  return __rdtsc();
+#else // GCC
+  ullong wtr;
+  __asm__ __volatile__
+  (
+    "cpuid \n"
+    "rdtsc \n"
+    "leal %0, %%ecx \n"
+    "movl %%eax, (%%ecx) \n"
+    "movl %%edx, 4(%%ecx)" :: "m"(wtr) : "eax", "ebx", "ecx", "edx"
+  );
+  return wtr;
 #endif
 }
 void System::toClipboard(const String& data) {
