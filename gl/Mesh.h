@@ -21,6 +21,7 @@ namespace L {
         GLenum _primitive;
       public:
         Mesh();
+        Mesh(const String&);
         Mesh(const MeshBuilder&, GLenum primitive = GL_TRIANGLES);
         //Mesh(byte vertexDesc, float* vertices, GLsizei count, GLenum primitive = GL_TRIANGLES);
         L_NoCopy(Mesh)

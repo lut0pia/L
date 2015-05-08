@@ -14,6 +14,16 @@ Mesh::Mesh()
     _indexCount(0),
     _primitive(0) {
 }
+Mesh::Mesh(const String& path)
+  : _vertexDesc(0),
+    _vertexBuffer(GL_ARRAY_BUFFER),
+    _indexBuffer(GL_ELEMENT_ARRAY_BUFFER),
+    _vertexCount(0),
+    _vertexSize(0),
+    _indexCount(0),
+    _primitive(0) {
+  Interface<Mesh>::fromFile(*this,path);
+}
 Mesh::Mesh(const MeshBuilder& builder, GLenum primitive)
   : _vertexDesc(builder.vertexDesc()),
     _vertexBuffer(GL_ARRAY_BUFFER),
