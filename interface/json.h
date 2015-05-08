@@ -93,9 +93,9 @@ namespace L {
           default: // Probably a number
             v.get<float>();
             if(1) {
-              bool negative(c=='-'), afterpoint(false);
+              bool negative(c=='-'), afterpoint(c=='.');
               int point(0);
-              if(!negative) v.get<float>() = c - '0';
+              if(!negative && !afterpoint) v.as<float>() = c - '0';
               while(c = stream.peek()) {
                 if(c>='0'&&c<='9') {
                   if(afterpoint)point++;
