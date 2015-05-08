@@ -10,6 +10,7 @@ namespace L {
 
       bool from(GL::Mesh& mesh, const File& f) {
         GL::MeshBuilder mb;
+        mb.reset(GL::Mesh::VERTEX|GL::Mesh::NORMAL,1048576,1048576);
         std::ifstream file(f.path().c_str(), std::ios::in);
         if(file) {
           String line;
@@ -36,17 +37,17 @@ namespace L {
             }*/ else if(linePart[0]=="f") { // Face abc:vertex; def:tex; g:normal;
               if(1) {
                 List<String> linePartPart(linePart[1].explode('/'));
-                mb.addIndex(FromString<size_t>(linePartPart[0])-1);
+                mb.addIndex(FromString<int>(linePartPart[0])-1);
                 //tmp.t1 = FromString<size_t>(linePartPart[1])-1;
               }
               if(1) {
                 List<String> linePartPart(linePart[2].explode('/'));
-                mb.addIndex(FromString<size_t>(linePartPart[0])-1);
+                mb.addIndex(FromString<int>(linePartPart[0])-1);
                 //tmp.t2 = FromString<size_t>(linePartPart[1])-1;
               }
               if(1) {
                 List<String> linePartPart(linePart[3].explode('/'));
-                mb.addIndex(FromString<size_t>(linePartPart[0])-1);
+                mb.addIndex(FromString<int>(linePartPart[0])-1);
                 //tmp.t3 = FromString<size_t>(linePartPart[1])-1;
                 //tmp.n = FromString<size_t>(linePartPart[2])-1;
               }
