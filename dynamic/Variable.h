@@ -24,7 +24,11 @@ namespace L {
             new(&_data) T(v);
           else _p = new T(v);
         }
-        Variable(const char* s) : _p(new String(s)), _td(Type<String>::description()) {}
+        Variable(const char* s) : _td(Type<String>::description()) {
+          if(local())
+            new(&_data) String(s);
+          else _p = new String(s);
+        }
         Variable(const Variable& other);
         Variable& operator=(const Variable&);
         ~Variable();
