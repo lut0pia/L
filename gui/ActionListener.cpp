@@ -3,32 +3,30 @@
 using namespace L;
 using namespace GUI;
 
-Event::Event(Type type, int x, int y) : type(type), x(x), y(y){}
-ActionListener::ActionListener(const Ref<Base>& inner, Function f, Dynamic::Var param)
-: Layer(inner), f(f), param(param), mouseIsOver(false){}
+Event::Event(Type type, int x, int y) : type(type), x(x), y(y) {}
+ActionListener::ActionListener(const Ref<Base>& inner, const Function& f, const Dynamic::Var& param)
+  : Layer(inner), _f(f), _param(param), _mouseIsOver(false) {}
 
-bool ActionListener::event(const Window::Event& e){
-    if(e.type == Window::Event::MOUSEMOVE){
-        if(gClip().contains(Point<2,int>(e.x,e.y))){
-            if(!mouseIsOver){
-                mouseIsOver = true;
-                f(this,param,Event::mouseOver);
-            }
-        }
-        else if(mouseIsOver){
-            mouseIsOver = false;
-            f(this,param,Event::mouseOut);
-        }
+bool ActionListener::event(const Window::Event& e) {
+  if(e.type == Window::Event::MOUSEMOVE) {
+    if(gClip().contains(Point<2,int>(e.x,e.y))) {
+      if(!_mouseIsOver) {
+        _mouseIsOver = true;
+        _f(this,_param,Event::mouseOver);
+      }
+    } else if(_mouseIsOver) {
+      _mouseIsOver = false;
+      _f(this,_param,Event::mouseOut);
     }
-    if(mouseIsOver && e.type == Window::Event::LBUTTONDOWN && f(this,param,Event(Event::leftClick,e.x,e.y)))
-        return true;
-    if(mouseIsOver && e.type == Window::Event::MOUSEWHEEL){
-        if(f(this,param,Event(Event::wheel,e.x,e.y)))
-            return true;
-    }
-    if(inner->event(e)){
-        f(this,param,Event::usedEvent);
-        return true;
-    }
-    else return false;
+  }
+  if(_mouseIsOver && e.type == Window::Event::LBUTTONDOWN && _f(this,_param,Event(Event::leftClick,e.x,e.y)))
+    return true;
+  if(_mouseIsOver && e.type == Window::Event::MOUSEWHEEL) {
+    if(_f(this,_param,Event(Event::wheel,e.x,e.y)))
+      return true;
+  }
+  if(inner->event(e)) {
+    _f(this,_param,Event::usedEvent);
+    return true;
+  } else return false;
 }
