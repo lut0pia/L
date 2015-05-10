@@ -28,7 +28,7 @@ namespace L {
             NONE, RESIZE, TEXT,
             KEYDOWN, KEYUP,
             MOUSEMOVE, MOUSEWHEEL,
-            LBUTTONDOWN, LBUTTONUP, RBUTTONDOWN, RBUTTONUP
+            LBUTTONDOWN, LBUTTONUP, RBUTTONDOWN, RBUTTONUP, MBUTTONDOWN, MBUTTONUP
           } type;
           union {
             struct {int x,y;};

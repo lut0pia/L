@@ -77,12 +77,16 @@ LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_MOUSEMOVE:
     case WM_LBUTTONDOWN:
     case WM_RBUTTONDOWN:
+    case WM_MBUTTONDOWN:
       switch(uMsg) {
         case WM_LBUTTONDOWN :
           e.type = Window::Event::LBUTTONDOWN;
           break;
         case WM_RBUTTONDOWN :
           e.type = Window::Event::RBUTTONDOWN;
+          break;
+        case WM_MBUTTONDOWN :
+          e.type = Window::Event::MBUTTONDOWN;
           break;
         default:
           e.type = Window::Event::MOUSEMOVE;
