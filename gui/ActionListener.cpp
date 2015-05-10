@@ -19,7 +19,7 @@ bool ActionListener::event(const Window::Event& e) {
       _f(this,_param,Event::mouseOut);
     }
   }
-  if(_mouseIsOver && e.type == Window::Event::LBUTTONDOWN && _f(this,_param,Event(Event::leftClick,e.x,e.y)))
+  if(_mouseIsOver && e.type == Window::Event::BUTTONDOWN && e.button == Window::Event::LBUTTON && _f(this,_param,Event(Event::leftClick,e.x,e.y)))
     return true;
   if(_mouseIsOver && e.type == Window::Event::MOUSEWHEEL) {
     if(_f(this,_param,Event(Event::wheel,e.x,e.y)))

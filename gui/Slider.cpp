@@ -50,12 +50,12 @@ void Slider::draw(GL::Program& program) {
 }
 bool Slider::event(const Window::Event& e) {
   bool wtr = false;
-  if(e.type == Window::Event::LBUTTONDOWN && thumb->gClip().contains(Point<2,int>(e.x,e.y))) {
+  if(e.type == Window::Event::BUTTONDOWN && e.button == Window::Event::LBUTTON && thumb->gClip().contains(Point<2,int>(e.x,e.y))) {
     inMotion = true;
     curDist = Point<2,int>(e.x,e.y) - thumb->gPos();
     wtr = true;
   }
-  if(e.type == Window::Event::LBUTTONUP)
+  if(e.type == Window::Event::BUTTONUP && e.button == Window::Event::LBUTTON)
     inMotion = false;
   if(inMotion) {
     thumbPos = (Interval<2,int>(Point<2,int>(0,0),dimensions-thumb->gDimensions()) // Interval of inside values

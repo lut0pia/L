@@ -22,17 +22,19 @@ namespace L {
             PAGEUP, PAGEDOWN, END, HOME, NUMLOCK,
             NUM0, NUM1, NUM2, NUM3, NUM4, NUM5, NUM6, NUM7, NUM8, NUM9,
             F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12,
+            LBUTTON, RBUTTON, MBUTTON,
             LAST
-          } VKey;
+          } Button;
           enum {
             NONE, RESIZE, TEXT,
-            KEYDOWN, KEYUP,
-            MOUSEMOVE, MOUSEWHEEL,
-            LBUTTONDOWN, LBUTTONUP, RBUTTONDOWN, RBUTTONUP, MBUTTONDOWN, MBUTTONUP
+            BUTTONDOWN, BUTTONUP,
+            MOUSEMOVE, MOUSEWHEEL
           } type;
           union {
-            struct {int x,y;};
-            VKey key;
+            struct {
+              int x,y;
+              Button button;
+            };
             char text[8];
           };
           Event();
@@ -47,7 +49,8 @@ namespace L {
       static bool opened();
       static bool loop();
       static bool newEvent(Event&);
-      static bool isPressed(Event::VKey);
+      static bool isPressed(Event::Button);
+
       static void swapBuffers();
 
       // Setters & getters

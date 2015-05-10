@@ -18,7 +18,7 @@
 using namespace L;
 using L::Window;
 
-Vector<bool> keystate(Window::Event::LAST, false);
+bool buttonstate[Window::Event::LAST] = {false};
 List<Window::Event> _events;
 Point2i _mousePos;
 int _width, _height, _flags;
@@ -44,9 +44,9 @@ LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
       break;
     case WM_KEYDOWN:
     case WM_KEYUP: // Key pressed
-      e.type = (uMsg==WM_KEYDOWN) ? Window::Event::KEYDOWN : Window::Event::KEYUP;
+      e.type = (uMsg==WM_KEYDOWN) ? Window::Event::BUTTONDOWN : Window::Event::BUTTONUP;
       switch(wParam) {
-#define MAP(a,b) case a: e.key = Window::Event::b; break;
+#define MAP(a,b) case a: e.button = Window::Event::b; break;
           MAP(VK_BACK,BACKSPACE)
           MAP(VK_TAB,TAB)
           MAP(VK_RETURN,ENTER)
@@ -69,28 +69,37 @@ LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 #undef MAP
         default:
           if((wParam>='0' && wParam<='9') || (wParam>='A' && wParam<='Z'))
-            e.key = (Window::Event::VKey)wParam;
+            e.button = (Window::Event::Button)wParam;
           else return 0;
       }
-      keystate[e.key] = (uMsg==WM_KEYDOWN);
       break;
     case WM_MOUSEMOVE:
     case WM_LBUTTONDOWN:
+    case WM_LBUTTONUP:
     case WM_RBUTTONDOWN:
+    case WM_RBUTTONUP:
     case WM_MBUTTONDOWN:
-      switch(uMsg) {
-        case WM_LBUTTONDOWN :
-          e.type = Window::Event::LBUTTONDOWN;
-          break;
-        case WM_RBUTTONDOWN :
-          e.type = Window::Event::RBUTTONDOWN;
-          break;
-        case WM_MBUTTONDOWN :
-          e.type = Window::Event::MBUTTONDOWN;
-          break;
-        default:
-          e.type = Window::Event::MOUSEMOVE;
-          break;
+    case WM_MBUTTONUP:
+      if(uMsg==WM_MOUSEMOVE)
+        e.type = Window::Event::MOUSEMOVE;
+      else {
+        if(uMsg==WM_LBUTTONDOWN || uMsg==WM_RBUTTONDOWN || uMsg==WM_MBUTTONDOWN)
+          e.type = Window::Event::BUTTONDOWN;
+        else e.type = Window::Event::BUTTONUP;
+        switch(uMsg) {
+          case WM_LBUTTONDOWN:
+          case WM_LBUTTONUP:
+            e.button = Window::Event::LBUTTON;
+            break;
+          case WM_RBUTTONDOWN:
+          case WM_RBUTTONUP:
+            e.button = Window::Event::RBUTTON;
+            break;
+          case WM_MBUTTONDOWN:
+          case WM_MBUTTONUP:
+            e.button = Window::Event::MBUTTON;
+            break;
+        }
       }
       e.x = GET_X_LPARAM(lParam);
       e.y = GET_Y_LPARAM(lParam);
@@ -118,6 +127,10 @@ LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
       return DefWindowProc(hwnd, uMsg, wParam, lParam);
       break;
   }
+  if(e.type==Window::Event::BUTTONDOWN)
+    buttonstate[e.button] = true;
+  else if(e.type==Window::Event::BUTTONUP)
+    buttonstate[e.button] = false;
   _events.push_back(e);
   return 0;
 }
@@ -277,8 +290,8 @@ bool Window::newEvent(Event& e) {
     return true;
   }
 }
-bool Window::isPressed(Event::VKey key) {
-  return keystate[key];
+bool Window::isPressed(Event::Button button) {
+  return buttonstate[button];
 }
 void Window::swapBuffers() {
   if(!opened()) return;

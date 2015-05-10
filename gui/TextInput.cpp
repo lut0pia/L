@@ -43,8 +43,8 @@ bool TextInput::event(const Window::Event& e) {
       cursor+=strlen(e.text);
       updateText();
       return true;
-    } else if(e.type == Window::Event::KEYDOWN) {
-      switch(e.key) {
+    } else if(e.type == Window::Event::BUTTONDOWN) {
+      switch(e.button) {
         case Window::Event::BACKSPACE:
           if(cursor) {
             while(((byte)text[cursor-1]>>6)==0x2) {
@@ -82,7 +82,7 @@ bool TextInput::event(const Window::Event& e) {
       return true;
     }
   }
-  if(e.type == Window::Event::LBUTTONDOWN) {
+  if(e.type == Window::Event::BUTTONDOWN && e.button == Window::Event::LBUTTON) {
     if(clip.contains(Point2i(e.x,e.y))) {
       if(!focus) {
         focus = true;
