@@ -9,6 +9,10 @@ namespace L {
   // Number functions :
   unsigned long factorial(unsigned long n);
   uint digit(uint d, uint b, uint n);
+  template <class T>
+  inline T log(T x, T base){
+    return std::log(x)/std::log(base);
+  }
 
   // Template functions :
   template <class T>
