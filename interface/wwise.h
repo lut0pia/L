@@ -63,7 +63,7 @@ namespace L {
         if(_lowLevelIO.Init(deviceSettings)!= AK_Success)
           L_Error("Wwise: MusicEngine init");
         _lowLevelIO.SetBasePath(basePath);
-        AK::StreamMgr::SetCurrentLanguage( AKTEXT("English(US)") );
+        AK::StreamMgr::SetCurrentLanguage(AKTEXT("English(US)"));
         // Initialize sound engine
         AkInitSettings initSettings;
         AkPlatformInitSettings platformInitSettings;
@@ -101,6 +101,7 @@ namespace L {
       }
       // Events
       static void postEvent(const String& name) {
+        L_DebugOnly(std::cout << "Wwise event: " << name << std::endl;)
         AK::SoundEngine::PostEvent(name.c_str(),100);
       }
       // Sound banks
