@@ -39,5 +39,6 @@ void GUI::Image::draw(GL::Program& program) {
                  (clip.min().y()>pos.y()) ? (float)(clip.min().y()-pos.y())/dimensions.y() : 0.f);
     glVertex2i(clip.max().x(),clip.min().y());
     glEnd();
+    tex->unbind();
   }
 }
