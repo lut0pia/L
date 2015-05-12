@@ -26,11 +26,6 @@
   class(const class&); \
   class& operator=(const class&);
 
-// Start anew with an object by constructing it again (and calling the previous object's destructor)
-#define L_Reconstruct(space,class,name,parameters) \
-  if(1){(name).~class(); \
-    new (&(name)) space class parameters;}
-
 // Allows true stringify
 #define L_Stringify(n) L_Stringify_(n)
 #define L_Stringify_(n) #n

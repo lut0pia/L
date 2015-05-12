@@ -10,8 +10,13 @@ namespace L {
   unsigned long factorial(unsigned long n);
   uint digit(uint d, uint b, uint n);
   template <class T>
-  inline T log(T x, T base){
+  inline T log(T x, T base) {
     return std::log(x)/std::log(base);
+  }
+  template <class T, typename... Args>
+  inline void reconstruct(T& v, Args&&... args) {
+    v.~T();
+    new(&v) T(args...);
   }
 
   // Template functions :

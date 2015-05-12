@@ -10,7 +10,7 @@ namespace L {
 
       bool from(GL::Mesh& mesh, const File& f) {
         GL::MeshBuilder mb;
-        mb.reset(GL::Mesh::VERTEX|GL::Mesh::NORMAL,1048576,1048576);
+        mb.reset(GL::Mesh::VERTEX|GL::Mesh::NORMAL,4194304,4194304);
         std::ifstream file(f.path().c_str(), std::ios::in);
         if(file) {
           String line;
@@ -54,7 +54,7 @@ namespace L {
             }
           }
           mb.computeNormals();
-          L_Reconstruct(GL::,Mesh,mesh,(mb));
+          reconstruct(mesh,mb);
         }
         return true;
       }
