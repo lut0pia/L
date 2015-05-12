@@ -23,7 +23,7 @@
 #ifndef AK_OPTIMIZED
 # include <AK/Comm/AkCommunication.h>
 #endif
-
+#include <AK/Plugin/AllPluginsRegistrationHelpers.h>
 
 namespace AK {
   void * AllocHook(size_t in_size) {
@@ -83,6 +83,8 @@ namespace L {
         if(AK::Comm::Init(commSettings) != AK_Success)
           L_Error("Wwise: Comm init");
 #endif
+        AK::SoundEngine::RegisterAllCodecPlugins();
+        AK::SoundEngine::RegisterAllEffectPlugins();
       }
       static void term() {
 #ifndef AK_OPTIMIZED
