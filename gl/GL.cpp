@@ -1,20 +1,24 @@
 #include "GL.h"
 
+#include "MeshBuilder.h"
+#include "../constants.h"
+
 using namespace L;
 using namespace GL;
 
 Texture* whiteTex;
+MeshBuilder meshBuilder;
 
-void GL::init(){
+void GL::init() {
   static bool done(false);
-  if(!done){
+  if(!done) {
     done = true;
     glewInit();
     whiteTex = new Texture(Image::Bitmap(1,1,Color::white));
   }
 }
 
-const Texture& GL::whiteTexture(){
+const Texture& GL::whiteTexture() {
   return *whiteTex;
 }
 const char* GL::error() {
@@ -51,6 +55,23 @@ void GL::drawAxes() {
   glVertex3f(0,0,0);
   glVertex3f(0,0,1024);
   glEnd();
+}
+void GL::makeDisc(Mesh& mesh, int slices) {
+  meshBuilder.reset(Mesh::VERTEX,128,128);
+  meshBuilder.setVertex(Point3f(0,0,0));
+  uint center(meshBuilder.addVertex());
+  meshBuilder.setVertex(Point3f(1,0,0));
+  uint first(meshBuilder.addVertex());
+  uint last(first);
+  for(int i(1); i<slices; i++) {
+    float angle(((float)i/slices)*PI<float>()*2);
+    meshBuilder.setVertex(Point3f(cos(angle),sin(angle),0));
+    uint current(meshBuilder.addVertex());
+    meshBuilder.addTriangle(center,current,last);
+    last = current;
+  }
+  meshBuilder.addTriangle(center,first,last);
+  reconstruct(mesh,meshBuilder);
 }
 
 void GL::draw2dLine(Point<2,float> a, Point<2,float> b, int size, const Color& c) {
