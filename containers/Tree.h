@@ -3,6 +3,7 @@
 
 #include "../geometry/Point.h"
 #include "../tmp.h"
+#include "Pool.h"
 
 namespace L {
   template <int d,class K,class V>
@@ -138,6 +139,13 @@ namespace L {
                 wtr += size(node->_children[i]);
               return wtr;
             } else return 0;
+          }
+
+          inline void* operator new(size_t size) {
+            return Pool<Tree::Node>::allocate();
+          }
+          inline void operator delete(void* p) {
+            Pool<Tree::Node>::deallocate(p);
           }
       };
       Node* _root;
