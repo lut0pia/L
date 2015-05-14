@@ -162,6 +162,7 @@
 		<Unit filename="containers/Array.h" />
 		<Unit filename="containers/BTree.h" />
 		<Unit filename="containers/Buffer.h" />
+		<Unit filename="containers/Pool.h" />
 		<Unit filename="containers/Ref.cpp" />
 		<Unit filename="containers/Ref.h" />
 		<Unit filename="containers/Tree.h" />
