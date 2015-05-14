@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <cstring>
+#include <cmath>
 #include "types.h"
 
 namespace L {
@@ -11,7 +12,7 @@ namespace L {
   uint digit(uint d, uint b, uint n);
   template <class T>
   inline T log(T x, T base) {
-    return std::log(x)/std::log(base);
+    return ::log(x)/::log(base);
   }
   template <class T, typename... Args>
   inline void reconstruct(T& v, Args&&... args) {
