@@ -1,5 +1,5 @@
-#ifndef DEF_L_Color
-#define DEF_L_Color
+#ifndef DEF_L_Image_Color
+#define DEF_L_Image_Color
 
 #include <cstdlib>
 #include <iostream>
