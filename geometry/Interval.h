@@ -27,6 +27,14 @@ namespace L {
       inline Interval operator*(const Interval& other) const {
         return Interval(*this,other);
       }
+      inline Interval operator+(const Interval& other) const {
+        Interval wtr;
+        for(int i(0); i<d; i++) {
+          wtr._min[i] = std::min(_min[i],other._min[i]);
+          wtr._max[i] = std::max(_max[i],other._max[i]);
+        }
+        return wtr;
+      }
       bool operator&&(const Interval& other) const {
         for(int i(0); i<d; i++) {
           if(std::max(_min[i],other._min[i]) > std::min(_max[i],other._max[i]))
