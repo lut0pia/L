@@ -13,6 +13,9 @@ namespace L {
     void makeDisc(Mesh&, int slices);
     // Color drawing
     void draw2dLine(Point<2,float>, Point<2,float>, int size, const Color& c);
+    inline void color(const Color& color) {
+      glColor4ub(color.r(),color.g(),color.b(),color.a());
+    }
   }
 }
 
