@@ -78,9 +78,11 @@ void Color::read(std::istream& is) {
 }
 
 Color Color::from(const String& str) {
-  if(str.size()==7 && str[0]=='#') { // Hexa color
+  if((str.size()==7 || str.size()==9) && str[0]=='#') { // Hexa color
     Vector<byte> tmp(htb(str.substr(1)));
-    return Color(tmp[0],tmp[1],tmp[2]);
+    if(tmp.size()<4)
+      tmp.push_back(255);
+    return Color(tmp[0],tmp[1],tmp[2],tmp[3]);
   }
 #define TMP(name) else if(str.toLower()==#name) return name;
   TMP(black)
