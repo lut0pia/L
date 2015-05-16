@@ -36,9 +36,12 @@ namespace L {
     static const uint value = static_pow<2,f>::value;
   };
 
-  template <int size, int alignment>
-  struct align {
-    static const uint value = size+(alignment-(size%alignment));
+  template <class T>
+  struct alignment {
+    static const uint size = sizeof(T);
+    static const uint align = __alignof(T);
+    static const uint pad = (align-(size%align));
+    static const uint padded = size+pad;
   };
 }
 

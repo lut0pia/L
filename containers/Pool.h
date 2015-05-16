@@ -8,8 +8,7 @@ namespace L {
   class Pool {
       static const int tableSize = 16;
       static const int intBits = sizeof(int)*8;
-      static const int typeSize = sizeof(T);
-      static const int alignedTypeSize = align<typeSize,__alignof(T)>::value;
+      static const int alignedTypeSize = alignment<T>::padded;
       static const int blockSize = tableSize*intBits*alignedTypeSize;
 
     private:
