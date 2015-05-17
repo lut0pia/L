@@ -26,10 +26,10 @@ namespace L {
           stream << '}';
         } else if(v.is<Dynamic::Array>()) {
           stream << '[';
-          L_Iter(v.as<Dynamic::Array>(),it) {
-            if(it != v.as<Dynamic::Array>().begin())
+          for(int i(0); i<v.as<Dynamic::Array>().size(); i++) {
+            if(i >0)
               stream << ',';
-            to((*it),stream);
+            to(v.as<Dynamic::Array>()[i],stream);
           }
           stream << ']';
         } else if(v.is<float>()) {

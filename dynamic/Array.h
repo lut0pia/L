@@ -1,12 +1,12 @@
 #ifndef DEF_L_Dynamic_Array
 #define DEF_L_Dynamic_Array
 
-#include <vector>
+#include "../containers/Array.h"
 #include "Variable.h"
 
 namespace L {
   namespace Dynamic {
-    class Array : public Vector<Variable> {
+    class Array : public L::Array<Variable> {
       public:
         Array& operator()(const Variable&);
         friend std::ostream& operator<<(std::ostream&, const Array&);

@@ -5,18 +5,18 @@
 using namespace L;
 using namespace Dynamic;
 
-Array& Array::operator()(const Variable& other) {
-  push_back(other);
+Dynamic::Array& Dynamic::Array::operator()(const Variable& other) {
+  push(other);
   return *this;
 }
-std::ostream& L::Dynamic::operator<<(std::ostream& s, const Array& v) {
+std::ostream& L::Dynamic::operator<<(std::ostream& s, const Dynamic::Array& v) {
   bool first = true;
   s.put('[');
-  L_Iter(v,it) {
+  v.foreach([&first,&s](const Variable& var) {
     if(first) first = false;
     else      s.put(',');
-    s << (*it);
-  }
+    s << var;
+  });
   s.put(']');
   return s;
 }

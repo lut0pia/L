@@ -71,7 +71,7 @@ const Variable& Variable::operator[](const L::String& str) const {
 }
 Variable& Variable::operator[](size_t i) {
   if(!is<Array>()) *this = Dynamic::Array();
-  if(get<Array>().size()<=i) get<Array>().resize(i+1);
+  if(get<Array>().size()<=i) get<Array>().size(i+1);
   return get<Array>()[i];
 }
 
