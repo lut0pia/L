@@ -4,8 +4,8 @@
 #include <cstdarg>
 #include <cstring>
 #include "../geometry/Point.h"
-#include "../stl/Vector.h"
 #include "../macros.h"
+#include "Array.h"
 
 #define ARGSTOPOINT Point<d,int> point;\
   if(1){\
@@ -26,12 +26,12 @@
   return (*this)[pos];
 namespace L {
   template <int d,class T>
-  class MultiArray : private Vector<T> {
+  class MultiArray : private Array<T> {
     protected:
       Point<d,int> _size;
     public:
-      MultiArray() : Vector<T>(), _size(0) {}
-      MultiArray(int arg,...) : Vector<T>() {
+      MultiArray() : Array<T>(), _size(0) {}
+      MultiArray(int arg,...) : Array<T>() {
         ARGSTOPOINT
         resizeFast(point);
       }
@@ -41,33 +41,8 @@ namespace L {
       }
       void resizeFast(const Point<d,int>& size) {
         _size = size;
-        Vector<T>::resize(size.product());
+        Array<T>::size(size.product());
       }
-      /*
-      void resize(size_t newsize,...){
-          size_t oldSizes[d];
-          memcpy(oldSizes,sizes,d*sizeof(size_t));
-
-          RESIZE
-
-          Vector<T>::reserve(newsize);
-          for(int i=d-1;i>=0;i--){ // For every dimension starting from last
-              typename Vector<T>::iterator it(Vector<T>::end());
-              size_t rowSize(1);
-              for(int j=0;j<i;j++)
-                  rowSize *= oldSizes[j];
-
-              while(it!=Vector<T>::begin()){
-                  if(sizes[i]>=oldSizes[i])
-                      Vector<T>::insert(it,(sizes[i]-oldSizes[i])*(rowSize/oldSizes[i]),T());
-                  else
-                      Vector<T>::erase(it+(sizes[i]-oldSizes[i])*(rowSize/oldSizes[i]),it);
-                  it += (sizes[i]-oldSizes[i])*(rowSize/oldSizes[i]);
-                  it -= rowSize;
-              }
-          }
-      }
-      */
 
       void resize(int arg,...) {
         ARGSTOPOINT
@@ -77,8 +52,8 @@ namespace L {
         MultiArray<d,T> old(*this);
         _size = size;
         int pos[d] = {0}, oldpos, newpos, zeroCount;
-        Vector<T>::clear();
-        Vector<T>::resize(size.product());
+        Array<T>::clear();
+        Array<T>::size(size.product());
         // Restore old elements
         for(int i(0); i<d; i++)
           if(!old.size(i))
@@ -115,10 +90,10 @@ namespace L {
       }
       T& operator()(int pos,...) {ACCESS}
       const T& operator()(int pos,...) const {ACCESS}
-      T& operator()(const Point<d,int>& point) {return Vector<T>::operator[](indexOf(point));}
-      const T& operator()(const Point<d,int>& point) const {return Vector<T>::operator[](indexOf(point));}
-      inline T& operator[](int i) {return Vector<T>::operator[](i);}
-      inline const T& operator[](int i) const {return Vector<T>::operator[](i);}
+      T& operator()(const Point<d,int>& point) {return Array<T>::operator[](indexOf(point));}
+      const T& operator()(const Point<d,int>& point) const {return Array<T>::operator[](indexOf(point));}
+      inline T& operator[](int i) {return Array<T>::operator[](i);}
+      inline const T& operator[](int i) const {return Array<T>::operator[](i);}
       inline int size(int i) const {return _size[i];}
       inline int size() const {return _size.product();}
   };
