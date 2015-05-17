@@ -1,5 +1,5 @@
-#ifndef DEF_L_Set
-#define DEF_L_Set
+#ifndef DEF_L_STL_Set
+#define DEF_L_STL_Set
 
 #include <set>
 

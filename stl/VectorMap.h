@@ -1,5 +1,5 @@
-#ifndef DEF_L_VectorMap
-#define DEF_L_VectorMap
+#ifndef DEF_L_STL_VectorMap
+#define DEF_L_STL_VectorMap
 
 #include "Set.h"
 #include "Vector.h"

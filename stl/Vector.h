@@ -1,5 +1,5 @@
-#ifndef DEF_L_Vector
-#define DEF_L_Vector
+#ifndef DEF_L_STL_Vector
+#define DEF_L_STL_Vector
 
 #include <cstdarg>
 #include <vector>

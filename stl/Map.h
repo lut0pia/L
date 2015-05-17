@@ -1,5 +1,5 @@
-#ifndef DEF_L_Map
-#define DEF_L_Map
+#ifndef DEF_L_STL_Map
+#define DEF_L_STL_Map
 
 #include <map>
 #include "../Exception.h"

@@ -1,5 +1,5 @@
-#ifndef DEF_L_Multimap
-#define DEF_L_Multimap
+#ifndef DEF_L_STL_Multimap
+#define DEF_L_STL_Multimap
 
 #include <map>
 #include "../Exception.h"

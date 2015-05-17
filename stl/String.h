@@ -1,5 +1,5 @@
-#ifndef DEF_L_String
-#define DEF_L_String
+#ifndef DEF_L_STL_String
+#define DEF_L_STL_String
 
 #include <sstream>
 #include <string>

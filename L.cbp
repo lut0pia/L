@@ -342,7 +342,6 @@
 		<Unit filename="stl/String.h" />
 		<Unit filename="stl/Vector.h" />
 		<Unit filename="stl/VectorMap.h" />
-		<Unit filename="stl/YStream.h" />
 		<Unit filename="stream.h" />
 		<Unit filename="system.h" />
 		<Unit filename="system/Directory.cpp" />
