@@ -7,55 +7,55 @@
 #include "Integer.h"
 #include "../macros.h"
 
-namespace L{
-    class Rational{
-        private:
-            Integer a, b; // a/b
+namespace L {
+  class Rational {
+    private:
+      Integer a, b; // a/b
 
-            void simplification();
+      void simplification();
 
-        public:
-            Rational(const long&);
-            Rational(const Integer& = 0, const Integer& = 1);
-            Rational(const String&, long base = 10);
+    public:
+      Rational(const long&);
+      Rational(const Integer& = 0, const Integer& = 1);
+      Rational(const String&, long base = 10);
 
-            Rational operator+(const Rational&) const;
-            Rational operator-(const Rational&) const;
-            Rational operator+() const;
-            Rational operator-() const;
-            Rational operator*(const Rational&) const;
-            Rational operator/(const Rational&) const;
-            Rational operator%(const Rational&) const;
+      Rational operator+(const Rational&) const;
+      Rational operator-(const Rational&) const;
+      Rational operator+() const;
+      Rational operator-() const;
+      Rational operator*(const Rational&) const;
+      Rational operator/(const Rational&) const;
+      Rational operator%(const Rational&) const;
 
-            Rational& operator ++();
-            Rational operator ++(int);
-            Rational& operator --();
-            Rational operator --(int);
+      Rational& operator ++();
+      Rational operator ++(int);
+      Rational& operator --();
+      Rational operator --(int);
 
-            bool operator==(const Rational&) const;
-            bool operator!=(const Rational&) const;
-            bool operator>(const Rational&) const;
-            bool operator<(const Rational&) const;
-            bool operator>=(const Rational&) const;
-            bool operator<=(const Rational&) const;
+      bool operator==(const Rational&) const;
+      bool operator!=(const Rational&) const;
+      bool operator>(const Rational&) const;
+      bool operator<(const Rational&) const;
+      bool operator>=(const Rational&) const;
+      bool operator<=(const Rational&) const;
 
-            Rational& operator +=(const Rational&);
-            Rational& operator -=(const Rational&);
-            Rational& operator *=(const Rational&);
-            Rational& operator /=(const Rational&);
-            Rational& operator %=(const Rational&);
+      Rational& operator +=(const Rational&);
+      Rational& operator -=(const Rational&);
+      Rational& operator *=(const Rational&);
+      Rational& operator /=(const Rational&);
+      Rational& operator %=(const Rational&);
 
-            const Integer& gA() const;
-            const Integer& gB() const;
-            Integer intval() const;
-            Rational abs() const;
-            bool negative() const;
+      const Integer& gA() const;
+      const Integer& gB() const;
+      Integer intval() const;
+      Rational abs() const;
+      bool negative() const;
 
-            String toShortString() const;
-            String toString(long base = 10) const;
-    };
+      String toShortString() const;
+      String toString(long base = 10) const;
+  };
 
-    std::ostream& operator<<(std::ostream &stream, const Rational&);
+  std::ostream& operator<<(std::ostream &stream, const Rational&);
 }
 
 #endif
