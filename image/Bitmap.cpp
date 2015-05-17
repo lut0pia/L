@@ -6,16 +6,16 @@
 using namespace L;
 using namespace Image;
 
-Bitmap::Bitmap(int width, int height) : Array<2,Color>(width,height) {}
-Bitmap::Bitmap(int width, int height, const Color& c) : Array<2,Color>(width,height) {
+Bitmap::Bitmap(int width, int height) : MultiArray<2,Color>(width,height) {}
+Bitmap::Bitmap(int width, int height, const Color& c) : MultiArray<2,Color>(width,height) {
   for(int x(0); x<width; x++)
     for(int y(0); y<height; y++)
       (*this)(x,y) = c;
 }
-Bitmap::Bitmap(int width, int height, const Image::Vector& v) : Array<2,Color>(width,height) {
+Bitmap::Bitmap(int width, int height, const Image::Vector& v) : MultiArray<2,Color>(width,height) {
   v.drawOn(*this);
 }
-Bitmap::Bitmap(const String& filePath) : Array<2,Color>() {
+Bitmap::Bitmap(const String& filePath) : MultiArray<2,Color>() {
   Interface<Bitmap>::fromFile(*this,filePath);
 }
 Bitmap& Bitmap::load(const String& filePath) {

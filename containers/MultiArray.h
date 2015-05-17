@@ -1,5 +1,5 @@
-#ifndef DEF_L_Array
-#define DEF_L_Array
+#ifndef DEF_L_MultiArray
+#define DEF_L_MultiArray
 
 #include <cstdarg>
 #include <cstring>
@@ -8,30 +8,30 @@
 #include "../macros.h"
 
 #define ARGSTOPOINT Point<d,int> point;\
-                    if(1){\
-                    int i(0);\
-                    point[0] = arg;\
-                    va_list vl;\
-                    va_start(vl,arg);\
-                    while(++i<d) point[i] = va_arg(vl,int);\
-                    va_end(vl);}
+  if(1){\
+    int i(0);\
+    point[0] = arg;\
+    va_list vl;\
+    va_start(vl,arg);\
+    while(++i<d) point[i] = va_arg(vl,int);\
+    va_end(vl);}
 #define ACCESS  int i(0);\
-                va_list vl;\
-                va_start(vl,pos);\
-                while(++i<d){\
-                  pos *= _size[i];\
-                  pos += va_arg(vl,int);\
-                }\
-                va_end(vl);\
-                return (*this)[pos];
+  va_list vl;\
+  va_start(vl,pos);\
+  while(++i<d){\
+    pos *= _size[i];\
+    pos += va_arg(vl,int);\
+  }\
+  va_end(vl);\
+  return (*this)[pos];
 namespace L {
   template <int d,class T>
-  class Array : private Vector<T> {
+  class MultiArray : private Vector<T> {
     protected:
       Point<d,int> _size;
     public:
-      Array() : Vector<T>(), _size(0) {}
-      Array(int arg,...) : Vector<T>() {
+      MultiArray() : Vector<T>(), _size(0) {}
+      MultiArray(int arg,...) : Vector<T>() {
         ARGSTOPOINT
         resizeFast(point);
       }
@@ -74,7 +74,7 @@ namespace L {
         resize(point);
       }
       void resize(const Point<d,int>& size) {
-        Array<d,T> old(*this);
+        MultiArray<d,T> old(*this);
         _size = size;
         int pos[d] = {0}, oldpos, newpos, zeroCount;
         Vector<T>::clear();
@@ -105,9 +105,9 @@ namespace L {
           }
         } while(zeroCount<d); // All positions have been done
       }
-      int indexOf(const Point<d,int>& point) const{
+      int indexOf(const Point<d,int>& point) const {
         int wtr(point[0]);
-        for(int i(1);i<d;i++){
+        for(int i(1); i<d; i++) {
           wtr *= _size[i];
           wtr += point[i];
         }
@@ -115,8 +115,8 @@ namespace L {
       }
       T& operator()(int pos,...) {ACCESS}
       const T& operator()(int pos,...) const {ACCESS}
-      T& operator()(const Point<d,int>& point){return Vector<T>::operator[](indexOf(point));}
-      const T& operator()(const Point<d,int>& point) const{return Vector<T>::operator[](indexOf(point));}
+      T& operator()(const Point<d,int>& point) {return Vector<T>::operator[](indexOf(point));}
+      const T& operator()(const Point<d,int>& point) const {return Vector<T>::operator[](indexOf(point));}
       inline T& operator[](int i) {return Vector<T>::operator[](i);}
       inline const T& operator[](int i) const {return Vector<T>::operator[](i);}
       inline int size(int i) const {return _size[i];}

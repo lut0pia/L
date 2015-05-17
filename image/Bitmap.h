@@ -2,7 +2,7 @@
 #define DEF_L_Image_Bitmap
 
 #include "Color.h"
-#include "../containers/Array.h"
+#include "../containers/MultiArray.h"
 #include "../geometry.h"
 
 // Don't forget it's supposed to look like this
@@ -15,9 +15,9 @@
 namespace L {
   namespace Image {
     class Vector;
-    class Bitmap : public Array<2,Color> {
+    class Bitmap : public MultiArray<2,Color> {
       public:
-        Bitmap() : Array<2,Color>() {}
+        Bitmap() : MultiArray<2,Color>() {}
         Bitmap(int width, int height);
         Bitmap(int width, int height, const Color&);
         Bitmap(int width, int height, const Image::Vector&);

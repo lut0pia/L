@@ -2,7 +2,7 @@
 #define DEF_L_Perlin
 
 #include "../geometry/Point.h"
-#include "../containers/Array.h"
+#include "../containers/MultiArray.h"
 #include "../tmp.h"
 #include "Interpolation.h"
 
@@ -11,7 +11,7 @@ namespace L {
   class Perlin {
     private:
       static const int d2 = static_pow<2,d>::value;
-      Array<d,Point<d,float> > _gradients;
+      MultiArray<d,Point<d,float> > _gradients;
       float _size;
     public:
       Perlin(int size) : _size(size) {

@@ -3,20 +3,20 @@
 
 #include <cstdlib>
 #include "Base.h"
-#include "../containers/Array.h"
+#include "../containers/MultiArray.h"
 
-namespace L{
-    namespace GUI{
-        class GridContainer : public Base{
-            protected:
-                //Array<2,Ref<Base> > elements;
-                Point2i spacing;
+namespace L {
+  namespace GUI {
+    class GridContainer : public Base {
+      protected:
+        //MultiArray<2,Ref<Base> > elements;
+        Point2i spacing;
 
-            public:
-                GridContainer();
-                virtual ~GridContainer(){}
-        };
-    }
+      public:
+        GridContainer();
+        virtual ~GridContainer() {}
+    };
+  }
 }
 
 #endif

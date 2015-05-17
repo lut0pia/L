@@ -1,4 +1,4 @@
-#include "containers/Array.h"
+#include "containers/MultiArray.h"
 #include "containers/BTree.h"
 #include "containers/Buffer.h"
 #include "containers/Pool.h"
