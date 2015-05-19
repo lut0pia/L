@@ -6,13 +6,12 @@
 #include "../Exception.h"
 #include "../macros.h"
 #include "../Rand.h"
-#include "../Serializable.h"
-#include "../stream.h"
+#include "../general.h"
 #include "../tmp.h"
 
 namespace L {
   template <class T>
-  class Set : public std::set<T>, public Serializable {
+  class Set : public std::set<T> {
     public:
       Set() : std::set<T>() {}
       Set(const std::set<T>& other) : std::set<T>(other) {}
@@ -78,88 +77,7 @@ namespace L {
         }
         return wtr;
       }
-
-      void write(std::ostream& s) const {writeT<T>(s);}
-      void read(std::istream& s) {readT<T>(s);}
-
-      template <typename R>
-      typename enable_if<is_serializable<R> >::type writeT(std::ostream& s) const {
-        s << "{ ";
-        L_Iter(*((std::set<T>*)this),it) {
-          Serializable::write(s,(*it));
-          s << " ";
-        }
-        s << "}";
-      }
-      template <typename R>
-      typename disable_if<is_serializable<R> >::type writeT(std::ostream& s) const {}
-
-      template <typename R>
-      typename enable_if<is_serializable<R> >::type readT(std::istream& s) {
-        nospace(s);
-        if(s.peek()=='{') {
-          std::set<T>::clear();
-          s.ignore();
-          nospace(s);
-          while(s.peek()!='}') {
-            T tmp;
-            Serializable::read(s,tmp);
-            insert(tmp);
-            nospace(s);
-          }
-          s.ignore();
-        }
-      }
-      template <typename R>
-      typename disable_if<is_serializable<R> >::type readT(std::istream& s) const {}
   };
-  /*
-  template <class T>
-  std::set<T>& operator +=(std::set<T>& a, const std::set<T>& b){
-      a.insert(b.begin(),b.end());
-      return a;
-  }
-  template <class T>
-  std::set<T> operator +(const std::set<T>& a, const std::set<T>& b){
-      std::set<T> wtr(a);
-      wtr += b;
-      return wtr;
-  }
-  template <class T>
-  std::set<T> operator +(const std::set<T>& a, const T& b){
-      std::set<T> wtr(a);
-      wtr.insert(b);
-      return wtr;
-  }
-
-  template <class T>
-  std::set<T>& operator *=(std::set<T>& a, const std::set<T>& b){
-      typename std::set<T>::iterator it;
-      it = a.begin();
-      while(it!=a.end()){
-          if(b.find(*it)==b.end()){
-              a.erase(it);
-              it = a.begin();
-          }
-          else it++;
-      }
-      return a;
-  }
-  template <class T>
-  std::set<T> operator *(const std::set<T>& a, const std::set<T>& b){
-      std::set<T> wtr(a);
-      return wtr *= b;
-  }
-
-  template <class T>
-  std::set<T> Map(T (*f)(T), const std::set<T>& s){
-      std::set<T> wtr;
-      typename std::set<T>::iterator it;
-      for(it=s.begin();it!=s.end();it++)
-          wtr.insert(f(*it));
-      return wtr;
-  }
-  */
 }
 
 #endif

@@ -6,7 +6,7 @@ using namespace Burp;
 Code_VarRef::Code_VarRef(String code, Map<String,size_t>& vi, size_t& ni){
     id = gIndex(code.substr(1),vi,ni);
 }
-Variable Code_VarRef::execute(Vector<Variable>& locals){
+Variable Code_VarRef::execute(Array<Variable>& locals){
     return &locals[id];
 }
 

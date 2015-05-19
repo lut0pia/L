@@ -9,11 +9,11 @@ namespace L{
         class Code_FunctionCall : public Code{
             private:
                 Ref<Function>* function;
-                Vector<Ref<Code> > parameters;
+                Array<Ref<Code> > parameters;
 
             public:
                 Code_FunctionCall(String code, Map<String,size_t>&, size_t&);
-                Variable execute(Vector<Variable>&);
+                Variable execute(Array<Variable>&);
         };
     }
 }

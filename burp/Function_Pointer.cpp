@@ -3,9 +3,9 @@
 using namespace L;
 using namespace Burp;
 
-Function_Pointer::Function_Pointer(Variable (*f)(Vector<Variable>&)){
+Function_Pointer::Function_Pointer(Variable (*f)(Array<Variable>&)){
     this->f = f;
 }
-Variable Function_Pointer::call(Vector<Variable>& parameters){
+Variable Function_Pointer::call(Array<Variable>& parameters){
     return f(parameters);
 }

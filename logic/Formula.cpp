@@ -39,7 +39,7 @@ bool Formula::operator==(const Formula& other){
         }
     return false;
 }
-bool Formula::interpret(const Vector<bool>& variables){
+bool Formula::interpret(const Array<bool>& variables){
     switch(type){
         case CONSTANT:  return b;
         case VARIABLE:  return variables[var];

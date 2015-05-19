@@ -14,13 +14,11 @@
 
 namespace L {
   namespace Image {
-    class Vector;
     class Bitmap : public MultiArray<2,Color> {
       public:
         Bitmap() : MultiArray<2,Color>() {}
         Bitmap(int width, int height);
         Bitmap(int width, int height, const Color&);
-        Bitmap(int width, int height, const Image::Vector&);
         Bitmap(const String& filePath);
         Bitmap& load(const String& filePath);
         Bitmap& save(const String& filePath);

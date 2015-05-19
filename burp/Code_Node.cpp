@@ -10,9 +10,9 @@ Code_Node::Code_Node(String code, Map<String,size_t>& vi, size_t& ni) {
   if(code[code.size()-1]==';')code.trimRight();
   List<String> part(code.escapedExplode(';',String::allbrackets));
   L_Iter(part,it)
-  codes.push_back(from(*it,vi,ni));
+  codes.push(from(*it,vi,ni));
 }
-Variable Code_Node::execute(Vector<Variable>& locals) {
+Variable Code_Node::execute(Array<Variable>& locals) {
   Variable wtr;
   for(size_t i=0; i<codes.size(); i++)
     wtr = codes[i]->execute(locals);

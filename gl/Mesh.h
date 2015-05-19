@@ -4,7 +4,6 @@
 #include "Buffer.h"
 #include "MeshBuilder.h"
 #include "../macros.h"
-#include "../stl/Vector.h"
 
 namespace L {
   namespace GL {

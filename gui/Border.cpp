@@ -27,7 +27,7 @@ void Border::draw(GL::Program& program) {
   Interval2i clip(gClip());
   if(!clip.empty()) {
     /*
-    Vector<float> vertex(8);
+    Array<float> vertex(8);
     vertex[0] = clip.gA().x();
     vertex[1] = clip.gA().y();
     vertex[2] = clip.gB().x();

@@ -11,7 +11,7 @@ namespace L{
 
             public:
                 Code_ConstValue(String code, Map<String,size_t>&, size_t&);
-                virtual Variable execute(Vector<Variable>&);
+                virtual Variable execute(Array<Variable>&);
         };
     }
 }

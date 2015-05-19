@@ -3,7 +3,8 @@
 
 #include "../containers/Ref.h"
 #include "../macros.h"
-#include "../stl.h"
+#include "../containers/Array.h"
+#include "../containers/Set.h"
 
 namespace L{
     class Huffman{
@@ -11,19 +12,19 @@ namespace L{
             class Tree{
                 private:
                     size_t weight;
-                    Set<byte> bytes;
+                    Pending::Set<byte> bytes;
                     Ref<Tree> zero, one;
                 public:
                     bool operator<(const Tree&) const;
 
-                    void write(byte, Vector<byte>&, size_t& bit) const;
-                    byte read(const Vector<byte>&, size_t& bit) const;
+                    void write(byte, Array<byte>&, size_t& bit) const;
+                    byte read(const Array<byte>&, size_t& bit) const;
                 friend class Huffman;
             };
             static Tree makeTree(size_t weight[256]);
-            static Tree makeTree(const Vector<byte>&);
-            static Vector<byte> encode(const Vector<byte>&, const Tree&);
-            static Vector<byte> decode(const Vector<byte>&, const Tree&, size_t max = -1);
+            static Tree makeTree(const Array<byte>&);
+            static Array<byte> encode(const Array<byte>&, const Tree&);
+            static Array<byte> decode(const Array<byte>&, const Tree&, size_t max = -1);
     };
 }
 

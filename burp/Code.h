@@ -11,7 +11,7 @@ namespace L{
         using Dynamic::Variable;
         class Code{
             public:
-                virtual Variable execute(Vector<Variable>&) = 0;
+                virtual Variable execute(Array<Variable>&) = 0;
 
                 static bool isConstExp(const String&);
                 static Variable fromConstExp(const String&);
@@ -20,7 +20,7 @@ namespace L{
             protected:
                 static size_t gIndex(const String& name, Map<String,size_t>&, size_t&);
                 static Ref<Code> from(String code, Map<String,size_t>&, size_t&); // Returns code by reading a String
-                static Vector<Variable> multiExecute(Vector<Ref<Code> >&,Vector<Variable>& locals);
+                static Array<Variable> multiExecute(Array<Ref<Code> >&,Array<Variable>& locals);
 
             friend class VirtualMachine;
         };

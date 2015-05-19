@@ -2,9 +2,9 @@
 
 using namespace L;
 
-Vector<byte> MTF::encode(const Vector<byte>& bytes){
+Array<byte> MTF::encode(const Array<byte>& bytes){
     size_t size = bytes.size();
-    Vector<byte> wtr(size);
+    Array<byte> wtr(size);
     byte t[256];
     for(size_t i=0;i<256;i++) t[i] = i;
     for(size_t i=0;i<size;i++){
@@ -18,9 +18,9 @@ Vector<byte> MTF::encode(const Vector<byte>& bytes){
     }
     return wtr;
 }
-Vector<byte> MTF::decode(const Vector<byte>& bytes){
+Array<byte> MTF::decode(const Array<byte>& bytes){
     size_t size = bytes.size();
-    Vector<byte> wtr(size);
+    Array<byte> wtr(size);
     byte t[256];
     for(size_t i=0;i<256;i++) t[i] = i;
     for(size_t i=0;i<size;i++){

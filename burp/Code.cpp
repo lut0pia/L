@@ -101,8 +101,8 @@ Ref<Code> Code::from(String code, Map<String,size_t>& vi, size_t& ni){
     }
 
 }
-Vector<Variable> Code::multiExecute(Vector<Ref<Code> >& codes,Vector<Variable>& locals){
-    Vector<Variable> wtr(codes.size());
+Array<Variable> Code::multiExecute(Array<Ref<Code> >& codes,Array<Variable>& locals){
+    Array<Variable> wtr(codes.size());
     for(uint i(0);i<codes.size();i++)
         wtr[i] = codes[i]->execute(locals);
     return wtr;

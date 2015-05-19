@@ -4,7 +4,6 @@
 #include "../containers/Ref.h"
 #include "../stl/String.h"
 #include "../stl/Set.h"
-#include "../stl/Vector.h"
 
 namespace L{
     namespace Regex{

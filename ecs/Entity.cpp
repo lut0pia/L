@@ -1,5 +1,6 @@
 #include "Entity.h"
 
+/*
 using namespace L;
 using namespace ECS;
 
@@ -11,3 +12,4 @@ uint Entity::add(const Entity& e){
 Entity& Entity::get(uint ei){
     return entities[ei];
 }
+*/

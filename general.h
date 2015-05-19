@@ -52,6 +52,11 @@ namespace L {
     memcpy(&a,&b,sizeof(T));
     memcpy(&b,tmp,sizeof(T));
   }
+
+  inline void nospace(std::istream& is) {
+    while(isspace(is.peek()))
+      is.ignore();
+  }
 }
 
 #endif

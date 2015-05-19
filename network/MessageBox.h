@@ -10,7 +10,7 @@ namespace L{
             protected:
                 SOCKET sd;
                 bool connected;
-                List<Vector<byte> > recvQueue;
+                List<Array<byte> > recvQueue;
                 List<Message> sendQueue;
 
                 Thread recvMessagesThread,
@@ -29,7 +29,7 @@ namespace L{
                 void clearSending(); // Clears the sending queue
 
                 bool newMessage(); // Returns true if there are messages in the receiving queue
-                const Vector<byte>& gMessage(); // Returns the content of the message
+                const Array<byte>& gMessage(); // Returns the content of the message
                 void popMessage(); // Deletes the message
 
                 inline SOCKET gSD(){return sd;}

@@ -21,11 +21,11 @@ size_t L::UTF8toUTF32(const char* s, size_t* n){
     else if(n)*n = 1;
     return wtr;
 }
-Vector<size_t> L::UTF8toUTF32(const String& str){
-    Vector<size_t> wtr;
+Array<size_t> L::UTF8toUTF32(const String& str){
+    Array<size_t> wtr;
     size_t utfsize;
     for(size_t i=0;i<str.size();i+=utfsize)
-        wtr.push_back(UTF8toUTF32(&str[i],&utfsize));
+        wtr.push(UTF8toUTF32(&str[i],&utfsize));
     return wtr;
 }
 String L::ANSItoUTF8(String str){

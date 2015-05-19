@@ -12,7 +12,6 @@
 #include "Exception.h"      // Exception layer with dynamic what
 #include "Interface.h"      // Helping to go from a format to another
 #include "Rand.h"           // Random number generation
-#include "Serializable.h"   // Indicates possibility of byte storing/sharing
 
 // Sublibraries
 #include "ai.h"             // Artifical Intelligence
@@ -36,7 +35,9 @@
 #include "patterns.h"       // Design patterns
 #include "regex.h"          // Regular expressions
 #include "stl.h"            // Additions to the STL (such as operators, streams and layers)
+#include "streams.h"        // C-Stream wrapper and friends
 #include "system.h"         // Filesystem, Window
+#include "text.h"           // String class and things that have to do with text
 #include "time.h"           // Timey-wimey wibbly-wobbly stuff
 
 #endif

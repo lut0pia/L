@@ -11,7 +11,7 @@ namespace L{
         typedef Dynamic::Var (*Task)(const Dynamic::Var&);
         typedef struct{Task task; Dynamic::Var arg;} TaskArg;
         private:
-            Vector<Ref<Thread> > threads;
+            Array<Ref<Thread> > threads;
             List<TaskArg> tasks;
             List<Dynamic::Var> results;
             Mutex tasksMutex, resultsMutex;

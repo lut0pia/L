@@ -10,9 +10,9 @@ Code_FunctionCall::Code_FunctionCall(String code, Map<String,size_t>& vi, size_t
   function = &VirtualMachine::functions[code.substr(0,tmp)];
   List<String> part = code.substr(tmp+1,code.size()-tmp-2).escapedExplode(',',String::allbrackets);
   L_Iter(part,it)
-  parameters.push_back(from(*it,vi,ni));
+  parameters.push(from(*it,vi,ni));
 }
-Variable Code_FunctionCall::execute(Vector<Variable>& locals) {
-  Vector<Variable> paramVars(Code::multiExecute(parameters,locals));
+Variable Code_FunctionCall::execute(Array<Variable>& locals) {
+  Array<Variable> paramVars(Code::multiExecute(parameters,locals));
   return (*function)->call(paramVars);
 }

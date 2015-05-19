@@ -11,7 +11,7 @@ namespace L{
                 bool hasElse;
             public:
                 Code_If(String code, Map<String,size_t>& vi, size_t& ni);
-                Variable execute(Vector<Variable>&);
+                Variable execute(Array<Variable>&);
         };
     }
 }

@@ -1,13 +1,15 @@
 #include "Huffman.h"
 
+#include <set>
+
 using namespace L;
 
 bool Huffman::Tree::operator<(const Tree& other) const {
   return weight < other.weight;
 }
-void Huffman::Tree::write(byte b, Vector<byte>& v, size_t& bit) const {
+void Huffman::Tree::write(byte b, Array<byte>& v, size_t& bit) const {
   if(v.size()<=bit/8)
-    v.resize((bit/8)+1);
+    v.size((bit/8)+1);
   if(bytes.size()>1) {
     if(zero != NULL && zero->bytes.has(b))
       zero->write(b,v,++bit);
@@ -17,9 +19,9 @@ void Huffman::Tree::write(byte b, Vector<byte>& v, size_t& bit) const {
     }
   }
 }
-byte Huffman::Tree::read(const Vector<byte>& v, size_t& bit) const {
+byte Huffman::Tree::read(const Array<byte>& v, size_t& bit) const {
   if(bytes.size()==1)
-    return *bytes.begin();
+    return bytes[0];
   else {
     if((v[bit/8]>>(7-bit%8))&1)
       return one->read(v,++bit);
@@ -48,22 +50,23 @@ Huffman::Tree Huffman::makeTree(size_t weight[256]) {
   }
   return *trees.begin();
 }
-Huffman::Tree Huffman::makeTree(const Vector<byte>& v) {
+Huffman::Tree Huffman::makeTree(const Array<byte>& v) {
   size_t weight[256] = {0};
-  L_Iter(v,it) weight[*it]++;
+  for(int i(0); i<v.size(); i++)
+    weight[v[i]]++;
   return makeTree(weight);
 }
-Vector<byte> Huffman::encode(const Vector<byte>& v, const Tree& t) {
-  Vector<byte> wtr(1,0);
+Array<byte> Huffman::encode(const Array<byte>& v, const Tree& t) {
+  Array<byte> wtr(1,0);
   size_t bit(0);
-  L_Iter(v,it)
-  t.write(*it,wtr,bit);
+  for(int i(0); i<v.size(); i++)
+    t.write(v[i],wtr,bit);
   return wtr;
 }
-Vector<byte> Huffman::decode(const Vector<byte>& v, const Tree& t, size_t max) {
-  Vector<byte> wtr;
+Array<byte> Huffman::decode(const Array<byte>& v, const Tree& t, size_t max) {
+  Array<byte> wtr;
   size_t bit(0);
   while(max-- && bit<v.size()*8)
-    wtr.push_back(t.read(v,bit));
+    wtr.push(t.read(v,bit));
   return wtr;
 }

@@ -3,7 +3,7 @@
 
 #include "Format.h"
 #include "../macros.h"
-#include "../stl/Vector.h"
+#include "../containers/Array.h"
 #include "../time.h"
 
 namespace L {
@@ -11,7 +11,7 @@ namespace L {
     class Buffer {
       private:
         Format format;
-        Vector<byte> bytes;
+        Array<byte> bytes;
       public:
         Buffer(const Format&, size_t);
         Buffer(const Format&, const Time&);

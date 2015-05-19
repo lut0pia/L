@@ -11,7 +11,7 @@ namespace L{
 
             public:
                 Code_VarRef(String code, Map<String,size_t>&, size_t&);
-                Variable execute(Vector<Variable>&);
+                Variable execute(Array<Variable>&);
         };
     }
 }

@@ -7,11 +7,11 @@ namespace L{
     namespace Burp{
         class Function_Pointer : public Function{
             private:
-                Variable (*f)(Vector<Variable>&);
+                Variable (*f)(Array<Variable>&);
 
             public:
-                Function_Pointer(Variable (*)(Vector<Variable>&));
-                Variable call(Vector<Variable>&);
+                Function_Pointer(Variable (*)(Array<Variable>&));
+                Variable call(Array<Variable>&);
         };
     }
 }

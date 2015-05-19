@@ -3,5 +3,4 @@
 #include "stl/Multimap.h"
 #include "stl/Set.h"
 #include "stl/String.h"
-#include "stl/Vector.h"
 #include "stl/VectorMap.h"

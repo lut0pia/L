@@ -11,7 +11,7 @@ namespace L{
 
             public:
                 Code_Variable(String code, Map<String,size_t>& BurpVariableIndex, size_t& nextIndex);
-                Variable execute(Vector<Variable>&);
+                Variable execute(Array<Variable>&);
         };
     }
 }

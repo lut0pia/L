@@ -1,7 +1,6 @@
 #include "Bitmap.h"
 
 #include "../Interface.h"
-#include "Vector.h"
 
 using namespace L;
 using namespace Image;
@@ -11,9 +10,6 @@ Bitmap::Bitmap(int width, int height, const Color& c) : MultiArray<2,Color>(widt
   for(int x(0); x<width; x++)
     for(int y(0); y<height; y++)
       (*this)(x,y) = c;
-}
-Bitmap::Bitmap(int width, int height, const Image::Vector& v) : MultiArray<2,Color>(width,height) {
-  v.drawOn(*this);
 }
 Bitmap::Bitmap(const String& filePath) : MultiArray<2,Color>() {
   Interface<Bitmap>::fromFile(*this,filePath);

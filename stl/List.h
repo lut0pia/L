@@ -3,7 +3,6 @@
 
 #include <cstdlib>
 #include <list>
-#include "../Serializable.h"
 
 namespace L {
   template <class T>

@@ -70,18 +70,11 @@ byte& Color::g() {return _data[1];}
 byte& Color::b() {return _data[2];}
 byte& Color::a() {return _data[3];}
 
-void Color::write(std::ostream& os) const {
-  os.write((char*)_data,4);
-}
-void Color::read(std::istream& is) {
-  is.read((char*)_data,4);
-}
-
 Color Color::from(const String& str) {
   if((str.size()==7 || str.size()==9) && str[0]=='#') { // Hexa color
-    Vector<byte> tmp(htb(str.substr(1)));
+    Array<byte> tmp(htb(str.substr(1)));
     if(tmp.size()<4)
-      tmp.push_back(255);
+      tmp.push(255);
     return Color(tmp[0],tmp[1],tmp[2],tmp[3]);
   }
 #define TMP(name) else if(str.toLower()==#name) return name;

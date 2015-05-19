@@ -56,7 +56,7 @@ quant_t quant(const L::String& str, size_t& i) {
   return wtr;
 }
 Ref<Base> Regex::from(const L::String& str, size_t qMin, size_t qMax) {
-  Vector<Ref<Base> > exps;
+  Array<Ref<Base> > exps;
   //std::cout << str << " " << qMin << " " << qMax << std::endl;
   if(!str.size()) throw Exception("Regex for empty string");  // Empty
   if(str==".") return new Char(qMin,qMax);                    // Any character
@@ -78,7 +78,7 @@ Ref<Base> Regex::from(const L::String& str, size_t qMin, size_t qMax) {
     return from(str.substr(1,str.size()-2),qMin,qMax);
   List<L::String> strs(str.escapedExplode('|',L::String::allbrackets));
   if(strs.size()>1) {
-    exps.resize(strs.size());
+    exps.size(strs.size());
     for(uint i(0); i<strs.size(); i++)
       exps[i] = from(strs[i]);
     return new Or(qMin,qMax,exps);
@@ -97,7 +97,7 @@ Ref<Base> Regex::from(const L::String& str, size_t qMin, size_t qMax) {
       sub = L::String(1,str[i]);
       q = quant(str,++i);
     }
-    exps.push_back(from(sub,q.min,q.max));
+    exps.push(from(sub,q.min,q.max));
   }
   return (exps.size()>1) ? new String(qMin,qMax,exps) : exps[0];
 }

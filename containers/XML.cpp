@@ -1,6 +1,7 @@
 #include "XML.h"
 
 #include "../macros.h"
+#include "../general.h"
 
 using namespace L;
 using namespace std;
@@ -25,8 +26,9 @@ void XML::write(std::ostream& s) const {
       s << "/>";
     else {
       s << '>';
-      L_Iter(children,it)
-      (*it).write(s);
+      children.foreach([&s](const XML& child) {
+        child.write(s);
+      });
       s << "</" << name << '>';
     }
   }
@@ -79,10 +81,10 @@ void XML::read(std::istream& s) {
     if(s.peek()=='>')
       s.ignore();
     while(true) { // It has children
-      children.push_back(XML());
+      children.push(XML());
       children.back().read(s);
       if(s.peek()=='/') {
-        children.pop_back();
+        children.pop();
         break;
       }
     }

@@ -2,13 +2,13 @@
 #define DEF_L_MTF
 
 #include "../macros.h"
-#include "../stl/Vector.h"
+#include "../containers/Array.h"
 
 namespace L{
     class MTF{
         public:
-            static Vector<byte> encode(const Vector<byte>&);
-            static Vector<byte> decode(const Vector<byte>&);
+            static Array<byte> encode(const Array<byte>&);
+            static Array<byte> decode(const Array<byte>&);
     };
 }
 

@@ -3,11 +3,11 @@
 
 #include "Base.h"
 
-namespace L{
-    namespace Font{
-        Base& get(const String& = "");
-        void set(Base*, const String& = "");
-    }
+namespace L {
+  namespace Font {
+    Base& get(const String& = "");
+    void set(Base*, const String& = "");
+  }
 }
 
 #endif

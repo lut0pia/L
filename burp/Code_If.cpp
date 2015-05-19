@@ -30,7 +30,7 @@ Code_If::Code_If(String code, Map<String,size_t>& vi, size_t& ni){
     }
     else throw Exception("Burp: Syntax error in if");
 }
-Variable Code_If::execute(Vector<Variable>& locals){
+Variable Code_If::execute(Array<Variable>& locals){
     if(codes[0]->execute(locals).get<bool>())
         return codes[1]->execute(locals);
     else if(hasElse)

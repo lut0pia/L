@@ -3,6 +3,7 @@
 
 #include <map>
 #include "../Exception.h"
+#include "Set.h"
 
 namespace L {
   template <class K, class V>

@@ -43,7 +43,7 @@ void MessageBox::clearSending() {
 bool MessageBox::newMessage() {
   return !recvQueue.empty();
 }
-const Vector<L::byte>& MessageBox::gMessage() {
+const Array<L::byte>& MessageBox::gMessage() {
   return recvQueue.front();
 }
 void MessageBox::popMessage() {

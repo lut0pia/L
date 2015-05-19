@@ -8,7 +8,7 @@ namespace L{
         class Code_For : public Code_Super<3,3>{
             public:
                 Code_For(String code, Map<String,size_t>& vi, size_t& ni) : Code_Super(code,vi,ni){};
-                Variable execute(Vector<Variable>&);
+                Variable execute(Array<Variable>&);
         };
     }
 }

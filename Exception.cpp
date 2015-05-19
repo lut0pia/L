@@ -1,5 +1,7 @@
 #include "Exception.h"
 
+#include <iostream>
+
 using namespace L;
 
 Exception::Exception(const String& w) : w(w) {

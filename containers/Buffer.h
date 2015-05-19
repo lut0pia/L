@@ -24,16 +24,16 @@ namespace L {
         return _w==_r;
       }
       void write(const T& e) {
-        if(full()) L_Error("Cannot write because queue is full.");
+        if(full()) throw Exception("Cannot write because queue is full.");
         _array[_w] = e;
         _w = index(_w+1);
       }
       void pop() {
-        if(empty()) L_Error("Cannot pop because queue is empty.");
+        if(empty()) throw Exception("Cannot pop because queue is empty.");
         _r = index(_r+1);
       }
       const T& read() const {
-        if(empty()) L_Error("Cannot read because queue is empty.");
+        if(empty()) throw Exception("Cannot read because queue is empty.");
         return _array[_r];
       }
   };

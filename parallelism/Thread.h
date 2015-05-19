@@ -11,7 +11,6 @@
 #include <cstdlib>
 #include "../dynamic.h"
 #include "../macros.h"
-#include "../stl/Vector.h"
 
 namespace L {
   class Thread {

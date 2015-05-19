@@ -8,7 +8,7 @@
 namespace L{
     class ThreadStore{
         private:
-            Vector<Ref<Thread> > threads;
+            Array<Ref<Thread> > threads;
             Mutex mutex;
             static Dynamic::Var garbageCollector(Thread*);
 

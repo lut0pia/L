@@ -77,23 +77,23 @@ namespace L {
               }
             }
           }
-          static void construct(Node*& node, const Point<d,K>& center, const List<Node*>& nodes) {
+          static void construct(Node*& node, const Point<d,K>& center, const Array<Node*>& nodes) {
             if(!nodes.empty()) {
               K distance(std::numeric_limits<K>::max());
-              for(auto&& i : nodes) { // Find node closest to the center of the current interval
-                K tmp(center.distSquared(i->key()));
+              for(int i(0); i<nodes.size(); i++) { // Find node closest to the center of the current interval
+                K tmp(center.distSquared(nodes[i]->key()));
                 if(tmp<distance) {
-                  node = i;
+                  node = nodes[i];
                   distance = tmp;
                 }
               }
               for(int i(0); i<n; i++) { // Cycle through all children
                 Point<d,K> childCenter(0);
-                List<Node*> childNodes;
-                for(auto&& j : nodes)
-                  if(node->childIndex(j->key())==i) { // Find nodes that should go to that child
-                    childNodes.push_back(j);
-                    childCenter += j->key(); // Compute the average of that child's nodes
+                Array<Node*> childNodes;
+                for(int j(0); j<nodes.size(); j++)
+                  if(node->childIndex(nodes[j]->key())==i) { // Find nodes that should go to that child
+                    childNodes.push(nodes[j]);
+                    childCenter += nodes[j]->key(); // Compute the average of that child's nodes
                   }
                 if(!childNodes.empty())
                   childCenter /= childNodes.size();
@@ -101,9 +101,9 @@ namespace L {
               }
             }
           }
-          static void destruct(Node* node, List<Node*>& nodes) { // This method collects all nodes in a list and removes all links between them
+          static void destruct(Node* node, Array<Node*>& nodes) { // This method collects all nodes in a list and removes all links between them
             if(node) {
-              nodes.push_back(node); // Collect this now
+              nodes.push(node); // Collect this now
               for(int i(0); i<n; i++) {
                 destruct(node->_children[i],nodes); // Go through children
                 node->_children[i] = NULL; // Remove all links
@@ -111,11 +111,11 @@ namespace L {
             }
           }
           static void balance(Node*& node) {
-            List<Node*> nodes;
+            Array<Node*> nodes;
             Point<d,K> center(0);
             destruct(node,nodes); // Start by collecting all nodes
-            for(auto&& i : nodes)
-              center += i->key();
+            for(int i(0); i<nodes.size(); i++)
+              center += nodes[i]->key();
             if(!nodes.empty())
               center /= nodes.size();
             construct(node,center,nodes); // Feed all nodes back inside the tree

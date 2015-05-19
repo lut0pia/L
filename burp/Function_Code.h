@@ -12,7 +12,7 @@ namespace L{
                 size_t scopeSize;
             public:
                 Function_Code(Ref<Code> code, size_t scopeSize);
-                virtual Dynamic::Variable call(Vector<Dynamic::Variable>& parameters);
+                virtual Dynamic::Variable call(Array<Dynamic::Variable>& parameters);
         };
     }
 }

@@ -9,7 +9,7 @@ namespace L{
         class Function{
             public:
                 virtual ~Function(){}
-                virtual Variable call(Vector<Variable>& parameters) = 0;
+                virtual Variable call(Array<Variable>& parameters) = 0;
         };
     }
 }

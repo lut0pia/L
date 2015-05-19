@@ -4,17 +4,18 @@
 #include <L/L.h>
 #include <iostream>
 
-namespace L{
-    class LBM : public Interface<Image::Bitmap>{
-        public: LBM() : Interface("lbm"){}
+namespace L {
+  class LBM : public Interface<Image::Bitmap> {
+    public:
+      LBM() : Interface("lbm") {}
 
-        void to(const Image::Bitmap& bmp, std::ostream& os){
-
-        }
-        void from(Image::Bitmap& bmp, const File& file){
-
-        }
-    };
+      bool to(const Image::Bitmap& bmp, std::ostream& os) {
+        return false;
+      }
+      bool from(Image::Bitmap& bmp, const File& file) {
+        return false;
+      }
+  };
 }
 
 #endif

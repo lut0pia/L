@@ -7,11 +7,11 @@ namespace L{
     namespace Burp{
         class Code_Node : public Code{
             private:
-                Vector<Ref<Code> > codes;
+                Array<Ref<Code> > codes;
 
             public:
                 Code_Node(String code, Map<String,size_t>&, size_t&);
-                Variable execute(Vector<Variable>&);
+                Variable execute(Array<Variable>&);
         };
     }
 }

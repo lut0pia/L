@@ -1,6 +1,7 @@
 #ifndef DEF_L_ECS_Entity
 #define DEF_L_ECS_Entity
 
+/*
 #include "../dynamic/Type.h"
 #include "../stl.h"
 #include "Engine.h"
@@ -38,6 +39,7 @@ namespace L{
         };
     }
 }
+*/
 
 #endif
 

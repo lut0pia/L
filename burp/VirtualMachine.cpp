@@ -76,7 +76,7 @@ void VirtualMachine::read(std::istream& stream) {
           functions[functionName];
           if(safe()) { // There are no undeclared functions
             List<String> paramStrings(functionParams.explode(','));
-            Vector<Variable> parameters(paramStrings.size());
+            Array<Variable> parameters(paramStrings.size());
             for(size_t i(0); i<parameters.size(); i++) // The parameters are constant expressions that need to be interpreted
               parameters[i] = Code::fromConstExp(paramStrings[i].trim());
             functions[functionName]->call(parameters);
@@ -131,7 +131,7 @@ bool VirtualMachine::safe() {
 
 // Implementations of standard dynamic functions
 
-Variable addition(Vector<Variable>& params) {
+Variable addition(Array<Variable>& params) {
   if(params[0].type() == params[1].type()) {
 #define TMP(T) if(params[0].is<T>()) return params[0].as<T>() + params[1].as<T>();
     TMP(bool) TMP(int) TMP(Rational) TMP(String)
@@ -139,7 +139,7 @@ Variable addition(Vector<Variable>& params) {
   }
   return Variable();
 }
-Variable subtraction(Vector<Variable>& params) {
+Variable subtraction(Array<Variable>& params) {
   if(params[0].type() == params[1].type()) {
 #define TMP(T) if(params[0].is<T>()) return params[0].as<T>() - params[1].as<T>();
     TMP(bool) TMP(int) TMP(Rational)
@@ -147,7 +147,7 @@ Variable subtraction(Vector<Variable>& params) {
   }
   return Variable();
 }
-Variable multiplication(Vector<Variable>& params) {
+Variable multiplication(Array<Variable>& params) {
   if(params[0].type() == params[1].type()) {
 #define TMP(T) if(params[0].is<T>()) return params[0].as<T>() * params[1].as<T>();
     TMP(bool) TMP(int) TMP(Rational)
@@ -155,7 +155,7 @@ Variable multiplication(Vector<Variable>& params) {
   }
   return Variable();
 }
-Variable division(Vector<Variable>& params) {
+Variable division(Array<Variable>& params) {
   if(params[0].type() == params[1].type()) {
 #define TMP(T) if(params[0].is<T>() && params[1].as<T>()!=0) return params[0].as<T>() / params[1].as<T>();
     TMP(bool) TMP(int) TMP(Rational)
@@ -163,7 +163,7 @@ Variable division(Vector<Variable>& params) {
   }
   return Variable();
 }
-Variable modulo(Vector<Variable>& params) {
+Variable modulo(Array<Variable>& params) {
   if(params[0].type() == params[1].type()) {
 #define TMP(T) if(params[0].is<T>()) return params[0].as<T>() % params[1].as<T>();
     TMP(bool) TMP(int) TMP(Rational)
@@ -171,13 +171,13 @@ Variable modulo(Vector<Variable>& params) {
   }
   return Variable();
 }
-Variable opposite(Vector<Variable>& params) {
+Variable opposite(Array<Variable>& params) {
 #define TMP(T) if(params[0].is<T>()) return -params[1].as<T>();
   TMP(bool) TMP(int) TMP(Rational)
 #undef TMP
   return Variable();
 }
-Variable assignment(Vector<Variable>& params) {
+Variable assignment(Array<Variable>& params) {
   if(params[0].is<Variable*>())
     return *params[0].as<Variable*>() = params[1];
   else if(params[0].is<Ref<Variable> >())
@@ -185,7 +185,7 @@ Variable assignment(Vector<Variable>& params) {
   else return Variable();
 }
 
-Variable eq(Vector<Variable>& params) {
+Variable eq(Array<Variable>& params) {
   if(params[0].type() == params[1].type()) {
 #define TMP(T) if(params[0].is<T>()) return params[0].as<T>() == params[1].as<T>();
     TMP(bool) TMP(int) TMP(Rational) TMP(String)
@@ -193,7 +193,7 @@ Variable eq(Vector<Variable>& params) {
   }
   return false;
 }
-Variable ne(Vector<Variable>& params) {
+Variable ne(Array<Variable>& params) {
   if(params[0].type() == params[1].type()) {
 #define TMP(T) if(params[0].is<T>()) return params[0].as<T>() != params[1].as<T>();
     TMP(bool) TMP(int) TMP(Rational) TMP(String)
@@ -201,7 +201,7 @@ Variable ne(Vector<Variable>& params) {
   }
   return false;
 }
-Variable gt(Vector<Variable>& params) {
+Variable gt(Array<Variable>& params) {
   if(params[0].type() == params[1].type()) {
 #define TMP(T) if(params[0].is<T>()) return params[0].as<T>() > params[1].as<T>();
     TMP(bool) TMP(int) TMP(Rational) TMP(String)
@@ -209,7 +209,7 @@ Variable gt(Vector<Variable>& params) {
   }
   return false;
 }
-Variable lt(Vector<Variable>& params) {
+Variable lt(Array<Variable>& params) {
   if(params[0].type() == params[1].type()) {
 #define TMP(T) if(params[0].is<T>()) return params[0].as<T>() < params[1].as<T>();
     TMP(bool) TMP(int) TMP(Rational) TMP(String)
@@ -217,7 +217,7 @@ Variable lt(Vector<Variable>& params) {
   }
   return false;
 }
-Variable ge(Vector<Variable>& params) {
+Variable ge(Array<Variable>& params) {
   if(params[0].type() == params[1].type()) {
 #define TMP(T) if(params[0].is<T>()) return params[0].as<T>() >= params[1].as<T>();
     TMP(bool) TMP(int) TMP(Rational) TMP(String)
@@ -225,7 +225,7 @@ Variable ge(Vector<Variable>& params) {
   }
   return false;
 }
-Variable le(Vector<Variable>& params) {
+Variable le(Array<Variable>& params) {
   if(params[0].type() == params[1].type()) {
 #define TMP(T) if(params[0].is<T>()) return params[0].as<T>() <= params[1].as<T>();
     TMP(bool) TMP(int) TMP(Rational) TMP(String)
@@ -234,7 +234,7 @@ Variable le(Vector<Variable>& params) {
   return false;
 }
 
-Variable indirection(Vector<Variable>& params) {
+Variable indirection(Array<Variable>& params) {
   if(params[0].is<Variable*>())
     return *params[0].as<Variable*>();
   else if(params[0].is<Ref<Variable> >())
@@ -242,30 +242,30 @@ Variable indirection(Vector<Variable>& params) {
   else
     return Variable();
 }
-Variable output(Vector<Variable>& params) {
-  L_Iter(params,it) {
-#define TMP(T) if(it->is<T>()){std::cout << it->as<T>();continue;}
+Variable output(Array<Variable>& params) {
+  params.foreach([](const Variable& v) {
+#define TMP(T) if(v.is<T>()){std::cout << v.as<T>();return;}
     TMP(bool) TMP(int) TMP(Rational) TMP(String)
 #undef TMP
-  }
+  });
   return Variable();
 }
-Variable input(Vector<Variable>& params) {
+Variable input(Array<Variable>& params) {
   String entry;
   std::getline(std::cin,entry);
   return Code::fromConstExp(entry);
 }
-
-Variable newAlloc(Vector<Variable>& params) {
+Variable newAlloc(Array<Variable>& params) {
   return Ref<Variable>(new Variable(params[0]));
 }
-Variable dynCall(Vector<Variable>& params) {
+Variable dynCall(Array<Variable>& params) {
   if(params.size()>0 && params[0].is<String>()) {
-    Vector<Variable> dynParams(params.begin()+1,params.end());
+    Array<Variable> dynParams(params);
+    dynParams.erase(0);
     return VirtualMachine::functions[params[0].as<String>()]->call(dynParams);
   } else return Variable();
 }
-Variable typeOf(Vector<Variable>& params) {
+Variable typeOf(Array<Variable>& params) {
 #define TMP(T,name) if(params[0].is<T>()) return name;
   TMP(bool,"bool")
   TMP(int,"integer")
@@ -273,16 +273,15 @@ Variable typeOf(Vector<Variable>& params) {
   TMP(Ref<Variable>,"reference")
   TMP(String,"String")
   TMP(Variable*,"reference")
-  TMP(Vector<Variable>,"array")
+  TMP(Array<Variable>,"array")
 #undef TMP
   return "unknown";
 }
-Variable rand(Vector<Variable>& params) {
+Variable rand(Array<Variable>& params) {
   return Rational(rand(),RAND_MAX);
 }
-
 /*
-BurpVariable at(Vector<BurpVariable> params){
+BurpVariable at(Array<BurpVariable> params){
     BurpVariable wtr;
     if(params.size()==2 && params[0].gType()==_pointer && params[0].g_pointer()->gType()==_array
        && params[1].gType()==_int && params[1].g_int()>=0
@@ -290,22 +289,21 @@ BurpVariable at(Vector<BurpVariable> params){
         wtr = params[0].g_pointer()->g_array()[params[1].g_int()].reference();
     return wtr;
 }
-BurpVariable push_back(Vector<BurpVariable> params){
+BurpVariable push_back(Array<BurpVariable> params){
     (params[0].g_pointer())->g_array().push_back(params[1]);
     return BurpVariable();
 }
-BurpVariable pop_back(Vector<BurpVariable> params){
+BurpVariable pop_back(Array<BurpVariable> params){
     (params[0].g_pointer())->g_array().pop_back();
     return BurpVariable();
 }
-BurpVariable size(Vector<BurpVariable> params){
+BurpVariable size(Array<BurpVariable> params){
     BurpVariable wtr;
     if(params.size() && params[0].gType()==_pointer && params[0].g_pointer()->gType()==_array)
         wtr = (int)params[0].g_pointer()->g_array().size();
     return wtr;
 }
 */
-
 void VirtualMachine::init() {
   Dynamic::Cast::init();
   Dynamic::Cast::declare<int,Rational>();
@@ -339,7 +337,3 @@ void VirtualMachine::init() {
   functions["size"] =              new Function_Pointer(size);
   */
 }
-
-
-
-

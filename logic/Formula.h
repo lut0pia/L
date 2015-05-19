@@ -4,11 +4,10 @@
 #include <cstdlib>
 #include <vector>
 #include "../containers.h"
-#include "../Serializable.h"
 
 namespace L{
     namespace Logic{
-        class Formula : public Serializable{
+        class Formula{
             typedef enum{
                 CONSTANT,VARIABLE,NOT,AND,OR
             } Type;
@@ -27,7 +26,7 @@ namespace L{
                 Formula operator*(const Formula&);
                 Formula operator+(const Formula&);
                 bool operator==(const Formula&);
-                bool interpret(const Vector<bool>&);
+                bool interpret(const Array<bool>&);
                 void simplify();
                 void write(std::ostream&) const;
                 void read(std::istream&);

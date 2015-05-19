@@ -3,7 +3,7 @@
 #include "../Exception.h"
 #include "../macros.h"
 #include "Set.h"
-#include "Vector.h"
+#include "../containers/Array.h"
 
 using namespace L;
 
@@ -25,7 +25,7 @@ String String::substr(size_t pos, size_t len) const {
 }
 List<String> String::escapedExplode(char c, byte escapeBrackets, uint limit) const {
   List<String> wtr; // Will contain parts
-  Vector<uint> delimiters(1,0); // Will contain delimiters for the split (already contains 0)
+  Array<uint> delimiters(1,0); // Will contain delimiters for the split (already contains 0)
   List<byte> brackets(1,0);
   size_t size(this->size());
   if(!size) return wtr;
@@ -50,23 +50,23 @@ List<String> String::escapedExplode(char c, byte escapeBrackets, uint limit) con
         brackets.pop_back();
     }
     if((*this)[i]==c && !brackets.back()) { // Add delimiter
-      delimiters.push_back(i+1);
+      delimiters.push(i+1);
     }
   }
-  delimiters.push_back(size+1);
+  delimiters.push(size+1);
   for(uint i(0); i<delimiters.size()-1; i++)
     wtr.push_back(substr(delimiters[i],delimiters[i+1]-delimiters[i]-1));
   return wtr;
 }
 List<String> String::explode(char c, size_t limit) const {
   List<String> wtr; // Will contain parts
-  Vector<uint> delimiters(1,0); // Will contain delimiters for the split (already contains 0)
+  Array<uint> delimiters(1,0); // Will contain delimiters for the split (already contains 0)
   size_t size(this->size());
   if(!size) return wtr;
   for(size_t i(0); (!limit || delimiters.size()<limit) && i<size; i++)
     if((*this)[i]==c) // Add delimiter
-      delimiters.push_back(i+1);
-  delimiters.push_back(size+1); // Add end delimiter
+      delimiters.push(i+1);
+  delimiters.push(size+1); // Add end delimiter
   for(uint i(0); i<delimiters.size()-1; i++)
     wtr.push_back(substr(delimiters[i],delimiters[i+1]-delimiters[i]-1));
   return wtr;
@@ -183,17 +183,6 @@ size_t String::endOf(size_t i, bool dquotesEscape) const {
       inQuotes = false;
   }
   return 0;
-}
-
-void String::write(std::ostream& s) const {
-  Serializable::write(s,size());
-  s.write(&operator[](0),size());
-}
-void String::read(std::istream& s) {
-  uint size;
-  Serializable::read(s,size);
-  resize(size);
-  s.read(&operator[](0),size);
 }
 
 String L::operator+(const String& lhs, const String& rhs) {

@@ -8,7 +8,7 @@
 
 namespace L {
   template <class T> class Set;
-  class String : public std::string, public Serializable {
+  class String : public std::string {
     public:
       String();
       String(const std::string& str);
@@ -39,9 +39,6 @@ namespace L {
       String toLower() const; // To lowercase
       String capitalize() const; // Capitalize first letter of all words
       size_t endOf(size_t start, bool dquotesEscape = true) const; // Returns end of bracket position
-
-      void write(std::ostream&) const;
-      void read(std::istream&);
   };
   // Override concatenate operators
   String operator+(const String& lhs, const String& rhs);

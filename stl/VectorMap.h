@@ -1,6 +1,7 @@
 #ifndef DEF_L_STL_VectorMap
 #define DEF_L_STL_VectorMap
 
+/*
 #include "Set.h"
 #include "Vector.h"
 
@@ -54,7 +55,7 @@ namespace L {
         else return Vector<T>::operator[](i);
       }
 
-      /*
+
       class iterator{
           private:
           public:
@@ -81,9 +82,10 @@ namespace L {
               T& operator*() const;
               T* operator->() const;
       };
-      */
+
   };
 }
+*/
 
 #endif
 

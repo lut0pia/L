@@ -4,11 +4,10 @@
 #include <cstdlib>
 #include <iostream>
 #include "../macros.h"
-#include "../Serializable.h"
 #include "../stl/String.h"
 
 namespace L {
-  class Color : public Serializable {
+  class Color {
     protected:
       byte _data[4];
     public:
@@ -30,9 +29,6 @@ namespace L {
       byte& b();
       byte& a();
       const byte* bytes() const {return _data;}
-
-      void write(std::ostream&) const;
-      void read(std::istream&);
 
       static Color from(const String&);
       static Color from(float r, float g, float b, float a = 1);

@@ -1,5 +1,7 @@
 #include "Format.h"
 
+#include <iostream>
+
 using namespace L;
 using namespace Audio;
 

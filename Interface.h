@@ -9,7 +9,7 @@
 #include "Exception.h"
 #include "stl/Map.h"
 #include "stl/String.h"
-#include "stl/Vector.h"
+#include "containers/Array.h"
 #include "system/File.h"
 
 namespace L {
@@ -37,7 +37,7 @@ namespace L {
       virtual bool from(T& v, std::istream& is) {
         return false;
       }
-      virtual bool from(T& v, const Vector<byte>& bytes) {
+      virtual bool from(T& v, const Array<byte>& bytes) {
         return false;
       }
 
@@ -51,21 +51,21 @@ namespace L {
       virtual bool to(const T& v, std::ostream& os) {
         return false;
       }
-      virtual bool to(const T& v, Vector<byte>& bytes) {
+      virtual bool to(const T& v, Array<byte>& bytes) {
         std::stringbuf sb;
         std::iostream stream(&sb); // Create stream
         if(!to(v,stream)) // Write in stream
           return false;
         // Copy data in vector
-        bytes.resize(1);
-        stream.read((char*)&bytes.front(),1);
+        bytes.size(1);
+        stream.read((char*)&bytes[0],1);
         if(stream.gcount()) {
           do {
-            bytes.resize(bytes.size()*2);
+            bytes.size(bytes.size()*2);
             stream.read((char*)&bytes[bytes.size()/2],bytes.size()/2);
           } while(stream.gcount()==bytes.size()/2);
           //bytes.resize(bytes.size()-((bytes.size()/2)-stream.gcount()));
-          bytes.resize((2*stream.gcount()+bytes.size())/2);
+          bytes.size((2*stream.gcount()+bytes.size())/2);
         } else bytes.clear();
         return true;
       }

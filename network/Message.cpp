@@ -9,19 +9,19 @@ using namespace Network;
 Message::Message(const Message& message) {
   v = message.v;
 }
-Message::Message(const Vector<L::byte>& message) {
-  v = new Vector<L::byte>(message);
+Message::Message(const Array<L::byte>& message) {
+  v = new Array<L::byte>(message);
 }
 Message::Message(const String& message) {
-  v = new Vector<L::byte>(message.begin(),message.end());
+  v = new Array<L::byte>((const byte*)&message[0],message.size());
 }
-Message::Message(Ref<Vector<L::byte> > message) {
+Message::Message(Ref<Array<L::byte> > message) {
   v = message;
 }
 
 void Message::send(SOCKET sock) {
   if(v!=NULL) {
-    Vector<L::byte> sizeVec(uitb(v->size(),2));
+    Array<L::byte> sizeVec(uitb(v->size(),2));
     uint i, sent;
     if(::send(sock,(char*)&sizeVec[0],2,0) == -1) {
 #if defined L_WINDOWS
@@ -42,12 +42,12 @@ void Message::send(SOCKET sock) {
 }
 void Message::recv(SOCKET sock) {
   size_t size,recvd,i;
-  Vector<L::byte> sizeVec(2);
+  Array<L::byte> sizeVec(2);
   if(::recv(sock,(char*)&sizeVec[0],2,0) != 2)
     throw Exception("Recv error 1");
   else {
     i=recvd=0;
-    v = new Vector<L::byte>(size = btui(sizeVec));
+    v = new Array<L::byte>(size = btui(sizeVec));
     while(i<size && (recvd = ::recv(sock,(char*)&(*v)[i],size-i,0)) > 0 && recvd<=size-i) // 0 means connection stopped
       i+=recvd;
     if(recvd<=0) {
