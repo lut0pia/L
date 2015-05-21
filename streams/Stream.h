@@ -15,13 +15,17 @@ namespace L {
 
       inline Stream& operator<<(char v) {fputc(v,_fd); return *this;}
       inline Stream& operator<<(const char* v) {fputs(v,_fd); return *this;}
-      inline Stream& operator<<(int v) {fprintf(_fd,"%d",v); return *this;}
+      inline Stream& operator<<(int v) {fprintf(_fd,"%i",v); return *this;}
+      inline Stream& operator<<(unsigned int v) {fprintf(_fd,"%u",v); return *this;}
       inline Stream& operator<<(float v) {fprintf(_fd,"%f",v); return *this;}
+      inline Stream& operator<<(double v) {fprintf(_fd,"%f",v); return *this;}
 
       inline Stream& operator>>(char& v) {v = fgetc(_fd); return *this;}
       inline Stream& operator>>(char* v) {fscanf(_fd,"%s",v); return *this;}
-      inline Stream& operator>>(int& v) {fscanf(_fd,"%d",&v); return *this;}
+      inline Stream& operator>>(int& v) {fscanf(_fd,"%i",&v); return *this;}
+      inline Stream& operator>>(unsigned int& v) {fscanf(_fd,"%u",&v); return *this;}
       inline Stream& operator>>(float& v) {fscanf(_fd,"%f",&v); return *this;}
+      inline Stream& operator>>(double& v) {fscanf(_fd,"%f",&v); return *this;}
 
       template<class T> inline Stream& operator<(const T& v) {write(&v,sizeof(v)); return *this;}
       template<class T> inline Stream& operator>(T& v) {read(&v,sizeof(v)); return *this;}
