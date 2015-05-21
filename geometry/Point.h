@@ -159,9 +159,9 @@ namespace L {
           wtr *= v[i];
         return wtr;
       }
-      bool increment(const Point& min,const Point& max, const T& delta = 1) {
+      bool increment(const Point& min, const Point& max, const Point& delta = 1) {
         for(int i(0); i<d; i++) {
-          v[i] += delta;
+          v[i] += delta[i];
           if(v[i]>=max.v[i]) {
             v[i] = min.v[i];
             if(i==d-1)
