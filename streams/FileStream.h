@@ -12,7 +12,9 @@ namespace L {
       inline FileStream(const File& file, const char* mode) : Stream(fopen(file.path().c_str(),mode)) {}
       inline ~FileStream() {fclose(_fd);}
       inline void rewind() {::rewind(_fd);}
+      inline int tell() const {return ::ftell(_fd);}
   };
+  static FileStream tmpfile;
 }
 
 #endif
