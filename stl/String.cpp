@@ -210,3 +210,17 @@ String L::operator+(char lhs, const String& rhs) {
   wtr.insert(0,1,lhs);
   return wtr;
 }
+
+Stream& L::operator>>(Stream &s, String& str) {
+  str.clear();
+  char c;
+  while(true) {
+    s >> c;
+    if(c==EOF) break;
+    if(Stream::isspace(c)) {
+      if(str.size()) break;
+      else continue;
+    } else str.push_back(c);
+  }
+  return s;
+}

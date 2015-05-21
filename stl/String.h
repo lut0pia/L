@@ -48,9 +48,8 @@ namespace L {
   String operator+(const String& lhs, char rhs);
   String operator+(char lhs, const String& rhs);
 
-  inline Stream& operator<<(Stream &s, const String& str) {
-    return s << &str[0];
-  }
+  inline Stream& operator<<(Stream &s, const String& str) {return s << &str[0];}
+  Stream& operator>>(Stream &s, String& str);
 }
 
 #endif
