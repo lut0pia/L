@@ -19,7 +19,7 @@ namespace L {
       inline Stream& operator<<(float v) {fprintf(_fd,"%f",v); return *this;}
 
       inline Stream& operator>>(char& v) {v = fgetc(_fd); return *this;}
-      inline Stream& operator>>(char*& v) {fscanf(_fd,"%s",v); return *this;}
+      inline Stream& operator>>(char* v) {fscanf(_fd,"%s",v); return *this;}
       inline Stream& operator>>(int& v) {fscanf(_fd,"%d",&v); return *this;}
       inline Stream& operator>>(float& v) {fscanf(_fd,"%f",&v); return *this;}
 
