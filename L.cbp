@@ -304,7 +304,6 @@
 		<Unit filename="parallelism/Mutex.h" />
 		<Unit filename="parallelism/RWSync.cpp" />
 		<Unit filename="parallelism/RWSync.h" />
-		<Unit filename="parallelism/Semaphore.cpp" />
 		<Unit filename="parallelism/Semaphore.h" />
 		<Unit filename="parallelism/Thread.cpp" />
 		<Unit filename="parallelism/Thread.h" />
