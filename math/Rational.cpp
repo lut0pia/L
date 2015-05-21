@@ -145,7 +145,3 @@ String Rational::toString(long lbase) const {
   return ((negative())?"-":"")+wtr;
 }
 
-std::ostream& L::operator<<(std::ostream &stream, const Rational& v) {
-  stream << v.toShortString();
-  return stream;
-}

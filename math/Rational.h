@@ -1,7 +1,6 @@
 #ifndef DEF_L_Rational
 #define DEF_L_Rational
 
-#include <iostream>
 #include <cmath>
 
 #include "Integer.h"
@@ -55,7 +54,9 @@ namespace L {
       String toString(long base = 10) const;
   };
 
-  std::ostream& operator<<(std::ostream &stream, const Rational&);
+  inline Stream& operator<<(Stream &s, const Rational& v) {
+    return s << v.toShortString();
+  }
 }
 
 #endif
