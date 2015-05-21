@@ -29,6 +29,8 @@ namespace L {
 
       template<class T> inline Stream& operator<(const T& v) {write(&v,sizeof(v)); return *this;}
       template<class T> inline Stream& operator>(T& v) {read(&v,sizeof(v)); return *this;}
+
+      static inline bool isspace(char c) {return c==' '||c=='\n'||c=='\t';}
   };
   static Stream in(stdin), out(stdout), err(stderr);
 }
