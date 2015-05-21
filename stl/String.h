@@ -4,6 +4,7 @@
 #include <sstream>
 #include <string>
 #include "List.h"
+#include "../streams/Stream.h"
 #include "../types.h"
 
 namespace L {
@@ -47,19 +48,8 @@ namespace L {
   String operator+(const String& lhs, char rhs);
   String operator+(char lhs, const String& rhs);
 
-  template <class T>
-  String ToString(const T& t) {
-    std::stringstream ss;
-    ss << t;
-    return ss.str();
-  }
-  template <class T>
-  T FromString(const String& str) {
-    T wtr;
-    std::stringstream ss;
-    ss << str;
-    ss >> wtr;
-    return wtr;
+  inline Stream& operator<<(Stream &s, const String& str) {
+    return s << &str[0];
   }
 }
 

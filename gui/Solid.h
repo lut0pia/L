@@ -1,7 +1,6 @@
 #ifndef DEF_L_GUI_Solid
 #define DEF_L_GUI_Solid
 
-#include <iostream>
 #include <cstdlib>
 #include "Base.h"
 

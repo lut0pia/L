@@ -57,7 +57,7 @@ quant_t quant(const L::String& str, size_t& i) {
 }
 Ref<Base> Regex::from(const L::String& str, size_t qMin, size_t qMax) {
   Array<Ref<Base> > exps;
-  //std::cout << str << " " << qMin << " " << qMax << std::endl;
+  //out << str << " " << qMin << " " << qMax << '\n';
   if(!str.size()) throw Exception("Regex for empty string");  // Empty
   if(str==".") return new Char(qMin,qMax);                    // Any character
   if(str.size()==1) return new Char(qMin,qMax,str[0]);        // Single character

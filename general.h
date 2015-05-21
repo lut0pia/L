@@ -5,6 +5,8 @@
 #include <cstring>
 #include <cmath>
 #include "types.h"
+#include "stl/String.h"
+#include "streams/FileStream.h"
 
 namespace L {
   // Number functions :
@@ -56,6 +58,25 @@ namespace L {
   inline void nospace(std::istream& is) {
     while(isspace(is.peek()))
       is.ignore();
+  }
+  template <class T>
+  String ToString(const T& t) {
+    tmpfile << t;
+    String wtr;
+    wtr.resize(tmpfile.tell());
+    tmpfile.rewind();
+    tmpfile.read(&wtr[0],wtr.size());
+    tmpfile.rewind();
+    return wtr;
+  }
+  template <class T>
+  T FromString(const String& str) {
+    T wtr;
+    tmpfile << str << '\0';
+    tmpfile.rewind();
+    tmpfile >> wtr;
+    tmpfile.rewind();
+    return wtr;
   }
 }
 

@@ -5,7 +5,6 @@
     **      - ws2_32
     */
 
-#include <iostream>
 #include "Network.h"
 #include "../parallelism.h"
 

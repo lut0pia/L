@@ -38,8 +38,6 @@ void Border::draw(GL::Program& program) {
     vertex[7] = clip.gB().y();
     Graphics::draw2dColorQuad(vertex,color);
     */
-    std::cout << clip.min().x() << " " << clip.min().y() << " "
-              << clip.max().x() << " " << clip.max().y() << std::endl;
     glColor4ub(color.r(),color.g(),color.b(),color.a());
     glBegin(GL_QUADS);
     glVertex2i(clip.min().x(),clip.min().y());

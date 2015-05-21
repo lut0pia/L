@@ -1,8 +1,6 @@
 #ifndef DEF_L_Burp_VirtualMachine
 #define DEF_L_Burp_VirtualMachine
 
-#include <iostream>
-
 #include "Function.h"
 #include "../containers/Ref.h"
 #include "../dynamic.h"

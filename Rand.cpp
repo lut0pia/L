@@ -1,7 +1,6 @@
 #include "Rand.h"
 
 #include <ctime>
-#include <iostream>
 
 using namespace L;
 

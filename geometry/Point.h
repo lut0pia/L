@@ -2,10 +2,10 @@
 #define DEF_L_Point
 
 #include <cmath>
-#include <iostream>
 #include <limits>
 #include "../types.h"
 #include "../Rand.h"
+#include "../streams/Stream.h"
 
 namespace L {
   template <int d,class T>
@@ -212,16 +212,17 @@ namespace L {
   typedef Point<4,float> Point4f;
 
   template <int d,class T>
-  std::ostream& operator<<(std::ostream &stream, const Point<d,T>& p) {
-    stream << '(';
+  Stream& operator<<(Stream &s, const Point<d,T>& v) {
+    s << '(';
     for(int i(0); i<d; i++) {
-      stream << p[i];
+      s << v[i];
       if(i<d-1)
-        stream << ';';
+        s << ';';
     }
-    stream << ')';
-    return stream;
+    s << ')';
+    return s;
   }
+
 }
 
 #endif

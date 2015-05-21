@@ -1,7 +1,5 @@
 #include "Format.h"
 
-#include <iostream>
-
 using namespace L;
 using namespace Audio;
 
@@ -16,9 +14,6 @@ bool Format::operator!=(const Format& other) const {
   return !((*this) == other);
 }
 
-void Format::display() const {
-  std::cout << channels << " " << samplingRate << " " << bytesPerSample << std::endl;
-}
 uint Format::bytesPerSecond() const {
   return channels*samplingRate*bytesPerSample;
 }

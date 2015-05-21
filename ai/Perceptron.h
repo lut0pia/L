@@ -1,7 +1,6 @@
 #ifndef DEF_L_AI_Perceptron
 #define DEF_L_AI_Perceptron
 
-#include <iostream>
 #include "../containers/Array.h"
 
 namespace L {

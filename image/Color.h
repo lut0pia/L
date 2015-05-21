@@ -2,7 +2,6 @@
 #define DEF_L_Image_Color
 
 #include <cstdlib>
-#include <iostream>
 #include "../macros.h"
 #include "../stl/String.h"
 

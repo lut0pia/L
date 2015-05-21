@@ -1,7 +1,6 @@
 #ifndef DEF_L_Dynamic_Type
 #define DEF_L_Dynamic_Type
 
-#include <iostream>
 #include <typeinfo>
 #include "../macros.h"
 #include "../stl/String.h"

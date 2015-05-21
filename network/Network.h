@@ -5,7 +5,6 @@
     **      - ws2_32
     */
 
-#include <iostream>
 #include "../stl.h"
 
 #include "../systems.h"

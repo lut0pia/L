@@ -1,5 +1,6 @@
 #include "VirtualMachine.h"
 
+#include <fstream>
 #include "Code.h"
 #include "../Exception.h"
 #include "Function_Code.h"
@@ -244,7 +245,7 @@ Variable indirection(Array<Variable>& params) {
 }
 Variable output(Array<Variable>& params) {
   params.foreach([](const Variable& v) {
-#define TMP(T) if(v.is<T>()){std::cout << v.as<T>();return;}
+#define TMP(T) if(v.is<T>()){out << v.as<T>();return;}
     TMP(bool) TMP(int) TMP(Rational) TMP(String)
 #undef TMP
   });

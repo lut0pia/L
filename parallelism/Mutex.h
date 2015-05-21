@@ -7,7 +7,6 @@
 #include <pthread.h>
 #endif
 
-#include <iostream>
 #include "../macros.h"
 
 namespace L {

@@ -6,7 +6,6 @@ using namespace L;
 using namespace Audio;
 
 Input::Input(const Format& format) : format(format) {
-  this->format.display();
 #if defined L_WINDOWS
   WAVEFORMATEX wfx(format.gWaveFormatEx());
   if(waveInOpen(&hwi,WAVE_MAPPER,&wfx,0,0,CALLBACK_NULL))
@@ -23,7 +22,6 @@ Input::~Input() {
 #endif
 }
 void Input::read(const Ref<Buffer>& buffer) {
-  format.display();
   if(format!=buffer->gFormat())
     throw Exception("Audio input format different from buffer format.");
 #if defined L_WINDOWS

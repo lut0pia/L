@@ -9,8 +9,6 @@ Background::Background(const Ref<Base>& inner, Color c) : Layer(inner), color(c)
 
 void Background::draw(GL::Program& program) {
   Interval2i clip(gClip());
-  std::cout << clip.min().x() << " " << clip.min().y() << " "
-            << clip.max().x() << " " << clip.max().y() << std::endl;
   if(!clip.empty() || true) {
     glColor3ub(color.r(),color.g(),color.b());
     glBegin(GL_QUADS);

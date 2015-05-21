@@ -58,7 +58,7 @@ Ref<Code> Code::from(String code, Map<String,size_t>& vi, size_t& ni){
         else break;
     }
 
-    //std::cout << code << std::endl;
+    //out << code << '\n';
 
     codeSize = code.size();
     if(codeSize>1 && code[0]=='{' && code.endOf(0)==codeSize-1) // {...} : node

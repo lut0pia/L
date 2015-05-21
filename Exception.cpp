@@ -1,11 +1,11 @@
 #include "Exception.h"
 
-#include <iostream>
+#include "streams/Stream.h"
 
 using namespace L;
 
 Exception::Exception(const String& w) : w(w) {
-  std::cout << w << std::endl;
+  out << w << '\n';
 }
 Exception::~Exception() throw() {}
 const char* Exception::what() const throw() {

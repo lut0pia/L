@@ -14,8 +14,6 @@ namespace L {
         bool operator==(const Format&) const;
         bool operator!=(const Format&) const;
 
-        void display() const;
-
         uint bytesPerSecond() const;
 #if defined L_WINDOWS
         WAVEFORMATEX gWaveFormatEx() const;

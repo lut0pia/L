@@ -1,5 +1,6 @@
 #include "XML.h"
 
+#include <fstream>
 #include "../macros.h"
 #include "../general.h"
 

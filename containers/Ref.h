@@ -2,7 +2,6 @@
 #define DEF_L_Ref
 
 #include <cstdlib>
-#include <iostream>
 
 namespace L {
   template<class T>

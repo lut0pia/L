@@ -1,7 +1,6 @@
 #ifndef DEF_L_Network_Stream
 #define DEF_L_Network_Stream
 
-#include <iostream>
 #include "Network.h"
 
 namespace L {

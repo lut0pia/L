@@ -1,7 +1,6 @@
 #ifndef DEF_L_Integer
 #define DEF_L_Integer
 
-#include <iostream>
 #include <cmath>
 
 #include "../containers/Array.h"

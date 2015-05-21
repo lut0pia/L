@@ -1,7 +1,6 @@
 #ifndef DEF_L_System_File
 #define DEF_L_System_File
 
-#include <fstream>
 #include "../stl/String.h"
 
 namespace L {

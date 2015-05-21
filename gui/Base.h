@@ -1,7 +1,6 @@
 #ifndef DEF_L_GUI_Base
 #define DEF_L_GUI_Base
 
-#include <iostream>
 #include <cstdlib>
 #include "../gl/Program.h"
 #include "../gl/GL.h"

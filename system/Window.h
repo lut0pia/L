@@ -1,7 +1,6 @@
 #ifndef DEF_L_System_Window
 #define DEF_L_System_Window
 
-#include <iostream>
 #include "../geometry/Point.h"
 #include "../macros.h"
 #include "../stl/String.h"
