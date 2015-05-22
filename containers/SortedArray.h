@@ -5,13 +5,19 @@
 
 namespace L {
   template <class T>
-  class SortedArray : private Array<T> {
-    private:
+  class SortedArray : protected Array<T> {
+    protected:
       int index(const T& e) {
-        int wtr(0);
-        while(wtr<Array<T>::size() && Array<T>::operator[](wtr)<e)
-          wtr++;
-        return wtr;
+        int l(0), r(size());
+        while(l<r) {
+          int m((l+r)/2);
+          if(Array<T>::operator[](m)==e)
+            return m;
+          else if(Array<T>::operator[](m)>e)
+            r = m;
+          else l = m+1;
+        }
+        return l;
       }
     public:
       void insert(const T& e) {
