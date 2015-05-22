@@ -60,6 +60,7 @@ namespace L {
       static float aspect();
       static Point2i mousePosition();
       static Point2f normalizedMousePosition();
+      static Point2f normalizedToPixels(const Point2f&);
   };
 }
 

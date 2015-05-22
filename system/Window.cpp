@@ -333,3 +333,6 @@ Point2i Window::mousePosition() {
 Point2f Window::normalizedMousePosition() {
   return Point2f((2*(float)_mousePos.x()/_width)-1,-((2*(float)_mousePos.y()/_height)-1));
 }
+Point2f Window::normalizedToPixels(const Point2f& p){
+  return Point2f(((p.x()+1)/2)*_width,((-p.y()+1)/2)*_height);
+}
