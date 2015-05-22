@@ -1,19 +1,12 @@
 #ifndef DEF_L_Set
 #define DEF_L_Set
 
-#include "Array.h"
+#include "SortedArray.h"
 
 namespace L {
   namespace Pending {
     template <class T>
-    class Set : private Array<T> {
-      private:
-        int index(const T& e) {
-          int wtr(0);
-          while(wtr<Array<T>::size() && Array<T>::operator[](wtr)<e)
-            wtr++;
-          return wtr;
-        }
+    class Set : private SortedArray<T> {
       public:
         Set operator+(const Set& other) {
           Set wtr;
