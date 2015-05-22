@@ -11,11 +11,11 @@ namespace L {
         int l(0), r(size());
         while(l<r) {
           int m((l+r)/2);
-          if(Array<T>::operator[](m)==e)
-            return m;
-          else if(Array<T>::operator[](m)>e)
+          if(Array<T>::operator[](m)<e)
+            l = m+1;
+          else if(e<Array<T>::operator[](m))
             r = m;
-          else l = m+1;
+          else return m;
         }
         return l;
       }
@@ -23,11 +23,7 @@ namespace L {
       void insert(const T& e) {
         Array<T>::insert(index(e),e);
       }
-      void erase(const T& e) {
-        int i(index(e));
-        if(i<Array<T>::size() && Array<T>::operator[](i)==e)
-          Array<T>::erase(i);
-      }
+      inline void erase(int i) {Array<T>::erase(i);}
       inline const T& operator[](int i) const {return Array<T>::operator[](i);}
       inline void clear() {Array<T>::clear();}
       inline size_t size() const {return Array<T>::size();}
