@@ -9,7 +9,7 @@ namespace L {
       String _path;
       FILE* _fd;
     public:
-      File(const String& path);
+      File(const String& path = "tmp");
       ~File();
       bool operator<(const File&) const;
 
