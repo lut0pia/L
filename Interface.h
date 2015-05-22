@@ -1,10 +1,6 @@
 #ifndef DEF_L_Interface
 #define DEF_L_Interface
 
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <iterator>
 #include "macros.h"
 #include "Exception.h"
 #include "stl/Map.h"
@@ -28,13 +24,12 @@ namespace L {
 
     public:
       virtual bool from(T& v, const File& file) {
-        std::ifstream is(file.path().c_str(),std::ios::binary);
-        return from(v,is);
+        return from(v,FileStream(file,"rb"));
       }
       virtual bool from(T& v, const String& str) {
         return false;
       }
-      virtual bool from(T& v, std::istream& is) {
+      virtual bool from(T& v, Stream& is) {
         return false;
       }
       virtual bool from(T& v, const Array<byte>& bytes) {
@@ -42,31 +37,22 @@ namespace L {
       }
 
       virtual bool to(const T& v, const File& file) {
-        std::ofstream os(file.path().c_str(),std::ios::binary);
-        return to(v,os);
+        return to(v,FileStream(file,"wb"));
       }
       virtual bool to(const T& v, String& str) {
         return false;
       }
-      virtual bool to(const T& v, std::ostream& os) {
+      virtual bool to(const T& v, Stream& os) {
         return false;
       }
       virtual bool to(const T& v, Array<byte>& bytes) {
-        std::stringbuf sb;
-        std::iostream stream(&sb); // Create stream
-        if(!to(v,stream)) // Write in stream
+        tmpfile.rewind();
+        if(!to(v,tmpfile)) // Write in stream
           return false;
-        // Copy data in vector
-        bytes.size(1);
-        stream.read((char*)&bytes[0],1);
-        if(stream.gcount()) {
-          do {
-            bytes.size(bytes.size()*2);
-            stream.read((char*)&bytes[bytes.size()/2],bytes.size()/2);
-          } while(stream.gcount()==bytes.size()/2);
-          //bytes.resize(bytes.size()-((bytes.size()/2)-stream.gcount()));
-          bytes.size((2*stream.gcount()+bytes.size())/2);
-        } else bytes.clear();
+        bytes.size(tmpfile.tell());
+        tmpfile.rewind();
+        tmpfile.read(&bytes[0],bytes.size());
+        tmpfile.rewind();
         return true;
       }
 

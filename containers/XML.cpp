@@ -1,6 +1,5 @@
 #include "XML.h"
 
-#include <fstream>
 #include "../macros.h"
 #include "../general.h"
 
@@ -9,14 +8,13 @@ using namespace std;
 
 XML::XML() {}
 XML::XML(const File& f) {
-  ifstream s(f.path());
-  read(s);
+  read(FileStream(f,"rb"));
 }
-XML::XML(std::istream& s) {
+XML::XML(Stream& s) {
   read(s);
 }
 
-void XML::write(std::ostream& s) const {
+void XML::write(Stream& s) const {
   if(text)
     s << name;
   else {
@@ -34,12 +32,12 @@ void XML::write(std::ostream& s) const {
     }
   }
 }
-void XML::read(std::istream& s) {
+void XML::read(Stream& s) {
   name.clear();
   children.clear();
   attributes.clear();
   text = false;
-  nospace(s);
+  s.nospace();
   if(s.peek()=='<') { // Node
     s.ignore();
     if(s.peek()=='/') return; // It's an end tag
@@ -63,7 +61,7 @@ void XML::read(std::istream& s) {
       s.ignore(2);
       return;
     }
-    nospace(s);
+    s.nospace();
     while(s.peek()!='>'&&s.peek()!='/') { // It has attributes
       String attrName, attrValue;
       while(s.peek()!='=')
@@ -73,7 +71,7 @@ void XML::read(std::istream& s) {
         attrValue.push_back(s.get());
       s.ignore();
       attributes[attrName] = attrValue;
-      nospace(s);
+      s.nospace();
     }
     if(s.peek()=='/') { // It's a single tag
       s.ignore(2);

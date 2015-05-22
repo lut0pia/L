@@ -252,9 +252,7 @@ Variable output(Array<Variable>& params) {
   return Variable();
 }
 Variable input(Array<Variable>& params) {
-  String entry;
-  std::getline(std::cin,entry);
-  return Code::fromConstExp(entry);
+  return Code::fromConstExp(in.line());
 }
 Variable newAlloc(Array<Variable>& params) {
   return Ref<Variable>(new Variable(params[0]));

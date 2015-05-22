@@ -16,10 +16,10 @@ namespace L {
 
       XML();
       XML(const File&);
-      XML(std::istream&);
+      XML(Stream&);
 
-      void write(std::ostream&) const;
-      void read(std::istream&);
+      void write(Stream&) const;
+      void read(Stream&);
   };
 }
 

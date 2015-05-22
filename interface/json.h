@@ -10,11 +10,11 @@ namespace L {
     public:
       JSON() : Interface("json") {}
 
-      bool to(const Dynamic::Var& v, std::ostream& stream) {
+      bool to(const Dynamic::Var& v, Stream& stream) {
         if(v.is<String>())
           stream << '"' << v.as<String>() << '"';
         else if(v.is<bool>())
-          stream << std::boolalpha << v.as<bool>();
+          stream << v.as<bool>();
         else if(v.is<Dynamic::Node>()) {
           stream << '{';
           L_Iter(v.as<Dynamic::Node>(),it) {
@@ -33,16 +33,15 @@ namespace L {
           }
           stream << ']';
         } else if(v.is<float>()) {
-          float tmp(v.as<float>());
-          stream << std::fixed << std::noshowpoint << std::setprecision(tmp == std::floor(tmp) ? 0 : 5) << v.as<float>();
+          stream << v.as<float>();
         } else L_Error("Bad JSON output.");
         return true;
       }
-      bool from(Dynamic::Var& v, std::istream& stream) {
+      bool from(Dynamic::Var& v, Stream& stream) {
         char c;
         size_t i;
         String str;
-        nospace(stream);
+        stream.nospace();
         switch(c = stream.get()) {
           case '"': // String
             v = String();
@@ -65,7 +64,7 @@ namespace L {
           case '{':
             v = Dynamic::Node();
             while(stream.peek()!='}') {
-              nospace(stream);
+              stream.nospace();
               if(stream.get()!='"') L_Error("Bad JSON input.");
               str.clear();
               while((c = stream.get()) != '"') { // Get name of attribute
@@ -73,7 +72,7 @@ namespace L {
                   str += stream.get();
                 else str += c;
               }
-              nospace(stream);
+              stream.nospace();
               if(stream.get()!=':') L_Error("Bad JSON input.");
               from(v[str],stream);
               if(stream.peek()==',')stream.ignore();
@@ -112,7 +111,7 @@ namespace L {
             }
             break;
         }
-        nospace(stream);
+        stream.nospace();
         return true;
       }
   };

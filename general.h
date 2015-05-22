@@ -1,7 +1,6 @@
 #ifndef DEF_L_general
 #define DEF_L_general
 
-#include <iostream>
 #include <cstring>
 #include <cmath>
 #include "types.h"
@@ -55,10 +54,6 @@ namespace L {
     memcpy(&b,tmp,sizeof(T));
   }
 
-  inline void nospace(std::istream& is) {
-    while(isspace(is.peek()))
-      is.ignore();
-  }
   template <class T>
   String ToString(const T& t) {
     tmpfile << t;
