@@ -92,6 +92,10 @@ void Camera::pixels() {
   ortho(0,Window::width(),Window::height(),0);
 }
 
+Point2f Camera::worldToScreen(const Point3f& p) const {
+  Point4f q(_viewProjection*p);
+  return Point3f(q)/q.w();
+}
 Point3f Camera::screenToRay(const Point2f& p) const {
   return Point3f(_ray * Point4f(p.x(),p.y(),0,1));
 }
