@@ -2,8 +2,8 @@
 #define DEF_L_Regex_Base
 
 #include "../containers/Ref.h"
+#include "../containers/Set.h"
 #include "../stl/String.h"
-#include "../stl/Set.h"
 
 namespace L{
     namespace Regex{

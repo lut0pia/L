@@ -1,7 +1,5 @@
 #include "Huffman.h"
 
-#include <set>
-
 using namespace L;
 
 bool Huffman::Tree::operator<(const Tree& other) const {
@@ -31,7 +29,7 @@ byte Huffman::Tree::read(const Array<byte>& v, size_t& bit) const {
 }
 
 Huffman::Tree Huffman::makeTree(size_t weight[256]) {
-  std::multiset<Tree> trees;
+  SortedArray<Tree> trees;
   Tree tmp;
   for(size_t i=0; i<256; i++) { // Initialize ordered container
     tmp.weight = weight[i];
@@ -40,15 +38,15 @@ Huffman::Tree Huffman::makeTree(size_t weight[256]) {
     trees.insert(tmp);
   }
   while(trees.size()>1) {
-    tmp.zero = new Tree(*trees.begin());
-    trees.erase(trees.begin());
-    tmp.one = new Tree(*trees.begin());
-    trees.erase(trees.begin());
+    tmp.zero = new Tree(trees[0]);
+    trees.erase(0);
+    tmp.one = new Tree(trees[0]);
+    trees.erase(0);
     tmp.weight = tmp.zero->weight + tmp.one->weight;
     tmp.bytes = tmp.zero->bytes + tmp.one->bytes;
     trees.insert(tmp);
   }
-  return *trees.begin();
+  return trees[0];
 }
 Huffman::Tree Huffman::makeTree(const Array<byte>& v) {
   size_t weight[256] = {0};

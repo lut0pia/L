@@ -1,6 +1,5 @@
 #include "stl/List.h"
 #include "stl/Map.h"
 #include "stl/Multimap.h"
-#include "stl/Set.h"
 #include "stl/String.h"
 #include "stl/VectorMap.h"

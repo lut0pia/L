@@ -38,12 +38,12 @@ void RelativeContainer::updateFromAbove(Point2i pos, Interval2i parentClip) {
   dimensionsChanged((*it).first,((*it).first)->gDimensions());
 }
 void RelativeContainer::draw(GL::Program& program) {
-  L_Iter(elements,it)
-  (*it)->draw(program);
+  for(int i(0); i<elements.size(); i++)
+    elements[i]->draw(program);
 }
 bool RelativeContainer::event(const Window::Event& e) {
-  L_Iter(elements,it)
-  if((*it)->event(e))
-    return true;
+  for(int i(0); i<elements.size(); i++)
+    if(elements[i]->event(e))
+      return true;
   return false;
 }

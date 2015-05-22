@@ -9,20 +9,20 @@
 namespace L {
   class Observable {
     private:
-      Set<Observer*> observers;
+      Set<Observer*> _observers;
 
     public:
       void addObserver(Observer* o) {
         o->observed.insert(this);
-        observers.insert(o);
+        _observers.insert(o);
       }
       void removeObserver(Observer* o) {
         o->observed.erase(this);
-        observers.erase(o);
+        _observers.erase(o);
       }
       void notifyObservers(int msg = 0) {
-        L_Iter(observers,observer)
-        (*observer)->notification(this,msg);
+        for(int i(0); i<_observers.size(); i++)
+          _observers[i]->notification(this,msg);
       }
   };
 }

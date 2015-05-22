@@ -3,12 +3,12 @@
 using namespace L;
 using namespace ECS;
 
-Set<void (*)()> Engine::updates;
+Set<void (*)()> Engine::_updates;
 
-void Engine::addUpdate(void (*update)()){
-    updates.insert(update);
+void Engine::addUpdate(void (*update)()) {
+  _updates.insert(update);
 }
-void Engine::update(){
-    L_Iter(updates,update)
-        (*update)();
+void Engine::update() {
+  for(int i(0); i<_updates.size(); i++)
+    _updates[i]();
 }

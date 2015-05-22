@@ -3,6 +3,7 @@
 
 #include <cstdlib>
 #include "Sizable.h"
+#include "../containers/Set.h"
 
 namespace L {
   namespace GUI {

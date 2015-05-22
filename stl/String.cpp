@@ -2,7 +2,6 @@
 
 #include "../Exception.h"
 #include "../macros.h"
-#include "Set.h"
 #include "../containers/Array.h"
 
 using namespace L;

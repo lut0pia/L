@@ -330,7 +330,6 @@
 		<Unit filename="stl/List.h" />
 		<Unit filename="stl/Map.h" />
 		<Unit filename="stl/Multimap.h" />
-		<Unit filename="stl/Set.h" />
 		<Unit filename="stl/String.cpp" />
 		<Unit filename="stl/String.h" />
 		<Unit filename="stl/VectorMap.h" />

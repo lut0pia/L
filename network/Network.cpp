@@ -107,7 +107,7 @@ String Network::HTTPRequest(const String& url){
         request = url.substr(tmp);
 
     // Connect to the server
-    Stream test(sd = connectTo("80",DNSLookup(host).random()));
+    Stream test(sd = connectTo("80",DNSLookup(host)[0]));
 
     test << "GET " << request << " HTTP/1.1\r\nHost: " << host << "\r\nConnection: close\r\n\r\n";
 
