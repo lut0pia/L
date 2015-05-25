@@ -6,7 +6,7 @@
 namespace L {
   template <class T>
   class SortedArray : protected Array<T> {
-    protected:
+    public:
       int index(const T& e) {
         int l(0), r(size());
         while(l<r) {
@@ -19,7 +19,22 @@ namespace L {
         }
         return l;
       }
-    public:
+      int first(const T& e) {
+        int i(index(e));
+        if(operator[](i)<e)
+          return -1;
+        else while(i>0 && !(operator[](i-1)<e))
+            i--;
+        return i;
+      }
+      int last(const T& e) {
+        int i(index(e));
+        if(e<operator[](i))
+          return -1;
+        else while(i<size() && !(e<operator[](i)))
+            i++;
+        return i;
+      }
       void insert(const T& e) {
         Array<T>::insert(index(e),e);
       }
