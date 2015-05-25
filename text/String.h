@@ -2,14 +2,15 @@
 #define DEF_L_String
 
 #include "../containers/Array.h"
-#include "../streams/Stream.h"
 
 namespace L {
   namespace Pending {
-    class String: public Array<char> {
+    class String: private Array<char> {
       public:
         inline String() {}
         String(const char*);
+        String(const String&, size_t start, size_t length = -1);
+
         inline String operator+(const String& other) {
           String wtr(*this);
           return wtr += other;
@@ -19,15 +20,12 @@ namespace L {
           Array<char>::operator+=(other);
           return *this;
         }
+
+        String substr(size_t pos, size_t length = -1) const;
+
+        inline size_t size() const {return Array<char>::size()-1;} // Subtract one because of '\0'
+        inline operator const char*() const {return &Array<char>::operator[](0);}
     };
-  }
-  inline Stream& operator<<(Stream &s, const Pending::String& str) {
-    return s << &str[0];
-  }
-  inline Stream& operator<(Stream &s, const Pending::String& str) {
-    s < str.size();
-    s.write(&str[0],str.size());
-    return s;
   }
 }
 
