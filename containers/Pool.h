@@ -60,6 +60,17 @@ namespace L {
             } else if(_next)
               _next->deallocate(p);
           }
+          bool allocated(void* p) {
+            if(_data<=p && p<=_data+sizeof(_data)) {
+              int i(((int)p-(int)_data)/alignedTypeSize);
+              int j(i%intBits); // Bit position
+              i /= intBits; // Position in table
+              return (_table[i]&(1<<j));
+            } else if(_next)
+              return _next->allocated(p);
+            else
+              return false;
+          }
           void foreach(const std::function<void(T&)>& f) {
             byte* ptr(_data);
             for(int i(0); i<tableSize; i++)
@@ -97,6 +108,10 @@ namespace L {
       }
       inline void deallocate(void* p) {
         if(_root) _root->deallocate(p);
+      }
+      inline bool allocated(void* p){
+        if(_root) return _root->allocated(p);
+        else return false;
       }
       inline void foreach(const std::function<void(const T&)>& f) const {
         if(_root) _root->foreach(f);
