@@ -43,7 +43,7 @@ namespace L {
         return *this;
       }
       inline Array operator+(const Array& other) {Array wtr(*this); return wtr += other;}
-      inline Array& operator+=(const Array& other) {push(other); return *this;}
+      inline Array& operator+=(const Array& other) {insert(_size,other); return *this;}
 
       inline size_t size() const {return _size;}
       inline size_t capacity() const {return _capacity;}
@@ -54,7 +54,6 @@ namespace L {
       inline T& back() {return operator[](_size-1);}
       inline const T& back() const {return operator[](_size-1);}
       template <typename... Args> inline void push(Args&&... args) {insert(_size,args...);}
-      inline void push(const Array& a) {insert(_size,a);}
       inline void pop() {erase(_size-1);}
 
       void size(size_t n) {
