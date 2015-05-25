@@ -333,7 +333,6 @@
 		<Unit filename="stl/Multimap.h" />
 		<Unit filename="stl/String.cpp" />
 		<Unit filename="stl/String.h" />
-		<Unit filename="stl/VectorMap.h" />
 		<Unit filename="streams.h" />
 		<Unit filename="streams/FileStream.h" />
 		<Unit filename="streams/Stream.cpp" />
