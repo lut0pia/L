@@ -8,7 +8,7 @@
 namespace L {
   template <int d,class K,class V>
   class Tree {
-    protected:
+    private:
       static const int n = static_pow<2,d>::value;
       static const int mask = ~((~0)<<d);
       typedef Point<d,K> Key;
@@ -142,13 +142,14 @@ namespace L {
           }
 
           inline void* operator new(size_t size) {
-            return Pool<Tree::Node>::allocate();
+            return _pool.allocate();
           }
           inline void operator delete(void* p) {
-            Pool<Tree::Node>::deallocate(p);
+            _pool.deallocate(p);
           }
       };
       Node* _root;
+      static Pool<Node> _pool;
 
     public:
       Tree() : _root(NULL) {}
@@ -181,6 +182,9 @@ namespace L {
         return Node::size(_root);
       }
   };
+  template <int d,class K,class V>
+  Pool<typename Tree<d,K,V>::Node> Tree<d,K,V>::_pool;
+
   // Regular trees
   template <class K,class V> class BinaryTree : public Tree<1,K,V> {};
   template <class K,class V> class QuadTree : public Tree<2,K,V> {};

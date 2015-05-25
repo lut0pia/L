@@ -2,6 +2,7 @@
 #define DEF_L_Pool
 
 #include "../tmp.h"
+#include "../Object.h"
 
 namespace L {
   template <class T>
@@ -23,7 +24,14 @@ namespace L {
             for(int i(0); i<tableSize; i++)
               _table[i] = 0;
           }
-          void* allocate() {
+          ~Block() {
+            delete _next;
+            _next = NULL;
+            foreach([](T& o) {
+              Object::destruct(o);
+            });
+          }
+          T* allocate() {
             byte* wtr(_data);
             if(!_full)
               for(int i(0); i<tableSize; i++)
@@ -33,7 +41,7 @@ namespace L {
                       wtr += alignedTypeSize;
                     else {
                       _table[i] |= 1<<j;
-                      return wtr;
+                      return (T*)wtr;
                     }
                 } else wtr += alignedTypeSize*intBits; // This part of the block is full
             _full = true;
@@ -51,22 +59,51 @@ namespace L {
             } else if(_next)
               _next->deallocate(p);
           }
+          void foreach(const std::function<void(T&)>& f) {
+            byte* ptr(_data);
+            for(int i(0); i<tableSize; i++)
+              if(_table[i]!=0) { // This part of the block is not empty
+                for(int j(0); j<intBits; j++) {
+                  if(_table[i]&(1<<j))
+                    f(*(T*)ptr);
+                  ptr += alignedTypeSize;
+                }
+              } else ptr += alignedTypeSize*intBits; // This part of the block is empty
+            if(_next)
+              _next->foreach(f);
+          }
       };
-      static Block* _root;
+      Block* _root;
 
     public:
-      static void* allocate() {
+      inline Pool() : _root(NULL) {}
+      inline ~Pool() {delete _root;}
+
+      template <typename... Args>
+      T* construct(Args&&... args){
+        T* wtr(allocate());
+        Object::construct(*wtr,args...);
+        return wtr;
+      }
+      void destruct(T* o){
+        Object::destruct(*o);
+        deallocate(o);
+      }
+      T* allocate() {
         if(!_root)
           _root = new Block();
         return _root->allocate();
       }
-      static void deallocate(void* p) {
-        if(_root)
-          _root->deallocate(p);
+      inline void deallocate(void* p) {
+        if(_root) _root->deallocate(p);
+      }
+      inline void foreach(const std::function<void(const T&)>& f) const {
+        if(_root) _root->foreach(f);
+      }
+      inline void foreach(const std::function<void(T&)>& f) {
+        if(_root) _root->foreach(f);
       }
   };
-  template <class T>
-  typename Pool<T>::Block* Pool<T>::_root(NULL);
 }
 
 #endif
