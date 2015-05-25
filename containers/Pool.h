@@ -1,6 +1,7 @@
 #ifndef DEF_L_Pool
 #define DEF_L_Pool
 
+#include <functional>
 #include "../tmp.h"
 #include "../Object.h"
 
@@ -80,12 +81,12 @@ namespace L {
       inline ~Pool() {delete _root;}
 
       template <typename... Args>
-      T* construct(Args&&... args){
+      T* construct(Args&&... args) {
         T* wtr(allocate());
         Object::construct(*wtr,args...);
         return wtr;
       }
-      void destruct(T* o){
+      void destruct(T* o) {
         Object::destruct(*o);
         deallocate(o);
       }
