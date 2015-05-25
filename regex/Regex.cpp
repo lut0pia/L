@@ -7,6 +7,7 @@
 #include "String.h"
 #include "../stl/String.h"
 #include "../Exception.h"
+#include "../general.h"
 
 using namespace L;
 using namespace Regex;

@@ -1,6 +1,7 @@
 #include "Rational.h"
 
 #include <cstdio>
+#include "../general.h"
 
 using namespace L;
 

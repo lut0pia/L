@@ -343,7 +343,7 @@ Integer Integer::lcd(const Integer& a, const Integer& b) {
 }
 Integer Integer::gcd(Integer a, Integer b) {
   if(a<b)
-    L::swap(a,b);
+    Object::swap(a,b);
   if(b!=0) {
     Integer c;
     while((b!=1)&&(a%b!=0)) {

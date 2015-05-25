@@ -2,6 +2,7 @@
 #define DEF_L_MTF
 
 #include "../macros.h"
+#include "../types.h"
 #include "../containers/Array.h"
 
 namespace L{

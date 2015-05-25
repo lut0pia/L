@@ -71,7 +71,7 @@ void GL::makeDisc(Mesh& mesh, int slices) {
     last = current;
   }
   meshBuilder.addTriangle(center,first,last);
-  reconstruct(mesh,meshBuilder);
+  Object::reconstruct(mesh,meshBuilder);
 }
 
 void GL::draw2dLine(Point<2,float> a, Point<2,float> b, int size, const Color& c) {

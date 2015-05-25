@@ -7,6 +7,7 @@
 #include "stl/String.h"
 #include "containers/Array.h"
 #include "system/File.h"
+#include "streams/FileStream.h"
 
 namespace L {
   template <class T>

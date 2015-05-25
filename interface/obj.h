@@ -54,7 +54,7 @@ namespace L {
             }
           }
           mb.computeNormals();
-          reconstruct(mesh,mb);
+          Object::reconstruct(mesh,mb);
         }
         return true;
       }

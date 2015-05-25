@@ -3,6 +3,7 @@
 
 #include "../containers/Ref.h"
 #include "../macros.h"
+#include "../types.h"
 #include "../containers/Array.h"
 #include "../containers/Set.h"
 

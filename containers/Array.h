@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <functional>
-#include "../general.h"
+#include "../Object.h"
 
 namespace L {
   template <class T>
@@ -12,6 +12,10 @@ namespace L {
     private:
       void* _data;
       size_t _size, _capacity;
+
+      inline void shift(size_t i, int offset) {
+        memmove(&operator[](i+offset),&operator[](i),(_size-i)*sizeof(T));
+      }
 
     public:
       Array() : _data(NULL), _size(0), _capacity(0) {}
@@ -27,27 +31,19 @@ namespace L {
       }
       Array(const Array& other) : _size(other._size), _capacity(other._size) {
         _data = malloc(_size*sizeof(T));
-        for(size_t i(0); i<_size; i++)
-          new(&operator[](i)) T(other[i]);
+        Object::copy(&operator[](0),&other[0],_size);
       }
       ~Array() {
         for(size_t i(0); i<_size; i++)
-          operator[](i).~T();
+          Object::destruct(operator[](i));
         free(_data);
       }
       Array& operator=(const Array& other) {
-        reconstruct(*this,other);
+        Object::reconstruct(*this,other);
         return *this;
       }
-      Array operator+(const Array& other) {
-        Array wtr(*this);
-        return wtr += other;
-      }
-      Array& operator+=(const Array& other) {
-        for(size_t i(0); i<other.size(); i++)
-          push(other[i]);
-        return *this;
-      }
+      inline Array operator+(const Array& other) {Array wtr(*this); return wtr += other;}
+      inline Array& operator+=(const Array& other) {push(other); return *this;}
 
       inline size_t size() const {return _size;}
       inline size_t capacity() const {return _capacity;}
@@ -58,6 +54,7 @@ namespace L {
       inline T& back() {return operator[](_size-1);}
       inline const T& back() const {return operator[](_size-1);}
       template <typename... Args> inline void push(Args&&... args) {insert(_size,args...);}
+      inline void push(const Array& a) {insert(_size,a);}
       inline void pop() {erase(_size-1);}
 
       void size(size_t n) {
@@ -79,14 +76,25 @@ namespace L {
       template <typename... Args>
       void insert(size_t i, Args&&... args) {
         if(_size+1>_capacity) grow(); // Check capacity
-        if(i<_size) memmove(&operator[](i+1),&operator[](i),(_size-i)*sizeof(T)); // Move right part
-        new(&operator[](i)) T(args...); // Place new value
+        shift(i,1); // Move right part
+        Object::construct(operator[](i),args...); // Place new value
         _size++; // Increase size
       }
+      void insert(size_t i, const Array& a) {
+        while(_size+a.size()>_capacity) grow(); // Check capacity
+        shift(i,a.size()); // Move right part
+        Object::copy(&operator[](i),&a[0],a.size());
+        _size += a.size();
+      }
       void erase(size_t i) {
-        operator[](i).~T(); // Destruct value
-        if(i<_size-1) memmove(&operator[](i),&operator[](i+1),(_size-i)*sizeof(T)); // Move right part
+        Object::destruct(operator[](i)); // Destruct value
+        shift(i+1,-1); // Move right part
         _size--; // Decrease size
+      }
+      void erase(size_t i, size_t count) {
+        Object::destruct(&operator[](i),count); // Destruct values
+        shift(i+count,-count); // Move right part
+        _size -= count; // Decrease size
       }
 
       void foreach(const std::function<void(const T&)>& f) const {

@@ -15,11 +15,6 @@ namespace L {
   inline T log(T x, T base) {
     return ::log(x)/::log(base);
   }
-  template <class T, typename... Args>
-  inline void reconstruct(T& v, Args&&... args) {
-    v.~T();
-    new(&v) T(args...);
-  }
 
   // Template functions :
   template <class T>
@@ -46,14 +41,6 @@ namespace L {
     while(n1<-limit/2)n1+=limit;
     return n1;
   }
-  template <class T>
-  void swap(T& a, T& b) {
-    char tmp[sizeof(T)];
-    memcpy(tmp,&a,sizeof(T));
-    memcpy(&a,&b,sizeof(T));
-    memcpy(&b,tmp,sizeof(T));
-  }
-
   template <class T>
   String ToString(const T& t) {
     tmpfile << t;

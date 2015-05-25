@@ -6,6 +6,7 @@
     */
 
 #include "../containers/Set.h"
+#include "../stl/String.h"
 
 #include "../systems.h"
 #include "../macros.h"
