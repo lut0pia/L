@@ -27,10 +27,6 @@ namespace L {
           }
           ~Block() {
             delete _next;
-            _next = NULL;
-            foreach([](T& o) {
-              Object::destruct(o);
-            });
           }
           T* allocate() {
             byte* wtr(_data);
@@ -109,7 +105,7 @@ namespace L {
       inline void deallocate(void* p) {
         if(_root) _root->deallocate(p);
       }
-      inline bool allocated(void* p){
+      inline bool allocated(void* p) {
         if(_root) return _root->allocated(p);
         else return false;
       }
