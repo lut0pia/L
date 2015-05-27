@@ -25,6 +25,7 @@ namespace L {
       inline Stream& operator<<(unsigned int v) {fprintf(_fd,"%u",v); return *this;}
       inline Stream& operator<<(float v) {fprintf(_fd,"%f",v); return *this;}
       inline Stream& operator<<(double v) {fprintf(_fd,"%f",v); return *this;}
+      inline Stream& operator<<(const void* v) {fprintf(_fd,"%p",v); return *this;}
 
       inline Stream& operator>>(char& v) {v = fgetc(_fd); return *this;}
       inline Stream& operator>>(char* v) {fscanf(_fd,"%s",v); return *this;}
