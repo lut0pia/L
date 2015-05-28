@@ -302,6 +302,8 @@
 		<Unit filename="network/Stream.cpp" />
 		<Unit filename="network/Stream.h" />
 		<Unit filename="parallelism.h" />
+		<Unit filename="parallelism/Coroutine.cpp" />
+		<Unit filename="parallelism/Coroutine.h" />
 		<Unit filename="parallelism/Mutex.cpp" />
 		<Unit filename="parallelism/Mutex.h" />
 		<Unit filename="parallelism/RWSync.cpp" />

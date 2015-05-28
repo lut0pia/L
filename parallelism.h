@@ -1,3 +1,4 @@
+#include "parallelism/Coroutine.h"
 #include "parallelism/Mutex.h"
 #include "parallelism/RWSync.h"
 #include "parallelism/Semaphore.h"
