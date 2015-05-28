@@ -6,5 +6,6 @@
 #include "containers/Ref.h"
 #include "containers/Set.h"
 #include "containers/SortedArray.h"
+#include "containers/StaticStack.h"
 #include "containers/Tree.h"
 #include "containers/XML.h"

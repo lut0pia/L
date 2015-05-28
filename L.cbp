@@ -165,6 +165,7 @@
 		<Unit filename="containers/Ref.h" />
 		<Unit filename="containers/Set.h" />
 		<Unit filename="containers/SortedArray.h" />
+		<Unit filename="containers/StaticStack.h" />
 		<Unit filename="containers/Tree.h" />
 		<Unit filename="containers/XML.cpp" />
 		<Unit filename="containers/XML.h" />
