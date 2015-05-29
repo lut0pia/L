@@ -4,6 +4,7 @@
 #include <setjmp.h>
 #include "../time/Time.h"
 #include "../containers/StaticStack.h"
+#include "../macros.h"
 
 namespace L {
   class Coroutine {
@@ -11,18 +12,22 @@ namespace L {
       static StaticStack<32,Coroutine*> _coroutines;
       jmp_buf _caller, _callee;
       int _stack[4096];
-      Time _time;
+      Time _nextJump, _nextYield;
       bool _returned;
 
     public:
       template <class F, class... Args>
-      Coroutine(const F& f, Args&&... args) : _returned(false) {
+      Coroutine(const F& f, Args&&... args) : _nextJump(0), _nextYield(0), _returned(false) {
         _coroutines.push(this);
         if(!setjmp(_caller)) {
+#if defined L_X86_32
           void* newesp(_stack+4095);
           __asm {
             mov esp, newesp
           }
+#else
+#error
+#endif
           proxy(f,args...);
         }
       }
@@ -38,10 +43,8 @@ namespace L {
 
       void jump();
       void jumpFor(const Time&);
-      void canJump();
       static void yield();
       static void yieldFor(const Time&);
-      static void canYield();
   };
 }
 

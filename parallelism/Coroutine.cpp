@@ -5,7 +5,7 @@ using namespace L;
 StaticStack<32,Coroutine*> Coroutine::_coroutines;
 
 void Coroutine::jump() {
-  if(!_returned) {
+  if(!_returned && (_nextJump==0 || _nextJump<Time::now())) {
     _coroutines.push(this);
     if(!setjmp(_caller))
       longjmp(_callee,1);
@@ -13,22 +13,15 @@ void Coroutine::jump() {
   }
 }
 void Coroutine::jumpFor(const Time& time) {
-  _time = Time::now()+time;
+  _nextYield = Time::now()+time;
   jump();
 }
-void Coroutine::canJump() {
-  if(_time<Time::now())
-    jump();
-}
 void Coroutine::yield() {
-  if(!setjmp(_coroutines.top()->_callee))
+  if((_coroutines.top()->_nextYield==0 || _coroutines.top()->_nextYield<Time::now())
+      && !setjmp(_coroutines.top()->_callee))
     longjmp(_coroutines.top()->_caller,1);
 }
 void Coroutine::yieldFor(const Time& time) {
-  _coroutines.top()->_time = Time::now()+time;
+  _coroutines.top()->_nextJump = Time::now()+time;
   yield();
-}
-void Coroutine::canYield() {
-  if(_coroutines.top()->_time<Time::now())
-    yield();
 }
