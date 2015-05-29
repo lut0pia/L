@@ -3,6 +3,12 @@
 
 #define typeof __typeof__ // static operator replaced by type name of expression
 
+#if defined(__x86_64__) || defined(_M_X64)
+#define L_X86_64
+#elif defined(__i386) || defined(_M_IX86)
+#define L_X86_32
+#endif
+
 // Assign value to automatically typed variable
 #define L_Auto(n,v) \
   auto n(v)
