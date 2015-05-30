@@ -29,7 +29,7 @@ namespace L {
         void ortho(float left, float right, float bottom, float top, float near = -1, float far = 1);
         void pixels(); // Maps to window's pixels (origins at top-left pixel)
 
-        Point2f worldToScreen(const Point3f&) const; // Returns the screen-space vector for that world space vector
+        bool worldToScreen(const Point3f&, Point2f&) const; // Set the screen-space vector for that world space vector, returns false if behind camera
         Point3f screenToRay(const Point2f&) const; // Returns direction vector from normalized screen position
         bool sees(const Interval3f&) const; // Checks if an interval can currently be seen by camera
 

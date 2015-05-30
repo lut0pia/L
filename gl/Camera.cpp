@@ -92,9 +92,12 @@ void Camera::pixels() {
   ortho(0,Window::width(),Window::height(),0);
 }
 
-Point2f Camera::worldToScreen(const Point3f& p) const {
+bool Camera::worldToScreen(const Point3f& p, Point2f& wtr) const {
   Point4f q(_viewProjection*p);
-  return Point3f(q)/q.w();
+  if(q.w()>0) // We do not want values behind the camera
+    wtr = Point3f(q)/q.w();
+  else return false;
+  return true;
 }
 Point3f Camera::screenToRay(const Point2f& p) const {
   return Point3f(_ray * Point4f(p.x(),p.y(),0,1));
