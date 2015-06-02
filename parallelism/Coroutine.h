@@ -9,9 +9,10 @@
 namespace L {
   class Coroutine {
     private:
+      static const size_t stackSize = 65536;
       static StaticStack<32,Coroutine*> _coroutines;
       jmp_buf _caller, _callee;
-      int _stack[4096];
+      char _stack[65536];
       Time _nextJump, _nextYield;
       bool _returned;
 
@@ -21,7 +22,7 @@ namespace L {
         _coroutines.push(this);
         if(!setjmp(_caller)) {
 #if defined L_X86_32
-          void* newesp(_stack+4095);
+          void* newesp(_stack+65536);
           __asm {
             mov esp, newesp
           }
