@@ -23,6 +23,9 @@ namespace L {
       bool empty() const {
         return _w==_r;
       }
+      int size() const {
+        return ((_r<_w)?(_w-_r):(n-(_r-_w)));
+      }
       void write(const T& e) {
         if(full()) throw Exception("Cannot write because queue is full.");
         _array[_w] = e;
