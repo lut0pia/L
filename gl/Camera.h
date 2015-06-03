@@ -34,7 +34,9 @@ namespace L {
         bool sees(const Interval3f&) const; // Checks if an interval can currently be seen by camera
 
         const Point3f& position() const {return _position;}
+        const Point3f& up() const {return _up;}
         const Point3f& forward() const {return _forward;}
+        const Point3f& right() const {return _right;}
         const Matrix44f& view() const {return _view;}
         const Matrix44f& projection() const {return _projection;}
         const Matrix44f& viewProjection() const {return _viewProjection;}
