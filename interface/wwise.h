@@ -106,6 +106,23 @@ namespace L {
         L_DebugOnly(std::cout << "Wwise event: " << name << std::endl;)
         AK::SoundEngine::PostEvent(name.c_str(),100);
       }
+      // RTPC
+      static void rtpc(const String& name, float value) {
+        AK::SoundEngine::SetRTPCValue(name.c_str(),value);
+      }
+      // Listeners
+      static void listen(const GL::Camera& cam) {
+        AkListenerPosition lp;
+        lp.Position.X = cam.position().x();
+        lp.Position.Y = cam.position().y();
+        lp.Position.Z = cam.position().z();
+        lp.OrientationFront.X = cam.forward().x();
+        lp.OrientationFront.Y = cam.forward().y();
+        lp.OrientationFront.Z = cam.forward().z();
+        lp.OrientationTop.X = cam.up().x();
+        lp.OrientationTop.Y = cam.up().y();
+        lp.OrientationTop.Z = cam.up().z();
+      }
       // Sound banks
       static void loadBank(const wchar_t* name) {
         AkBankID bankID;
