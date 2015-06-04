@@ -8,6 +8,6 @@ const char* Stream::line() {
   nospace();
   while((*w++ = get())!='\n') {}
   unget('\n');
-  *w = '\0';
+  *--w = '\0';
   return buffer;
 }
