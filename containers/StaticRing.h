@@ -1,5 +1,5 @@
-#ifndef DEF_L_Buffer
-#define DEF_L_Buffer
+#ifndef DEF_L_StaticRing
+#define DEF_L_StaticRing
 
 #include "../Exception.h"
 #include "../general.h"
@@ -7,13 +7,13 @@
 
 namespace L {
   template <int n, class T>
-  class Buffer {
+  class StaticRing {
     private:
       T _array[n];
       int _w, _r;
 
     public:
-      Buffer() : _w(0), _r(0) {}
+      StaticRing() : _w(0), _r(0) {}
       int index(int i) const {
         return PMod(i,n);
       }

@@ -159,7 +159,7 @@
 		<Unit filename="containers.h" />
 		<Unit filename="containers/Array.h" />
 		<Unit filename="containers/BTree.h" />
-		<Unit filename="containers/Buffer.h" />
+		<Unit filename="containers/StaticRing.h" />
 		<Unit filename="containers/MultiArray.h" />
 		<Unit filename="containers/Pool.h" />
 		<Unit filename="containers/Ref.h" />
