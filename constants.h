@@ -10,6 +10,10 @@ namespace L {
     static const T wtr(PI<T>()/(T)180);
     return wtr;
   }
+  template <class T> inline const T& RADTODEG(){
+    static const T wtr(1.f/DEGTORAD<T>());
+    return wtr;
+  }
 }
 
 #endif
