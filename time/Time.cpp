@@ -24,6 +24,9 @@ Time Time::operator+(const Time& other) const {
 Time Time::operator-(const Time& other) const {
   return Time(usec-other.usec);
 }
+Time Time::operator*(float v) const {
+  return Time(usec*v);
+}
 Time Time::operator*(const long long& v) const {
   return Time(usec*v);
 }

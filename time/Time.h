@@ -14,6 +14,7 @@ namespace L {
 
       Time operator+(const Time&) const;
       Time operator-(const Time&) const;
+      Time operator*(float) const;
       Time operator*(const long long&) const;
       Time operator/(const long long&) const;
       bool operator==(const Time&) const;
