@@ -9,15 +9,17 @@ namespace L {
   namespace GUI {
     class Image : public Solid {
       protected:
-        Ref<GL::Texture> tex;
-        Point2i dimensions;
+        Ref<GL::Texture> _texture;
+        Point2i _dimensions;
 
       public:
         Image();
+        Image(const Ref<GL::Texture>&);
         Image(const L::Image::Bitmap&);
         virtual ~Image() {}
 
-        void sBitmap(const L::Image::Bitmap&);
+        void texture(const Ref<GL::Texture>&);
+        void bitmap(const L::Image::Bitmap&);
 
         Point2i gDimensions();
         void draw(GL::Program&);

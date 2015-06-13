@@ -4,7 +4,7 @@ using namespace L;
 using namespace GUI;
 
 void GUI::Text::redraw(){
-    sBitmap(font.render(text).filter(color));
+    bitmap(font.render(text).filter(color));
 }
 GUI::Text::Text(const String& text, const String& font, Color color)
     : Image(), text(text), font(Font::get(font)), color(color){
