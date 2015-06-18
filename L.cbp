@@ -159,13 +159,13 @@
 		<Unit filename="containers.h" />
 		<Unit filename="containers/Array.h" />
 		<Unit filename="containers/BTree.h" />
-		<Unit filename="containers/StaticRing.h" />
 		<Unit filename="containers/KeyValue.h" />
 		<Unit filename="containers/MultiArray.h" />
 		<Unit filename="containers/Pool.h" />
 		<Unit filename="containers/Ref.h" />
 		<Unit filename="containers/Set.h" />
 		<Unit filename="containers/SortedArray.h" />
+		<Unit filename="containers/StaticRing.h" />
 		<Unit filename="containers/StaticStack.h" />
 		<Unit filename="containers/Tree.h" />
 		<Unit filename="containers/XML.cpp" />
