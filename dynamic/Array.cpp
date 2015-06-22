@@ -9,7 +9,7 @@ Dynamic::Array& Dynamic::Array::operator()(const Variable& other) {
   push(other);
   return *this;
 }
-std::ostream& L::Dynamic::operator<<(std::ostream& s, const Dynamic::Array& v) {
+Stream& L::Dynamic::operator<<(Stream& s, const Dynamic::Array& v) {
   bool first = true;
   s.put('[');
   v.foreach([&first,&s](const Variable& var) {

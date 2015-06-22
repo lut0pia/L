@@ -1,9 +1,9 @@
 #ifndef DEF_L_Dynamic_Type
 #define DEF_L_Dynamic_Type
 
-#include <typeinfo>
 #include "../macros.h"
 #include "../stl/String.h"
+#include "../streams/Stream.h"
 
 namespace L {
   namespace Dynamic {
@@ -17,10 +17,9 @@ namespace L {
       void (*dtr)(void*);
       void (*del)(void*);
 
-      void (*out)(std::ostream&,const void*);
+      void (*out)(Stream&,const void*);
       int (*cmp)(void*,void*);
 
-      bool (*hasout)();
       bool (*hascmp)();
     } TypeDescription;
 
@@ -53,10 +52,9 @@ namespace L {
           return wtr.substr(55);
 #endif
         }
-        static void out(std::ostream& s, const void* p) {s << "N/A";}
+        static void out(Stream& s, const void* p) {s << (*(const T*)p);}
         static int cmp(void* a, void* b) {return 0;}
 
-        static bool hasname() {return true;}
         static bool hasout() {return false;}
         static bool hascmp() {return false;}
     };
@@ -65,15 +63,12 @@ namespace L {
     template <class T> const TypeDescription Type<T>::td = {Type<T>::name(),sizeof(T),
                                                             cpy,cpyto,dtr,del,
                                                             out,cmp,
-                                                            hasout,hascmp
+                                                            hascmp
                                                            };
 
     // Specify void doesn't construct nor destruct
     template <> inline void* Type<void>::cpy(void* p) {return NULL;}
     template <> inline void Type<void>::del(void* p) {}
-
-#define L_TYPE_OUTABLE(T) template <> inline void Type< T >::out(std::ostream& s, const void* p){s << (*(T*)p);} \
-  template <> inline bool Type< T >::hasout(){return true;}
 
 #define L_TYPE_CMPABLE(T) template <> inline int Type< T >::cmp(void* a, void* b){\
     if((*(T*)a)<(*(T*)b))       return -1;\
@@ -81,7 +76,7 @@ namespace L {
     else                        return 1;} \
   template <> inline bool Type< T >::hascmp(){return true;}
 
-#define L_TYPE_PRIMITIVE(T) L_TYPE_OUTABLE(T) L_TYPE_CMPABLE(T)
+#define L_TYPE_PRIMITIVE(T) L_TYPE_CMPABLE(T)
 
     L_TYPE_PRIMITIVE(bool)
     L_TYPE_PRIMITIVE(unsigned char)

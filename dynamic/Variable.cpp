@@ -75,8 +75,7 @@ Variable& Variable::operator[](size_t i) {
   return get<Array>()[i];
 }
 
-std::ostream& L::Dynamic::operator<<(std::ostream& s, const Variable& v) {
-  if(v._td->hasout())
-    v._td->out(s,v.value());
+L::Stream& L::Dynamic::operator<<(L::Stream& s, const Variable& v) {
+  v._td->out(s,v.value());
   return s;
 }

@@ -8,10 +8,9 @@ namespace L {
     class Node : public Map<String,Variable> {
       public:
         Node& operator()(const String&, const Variable&);
-        friend std::ostream& operator<<(std::ostream&, const Node&);
+        friend Stream& operator<<(Stream&, const Node&);
     };
-    std::ostream& operator<<(std::ostream& s, const Node& v);
-    L_TYPE_OUTABLE(Node)
+    Stream& operator<<(Stream& s, const Node& v);
   }
 }
 

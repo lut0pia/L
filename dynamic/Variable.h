@@ -70,10 +70,10 @@ namespace L {
 
         template<class T> operator T() {return get<T>();}
 
-        friend std::ostream& operator<<(std::ostream&, const Variable&);
+        friend Stream& operator<<(Stream&, const Variable&);
     };
     typedef Variable Var;
-    std::ostream& operator<<(std::ostream&, const Variable&);
+    Stream& operator<<(Stream&, const Variable&);
   }
 }
 

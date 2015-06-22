@@ -9,7 +9,7 @@ Node& Node::operator()(const String& s, const Variable& v) {
   operator[](s) = v;
   return *this;
 }
-std::ostream& L::Dynamic::operator<<(std::ostream& s, const Node& v) {
+Stream& L::Dynamic::operator<<(Stream& s, const Node& v) {
   bool first = true;
   s.put('{');
   L_Iter(v,it) {

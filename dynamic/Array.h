@@ -9,10 +9,9 @@ namespace L {
     class Array : public L::Array<Variable> {
       public:
         Array& operator()(const Variable&);
-        friend std::ostream& operator<<(std::ostream&, const Array&);
+        friend Stream& operator<<(Stream&, const Array&);
     };
-    std::ostream& operator<<(std::ostream& s, const Array& v);
-    L_TYPE_OUTABLE(Array)
+    Stream& operator<<(Stream& s, const Array& v);
   }
 }
 
