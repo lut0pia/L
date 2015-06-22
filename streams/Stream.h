@@ -21,6 +21,18 @@ namespace L {
 
       const char* line(); // Reads a line until \n
 
+      // Default operators
+      template<class T> Stream& operator<<(const T& v) { // TODO: Default human readable is hexadecimal
+        write(&v,sizeof(v));
+        return *this;
+      }
+      template<class T> Stream& operator>>(T& v) {
+        read(&v,sizeof(v));
+        return *this;
+      }
+      template<class T> inline Stream& operator<(const T& v) {write(&v,sizeof(v)); return *this;}
+      template<class T> inline Stream& operator>(T& v) {read(&v,sizeof(v)); return *this;}
+
       inline Stream& operator<<(char v) {fputc(v,_fd); return *this;}
       inline Stream& operator<<(const char* v) {fputs(v,_fd); return *this;}
       inline Stream& operator<<(int v) {fprintf(_fd,"%i",v); return *this;}
@@ -35,9 +47,6 @@ namespace L {
       inline Stream& operator>>(unsigned int& v) {fscanf(_fd,"%u",&v); return *this;}
       inline Stream& operator>>(float& v) {fscanf(_fd,"%f",&v); return *this;}
       inline Stream& operator>>(double& v) {fscanf(_fd,"%f",&v); return *this;}
-
-      template<class T> inline Stream& operator<(const T& v) {write(&v,sizeof(v)); return *this;}
-      template<class T> inline Stream& operator>(T& v) {read(&v,sizeof(v)); return *this;}
 
       void nospace() {char tmp; while(isspace(tmp = get())) {} unget(tmp);}
       static inline bool isspace(char c) {return c==' '||c=='\t'||c=='\n'||c=='\v'||c=='\f'||c=='\r';}
