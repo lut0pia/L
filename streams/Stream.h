@@ -14,6 +14,7 @@ namespace L {
       inline void read(void* data, size_t size) {fread(data,1,size,_fd);}
       inline char peek() {char wtr(get()); unget(wtr); return wtr;}
       inline char get() {return fgetc(_fd);}
+      inline void put(char c) {fputc(c,_fd);}
       inline void unget(char c) {ungetc(c,_fd);}
       inline void ignore(int n=1) {while(n--)get();}
       inline bool eof() const{return feof(_fd);}
