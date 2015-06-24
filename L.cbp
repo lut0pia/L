@@ -181,8 +181,6 @@
 		<Unit filename="dynamic/Cast.h" />
 		<Unit filename="dynamic/Node.cpp" />
 		<Unit filename="dynamic/Node.h" />
-		<Unit filename="dynamic/Scope.cpp" />
-		<Unit filename="dynamic/Scope.h" />
 		<Unit filename="dynamic/Type.h" />
 		<Unit filename="dynamic/Variable.cpp" />
 		<Unit filename="dynamic/Variable.h" />
