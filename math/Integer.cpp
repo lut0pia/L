@@ -360,7 +360,7 @@ Integer Integer::pow(const Integer& a, Integer b) {
   return wtr;
 }
 
-std::ostream& L::operator<<(std::ostream &stream, const Integer& v) {
+Stream& L::operator<<(Stream &stream, const Integer& v) {
   if(v.size()) {
     if(v._negative)
       stream << '-';

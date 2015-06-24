@@ -67,10 +67,10 @@ namespace L {
       static Integer gcd(Integer a, Integer b);
       static Integer pow(const Integer& a, Integer b);
       friend class Rational;
-      friend std::ostream& operator<<(std::ostream&, const Integer&);
+      friend Stream& operator<<(Stream&, const Integer&);
   };
 
-  std::ostream& operator<<(std::ostream&, const Integer&);
+  Stream& operator<<(Stream&, const Integer&);
 }
 
 #endif
