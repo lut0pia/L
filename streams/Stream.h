@@ -22,14 +22,8 @@ namespace L {
       const char* line(); // Reads a line until \n
 
       // Default operators
-      template<class T> Stream& operator<<(const T& v) { // TODO: Default human readable is hexadecimal
-        write(&v,sizeof(v));
-        return *this;
-      }
-      template<class T> Stream& operator>>(T& v) {
-        read(&v,sizeof(v));
-        return *this;
-      }
+      template<class T> inline Stream& operator<<(const T& v) {return operator<<("N/A");}
+      template<class T> inline Stream& operator>>(T& v) {return *this;}
       template<class T> inline Stream& operator<(const T& v) {write(&v,sizeof(v)); return *this;}
       template<class T> inline Stream& operator>(T& v) {read(&v,sizeof(v)); return *this;}
 
