@@ -28,7 +28,10 @@ namespace L {
         return from(v,FileStream(file,"rb"));
       }
       virtual bool from(T& v, const String& str) {
-        return false;
+        tmpfile.rewind();
+        tmpfile << str;
+        tmpfile.rewind();
+        return from(v,tmpfile);
       }
       virtual bool from(T& v, Stream& is) {
         return false;
