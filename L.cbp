@@ -329,6 +329,9 @@
 		<Unit filename="regex/Regex.h" />
 		<Unit filename="regex/String.cpp" />
 		<Unit filename="regex/String.h" />
+		<Unit filename="script.h" />
+		<Unit filename="script/Lexer.cpp" />
+		<Unit filename="script/Lexer.h" />
 		<Unit filename="stl.h" />
 		<Unit filename="stl/List.h" />
 		<Unit filename="stl/Map.h" />
