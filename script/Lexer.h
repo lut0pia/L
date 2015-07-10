@@ -9,10 +9,13 @@ namespace L {
       private:
         Stream& _stream;
         char _buffer[1024];
+        bool _literal;
+
       public:
         inline Lexer(Stream& stream) : _stream(stream) {}
         bool nextToken();
         inline const char* token() const {return _buffer;}
+        inline bool literal() const {return _literal;}
     };
   }
 }

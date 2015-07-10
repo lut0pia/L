@@ -10,30 +10,29 @@ bool Lexer::nextToken() {
   else {
     char* w(_buffer);
     char c;
-    bool string(false);
+    _literal = false;
     do {
       c = _stream.get();
-      if(string) {
-        *w++ = c;
-        if(c=='"')
-          break;
-      } else {
-        if(Stream::isspace(c)) { // End of word
-          break;
-        }  else if((c>='!' && c<='/') || (c>=':' && c<='@') || (c>='['&&c<='`') || c>='{') { // Special char
+      if(_literal) { // Literal expression
+        if(c=='"') break; // End of string
+        else *w++ = c; // Character inside string
+      } else { // Non-literal token
+        if(Stream::isspace(c)) break;  // End of word
+        else if((c>='!' && c<='/') || (c>=':' && c<='@') || (c>='['&&c<='`') || c>='{') { // Special char
           if(w>_buffer) { // Word already started
             _stream.unget(c);
             break;
           } else {
-            *w++ = c;
-            if(c=='"') string = true; // Start of a string
-            else break; // Single special char
+            if(c=='"') _literal = true; // Start of a string
+            else { // Single special char
+              *w++ = c;
+              break;
+            }
           }
-        } else
-          *w++ = c;
+        } else *w++ = c; // Regular character
       }
-    } while(!_stream.eof());
-    *w = '\0';
+    } while(!_stream.eof()); // Reached end of stream
+    *w = '\0'; // Null-ended
     return true;
   }
 }
