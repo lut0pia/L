@@ -3,6 +3,7 @@
 using namespace L;
 using namespace ECS;
 
+Pool<Entity> Engine::_entities;
 Set<void (*)()> Engine::_updates;
 
 void Engine::addUpdate(void (*update)()) {
