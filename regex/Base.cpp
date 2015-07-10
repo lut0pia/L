@@ -3,11 +3,11 @@
 using namespace L;
 using namespace Regex;
 
-Base::Base(size_t qMin, size_t qMax) : qMin(qMin), qMax(qMax) {}
+Base::Base(size_t qMin, size_t qMax) : _qMin(qMin), _qMax(qMax) {}
 Set<size_t> Base::qAccepts(const String& str, const Set<size_t>& start, size_t count) {
   Set<size_t> wtr;
-  if(qMin<=count) wtr += start;
-  if(qMax>count)
+  if(_qMin<=count) wtr += start;
+  if(_qMax>count)
     for(int i(0); i<start.size(); i++) {
       Set<size_t> newStart(accepts(str,start[i]));
       if(!newStart.empty())
