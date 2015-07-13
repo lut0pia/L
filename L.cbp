@@ -30,35 +30,6 @@
 					<Add option="-s" />
 				</Linker>
 			</Target>
-			<Target title="Debug (MinGW)">
-				<Option platforms="Windows;" />
-				<Option output="bin/mingw/L" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="" />
-				<Option object_output="obj/mingw/debug" />
-				<Option type="2" />
-				<Option compiler="gcc" />
-				<Option createDefFile="1" />
-				<Compiler>
-					<Add option="-Wall" />
-					<Add option="-g" />
-					<Add option="-DL_Debug" />
-				</Compiler>
-			</Target>
-			<Target title="Release (MinGW)">
-				<Option platforms="Windows;" />
-				<Option output="bin/mingw/L" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="" />
-				<Option object_output="obj/mingw/release" />
-				<Option type="2" />
-				<Option compiler="gcc" />
-				<Option createDefFile="1" />
-				<Compiler>
-					<Add option="-O3" />
-				</Compiler>
-				<Linker>
-					<Add option="-s" />
-				</Linker>
-			</Target>
 			<Target title="Debug (Unix)">
 				<Option platforms="Unix;" />
 				<Option output="bin/unix/L" prefix_auto="1" extension_auto="1" />
