@@ -22,9 +22,8 @@ namespace L {
         Object::destruct(*_current);
         _current--;
       }
-      inline T& top() {
-        return *_current;
-      }
+      inline T& top() {return *_current;}
+      inline T& operator[](int i) {return *(_current-i);}
       inline bool empty() const {return (const T*)_array==_current;}
   };
 }
