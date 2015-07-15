@@ -104,6 +104,19 @@ namespace L {
         for(size_t i(0); i<_size; i++)
           f(operator[](i));
       }
+
+      template <typename... Args>
+      inline static Array make(Args&&... args) {
+        Array wtr;
+        staticPush(wtr,args...);
+        return wtr;
+      }
+      template <typename... Args>
+      inline static void staticPush(Array& a, const T& e, Args&&... args) {
+        a.push(e);
+        staticPush(a,args...);
+      }
+      inline static void staticPush(Array& a) {}
   };
 }
 
