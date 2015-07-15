@@ -25,6 +25,7 @@ namespace L {
       inline T& top() {
         return *_current;
       }
+      inline bool empty() const {return (const T*)_array==_current;}
   };
 }
 
