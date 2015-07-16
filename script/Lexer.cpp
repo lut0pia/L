@@ -1,13 +1,16 @@
 #include "Lexer.h"
 
+#include <cstring>
+#include "../Exception.h"
+
 using namespace L;
 using namespace Script;
 
 bool Lexer::nextToken() {
-  _stream.nospace();
   if(_stream.eof())
     return false;
   else {
+    _stream.nospace();
     char* w(_buffer);
     char c;
     _literal = false;
@@ -35,4 +38,19 @@ bool Lexer::nextToken() {
     *w = '\0'; // Null-ended
     return true;
   }
+}
+
+bool Lexer::isToken(const char* str) {
+  return !strcmp(str,token());
+}
+bool Lexer::acceptToken(const char* str) {
+  if(isToken(str)) {
+    nextToken();
+    return true;
+  }
+  return false;
+}
+void Lexer::expectToken(const char* str) {
+  if(!acceptToken(str))
+    throw Exception("Script: Expected "+String(str)+" but got "+String(token())+" instead.");
 }

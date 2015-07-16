@@ -14,6 +14,10 @@ namespace L {
       public:
         inline Lexer(Stream& stream) : _stream(stream) {}
         bool nextToken();
+        bool isToken(const char*);
+        bool acceptToken(const char*);
+        void expectToken(const char*);
+
         inline const char* token() const {return _buffer;}
         inline bool literal() const {return _literal;}
     };
