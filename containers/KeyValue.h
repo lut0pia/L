@@ -16,7 +16,7 @@ namespace L {
       inline const V& value() const {return _value;}
   };
   template <class K, class V>
-  inline KeyValue<K,V> keyValue(const K& k, const V& v){
+  inline KeyValue<K,V> keyValue(const K& k, const V& v) {
     return KeyValue<K,V>(k,v);
   }
 }
