@@ -72,20 +72,8 @@
 		<Unit filename="ai/Perceptron.cpp" />
 		<Unit filename="ai/Perceptron.h" />
 		<Unit filename="audio.h" />
-		<Unit filename="audio/Audio.cpp" />
-		<Unit filename="audio/Audio.h" />
-		<Unit filename="audio/Buffer.cpp" />
-		<Unit filename="audio/Buffer.h" />
-		<Unit filename="audio/Format.cpp" />
-		<Unit filename="audio/Format.h" />
-		<Unit filename="audio/Input.cpp">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="audio/Input.h" />
 		<Unit filename="audio/Midi.cpp" />
 		<Unit filename="audio/Midi.h" />
-		<Unit filename="audio/Output.cpp" />
-		<Unit filename="audio/Output.h" />
 		<Unit filename="burp.h" />
 		<Unit filename="burp/Code.cpp" />
 		<Unit filename="burp/Code.h" />
