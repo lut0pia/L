@@ -35,30 +35,6 @@ Server::Server(const char* port){
         return;
     }
 
-    /*
-    struct addrinfo hints, *res;
-
-    memset(&hints, 0, sizeof hints);
-    hints.ai_family = AF_UNSPEC;        // Use IPv4 or IPv6, whichever
-    hints.ai_socktype = SOCK_STREAM;    // TCP socket
-    hints.ai_flags = AI_PASSIVE;        // Fill in my IP for me
-
-    getaddrinfo(NULL, port, &hints, &res);
-
-    if((sd = socket(res->ai_family,res->ai_socktype,res->ai_protocol)) == INVALID_SOCKET){ // INVALID_SOCKET
-        throw Exception("Server socket error";
-        sd = 0;
-        return;
-    }
-    setsockopt(sd,SOL_SOCKET,SO_REUSEADDR, &optval, sizeof(optval));
-    if(::bind(sd,res->ai_addr,res->ai_addrlen)){
-        throw Exception("Server bind error";
-        closesocket(sd);
-        sd = 0;
-        return;
-    }
-    */
-
     if(listen(sd, 5) == -1){
         throw Exception("Server listen error");
         closesocket(sd);
