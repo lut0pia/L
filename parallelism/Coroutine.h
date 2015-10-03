@@ -14,11 +14,11 @@ namespace L {
       jmp_buf _caller, _callee;
       char _stack[stackSize];
       Time _nextJump, _nextYield;
-      bool _returned;
+      bool _returned, _terminating;
 
     public:
       template <class F, class... Args>
-      Coroutine(const F& f, Args&&... args) : _nextJump(0), _nextYield(0), _returned(false) {
+      Coroutine(const F& f, Args&&... args) : _nextJump(0), _nextYield(0), _returned(false), _terminating(false) {
         _coroutines.push(this);
         if(!setjmp(_caller)) {
 #if defined L_X86_32
@@ -41,11 +41,13 @@ namespace L {
       }
 
       inline bool returned() const {return _returned;}
+      static bool terminating() {return _coroutines.top()->_terminating;}
 
-      void jump();
-      void jumpFor(const Time&);
-      static void yield();
-      static void yieldFor(const Time&);
+      bool jump();
+      bool jumpFor(const Time&);
+      void terminate();
+      static bool yield();
+      static bool yieldFor(const Time&);
   };
 }
 
