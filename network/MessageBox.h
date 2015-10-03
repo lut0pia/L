@@ -34,12 +34,12 @@ namespace L{
 
                 inline SOCKET gSD(){return sd;}
                 inline bool isConnected(){return connected;}
-*/
             protected:
                 static Dynamic::Var recvMessages(Thread*);
                 static Dynamic::Var sendMessages(Thread*);
         };
     }
 }
+*/
 
 #endif

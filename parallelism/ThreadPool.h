@@ -6,6 +6,7 @@
 #include "Mutex.h"
 #include "Semaphore.h"
 
+/*
 namespace L{
     class ThreadPool{
         typedef Dynamic::Var (*Task)(const Dynamic::Var&);
@@ -30,7 +31,6 @@ namespace L{
             void push(Task, const Dynamic::Var& = Dynamic::Var());
             Dynamic::Var get();
     };
-/*
 }
 */
 #endif
