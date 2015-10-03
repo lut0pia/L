@@ -5,20 +5,20 @@
 #include "../containers/Ref.h"
 #include "Mutex.h"
 
-namespace L{
-    class ThreadStore{
-        private:
-            Array<Ref<Thread> > threads;
-            Mutex mutex;
-            static Dynamic::Var garbageCollector(Thread*);
+namespace L {
+  class ThreadStore {
+    private:
+      Array<Ref<Thread> > threads;
+      Mutex mutex;
+      static Var garbageCollector(Thread*);
 
-        public:
-            ThreadStore();
-            L_NoCopy(ThreadStore)
-            ~ThreadStore();
+    public:
+      ThreadStore();
+      L_NoCopy(ThreadStore)
+      ~ThreadStore();
 
-            void attach(const Ref<Thread>&);
-    };
+      void attach(const Ref<Thread>&);
+  };
 }
 #endif
 
