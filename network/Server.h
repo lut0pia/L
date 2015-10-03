@@ -8,6 +8,7 @@
 #include "Network.h"
 #include "../parallelism.h"
 
+/*
 namespace L{
     namespace Network{
         class Server{
@@ -32,6 +33,7 @@ namespace L{
         };
     }
 }
+*/
 
 #endif
 

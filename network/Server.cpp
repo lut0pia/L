@@ -4,7 +4,7 @@
 
 using namespace L;
 using namespace Network;
-
+/*
 #if defined L_UNIX
     #include <string.h>
 #endif
@@ -75,4 +75,4 @@ Dynamic::Var Server::waitForClients(Thread* thread){
     }
     return 0;
 }
-
+*/
