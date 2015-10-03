@@ -6,11 +6,11 @@
 #include <iomanip>
 
 namespace L {
-  class JSON : public Interface<Dynamic::Var> {
+  class JSON : public Interface<Var> {
     public:
       JSON() : Interface("json") {}
 
-      bool to(const Dynamic::Var& v, Stream& stream) {
+      bool to(const Var& v, Stream& stream) {
         if(v.is<String>())
           stream << '"' << v.as<String>() << '"';
         else if(v.is<bool>())
@@ -37,7 +37,7 @@ namespace L {
         } else L_Error("Bad JSON output.");
         return true;
       }
-      bool from(Dynamic::Var& v, Stream& stream) {
+      bool from(Var& v, Stream& stream) {
         char c;
         size_t i;
         String str;

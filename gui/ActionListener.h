@@ -25,14 +25,14 @@ namespace L {
     };
     class ActionListener : public Layer {
       public:
-        typedef std::function<bool(ActionListener*,Dynamic::Var&,Event)> Function;
+        typedef std::function<bool(ActionListener*,Var&,Event)> Function;
       protected:
         Function _f; // A return value of true means the event has been used
-        Dynamic::Var _param;
+        Var _param;
         bool _mouseIsOver;
 
       public:
-        ActionListener(const Ref<Base>&, const Function&, const Dynamic::Var& param = Dynamic::Var());
+        ActionListener(const Ref<Base>&, const Function&, const Var& param = Var());
 
         bool event(const Window::Event&);
     };

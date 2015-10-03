@@ -11,7 +11,6 @@
 
 namespace L {
   namespace Script {
-    using Dynamic::Var;
     class Context {
       private:
         Parser _parser;

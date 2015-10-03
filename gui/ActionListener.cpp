@@ -4,7 +4,7 @@ using namespace L;
 using namespace GUI;
 
 Event::Event(Type type, int x, int y) : type(type), x(x), y(y) {}
-ActionListener::ActionListener(const Ref<Base>& inner, const Function& f, const Dynamic::Var& param)
+ActionListener::ActionListener(const Ref<Base>& inner, const Function& f, const Var& param)
   : Layer(inner), _f(f), _param(param), _mouseIsOver(false) {}
 
 bool ActionListener::event(const Window::Event& e) {

@@ -72,9 +72,9 @@ namespace L {
 
         friend Stream& operator<<(Stream&, const Variable&);
     };
-    typedef Variable Var;
     Stream& operator<<(Stream&, const Variable&);
   }
+  typedef Dynamic::Variable Var;
 }
 
 #endif

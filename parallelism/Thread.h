@@ -14,10 +14,10 @@
 
 namespace L {
   class Thread {
-      typedef Dynamic::Var(*Function)(Thread*);
+      typedef Var(*Function)(Thread*);
     private:
       Function function;
-      Dynamic::Var arg, result;
+      Var arg, result;
       bool running, waitedFor;
 #if defined L_WINDOWS
       DWORD threadId;
@@ -29,16 +29,16 @@ namespace L {
 
     public:
       Thread();
-      Thread(Function,const Dynamic::Var& = Dynamic::Var());
+      Thread(Function,const Var& = Var());
       L_NoCopy(Thread)
       ~Thread();
 
-      void start(Function,const Dynamic::Var& = Dynamic::Var());
+      void start(Function,const Var& = Var());
       void waitForEnd(int maxMilliseconds = -1);
       void terminate();
 
-      inline const Dynamic::Var& gArg() const {return arg;}
-      inline const Dynamic::Var& gResult() const {return result;}
+      inline const Var& gArg() const {return arg;}
+      inline const Var& gResult() const {return result;}
       inline bool isRunning() const {return running;}
       inline bool isWaitedFor() const {return waitedFor;}
 

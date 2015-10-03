@@ -8,7 +8,6 @@ namespace L {
   namespace Script {
     class Context;
     class Compiler;
-    using Dynamic::Var;
     namespace Code {
       class Base {
         public:

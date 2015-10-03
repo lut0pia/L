@@ -4,7 +4,7 @@
 
 using namespace L;
 
-Dynamic::Var ThreadStore::garbageCollector(Thread* thread) {
+Var ThreadStore::garbageCollector(Thread* thread) {
   ThreadStore& ts(*thread->gArg().as<ThreadStore*>());
   while(!thread->isWaitedFor()) {
     size_t i(0);
@@ -17,7 +17,7 @@ Dynamic::Var ThreadStore::garbageCollector(Thread* thread) {
     ts.mutex.unlock();
     System::sleep(50);
   }
-  return Dynamic::Var();
+  return Var();
 }
 ThreadStore::ThreadStore() {
   attach(new Thread(garbageCollector,this));
