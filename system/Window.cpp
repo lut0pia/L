@@ -1,13 +1,6 @@
 #include "Window.h"
 
 #include "../systems.h"
-/*
-#include<X11/X.h>
-#include<X11/Xlib.h>
-#include<GL/glew.h>
-#include<GL/glx.h>
-#include<GL/glu.h>
-*/
 
 #include <cstring>
 #include "../gl/GL.h"
