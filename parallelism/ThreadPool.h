@@ -30,7 +30,9 @@ namespace L{
             void push(Task, const Dynamic::Var& = Dynamic::Var());
             Dynamic::Var get();
     };
+/*
 }
+*/
 #endif
 
 

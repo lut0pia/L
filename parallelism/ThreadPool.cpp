@@ -1,5 +1,6 @@
 #include "ThreadPool.h"
 
+/*
 using namespace L;
 
 Dynamic::Var ThreadPool::worker(Thread* thread) {
@@ -51,3 +52,4 @@ Dynamic::Var ThreadPool::get() {
   resultsMutex.unlock();
   return wtr;
 }
+*/
