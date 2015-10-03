@@ -51,6 +51,8 @@ namespace L {
       inline void clear() {size(0);}
       inline T& operator[](size_t i) {return *(((T*)_data)+i);}
       inline const T& operator[](size_t i) const {return *(((T*)_data)+i);}
+      inline T& front() {return operator[](0);}
+      inline const T& front() const {return operator[](0);}
       inline T& back() {return operator[](_size-1);}
       inline const T& back() const {return operator[](_size-1);}
       template <typename... Args> inline void push(Args&&... args) {insert(_size,args...);}
