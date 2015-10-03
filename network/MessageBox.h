@@ -1,6 +1,6 @@
 #ifndef DEF_L_Network_MessageBox
 #define DEF_L_Network_MessageBox
-
+/*
 #include "Message.h"
 #include "../parallelism.h"
 
@@ -34,7 +34,7 @@ namespace L{
 
                 inline SOCKET gSD(){return sd;}
                 inline bool isConnected(){return connected;}
-
+*/
             protected:
                 static Dynamic::Var recvMessages(Thread*);
                 static Dynamic::Var sendMessages(Thread*);

@@ -2,7 +2,7 @@
 
 using namespace L;
 using namespace Network;
-
+/*
 #include "Message.h"
 
 MessageBox::MessageBox(SOCKET sd) : sendQueueSemaphore(0) {
