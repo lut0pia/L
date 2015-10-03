@@ -17,7 +17,6 @@
 // Sublibraries
 #include "ai.h"             // Artifical Intelligence
 #include "audio.h"          // Audio I/O, Wave & Midi
-//#include "burp.h"           // Interpreted scripting language
 #include "bytes.h"          // Byte to byte functions, encoding
 #include "constants.h"      // Constant values
 #include "containers.h"     // Classes that hold other classes
