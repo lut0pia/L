@@ -14,13 +14,13 @@ void ListContainer::toggleBlockInsert() {
   update();
 }
 void ListContainer::push_back(Ref<Base> e) {
-  elements.push_back(e);
+  elements.push(e);
   e->sParent(this);
   update();
 }
 void ListContainer::pop_back(size_t n) {
   while(n--)
-    elements.pop_back();
+    elements.pop();
   update();
 }
 size_t ListContainer::size() {
@@ -43,11 +43,12 @@ void ListContainer::updateFromAbove(Point2i pos, Interval2i parentClip) {
   if(!blockInsert) {
     Point2i oldDim(dimensions);
     dimensions.x() = dimensions.y() = 0;
-    L_Iter(elements,it) {
-      (*it)->updateFromAbove(Point<2,int>(pos.x(),pos.y()+dimensions.y()),parentClip);
-      Point2i childDim((*it)->gDimensions());
+    for(int i(0); i<elements.size(); i++) {
+      const Ref<Base>& element(elements[i]);
+      element->updateFromAbove(Point<2,int>(pos.x(),pos.y()+dimensions.y()),parentClip);
+      Point2i childDim(element->gDimensions());
       dimensions.y() += childDim.y();
-      if(it!=--elements.end())
+      if(i+1<elements.size())
         dimensions.y() += spacing;
       dimensions.x() = std::max(dimensions.x(), childDim.x());
     }
@@ -56,13 +57,13 @@ void ListContainer::updateFromAbove(Point2i pos, Interval2i parentClip) {
   }
 }
 void ListContainer::draw(GL::Program& program) {
-  L_Iter(elements,it)
-  (*it)->draw(program);
+  for(int i(0); i<elements.size(); i++)
+    elements[i]->draw(program);
 }
 bool ListContainer::event(const Window::Event& e) {
-  L_Iter(elements,it)
-  if((*it)->event(e))
-    return true;
+  for(int i(0); i<elements.size(); i++)
+    if(elements[i]->event(e))
+      return true;
   return false;
 }
 

@@ -22,31 +22,31 @@ String::String(size_t n, char c) : std::string(n,c) {}
 String String::substr(size_t pos, size_t len) const {
   return String(*this,pos,len);
 }
-List<String> String::escapedExplode(char c, byte escapeBrackets, uint limit) const {
-  List<String> wtr; // Will contain parts
+Array<String> String::escapedExplode(char c, byte escapeBrackets, uint limit) const {
+  Array<String> wtr; // Will contain parts
   Array<uint> delimiters(1,0); // Will contain delimiters for the split (already contains 0)
-  List<byte> brackets(1,0);
+  Array<byte> brackets(1,0);
   size_t size(this->size());
   if(!size) return wtr;
   for(uint i(0); (!limit || delimiters.size()<limit) && i<size; i++) {
     if((*this)[i] == '"' && (escapeBrackets & quotations)) { // There's a quotation and it's an escape
       if(brackets.back()==quotations) // Closing
-        brackets.pop_back();
+        brackets.pop();
       else                              // Opening
-        brackets.push_back(quotations);
+        brackets.push(quotations);
     } else if(brackets.back()!=quotations) { // We're not in quotes ((), {}, [] are effective)
       if((*this)[i] == '(' && (escapeBrackets & parentheses)) // There's a parenthese opening and it's an escape
-        brackets.push_back(parentheses);
+        brackets.push(parentheses);
       else if((*this)[i] == ')' && brackets.back()==parentheses) // There's a parenthese closing and we're in parentheses
-        brackets.pop_back();
+        brackets.pop();
       else if((*this)[i] == '{' && (escapeBrackets & curlybrackets)) // There's a curly bracket opening and it's an escape
-        brackets.push_back(curlybrackets);
+        brackets.push(curlybrackets);
       else if((*this)[i] == '}' && brackets.back()==curlybrackets) // There's a curly bracket closing and we're in curly brackets
-        brackets.pop_back();
+        brackets.pop();
       else if((*this)[i] == '[' && (escapeBrackets & squarebrackets)) // There's a square bracket opening and it's an escape
-        brackets.push_back(squarebrackets);
+        brackets.push(squarebrackets);
       else if((*this)[i] == ']' && brackets.back()==squarebrackets) // There's a square bracket closing and we're in a square bracket
-        brackets.pop_back();
+        brackets.pop();
     }
     if((*this)[i]==c && !brackets.back()) { // Add delimiter
       delimiters.push(i+1);
@@ -54,11 +54,11 @@ List<String> String::escapedExplode(char c, byte escapeBrackets, uint limit) con
   }
   delimiters.push(size+1);
   for(uint i(0); i<delimiters.size()-1; i++)
-    wtr.push_back(substr(delimiters[i],delimiters[i+1]-delimiters[i]-1));
+    wtr.push(substr(delimiters[i],delimiters[i+1]-delimiters[i]-1));
   return wtr;
 }
-List<String> String::explode(char c, size_t limit) const {
-  List<String> wtr; // Will contain parts
+Array<String> String::explode(char c, size_t limit) const {
+  Array<String> wtr; // Will contain parts
   Array<uint> delimiters(1,0); // Will contain delimiters for the split (already contains 0)
   size_t size(this->size());
   if(!size) return wtr;
@@ -67,7 +67,7 @@ List<String> String::explode(char c, size_t limit) const {
       delimiters.push(i+1);
   delimiters.push(size+1); // Add end delimiter
   for(uint i(0); i<delimiters.size()-1; i++)
-    wtr.push_back(substr(delimiters[i],delimiters[i+1]-delimiters[i]-1));
+    wtr.push(substr(delimiters[i],delimiters[i+1]-delimiters[i]-1));
   return wtr;
 }
 String String::replaceAll(const String& search, const String& replace) const {

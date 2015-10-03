@@ -17,7 +17,7 @@ typedef struct {size_t min,max;} quant_t;
 quant_t quant(const L::String& str, size_t& i) {
   quant_t wtr = {1,1};
   size_t tmp;
-  List<L::String> part;
+  Array<L::String> part;
   if(i<str.size())
     switch(str[i]) {
       case '*':
@@ -77,7 +77,7 @@ Ref<Base> Regex::from(const L::String& str, size_t qMin, size_t qMax) {
   }
   if(str[0]=='(' && str.endOf(0)==str.size()-1)
     return from(str.substr(1,str.size()-2),qMin,qMax);
-  List<L::String> strs(str.escapedExplode('|',L::String::allbrackets));
+  Array<L::String> strs(str.escapedExplode('|',L::String::allbrackets));
   if(strs.size()>1) {
     exps.size(strs.size());
     for(uint i(0); i<strs.size(); i++)

@@ -3,7 +3,7 @@
 
 #include <sstream>
 #include <string>
-#include "List.h"
+#include "../containers/Array.h"
 #include "../streams/Stream.h"
 #include "../types.h"
 
@@ -29,8 +29,8 @@ namespace L {
       static const byte allbrackets;
 
       String substr(size_t pos, size_t len = npos) const;
-      List<String> escapedExplode(char c, byte escapeBrackets, size_t limit = 0) const; // Splits and returns an array of each part (limit is the max number of parts)
-      List<String> explode(char c, size_t limit = 0) const;
+      Array<String> escapedExplode(char c, byte escapeBrackets, size_t limit = 0) const; // Splits and returns an array of each part (limit is the max number of parts)
+      Array<String> explode(char c, size_t limit = 0) const;
       String replaceAll(const String& search, const String& replace) const; // Replaces search by replace
       void trimLeft(size_t=1);
       void trimRight(size_t=1);

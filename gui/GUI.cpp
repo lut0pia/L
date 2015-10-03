@@ -58,7 +58,7 @@ GUI::Base* GUI::from(const XML& xml, Map<String,GUI::Base*>& ids) {
 }
 
 Point2i GUI::point(const String& str) {
-  List<String> coords(str.explode(' '));
+  Array<String> coords(str.explode(' '));
   if(coords.size()==2)
     return Point<2,int>(FromString<int>(coords[0]),FromString<int>(coords[1]));
   else throw Exception("GUI: Point must be \"x y\", not \""+str+"\".");

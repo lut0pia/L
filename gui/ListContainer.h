@@ -3,12 +3,13 @@
 
 #include <cstdlib>
 #include "Solid.h"
+#include "../containers/Array.h"
 
 namespace L {
   namespace GUI {
     class ListContainer : public Solid {
       protected:
-        List<Ref<Base> > elements;
+        Array<Ref<Base> > elements;
         int spacing;
         Point2i dimensions;
         bool blockInsert;

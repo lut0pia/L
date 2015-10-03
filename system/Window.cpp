@@ -7,6 +7,7 @@
 #include "../stl.h"
 #include "../bytes/encoding.h"
 #include "System.h"
+#include "../containers/List.h"
 
 using namespace L;
 using L::Window;
@@ -124,7 +125,7 @@ LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     buttonstate[e.button] = true;
   else if(e.type==Window::Event::BUTTONUP)
     buttonstate[e.button] = false;
-  _events.push_back(e);
+  _events.push(e);
   return 0;
 }
 #elif defined L_UNIX
@@ -279,7 +280,7 @@ bool Window::newEvent(Event& e) {
     return false;
   else {
     e = _events.front();
-    _events.pop_front();
+    _events.popFront();
     return true;
   }
 }
@@ -326,6 +327,6 @@ Point2i Window::mousePosition() {
 Point2f Window::normalizedMousePosition() {
   return Point2f((2*(float)_mousePos.x()/_width)-1,-((2*(float)_mousePos.y()/_height)-1));
 }
-Point2f Window::normalizedToPixels(const Point2f& p){
+Point2f Window::normalizedToPixels(const Point2f& p) {
   return Point2f(((p.x()+1)/2)*_width,((-p.y()+1)/2)*_height);
 }
