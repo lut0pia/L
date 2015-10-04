@@ -1,5 +1,5 @@
-#ifndef DEF_L_consts
-#define DEF_L_consts
+#ifndef DEF_L_constants
+#define DEF_L_constants
 
 namespace L {
   template <class T> inline const T& PI() {
