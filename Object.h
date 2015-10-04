@@ -11,6 +11,11 @@ namespace L {
     inline void destruct(T& v) {
       v.~T();
     }
+    template <class T>
+    inline void destruct(T* p, size_t count) {
+      while(count--)
+        (p++)->~T();
+    }
     template <class T, typename... Args>
     inline void reconstruct(T& v, Args&&... args) {
       destruct(v);
