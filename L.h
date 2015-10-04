@@ -2,11 +2,12 @@
 #define DEF_L
 
 // General definitions
+#include "constants.h"      // Constant values
+#include "general.h"        // Miscellaneous tools
 #include "macros.h"         // Useful macros
-#include "types.h"          // Useful typedefs
 #include "systems.h"        // Useful system includes
 #include "tmp.h"            // Template Meta-Programming
-#include "general.h"        // Miscellaneous tools
+#include "types.h"          // Useful typedefs
 
 // General classes
 #include "Exception.h"      // Exception layer with dynamic what
@@ -18,7 +19,6 @@
 #include "ai.h"             // Artifical Intelligence
 #include "audio.h"          // Audio I/O, Wave & Midi
 #include "bytes.h"          // Byte to byte functions, encoding
-#include "constants.h"      // Constant values
 #include "containers.h"     // Classes that hold other classes
 #include "dbms.h"           // Database Management System
 #include "dynamic.h"        // Dynamic typing/casting
