@@ -6,13 +6,14 @@
 **      - winmm
 */
 
-#if defined L_WINDOWS
-#include <windows.h>
-#include <mmsystem.h>
-#endif
-
-#include "../patterns.h"
+#include "../patterns/Singleton.h"
 #include "../systems.h"
+#include "../types.h"
+
+#if defined L_WINDOWS
+# include <windows.h>
+# include <mmsystem.h>
+#endif
 
 #define L_ToMidiNote(n) ((n)+24) // Shift the note to the right midi equivalent
 
