@@ -24,7 +24,6 @@ namespace L {
   template <int l, int c, class T>
   class Matrix {
     private:
-      static const int lc = l*c;
       union {
         T _m[l][c];
         T _a[l*c];
@@ -66,12 +65,12 @@ namespace L {
         return (*this)*Matrix<l,1,T>(v);
       }
       Matrix& operator*=(const T& scalar) {
-        for(int i(0); i<lc; i++)
+        for(int i(0); i<l*c; i++)
           _a[i] *= scalar;
         return *this;
       }
       Matrix& operator/=(const T& scalar) {
-        for(int i(0); i<lc; i++)
+        for(int i(0); i<l*c; i++)
           _a[i] /= scalar;
         return *this;
       }
