@@ -1,9 +1,9 @@
 #include "Bitmap.h"
 
+#include "../Exception.h"
+
 using namespace L;
 using namespace Font;
-
-#include "../Exception.h"
 
 Font::Bitmap::Bitmap(const Image::Bitmap& bmp) {
   size_t advance(bmp.width()/16);
