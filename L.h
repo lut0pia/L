@@ -20,7 +20,6 @@
 #include "audio.h"          // Audio I/O, Wave & Midi
 #include "bytes.h"          // Byte to byte functions, encoding
 #include "containers.h"     // Classes that hold other classes
-#include "dbms.h"           // Database Management System
 #include "dynamic.h"        // Dynamic typing/casting
 #include "ecs.h"            // Entity/Component/System
 #include "font.h"           // Font handling
@@ -28,9 +27,7 @@
 #include "gl.h"             // Everything related to OpenGL
 #include "gui.h"            // 2D graphical user interface
 #include "image.h"          // Images, textures, colors
-#include "logic.h"          // Propositional logic
 #include "math.h"           // Mathematical tools
-#include "network.h"        // Client & Server classes, network tools
 #include "parallelism.h"    // Threads & synchronization
 #include "patterns.h"       // Design patterns
 #include "regex.h"          // Regular expressions
