@@ -4,13 +4,11 @@
 #include <cstring>
 #include <cmath>
 #include "types.h"
-#include "stl/String.h"
+#include "String.h"
 #include "streams/FileStream.h"
 
 namespace L {
   // Number functions :
-  unsigned long factorial(unsigned long n);
-  uint digit(uint d, uint b, uint n);
   template <class T>
   inline T log(T x, T base) {
     return ::log(x)/::log(base);
@@ -45,7 +43,7 @@ namespace L {
   String ToString(const T& t) {
     tmpfile << t;
     String wtr;
-    wtr.resize(tmpfile.tell());
+    wtr.size(tmpfile.tell());
     tmpfile.rewind();
     tmpfile.read(&wtr[0],wtr.size());
     tmpfile.rewind();
