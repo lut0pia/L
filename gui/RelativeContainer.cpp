@@ -24,7 +24,7 @@ void RelativeContainer::clear() {
 }
 
 void RelativeContainer::dimensionsChanged(Base* e,Point2i newDim) {
-  struct RelPos rp = positions[e];
+  RelPos rp = positions[e];
   Point2i childRPP(rp.relPixPos);
   Point<2,float> childSRP(rp.srcRatPos);
   Point<2,float> childTRP(rp.tarRatPos);
