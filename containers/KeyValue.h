@@ -10,6 +10,7 @@ namespace L {
     public:
       KeyValue(const K& key = K(), const V& value = V()) : _key(key), _value(value) {}
       inline bool operator<(const KeyValue& other) const {return key()<other.key();}
+      inline bool operator==(const KeyValue& other) const {return key()==other.key();}
       inline const K& key() const {return _key;}
       inline const V& value() const {return _value;}
   };
