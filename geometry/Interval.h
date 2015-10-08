@@ -97,12 +97,7 @@ namespace L {
 
   template <int d,class T>
   Stream& operator<<(Stream &s, const Interval<d,T>& v) {
-    s << '(';
-    s << v.min();
-    s << ',';
-    s << v.max();
-    s << ')';
-    return s;
+    return s << '(' << v.min() << ',' << v.max() << ')';
   }
 }
 
