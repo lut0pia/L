@@ -13,6 +13,7 @@ namespace L {
       inline bool operator==(const KeyValue& other) const {return key()==other.key();}
       inline const K& key() const {return _key;}
       inline const V& value() const {return _value;}
+      inline V& value() {return _value;}
   };
   template <class K, class V>
   inline KeyValue<K,V> keyValue(const K& k, const V& v) {
