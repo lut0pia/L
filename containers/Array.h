@@ -90,6 +90,10 @@ namespace L {
         Object::copy(&operator[](i),&a[0],a.size());
         _size += a.size();
       }
+      template <typename... Args>
+      void replace(size_t i, Args&&... args) {
+        Object::reconstruct(operator[](i),args...); // Place new value
+      }
       void erase(size_t i) {
         Object::destruct(operator[](i)); // Destruct value
         shift(i+1,-1); // Move right part
