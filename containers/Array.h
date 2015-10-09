@@ -25,10 +25,11 @@ namespace L {
         while(_size<size)
           push(*a++);
       }
-      Array(size_t size, const T& value = T()) : _data(NULL), _size(0), _capacity(0) {
+      template <typename... Args>
+      Array(size_t size, Args&&... args) : _data(NULL), _size(0), _capacity(0) {
         capacity(size);
         while(_size<size)
-          push(value);
+          push(args...);
       }
       Array(const Array& other) : _size(other._size), _capacity(other._size) {
         _data = malloc(_size*sizeof(T));
@@ -58,9 +59,10 @@ namespace L {
       template <typename... Args> inline void push(Args&&... args) {insert(_size,args...);}
       inline void pop() {erase(_size-1);}
 
-      void size(size_t n) {
+      template <typename... Args>
+      void size(size_t n,Args&&... args) {
         if(_capacity<n) capacity(n);
-        while(_size<n) push();
+        while(_size<n) push(args...);
         while(_size>n) pop();
       }
       void capacity(size_t n) {
