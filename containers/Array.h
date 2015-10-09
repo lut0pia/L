@@ -5,6 +5,7 @@
 #include <cstring>
 #include <functional>
 #include "../Object.h"
+#include "../streams/Stream.h"
 
 namespace L {
   template <class T>
@@ -120,6 +121,19 @@ namespace L {
       }
       inline static void staticPush(Array& a) {}
   };
+
+  template <class T>
+  Stream& operator<<(Stream& s, const Array<T>& v) {
+    s << '[';
+    bool first(true);
+    for(int i(0); i<v.size(); i++) {
+      if(first) first = false;
+      else s << ',';
+      s << v[i];
+    }
+    s << ']';
+    return s;
+  }
 }
 
 #endif
