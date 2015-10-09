@@ -94,6 +94,13 @@ namespace L {
       void replace(size_t i, Args&&... args) {
         Object::reconstruct(operator[](i),args...); // Place new value
       }
+      void replaceArray(size_t i, int len, const Array& a, int alen=-1, size_t ai=0) {
+        growTo(_size+(alen-len)); // Check capacity
+        if(alen==-1) alen = a.size();
+        shift(i+len,alen-len);
+        Object::copy(&operator[](i),&a[ai],alen);
+        _size += alen-len;
+      }
       void erase(size_t i) {
         Object::destruct(operator[](i)); // Destruct value
         shift(i+1,-1); // Move right part
