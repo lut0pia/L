@@ -43,7 +43,7 @@ namespace L {
         return *this;
       }
       inline Array operator+(const Array& other) {Array wtr(*this); return wtr += other;}
-      inline Array& operator+=(const Array& other) {insert(_size,other); return *this;}
+      inline Array& operator+=(const Array& other) {insertArray(_size,other); return *this;}
 
       inline size_t size() const {return _size;}
       inline size_t capacity() const {return _capacity;}
@@ -84,7 +84,7 @@ namespace L {
         Object::construct(operator[](i),args...); // Place new value
         _size++; // Increase size
       }
-      void insert(size_t i, const Array& a) {
+      void insertArray(size_t i, const Array& a) {
         growTo(_size+a.size()); // Check capacity
         shift(i,a.size()); // Move right part
         Object::copy(&operator[](i),&a[0],a.size());
