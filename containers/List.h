@@ -51,6 +51,7 @@ namespace L {
           Node* old(_first);
           _first = old->_next;
           delete old;
+          _size--;
         }
       }
       void clear() {
