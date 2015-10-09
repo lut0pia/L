@@ -10,8 +10,8 @@ namespace L {
     public:
       inline Stream(FILE* fd) : _fd(fd) {}
 
-      inline void write(const void* data, size_t size) {fwrite(data,1,size,_fd);}
-      inline void read(void* data, size_t size) {fread(data,1,size,_fd);}
+      inline size_t write(const void* data, size_t size) {return fwrite(data,1,size,_fd);}
+      inline size_t read(void* data, size_t size) {return fread(data,1,size,_fd);}
       inline char peek() {char wtr(get()); unget(wtr); return wtr;}
       inline char get() {return fgetc(_fd);}
       inline void put(char c) {fputc(c,_fd);}
