@@ -84,19 +84,11 @@ namespace L {
         Object::construct(operator[](i),args...); // Place new value
         _size++; // Increase size
       }
-      void insertArray(size_t i, const Array& a) {
-        growTo(_size+a.size()); // Check capacity
-        shift(i,a.size()); // Move right part
-        Object::copy(&operator[](i),&a[0],a.size());
-        _size += a.size();
-      }
-      template <typename... Args>
-      void replace(size_t i, Args&&... args) {
-        Object::reconstruct(operator[](i),args...); // Place new value
-      }
+      inline void insertArray(size_t i, const Array& a, int alen=-1, size_t ai=0) {replaceArray(i,0,a,alen,ai);}
+      template <typename... Args> inline void replace(size_t i, Args&&... args) {Object::reconstruct(operator[](i),args...);}
       void replaceArray(size_t i, int len, const Array& a, int alen=-1, size_t ai=0) {
-        growTo(_size+(alen-len)); // Check capacity
         if(alen==-1) alen = a.size();
+        growTo(_size+(alen-len)); // Check capacity
         shift(i+len,alen-len);
         Object::copy(&operator[](i),&a[ai],alen);
         _size += alen-len;
