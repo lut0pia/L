@@ -79,13 +79,13 @@ namespace L {
       }
       template <typename... Args>
       void insert(size_t i, Args&&... args) {
-        if(_size+1>_capacity) grow(); // Check capacity
+        growTo(_size+1); // Check capacity
         shift(i,1); // Move right part
         Object::construct(operator[](i),args...); // Place new value
         _size++; // Increase size
       }
       void insert(size_t i, const Array& a) {
-        while(_size+a.size()>_capacity) grow(); // Check capacity
+        growTo(_size+a.size()); // Check capacity
         shift(i,a.size()); // Move right part
         Object::copy(&operator[](i),&a[0],a.size());
         _size += a.size();
