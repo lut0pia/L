@@ -35,8 +35,7 @@ namespace L {
         Object::copy(&operator[](0),&other[0],_size);
       }
       ~Array() {
-        for(size_t i(0); i<_size; i++)
-          Object::destruct(operator[](i));
+        Object::destruct(&operator[](0),_size);
         free(_data);
       }
       Array& operator=(const Array& other) {
