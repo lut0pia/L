@@ -38,7 +38,7 @@ namespace L {
         Object::destruct(&operator[](0),_size);
         free(_data);
       }
-      Array& operator=(const Array& other) {
+      inline Array& operator=(const Array& other) {
         Object::reconstruct(*this,other);
         return *this;
       }
