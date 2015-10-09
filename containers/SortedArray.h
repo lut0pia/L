@@ -7,7 +7,7 @@ namespace L {
   template <class T>
   class SortedArray : protected Array<T> {
     public:
-      int index(const T& e) {
+      int index(const T& e) const {
         int l(0), r(size());
         while(l<r) {
           int m((l+r)/2);
