@@ -227,17 +227,6 @@
 		<Unit filename="patterns/Observable.h" />
 		<Unit filename="patterns/Observer.h" />
 		<Unit filename="patterns/Singleton.h" />
-		<Unit filename="regex.h" />
-		<Unit filename="regex/Base.cpp" />
-		<Unit filename="regex/Base.h" />
-		<Unit filename="regex/Char.cpp" />
-		<Unit filename="regex/Char.h" />
-		<Unit filename="regex/Or.cpp" />
-		<Unit filename="regex/Or.h" />
-		<Unit filename="regex/Regex.cpp" />
-		<Unit filename="regex/Regex.h" />
-		<Unit filename="regex/String.cpp" />
-		<Unit filename="regex/String.h" />
 		<Unit filename="script.h" />
 		<Unit filename="script/Context.cpp" />
 		<Unit filename="script/Context.h" />

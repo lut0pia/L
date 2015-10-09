@@ -30,7 +30,6 @@
 #include "math.h"           // Mathematical tools
 #include "parallelism.h"    // Threads & synchronization
 #include "patterns.h"       // Design patterns
-#include "regex.h"          // Regular expressions
 #include "script.h"         // Scripting language
 #include "stl.h"            // Additions to the STL (such as operators, streams and layers)
 #include "streams.h"        // C-Stream wrapper and friends
