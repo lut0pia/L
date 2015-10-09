@@ -5,7 +5,7 @@
 
 namespace L {
   template <class T>
-  class Set : private SortedArray<T> {
+  class Set : protected SortedArray<T> {
     public:
       Set operator+(const Set& other) {
         Set wtr;
@@ -42,6 +42,8 @@ namespace L {
       inline bool empty() const {return Array<T>::empty();}
       inline void foreach(const std::function<void(const T&)>& f) const {Array<T>::foreach(f);}
   };
+
+  template <class T> inline Stream& operator<<(Stream& s, const Set<T>& v) { return s << (const Array<T>&)v;}
 }
 
 #endif
