@@ -4,7 +4,7 @@
 #include <GL/glew.h>
 #include "Shader.h"
 #include "../geometry/Point.h"
-#include "../stl/Map.h"
+#include "../containers/Map.h"
 
 namespace L {
   namespace GL {

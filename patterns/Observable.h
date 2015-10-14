@@ -2,8 +2,6 @@
 #define DEF_L_Observable
 
 #include "../macros.h"
-#include "../stl.h"
-
 #include "Observer.h"
 
 namespace L {

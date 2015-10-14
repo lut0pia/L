@@ -3,7 +3,7 @@
 
 #include "../systems.h"
 #include "../macros.h"
-#include "../stl/String.h"
+#include "../String.h"
 #include "../time.h"
 #include "../geometry/Point.h"
 
@@ -25,8 +25,8 @@ namespace L{
         void closeConsole();
 
         String formatPath(String);
-        String pathDirectory(String);
-        String pathFile(String);
+        String pathDirectory(const String&);
+        String pathFile(const String&);
 
         #if defined L_WINDOWS
             const char slash = '\\';

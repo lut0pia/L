@@ -10,6 +10,7 @@
 #include <ctime>
 #include "../systems.h"
 #include "Timer.h"
+#include "../types.h"
 
 using namespace L;
 
@@ -85,6 +86,6 @@ float Time::fps() {
 String Time::format(String str, Time t) {
   time_t timestamp(t.seconds());
   char date[512];
-  strftime(date,sizeof(date),str.c_str(),localtime(&timestamp));
+  strftime(date,sizeof(date),str,localtime(&timestamp));
   return date;
 }

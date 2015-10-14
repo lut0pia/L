@@ -4,7 +4,7 @@
 #include <cmath>
 
 #include "../containers/Array.h"
-#include "../stl/String.h"
+#include "../String.h"
 
 namespace L {
   class Integer {

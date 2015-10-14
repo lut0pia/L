@@ -11,7 +11,7 @@ void TextInput::updateText() {
   String tmp = text;
   Color c(Color::black);
   if(password) tmp = String(tmp.size(),'*');
-  if(focus) tmp.insert(cursor,1,1);
+  if(focus) tmp.insert(cursor,1);
   if(tmp=="" && !focus) {
     tmp = placeholder;
     c = Color::grey;
@@ -56,7 +56,7 @@ bool TextInput::event(const Window::Event& e) {
           }
           break;
         case Window::Event::ENTER:
-          text.insert(cursor,1,'\n');
+          text.insert(cursor,'\n');
           cursor++;
           break;
         case Window::Event::LEFT:

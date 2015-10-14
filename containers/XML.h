@@ -1,8 +1,8 @@
 #ifndef DEF_L_XML
 #define DEF_L_XML
 
-#include "../stl/Map.h"
-#include "../stl/String.h"
+#include "../containers/Map.h"
+#include "../String.h"
 #include "../containers/Array.h"
 #include "../system/File.h"
 

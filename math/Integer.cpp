@@ -15,14 +15,15 @@ Integer::Integer(const int& n) : _negative(n<0) {
 }
 Integer::Integer(const String& b, int lbase) : _negative(false) {
   Integer base(lbase);
-  L_Iter(b,c) {
+  for(int i(0); i<b.size(); i++) {
+    char c(b[i]);
     int v;
-    if(*c>='a'&&*c<='z') // Go from visual char to actual value
-      v = *c-('a'-10);
-    else if(*c>='A'&&*c<='Z') // Same
-      v = *c-('A'-10);
-    else if(*c>='0'&&*c<='9') // Same
-      v = *c-'0';
+    if(c>='a'&&c<='z') // Go from visual char to actual value
+      v = c-('a'-10);
+    else if(c>='A'&&c<='Z') // Same
+      v = c-('A'-10);
+    else if(c>='0'&&c<='9') // Same
+      v = c-'0';
     else continue; // Erase useless characters
     operator*=(base);
     operator+=(v);

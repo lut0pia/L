@@ -34,8 +34,9 @@ void RelativeContainer::dimensionsChanged(Base* e,Point2i newDim) {
 }
 void RelativeContainer::updateFromAbove(Point2i pos, Interval2i parentClip) {
   Solid::updateFromAbove(pos,parentClip);
-  L_Iter(positions,it)
-  dimensionsChanged((*it).first,((*it).first)->gDimensions());
+  positions.foreach([this](const KeyValue<Base*,RelPos>& e) {
+    dimensionsChanged(e.key(),e.key()->gDimensions());
+  });
 }
 void RelativeContainer::draw(GL::Program& program) {
   for(int i(0); i<elements.size(); i++)

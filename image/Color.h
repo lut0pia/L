@@ -3,7 +3,8 @@
 
 #include <cstdlib>
 #include "../macros.h"
-#include "../stl/String.h"
+#include "../String.h"
+#include "../types.h"
 
 namespace L {
   class Color {
@@ -29,7 +30,7 @@ namespace L {
       byte& a();
       const byte* bytes() const {return _data;}
 
-      static Color from(const String&);
+      static Color from(String);
       static Color from(float r, float g, float b, float a = 1);
       static Color lerp(Color, Color, float w);
       static Color random();

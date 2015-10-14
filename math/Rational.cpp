@@ -16,8 +16,8 @@ Rational::Rational(const Integer& a, const Integer& b) : a(a), b(b) {
   simplification();
 }
 Rational::Rational(const String& str, long base) : a(str) {
-  size_t point(str.find_first_of('.'));
-  b = (point!=String::npos) ? Integer::pow(base,str.size()-point-1) : 1;
+  size_t point(str.findFirst('.'));
+  b = (point>=0) ? Integer::pow(base,str.size()-point-1) : 1;
   simplification();
 }
 
@@ -136,11 +136,11 @@ String Rational::toString(long lbase) const {
   String wtr = intval().toString();
   if(b!=1) { // Decimal part
     size_t i = 0;
-    wtr += '.';
+    wtr.push('.');
     do {
       n *= lbase;
       buff = (n.intval()%lbase).part(0);
-      wtr += (char)((buff<10) ? buff+'0' : buff+'W');
+      wtr.push(((buff<10) ? buff+'0' : buff+'W'));
     } while(n.gB()!=1 && ++i<10);
   }
   return ((negative())?"-":"")+wtr;

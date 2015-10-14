@@ -2,7 +2,7 @@
 #define DEF_L_encoding
 
 #include <cstdlib>
-#include "../stl/String.h"
+#include "../String.h"
 #include "../containers/Array.h"
 
 namespace L{

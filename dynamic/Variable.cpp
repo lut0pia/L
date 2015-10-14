@@ -67,7 +67,7 @@ Variable& Variable::operator[](const L::String& str) {
   return as<Node>()[str];
 }
 const Variable& Variable::operator[](const L::String& str) const {
-  return as<Node>().at(str);
+  return as<Node>()[str];
 }
 Variable& Variable::operator[](size_t i) {
   if(!is<Array>()) *this = Dynamic::Array();

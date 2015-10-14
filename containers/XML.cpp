@@ -19,8 +19,8 @@ void XML::write(Stream& s) const {
     s << name;
   else {
     s << '<' << name;
-    L_Iter(attributes,it)
-    s << ' ' << (*it).first << "=\"" << (*it).second << '"';
+    for(int i(0); i<attributes.size(); i++)
+      s << ' ' << attributes[i].key() << "=\"" << attributes[i].value() << '"';
     if(children.empty())
       s << "/>";
     else {
@@ -55,8 +55,8 @@ void XML::read(Stream& s) {
       read(s);
       return;
     }
-    while(!isspace(s.peek()) && s.peek()!='/' && s.peek()!='>') // Get the name of the tag
-      name.push_back(s.get());
+    while(!Stream::isspace(s.peek()) && s.peek()!='/' && s.peek()!='>') // Get the name of the tag
+      name.push(s.get());
     if(s.peek()=='/') { // It's a single tag with no attributes
       s.ignore(2);
       return;
@@ -65,10 +65,10 @@ void XML::read(Stream& s) {
     while(s.peek()!='>'&&s.peek()!='/') { // It has attributes
       String attrName, attrValue;
       while(s.peek()!='=')
-        attrName.push_back(s.get());
+        attrName.push(s.get());
       s.ignore(2);
       while(s.peek()!='"')
-        attrValue.push_back(s.get());
+        attrValue.push(s.get());
       s.ignore();
       attributes[attrName] = attrValue;
       s.nospace();
@@ -93,7 +93,7 @@ void XML::read(Stream& s) {
   } else { // Text node
     text = true;
     while(s.peek()!='<')
-      name.push_back(s.get());
-    name = name.trim(" \t\n\r");
+      name.push(s.get());
+    name.trim(" \t\n\r");
   }
 }

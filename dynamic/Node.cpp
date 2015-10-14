@@ -12,11 +12,10 @@ Node& Node::operator()(const String& s, const Variable& v) {
 Stream& L::Dynamic::operator<<(Stream& s, const Node& v) {
   bool first = true;
   s.put('{');
-  L_Iter(v,it) {
-    if(first) first = false;
-    else      s.put(',');
-    s << (*it).first << ':' << (*it).second;
-  }
+  v.foreach([&first,&s](const KeyValue<String,Variable>& e) {
+    (first)?first = false:s.put(',');
+    s << e.key() << ':' << e.value();
+  });
   s.put('}');
   return s;
 }

@@ -3,8 +3,8 @@
 
 #include "macros.h"
 #include "Exception.h"
-#include "stl/Map.h"
-#include "stl/String.h"
+#include "containers/Map.h"
+#include "String.h"
 #include "containers/Array.h"
 #include "system/File.h"
 #include "streams/FileStream.h"

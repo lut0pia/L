@@ -11,19 +11,18 @@ namespace L {
       bool from(GL::Mesh& mesh, const File& f) {
         GL::MeshBuilder mb;
         mb.reset(GL::Mesh::VERTEX|GL::Mesh::NORMAL,4194304,4194304);
-        std::ifstream file(f.path().c_str(), std::ios::in);
-        if(file) {
-          String line;
-          while(getline(file, line)) {
-            List<String> linePart(line.explode(' '));
-            if(linePart[0]=="v") { // Vertex
-              Point3f tmp;
-              tmp.x() = FromString<float>(linePart[1]);
-              tmp.y() = FromString<float>(linePart[2]);
-              tmp.z() = FromString<float>(linePart[3]);
-              mb.setVertex(tmp);
-              mb.addVertex();
-            }/* else if(linePart[0]=="vt") { // TexCoord
+        FileStream file(f,"rb");
+        while(!file.eof()) {
+          String line(file.line());
+          Array<String> linePart(line.explode(' '));
+          if(linePart[0]=="v") { // Vertex
+            Point3f tmp;
+            tmp.x() = FromString<float>(linePart[1]);
+            tmp.y() = FromString<float>(linePart[2]);
+            tmp.z() = FromString<float>(linePart[3]);
+            mb.setVertex(tmp);
+            mb.addVertex();
+          }/* else if(linePart[0]=="vt") { // TexCoord
               Point2f tmp;
               tmp.x() = FromString<float>(linePart[1]);
               tmp.y() = FromString<float>(linePart[2]);
@@ -35,27 +34,26 @@ namespace L {
               tmp.z() = FromString<float>(linePart[3]);
               mesh.normal.push_back(tmp);
             }*/ else if(linePart[0]=="f") { // Face abc:vertex; def:tex; g:normal;
-              if(1) {
-                List<String> linePartPart(linePart[1].explode('/'));
-                mb.addIndex(FromString<int>(linePartPart[0])-1);
-                //tmp.t1 = FromString<size_t>(linePartPart[1])-1;
-              }
-              if(1) {
-                List<String> linePartPart(linePart[2].explode('/'));
-                mb.addIndex(FromString<int>(linePartPart[0])-1);
-                //tmp.t2 = FromString<size_t>(linePartPart[1])-1;
-              }
-              if(1) {
-                List<String> linePartPart(linePart[3].explode('/'));
-                mb.addIndex(FromString<int>(linePartPart[0])-1);
-                //tmp.t3 = FromString<size_t>(linePartPart[1])-1;
-                //tmp.n = FromString<size_t>(linePartPart[2])-1;
-              }
+            if(1) {
+              Array<String> linePartPart(linePart[1].explode('/'));
+              mb.addIndex(FromString<int>(linePartPart[0])-1);
+              //tmp.t1 = FromString<size_t>(linePartPart[1])-1;
+            }
+            if(1) {
+              Array<String> linePartPart(linePart[2].explode('/'));
+              mb.addIndex(FromString<int>(linePartPart[0])-1);
+              //tmp.t2 = FromString<size_t>(linePartPart[1])-1;
+            }
+            if(1) {
+              Array<String> linePartPart(linePart[3].explode('/'));
+              mb.addIndex(FromString<int>(linePartPart[0])-1);
+              //tmp.t3 = FromString<size_t>(linePartPart[1])-1;
+              //tmp.n = FromString<size_t>(linePartPart[2])-1;
             }
           }
-          mb.computeNormals();
-          Object::reconstruct(mesh,mb);
         }
+        mb.computeNormals();
+        Object::reconstruct(mesh,mb);
         return true;
       }
   };

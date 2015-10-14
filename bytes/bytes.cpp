@@ -5,8 +5,8 @@
 
 using namespace L;
 
-Array<byte> L::bytesFromFile(String filePath) {
-  std::ifstream file(filePath.c_str(), std::ios::binary | std::ios::in);
+Array<byte> L::bytesFromFile(const String& filePath) {
+  std::ifstream file(filePath, std::ios::binary | std::ios::in);
   Array<byte> wtr;
   if(file) {
     // get length of file:
@@ -18,8 +18,8 @@ Array<byte> L::bytesFromFile(String filePath) {
   } else throw Exception("Tried to open a file that didn't exist: " + filePath);
   return wtr;
 }
-void L::fileFromBytes(String filePath, const Array<byte>& bytes) {
-  std::ofstream file(filePath.c_str(), std::ios::binary | std::ios::out);
+void L::fileFromBytes(const String& filePath, const Array<byte>& bytes) {
+  std::ofstream file(filePath, std::ios::binary | std::ios::out);
   if(file) {
     file.write((char*)&bytes[0],bytes.size());
     file.close();
@@ -73,7 +73,7 @@ Array<byte> L::ftb(float n) {
   return itb(n*(float)0x10000,4);
 }
 Array<byte> L::stb(const String& s) {
-  return Array<byte>((const byte*)&s[0],s.size());
+  return Array<byte>((const byte*)(const char*)s,s.size());
 }
 byte hex(char c) {
   if(c>='0'&&c<='9')
@@ -85,7 +85,7 @@ byte hex(char c) {
   throw Exception(c+" is not an hexadecimal character.");
 }
 Array<byte> L::htb(const String& s) {
-  Array<byte> wtr(s.size()/2);
+  Array<byte> wtr(s.size()/2,0);
   for(uint i(0); i<wtr.size(); i++)
     wtr[i] = (hex(s[i*2]) << 4) | hex(s[i*2+1]);
   return wtr;
@@ -100,7 +100,7 @@ ulong L::btulBE(Array<byte> bytes) {
   return wtr;
 }
 Array<byte> L::ultbBE(ulong n, uint size) {
-  Array<byte> wtr(size);
+  Array<byte> wtr(size,0);
   byte* b = &wtr.back();
   while(n) {
     *b-- = (n&0xFF);
@@ -117,7 +117,7 @@ ulong L::btulLE(Array<byte> bytes) {
   return wtr;
 }
 Array<byte> L::ultbLE(ulong n, uint size) {
-  Array<byte> wtr(size);
+  Array<byte> wtr(size,0);
   byte* b = &wtr[0];
   while(n) {
     *b++ = (n&0xFF);

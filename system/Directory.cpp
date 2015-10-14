@@ -8,7 +8,6 @@
 
 //#include <dirent.h>
 #include "../Exception.h"
-#include "../stl.h"
 #include "System.h"
 
 using namespace L;
@@ -26,7 +25,7 @@ Directory::Directory() {
 }
 Directory::Directory(const String& p) : path(System::formatPath(p)) {
   if(path.size()>1 && path[path.size()-1]!=System::slash)
-    path += System::slash;
+    path.push(System::slash);
 }
 bool Directory::operator<(const Directory& other) const {
   return path < other.path;
@@ -35,7 +34,7 @@ bool Directory::operator<(const Directory& other) const {
 String Directory::name() const {
 #if defined L_WINDOWS
   if(path.size()>3) {
-    String wtr(path.substr(1+path.find_last_of('\\',path.size()-2)));
+    String wtr(path.substr(1+path.findLast('\\')));
     return wtr.substr(0,wtr.size()-1);
   } else return path.substr(0,2); // C:
 #elif defined L_UNIX
@@ -48,7 +47,7 @@ String Directory::name() const {
 void Directory::goUp() {
 #if defined L_WINDOWS
   if(path.size()>3)
-    path.erase(1+path.find_last_of('\\',path.size()-2));
+    path.erase(1+path.findLast('\\'));
 #elif defined L_UNIX
   if(path.size()>1)
     path.erase(1+path.find_last_of('/',path.size()-2));
@@ -72,7 +71,7 @@ Directory::Content Directory::content() const {
   if(path!="\\") { // Normal path
     WIN32_FIND_DATA fdFile;
     HANDLE hFind = NULL;
-    if((hFind = FindFirstFile((path+"*").c_str(), &fdFile)) == INVALID_HANDLE_VALUE)
+    if((hFind = FindFirstFile((path+"*"), &fdFile)) == INVALID_HANDLE_VALUE)
       throw Exception("Could not open directory: " + path);
     else {
       do {
@@ -117,7 +116,7 @@ Directory::Content Directory::content() const {
 }
 bool Directory::exists() {
 #if defined L_WINDOWS
-  DWORD dwAttrib = GetFileAttributes(path.c_str());
+  DWORD dwAttrib = GetFileAttributes(path);
   return (dwAttrib != INVALID_FILE_ATTRIBUTES
           && (dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
 #elif defined L_UNIX

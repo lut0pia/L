@@ -4,10 +4,6 @@
 
 using namespace L;
 
-Exception::Exception(const String& w) : w(w) {
-  out << w << '\n';
-}
-Exception::~Exception() throw() {}
-const char* Exception::what() const throw() {
-  return w.c_str();
+Exception::Exception(const char* w) : w(w) {
+  out << "Exception: " << w << '\n';
 }

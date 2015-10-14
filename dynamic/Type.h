@@ -2,7 +2,7 @@
 #define DEF_L_Dynamic_Type
 
 #include "../macros.h"
-#include "../stl/String.h"
+#include "../String.h"
 #include "../streams/Stream.h"
 
 namespace L {

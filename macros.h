@@ -9,18 +9,6 @@
 #define L_X86_32
 #endif
 
-// Assign value to automatically typed variable
-#define L_Auto(n,v) \
-  auto n(v)
-
-// Iterate forwards inside collection
-#define L_Iter(name,it) \
-  for(auto it((name).begin());it!=(name).end();++it)
-
-// Iterate backwards inside collection
-#define L_RevIter(name,it) \
-  for(auto it((name).rbegin());it!=(name).rend();++it)
-
 /*
 #define L_NoCopy(class) \
   class(const class&) = delete; \

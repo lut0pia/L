@@ -4,7 +4,6 @@
 
 #include <cstring>
 #include "../gl/GL.h"
-#include "../stl.h"
 #include "../bytes/encoding.h"
 #include "System.h"
 #include "../containers/List.h"
@@ -111,7 +110,7 @@ LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_CHAR:
       if(wParam != '\b' && wParam != '\r') {
         e.type = Window::Event::TEXT;
-        strcpy(e.text,ANSItoUTF8(String(1,wParam)).c_str());
+        strcpy(e.text,ANSItoUTF8(String(1,wParam)));
       } else return 0;
       break;
     case WM_SETCURSOR:
@@ -197,7 +196,7 @@ void Window::open(const String& title, int width, int height, int flags) {
   width = rect.right-rect.left;
   height = rect.bottom-rect.top;
   // Create window
-  hWND = CreateWindow("LWC",title.c_str(),wStyle,   // Properties
+  hWND = CreateWindow("LWC",title,wStyle,   // Properties
                       CW_USEDEFAULT,CW_USEDEFAULT,width,height,
                       NULL,NULL,GetModuleHandle(NULL),NULL);
   // Set OpenGL as renderer
@@ -299,7 +298,7 @@ void Window::swapBuffers() {
 void Window::title(const String& str) {
   if(!opened()) return;
 #if defined L_WINDOWS
-  SetWindowText(hWND,str.c_str());
+  SetWindowText(hWND,str);
 #elif defined L_UNIX
 #endif
 }

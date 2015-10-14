@@ -6,12 +6,12 @@
 #include <cmath>
 
 #include "../types.h"
-#include "../stl/String.h"
+#include "../String.h"
 #include "../containers/Array.h"
 
 namespace L {
-  Array<byte> bytesFromFile(String filePath); // Returns a Vector containing every byte in a file
-  void fileFromBytes(String filePath, const Array<byte>&); // Creates a file with the byte Vector
+  Array<byte> bytesFromFile(const String& filePath); // Returns a Vector containing every byte in a file
+  void fileFromBytes(const String& filePath, const Array<byte>&); // Creates a file with the byte Vector
 
   // These functions are made to read and write FOR each other, don't forget that
   uint btui(const Array<byte>&);

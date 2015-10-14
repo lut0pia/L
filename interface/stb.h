@@ -5883,7 +5883,7 @@ namespace L {
       }
       bool from(Image::Bitmap& bmp, const File& file) {
         int width, height, comp;
-        unsigned char* a(stbi_load(file.path().c_str(),&width,&height,&comp,4));
+        unsigned char* a(stbi_load(file.path(),&width,&height,&comp,4));
         if(a || comp!=4) {
           bmp.resize(width,height);
           for(int x(0); x<width; x++)

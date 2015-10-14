@@ -114,11 +114,11 @@ namespace L {
         return goid;
       }
       static void postEvent(const String& name, AkGameObjectID goid) {
-        AK::SoundEngine::PostEvent(name.c_str(),goid);
+        AK::SoundEngine::PostEvent(name,goid);
       }
       // RTPC
       static void rtpc(const String& name, float value) {
-        AK::SoundEngine::SetRTPCValue(name.c_str(),value);
+        AK::SoundEngine::SetRTPCValue(name,value);
       }
       // Listeners
       static void listen(const Point3f& pos, const Point3f& front, const Point3f& top) {

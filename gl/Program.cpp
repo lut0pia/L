@@ -43,10 +43,10 @@ void Program::use() const {
   glUseProgram(_id);
 }
 GLuint Program::uniformLocation(const String& name) {
-  Map<String,GLuint>::iterator it(_uniformLocation.find(name));
-  if(it!=_uniformLocation.end()) return it->second;
+  KeyValue<String,GLuint>* it(_uniformLocation.find(name));
+  if(it) return it->value();
   else {
-    GLuint location(glGetUniformLocation(_id, name.c_str()));
+    GLuint location(glGetUniformLocation(_id, name));
     if(location<0) throw Exception("Uniform "+name+" cannot be found.");
     return _uniformLocation[name] = location;
   }

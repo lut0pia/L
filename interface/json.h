@@ -17,12 +17,13 @@ namespace L {
           stream << v.as<bool>();
         else if(v.is<Dynamic::Node>()) {
           stream << '{';
-          L_Iter(v.as<Dynamic::Node>(),it) {
-            if(it != v.as<Dynamic::Node>().begin())
-              stream << ',';
-            stream << '"' << (*it).first << "\":";
-            to((*it).second,stream);
-          }
+          bool first(true);
+          v.as<Dynamic::Node>().foreach([this,&v,&stream,&first](const KeyValue<String,Var>& e) {
+            if(first) first = false;
+            else stream << ',';
+            stream << '"' << e.key() << "\":";
+            to(e.value(),stream);
+          });
           stream << '}';
         } else if(v.is<Dynamic::Array>()) {
           stream << '[';
@@ -47,8 +48,8 @@ namespace L {
             v = String();
             while((c = stream.get()) != '"') {
               if(c == '\\' && stream.peek()=='"')
-                v.as<String>() += stream.get();
-              else v.as<String>() += c;
+                v.as<String>().push(stream.get());
+              else v.as<String>().push(c);
             }
             break;
           case 't':
@@ -69,8 +70,8 @@ namespace L {
               str.clear();
               while((c = stream.get()) != '"') { // Get name of attribute
                 if(c == '\\' && stream.peek()=='"')
-                  str += stream.get();
-                else str += c;
+                  str.push(stream.get());
+                else str.push(c);
               }
               stream.nospace();
               if(stream.get()!=':') L_Error("Bad JSON input.");

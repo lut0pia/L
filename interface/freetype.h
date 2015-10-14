@@ -24,7 +24,7 @@ class FTFont : public L::Font::Base {
           throw L::Exception("Couldn't initialize FreeType.");
         FTinit = true;
       }
-      if(FT_New_Face(library,filePath.c_str(),0,&face))
+      if(FT_New_Face(library,filePath,0,&face))
         throw L::Exception("Couldn't load face with FreeType.");
       if(FT_Set_Pixel_Sizes(face,0,pixels))
         throw L::Exception("Couldn't specify char size with FreeType.");

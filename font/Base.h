@@ -1,9 +1,9 @@
 #ifndef DEF_L_Font_Base
 #define DEF_L_Font_Base
 
+#include "../containers/Map.h"
 #include "../image.h"
 #include "../geometry/Point.h"
-#include "../stl/Map.h"
 
 namespace L {
   namespace Font {

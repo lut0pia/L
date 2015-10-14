@@ -2,7 +2,7 @@
 #define DEF_L_Shader
 
 #include <GL/glew.h>
-#include "../stl/String.h"
+#include "../String.h"
 #include "../system/File.h"
 #include "../macros.h"
 

@@ -9,7 +9,6 @@
 
 #include "Directory.h"
 #include "../macros.h"
-#include "../stl.h"
 #include "System.h"
 
 using namespace L;
@@ -33,9 +32,9 @@ String File::dir() const {
 bool File::exists() const {
 #if defined L_WINDOWS
   WIN32_FIND_DATA fdFile;
-  if(FindFirstFile(_path.c_str(), &fdFile)                     // File found
+  if(FindFirstFile(_path, &fdFile)                     // File found
       && !(fdFile.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)    // Not a directory
-      && !strcmp(fdFile.cFileName,name().c_str())) {              // Case sensitive same name
+      && !strcmp(fdFile.cFileName,name())) {              // Case sensitive same name
     return true;
   } else return false;
 #elif defined L_UNIX
@@ -49,16 +48,16 @@ void File::makePath() const {
 File& File::open(const char* mode) {
   makePath();
   close();
-  _fd = fopen(_path.c_str(),mode);
+  _fd = fopen(_path,mode);
   return *this;
 }
 void File::close() {
-  if(_fd!=NULL){
+  if(_fd!=NULL) {
     fclose(_fd);
     _fd = NULL;
   }
 }
-bool File::error() const{
+bool File::error() const {
   return ferror(_fd);
 }
 
@@ -67,7 +66,7 @@ size_t File::read(char* buffer, int count) {
 }
 String File::read(int count) {
   String wtr(count,'\0');
-  wtr.resize(read(&wtr[0],count));
+  wtr.size(read(wtr,count));
   return wtr;
 }
 String File::readLine() {
@@ -76,11 +75,10 @@ String File::readLine() {
   while(true) {
     c = fgetc(_fd);
     if(c==EOF) break;
-    if(c=='\n'){
+    if(c=='\n') {
       if(wtr.size()) return wtr;
       else continue;
-    }
-    else wtr.push_back(c);
+    } else wtr.push(c);
   }
   return wtr;
 }
@@ -98,6 +96,6 @@ size_t File::write(const char* buffer, int count) {
   return fwrite(buffer,1,count,_fd);
 }
 void File::write(const String& str) {
-  write(str.c_str(),str.size());
+  write(str,str.size());
 }
 

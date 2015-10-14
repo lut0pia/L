@@ -3,7 +3,7 @@
 
 #include "../geometry/Point.h"
 #include "../macros.h"
-#include "../stl/String.h"
+#include "../String.h"
 
 namespace L {
   class Window {

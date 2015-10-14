@@ -1,7 +1,7 @@
 #ifndef DEF_L_System_File
 #define DEF_L_System_File
 
-#include "../stl/String.h"
+#include "../String.h"
 
 namespace L {
   class File {

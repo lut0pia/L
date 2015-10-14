@@ -14,6 +14,7 @@
 #include "Interface.h"      // Helping to go from a format to another
 #include "Object.h"         // Helping dealing with objects
 #include "Rand.h"           // Random number generation
+#include "String.h"         // Mandatory string class
 
 // Sublibraries
 #include "ai.h"             // Artifical Intelligence
@@ -31,10 +32,8 @@
 #include "parallelism.h"    // Threads & synchronization
 #include "patterns.h"       // Design patterns
 #include "script.h"         // Scripting language
-#include "stl.h"            // Additions to the STL (such as operators, streams and layers)
 #include "streams.h"        // C-Stream wrapper and friends
 #include "system.h"         // Filesystem, Window
-#include "text.h"           // String class and things that have to do with text
 #include "time.h"           // Timey-wimey wibbly-wobbly stuff
 
 #endif

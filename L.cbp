@@ -66,6 +66,8 @@
 		<Unit filename="Object.h" />
 		<Unit filename="Rand.cpp" />
 		<Unit filename="Rand.h" />
+		<Unit filename="String.cpp" />
+		<Unit filename="String.h" />
 		<Unit filename="ai.h" />
 		<Unit filename="ai/MLP.cpp" />
 		<Unit filename="ai/MLP.h" />
@@ -91,6 +93,7 @@
 		<Unit filename="containers/BTree.h" />
 		<Unit filename="containers/KeyValue.h" />
 		<Unit filename="containers/List.h" />
+		<Unit filename="containers/Map.h" />
 		<Unit filename="containers/MultiArray.h" />
 		<Unit filename="containers/Pool.h" />
 		<Unit filename="containers/Ref.h" />
@@ -239,11 +242,6 @@
 		<Unit filename="script/code/Base.h" />
 		<Unit filename="script/code/Node.cpp" />
 		<Unit filename="script/code/Node.h" />
-		<Unit filename="stl.h" />
-		<Unit filename="stl/Map.h" />
-		<Unit filename="stl/Multimap.h" />
-		<Unit filename="stl/String.cpp" />
-		<Unit filename="stl/String.h" />
 		<Unit filename="streams.h" />
 		<Unit filename="streams/FileStream.h" />
 		<Unit filename="streams/Stream.cpp" />
@@ -258,9 +256,6 @@
 		<Unit filename="system/Window.cpp" />
 		<Unit filename="system/Window.h" />
 		<Unit filename="systems.h" />
-		<Unit filename="text.h" />
-		<Unit filename="text/String.cpp" />
-		<Unit filename="text/String.h" />
 		<Unit filename="time.h" />
 		<Unit filename="time/Time.cpp" />
 		<Unit filename="time/Time.h" />

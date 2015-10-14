@@ -70,14 +70,15 @@ byte& Color::g() {return _data[1];}
 byte& Color::b() {return _data[2];}
 byte& Color::a() {return _data[3];}
 
-Color Color::from(const String& str) {
+Color Color::from(String str) {
+  str.toLower();
   if((str.size()==7 || str.size()==9) && str[0]=='#') { // Hexa color
     Array<byte> tmp(htb(str.substr(1)));
     if(tmp.size()<4)
       tmp.push(255);
     return Color(tmp[0],tmp[1],tmp[2],tmp[3]);
   }
-#define TMP(name) else if(str.toLower()==#name) return name;
+#define TMP(name) else if(str==#name) return name;
   TMP(black)
   TMP(blue)
   TMP(cyan)

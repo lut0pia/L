@@ -1,6 +1,7 @@
 #include "Lexer.h"
 
 #include <cstring>
+#include "../String.h"
 #include "../Exception.h"
 
 using namespace L;

@@ -1,6 +1,7 @@
 #include "Parser.h"
 
 #include "../containers/StaticStack.h"
+#include "../Exception.h"
 
 using namespace L;
 using namespace Script;
@@ -18,7 +19,7 @@ void Parser::Node::print() {
 }
 
 void Parser::startSymbol(const String& strSymbol) {
-  _startSymbol = hash(strSymbol.c_str());
+  _startSymbol = hash(strSymbol);
 }
 void Parser::addRule(const Array<const char*>& strRule) {
   Array<uint> rule;

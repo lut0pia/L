@@ -7,7 +7,7 @@ using namespace GL;
 
 void Shader::load(const String& src) {
   GLint compile_status = GL_TRUE;
-  GLchar* srcStr((GLchar*)src.c_str());
+  const GLchar* srcStr(src);
   glShaderSource(_id, 1, &srcStr, NULL);
   glCompileShader(_id);
   glGetShaderiv(_id, GL_COMPILE_STATUS, &compile_status);

@@ -1,7 +1,7 @@
 #ifndef DEF_L_Time
 #define DEF_L_Time
 
-#include "../stl/String.h"
+#include "../String.h"
 
 namespace L {
   class Time {

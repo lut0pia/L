@@ -4,7 +4,7 @@
 #include <GL/glew.h>
 #include "Shader.h"
 #include "Texture.h"
-#include "../stl/Map.h"
+#include "../containers/Map.h"
 #include "../math/Matrix.h"
 
 namespace L {

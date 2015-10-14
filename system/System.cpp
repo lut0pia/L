@@ -10,11 +10,10 @@ using namespace System;
 
 #include "Directory.h"
 #include "../Exception.h"
-#include "../stl.h"
 
 String System::callGet(const String& cmd) {
   String wtr = "";
-  FILE* pipe = popen(cmd.c_str(),"r");
+  FILE* pipe = popen(cmd,"r");
   if(!pipe) throw Exception("Couldn't open pipe in System");
   else {
     char buffer[128];
@@ -27,7 +26,7 @@ String System::callGet(const String& cmd) {
   return wtr;
 }
 int System::call(const String& cmd) {
-  return system(cmd.c_str());
+  return system(cmd);
 }
 void System::sleep(int milliseconds) {
   sleep(Time(0,milliseconds));
@@ -67,7 +66,7 @@ void System::toClipboard(const String& data) {
   if(OpenClipboard(NULL) && EmptyClipboard()) {
     HGLOBAL tmp = GlobalAlloc(0,data.size()+1); // Allocate global memory
     GlobalLock(tmp); // Lock it
-    strcpy((char*)tmp,data.c_str()); // Copy data
+    strcpy((char*)tmp,data); // Copy data
     GlobalUnlock(tmp); // Unlock it
     SetClipboardData(CF_TEXT,tmp);
     CloseClipboard();
@@ -86,7 +85,7 @@ String System::fromClipboard() {
   throw Exception("Cannot get clipboard data.");
 }
 String System::gEnv(const String& name) {
-  return getenv(name.c_str());
+  return getenv(name);
 }
 Point2i System::screenSize() {
 #if defined L_WINDOWS
@@ -120,7 +119,7 @@ void System::closeConsole() {
 
 String System::formatPath(String path) {
 #if defined L_WINDOWS
-  path = path.replaceAll("/","\\");
+  path.replaceAll("/","\\");
 #endif
 #if defined L_WINDOWS
   if(path != "\\" && (path.size()<2 || path[1]!=':'))
@@ -130,10 +129,10 @@ String System::formatPath(String path) {
     path = Directory::current.gPath()+path;
   return path;
 }
-String System::pathDirectory(String path) {
-  return path.substr(0,1+path.find_last_of(slash));
+String System::pathDirectory(const String& path) {
+  return path.substr(0,1+path.findLast(slash));
 }
-String System::pathFile(String path) {
-  return path.substr(1+path.find_last_of(slash));
+String System::pathFile(const String& path) {
+  return path.substr(1+path.findLast(slash));
 }
 

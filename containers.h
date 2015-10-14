@@ -2,6 +2,7 @@
 #include "containers/BTree.h"
 #include "containers/KeyValue.h"
 #include "containers/List.h"
+#include "containers/Map.h"
 #include "containers/MultiArray.h"
 #include "containers/Pool.h"
 #include "containers/Ref.h"
