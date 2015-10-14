@@ -34,6 +34,7 @@ namespace L {
       inline Stream& operator<<(const char* v) {fputs(v,_fd); return *this;}
       inline Stream& operator<<(int v) {fprintf(_fd,"%i",v); return *this;}
       inline Stream& operator<<(unsigned int v) {fprintf(_fd,"%u",v); return *this;}
+      inline Stream& operator<<(long long v) {fprintf(_fd,"%lld",v); return *this;}
       inline Stream& operator<<(float v) {fprintf(_fd,"%f",v); return *this;}
       inline Stream& operator<<(double v) {fprintf(_fd,"%f",v); return *this;}
       inline Stream& operator<<(const void* v) {fprintf(_fd,"%p",v); return *this;}
