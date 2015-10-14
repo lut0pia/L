@@ -18,7 +18,7 @@ namespace L {
       inline void unget(char c) {ungetc(c,_fd);}
       inline void ignore(int n=1) {while(n--)get();}
       inline bool eof() const {return feof(_fd);}
-      inline void flush(){fflush(_fd);}
+      inline void flush() {fflush(_fd);}
 
       const char* line(); // Reads a line until \n
 
