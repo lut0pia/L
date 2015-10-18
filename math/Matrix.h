@@ -24,10 +24,7 @@ namespace L {
   template <int l, int c, class T>
   class Matrix {
     private:
-      union {
-        T _m[l][c];
-        T _a[l*c];
-      };
+      T _m[l][c];
     public:
       Matrix() {}
       Matrix(const Point<l,T>& v) {
@@ -37,8 +34,8 @@ namespace L {
 
       inline T& operator()(int line, int column) {return _m[line][column];}
       inline const T& operator()(int line, int column) const {return _m[line][column];}
-      inline T* array() {return _a;}
-      inline const T* array() const {return _a;}
+      inline T* array() {return &_m[0][0];}
+      inline const T* array() const {return &_m[0][0];}
       Matrix operator+(const Matrix& other) const {
         Matrix wtr(*this);
         wtr += other;
@@ -66,12 +63,12 @@ namespace L {
       }
       Matrix& operator*=(const T& scalar) {
         for(int i(0); i<l*c; i++)
-          _a[i] *= scalar;
+          array()[i] *= scalar;
         return *this;
       }
       Matrix& operator/=(const T& scalar) {
         for(int i(0); i<l*c; i++)
-          _a[i] /= scalar;
+          array()[i] /= scalar;
         return *this;
       }
       Matrix operator*(const T& scalar) const {
