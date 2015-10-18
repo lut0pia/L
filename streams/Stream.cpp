@@ -11,3 +11,13 @@ const char* Stream::line() {
   *w = '\0'; // Null-end string
   return buffer;
 }
+const char* Stream::bufferize(size_t* size) {
+  static char buffer[4096];
+  char* w(buffer);
+  while(!eof() && w<buffer+4096) {*w++ = get();} // End of line or file
+  if(w==buffer) return 0;
+  else {
+    *size = w-buffer;
+    return buffer;
+  }
+}

@@ -21,6 +21,7 @@ namespace L {
       inline void flush() {fflush(_fd);}
 
       const char* line(); // Reads a line until \n
+      const char* bufferize(size_t*); // Reads as many chars as possible
 
       // Default operators
       template<class T> inline Stream& operator<<(const T& v) {return operator<<("N/A");}
