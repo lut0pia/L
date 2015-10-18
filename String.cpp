@@ -9,13 +9,14 @@ String::String(const char* str) {
   do Array<char>::push(*str);
   while(*str++!='\0');
 }
-String::String(const String& str, size_t pos, size_t length) {
-  if(length==-1)
-    length = str.size()-pos;
-  capacity(length+1);
-  while(length--)
-    Array<char>::push(str[pos++]);
-  Array<char>::push('\0');
+String::String(const char* buffer, size_t length) : Array<char>(length+1) {
+  memcpy(&operator[](0),buffer,length);
+  operator[](length) = '\0';
+}
+String::String(const String& str, size_t pos, size_t length)
+  : Array<char>((length = (length==-1)?str.size()-pos:length)+1) {
+  memcpy(&operator[](0),&str[pos],length);
+  operator[](length) = '\0';
 }
 String& String::operator+=(const String& other) {
   Array<char>::pop();

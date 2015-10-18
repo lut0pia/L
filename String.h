@@ -11,6 +11,7 @@ namespace L {
       inline String() : Array<char>(1,'\0') {}
       inline String(size_t s, char c) : Array<char>(s,c) {Array<char>::push('\0');}
       String(const char*);
+      String(const char*,size_t);
       String(const String&, size_t start, size_t length = -1);
 
       inline String operator+(const String& other) {
