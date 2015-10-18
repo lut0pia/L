@@ -1,3 +1,4 @@
+#include "math/Fixed.h"
 #include "math/Integer.h"
 #include "math/Interpolation.h"
 #include "math/Matrix.h"

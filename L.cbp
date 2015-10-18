@@ -203,6 +203,8 @@
 		<Unit filename="image/Color.h" />
 		<Unit filename="macros.h" />
 		<Unit filename="math.h" />
+		<Unit filename="math/Fixed.cpp" />
+		<Unit filename="math/Fixed.h" />
 		<Unit filename="math/Integer.cpp" />
 		<Unit filename="math/Integer.h" />
 		<Unit filename="math/Interpolation.h" />
