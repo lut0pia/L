@@ -20,8 +20,8 @@ namespace L {
       String& operator+=(const String& other);
       inline bool operator==(const String& other) const {return !strcmp(operator const char*(),(const char*)other);}
       inline bool operator!=(const String& other) const {return !operator==(other);}
-      inline bool operator<(const String& other) const{return strcmp(operator const char*(),(const char*)other)<0;}
-      inline bool operator>(const String& other) const{return strcmp(operator const char*(),(const char*)other)>0;}
+      inline bool operator<(const String& other) const {return strcmp(operator const char*(),(const char*)other)<0;}
+      inline bool operator>(const String& other) const {return strcmp(operator const char*(),(const char*)other)>0;}
 
       inline int findFirst(char c) const {return strchr(*this,c)-operator const char*();}
       inline int findLast(char c) const {return strrchr(*this,c)-operator const char*();}
@@ -41,7 +41,7 @@ namespace L {
       String& capitalize(); // Capitalize first letter of all words
 
       // Array redirections
-      inline void pop(){erase(size()-1);}
+      inline void pop() {erase(size()-1);}
       inline void push(char c) {insert(size(),c);}
       inline void insert(size_t i,char c) {Array<char>::insert(i,c);}
       inline void insert(size_t i,const String& str) {Array<char>::insertArray(i,str,str.size());}
