@@ -32,6 +32,7 @@ namespace L {
       inline Stream& operator<<(char v) {fputc(v,_fd); return *this;}
       inline Stream& operator<<(char* v) {fputs(v,_fd); return *this;}
       inline Stream& operator<<(const char* v) {fputs(v,_fd); return *this;}
+      inline Stream& operator<<(short v) {fprintf(_fd,"%i",v); return *this;}
       inline Stream& operator<<(int v) {fprintf(_fd,"%i",v); return *this;}
       inline Stream& operator<<(unsigned int v) {fprintf(_fd,"%u",v); return *this;}
       inline Stream& operator<<(long long v) {fprintf(_fd,"%lld",v); return *this;}
