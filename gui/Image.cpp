@@ -24,7 +24,7 @@ void GUI::Image::bitmap(const Bitmap& bmp) {
   texture(new GL::Texture(bmp));
 }
 
-Point2i GUI::Image::gDimensions() {
+Vector2i GUI::Image::gDimensions() {
   return _dimensions;
 }
 void GUI::Image::draw(GL::Program& program) {

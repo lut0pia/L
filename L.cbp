@@ -130,7 +130,7 @@
 		<Unit filename="general.h" />
 		<Unit filename="geometry.h" />
 		<Unit filename="geometry/Interval.h" />
-		<Unit filename="geometry/Point.h" />
+		<Unit filename="geometry/Vector.h" />
 		<Unit filename="geometry/Segment.h" />
 		<Unit filename="geometry/Surface.h" />
 		<Unit filename="geometry/Volume.h" />

@@ -26,7 +26,7 @@ namespace L {
         GLuint uniformLocation(const String& name);
         void uniform(const String& name, float);
         void uniform(const String& name, float,float,float);
-        void uniform(const String& name, const Point3f&);
+        void uniform(const String& name, const Vector3f&);
         void uniform(const String& name, const Matrix44f&);
         void uniform(const String& name, const Texture&, GLenum unit = GL_TEXTURE0);
 

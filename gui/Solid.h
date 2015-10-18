@@ -8,15 +8,15 @@ namespace L{
     namespace GUI{
         class Solid : public Base{
             protected:
-                Point2i pos;
+                Vector2i pos;
                 Interval2i clip;
             public:
                 Solid();
                 virtual ~Solid(){}
 
-                virtual Point2i gPos();
+                virtual Vector2i gPos();
                 virtual Interval2i gClip();
-                virtual void updateFromAbove(Point<2,int>,Interval<2,int>);
+                virtual void updateFromAbove(Vector<2,int>,Interval<2,int>);
         };
     }
 }

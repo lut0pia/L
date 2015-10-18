@@ -58,14 +58,14 @@ void GL::drawAxes() {
 }
 void GL::makeDisc(Mesh& mesh, int slices) {
   meshBuilder.reset(Mesh::VERTEX,128,128);
-  meshBuilder.setVertex(Point3f(0,0,0));
+  meshBuilder.setVertex(Vector3f(0,0,0));
   uint center(meshBuilder.addVertex());
-  meshBuilder.setVertex(Point3f(1,0,0));
+  meshBuilder.setVertex(Vector3f(1,0,0));
   uint first(meshBuilder.addVertex());
   uint last(first);
   for(int i(1); i<slices; i++) {
     float angle(((float)i/slices)*PI<float>()*2);
-    meshBuilder.setVertex(Point3f(cos(angle),sin(angle),0));
+    meshBuilder.setVertex(Vector3f(cos(angle),sin(angle),0));
     uint current(meshBuilder.addVertex());
     meshBuilder.addTriangle(center,current,last);
     last = current;
@@ -74,7 +74,7 @@ void GL::makeDisc(Mesh& mesh, int slices) {
   Object::reconstruct(mesh,meshBuilder);
 }
 
-void GL::draw2dLine(Point<2,float> a, Point<2,float> b, int size, const Color& c) {
+void GL::draw2dLine(Vector<2,float> a, Vector<2,float> b, int size, const Color& c) {
   glColor3ub(c.r(),c.g(),c.b());
   glBegin(GL_LINES);
   glVertex2f(a.x(),a.y());

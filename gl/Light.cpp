@@ -18,8 +18,8 @@ void Light::color(float r, float g, float b, float a) {
   _color[2] = b;
   _color[3] = a;
 }
-Point3f Light::position() const{
-  return Point3f(_position[0],_position[1],_position[2]);
+Vector3f Light::position() const{
+  return Vector3f(_position[0],_position[1],_position[2]);
 }
 void Light::set(GLenum light) {
   glLightfv(light, GL_POSITION, _position.array());

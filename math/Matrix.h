@@ -1,7 +1,7 @@
 #ifndef DEF_L_Matrix
 #define DEF_L_Matrix
 
-#include "../geometry/Point.h"
+#include "../geometry/Vector.h"
 
 namespace L {
   template <int l, int c, class T>
@@ -27,7 +27,7 @@ namespace L {
       T _m[l][c];
     public:
       Matrix() {}
-      Matrix(const Point<l,T>& v) {
+      Matrix(const Vector<l,T>& v) {
         for(int i(0); i<l; i++)
           _m[i][0] = v[i];
       }
@@ -58,7 +58,7 @@ namespace L {
           }
         return wtr;
       }
-      Matrix<l,1,T> operator*(const Point<l,T>& v) const {
+      Matrix<l,1,T> operator*(const Vector<l,T>& v) const {
         return (*this)*Matrix<l,1,T>(v);
       }
       Matrix& operator*=(const T& scalar) {
@@ -123,7 +123,7 @@ namespace L {
             wtr(x,y) = ((x==y)?1:0);
         return wtr;
       }
-      static Matrix<4,4,T> rotation(const Point<3,T>& axis, T angle) {
+      static Matrix<4,4,T> rotation(const Vector<3,T>& axis, T angle) {
         Matrix<4,4,T> wtr(Matrix<4,4,T>::identity());
         if(angle < 0.001 && angle > -0.001)
           angle = 0;
@@ -146,14 +146,14 @@ namespace L {
         wtr(2,2) = z2+(cosi*(1-z2));
         return wtr;
       }
-      static Matrix<4,4,T> translation(const Point<3,T>& vector) {
+      static Matrix<4,4,T> translation(const Vector<3,T>& vector) {
         Matrix<4,4,T> wtr(Matrix<4,4,T>::identity());
         wtr(0,3) = vector.x();
         wtr(1,3) = vector.y();
         wtr(2,3) = vector.z();
         return wtr;
       }
-      static Matrix<4,4,T> orientation(const Point<3,T>& newx, const Point<3,T>& newy,const Point<3,T>& newz) {
+      static Matrix<4,4,T> orientation(const Vector<3,T>& newx, const Vector<3,T>& newy,const Vector<3,T>& newz) {
         Matrix<4,4,T> wtr(Matrix<4,4,T>::identity());
         wtr(0,0) = newx.x();
         wtr(1,0) = newx.y();
@@ -167,8 +167,8 @@ namespace L {
         return wtr;
       }
 
-      operator Point<l,T>() {
-        Point<l,T> wtr;
+      operator Vector<l,T>() {
+        Vector<l,T> wtr;
         for(int i(0); i<l; i++)
           wtr[i] = _m[i][0];
         return wtr;

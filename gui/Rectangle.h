@@ -9,7 +9,7 @@ namespace L {
     class Rectangle : public Sizable {
       public:
         Rectangle();
-        Rectangle(Point2i,Color);
+        Rectangle(Vector2i,Color);
         virtual ~Rectangle() {}
 
         Color color;

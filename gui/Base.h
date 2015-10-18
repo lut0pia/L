@@ -20,17 +20,17 @@ namespace L {
         L_NoCopy(Base)
         virtual ~Base() {}
 
-        virtual Point2i gPos() = 0;
+        virtual Vector2i gPos() = 0;
         virtual Interval2i gClip() = 0;
         void sParent(Base*);
         Base* gParent() const;
-        virtual Point2i gDimensions() = 0;
-        void dimensionsChanged(Point2i newDim);
+        virtual Vector2i gDimensions() = 0;
+        void dimensionsChanged(Vector2i newDim);
 
         void updateAll();
         void update();
-        virtual void updateFromAbove(Point<2,int>,Interval<2,int>) = 0; // Position and parent clip changed
-        virtual void dimensionsChanged(Base* child, Point2i dimensions); // Dimensions of child changed
+        virtual void updateFromAbove(Vector<2,int>,Interval<2,int>) = 0; // Position and parent clip changed
+        virtual void dimensionsChanged(Base* child, Vector2i dimensions); // Dimensions of child changed
 
         virtual void draw(GL::Program&);
         virtual bool event(const Window::Event&); // A return value of true means the event has been used

@@ -3,13 +3,13 @@
 
 #include "../containers/Map.h"
 #include "../image.h"
-#include "../geometry/Point.h"
+#include "../geometry/Vector.h"
 
 namespace L {
   namespace Font {
     typedef struct {
       Image::Bitmap bmp;
-      Point2i origin;
+      Vector2i origin;
       size_t advance;
     } Glyph;
     class Base {

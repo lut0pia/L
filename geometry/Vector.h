@@ -9,102 +9,102 @@
 
 namespace L {
   template <int d,class T>
-  class Point {
+  class Vector {
     protected:
       T _c[d];
     public:
-      Point() {}
+      Vector() {}
       template <class R>
-      Point(const Point<d,R>& other) {
+      Vector(const Vector<d,R>& other) {
         for(int i(0); i<d; i++)
           _c[i] = other[i];
       }
-      Point(const T& scalar) {
+      Vector(const T& scalar) {
         for(int i(0); i<d; i++)
           _c[i] = scalar;
       }
-      Point(const T& x, const T& y) {
+      Vector(const T& x, const T& y) {
         _c[0] = x;
         _c[1] = y;
       }
-      Point(const T& x, const T& y, const T& z) {
+      Vector(const T& x, const T& y, const T& z) {
         _c[0] = x;
         _c[1] = y;
         _c[2] = z;
       }
-      Point(const T& x, const T& y, const T& z, const T& w) {
+      Vector(const T& x, const T& y, const T& z, const T& w) {
         _c[0] = x;
         _c[1] = y;
         _c[2] = z;
         _c[3] = w;
       }
-      Point(const Point<d-1,T>& p, const T& w = 1.0) {
+      Vector(const Vector<d-1,T>& p, const T& w = 1.0) {
         for(int i(0); i<d-1; i++)
           _c[i] = p[i];
         _c[d-1] = w;
       }
-      Point(const Point<d+1,T>& p) {
+      Vector(const Vector<d+1,T>& p) {
         for(int i(0); i<d; i++)
           _c[i] = p[i];
       }
 
-      Point& operator+=(const Point& other) {
+      Vector& operator+=(const Vector& other) {
         for(int i(0); i<d; i++)
           _c[i] += other._c[i];
         return *this;
       }
-      Point& operator-=(const Point& other) {
+      Vector& operator-=(const Vector& other) {
         for(int i(0); i<d; i++)
           _c[i] -= other._c[i];
         return *this;
       }
-      Point& operator*=(const Point& other) {
+      Vector& operator*=(const Vector& other) {
         for(int i(0); i<d; i++)
           _c[i] *= other._c[i];
         return *this;
       }
-      Point& operator/=(const Point& other) {
+      Vector& operator/=(const Vector& other) {
         for(int i(0); i<d; i++)
           _c[i] /= other._c[i];
         return *this;
       }
-      Point operator+(const Point& other) const {
-        Point wtr(*this);
+      Vector operator+(const Vector& other) const {
+        Vector wtr(*this);
         wtr += other;
         return wtr;
       }
-      Point operator-(const Point& other) const {
-        Point wtr(*this);
+      Vector operator-(const Vector& other) const {
+        Vector wtr(*this);
         wtr -= other;
         return wtr;
       }
-      Point operator-() const {
-        Point wtr;
+      Vector operator-() const {
+        Vector wtr;
         for(int i(0); i<d; i++)
           wtr._c[i] = -_c[i];
         return wtr;
       }
-      Point operator*(const Point& other) const {
-        Point wtr(*this);
+      Vector operator*(const Vector& other) const {
+        Vector wtr(*this);
         wtr *= other;
         return wtr;
       }
-      Point operator/(const Point& other) const {
-        Point wtr(*this);
+      Vector operator/(const Vector& other) const {
+        Vector wtr(*this);
         wtr /= other;
         return wtr;
       }
 
-      bool operator==(const Point& other) const {
+      bool operator==(const Vector& other) const {
         for(int i(0); i<d; i++)
           if(_c[i] != other._c[i])
             return false;
         return true;
       }
-      bool operator!=(const Point& other) const {
+      bool operator!=(const Vector& other) const {
         return !(*this == other);
       }
-      bool operator<(const Point& other) const {
+      bool operator<(const Vector& other) const {
         for(int i(0); i<d; i++)
           if(_c[i] < other._c[i])
             return true;
@@ -127,24 +127,24 @@ namespace L {
           wtr += abs(_c[i]);
         return wtr;
       }
-      Point& normalize() {
+      Vector& normalize() {
         T n(norm());
         for(int i(0); i<d; i++)
           _c[i] /= n;
         return *this;
       }
-      inline T dist(const Point& other) const {
+      inline T dist(const Vector& other) const {
         return (*this-other).norm();
       }
-      inline T distSquared(const Point& other) const {
+      inline T distSquared(const Vector& other) const {
         return (*this-other).normSquared();
       }
-      Point cross(const Point& other) {
-        return Point(y()*other.z() - z()*other.y(),
+      Vector cross(const Vector& other) {
+        return Vector(y()*other.z() - z()*other.y(),
                      z()*other.x() - x()*other.z(),
                      x()*other.y() - y()*other.x());
       }
-      T dot(const Point& other) const {
+      T dot(const Vector& other) const {
         T wtr(0);
         for(int i(0); i<d; i++)
           wtr += _c[i]*other._c[i];
@@ -156,7 +156,7 @@ namespace L {
           wtr *= _c[i];
         return wtr;
       }
-      bool increment(const Point& min, const Point& max, const Point& delta = 1) {
+      bool increment(const Vector& min, const Vector& max, const Vector& delta = 1) {
         for(int i(0); i<d; i++) {
           _c[i] += delta[i];
           if(_c[i]>=max._c[i]) {
@@ -181,20 +181,20 @@ namespace L {
       inline T& z() {return _c[2];}
       inline T& w() {return _c[3];}
 
-      static Point min() {
-        Point wtr;
+      static Vector min() {
+        Vector wtr;
         for(int i(0); i<d; i++)
           wtr[i] = std::numeric_limits<T>::min();
         return wtr;
       }
-      static Point max() {
-        Point wtr;
+      static Vector max() {
+        Vector wtr;
         for(int i(0); i<d; i++)
           wtr[i] = std::numeric_limits<T>::max();
         return wtr;
       }
-      static Point random() {
-        Point wtr;
+      static Vector random() {
+        Vector wtr;
         for(int i(0); i<d; i++)
           wtr[i] = Rand::nextFloat()-.5f;
         wtr.normalize();
@@ -202,14 +202,14 @@ namespace L {
       }
   };
 
-  typedef Point<2,int> Point2i;
-  typedef Point<3,int> Point3i;
-  typedef Point<2,float> Point2f;
-  typedef Point<3,float> Point3f;
-  typedef Point<4,float> Point4f;
+  typedef Vector<2,int> Vector2i;
+  typedef Vector<3,int> Vector3i;
+  typedef Vector<2,float> Vector2f;
+  typedef Vector<3,float> Vector3f;
+  typedef Vector<4,float> Vector4f;
 
   template <int d,class T>
-  Stream& operator<<(Stream &s, const Point<d,T>& _c) {
+  Stream& operator<<(Stream &s, const Vector<d,T>& _c) {
     s << '(';
     for(int i(0); i<d; i++) {
       s << _c[i];

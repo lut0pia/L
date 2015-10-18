@@ -2,25 +2,25 @@
 #define DEF_L_Surface
 
 #include "../Exception.h"
-#include "Point.h"
+#include "Vector.h"
 
 namespace L {
   template <int d,class T>
   class Surface {
     protected:
-      Point<d,T> a, b, c;
+      Vector<d,T> a, b, c;
     public:
       Surface() {
       }
-      Surface(const Point<d,T>& a,
-              const Point<d,T>& b,
-              const Point<d,T>& c)
+      Surface(const Vector<d,T>& a,
+              const Vector<d,T>& b,
+              const Vector<d,T>& c)
         : a(a), b(b), c(c) {
       }
 
-      bool contains(const Point<d,T>& p) {
-        Point<d,T> ap(p-a), ab(b-a), ac(c-a);
-        Point<2,T> sap; // sap is a vector defining ap according to abc
+      bool contains(const Vector<d,T>& p) {
+        Vector<d,T> ap(p-a), ab(b-a), ac(c-a);
+        Vector<2,T> sap; // sap is a vector defining ap according to abc
         if(d==2) {
           sap.x() = -(ac.y()*ap.x() - ac.x()*ap.y())/(ab.y()*ac.x() - ab.x()*ac.y());
           sap.y() = (ab.y()*ap.x() - ab.x()*ap.y())/(ab.y()*ac.x() - ab.x()*ac.y());
@@ -35,9 +35,9 @@ namespace L {
         return ((a == b) && (b == c));
       }
 
-      inline const Point<d,T>& gA() const {return a;}
-      inline const Point<d,T>& gB() const {return b;}
-      inline const Point<d,T>& gC() const {return c;}
+      inline const Vector<d,T>& gA() const {return a;}
+      inline const Vector<d,T>& gB() const {return b;}
+      inline const Vector<d,T>& gC() const {return c;}
   };
 }
 

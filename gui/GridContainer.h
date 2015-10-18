@@ -10,7 +10,7 @@ namespace L {
     class GridContainer : public Base {
       protected:
         //MultiArray<2,Ref<Base> > elements;
-        Point2i spacing;
+        Vector2i spacing;
 
       public:
         GridContainer();

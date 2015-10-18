@@ -15,11 +15,11 @@ namespace L {
         Border(Ref<Base>, size_t, Color);
         virtual ~Border() {}
 
-        Point2i gPos();
+        Vector2i gPos();
         Interval2i gClip();
-        Point2i gDimensions();
-        void dimensionsChanged(Base*,Point<2,int>);
-        void updateFromAbove(Point<2,int>,Interval<2,int>);
+        Vector2i gDimensions();
+        void dimensionsChanged(Base*,Vector<2,int>);
+        void updateFromAbove(Vector<2,int>,Interval<2,int>);
         void draw(GL::Program&);
     };
   }

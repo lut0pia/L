@@ -15,11 +15,11 @@ namespace L {
         virtual ~Layer() {}
 
         inline const Ref<Base>& gInner() {return inner;}
-        virtual Point2i gPos();
+        virtual Vector2i gPos();
         virtual Interval2i gClip();
-        virtual Point2i gDimensions();
-        virtual void dimensionsChanged(Base*,Point<2,int>);
-        virtual void updateFromAbove(Point<2,int>,Interval<2,int>);
+        virtual Vector2i gDimensions();
+        virtual void dimensionsChanged(Base*,Vector<2,int>);
+        virtual void updateFromAbove(Vector<2,int>,Interval<2,int>);
         virtual void draw(GL::Program&);
         virtual bool event(const Window::Event&);
     };

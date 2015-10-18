@@ -57,7 +57,7 @@ void Program::uniform(const String& name, float v) {
 void Program::uniform(const String& name, float x,float y,float z) {
   glUniform3f(uniformLocation(name),x,y,z);
 }
-void Program::uniform(const String& name, const Point3f& p) {
+void Program::uniform(const String& name, const Vector3f& p) {
   uniform(name,p.x(),p.y(),p.z());
 }
 void Program::uniform(const String& name, const Matrix44f& m) {

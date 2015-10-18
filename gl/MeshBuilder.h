@@ -2,7 +2,7 @@
 #define DEF_L_GL_MeshBuilder
 
 #include "../image/Color.h"
-#include "../geometry/Point.h"
+#include "../geometry/Vector.h"
 #include "../macros.h"
 
 namespace L {
@@ -24,7 +24,7 @@ namespace L {
         L_NoCopy(MeshBuilder)
         void reset(byte vertexDesc, uint maxVertices, uint maxIndices);
         void computeNormals();
-        void setVertex(const Point3f&);
+        void setVertex(const Vector3f&);
         void setVertexColor(const Color&);
         uint addVertex();
         void addIndex(uint);
@@ -35,8 +35,8 @@ namespace L {
         inline uint* indices() const {return _indexBuffer;}
         inline uint vertexCount() const {return _vertexCount;}
         inline uint indexCount() const {return _indexCount;}
-        inline Point3f& vertex(uint i) const {return *((Point3f*)(_offsetVertex+_vertexBuffer+_vertexSize*i));}
-        inline Point3f& normal(uint i) const {return *((Point3f*)(_offsetNormal+_vertexBuffer+_vertexSize*i));}
+        inline Vector3f& vertex(uint i) const {return *((Vector3f*)(_offsetVertex+_vertexBuffer+_vertexSize*i));}
+        inline Vector3f& normal(uint i) const {return *((Vector3f*)(_offsetNormal+_vertexBuffer+_vertexSize*i));}
     };
   }
 }

@@ -9,7 +9,7 @@ namespace L {
     Base* from(const XML&);
     Base* from(const XML&, Map<String,Base*>&);
 
-    Point2i point(const String&);
+    Vector2i point(const String&);
   }
 }
 

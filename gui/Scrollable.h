@@ -8,19 +8,19 @@ namespace L {
   namespace GUI {
     class Scrollable : public Sizable {
       protected:
-        Point2i modifier, childDim;
+        Vector2i modifier, childDim;
         Ref<Base> child;
 
       public:
-        Scrollable(Point<2,int>,Ref<Base>);
+        Scrollable(Vector<2,int>,Ref<Base>);
 
-        void sModifier(Point<2,int>);
-        Point2i gModifier() const;
-        void sValue(Point<2,float>);
-        Point<2,float> gValue() const;
+        void sModifier(Vector<2,int>);
+        Vector2i gModifier() const;
+        void sValue(Vector<2,float>);
+        Vector<2,float> gValue() const;
 
-        void dimensionsChanged(Base*, Point<2,int>);
-        void updateFromAbove(Point<2,int>,Interval<2,int>);
+        void dimensionsChanged(Base*, Vector<2,int>);
+        void updateFromAbove(Vector<2,int>,Interval<2,int>);
         void draw(GL::Program&);
         bool event(const Window::Event& e);
     };

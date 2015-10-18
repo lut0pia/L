@@ -1,7 +1,7 @@
 #ifndef DEF_L_System_Window
 #define DEF_L_System_Window
 
-#include "../geometry/Point.h"
+#include "../geometry/Vector.h"
 #include "../macros.h"
 #include "../String.h"
 
@@ -58,9 +58,9 @@ namespace L {
       static int width();
       static int height();
       static float aspect();
-      static Point2i mousePosition();
-      static Point2f normalizedMousePosition();
-      static Point2f normalizedToPixels(const Point2f&);
+      static Vector2i mousePosition();
+      static Vector2f normalizedMousePosition();
+      static Vector2f normalizedToPixels(const Vector2f&);
   };
 }
 

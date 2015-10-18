@@ -1,7 +1,7 @@
 #ifndef DEF_L_Tree
 #define DEF_L_Tree
 
-#include "../geometry/Point.h"
+#include "../geometry/Vector.h"
 #include "../tmp.h"
 #include "Pool.h"
 
@@ -11,7 +11,7 @@ namespace L {
     private:
       static const int n = static_pow<2,d>::value;
       static const int mask = ~((~0)<<d);
-      typedef Point<d,K> Key;
+      typedef Vector<d,K> Key;
       class Node {
         private:
           V _value;
@@ -77,7 +77,7 @@ namespace L {
               }
             }
           }
-          static void construct(Node*& node, const Point<d,K>& center, const Array<Node*>& nodes) {
+          static void construct(Node*& node, const Vector<d,K>& center, const Array<Node*>& nodes) {
             if(!nodes.empty()) {
               K distance(std::numeric_limits<K>::max());
               for(int i(0); i<nodes.size(); i++) { // Find node closest to the center of the current interval
@@ -88,7 +88,7 @@ namespace L {
                 }
               }
               for(int i(0); i<n; i++) { // Cycle through all children
-                Point<d,K> childCenter(0);
+                Vector<d,K> childCenter(0);
                 Array<Node*> childNodes;
                 for(int j(0); j<nodes.size(); j++)
                   if(node->childIndex(nodes[j]->key())==i) { // Find nodes that should go to that child
@@ -112,7 +112,7 @@ namespace L {
           }
           static void balance(Node*& node) {
             Array<Node*> nodes;
-            Point<d,K> center(0);
+            Vector<d,K> center(0);
             destruct(node,nodes); // Start by collecting all nodes
             for(int i(0); i<nodes.size(); i++)
               center += nodes[i]->key();

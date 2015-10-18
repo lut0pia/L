@@ -10,7 +10,7 @@ namespace L {
     class Image : public Solid {
       protected:
         Ref<GL::Texture> _texture;
-        Point2i _dimensions;
+        Vector2i _dimensions;
 
       public:
         Image();
@@ -21,7 +21,7 @@ namespace L {
         void texture(const Ref<GL::Texture>&);
         void bitmap(const L::Image::Bitmap&);
 
-        Point2i gDimensions();
+        Vector2i gDimensions();
         void draw(GL::Program&);
     };
   }

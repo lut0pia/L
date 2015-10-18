@@ -6,7 +6,7 @@ using namespace L;
 using namespace L::GUI;
 
 Rectangle::Rectangle() : Sizable(), color(Color::black) {}
-Rectangle::Rectangle(Point2i d,Color c) : Sizable(d), color(c) {}
+Rectangle::Rectangle(Vector2i d,Color c) : Sizable(d), color(c) {}
 
 void Rectangle::draw(GL::Program& program) {
   glColor4ub(color.r(),color.g(),color.b(),color.a());

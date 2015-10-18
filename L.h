@@ -24,7 +24,7 @@
 #include "dynamic.h"        // Dynamic typing/casting
 #include "ecs.h"            // Entity/Component/System
 #include "font.h"           // Font handling
-#include "geometry.h"       // Points, intervals, surfaces, volumes, and all related functions
+#include "geometry.h"       // Vectors, intervals, surfaces, volumes, and all related functions
 #include "gl.h"             // Everything related to OpenGL
 #include "gui.h"            // 2D graphical user interface
 #include "image.h"          // Images, textures, colors

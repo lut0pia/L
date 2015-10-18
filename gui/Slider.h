@@ -10,23 +10,23 @@ namespace L {
       protected:
         Ref<Base> thumb;
         bool inMotion;
-        Point2i curDist, thumbPos;
-        Point<2,float> value;
+        Vector2i curDist, thumbPos;
+        Vector<2,float> value;
 
       public:
-        Slider(Point<2,int>, Ref<Base> thumb);
+        Slider(Vector<2,int>, Ref<Base> thumb);
 
         // Setters
         void sThumb(Ref<Base>);
-        void sValue(Point<2,float>);
+        void sValue(Vector<2,float>);
         // Getters
-        Point<2,float> gValue() const;
+        Vector<2,float> gValue() const;
 
         void updateThumb();
         void updateValue();
 
-        void dimensionsChanged(Base*,Point<2,int>);
-        void updateFromAbove(Point<2,int>,Interval<2,int>);
+        void dimensionsChanged(Base*,Vector<2,int>);
+        void updateFromAbove(Vector<2,int>,Interval<2,int>);
         void draw(GL::Program&);
         bool event(const Window::Event& e);
     };

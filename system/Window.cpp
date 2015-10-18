@@ -13,7 +13,7 @@ using L::Window;
 
 bool buttonstate[Window::Event::LAST] = {false};
 List<Window::Event> _events;
-Point2i _mousePos;
+Vector2i _mousePos;
 int _width, _height, _flags;
 
 Window::Event::Event() {
@@ -96,7 +96,7 @@ LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
       }
       e.x = GET_X_LPARAM(lParam);
       e.y = GET_Y_LPARAM(lParam);
-      _mousePos = Point2i(e.x,e.y);
+      _mousePos = Vector2i(e.x,e.y);
       break;
     case WM_MOUSEWHEEL:
       e.type = Window::Event::MOUSEWHEEL;
@@ -222,7 +222,7 @@ void Window::open(const String& title, int width, int height, int flags) {
     throw Exception("No appropriate visual found for X server.");
   cmap = XCreateColormap(dpy, root, vi->visual, AllocNone);
   swa.colormap = cmap;
-  swa.event_mask = ExposureMask | KeyPressMask | PointerMotionMask;
+  swa.event_mask = ExposureMask | KeyPressMask | VectorerMotionMask;
   win = XCreateWindow(dpy, root, 0, 0, width, height, 0, vi->depth, InputOutput, vi->visual, CWColormap | CWEventMask, &swa);
   Atom delWindow = XInternAtom(dpy,"WM_DELETE_WINDOW",0); // This is for the window close operation
   XSetWMProtocols(dpy, win, &delWindow, 1);
@@ -234,7 +234,7 @@ void Window::open(const String& title, int width, int height, int flags) {
 #endif
 }
 void Window::openFullscreen(const String& title, int flags) {
-  Point2i screenSize(System::screenSize());
+  Vector2i screenSize(System::screenSize());
   open(title,screenSize.x(),screenSize.y(),borderless | flags);
 }
 void Window::close() {
@@ -320,12 +320,12 @@ int Window::height() {
 float Window::aspect() {
   return (float)_width/_height;
 }
-Point2i Window::mousePosition() {
+Vector2i Window::mousePosition() {
   return _mousePos;
 }
-Point2f Window::normalizedMousePosition() {
-  return Point2f((2*(float)_mousePos.x()/_width)-1,-((2*(float)_mousePos.y()/_height)-1));
+Vector2f Window::normalizedMousePosition() {
+  return Vector2f((2*(float)_mousePos.x()/_width)-1,-((2*(float)_mousePos.y()/_height)-1));
 }
-Point2f Window::normalizedToPixels(const Point2f& p) {
-  return Point2f(((p.x()+1)/2)*_width,((-p.y()+1)/2)*_height);
+Vector2f Window::normalizedToPixels(const Vector2f& p) {
+  return Vector2f(((p.x()+1)/2)*_width,((-p.y()+1)/2)*_height);
 }

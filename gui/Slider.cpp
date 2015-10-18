@@ -3,18 +3,18 @@
 using namespace L;
 using namespace GUI;
 
-Slider::Slider(Point2i d, Ref<Base> thumb) : Sizable(d), curDist(0,0) {
+Slider::Slider(Vector2i d, Ref<Base> thumb) : Sizable(d), curDist(0,0) {
   sThumb(thumb);
   inMotion = false;
 }
 void Slider::sThumb(Ref<Base> thumb) {
   this->thumb = thumb;
   thumb->sParent(this);
-  sValue(Point<2,float>(0,0));
+  sValue(Vector<2,float>(0,0));
 }
-void Slider::sValue(Point<2,float> v) {
+void Slider::sValue(Vector<2,float> v) {
   /*
-  Point2i thumbDim(thumb->gDimensions());
+  Vector2i thumbDim(thumb->gDimensions());
   v.x *= (float)(dimensions.x()-thumbDim.x());
   v.y *= (float)(dimensions.y()-thumbDim.y());
   */
@@ -22,26 +22,26 @@ void Slider::sValue(Point<2,float> v) {
   updateThumb();
 }
 
-Point<2,float> Slider::gValue() const {
+Vector<2,float> Slider::gValue() const {
   return value;
 }
 void Slider::updateThumb() {
   thumb->updateFromAbove(pos+thumbPos,clip);
 }
 void Slider::updateValue() {
-  Point2i thumbDim(thumb->gDimensions());
-  value = Point<2,float>((float)thumbPos.x()/(float)(dimensions.x()-thumbDim.x()),
+  Vector2i thumbDim(thumb->gDimensions());
+  value = Vector<2,float>((float)thumbPos.x()/(float)(dimensions.x()-thumbDim.x()),
                          (float)thumbPos.y()/(float)(dimensions.x()-thumbDim.y()));
   updateThumb();
 }
-void Slider::dimensionsChanged(Base* e,Point2i thumbDim) {
-  Point<2,float> v(value);
+void Slider::dimensionsChanged(Base* e,Vector2i thumbDim) {
+  Vector<2,float> v(value);
   v.x() *= (float)(dimensions.x()-thumbDim.x());
   v.y() *= (float)(dimensions.y()-thumbDim.y());
   thumbPos = v;
   updateThumb();
 }
-void Slider::updateFromAbove(Point2i pos,Interval2i parentClip) {
+void Slider::updateFromAbove(Vector2i pos,Interval2i parentClip) {
   Solid::updateFromAbove(pos,parentClip);
   updateThumb();
 }
@@ -50,16 +50,16 @@ void Slider::draw(GL::Program& program) {
 }
 bool Slider::event(const Window::Event& e) {
   bool wtr = false;
-  if(e.type == Window::Event::BUTTONDOWN && e.button == Window::Event::LBUTTON && thumb->gClip().contains(Point<2,int>(e.x,e.y))) {
+  if(e.type == Window::Event::BUTTONDOWN && e.button == Window::Event::LBUTTON && thumb->gClip().contains(Vector<2,int>(e.x,e.y))) {
     inMotion = true;
-    curDist = Point<2,int>(e.x,e.y) - thumb->gPos();
+    curDist = Vector<2,int>(e.x,e.y) - thumb->gPos();
     wtr = true;
   }
   if(e.type == Window::Event::BUTTONUP && e.button == Window::Event::LBUTTON)
     inMotion = false;
   if(inMotion) {
-    thumbPos = (Interval<2,int>(Point<2,int>(0,0),dimensions-thumb->gDimensions()) // Interval of inside values
-                .closestTo(Point<2,int>(e.x,e.y)-pos-curDist));
+    thumbPos = (Interval<2,int>(Vector<2,int>(0,0),dimensions-thumb->gDimensions()) // Interval of inside values
+                .closestTo(Vector<2,int>(e.x,e.y)-pos-curDist));
     updateValue();
     wtr = true;
   }

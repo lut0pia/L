@@ -8,7 +8,7 @@
 using namespace L;
 using namespace GL;
 
-Camera::Camera(const Point3f& position,const Point3f& lookat)
+Camera::Camera(const Vector3f& position,const Vector3f& lookat)
   : _position(position), _lookat(lookat) {
   update();
 }
@@ -16,7 +16,7 @@ void Camera::update() {
   // Compute new vectors
   _forward = _lookat - _position;
   _forward.normalize();
-  _right = _forward.cross(Point3f(0,1,0));
+  _right = _forward.cross(Vector3f(0,1,0));
   _right.normalize();
   _up = _right.cross(_forward);
   _up.normalize();
@@ -27,42 +27,42 @@ void Camera::update() {
   _ray = orientation*_projection.inverse();
 }
 
-void Camera::move(const Point3f& delta) {
-  Point3f absDelta(_right*delta.x()+_up*delta.y()+_forward*delta.z());
+void Camera::move(const Vector3f& delta) {
+  Vector3f absDelta(_right*delta.x()+_up*delta.y()+_forward*delta.z());
   _position += absDelta;
   _lookat += absDelta;
   update();
 }
-void Camera::position(const Point3f& position) {
+void Camera::position(const Vector3f& position) {
   _position = position;
   update();
 }
-void Camera::lookat(const Point3f& lookat) {
+void Camera::lookat(const Vector3f& lookat) {
   _lookat = lookat;
   update();
 }
 
 void Camera::phiLook(float angle) {
   _lookat -= _position;
-  _lookat = Point3f(Matrix44f::rotation(Point3f(0,1,0),angle) * _lookat);
+  _lookat = Vector3f(Matrix44f::rotation(Vector3f(0,1,0),angle) * _lookat);
   _lookat += _position;
   update();
 }
 void Camera::phiPosition(float angle) {
   _position -= _lookat;
-  _position = Point3f(Matrix44f::rotation(Point3f(0,1,0),angle) * _position);
+  _position = Vector3f(Matrix44f::rotation(Vector3f(0,1,0),angle) * _position);
   _position += _lookat;
   update();
 }
 void Camera::thetaLook(float angle) {
   _lookat -= _position;
-  _lookat = Point3f(Matrix44f::rotation(_right,angle) * _lookat);
+  _lookat = Vector3f(Matrix44f::rotation(_right,angle) * _lookat);
   _lookat += _position;
   update();
 }
 void Camera::thetaPosition(float angle) {
   _position -= _lookat;
-  _position = Point3f(Matrix44f::rotation(_right,angle) * _position);
+  _position = Vector3f(Matrix44f::rotation(_right,angle) * _position);
   _position += _lookat;
   update();
 }
@@ -92,26 +92,26 @@ void Camera::pixels() {
   ortho(0,Window::width(),Window::height(),0);
 }
 
-bool Camera::worldToScreen(const Point3f& p, Point2f& wtr) const {
-  Point4f q(_viewProjection*p);
+bool Camera::worldToScreen(const Vector3f& p, Vector2f& wtr) const {
+  Vector4f q(_viewProjection*p);
   if(q.w()>0) // We do not want values behind the camera
-    wtr = Point3f(q)/q.w();
+    wtr = Vector3f(q)/q.w();
   else return false;
   return true;
 }
-Point3f Camera::screenToRay(const Point2f& p) const {
-  return Point3f(_ray * Point4f(p.x(),p.y(),0,1));
+Vector3f Camera::screenToRay(const Vector2f& p) const {
+  return Vector3f(_ray * Vector4f(p.x(),p.y(),0,1));
 }
 bool Camera::sees(const Interval3f& i) const {
-  static const Interval3f ndc(Point3f(-1,-1,-1),Point3f(1,1,1));
+  static const Interval3f ndc(Vector3f(-1,-1,-1),Vector3f(1,1,1));
   Interval3f projected;
   for(int c(0); c<8; c++) { // Cycle through corners of the interval
-    Point3f p(((c&0x1)?i.min().x():i.max().x()),
+    Vector3f p(((c&0x1)?i.min().x():i.max().x()),
               ((c&0x2)?i.min().y():i.max().y()),
               ((c&0x4)?i.min().z():i.max().z()));
-    Point4f q(_viewProjection*p);
+    Vector4f q(_viewProjection*p);
     if(q.w()>0) { // We do not want values behind the camera
-      Point3f r(Point3f(q)/q.w()); // Compute NDC coordinates
+      Vector3f r(Vector3f(q)/q.w()); // Compute NDC coordinates
       if(abs(r.x())<1 && abs(r.y())<1 && abs(r.z())<1) // The point is clearly in view
         return true;
       else { // The shape could go through the view

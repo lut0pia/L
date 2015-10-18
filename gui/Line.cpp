@@ -5,9 +5,9 @@
 using namespace L;
 using namespace GUI;
 
-Line::Line(Point2i d, Color c) : Sizable(d), c(c), visible(true){}
+Line::Line(Vector2i d, Color c) : Sizable(d), c(c), visible(true){}
 
-void Line::updateFromAbove(Point2i pos, Interval2i parentClip){
+void Line::updateFromAbove(Vector2i pos, Interval2i parentClip){
     Solid::updateFromAbove(pos,parentClip);
     a = pos;
     b = pos+dimensions;

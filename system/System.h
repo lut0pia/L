@@ -5,7 +5,7 @@
 #include "../macros.h"
 #include "../String.h"
 #include "../time.h"
-#include "../geometry/Point.h"
+#include "../geometry/Vector.h"
 
 namespace L{
     namespace System{
@@ -18,7 +18,7 @@ namespace L{
         void toClipboard(const String&);
         String fromClipboard();
         String gEnv(const String&);
-        Point2i screenSize();
+        Vector2i screenSize();
 
         void sConsoleCursorPosition(unsigned short x,unsigned short y);
         void clearConsole();

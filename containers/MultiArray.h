@@ -3,11 +3,11 @@
 
 #include <cstdarg>
 #include <cstring>
-#include "../geometry/Point.h"
+#include "../geometry/Vector.h"
 #include "../macros.h"
 #include "Array.h"
 
-#define ARGSTOPOINT Point<d,int> point;\
+#define ARGSTOPOINT Vector<d,int> point;\
   if(1){\
     int i(0);\
     point[0] = arg;\
@@ -28,7 +28,7 @@ namespace L {
   template <int d,class T>
   class MultiArray : private Array<T> {
     protected:
-      Point<d,int> _size;
+      Vector<d,int> _size;
     public:
       MultiArray() : Array<T>(), _size(0) {}
       MultiArray(int arg,...) : Array<T>() {
@@ -39,7 +39,7 @@ namespace L {
         ARGSTOPOINT
         resizeFast(point);
       }
-      void resizeFast(const Point<d,int>& size) {
+      void resizeFast(const Vector<d,int>& size) {
         _size = size;
         Array<T>::size(size.product());
       }
@@ -48,7 +48,7 @@ namespace L {
         ARGSTOPOINT
         resize(point);
       }
-      void resize(const Point<d,int>& size) {
+      void resize(const Vector<d,int>& size) {
         MultiArray<d,T> old(*this);
         _size = size;
         int pos[d] = {0}, oldpos, newpos, zeroCount;
@@ -80,7 +80,7 @@ namespace L {
           }
         } while(zeroCount<d); // All positions have been done
       }
-      int indexOf(const Point<d,int>& point) const {
+      int indexOf(const Vector<d,int>& point) const {
         int wtr(point[0]);
         for(int i(1); i<d; i++) {
           wtr *= _size[i];
@@ -90,8 +90,8 @@ namespace L {
       }
       T& operator()(int pos,...) {ACCESS}
       const T& operator()(int pos,...) const {ACCESS}
-      T& operator()(const Point<d,int>& point) {return Array<T>::operator[](indexOf(point));}
-      const T& operator()(const Point<d,int>& point) const {return Array<T>::operator[](indexOf(point));}
+      T& operator()(const Vector<d,int>& point) {return Array<T>::operator[](indexOf(point));}
+      const T& operator()(const Vector<d,int>& point) const {return Array<T>::operator[](indexOf(point));}
       inline T& operator[](int i) {return Array<T>::operator[](i);}
       inline const T& operator[](int i) const {return Array<T>::operator[](i);}
       inline int size(int i) const {return _size[i];}

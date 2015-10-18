@@ -31,22 +31,22 @@ void ListContainer::clear() {
   update();
 }
 
-Point2i ListContainer::gDimensions() {
+Vector2i ListContainer::gDimensions() {
   return dimensions;
 }
-void ListContainer::dimensionsChanged(Base* e, Point2i newDim) {
+void ListContainer::dimensionsChanged(Base* e, Vector2i newDim) {
   update();
 }
-void ListContainer::updateFromAbove(Point2i pos, Interval2i parentClip) {
+void ListContainer::updateFromAbove(Vector2i pos, Interval2i parentClip) {
   this->pos = pos;
   clip = parentClip;
   if(!blockInsert) {
-    Point2i oldDim(dimensions);
+    Vector2i oldDim(dimensions);
     dimensions.x() = dimensions.y() = 0;
     for(int i(0); i<elements.size(); i++) {
       const Ref<Base>& element(elements[i]);
-      element->updateFromAbove(Point<2,int>(pos.x(),pos.y()+dimensions.y()),parentClip);
-      Point2i childDim(element->gDimensions());
+      element->updateFromAbove(Vector<2,int>(pos.x(),pos.y()+dimensions.y()),parentClip);
+      Vector2i childDim(element->gDimensions());
       dimensions.y() += childDim.y();
       if(i+1<elements.size())
         dimensions.y() += spacing;

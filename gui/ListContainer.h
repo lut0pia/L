@@ -11,7 +11,7 @@ namespace L {
       protected:
         Array<Ref<Base> > elements;
         int spacing;
-        Point2i dimensions;
+        Vector2i dimensions;
         bool blockInsert;
 
       public:
@@ -25,9 +25,9 @@ namespace L {
         size_t size();
         void clear();
 
-        Point2i gDimensions();
-        void dimensionsChanged(Base*,Point<2,int>);
-        void updateFromAbove(Point<2,int>,Interval<2,int>);
+        Vector2i gDimensions();
+        void dimensionsChanged(Base*,Vector<2,int>);
+        void updateFromAbove(Vector<2,int>,Interval<2,int>);
         void draw(GL::Program&);
         bool event(const Window::Event&);
     };

@@ -4,13 +4,13 @@ using namespace L;
 using namespace L::GUI;
 
 Sizable::Sizable() : Solid(){}
-Sizable::Sizable(Point2i d) : Solid(), dimensions(d){
+Sizable::Sizable(Vector2i d) : Solid(), dimensions(d){
     clip.add(d);
 }
-void Sizable::sDimensions(Point2i d){
+void Sizable::sDimensions(Vector2i d){
     dimensions = d;
     dimensionsChanged(d);
 }
-Point2i Sizable::gDimensions(){
+Vector2i Sizable::gDimensions(){
     return dimensions;
 }

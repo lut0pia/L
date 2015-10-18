@@ -128,7 +128,7 @@ void Bitmap::blur(int factor) {
 void Bitmap::drawTriangle(Surface<2,float> s,Color c) {
   Interval<2,float> interval(s.gA(),s.gB());
   interval.add(s.gC());
-  Point<2,int> p;
+  Vector<2,int> p;
   // float loop testing all pixels inside the interval
   for(p.x() = interval.min().x();
       p.x() < interval.max().x();

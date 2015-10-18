@@ -7,19 +7,19 @@ Layer::Layer(const Ref<Base>& inner) : inner(inner) {
   inner->sParent(this);
 }
 
-Point2i Layer::gPos() {
+Vector2i Layer::gPos() {
   return inner->gPos();
 }
 Interval2i Layer::gClip() {
   return inner->gClip();
 }
-Point2i Layer::gDimensions() {
+Vector2i Layer::gDimensions() {
   return inner->gDimensions();
 }
-void Layer::dimensionsChanged(Base* e,Point2i newDim) {
+void Layer::dimensionsChanged(Base* e,Vector2i newDim) {
   Base::dimensionsChanged(newDim);
 }
-void Layer::updateFromAbove(Point2i pos,Interval2i parentClip) {
+void Layer::updateFromAbove(Vector2i pos,Interval2i parentClip) {
   inner->updateFromAbove(pos,parentClip);
 }
 void Layer::draw(GL::Program& program) {

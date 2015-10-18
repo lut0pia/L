@@ -15,18 +15,18 @@ namespace L {
         String text, placeholder;
 
         void updateText();
-        void updateTextElement(Point<2,int>);
+        void updateTextElement(Vector<2,int>);
 
       public:
-        TextInput(Point<2,int>, const String& font = "", String placeholder = "", bool password = false);
+        TextInput(Vector<2,int>, const String& font = "", String placeholder = "", bool password = false);
         virtual ~TextInput() {}
 
         String gText() const;
 
         bool event(const Window::Event& e);
         void draw(GL::Program&);
-        void dimensionsChanged(Base*,Point<2,int>);
-        void updateFromAbove(Point<2,int>,Interval<2,int>);
+        void dimensionsChanged(Base*,Vector<2,int>);
+        void updateFromAbove(Vector<2,int>,Interval<2,int>);
     };
   }
 }

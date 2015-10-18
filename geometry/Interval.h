@@ -4,18 +4,18 @@
 #include <algorithm>
 
 #include "../general.h"
-#include "Point.h"
+#include "Vector.h"
 
 namespace L {
   template <int d,class T>
   class Interval {
     protected:
-      Point<d,T> _min, _max;
+      Vector<d,T> _min, _max;
     public:
       Interval() {
         clear();
       }
-      Interval(const Point<d,T>& a, const Point<d,T>& b) : _min(a), _max(a) {
+      Interval(const Vector<d,T>& a, const Vector<d,T>& b) : _min(a), _max(a) {
         add(b);
       }
       Interval(const Interval& a, const Interval& b) {
@@ -46,7 +46,7 @@ namespace L {
         return (*this) && other;
       }
 
-      void add(const Point<d,T>& p) {
+      void add(const Vector<d,T>& p) {
         for(int i(0); i<d; i++) {
           if(_min[i] > p[i])
             _min[i] = p[i];
@@ -54,7 +54,7 @@ namespace L {
             _max[i] = p[i];
         }
       }
-      bool contains(Point<d,T> p) const {
+      bool contains(Vector<d,T> p) const {
         if(empty()) return false;
         bool wtr(true);
         for(size_t i(0); i<d&&wtr; i++)
@@ -62,7 +62,7 @@ namespace L {
             wtr = false;
         return wtr;
       }
-      Point<d,T> closestTo(Point<d,T> p) const {
+      Vector<d,T> closestTo(Vector<d,T> p) const {
         for(size_t i(0); i<d; i++) {
           if(p[i]<_min[i])
             p[i] = _min[i];
@@ -71,10 +71,10 @@ namespace L {
         }
         return p;
       }
-      Point<d,T> size() const {
+      Vector<d,T> size() const {
         return _max - _min;
       }
-      Point<d,T> center() const {
+      Vector<d,T> center() const {
         return (_min + _max)/2;
       }
       bool empty() const {
@@ -84,12 +84,12 @@ namespace L {
         return false;
       }
       void clear() {
-        _min = Point<d,T>::max();
-        _max = Point<d,T>::min();
+        _min = Vector<d,T>::max();
+        _max = Vector<d,T>::min();
       }
 
-      inline const Point<d,T>& min() const {return _min;}
-      inline const Point<d,T>& max() const {return _max;}
+      inline const Vector<d,T>& min() const {return _min;}
+      inline const Vector<d,T>& max() const {return _max;}
   };
   typedef Interval<2,int> Interval2i;
   typedef Interval<3,int> Interval3i;

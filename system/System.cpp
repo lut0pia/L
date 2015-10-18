@@ -87,9 +87,9 @@ String System::fromClipboard() {
 String System::gEnv(const String& name) {
   return getenv(name);
 }
-Point2i System::screenSize() {
+Vector2i System::screenSize() {
 #if defined L_WINDOWS
-  return Point2i(GetSystemMetrics(SM_CXSCREEN),GetSystemMetrics(SM_CYSCREEN));
+  return Vector2i(GetSystemMetrics(SM_CXSCREEN),GetSystemMetrics(SM_CYSCREEN));
 #endif
 }
 void System::sConsoleCursorPosition(ushort x,ushort y) {

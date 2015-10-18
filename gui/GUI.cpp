@@ -46,7 +46,7 @@ GUI::Base* GUI::from(const XML& xml, Map<String,GUI::Base*>& ids) {
                       ? xml.attributes["font"]
                       : "");
     } else if(xml.name == "textinput") {
-      return new TextInput((xml.attributes.has("size"))           ? GUI::point(xml.attributes["size"])   : Point<2,int>(100,20),
+      return new TextInput((xml.attributes.has("size"))           ? GUI::point(xml.attributes["size"])   : Vector<2,int>(100,20),
                            (xml.attributes.has("font"))           ? xml.attributes["font"]               : "",
                            (xml.attributes.has("placeholder"))    ? xml.attributes["placeholder"]        : "",
                            xml.attributes.has("password"));
@@ -57,9 +57,9 @@ GUI::Base* GUI::from(const XML& xml, Map<String,GUI::Base*>& ids) {
   }
 }
 
-Point2i GUI::point(const String& str) {
+Vector2i GUI::point(const String& str) {
   Array<String> coords(str.explode(' '));
   if(coords.size()==2)
-    return Point<2,int>(FromString<int>(coords[0]),FromString<int>(coords[1]));
-  else throw Exception("GUI: Point must be \"x y\", not \""+str+"\".");
+    return Vector<2,int>(FromString<int>(coords[0]),FromString<int>(coords[1]));
+  else throw Exception("GUI: Vector must be \"x y\", not \""+str+"\".");
 }

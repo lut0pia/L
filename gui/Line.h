@@ -9,13 +9,13 @@ namespace L{
         class Line : public Sizable{
             protected:
                 Color c;
-                Point2i a,b;
+                Vector2i a,b;
                 bool visible;
 
             public:
-                Line(Point<2,int>, Color);
+                Line(Vector<2,int>, Color);
 
-                void updateFromAbove(Point<2,int>,Interval<2,int>);
+                void updateFromAbove(Vector<2,int>,Interval<2,int>);
                 void draw();
         };
     }

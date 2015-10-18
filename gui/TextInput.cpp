@@ -18,12 +18,12 @@ void TextInput::updateText() {
   }
   textElement->sText(tmp,c);
 }
-void TextInput::updateTextElement(Point2i dim) {
-  textElement->updateFromAbove(Point<2,int>(std::min(pos.x(),pos.x()+dimensions.x()-dim.x()),
+void TextInput::updateTextElement(Vector2i dim) {
+  textElement->updateFromAbove(Vector<2,int>(std::min(pos.x(),pos.x()+dimensions.x()-dim.x()),
                                ((2*pos.y()+dimensions.y())/2)-(dim.y()/2)),clip);
 }
 
-TextInput::TextInput(Point2i d, const String& font, String placeholder, bool password) : Sizable(d), textElement(new Text("",font)) {
+TextInput::TextInput(Vector2i d, const String& font, String placeholder, bool password) : Sizable(d), textElement(new Text("",font)) {
   textElement->sParent(this);
   this->placeholder = placeholder;
   this->password = password;
@@ -83,7 +83,7 @@ bool TextInput::event(const Window::Event& e) {
     }
   }
   if(e.type == Window::Event::BUTTONDOWN && e.button == Window::Event::LBUTTON) {
-    if(clip.contains(Point2i(e.x,e.y))) {
+    if(clip.contains(Vector2i(e.x,e.y))) {
       if(!focus) {
         focus = true;
         updateText();
@@ -100,10 +100,10 @@ bool TextInput::event(const Window::Event& e) {
 void TextInput::draw(GL::Program& program) {
   textElement->draw(program);
 }
-void TextInput::dimensionsChanged(Base* e,Point2i newDim) {
+void TextInput::dimensionsChanged(Base* e,Vector2i newDim) {
   updateTextElement(newDim);
 }
-void TextInput::updateFromAbove(Point2i pos, Interval2i parentClip) {
+void TextInput::updateFromAbove(Vector2i pos, Interval2i parentClip) {
   Solid::updateFromAbove(pos,parentClip);
   updateTextElement(textElement->gDimensions());
 }

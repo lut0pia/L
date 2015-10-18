@@ -9,7 +9,7 @@ ActionListener::ActionListener(const Ref<Base>& inner, const Function& f, const 
 
 bool ActionListener::event(const Window::Event& e) {
   if(e.type == Window::Event::MOUSEMOVE) {
-    if(gClip().contains(Point<2,int>(e.x,e.y))) {
+    if(gClip().contains(Vector<2,int>(e.x,e.y))) {
       if(!_mouseIsOver) {
         _mouseIsOver = true;
         _f(this,_param,Event::mouseOver);

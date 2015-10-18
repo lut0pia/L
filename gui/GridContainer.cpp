@@ -15,8 +15,8 @@ void GUI_VerticalList::update(){
     GUI::update();
 }
 
-Point2i GUI_VerticalList::absPos(GUI* asker){
-    Point2i tmp = GUI::absPos(this), modifier(0,0);
+Vector2i GUI_VerticalList::absPos(GUI* asker){
+    Vector2i tmp = GUI::absPos(this), modifier(0,0);
     list<Ref<GUI> >::iterator it;
     for(it=elements.begin();it!=elements.end()&&(*it)!=asker;it++){
         modifier.y += (*it)->gHeight();

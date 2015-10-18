@@ -7,14 +7,14 @@ namespace L{
     namespace GUI{
         class Sizable : public Solid{
             protected:
-                Point2i dimensions;
+                Vector2i dimensions;
             public:
                 Sizable();
-                Sizable(Point<2,int>);
+                Sizable(Vector<2,int>);
                 virtual ~Sizable(){}
 
-                virtual void sDimensions(Point<2,int>);
-                Point2i gDimensions();
+                virtual void sDimensions(Vector<2,int>);
+                Vector2i gDimensions();
         };
     }
 }
