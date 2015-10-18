@@ -11,64 +11,61 @@ namespace L {
   template <int d,class T>
   class Point {
     protected:
-      union {
-        T v[d];
-        byte b[d*sizeof(T)];
-      };
+      T _c[d];
     public:
       Point() {}
       template <class R>
       Point(const Point<d,R>& other) {
         for(int i(0); i<d; i++)
-          v[i] = other[i];
+          _c[i] = other[i];
       }
       Point(const T& scalar) {
         for(int i(0); i<d; i++)
-          v[i] = scalar;
+          _c[i] = scalar;
       }
       Point(const T& x, const T& y) {
-        v[0] = x;
-        v[1] = y;
+        _c[0] = x;
+        _c[1] = y;
       }
       Point(const T& x, const T& y, const T& z) {
-        v[0] = x;
-        v[1] = y;
-        v[2] = z;
+        _c[0] = x;
+        _c[1] = y;
+        _c[2] = z;
       }
       Point(const T& x, const T& y, const T& z, const T& w) {
-        v[0] = x;
-        v[1] = y;
-        v[2] = z;
-        v[3] = w;
+        _c[0] = x;
+        _c[1] = y;
+        _c[2] = z;
+        _c[3] = w;
       }
       Point(const Point<d-1,T>& p, const T& w = 1.0) {
         for(int i(0); i<d-1; i++)
-          v[i] = p[i];
-        v[d-1] = w;
+          _c[i] = p[i];
+        _c[d-1] = w;
       }
       Point(const Point<d+1,T>& p) {
         for(int i(0); i<d; i++)
-          v[i] = p[i];
+          _c[i] = p[i];
       }
 
       Point& operator+=(const Point& other) {
         for(int i(0); i<d; i++)
-          v[i] += other.v[i];
+          _c[i] += other._c[i];
         return *this;
       }
       Point& operator-=(const Point& other) {
         for(int i(0); i<d; i++)
-          v[i] -= other.v[i];
+          _c[i] -= other._c[i];
         return *this;
       }
       Point& operator*=(const Point& other) {
         for(int i(0); i<d; i++)
-          v[i] *= other.v[i];
+          _c[i] *= other._c[i];
         return *this;
       }
       Point& operator/=(const Point& other) {
         for(int i(0); i<d; i++)
-          v[i] /= other.v[i];
+          _c[i] /= other._c[i];
         return *this;
       }
       Point operator+(const Point& other) const {
@@ -84,7 +81,7 @@ namespace L {
       Point operator-() const {
         Point wtr;
         for(int i(0); i<d; i++)
-          wtr.v[i] = -v[i];
+          wtr._c[i] = -_c[i];
         return wtr;
       }
       Point operator*(const Point& other) const {
@@ -100,7 +97,7 @@ namespace L {
 
       bool operator==(const Point& other) const {
         for(int i(0); i<d; i++)
-          if(v[i] != other.v[i])
+          if(_c[i] != other._c[i])
             return false;
         return true;
       }
@@ -109,16 +106,16 @@ namespace L {
       }
       bool operator<(const Point& other) const {
         for(int i(0); i<d; i++)
-          if(v[i] < other.v[i])
+          if(_c[i] < other._c[i])
             return true;
-          else if(v[i] > other.v[i])
+          else if(_c[i] > other._c[i])
             return false;
         return false;
       }
       T normSquared() const {
         T wtr(0);
         for(int i(0); i<d; i++)
-          wtr += v[i]*v[i];
+          wtr += _c[i]*_c[i];
         return wtr;
       }
       inline T norm() const {
@@ -127,13 +124,13 @@ namespace L {
       T manhattan() const {
         T wtr(0);
         for(int i(0); i<d; i++)
-          wtr += abs(v[i]);
+          wtr += abs(_c[i]);
         return wtr;
       }
       Point& normalize() {
         T n(norm());
         for(int i(0); i<d; i++)
-          v[i] /= n;
+          _c[i] /= n;
         return *this;
       }
       inline T dist(const Point& other) const {
@@ -150,20 +147,20 @@ namespace L {
       T dot(const Point& other) const {
         T wtr(0);
         for(int i(0); i<d; i++)
-          wtr += v[i]*other.v[i];
+          wtr += _c[i]*other._c[i];
         return wtr;
       }
       T product() const {
         T wtr(1);
         for(int i(0); i<d; i++)
-          wtr *= v[i];
+          wtr *= _c[i];
         return wtr;
       }
       bool increment(const Point& min, const Point& max, const Point& delta = 1) {
         for(int i(0); i<d; i++) {
-          v[i] += delta[i];
-          if(v[i]>=max.v[i]) {
-            v[i] = min.v[i];
+          _c[i] += delta[i];
+          if(_c[i]>=max._c[i]) {
+            _c[i] = min._c[i];
             if(i==d-1)
               return false;
           } else break;
@@ -171,18 +168,18 @@ namespace L {
         return true;
       }
 
-      inline const T& operator[](int i) const {return v[i];}
-      inline const T& x() const {return v[0];}
-      inline const T& y() const {return v[1];}
-      inline const T& z() const {return v[2];}
-      inline const T& w() const {return v[3];}
-      inline const byte* bytes() const {return b;}
-      inline const T* array() const {return v;}
-      inline T& operator[](int i) {return v[i];}
-      inline T& x() {return v[0];}
-      inline T& y() {return v[1];}
-      inline T& z() {return v[2];}
-      inline T& w() {return v[3];}
+      inline const T& operator[](int i) const {return _c[i];}
+      inline const T& x() const {return _c[0];}
+      inline const T& y() const {return _c[1];}
+      inline const T& z() const {return _c[2];}
+      inline const T& w() const {return _c[3];}
+      inline const byte* bytes() const {return (const byte*)&_c;}
+      inline const T* array() const {return _c;}
+      inline T& operator[](int i) {return _c[i];}
+      inline T& x() {return _c[0];}
+      inline T& y() {return _c[1];}
+      inline T& z() {return _c[2];}
+      inline T& w() {return _c[3];}
 
       static Point min() {
         Point wtr;
@@ -212,10 +209,10 @@ namespace L {
   typedef Point<4,float> Point4f;
 
   template <int d,class T>
-  Stream& operator<<(Stream &s, const Point<d,T>& v) {
+  Stream& operator<<(Stream &s, const Point<d,T>& _c) {
     s << '(';
     for(int i(0); i<d; i++) {
-      s << v[i];
+      s << _c[i];
       if(i<d-1)
         s << ';';
     }
