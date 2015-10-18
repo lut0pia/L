@@ -24,7 +24,9 @@ namespace L {
       inline bool operator<(const String& other) const {return strcmp(operator const char*(),(const char*)other)<0;}
       inline bool operator>(const String& other) const {return strcmp(operator const char*(),(const char*)other)>0;}
 
+      // Search methods
       inline int findFirst(char c) const {return strchr(*this,c)-operator const char*();}
+      int findFirst(const String&) const;
       inline int findLast(char c) const {return strrchr(*this,c)-operator const char*();}
       inline String substr(size_t pos, size_t length = -1) const {return String(*this,pos,length);}
 

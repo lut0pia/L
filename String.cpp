@@ -24,6 +24,13 @@ String& String::operator+=(const String& other) {
   return *this;
 }
 
+int String::findFirst(const String& str) const {
+  for(int i(0); i<size(); i++)
+    if(strncmp(&operator[](i),str,str.size())==0)
+      return i;
+  return -1;
+}
+
 Array<String> String::explode(char c, size_t limit) const {
   Array<String> wtr; // Will contain parts
   Array<size_t> delimiters(1,0); // Will contain delimiters for the split (already contains 0)
