@@ -182,13 +182,13 @@ namespace L {
   typedef Matrix<4,4,float> Matrix44f;
 
   template <int l, int c, class T>
-  std::ostream& operator<<(std::ostream &stream, const Matrix<l,c,T>& m) {
+  Stream& operator<<(Stream &s, const Matrix<l,c,T>& m) {
     for(int li(0); li<l; li++) {
       for(int ci(0); ci<c; ci++)
-        stream << '[' << m(li,ci) << "]\t";
-      stream << std::endl;
+        s << '[' << m(li,ci) << "]\t";
+      s << '\n';
     }
-    return stream;
+    return s;
   }
 }
 
