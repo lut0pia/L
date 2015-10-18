@@ -14,7 +14,7 @@ namespace L {
       String(const char*,size_t);
       String(const String&, size_t start, size_t length = -1);
 
-      inline String operator+(const String& other) {
+      inline String operator+(const String& other) const {
         String wtr(*this);
         return wtr += other;
       }
