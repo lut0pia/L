@@ -35,7 +35,6 @@ namespace L {
       static Color from(String);
       static Color from(float r, float g, float b, float a = 1);
       static Color lerp(Color, Color, float w);
-      static Color random();
       static const Color black, blue, cyan, green, grey, lightgrey, magenta, red, white, yellow;
   };
 }

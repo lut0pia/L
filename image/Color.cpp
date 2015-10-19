@@ -90,8 +90,4 @@ Color Color::lerp(Color a, Color b, float w) {
   float nw(1.f-w);
   return Color(nw*a.r() + w*b.r(), w*a.g() + w*b.g(), w*a.b() + w*b.b(), w*a.a() + w*b.a());
 }
-Color Color::random() {
-  return Color(Rand::nextByte(),Rand::nextByte(),Rand::nextByte(),Rand::nextByte());
-}
-
 
