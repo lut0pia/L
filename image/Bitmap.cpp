@@ -3,7 +3,6 @@
 #include "../Interface.h"
 
 using namespace L;
-using namespace Image;
 
 Bitmap::Bitmap(int width, int height) : MultiArray<2,Color>(width,height) {}
 Bitmap::Bitmap(int width, int height, const Color& c) : MultiArray<2,Color>(width,height) {

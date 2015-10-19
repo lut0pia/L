@@ -10,9 +10,9 @@ Glyph& Base::glyph(size_t utf32) {
     return _glyphs[utf32] = loadGlyph(utf32);
   return _glyphs[utf32];
 }
-Image::Bitmap Base::render(const String& s) {
+L::Bitmap Base::render(const String& s) {
   Array<size_t> str(UTF8toUTF32(s));
-  Image::Bitmap wtr;
+  L::Bitmap wtr;
   size_t penx = 0,
          peny = ascender(),
          width = 2,

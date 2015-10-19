@@ -15,11 +15,11 @@ namespace L {
       public:
         Image();
         Image(const Ref<GL::Texture>&);
-        Image(const L::Image::Bitmap&);
+        Image(const Bitmap&);
         virtual ~Image() {}
 
         void texture(const Ref<GL::Texture>&);
-        void bitmap(const L::Image::Bitmap&);
+        void bitmap(const Bitmap&);
 
         Vector2i gDimensions();
         void draw(GL::Program&);

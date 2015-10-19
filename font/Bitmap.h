@@ -9,7 +9,7 @@ namespace L {
       private:
         size_t lh,a,d;
       public:
-        Bitmap(const Image::Bitmap&);
+        Bitmap(const L::Bitmap&);
         size_t lineHeight();
         size_t ascender();
         size_t descender();

@@ -4,8 +4,6 @@
 
 using namespace L;
 using namespace GUI;
-using L::Image::Bitmap;
-using GUI::Image;
 
 GUI::Image::Image() : Solid(), _dimensions(0,0) {}
 GUI::Image::Image(const Ref<GL::Texture>& tex) : Solid() {

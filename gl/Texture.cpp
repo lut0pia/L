@@ -6,14 +6,14 @@ using namespace GL;
 Texture::Texture() : _width(0), _height(0) {
   glGenTextures(1, &_id);
 }
-Texture::Texture(const Image::Bitmap& bmp, bool mipmaps) {
+Texture::Texture(const Bitmap& bmp, bool mipmaps) {
   glGenTextures(1, &_id);
   load(bmp,mipmaps);
 }
 Texture::~Texture() {
   glDeleteTextures(1,&_id);
 }
-void Texture::load(const Image::Bitmap& bmp, bool mipmaps) {
+void Texture::load(const Bitmap& bmp, bool mipmaps) {
   _width = bmp.width();
   _height = bmp.height();
   GLubyte* pixelArray = new GLubyte[_width*_height*4];

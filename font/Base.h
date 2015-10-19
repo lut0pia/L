@@ -8,7 +8,7 @@
 namespace L {
   namespace Font {
     typedef struct {
-      Image::Bitmap bmp;
+      L::Bitmap bmp;
       Vector2i origin;
       size_t advance;
     } Glyph;
@@ -18,7 +18,7 @@ namespace L {
       public:
         virtual ~Base() {}
         Glyph& glyph(size_t utf32);
-        virtual Image::Bitmap render(const String&);
+        virtual L::Bitmap render(const String&);
 
         virtual size_t lineHeight() = 0;
         virtual size_t ascender() = 0;

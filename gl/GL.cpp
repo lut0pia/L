@@ -14,7 +14,7 @@ void GL::init() {
   if(!done) {
     done = true;
     glewInit();
-    whiteTex = new Texture(Image::Bitmap(1,1,Color::white));
+    whiteTex = new Texture(Bitmap(1,1,Color::white));
   }
 }
 

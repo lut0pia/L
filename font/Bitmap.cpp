@@ -5,7 +5,7 @@
 using namespace L;
 using namespace Font;
 
-Font::Bitmap::Bitmap(const Image::Bitmap& bmp) {
+Font::Bitmap::Bitmap(const L::Bitmap& bmp) {
   size_t advance(bmp.width()/16);
   lh = a = bmp.height()/8;
   d = 0;

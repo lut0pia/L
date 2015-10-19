@@ -12,10 +12,10 @@ namespace L {
         int _width, _height;
       public:
         Texture();
-        Texture(const Image::Bitmap&, bool mipmaps = false);
+        Texture(const Bitmap&, bool mipmaps = false);
         ~Texture();
         L_NoCopy(Texture)
-        void load(const Image::Bitmap&, bool mipmaps = false);
+        void load(const Bitmap&, bool mipmaps = false);
         void load(GLsizei width, GLsizei height, const void* data = NULL, bool mipmaps = false);
         void bind() const;
         void unbind() const;
