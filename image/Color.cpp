@@ -61,15 +61,6 @@ Color& Color::operator+=(const Color& other) {
   return *this;
 }
 
-byte Color::r() const {return _data[0];}
-byte Color::g() const {return _data[1];}
-byte Color::b() const {return _data[2];}
-byte Color::a() const {return _data[3];}
-byte& Color::r() {return _data[0];}
-byte& Color::g() {return _data[1];}
-byte& Color::b() {return _data[2];}
-byte& Color::a() {return _data[3];}
-
 Color Color::from(String str) {
   str.toLower();
   if((str.size()==7 || str.size()==9) && str[0]=='#') { // Hexa color
