@@ -20,10 +20,9 @@ namespace L {
       static float next(float min, float max); // Returns a random float between min and max
       static void fill(byte*,size_t);
       template <class T>
-      static T next() {
+      inline static T next() {
         byte wtr[sizeof(T)];
-        for(int i(0); i<sizeof(T); i++)
-          wtr[i] = nextByte();
+        fill(wtr,sizeof(T));
         return *((T*)&wtr);
       }
 
