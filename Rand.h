@@ -18,6 +18,7 @@ namespace L {
       static ullong next(ullong min, ullong max); // Returns a random unsigned integer between min and max
       static int next(int min, int max); // Returns a random integer between min and max
       static float next(float min, float max); // Returns a random float between min and max
+      static void fill(byte*,size_t);
       template <class T>
       static T next() {
         byte wtr[sizeof(T)];

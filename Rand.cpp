@@ -30,6 +30,12 @@ int Rand::next(int min, int max) {
 float Rand::next(float min, float max) {
   return (nextFloat()*(max-min))+min;
 }
+void Rand::fill(byte* dst, size_t size) {
+  while(size>0) {
+    *dst++ = nextByte();
+    size--;
+  }
+}
 
 float Rand::gauss(uint i) {
   float wtr(0);
