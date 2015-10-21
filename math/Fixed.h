@@ -24,6 +24,7 @@ namespace L {
       template <class T> inline Fixed operator*(const T& other) {Fixed wtr(*this); return wtr*=other;}
       template <class T> inline Fixed operator/(const T& other) {Fixed wtr(*this); return wtr/=other;}
       template <class T> inline Fixed operator%(const T& other) {Fixed wtr(*this); return wtr%=other;}
+      inline Fixed operator-() {Fixed wtr; wtr._raw = -_raw; return wtr;}
 
       inline Fixed& operator+=(const Fixed& other) {_raw+=other._raw; return *this;}
       inline Fixed& operator-=(const Fixed& other) {_raw-=other._raw; return *this;}
