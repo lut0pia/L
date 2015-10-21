@@ -8,13 +8,13 @@ Fixed::Fixed(float f) {
   float g;
   f = modf(f,&g);
   _raw = ((int)g<<halfbits);
-  if(f>0) _raw |= (int)(f*0xffff+1);
+  if(f!=0) _raw |= (int)(f*0xffff+1);
 }
 Fixed::Fixed(double f) {
   double g;
   f = modf(f,&g);
   _raw = ((int)g<<halfbits);
-  if(f>0) _raw |= (int)(f*0xffff+1);
+  if(f!=0) _raw |= (int)(f*0xffff+1);
 }
 Stream& L::operator<<(Stream& s, const Fixed& v) {
   int r(v.raw());
