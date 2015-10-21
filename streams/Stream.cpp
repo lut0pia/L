@@ -11,6 +11,14 @@ const char* Stream::line() {
   *w = '\0'; // Null-end string
   return buffer;
 }
+const char* Stream::word() {
+  static char buffer[1024];
+  char* w(buffer);
+  nospace();
+  while(!isspace(*w++ = get()) && !eof()) {} // End of line or file
+  *w = '\0'; // Null-end string
+  return buffer;
+}
 const char* Stream::bufferize(size_t* size) {
   static char buffer[4096];
   char* w(buffer);

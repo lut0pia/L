@@ -21,6 +21,7 @@ namespace L {
       inline void flush() {fflush(_fd);}
 
       const char* line(); // Reads a line until \n
+      const char* word(); // Reads a word until a space
       const char* bufferize(size_t*); // Reads as many chars as possible
 
       // Default operators
