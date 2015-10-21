@@ -3,6 +3,7 @@
 
 #include "../streams/Stream.h"
 #include "../types.h"
+#include "../tmp.h"
 
 namespace L {
   class Fixed {
@@ -11,6 +12,7 @@ namespace L {
     public:
       static const int bits = sizeof(int)*8;
       static const int halfbits = bits/2;
+      static const int mul = static_pow<2,halfbits>::value;
 
       inline Fixed() {}
       inline Fixed(int i) : _raw(i<<halfbits) {}
@@ -60,6 +62,10 @@ namespace L {
       template <class T> inline Fixed& operator/=(const T& other) {_raw /= other; return *this;}
 
       inline int raw() const {return _raw;}
+
+      inline operator int(){return _raw>>16;}
+      inline operator float(){return (float)_raw/mul;}
+      inline operator double(){return (double)_raw/mul;}
   };
   Stream& operator<<(Stream&, const Fixed&);
 }
