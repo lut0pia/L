@@ -63,6 +63,7 @@
 		<Unit filename="Exception.h" />
 		<Unit filename="Interface.h" />
 		<Unit filename="L.h" />
+		<Unit filename="Number.h" />
 		<Unit filename="Object.h" />
 		<Unit filename="Rand.cpp" />
 		<Unit filename="Rand.h" />
