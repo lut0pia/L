@@ -18,23 +18,33 @@ const Color Color::red(255,0,0);
 const Color Color::white(255,255,255);
 const Color Color::yellow(255,255,0);
 
-Color::Color() {
-  _data[0] =
-    _data[1] =
-      _data[2] =
-        _data[3] = 0;
-}
-Color::Color(byte gs) {
-  _data[0] =
-    _data[1] =
-      _data[2] = gs;
-  _data[3] = 0xFF;
-}
-Color::Color(byte r, byte g, byte b, byte a) {
-  _data[0] = r;
-  _data[1] = g;
-  _data[2] = b;
-  _data[3] = a;
+Color::Color(String str) {
+  str.toLower();
+  if(str.empty()) {}
+  else if(str[0]=='#') { // Hexa color
+    if(str.size()==7) { // #RRBBGG
+      uint rgb(Number::fromString<16,uint>(str.substr(1)));
+      new(this)Color(rgb>>16,rgb>>8,rgb);
+      return;
+    } else if(str.size()==9) { // #RRGGBBAA
+      uint rgba(Number::fromString<16,uint>(str.substr(1)));
+      new(this)Color(rgba>>24,rgba>>16,rgba>>8,rgba);
+      return;
+    }
+  }
+#define TMP(name) else if(str==#name){*this = name; return;}
+  TMP(black)
+  TMP(blue)
+  TMP(cyan)
+  TMP(green)
+  TMP(grey)
+  TMP(lightgrey)
+  TMP(magenta)
+  TMP(red)
+  TMP(white)
+  TMP(yellow)
+#undef TMP
+  throw Exception("Unknown color: "+str);
 }
 
 bool Color::operator==(const Color& other) const {
@@ -61,28 +71,6 @@ Color& Color::operator+=(const Color& other) {
   return *this;
 }
 
-Color Color::from(String str) {
-  str.toLower();
-  if((str.size()==7 || str.size()==9) && str[0]=='#') { // Hexa color
-    Array<byte> tmp(htb(str.substr(1)));
-    if(tmp.size()<4)
-      tmp.push(255);
-    return Color(tmp[0],tmp[1],tmp[2],tmp[3]);
-  }
-#define TMP(name) else if(str==#name) return name;
-  TMP(black)
-  TMP(blue)
-  TMP(cyan)
-  TMP(green)
-  TMP(grey)
-  TMP(lightgrey)
-  TMP(magenta)
-  TMP(red)
-  TMP(white)
-  TMP(yellow)
-#undef TMP
-  else throw Exception("Unknown color: "+str);
-}
 Color Color::from(float r, float g, float b, float a) {
   return Color(r*255,g*255,b*255,a*255);
 }

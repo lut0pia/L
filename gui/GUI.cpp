@@ -18,21 +18,21 @@ GUI::Base* GUI::from(const XML& xml, Map<String,GUI::Base*>& ids) {
         throw Exception("GUI: A background must have a color.");
       if(!xml.children.size())
         throw Exception("GUI: A background must have a child.");
-      return new Background(GUI::from(xml.children[0],ids),Color::from(xml.attributes["color"]));
+      return new Background(GUI::from(xml.children[0],ids),Color(xml.attributes["color"]));
     } else if(xml.name == "border") {
       return new Border(GUI::from(xml.children[0],ids),
                         (xml.attributes.has("size")) ? FromString<size_t>(xml.attributes["size"]) : 1,
-                        Color::from(xml.attributes["color"]));
+                        Color(xml.attributes["color"]));
     } else if(xml.name == "image") {
       if(!xml.attributes.has("src"))
         throw Exception("GUI: An image needs the src attribute");
       return new Image(xml.attributes["src"]);
     } else if(xml.name == "rectangle") {
       return new Rectangle(point(xml.attributes["size"]),
-                           Color::from(xml.attributes["color"]));
+                           Color(xml.attributes["color"]));
     } else if(xml.name == "line") {
       return new Line(point(xml.attributes["size"]),
-                      Color::from(xml.attributes["color"]));
+                      Color(xml.attributes["color"]));
     } else if(xml.name == "list") {
       ListContainer* wtr((xml.attributes.has("spacing"))
                          ? new ListContainer(FromString<int>(xml.attributes["spacing"]))

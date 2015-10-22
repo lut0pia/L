@@ -3,6 +3,7 @@
 
 #include <cstdlib>
 #include "../macros.h"
+#include "../Number.h"
 #include "../String.h"
 #include "../types.h"
 
@@ -11,9 +12,25 @@ namespace L {
     protected:
       byte _data[4];
     public:
-      Color();
-      Color(byte gs);
-      Color(byte r, byte g, byte b, byte a = 0xFF);
+      inline Color() {
+        _data[0] =
+          _data[1] =
+            _data[2] =
+              _data[3] = 0;
+      }
+      inline Color(byte gs) {
+        _data[0] =
+          _data[1] =
+            _data[2] = gs;
+        _data[3] = 0xFF;
+      }
+      inline Color(byte r, byte g, byte b, byte a = 0xFF) {
+        _data[0] = r;
+        _data[1] = g;
+        _data[2] = b;
+        _data[3] = a;
+      }
+      Color(String);
 
       bool operator==(const Color&) const;
       bool operator!=(const Color&) const;
@@ -32,7 +49,6 @@ namespace L {
       inline byte& a() {return _data[3];}
       inline const byte* bytes() const {return _data;}
 
-      static Color from(String);
       static Color from(float r, float g, float b, float a = 1);
       static Color lerp(Color, Color, float w);
       static const Color black, blue, cyan, green, grey, lightgrey, magenta, red, white, yellow;
