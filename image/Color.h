@@ -53,6 +53,13 @@ namespace L {
       static Color lerp(Color, Color, float w);
       static const Color black, blue, cyan, green, grey, lightgrey, magenta, red, white, yellow;
   };
+  inline Stream& operator>>(Stream &s, Color& v) {
+    v = Color(s.word());
+    return s;
+  }
+  inline Stream& operator<<(Stream &s, const Color& v) {
+    return s << '#' << Number::toString<16>(v.rgba(),8);
+  }
 }
 
 #endif
