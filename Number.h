@@ -40,6 +40,8 @@ namespace L {
     template <int base=2,class T>
     const T& log(const T& v) {
     }
+    template <class T> inline const T& max(const T& a, const T& b) {return (a>b)?a:b;}
+    template <class T> inline const T& min(const T& a, const T& b) {return (a<b)?a:b;}
   };
 }
 
