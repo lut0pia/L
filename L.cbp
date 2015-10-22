@@ -15,8 +15,11 @@
 				<Option compiler="microsoft_visual_c_2012" />
 				<Option createDefFile="1" />
 				<Compiler>
-					<Add option="-DL_Debug" />
+					<Add option="/DGLEW_STATIC" />
 				</Compiler>
+				<ExtraCommands>
+					<Add after='lib.exe /NOLOGO /IGNORE:4006,4221 /LIBPATH:C:\Environment\MSVC\lib /OUT:&quot;$(PROJECT_DIR)$(TARGET_OUTPUT_FILE)&quot; &quot;$(PROJECT_DIR)$(TARGET_OUTPUT_FILE)&quot; gdi32.lib user32.lib opengl32.lib glew32s.lib glu32.lib ws2_32.lib' />
+				</ExtraCommands>
 			</Target>
 			<Target title="Release (Win)">
 				<Option platforms="Windows;" />
@@ -26,9 +29,15 @@
 				<Option type="2" />
 				<Option compiler="microsoft_visual_c_2012" />
 				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="/O2" />
+				</Compiler>
 				<Linker>
 					<Add option="-s" />
 				</Linker>
+				<ExtraCommands>
+					<Add after='lib.exe /NOLOGO /IGNORE:4006,4221 /LIBPATH:C:\Environment\MSVC\lib /OUT:&quot;$(PROJECT_DIR)$(TARGET_OUTPUT_FILE)&quot; &quot;$(PROJECT_DIR)$(TARGET_OUTPUT_FILE)&quot; gdi32.lib user32.lib opengl32.lib glew32s.lib glu32.lib ws2_32.lib' />
+				</ExtraCommands>
 			</Target>
 			<Target title="Debug (Unix)">
 				<Option platforms="Unix;" />
