@@ -15,7 +15,7 @@ const char* Stream::word() {
   static char buffer[1024];
   char* w(buffer);
   nospace();
-  while(!isspace(*w++ = get()) && !eof()) {} // End of line or file
+  while(!isspace(*w = get()) && !eof()) w++; // End of line or file
   *w = '\0'; // Null-end string
   return buffer;
 }
