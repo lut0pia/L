@@ -84,8 +84,6 @@
 		<Unit filename="bytes/Huffman.h" />
 		<Unit filename="bytes/MTF.cpp" />
 		<Unit filename="bytes/MTF.h" />
-		<Unit filename="bytes/bytes.cpp" />
-		<Unit filename="bytes/bytes.h" />
 		<Unit filename="bytes/encoding.cpp" />
 		<Unit filename="bytes/encoding.h" />
 		<Unit filename="constants.h" />
