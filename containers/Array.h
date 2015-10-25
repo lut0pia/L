@@ -57,6 +57,7 @@ namespace L {
       inline T& back() {return operator[](_size-1);}
       inline const T& back() const {return operator[](_size-1);}
       template <typename... Args> inline void push(Args&&... args) {insert(_size,args...);}
+      template <typename... Args> inline void pushFront(Args&&... args) {insert(0,args...);}
       inline void pop() {erase(_size-1);}
 
       template <typename... Args>
