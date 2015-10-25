@@ -71,15 +71,12 @@ namespace L {
         _data = realloc(_data,n*sizeof(T));
         _capacity = n;
       }
-      void grow() {
-        capacity((_capacity)?_capacity*2:1); // Double capacity or at least make it one
-      }
       void growTo(size_t size) {
-        while(size>_capacity) grow();
+        size_t tmp((_capacity)?_capacity:1);
+        while(size>tmp) tmp *= 2;
+        capacity(tmp);
       }
-      void shrink() {
-        capacity(size());
-      }
+      inline void shrink() {capacity(size());}
       template <typename... Args>
       void insert(size_t i, Args&&... args) {
         growTo(_size+1); // Check capacity
