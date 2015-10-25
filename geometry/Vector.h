@@ -209,10 +209,10 @@ namespace L {
   typedef Vector<4,float> Vector4f;
 
   template <int d,class T>
-  Stream& operator<<(Stream &s, const Vector<d,T>& _c) {
+  Stream& operator<<(Stream &s, const Vector<d,T>& v) {
     s << '(';
     for(int i(0); i<d; i++) {
-      s << _c[i];
+      s << v[i];
       if(i<d-1)
         s << ';';
     }
