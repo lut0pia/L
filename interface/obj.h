@@ -16,7 +16,7 @@ namespace L {
           String line(file.line());
           Array<String> linePart(line.explode(' '));
           if(linePart[0]=="v") { // Vertex
-            Point3f tmp;
+            Vector3f tmp;
             tmp.x() = FromString<float>(linePart[1]);
             tmp.y() = FromString<float>(linePart[2]);
             tmp.z() = FromString<float>(linePart[3]);
