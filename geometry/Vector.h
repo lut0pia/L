@@ -13,30 +13,20 @@ namespace L {
     protected:
       T _c[d];
     public:
-      Vector() {}
+      inline Vector() {}
       template <class R>
-      Vector(const Vector<d,R>& other) {
+      inline Vector(const Vector<d,R>& other) {
         for(int i(0); i<d; i++)
           _c[i] = other[i];
       }
-      Vector(const T& scalar) {
+      inline Vector(const T& v) {
         for(int i(0); i<d; i++)
-          _c[i] = scalar;
+          _c[i] = v;
       }
-      Vector(const T& x, const T& y) {
-        _c[0] = x;
-        _c[1] = y;
-      }
-      Vector(const T& x, const T& y, const T& z) {
-        _c[0] = x;
-        _c[1] = y;
-        _c[2] = z;
-      }
-      Vector(const T& x, const T& y, const T& z, const T& w) {
-        _c[0] = x;
-        _c[1] = y;
-        _c[2] = z;
-        _c[3] = w;
+      template <typename... Args>
+      inline Vector(const T& v, Args&&... args) {
+        _c[0] = v;
+        new(((T*)this)+1)Vector<d-1,T>(args...);
       }
       Vector(const Vector<d-1,T>& p, const T& w = 1.0) {
         for(int i(0); i<d-1; i++)
