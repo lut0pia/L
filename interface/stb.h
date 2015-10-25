@@ -5871,17 +5871,17 @@ STBIDEF int stbi_info_from_callbacks(stbi_io_callbacks const *c, void *user, int
 #include <L/L.h>
 
 namespace L {
-  class STB : public Interface<Image::Bitmap> {
+  class STB : public Interface<Bitmap> {
     public:
       STB() : Interface("png") {
         subscribe("bmp");
         subscribe("jpeg");
         subscribe("jpg");
       }
-      bool to(const Image::Bitmap& bmp, const File& file) {
+      bool to(const Bitmap& bmp, const File& file) {
         return false;
       }
-      bool from(Image::Bitmap& bmp, const File& file) {
+      bool from(Bitmap& bmp, const File& file) {
         int width, height, comp;
         unsigned char* a(stbi_load(file.path(),&width,&height,&comp,4));
         if(a || comp!=4) {
