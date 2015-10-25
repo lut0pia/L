@@ -68,32 +68,16 @@ namespace L {
           _c[i] /= other._c[i];
         return *this;
       }
-      Vector operator+(const Vector& other) const {
-        Vector wtr(*this);
-        wtr += other;
-        return wtr;
-      }
-      Vector operator-(const Vector& other) const {
-        Vector wtr(*this);
-        wtr -= other;
-        return wtr;
-      }
+      inline Vector operator+(const Vector& other) const {Vector wtr(*this); wtr += other; return wtr;}
+      inline Vector operator-(const Vector& other) const {Vector wtr(*this); wtr -= other; return wtr;}
       Vector operator-() const {
         Vector wtr;
         for(int i(0); i<d; i++)
           wtr._c[i] = -_c[i];
         return wtr;
       }
-      Vector operator*(const Vector& other) const {
-        Vector wtr(*this);
-        wtr *= other;
-        return wtr;
-      }
-      Vector operator/(const Vector& other) const {
-        Vector wtr(*this);
-        wtr /= other;
-        return wtr;
-      }
+      inline Vector operator*(const Vector& other) const {Vector wtr(*this); wtr *= other; return wtr;}
+      inline Vector operator/(const Vector& other) const {Vector wtr(*this); wtr /= other; return wtr;}
 
       bool operator==(const Vector& other) const {
         for(int i(0); i<d; i++)
