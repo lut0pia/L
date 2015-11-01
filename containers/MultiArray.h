@@ -1,105 +1,57 @@
 #ifndef DEF_L_MultiArray
 #define DEF_L_MultiArray
 
-#include <cstdarg>
-#include <cstring>
-#include "../geometry/Vector.h"
-#include "../macros.h"
 #include "Array.h"
+#include "../geometry/Vector.h"
 
-#define ARGSTOPOINT Vector<d,int> point;\
-  if(1){\
-    int i(0);\
-    point[0] = arg;\
-    va_list vl;\
-    va_start(vl,arg);\
-    while(++i<d) point[i] = va_arg(vl,int);\
-    va_end(vl);}
-#define ACCESS  int i(0);\
-  va_list vl;\
-  va_start(vl,pos);\
-  while(++i<d){\
-    pos *= _size[i];\
-    pos += va_arg(vl,int);\
-  }\
-  va_end(vl);\
-  return (*this)[pos];
 namespace L {
   template <int d,class T>
   class MultiArray : private Array<T> {
     protected:
       Vector<d,int> _size;
     public:
-      MultiArray() : Array<T>(), _size(0) {}
-      MultiArray(int arg,...) : Array<T>() {
-        ARGSTOPOINT
-        resizeFast(point);
+      inline MultiArray() : Array<T>(), _size(0) {}
+      template <typename... Args>
+      inline MultiArray(int i, Args&&... args) : Array<T>() {
+        resizeFast(Vector<d,int>(i,args...));
       }
-      void resizeFast(int arg,...) {
-        ARGSTOPOINT
-        resizeFast(point);
-      }
-      void resizeFast(const Vector<d,int>& size) {
+
+      template <typename... Args> inline void resizeFast(int i, Args&&... args) {resizeFast(Vector<d,int>(i,args...));}
+      inline void resizeFast(const Vector<d,int>& size) {
         _size = size;
         Array<T>::size(size.product());
       }
 
-      void resize(int arg,...) {
-        ARGSTOPOINT
-        resize(point);
-      }
+      template <typename... Args> inline void resize(int i, Args&&... args) {resize(Vector<d,int>(i,args...));}
       void resize(const Vector<d,int>& size) {
-        MultiArray<d,T> old(*this);
-        _size = size;
-        int pos[d] = {0}, oldpos, newpos, zeroCount;
-        Array<T>::clear();
+        int lines(Number::min(_size.product()/_size[0],size.product()/size[0]));
         Array<T>::size(size.product());
-        // Restore old elements
-        for(int i(0); i<d; i++)
-          if(!old.size(i))
-            return;
-        do {
-          // Replace element
-          oldpos = newpos = pos[0];
-          for(int i(1); i<d; i++) {
-            oldpos *= old.size(i);
-            newpos *= _size[i];
-            oldpos += pos[i];
-            newpos += pos[i];
-          }
-          (*this)[newpos] = old[oldpos];
-          // Change position
-          zeroCount = 0;
-          for(int i(0); i<d; i++) {
-            pos[i]++;
-            if(pos[i]<std::min(_size[i],old.size(i))) break;
-            else {
-              pos[i] = 0;
-              zeroCount++;
-            }
-          }
-        } while(zeroCount<d); // All positions have been done
+        if(size[0]<_size[0])
+          for(int i(0); i<lines; i++)
+            memmove(&operator[](size[0]*i),&operator[](_size[0]*i),Number::min(_size[0],size[0])*4);
+        else
+          for(int i(lines-1); i>=0; i--)
+            memmove(&operator[](size[0]*i),&operator[](_size[0]*i),Number::min(_size[0],size[0])*4);
+        _size = size;
       }
       int indexOf(const Vector<d,int>& point) const {
-        int wtr(point[0]);
-        for(int i(1); i<d; i++) {
+        int wtr(point[d-1]);
+        for(int i(d-2); i>=0; i--) {
           wtr *= _size[i];
           wtr += point[i];
         }
         return wtr;
       }
-      T& operator()(int pos,...) {ACCESS}
-      const T& operator()(int pos,...) const {ACCESS}
-      T& operator()(const Vector<d,int>& point) {return Array<T>::operator[](indexOf(point));}
-      const T& operator()(const Vector<d,int>& point) const {return Array<T>::operator[](indexOf(point));}
+      template <typename... Args> inline T& operator()(int i, Args&&... args) {return operator()(Vector<d,int>(i,args...));}
+      template <typename... Args> inline const T& operator()(int i, Args&&... args) const {return operator()(Vector<d,int>(i,args...));}
+      inline T& operator()(const Vector<d,int>& point) {return Array<T>::operator[](indexOf(point));}
+      inline const T& operator()(const Vector<d,int>& point) const {return Array<T>::operator[](indexOf(point));}
       inline T& operator[](int i) {return Array<T>::operator[](i);}
       inline const T& operator[](int i) const {return Array<T>::operator[](i);}
       inline int size(int i) const {return _size[i];}
       inline int size() const {return _size.product();}
   };
 }
-#undef ARGSTOPOINT
-#undef ACCESS
 
 #endif
 

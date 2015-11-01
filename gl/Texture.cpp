@@ -16,19 +16,7 @@ Texture::~Texture() {
 void Texture::load(const Bitmap& bmp, bool mipmaps) {
   _width = bmp.width();
   _height = bmp.height();
-  GLubyte* pixelArray = new GLubyte[_width*_height*4];
-  // Copy data
-  for(int x(0); x<_width; x++)
-    for(int y(0); y<_height; y++) {
-      GLubyte* tmp = pixelArray+(x*4+(y*_width)*4);
-      const Color& c = bmp(x,y);
-      *tmp++ = c.r();
-      *tmp++ = c.g();
-      *tmp++ = c.b();
-      *tmp = c.a();
-    }
-  load(_width,_height,pixelArray,mipmaps);
-  delete[] pixelArray;
+  load(_width,_height,&bmp[0],mipmaps);
 }
 void Texture::load(GLsizei width, GLsizei height, const void* data, bool mipmaps) {
   _width = width;
