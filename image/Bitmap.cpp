@@ -30,6 +30,11 @@ Bitmap Bitmap::sub(int x, int y, int width, int height) const {
       wtr(i,j) = (*this)(x+i,y+j);
   return wtr;
 }
+void Bitmap::blit(const Bitmap& bmp, int x, int y) {
+  for(int i(0); i<bmp.width(); i++)
+    for(int j(0); j<bmp.height(); j++)
+      operator()(i+x,j+y) = bmp(i,j);
+}
 Bitmap Bitmap::filter(Color c) const {
   Bitmap wtr;
   wtr.resize(width(),height());

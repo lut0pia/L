@@ -18,7 +18,7 @@ namespace L {
       Bitmap() : MultiArray<2,Color>() {}
       Bitmap(int width, int height);
       Bitmap(int width, int height, const Color&);
-      inline Bitmap(const Color* a, int width, int height) : MultiArray<2,Color>(a,width,height){}
+      inline Bitmap(const Color* a, int width, int height) : MultiArray<2,Color>(a,width,height) {}
       Bitmap(const String& filePath);
       Bitmap& load(const String& filePath);
       Bitmap& save(const String& filePath);
@@ -27,6 +27,7 @@ namespace L {
 
       // Image treatment
       Bitmap sub(int x, int y, int width, int height) const;
+      void blit(const Bitmap&, int x, int y);
       Bitmap filter(Color) const;
       Bitmap trim(Color) const;
       Bitmap trim(int left, int right, int top, int bottom) const;
