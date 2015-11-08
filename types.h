@@ -11,6 +11,7 @@ namespace L {
   typedef long long llong;
   typedef unsigned long long ullong;
 
+  typedef uint16_t uint16;
   typedef uint32_t uint32;
 }
 
