@@ -35,22 +35,16 @@ void Bitmap::blit(const Bitmap& bmp, int x, int y) {
     for(int j(0); j<bmp.height(); j++)
       operator()(i+x,j+y) = bmp(i,j);
 }
-Bitmap Bitmap::filter(Color c) const {
-  Bitmap wtr;
-  wtr.resize(width(),height());
-  float r = (float)c.r()/255.0,
-        g = (float)c.g()/255.0,
-        b = (float)c.b()/255.0,
-        a = (float)c.a()/255.0;
-  for(int x=0; x<width(); x++)
-    for(int y=0; y<height(); y++) {
-      Color tmp((*this)(x,y));
-      wtr(x,y) = Color((float)tmp.r()*r,
-                       (float)tmp.g()*g,
-                       (float)tmp.b()*b,
-                       (float)tmp.a()*a);
+void Bitmap::filter(Color c) {
+  for(int x(0); x<width(); x++)
+    for(int y(0); y<height(); y++) {
+      Color tmp(operator()(x,y));
+      if(tmp.r()>c.r()) tmp.r() = c.r();
+      if(tmp.g()>c.g()) tmp.g() = c.g();
+      if(tmp.b()>c.b()) tmp.b() = c.b();
+      if(tmp.a()>c.a()) tmp.a() = c.a();
+      operator()(x,y) = tmp;
     }
-  return wtr;
 }
 Bitmap Bitmap::trim(Color c) const {
   int left = 0, right = width()-1,

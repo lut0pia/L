@@ -28,7 +28,7 @@ namespace L {
       // Image treatment
       Bitmap sub(int x, int y, int width, int height) const;
       void blit(const Bitmap&, int x, int y);
-      Bitmap filter(Color) const;
+      void filter(Color);
       Bitmap trim(Color) const;
       Bitmap trim(int left, int right, int top, int bottom) const;
       void scale(int width, int height);
