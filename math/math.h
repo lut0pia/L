@@ -47,13 +47,10 @@ namespace L {
     while(x<0)x+=m;
     return x;
   }
-  /*
-  template <>
-  inline int PMod<int>(int x, int m) {
+  template <> inline int pmod(int x, const int& m) {
     int wtr(x%m);
-    return wtr<0 ? wtr+m : wtr;
+    return (wtr<0)?wtr+m:wtr;
   }
-  */
 }
 
 #endif
