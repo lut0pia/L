@@ -4,6 +4,7 @@
 #include "../geometry/Vector.h"
 #include "../macros.h"
 #include "../String.h"
+#include "../image/Bitmap.h"
 
 namespace L {
   class Window {
@@ -41,6 +42,7 @@ namespace L {
       static const int resizable = 0x1;
       static const int borderless = 0x2;
       static const int nocursor = 0x4;
+      static const int opengl = 0x8;
     public:
       static void open(const String& title, int width = 800, int height = 600, int flags = 0);
       static void openFullscreen(const String& title, int flags = 0);
@@ -51,6 +53,7 @@ namespace L {
       static bool isPressed(Event::Button);
 
       static void swapBuffers();
+      static void draw(const Bitmap&);
 
       // Setters & getters
       static void title(const String&);

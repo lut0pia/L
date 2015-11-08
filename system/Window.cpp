@@ -24,6 +24,7 @@ Window::Event::Event() {
 HWND hWND;
 HDC hDC;
 HGLRC hRC;
+HBITMAP hBITMAP = 0;
 LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
   Window::Event e;
   switch(uMsg) {
@@ -110,7 +111,7 @@ LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_CHAR:
       if(wParam != '\b' && wParam != '\r') {
         e.type = Window::Event::TEXT;
-        strcpy(e.text,ANSItoUTF8(String(1,wParam)));
+        strcpy(e.text,UTF16toUTF8(wParam));
       } else return 0;
       break;
     case WM_SETCURSOR:
@@ -172,8 +173,6 @@ void Window::open(const String& title, int width, int height, int flags) {
   _flags = flags;
 #if defined L_WINDOWS
   WNDCLASS wc;
-  PIXELFORMATDESCRIPTOR pfd;
-  int format;
   // Register window class
   wc.style = CS_OWNDC;
   wc.lpfnWndProc = MainWndProc;
@@ -199,21 +198,20 @@ void Window::open(const String& title, int width, int height, int flags) {
   hWND = CreateWindow("LWC",title,wStyle,   // Properties
                       CW_USEDEFAULT,CW_USEDEFAULT,width,height,
                       NULL,NULL,GetModuleHandle(NULL),NULL);
-  // Set OpenGL as renderer
-  hDC = GetDC(hWND); // get the device context (DC)
-  ZeroMemory(&pfd,sizeof(pfd)); // set the pixel format for the DC
+  hDC = GetDC(hWND); // Get the device context (DC)
+  PIXELFORMATDESCRIPTOR pfd;
+  ZeroMemory(&pfd,sizeof(pfd)); // Initialize pixel format descriptor
   pfd.nSize = sizeof(pfd);
   pfd.nVersion = 1;
-  pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+  pfd.dwFlags = PFD_DRAW_TO_WINDOW | ((flags & opengl)?PFD_SUPPORT_OPENGL:0) | PFD_DOUBLEBUFFER;
   pfd.iPixelType = PFD_TYPE_RGBA;
   pfd.cColorBits = 24;
   pfd.cDepthBits = 16;
-  pfd.iLayerType = PFD_MAIN_PLANE;
-  format = ChoosePixelFormat(hDC,&pfd);
-  SetPixelFormat(hDC,format,&pfd);
-  hRC = wglCreateContext(hDC); // create and enable the render context (RC)
-  wglMakeCurrent(hDC,hRC);
-  GL::init();
+  SetPixelFormat(hDC,ChoosePixelFormat(hDC,&pfd),&pfd); // Set pixel format (according to descriptor) to device context
+  if(flags & opengl) {
+    hRC = wglCreateContext(hDC); // create and enable the render context (RC)
+    wglMakeCurrent(hDC,hRC);
+  }
 #elif defined L_UNIX
   if((dpy = XOpenDisplay(NULL)) == NULL)
     throw Exception("Cannot open X server display.");
@@ -232,6 +230,8 @@ void Window::open(const String& title, int width, int height, int flags) {
   glXMakeCurrent(dpy, win, glc);
   winOpened = true;
 #endif
+  if(flags & opengl)
+    GL::init();
 }
 void Window::openFullscreen(const String& title, int flags) {
   Vector2i screenSize(System::screenSize());
@@ -286,12 +286,26 @@ bool Window::newEvent(Event& e) {
 bool Window::isPressed(Event::Button button) {
   return buttonstate[button];
 }
+
 void Window::swapBuffers() {
   if(!opened()) return;
 #if defined L_WINDOWS
   SwapBuffers(hDC);
 #elif defined L_UNIX
   glXSwapBuffers(dpy, win);
+#endif
+}
+void Window::draw(const Bitmap& bmp) {
+  if(!opened()) return;
+#if defined L_WINDOWS
+  HBITMAP hbmp = CreateBitmap(bmp.width(),bmp.height(),1,32,&bmp(0,0)), htmp;
+  HDC hMemDC = CreateCompatibleDC(hDC);
+  htmp = (HBITMAP)SelectObject(hMemDC,hbmp);
+  BitBlt(hDC,0,0,bmp.width(),bmp.height(),hMemDC,0,0,SRCCOPY);
+  SelectObject(hMemDC, htmp);
+  DeleteObject(hbmp);
+  DeleteDC(hMemDC);
+#elif defined L_UNIX
 #endif
 }
 
