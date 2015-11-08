@@ -15,6 +15,8 @@ namespace L {
       inline MultiArray(int i, Args&&... args) : Array<T>() {
         resizeFast(Vector<d,int>(i,args...));
       }
+      template <typename... Args>
+      inline MultiArray(const T* a, int i, Args&&... args) : Array<T>(a,Vector<d,int>(i,args...).product()), _size(Vector<d,int>(i,args...)) {}
 
       template <typename... Args> inline void resizeFast(int i, Args&&... args) {resizeFast(Vector<d,int>(i,args...));}
       inline void resizeFast(const Vector<d,int>& size) {
