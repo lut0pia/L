@@ -179,6 +179,7 @@ namespace L {
   typedef Vector<4,byte> Vector4b;
   typedef Vector<2,int> Vector2i;
   typedef Vector<3,int> Vector3i;
+  typedef Vector<4,int> Vector4i;
   typedef Vector<2,float> Vector2f;
   typedef Vector<3,float> Vector3f;
   typedef Vector<4,float> Vector4f;
