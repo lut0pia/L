@@ -49,7 +49,6 @@ namespace L {
         } else
           for(int i((size.product()/size[0])-1); i>=0; i--)
             memswap(&operator[](size[0]*i),&operator[](_size[0]*i),_size[0]*sizeof(T));
-        out << size << '\n';
         _size = size;
       }
       int indexOf(const Vector<d,int>& point) const {
