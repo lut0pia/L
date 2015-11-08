@@ -1,9 +1,7 @@
 #include "Integer.h"
 
 #include "../Exception.h"
-#include "../general.h"
-#include "../macros.h"
-#include "../Number.h"
+#include "math.h"
 
 using namespace L;
 
@@ -79,7 +77,7 @@ Integer Integer::operator--(int) {
 }
 
 bool Integer::operator==(const Integer& other) const {
-  size_t maxp = Number::max(size(),other.size());
+  size_t maxp(max(size(),other.size()));
   type zeroTest = 0, equalityTest = 0;
   for(size_t n=0; n<maxp; n++) {
     if(part(n)==other.part(n)) {
@@ -100,7 +98,7 @@ bool Integer::operator!=(const Integer& other) const {
 }
 bool Integer::operator>(const Integer& other) const {
   if(negative()==other.negative()) {
-    size_t maxp = Number::max(size(),other.size());
+    size_t maxp(max(size(),other.size()));
     for(size_t n=maxp-1; n<=maxp; n--) {
       if(part(n)>other.part(n))
         return !negative();
@@ -112,7 +110,7 @@ bool Integer::operator>(const Integer& other) const {
 }
 bool Integer::operator<(const Integer& other) const {
   if(negative()==other.negative()) {
-    size_t maxp = Number::max(size(),other.size());
+    size_t maxp(max(size(),other.size()));
     for(size_t n=maxp-1; n<=maxp; n--) {
       if(part(n)<other.part(n))
         return !negative();
@@ -157,7 +155,7 @@ Integer& Integer::operator+=(const Integer& other) {
   if(negative() != other.negative())
     (*this) -= -other;
   else { // Same sign
-    size_t maxp(Number::max(size(),other.size()));
+    size_t maxp(max(size(),other.size()));
     for(size_t n(0); n<maxp; n++) {
       type tmp(part(n));
       part(n,tmp+other.part(n));
@@ -179,7 +177,7 @@ Integer& Integer::operator-=(const Integer& other) {
   else if((negative() && (*this) > other) || (!negative() && (*this) < other)) // Only subtract absolutely smaller number
     (*this) = -(other-(*this));
   else { // Same sign
-    size_t maxp(Number::max(size(),other.size()));
+    size_t maxp(max(size(),other.size()));
     for(size_t n(0); n<maxp; n++) {
       type tmp(part(n));
       part(n,tmp-other.part(n));
@@ -275,11 +273,11 @@ String Integer::toShortString() const {
     case 0:
       return "0";
     case 1:
-      return ((negative())?"-":"")+ToString(_part[0]);
+      return ((negative())?"-":"")+String::from(_part[0]);
     case 2:
-      return ((negative())?"-":"")+ToString(_part.back())+"*(2^32)";
+      return ((negative())?"-":"")+String::from(_part.back())+"*(2^32)";
     default:
-      return ((negative())?"-":"")+ToString(_part.back())+"*(2^32^"+ToString(size()-1)+")";
+      return ((negative())?"-":"")+String::from(_part.back())+"*(2^32^"+String::from(size()-1)+")";
   }
 }
 String Integer::toString(long lbase) const {
@@ -289,13 +287,13 @@ String Integer::toString(long lbase) const {
   switch(lbase) {
     case 2:
       for(size_t i=size()-1; i!=(size_t)-1; i--)
-        wtr += Number::toString<2>(part(i),sizeof(type)*8);
+        wtr += numberToString<2>(part(i),sizeof(type)*8);
       while(wtr[0]=='0' && wtr.size()>1)
         wtr.erase(0,1);
       break;
     case 16:
       for(size_t i=size()-1; i!=(size_t)-1; i--)
-        wtr += Number::toString<16>(part(i),sizeof(type)*2);
+        wtr += numberToString<16>(part(i),sizeof(type)*2);
       while(wtr[0]=='0' && wtr.size()>1)
         wtr.erase(0,1);
       break;
@@ -365,13 +363,13 @@ Stream& L::operator<<(Stream &stream, const Integer& v) {
   if(v.size()) {
     if(v._negative)
       stream << '-';
-    stream << ToString(v._part.back());
+    stream << String::from(v._part.back());
     if(v.size()>1) {
       stream << "*(2^32";
       if(v.size()==2)
         stream << ')';
       else
-        stream << '^' << ToString(v.size()-1) << ')';
+        stream << '^' << String::from(v.size()-1) << ')';
     }
   } else stream << '0';
   return stream;

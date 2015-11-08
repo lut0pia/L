@@ -134,7 +134,6 @@
 		<Unit filename="font/Bitmap.h" />
 		<Unit filename="font/Font.cpp" />
 		<Unit filename="font/Font.h" />
-		<Unit filename="general.h" />
 		<Unit filename="geometry.h" />
 		<Unit filename="geometry/Interval.h" />
 		<Unit filename="geometry/Vector.h" />

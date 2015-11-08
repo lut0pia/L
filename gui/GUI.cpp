@@ -21,7 +21,7 @@ GUI::Base* GUI::from(const XML& xml, Map<String,GUI::Base*>& ids) {
       return new Background(GUI::from(xml.children[0],ids),Color(xml.attributes["color"]));
     } else if(xml.name == "border") {
       return new Border(GUI::from(xml.children[0],ids),
-                        (xml.attributes.has("size")) ? FromString<size_t>(xml.attributes["size"]) : 1,
+                        (xml.attributes.has("size")) ? String::to<size_t>(xml.attributes["size"]) : 1,
                         Color(xml.attributes["color"]));
     } else if(xml.name == "image") {
       if(!xml.attributes.has("src"))
@@ -35,7 +35,7 @@ GUI::Base* GUI::from(const XML& xml, Map<String,GUI::Base*>& ids) {
                       Color(xml.attributes["color"]));
     } else if(xml.name == "list") {
       ListContainer* wtr((xml.attributes.has("spacing"))
-                         ? new ListContainer(FromString<int>(xml.attributes["spacing"]))
+                         ? new ListContainer(String::to<int>(xml.attributes["spacing"]))
                          : new ListContainer());
       xml.children.foreach([&wtr,&ids](const XML& child) {
         wtr->push_back(GUI::from(child,ids));
@@ -60,6 +60,6 @@ GUI::Base* GUI::from(const XML& xml, Map<String,GUI::Base*>& ids) {
 Vector2i GUI::point(const String& str) {
   Array<String> coords(str.explode(' '));
   if(coords.size()==2)
-    return Vector<2,int>(FromString<int>(coords[0]),FromString<int>(coords[1]));
+    return Vector<2,int>(String::to<int>(coords[0]),String::to<int>(coords[1]));
   else throw Exception("GUI: Vector must be \"x y\", not \""+str+"\".");
 }

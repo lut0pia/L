@@ -1,14 +1,13 @@
 #include "XML.h"
 
-#include "../macros.h"
-#include "../general.h"
+#include "../types.h"
+#include "../streams/FileStream.h"
 
 using namespace L;
-using namespace std;
 
 XML::XML() {}
 XML::XML(const File& f) {
-  read(FileStream(f,"rb"));
+  read(FileStream(f.path(),"rb"));
 }
 XML::XML(Stream& s) {
   read(s);

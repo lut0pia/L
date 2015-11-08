@@ -1,7 +1,6 @@
 #include "Rational.h"
 
 #include <cstdio>
-#include "../general.h"
 
 using namespace L;
 
@@ -124,7 +123,7 @@ String Rational::toShortString() const {
       case 1:
         return ((negative())?"-":"")+String(buffer)+"*(2^32)";
       default:
-        return ((negative())?"-":"")+String(buffer)+"*(2^32^"+ToString(ratio)+")";
+        return ((negative())?"-":"")+String(buffer)+"*(2^32^"+String::from(ratio)+")";
     }
   } else if(a.size()>b.size())
     return "inf";

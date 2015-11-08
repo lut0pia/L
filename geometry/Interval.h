@@ -3,7 +3,6 @@
 
 #include <algorithm>
 
-#include "../general.h"
 #include "Vector.h"
 
 namespace L {
@@ -58,7 +57,7 @@ namespace L {
         if(empty()) return false;
         bool wtr(true);
         for(size_t i(0); i<d&&wtr; i++)
-          if(!InBetween(p[i],_min[i],_max[i]))
+          if(!(_min[i] <= p[i] && p[i] <= _max[i]))
             wtr = false;
         return wtr;
       }

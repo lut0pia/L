@@ -21,7 +21,7 @@ Context::Context() {
   _parser.addRule(Array<const char*>::make("&value","&const"));
 }
 void Context::read(const File& file) {
-  FileStream stream(file,"rb");
+  FileStream stream(file.path(),"rb");
   Lexer lexer(stream);
   while(lexer.nextToken()) {
     out << lexer.token() << '\n';

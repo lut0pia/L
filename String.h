@@ -3,7 +3,7 @@
 
 #include <cstring>
 #include "containers/Array.h"
-#include "streams/Stream.h"
+#include "streams/FileStream.h"
 
 namespace L {
   class String: private Array<char> {
@@ -58,6 +58,26 @@ namespace L {
       inline operator char*() {return &Array<char>::operator[](0);}
       inline const char& operator[](int i) const {return Array<char>::operator[](i);}
       inline char& operator[](int i) {return Array<char>::operator[](i);}
+
+      template <class T>
+      static String from(const T& t) {
+        tmpfile << t;
+        String wtr;
+        wtr.size(tmpfile.tell());
+        tmpfile.rewind();
+        tmpfile.read(&wtr[0],wtr.size());
+        tmpfile.rewind();
+        return wtr;
+      }
+      template <class T>
+      static T to(const String& str) {
+        T wtr;
+        tmpfile << str << '\0';
+        tmpfile.rewind();
+        tmpfile >> wtr;
+        tmpfile.rewind();
+        return wtr;
+      }
   };
   inline String operator+(const char* a, const String& b) {return String(a)+b;}
   inline bool operator==(const String& a, const char* b) {return !strcmp(a,b);}

@@ -3,6 +3,21 @@
 
 #include "Array.h"
 #include "../geometry/Vector.h"
+#include "../math/math.h"
+
+inline void memswap(void* a, void* b, size_t size) {
+  if(a==b) return;
+  char buffer[16384];
+  while(size>0) {
+    size_t bufsize(L::min(L::min(size,(size_t)L::abs((int)a-(int)b)),16384u));
+    memcpy(buffer,a,bufsize);
+    memcpy(a,b,bufsize);
+    memcpy(b,buffer,bufsize);
+    a = (char*)a+bufsize;
+    b = (char*)b+bufsize;
+    size -= bufsize;
+  }
+}
 
 namespace L {
   template <int d,class T>
@@ -26,10 +41,15 @@ namespace L {
 
       template <typename... Args> inline void resize(int i, Args&&... args) {resize(Vector<d,int>(i,args...));}
       void resize(const Vector<d,int>& size) {
-        int lines(Number::min(_size.product()/_size[0],size.product()/size[0]));
         Array<T>::size(size.product());
-        if(size[0]<_size[0])  for(int i(0); i<lines; i++) memmove(&operator[](size[0]*i),&operator[](_size[0]*i),size[0]*4);
-        else for(int i(lines-1); i>=0; i--) memmove(&operator[](size[0]*i),&operator[](_size[0]*i),_size[0]*4);
+        if(size[0]<_size[0]) {
+          int lines(_size.product()/_size[0]);
+          for(int i(0); i<lines; i++)
+            memswap(&operator[](size[0]*i),&operator[](_size[0]*i),size[0]*sizeof(T));
+        } else
+          for(int i((size.product()/size[0])-1); i>=0; i--)
+            memswap(&operator[](size[0]*i),&operator[](_size[0]*i),_size[0]*sizeof(T));
+        out << size << '\n';
         _size = size;
       }
       int indexOf(const Vector<d,int>& point) const {

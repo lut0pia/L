@@ -25,7 +25,7 @@ namespace L {
 
     public:
       virtual bool from(T& v, const File& file) {
-        return from(v,FileStream(file,"rb"));
+        return from(v,FileStream(file.path(),"rb"));
       }
       virtual bool from(T& v, const String& str) {
         tmpfile.rewind();
@@ -41,7 +41,7 @@ namespace L {
       }
 
       virtual bool to(const T& v, const File& file) {
-        return to(v,FileStream(file,"wb"));
+        return to(v,FileStream(file.path(),"wb"));
       }
       virtual bool to(const T& v, String& str) {
         return false;
