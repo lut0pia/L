@@ -3,7 +3,7 @@
 
 #include <cstdlib>
 #include "../macros.h"
-#include "../Number.h"
+#include "../math/math.h"
 #include "../String.h"
 #include "../types.h"
 
@@ -58,7 +58,7 @@ namespace L {
     return s;
   }
   inline Stream& operator<<(Stream &s, const Color& v) {
-    return s << '#' << Number::toString<16>(v.rgba(),8);
+    return s << '#' << numberToString<16>(v.rgba(),8);
   }
 }
 

@@ -72,7 +72,6 @@
 		<Unit filename="Exception.h" />
 		<Unit filename="Interface.h" />
 		<Unit filename="L.h" />
-		<Unit filename="Number.h" />
 		<Unit filename="Object.h" />
 		<Unit filename="Rand.cpp" />
 		<Unit filename="Rand.h" />
@@ -222,6 +221,7 @@
 		<Unit filename="math/Rational.h" />
 		<Unit filename="math/Real.cpp" />
 		<Unit filename="math/Real.h" />
+		<Unit filename="math/math.h" />
 		<Unit filename="parallelism.h" />
 		<Unit filename="parallelism/Coroutine.cpp" />
 		<Unit filename="parallelism/Coroutine.h" />

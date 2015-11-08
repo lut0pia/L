@@ -23,11 +23,11 @@ Color::Color(String str) {
   if(str.empty()) {}
   else if(str[0]=='#') { // Hexa color
     if(str.size()==7) { // #RRBBGG
-      uint rgb(Number::fromString<16,uint>(str.substr(1)));
+      uint rgb(stringToNumber<16,uint>(str.substr(1)));
       new(this)Color(rgb>>16,rgb>>8,rgb);
       return;
     } else if(str.size()==9) { // #RRGGBBAA
-      uint rgba(Number::fromString<16,uint>(str.substr(1)));
+      uint rgba(stringToNumber<16,uint>(str.substr(1)));
       new(this)Color(rgba>>24,rgba>>16,rgba>>8,rgba);
       return;
     }
