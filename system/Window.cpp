@@ -6,13 +6,13 @@
 #include "../gl/GL.h"
 #include "../bytes/encoding.h"
 #include "System.h"
-#include "../containers/List.h"
+#include "../containers/StaticRing.h"
 
 using namespace L;
 using L::Window;
 
 bool buttonstate[Window::Event::LAST] = {false};
-List<Window::Event> _events;
+StaticRing<512,Window::Event> _events;
 Vector2i _mousePos;
 int _width, _height, _flags;
 
@@ -278,8 +278,8 @@ bool Window::newEvent(Event& e) {
   if(_events.empty())
     return false;
   else {
-    e = _events.front();
-    _events.popFront();
+    e = _events.top();
+    _events.pop();
     return true;
   }
 }
