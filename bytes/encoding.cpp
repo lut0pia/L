@@ -1,31 +1,50 @@
 #include "encoding.h"
 
-#include "../types.h"
+#include "../tmp.h"
 
 using namespace L;
 
-size_t L::UTF8toUTF32(const char* s, size_t* n) {
-  size_t wtr = (byte)*s;
-  if(wtr>>5==0x6) { // 2 bytes
-    wtr <<= 6;
-    wtr |= ((byte)*(++s)) & 0x3F; // 6bits mask
-    wtr &= 0x7FF; // 11bits mask
-    if(n)*n = 2;
-  } else if(wtr>>4==0xE) { // 3 bytes
-    wtr <<= 6;
-    wtr |= ((byte)*(++s)) & 0x3F; // 6bits mask
-    wtr <<= 6;
-    wtr |= ((byte)*(++s)) & 0x3F; // 6bits mask
-    wtr &= 0xFFFF; // 16bits mask
-    if(n)*n = 3;
-  } else if(n)*n = 1;
+const char* L::UTF16toUTF8(uint16 utf16) {
+  static char wtr[4];
+  if(utf16<static_pow<2,7>::value) {
+    wtr[0] = utf16;
+    wtr[1] = 0;
+  } else if(utf16<static_pow<2,11>::value) {
+    wtr[0] = 0xC0 | (utf16>>6);
+    wtr[1] = 0x80 | (utf16 & bitmask<6>::value);
+    wtr[2] = 0;
+  } else {
+    wtr[0] = 0xE0 | (utf16>>12);
+    wtr[1] = 0x80 | ((utf16>>6) & bitmask<6>::value);
+    wtr[2] = 0x80 | (utf16 & bitmask<6>::value);
+    wtr[3] = 0;
+  }
   return wtr;
 }
-Array<size_t> L::UTF8toUTF32(const String& str) {
-  Array<size_t> wtr;
-  size_t utfsize;
-  for(size_t i(0); i<str.size(); i+=utfsize)
-    wtr.push(UTF8toUTF32(&str[i],&utfsize));
+uint32 L::UTF8toUTF32(const char* str, int* size) {
+  uint32 wtr((byte)*str);
+  if(wtr>>5==0x6) { // 2 bytes
+    wtr <<= 6;
+    wtr |= ((byte)*(++str)) & bitmask<6>::value;
+    wtr &= bitmask<11>::value;
+    *size = 2;
+  } else if(wtr>>4==0xE) { // 3 bytes
+    wtr <<= 6;
+    wtr |= ((byte)*(++str)) & bitmask<6>::value;
+    wtr <<= 6;
+    wtr |= ((byte)*(++str)) & bitmask<6>::value;
+    wtr &= bitmask<16>::value;
+    *size = 3;
+  } else *size = 1;
+  return wtr;
+}
+Array<uint32> L::UTF8toUTF32(const char* str) {
+  Array<uint32> wtr;
+  int utfsize;
+  while(*str) {
+    wtr.push(UTF8toUTF32(str,&utfsize));
+    str+=utfsize;
+  }
   return wtr;
 }
 String L::ANSItoUTF8(String str) {
