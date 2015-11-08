@@ -35,6 +35,10 @@ namespace L {
   struct flag {
     static const uint value = static_pow<2,f>::value;
   };
+  template <uint n>
+  struct bitmask {
+    static const uint value = ~(~0<<n);
+  };
 
   template <class T>
   struct alignment {
