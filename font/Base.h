@@ -2,7 +2,7 @@
 #define DEF_L_Font_Base
 
 #include "../containers/Map.h"
-#include "../image.h"
+#include "../image/Bitmap.h"
 #include "../geometry/Vector.h"
 
 namespace L {
@@ -10,20 +10,17 @@ namespace L {
     typedef struct {
       L::Bitmap bmp;
       Vector2i origin;
-      size_t advance;
+      int advance;
     } Glyph;
     class Base {
       protected:
-        Map<size_t,Glyph> _glyphs;
+        Map<uint32,Glyph> _glyphs;
+        int _lineheight;
       public:
         virtual ~Base() {}
-        Glyph& glyph(size_t utf32);
-        virtual L::Bitmap render(const String&);
-
-        virtual size_t lineHeight() = 0;
-        virtual size_t ascender() = 0;
-        virtual size_t descender() = 0;
-        virtual Glyph loadGlyph(size_t utf32) = 0;
+        const Glyph& glyph(uint32 utf32);
+        virtual L::Bitmap render(const char*);
+        virtual Glyph loadGlyph(uint32 utf32) = 0;
     };
   }
 }
