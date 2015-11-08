@@ -15,8 +15,8 @@
 namespace L {
   class Bitmap : public MultiArray<2,Color> {
     public:
-      Bitmap() : MultiArray<2,Color>() {}
-      Bitmap(int width, int height);
+      inline Bitmap() : MultiArray<2,Color>() {}
+      inline Bitmap(int width, int height) : MultiArray<2,Color>(width,height) {}
       Bitmap(int width, int height, const Color&);
       inline Bitmap(const Color* a, int width, int height) : MultiArray<2,Color>(a,width,height) {}
       Bitmap(const String& filePath);

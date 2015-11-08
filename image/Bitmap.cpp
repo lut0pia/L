@@ -4,7 +4,6 @@
 
 using namespace L;
 
-Bitmap::Bitmap(int width, int height) : MultiArray<2,Color>(width,height) {}
 Bitmap::Bitmap(int width, int height, const Color& c) : MultiArray<2,Color>(width,height) {
   for(int x(0); x<width; x++)
     for(int y(0); y<height; y++)
