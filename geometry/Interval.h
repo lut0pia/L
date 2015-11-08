@@ -1,8 +1,7 @@
 #ifndef DEF_L_Interval
 #define DEF_L_Interval
 
-#include <algorithm>
-
+#include "../math/math.h"
 #include "Vector.h"
 
 namespace L {
@@ -11,16 +10,12 @@ namespace L {
     protected:
       Vector<d,T> _min, _max;
     public:
-      Interval() {
-        clear();
-      }
-      Interval(const Vector<d,T>& a, const Vector<d,T>& b) : _min(a), _max(a) {
-        add(b);
-      }
+      inline Interval() {clear();}
+      inline Interval(const Vector<d,T>& a, const Vector<d,T>& b) : _min(a), _max(a) {add(b);}
       Interval(const Interval& a, const Interval& b) {
         for(int i(0); i<d; i++) {
-          _min[i] = std::max(a._min[i],b._min[i]);
-          _max[i] = std::min(a._max[i],b._max[i]);
+          _min[i] = L::max(a._min[i],b._min[i]);
+          _max[i] = L::min(a._max[i],b._max[i]);
         }
       }
       inline Interval operator*(const Interval& other) const {
@@ -29,14 +24,14 @@ namespace L {
       inline Interval operator+(const Interval& other) const {
         Interval wtr;
         for(int i(0); i<d; i++) {
-          wtr._min[i] = std::min(_min[i],other._min[i]);
-          wtr._max[i] = std::max(_max[i],other._max[i]);
+          wtr._min[i] = L::min(_min[i],other._min[i]);
+          wtr._max[i] = L::max(_max[i],other._max[i]);
         }
         return wtr;
       }
       bool operator&&(const Interval& other) const {
         for(int i(0); i<d; i++) {
-          if(std::max(_min[i],other._min[i]) > std::min(_max[i],other._max[i]))
+          if(L::max(_min[i],other._min[i]) > L::min(_max[i],other._max[i]))
             return false;
         }
         return true;
