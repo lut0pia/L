@@ -28,12 +28,8 @@ namespace L {
       void resize(const Vector<d,int>& size) {
         int lines(Number::min(_size.product()/_size[0],size.product()/size[0]));
         Array<T>::size(size.product());
-        if(size[0]<_size[0])
-          for(int i(0); i<lines; i++)
-            memmove(&operator[](size[0]*i),&operator[](_size[0]*i),Number::min(_size[0],size[0])*4);
-        else
-          for(int i(lines-1); i>=0; i--)
-            memmove(&operator[](size[0]*i),&operator[](_size[0]*i),Number::min(_size[0],size[0])*4);
+        if(size[0]<_size[0])  for(int i(0); i<lines; i++) memmove(&operator[](size[0]*i),&operator[](_size[0]*i),size[0]*4);
+        else for(int i(lines-1); i>=0; i--) memmove(&operator[](size[0]*i),&operator[](_size[0]*i),_size[0]*4);
         _size = size;
       }
       int indexOf(const Vector<d,int>& point) const {
