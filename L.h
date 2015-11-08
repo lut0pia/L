@@ -11,7 +11,7 @@
 // General classes
 #include "Exception.h"      // Exception layer with dynamic what
 #include "Interface.h"      // Helping to go from a format to another
-#include "Object.h"         // Helping dealing with objects
+#include "Object.h"         // Allocate/construct/copy/move objects
 #include "Rand.h"           // Random number generation
 #include "String.h"         // Mandatory string class
 
