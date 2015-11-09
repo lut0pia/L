@@ -1,9 +1,6 @@
 #include "Color.h"
 
-#include <cstring>
-#include "../bytes.h"
 #include "../Exception.h"
-#include "../Rand.h"
 
 using namespace L;
 
@@ -45,30 +42,6 @@ Color::Color(String str) {
   TMP(yellow)
 #undef TMP
   throw Exception("Unknown color: "+str);
-}
-
-bool Color::operator==(const Color& other) const {
-  return !memcmp(_data,other._data,4);
-}
-bool Color::operator!=(const Color& other) const {
-  return !(*this == other);
-}
-bool Color::operator<(const Color& other) const {
-  for(uint i(0); i<4; i++)
-    if(_data[i]<other._data[i])
-      return true;
-    else if(_data[i]>other._data[i])
-      return false;
-  return false;
-}
-Color& Color::operator+=(const Color& other) {
-  for(size_t i=0; i<4; i++) {
-    if((_data[i]+other._data[i])%0xFF < _data[i])
-      _data[i] = 0xFF;
-    else
-      _data[i] += other._data[i];
-  }
-  return *this;
 }
 
 Color Color::from(float r, float g, float b, float a) {

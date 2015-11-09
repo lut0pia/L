@@ -3,6 +3,7 @@
 
 #include <GL/glew.h>
 #include "../image/Bitmap.h"
+#include "../macros.h"
 
 namespace L {
   namespace GL {
