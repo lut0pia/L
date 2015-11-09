@@ -4,6 +4,7 @@
 // General definitions
 #include "constants.h"      // Constant values
 #include "macros.h"         // Useful macros
+#include "objects.h"        // Construct/destruct/copy/move/swap objects
 #include "systems.h"        // Useful system includes
 #include "tmp.h"            // Template Meta-Programming
 #include "types.h"          // Useful typedefs
@@ -11,7 +12,6 @@
 // General classes
 #include "Exception.h"      // Exception layer with dynamic what
 #include "Interface.h"      // Helping to go from a format to another
-#include "Object.h"         // Allocate/construct/copy/move objects
 #include "Rand.h"           // Random number generation
 #include "String.h"         // Mandatory string class
 

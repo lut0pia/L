@@ -3,7 +3,7 @@
 
 #include <functional>
 #include "../tmp.h"
-#include "../Object.h"
+#include "../objects.h"
 
 namespace L {
   template <class T>
@@ -90,11 +90,11 @@ namespace L {
       template <typename... Args>
       T* construct(Args&&... args) {
         T* wtr(allocate());
-        Object::construct(*wtr,args...);
+        L::construct(*wtr,args...);
         return wtr;
       }
       void destruct(T* o) {
-        Object::destruct(*o);
+        L::destruct(*o);
         deallocate(o);
       }
       T* allocate() {

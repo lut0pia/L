@@ -1,7 +1,7 @@
 #ifndef DEF_L_StaticStack
 #define DEF_L_StaticStack
 
-#include "../Object.h"
+#include "../objects.h"
 #include "../types.h"
 
 namespace L {
@@ -16,10 +16,10 @@ namespace L {
       template <class... Args>
       inline void push(Args&&... args) {
         _current++;
-        Object::construct(*_current,args...);
+        construct(*_current,args...);
       }
       inline void pop() {
-        Object::destruct(*_current);
+        destruct(*_current);
         _current--;
       }
       inline T& top() {return *_current;}

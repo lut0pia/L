@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <functional>
-#include "../Object.h"
+#include "../objects.h"
 #include "../streams/Stream.h"
 
 namespace L {
@@ -33,14 +33,14 @@ namespace L {
       }
       Array(const Array& other) : _size(other._size), _capacity(other._size) {
         _data = malloc(_size*sizeof(T));
-        Object::copy(&operator[](0),&other[0],_size);
+        copy(&operator[](0),&other[0],_size);
       }
       ~Array() {
-        Object::destruct(&operator[](0),_size);
+        destruct(&operator[](0),_size);
         free(_data);
       }
       inline Array& operator=(const Array& other) {
-        Object::reconstruct(*this,other);
+        reconstruct(*this,other);
         return *this;
       }
       inline Array operator+(const Array& other) {Array wtr(*this); return wtr += other;}
@@ -81,25 +81,25 @@ namespace L {
       void insert(size_t i, Args&&... args) {
         growTo(_size+1); // Check capacity
         shift(i,1); // Move right part
-        Object::construct(operator[](i),args...); // Place new value
+        construct(operator[](i),args...); // Place new value
         _size++; // Increase size
       }
       inline void insertArray(size_t i, const Array& a, int alen=-1, size_t ai=0) {replaceArray(i,0,a,alen,ai);}
-      template <typename... Args> inline void replace(size_t i, Args&&... args) {Object::reconstruct(operator[](i),args...);}
+      template <typename... Args> inline void replace(size_t i, Args&&... args) {reconstruct(operator[](i),args...);}
       void replaceArray(size_t i, int len, const Array& a, int alen=-1, size_t ai=0) {
         if(alen==-1) alen = a.size();
         growTo(_size+(alen-len)); // Check capacity
         shift(i+len,alen-len);
-        Object::copy(&operator[](i),&a[ai],alen);
+        copy(&operator[](i),&a[ai],alen);
         _size += alen-len;
       }
       void erase(size_t i) {
-        Object::destruct(operator[](i)); // Destruct value
+        destruct(operator[](i)); // Destruct value
         shift(i+1,-1); // Move right part
         _size--; // Decrease size
       }
       void erase(size_t i, size_t count) {
-        Object::destruct(&operator[](i),count); // Destruct values
+        destruct(&operator[](i),count); // Destruct values
         shift(i+count,-count); // Move right part
         _size -= count; // Decrease size
       }
