@@ -175,6 +175,7 @@ namespace L {
         return wtr;
       }
   };
+  template <int d,class T> inline Vector<d,T> operator*(const T& a, const Vector<d,T>& b) {return b*a;}
 
   typedef Vector<4,byte> Vector4b;
   typedef Vector<2,int> Vector2i;
