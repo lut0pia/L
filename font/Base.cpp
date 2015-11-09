@@ -12,7 +12,7 @@ const Glyph& Base::glyph(uint32 utf32) {
 }
 Bitmap Base::render(const char* str) {
   int penx(0), peny(0), width(2), height(_lineheight);
-  Bitmap wtr(512,128);
+  Bitmap wtr(512,max(128,_lineheight));
   int utfsize;
   while(*str) {
     uint32 utf32(UTF8toUTF32(str,&utfsize));
