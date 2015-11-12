@@ -61,21 +61,21 @@ namespace L {
 
       template <class T>
       static String from(const T& t) {
+        tmpfile.rewind();
         tmpfile << t;
         String wtr;
         wtr.size(tmpfile.tell());
         tmpfile.rewind();
         tmpfile.read(&wtr[0],wtr.size());
-        tmpfile.rewind();
         return wtr;
       }
       template <class T>
       static T to(const String& str) {
         T wtr;
+        tmpfile.rewind();
         tmpfile << str << '\0';
         tmpfile.rewind();
         tmpfile >> wtr;
-        tmpfile.rewind();
         return wtr;
       }
   };
