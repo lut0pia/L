@@ -1,6 +1,8 @@
 #include "Bitmap.h"
 
 #include "../Interface.h"
+#include "../math/Interpolation.h"
+#include <cmath>
 
 using namespace L;
 
@@ -27,6 +29,49 @@ const Color& Bitmap::at(int x, int y) const {
   else return MultiArray<2,Color>::operator()(x,y);
 }
 
+Color Bitmap::linear(float x, float y) const {
+  x-= .5f;
+  y-= .5f;
+  float weight[2] = {pmod(x,1.f),pmod(y,1.f)};
+  x = floor(x);
+  y = floor(y);
+  Vector4f cell[4] = {
+    at(x,y),
+    at(x,y+1),
+    at(x+1,y),
+    at(x+1,y+1)
+  };
+  Vector4f tmp(Interpolation<Vector4f>::linear<2>(cell,weight));
+  return Color(clamp(tmp[0],0.f,255.f),clamp(tmp[1],0.f,255.f),clamp(tmp[2],0.f,255.f),clamp(tmp[3],0.f,255.f));
+}
+
+Color Bitmap::cubic(float x, float y) const {
+  x-= .5f;
+  y-= .5f;
+  float weight[2] = {pmod(x,1.f),pmod(y,1.f)};
+  x = floor(x);
+  y = floor(y);
+  Vector4f cell[16] = {
+    at(x-1,y-1),
+    at(x-1,y),
+    at(x-1,y+1),
+    at(x-1,y+2),
+    at(x,y-1),
+    at(x,y),
+    at(x,y+1),
+    at(x,y+2),
+    at(x+1,y-1),
+    at(x+1,y),
+    at(x+1,y+1),
+    at(x+1,y+2),
+    at(x+2,y-1),
+    at(x+2,y),
+    at(x+2,y+1),
+    at(x+2,y+2)
+  };
+  Vector4f tmp(Interpolation<Vector4f>::cubic<2>(cell,weight));
+  return Color(clamp(tmp[0],0.f,255.f),clamp(tmp[1],0.f,255.f),clamp(tmp[2],0.f,255.f),clamp(tmp[3],0.f,255.f));
+}
 Bitmap Bitmap::sub(int x, int y, int width, int height) const {
   Bitmap wtr;
   wtr.resize(width,height);
@@ -89,14 +134,29 @@ Bitmap Bitmap::trim(int left, int right, int top, int bottom) const {
       wtr(x-left,y-top) = (*this)(x,y);
   return wtr;
 }
-void Bitmap::scale(int newWidth, int newHeight) {
-  float hf = (float)height()/(float)newHeight,
-        wf = (float)width()/(float)newWidth;
+void Bitmap::scale(int newWidth, int newHeight, InterpolationType it) {
+  float hf((float)height()/(float)newHeight),
+        wf((float)width()/(float)newWidth);
   Bitmap copy(*this);
-  resize(newWidth,newHeight);
-  for(int x=0; x<newWidth; x++)
-    for(int y=0; y<newHeight; y++)
-      (*this)(x,y) = copy((float)x*wf,(float)y*hf);
+  resizeFast(newWidth,newHeight);
+  switch(it) {
+    case NEAREST:
+      for(int x(0); x<newWidth; x++)
+        for(int y(0); y<newHeight; y++)
+          (*this)(x,y) = copy.nearest((float)x*wf,(float)y*hf);
+      break;
+    case LINEAR:
+      for(int x(0); x<newWidth; x++)
+        for(int y(0); y<newHeight; y++)
+          (*this)(x,y) = copy.linear((float)x*wf,(float)y*hf);
+      break;
+    default:
+    case CUBIC:
+      for(int x(0); x<newWidth; x++)
+        for(int y(0); y<newHeight; y++)
+          (*this)(x,y) = copy.cubic((float)x*wf,(float)y*hf);
+      break;
+  }
 }
 void Bitmap::blur(int factor) {
   uint rt, gt, bt;

@@ -15,6 +15,10 @@
 namespace L {
   class Bitmap : public MultiArray<2,Color> {
     public:
+      typedef enum {
+        NEAREST,LINEAR,CUBIC
+      } InterpolationType;
+
       inline Bitmap() : MultiArray<2,Color>() {}
       inline Bitmap(int width, int height) : MultiArray<2,Color>(width,height) {}
       Bitmap(int width, int height, const Color&);
@@ -27,12 +31,15 @@ namespace L {
       const Color& at(int x, int y) const;
 
       // Image treatment
+      inline Color nearest(float x,float y) const {return operator()(x,y);}
+      Color linear(float,float) const;
+      Color cubic(float,float) const;
       Bitmap sub(int x, int y, int width, int height) const;
       void blit(const Bitmap&, int x, int y);
       void filter(Color);
       Bitmap trim(Color) const;
       Bitmap trim(int left, int right, int top, int bottom) const;
-      void scale(int width, int height);
+      void scale(int width, int height, InterpolationType = CUBIC);
       void blur(int factor);
       void saturation(float percent);
       void drawTriangle(Surface<2,float>,Color);
