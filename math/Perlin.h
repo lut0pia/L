@@ -29,7 +29,7 @@ namespace L {
         // Determine grid cell coordinates
         Vector<d,int> i0,i1;
         for(int i(0); i<d; i++) {
-          point[i] = PMod(point[i],_size); // Make sure the point falls into available values
+          point[i] = pmod(point[i],_size); // Make sure the point falls into available values
           i0[i] = (int)point[i];
           if(point[i]<0)
             i0[i] -= 1;
