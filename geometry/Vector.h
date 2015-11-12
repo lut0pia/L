@@ -196,7 +196,6 @@ namespace L {
     s << ')';
     return s;
   }
-
 }
 
 #endif
