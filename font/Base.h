@@ -14,12 +14,14 @@ namespace L {
     } Glyph;
     class Base {
       protected:
+        Glyph _ascii[128];
         Map<uint32,Glyph> _glyphs;
         int _lineheight;
       public:
         virtual ~Base() {}
         const Glyph& glyph(uint32 utf32);
-        virtual L::Bitmap render(const char*);
+        virtual Bitmap render(const char*);
+        virtual Vector2i guessSize(const char*);
         virtual Glyph loadGlyph(uint32 utf32) = 0;
     };
   }
