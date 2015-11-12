@@ -39,6 +39,7 @@ namespace L {
       static float fps();
       static String format(String, Time = now());
   };
+  Stream& operator<<(Stream &s, const Time& v);
 }
 
 #endif
