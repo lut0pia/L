@@ -24,6 +24,7 @@ namespace L {
       Bitmap& save(const String& filePath);
       inline int width() const {return size(0);}
       inline int height() const {return size(1);}
+      const Color& at(int x, int y) const;
 
       // Image treatment
       Bitmap sub(int x, int y, int width, int height) const;

@@ -20,6 +20,12 @@ Bitmap& Bitmap::save(const String& filePath) {
   Interface<Bitmap>::toFile(*this,filePath);
   return *this;
 }
+const Color& Bitmap::at(int x, int y) const {
+  static Color outside;
+  if(x<0 || y<0 || x>=width() || y>=height())
+    return outside;
+  else return MultiArray<2,Color>::operator()(x,y);
+}
 
 Bitmap Bitmap::sub(int x, int y, int width, int height) const {
   Bitmap wtr;
