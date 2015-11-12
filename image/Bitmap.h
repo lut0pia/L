@@ -20,6 +20,7 @@ namespace L {
       } InterpolationType;
 
       inline Bitmap() : MultiArray<2,Color>() {}
+      inline Bitmap(const Vector2i& s) : MultiArray<2,Color>(s) {}
       inline Bitmap(int width, int height) : MultiArray<2,Color>(width,height) {}
       Bitmap(int width, int height, const Color&);
       inline Bitmap(const Color* a, int width, int height) : MultiArray<2,Color>(a,width,height) {}
