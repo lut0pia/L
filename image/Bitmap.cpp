@@ -81,9 +81,9 @@ Bitmap Bitmap::sub(int x, int y, int width, int height) const {
   return wtr;
 }
 void Bitmap::blit(const Bitmap& bmp, int x, int y) {
-  for(int i(0); i<bmp.width(); i++)
-    for(int j(0); j<bmp.height(); j++)
-      operator()(i+x,j+y) = bmp(i,j);
+  size_t linesize(bmp.width()*sizeof(Color));
+  for(int j(0); j<bmp.height(); j++)
+    memcpy(&operator()(x,j+y),&bmp(0,j),linesize);
 }
 void Bitmap::filter(Color c) {
   for(int x(0); x<width(); x++)
