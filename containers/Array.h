@@ -36,7 +36,7 @@ namespace L {
         copy(&operator[](0),&other[0],_size);
       }
       ~Array() {
-        destruct(&operator[](0),_size);
+        destruct((T*)_data,_size);
         free(_data);
       }
       inline Array& operator=(const Array& other) {
