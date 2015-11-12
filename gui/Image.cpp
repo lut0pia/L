@@ -6,28 +6,22 @@ using namespace L;
 using namespace GUI;
 
 GUI::Image::Image() : Solid(), _dimensions(0,0) {}
-GUI::Image::Image(const Ref<GL::Texture>& tex) : Solid() {
-  texture(tex);
-}
 GUI::Image::Image(const Bitmap& bmp) : Solid() {
   bitmap(bmp);
 }
-void GUI::Image::texture(const Ref<GL::Texture>& tex) {
-  _texture = tex;
-  _dimensions.x() = tex->width();
-  _dimensions.y() = tex->height();
-  dimensionsChanged(_dimensions);
-}
 void GUI::Image::bitmap(const Bitmap& bmp) {
-  texture(new GL::Texture(bmp));
+  _texture.load(bmp);
+  _dimensions.x() = bmp.width();
+  _dimensions.y() = bmp.height();
+  dimensionsChanged(_dimensions);
 }
 
 Vector2i GUI::Image::gDimensions() {
   return _dimensions;
 }
 void GUI::Image::draw(GL::Program& program) {
-  if(_texture && !clip.empty()) {
-    program.uniform("texture",*_texture);
+  if(!_texture.empty() && !clip.empty()) {
+    program.uniform("texture",_texture);
     glColor4ub(255,255,255,255);
     glBegin(GL_QUADS);
     glTexCoord2f((clip.min().x()>pos.x()) ? (float)(clip.min().x()-pos.x())/_dimensions.x() : 0.f,
@@ -43,6 +37,6 @@ void GUI::Image::draw(GL::Program& program) {
                  (clip.min().y()>pos.y()) ? (float)(clip.min().y()-pos.y())/_dimensions.y() : 0.f);
     glVertex2i(clip.max().x(),clip.min().y());
     glEnd();
-    _texture->unbind();
+    _texture.unbind();
   }
 }

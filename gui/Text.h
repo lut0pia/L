@@ -5,26 +5,22 @@
 #include "Image.h"
 #include "../font.h"
 
-namespace L{
-    namespace GUI{
-        class Text : public Image{
-            protected:
-                String text;
-                Font::Base& font;
-                Color color;
-                void redraw();
+namespace L {
+  namespace GUI {
+    class Text : public Image {
+      protected:
+        String _text;
+        Font::Base& _font;
+        Color _color;
+        void redraw();
 
-            public:
-                Text(const String& text = "", const String& font = "", Color = Color::white);
-                virtual ~Text(){}
-
-                // Setters
-                void sText(const String&, Color = Color::white);
-
-                // Getters
-                String gText() const{return text;}
-        };
-    }
+      public:
+        Text(const String& text = "", const String& font = "", Color = Color::white);
+        virtual ~Text() {}
+        void text(const String&, Color = Color::white);
+        const String& text() const {return _text;}
+    };
+  }
 }
 
 #endif

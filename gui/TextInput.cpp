@@ -16,7 +16,7 @@ void TextInput::updateText() {
     tmp = placeholder;
     c = Color::grey;
   }
-  textElement->sText(tmp,c);
+  textElement->text(tmp,c);
 }
 void TextInput::updateTextElement(Vector2i dim) {
   textElement->updateFromAbove(Vector<2,int>(std::min(pos.x(),pos.x()+dimensions.x()-dim.x()),

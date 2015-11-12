@@ -1,21 +1,25 @@
 #include "Text.h"
 
+#include "../time.h"
+
 using namespace L;
 using namespace GUI;
 
 void GUI::Text::redraw() {
-  Bitmap bmp(font.render(text));
-  bmp.filter(color);
+  Bitmap bmp(_font.render(_text));
+  bmp.filter(_color);
   bitmap(bmp);
 }
 GUI::Text::Text(const String& text, const String& font, Color color)
-  : Image(), text(text), font(Font::get(font)), color(color) {
+  : Image(), _text(text), _font(Font::get(font)), _color(color) {
   redraw();
 }
-void GUI::Text::sText(const String& text, Color color) {
-  this->text = text;
-  this->color = color;
-  redraw();
+void GUI::Text::text(const String& text, Color color) {
+  if(_text!=text || _color!=color) {
+    _text = text;
+    _color = color;
+    redraw();
+  }
 }
 
 
