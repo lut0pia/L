@@ -45,7 +45,7 @@ namespace L {
           values[i] = _gradients(ip).dot(point-Vector<d,float>(ip));
         }
         // Interpolate all dimensions
-        return Interpolation<d,float>::linear(values,weight);
+        return Interpolation<float>::linear<d>(values,weight.array());
       }
   };
 }
