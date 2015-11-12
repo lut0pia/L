@@ -33,7 +33,7 @@ namespace L {
           int lines(_size.product()/_size[0]);
           for(int i(0); i<lines; i++)
             swap(&operator[](size[0]*i),&operator[](_size[0]*i),size[0]);
-        } else
+        } else if(size[0]>_size[0])
           for(int i((size.product()/size[0])-1); i>=0; i--)
             swap(&operator[](size[0]*i),&operator[](_size[0]*i),_size[0]);
         _size = size;
