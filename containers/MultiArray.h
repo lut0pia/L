@@ -54,6 +54,7 @@ namespace L {
       inline const T& operator[](int i) const {return Array<T>::operator[](i);}
       inline int size(int i) const {return _size[i];}
       inline int size() const {return _size.product();}
+      inline bool empty() const {return Array<T>::empty();}
   };
 }
 
