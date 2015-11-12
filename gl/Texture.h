@@ -25,6 +25,7 @@ namespace L {
         inline GLuint id() const {return _id;}
         inline int width() const {return _width;}
         inline int height() const {return _height;}
+        inline bool empty() const {return !_width || !_height;}
     };
   }
 }
