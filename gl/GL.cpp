@@ -75,7 +75,7 @@ void GL::makeDisc(Mesh& mesh, int slices) {
 }
 
 void GL::draw2dLine(Vector<2,float> a, Vector<2,float> b, int size, const Color& c) {
-  glColor3ub(c.r(),c.g(),c.b());
+  color(c);
   glBegin(GL_LINES);
   glVertex2f(a.x(),a.y());
   glVertex2f(b.x(),b.y());
