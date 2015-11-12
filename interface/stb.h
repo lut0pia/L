@@ -5883,12 +5883,23 @@ namespace L {
       }
       bool from(Bitmap& bmp, const File& file) {
         int width, height, comp;
-        unsigned char* a(stbi_load(file.path(),&width,&height,&comp,4));
-        if(a || comp!=4) {
+        unsigned char* i(stbi_load(file.path(),&width,&height,&comp,4));
+        if(i) {
           bmp.resizeFast(width,height);
-          memcpy(&bmp[0],a,width*height*4);
+          size_t s(width*height);
+          unsigned char* a(i);
+          unsigned char* b((unsigned char*)&bmp[0]);
+          while(s--) {
+            b[2] = a[0];
+            b[1] = a[1];
+            b[0] = a[2];
+            b[3] = a[3];
+            a += 4;
+            b += 4;
+          }
+          stbi_image_free(i);
           return true;
-        } else throw L::Exception("stb_image: Could not load image");
+        } else return false;
       }
   };
 }

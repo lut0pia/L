@@ -26,8 +26,8 @@ void Texture::load(GLsizei width, GLsizei height, const void* data, bool mipmaps
   parameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   parameter(GL_TEXTURE_MIN_FILTER, (mipmaps)?GL_LINEAR_MIPMAP_LINEAR:GL_LINEAR);
   if(mipmaps)
-    gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, _width, _height, GL_RGBA, GL_UNSIGNED_BYTE, data);
-  else glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, _width, _height, GL_BGRA, GL_UNSIGNED_BYTE, data);
+  else glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_BGRA, GL_UNSIGNED_BYTE, data);
   unbind();
 }
 void Texture::bind() const {

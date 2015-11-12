@@ -53,7 +53,7 @@ void Mesh::draw() {
   if(_vertexDesc&COLOR) glEnableClientState(GL_COLOR_ARRAY);
   if(_vertexDesc&NORMAL) glEnableClientState(GL_NORMAL_ARRAY);
   if(_vertexDesc&VERTEX) glVertexPointer(3, GL_FLOAT, _vertexSize, (void*)(attributeOffset(_vertexDesc,VERTEX)));
-  if(_vertexDesc&COLOR) glColorPointer(4, GL_UNSIGNED_BYTE, _vertexSize, (void*)(attributeOffset(_vertexDesc,COLOR)));
+  if(_vertexDesc&COLOR) glColorPointer(GL_BGRA, GL_UNSIGNED_BYTE, _vertexSize, (void*)(attributeOffset(_vertexDesc,COLOR)));
   if(_vertexDesc&NORMAL) glNormalPointer(GL_FLOAT, _vertexSize, (void*)(attributeOffset(_vertexDesc,NORMAL)));
   if(_indexCount) glDrawElements(_primitive, _indexCount, GL_UNSIGNED_INT, (void*)0);
   else glDrawArrays(_primitive, 0, _vertexCount);

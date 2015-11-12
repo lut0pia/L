@@ -10,18 +10,18 @@ namespace L {
     public:
       inline Color() : Vector4b(0,0,0,0) {}
       inline Color(byte gs) : Vector4b(gs,gs,gs,0xff) {}
-      inline Color(byte r, byte g, byte b, byte a = 0xFF) : Vector4b(r,g,b,a) {}
+      inline Color(byte r, byte g, byte b, byte a = 0xFF) : Vector4b(b,g,r,a) {}
       Color(String);
 
-      inline byte r() const {return _c[0];}
+      inline byte r() const {return _c[2];}
       inline byte g() const {return _c[1];}
-      inline byte b() const {return _c[2];}
+      inline byte b() const {return _c[0];}
       inline byte a() const {return _c[3];}
-      inline uint rgb() const {return r()<<16|g()<<8|b();}
-      inline uint rgba() const {return r()<<24|g()<<16|b()<<8|a();}
-      inline byte& r() {return _c[0];}
+      inline uint rgb() const {return r()|g()<<8|b()<<16;}
+      inline uint rgba() const {return r()<<8|g()<<16|b()<<24|a();}
+      inline byte& r() {return _c[2];}
       inline byte& g() {return _c[1];}
-      inline byte& b() {return _c[2];}
+      inline byte& b() {return _c[0];}
       inline byte& a() {return _c[3];}
 
       static Color from(float r, float g, float b, float a = 1);
