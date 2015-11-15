@@ -815,6 +815,15 @@ Glyph Pixel::loadGlyph(size_t utf32) {
                  O,_,_,O,O,O,_,
                  _,O,_,_,_,_,_,
                  _,_,O,O,O,O,_)
+    case '&':
+      MAKE_GLYPH(6,7,
+                 _,_,_,_,_,_,
+                 _,_,O,_,_,_,
+                 _,O,_,O,_,_,
+                 _,_,O,_,_,_,
+                 _,O,_,O,_,O,
+                 O,_,_,_,O,_,
+                 _,O,O,O,_,O)
     case ' ':
       MAKE_GLYPH(3,1,_,_,_)
     default:
