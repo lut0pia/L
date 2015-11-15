@@ -30,6 +30,8 @@ namespace L {
       template<class T> inline Stream& operator<(const T& v) {write(&v,sizeof(v)); return *this;}
       template<class T> inline Stream& operator>(T& v) {read(&v,sizeof(v)); return *this;}
 
+      template<class T> inline Stream& operator<<(T* v) {return *this << numberToString<16>((uint)v,sizeof(v)*2);}
+
       inline Stream& operator<<(bool v) {return *this << ((v)?"true":"false");}
       inline Stream& operator<<(char v) {fputc(v,_fd); return *this;}
       inline Stream& operator<<(char* v) {fputs(v,_fd); return *this;}
