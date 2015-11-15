@@ -26,10 +26,8 @@ namespace L {
           push(*a++);
       }
       template <typename... Args>
-      Array(size_t size, Args&&... args) : _data(NULL), _size(0), _capacity(0) {
-        capacity(size);
-        while(_size<size)
-          push(args...);
+      Array(size_t s, Args&&... args) : _data(NULL), _size(0), _capacity(0) {
+        size(s,args...);
       }
       Array(const Array& other) : _size(other._size), _capacity(other._size) {
         _data = malloc(_size*sizeof(T));
