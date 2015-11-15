@@ -60,9 +60,10 @@ namespace L {
 
       template <typename... Args>
       void size(size_t n,Args&&... args) {
-        if(_capacity<n) capacity(n);
-        while(_size<n) push(args...);
-        while(_size>n) pop();
+        if(_capacity<n) growTo(n);
+        if(_size<n) construct(&operator[](_size),n-_size);
+        else destruct(&operator[](n),_size-n);
+        _size = n;
       }
       void capacity(size_t n) {
         if(n<_size) size(n); // Have to resize because capacity cannot be below size
