@@ -38,7 +38,9 @@ namespace L {
         free(_data);
       }
       inline Array& operator=(const Array& other) {
-        reconstruct(*this,other);
+        if(this!=&other) {
+          reconstruct(*this,other);
+        }
         return *this;
       }
       inline Array operator+(const Array& other) {Array wtr(*this); return wtr += other;}
