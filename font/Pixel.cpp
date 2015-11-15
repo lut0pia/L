@@ -741,23 +741,23 @@ Glyph Pixel::loadGlyph(size_t utf32) {
                  O,_,O,
                  O,_,O)
     case '(':
-      MAKE_GLYPH(3,7,
-                 _,_,O,
-                 _,O,_,
-                 _,O,_,
-                 _,O,_,
-                 _,O,_,
-                 _,O,_,
-                 _,_,O)
+      MAKE_GLYPH(2,7,
+                 _,O,
+                 O,_,
+                 O,_,
+                 O,_,
+                 O,_,
+                 O,_,
+                 _,O)
     case ')':
-      MAKE_GLYPH(3,7,
-                 O,_,_,
-                 _,O,_,
-                 _,O,_,
-                 _,O,_,
-                 _,O,_,
-                 _,O,_,
-                 O,_,_)
+      MAKE_GLYPH(2,7,
+                 O,_,
+                 _,O,
+                 _,O,
+                 _,O,
+                 _,O,
+                 _,O,
+                 O,_)
     case '{':
       MAKE_GLYPH(3,7,
                  _,_,O,
@@ -777,23 +777,23 @@ Glyph Pixel::loadGlyph(size_t utf32) {
                  _,O,_,
                  O,_,_)
     case '[':
-      MAKE_GLYPH(3,7,
-                 _,O,O,
-                 _,O,_,
-                 _,O,_,
-                 _,O,_,
-                 _,O,_,
-                 _,O,_,
-                 _,O,O)
+      MAKE_GLYPH(2,7,
+                 O,O,
+                 O,_,
+                 O,_,
+                 O,_,
+                 O,_,
+                 O,_,
+                 O,O)
     case ']':
-      MAKE_GLYPH(3,7,
-                 O,O,_,
-                 _,O,_,
-                 _,O,_,
-                 _,O,_,
-                 _,O,_,
-                 _,O,_,
-                 O,O,_)
+      MAKE_GLYPH(2,7,
+                 O,O,
+                 _,O,
+                 _,O,
+                 _,O,
+                 _,O,
+                 _,O,
+                 O,O)
     case ' ':
       MAKE_GLYPH(3,1,_,_,_)
     default:
