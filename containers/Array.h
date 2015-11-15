@@ -75,9 +75,11 @@ namespace L {
         }
       }
       void growTo(size_t size) {
-        size_t tmp((_capacity)?_capacity:1);
-        while(size>tmp) tmp *= 2;
-        capacity(tmp);
+        if(size>capacity()) {
+          size_t tmp((_capacity)?_capacity:1);
+          while(size>tmp) tmp *= 2;
+          capacity(tmp);
+        }
       }
       inline void shrink() {capacity(size());}
       template <typename... Args>
