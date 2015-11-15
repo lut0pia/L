@@ -602,8 +602,8 @@ Glyph Pixel::loadGlyph(size_t utf32) {
                        O,_,_,_,_,
                        O,O,O,O,_,
                        _,_,_,_,O,
-                       _,_,_,_,O,
-                       O,O,O,O,_)
+                       O,_,_,_,O,
+                       _,O,O,O,_)
     case '6':
       MAKE_UPPER_GLYPH(_,O,O,O,_,
                        O,_,_,_,O,
