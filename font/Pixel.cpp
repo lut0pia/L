@@ -824,6 +824,14 @@ Glyph Pixel::loadGlyph(size_t utf32) {
                  _,O,_,O,_,O,
                  O,_,_,_,O,_,
                  _,O,O,O,_,O)
+    case '~':
+      MAKE_UPPER_GLYPH(_,_,_,_,_,
+                       _,_,_,_,_,
+                       _,O,_,_,_,
+                       O,_,O,_,O,
+                       _,_,_,O,_,
+                       _,_,_,_,_,
+                       _,_,_,_,_)
     case ' ':
       MAKE_GLYPH(3,1,_,_,_)
     default:
