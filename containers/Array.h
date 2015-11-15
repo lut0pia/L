@@ -63,7 +63,7 @@ namespace L {
       template <typename... Args>
       void size(size_t n,Args&&... args) {
         if(_capacity<n) growTo(n);
-        if(_size<n) construct(&operator[](_size),n-_size);
+        if(_size<n) construct(&operator[](_size),n-_size,args...);
         else destruct(&operator[](n),_size-n);
         _size = n;
       }
