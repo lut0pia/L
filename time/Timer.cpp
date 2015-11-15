@@ -2,47 +2,42 @@
 
 using namespace L;
 
-Timer::Timer() : last(Time::now()), paused(false){}
-void Timer::setoff(){
-    last = Time::now();
+Timer::Timer() : _last(Time::now()), _paused(false) {}
+void Timer::setoff() {
+  _last = Time::now();
 }
-Time Timer::frame(){
-    if(!paused){
-        Time now(Time::now());
-        Time wtr(now-last);
-        last = now;
-        return wtr;
-    }
-    else return 0;
-}
-Time Timer::since() const{
-    return Time::now()-last;
-}
-bool Timer::every(const Time& span){
+Time Timer::frame() {
+  if(!_paused) {
     Time now(Time::now());
-    if(last<now-span && !paused){
-        last = now;
-        return true;
-    }
-    else return false;
+    Time wtr(now-_last);
+    _last = now;
+    return wtr;
+  } else return 0;
 }
-void Timer::pause(){
-    if(!paused){
-        last -= Time::now();
-        paused = true;
-    }
+Time Timer::since() const {
+  return Time::now()-_last;
 }
-void Timer::unpause(){
-    if(paused){
-        last += Time::now();
-        paused = false;
-    }
+bool Timer::every(const Time& span) {
+  Time now(Time::now());
+  if(_last<now-span && !_paused) {
+    _last = now;
+    return true;
+  } else return false;
 }
-void Timer::togglePause(){
-    if(paused)  unpause();
-    else        pause();
+void Timer::pause() {
+  if(!_paused) {
+    _last -= Time::now();
+    _paused = true;
+  }
 }
-bool Timer::gPaused(){
-    return paused;
+void Timer::unpause() {
+  if(_paused) {
+    _last += Time::now();
+    _paused = false;
+  }
+}
+void Timer::togglePause() {
+  if(_paused) unpause();
+  else pause();
 }
 

@@ -3,23 +3,25 @@
 
 #include "Time.h"
 
-namespace L{
-    class Timer{
-        private:
-            Time last;
-            bool paused;
+namespace L {
+  class Timer {
+    private:
+      Time _last;
+      bool _paused;
 
-        public:
-            Timer();
-            void setoff();
-            Time frame();
-            Time since() const;
-            bool every(const Time& span);
-            void pause();
-            void unpause();
-            void togglePause();
-            bool gPaused();
-    };
+    public:
+      Timer();
+
+      inline bool paused() const {return _paused;}
+
+      void setoff();
+      Time frame();
+      Time since() const;
+      bool every(const Time& span);
+      void pause();
+      void unpause();
+      void togglePause();
+  };
 }
 
 #endif
