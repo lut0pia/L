@@ -39,7 +39,8 @@ namespace L {
       }
       inline Array& operator=(const Array& other) {
         if(this!=&other) {
-          reconstruct(*this,other);
+          clear();
+          insertArray(0,other);
         }
         return *this;
       }
