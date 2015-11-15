@@ -52,17 +52,17 @@ namespace L {
         AkMemSettings memSettings;
         memSettings.uMaxNumPools = 20;
         if(AK::MemoryMgr::Init(&memSettings) != AK_Success)
-          L_Error("Wwise: MemoryMgr init");
+          throw Exception("Wwise: MemoryMgr init");
         // Initialize streaming manager
         AkStreamMgrSettings stmSettings;
         AK::StreamMgr::GetDefaultSettings(stmSettings);
         if(!AK::StreamMgr::Create(stmSettings))
-          L_Error("Wwise: StreamMgr init");
+          throw Exception("Wwise: StreamMgr init");
         // Create streaming device
         AkDeviceSettings deviceSettings;
         AK::StreamMgr::GetDefaultDeviceSettings(deviceSettings);
         if(_lowLevelIO.Init(deviceSettings)!= AK_Success)
-          L_Error("Wwise: MusicEngine init");
+          throw Exception("Wwise: MusicEngine init");
         _lowLevelIO.SetBasePath(basePath);
         AK::StreamMgr::SetCurrentLanguage(AKTEXT("English(US)"));
         // Initialize sound engine
@@ -71,18 +71,18 @@ namespace L {
         AK::SoundEngine::GetDefaultInitSettings(initSettings);
         AK::SoundEngine::GetDefaultPlatformInitSettings(platformInitSettings);
         if(AK::SoundEngine::Init(&initSettings, &platformInitSettings) != AK_Success)
-          L_Error("Wwise: SoundEngine init");
+          throw Exception("Wwise: SoundEngine init");
         // Initialize music engine
         AkMusicSettings musicInit;
         AK::MusicEngine::GetDefaultInitSettings(musicInit);
         if(AK::MusicEngine::Init(&musicInit)  != AK_Success)
-          L_Error("Wwise: MusicEngine init");
+          throw Exception("Wwise: MusicEngine init");
 #ifndef AK_OPTIMIZED
         // Initialize communication
         AkCommSettings commSettings;
         AK::Comm::GetDefaultInitSettings(commSettings);
         if(AK::Comm::Init(commSettings) != AK_Success)
-          L_Error("Wwise: Comm init");
+          throw Exception("Wwise: Comm init");
 #endif
         AK::SoundEngine::RegisterAllCodecPlugins();
         AK::SoundEngine::RegisterAllEffectPlugins();
@@ -132,7 +132,7 @@ namespace L {
       static void loadBank(const wchar_t* name) {
         AkBankID bankID;
         if(AK::SoundEngine::LoadBank(name,AK_DEFAULT_POOL_ID,bankID) != AK_Success)
-          L_Error("Wwise: couldn't load bank");
+          throw Exception("Wwise: couldn't load bank");
       }
   };
 }

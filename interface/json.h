@@ -35,7 +35,7 @@ namespace L {
           stream << ']';
         } else if(v.is<float>()) {
           stream << v.as<float>();
-        } else L_Error("Bad JSON output.");
+        } else throw Exception("Bad JSON output.");
         return true;
       }
       bool from(Var& v, Stream& stream) {
@@ -66,7 +66,7 @@ namespace L {
             v = Dynamic::Node();
             while(stream.peek()!='}') {
               stream.nospace();
-              if(stream.get()!='"') L_Error("Bad JSON input.");
+              if(stream.get()!='"') throw Exception("Bad JSON input.");
               str.clear();
               while((c = stream.get()) != '"') { // Get name of attribute
                 if(c == '\\' && stream.peek()=='"')
@@ -74,7 +74,7 @@ namespace L {
                 else str.push(c);
               }
               stream.nospace();
-              if(stream.get()!=':') L_Error("Bad JSON input.");
+              if(stream.get()!=':') throw Exception("Bad JSON input.");
               from(v[str],stream);
               if(stream.peek()==',')stream.ignore();
             }
