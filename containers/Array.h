@@ -68,9 +68,11 @@ namespace L {
         _size = n;
       }
       void capacity(size_t n) {
-        if(n<_size) size(n); // Have to resize because capacity cannot be below size
-        _data = realloc(_data,n*sizeof(T));
-        _capacity = n;
+        if(n!=capacity()) {
+          if(n<_size) size(n); // Have to resize because capacity cannot be below size
+          _data = realloc(_data,n*sizeof(T));
+          _capacity = n;
+        }
       }
       void growTo(size_t size) {
         size_t tmp((_capacity)?_capacity:1);
