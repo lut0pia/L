@@ -31,11 +31,6 @@
 #define L_DebugOnly(x)
 #endif
 
-#define L_FileLine ("\nFile:\t" __FILE__ "\nLine:\t" L_Stringify(__LINE__))
-#define L_Error(msg) throw L::Exception(L::String("\nMsg: \t")+(msg)+L::String(L_FileLine))
-#define L_ErrorIf(condition,msg) if(condition) L_Error(msg)
-#define L_Warning(msg) L_DebugOnly(L_Error(msg))
-#define L_WarningIf(condition,msg) L_DebugOnly(L_ErrorIf(condition, msg))
 
 #endif
 

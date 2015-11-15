@@ -36,13 +36,14 @@ void MeshBuilder::reset(byte vertexDesc, uint maxVertices, uint maxIndices) {
   _currentVertex = _vertexBuffer;
 }
 void MeshBuilder::computeNormals() {
-  L_ErrorIf(!(_vertexDesc & Mesh::NORMAL),"There are no normals in this mesh.");
+  if(!(_vertexDesc & Mesh::NORMAL))
+    throw Exception("There are no normals in this mesh.");
   for(uint i(0); i<_vertexCount; i++)
     normal(i) = Vector3f(0,0,0);
   for(uint i(0); i<_indexCount; i+=3) {
     Vector3f& a(vertex(_indexBuffer[i]));
     Vector3f n((vertex(_indexBuffer[i+1])-a)
-              .cross(vertex(_indexBuffer[i+2])-a));
+               .cross(vertex(_indexBuffer[i+2])-a));
     n.normalize();
     normal(_indexBuffer[i]) += n;
     normal(_indexBuffer[i+1]) += n;
