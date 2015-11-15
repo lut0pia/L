@@ -9,6 +9,11 @@ namespace L {
   inline void construct(T& v, Args&&... args) {
     new(&v) T(args...);
   }
+  template <class T, typename... Args>
+  inline void construct(T* p, size_t count, Args&&... args) {
+    while(count--)
+      new(p++) T(args...);
+  }
   template <class T>
   inline void destruct(T& v) {
     v.~T();
