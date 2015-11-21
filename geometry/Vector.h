@@ -130,6 +130,12 @@ namespace L {
           wtr *= _c[i];
         return wtr;
       }
+      T sum() const {
+        T wtr(0);
+        for(int i(0); i<d; i++)
+          wtr += _c[i];
+        return wtr;
+      }
       bool increment(const Vector& min, const Vector& max, const Vector& delta = 1) {
         for(int i(0); i<d; i++) {
           _c[i] += delta[i];
