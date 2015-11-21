@@ -9,6 +9,7 @@ namespace L {
   class Color  : public Vector4b {
     public:
       inline Color() : Vector4b(0,0,0,0) {}
+      inline Color(const Vector4b& v) : Vector4b(v) {}
       inline Color(byte gs) : Vector4b(gs,gs,gs,0xff) {}
       inline Color(byte r, byte g, byte b, byte a = 0xFF) : Vector4b(b,g,r,a) {}
       Color(String);
