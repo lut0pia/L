@@ -142,14 +142,13 @@ namespace L {
           }
 
           inline void* operator new(size_t size) {
-            return _pool.allocate();
+            return Pool<Node>::global.allocate();
           }
           inline void operator delete(void* p) {
-            _pool.deallocate(p);
+            Pool<Node>::global.deallocate(p);
           }
       };
       Node* _root;
-      static Pool<Node> _pool;
 
     public:
       Tree() : _root(NULL) {}
@@ -182,8 +181,6 @@ namespace L {
         return Node::size(_root);
       }
   };
-  template <int d,class K,class V>
-  Pool<typename Tree<d,K,V>::Node> Tree<d,K,V>::_pool;
 
   // Regular trees
   template <class K,class V> class BinaryTree : public Tree<1,K,V> {};
