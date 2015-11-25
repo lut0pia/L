@@ -26,16 +26,12 @@ namespace L {
         }
       }
     public:
-      Ref() : p(NULL), c(NULL) {}
-      Ref(const Ref& other) {
-        copy(other);
-      }
-      template <class R>
-      Ref(const Ref<R>& other) {
-        copy(other);
-      }
-      template <class R>
-      Ref(R* p): p(p), c(new int(1)) {}
+      inline Ref() : p(NULL), c(NULL) {}
+      inline Ref(const Ref& other) {copy(other);}
+      template <class R> inline Ref(const Ref<R>& other) {copy(other);}
+      template <class R> inline Ref(R* p): p(p), c(new int(1)) {}
+      inline ~Ref() {free();}
+
       Ref& operator=(const Ref& other) {
         if(p != other.p) {
           free();
@@ -53,32 +49,15 @@ namespace L {
         }
         return *this;
       }
-      ~Ref() {
-        free();
-      }
-      bool operator==(const Ref& other) {
-        return (p == other.p);
-      }
-      const T& operator*() const {
-        return *p;
-      }
-      T& operator*() {
-        return *p;
-      }
-      operator T*() const {
-        return p;
-      }
-      T* operator->() const {
-        return p;
-      }
-      inline bool null() const {
-        return (p==NULL);
-      }
-      inline void clear() {
-        *this = Ref();
-      }
-      template <class R>
-      friend class Ref;
+      inline bool operator==(const Ref& other) {return (p == other.p);}
+      inline const T& operator*() const {return *p;}
+      inline T& operator*() {return *p;}
+      inline operator T*() const {return p;}
+      inline T* operator->() const {return p;}
+      inline bool null() const {return (p==NULL);}
+      inline void clear() {free(); p=NULL; c=NULL;}
+
+      template <class R> friend class Ref;
   };
 
 }
