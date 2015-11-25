@@ -56,7 +56,7 @@ namespace L {
             } else if(_next)
               _next->deallocate(p);
           }
-          bool allocated(void* p) {
+          bool allocated(void* p) const {
             if(_data<=p && p<=_data+sizeof(_data)) {
               int i(((int)p-(int)_data)/alignedTypeSize);
               int j(i%intBits); // Bit position
