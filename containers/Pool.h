@@ -115,7 +115,9 @@ namespace L {
       inline void foreach(const std::function<void(T&)>& f) {
         if(_root) _root->foreach(f);
       }
+      static Pool global;
   };
+  template <class T> Pool<T> Pool<T>::global;
 }
 
 #endif
