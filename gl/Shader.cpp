@@ -5,10 +5,9 @@
 using namespace L;
 using namespace GL;
 
-void Shader::load(const String& src) {
-  GLint compile_status = GL_TRUE;
-  const GLchar* srcStr(src);
-  glShaderSource(_id, 1, &srcStr, NULL);
+void Shader::load(const char* src) {
+  GLint compile_status(GL_TRUE);
+  glShaderSource(_id, 1, &(const GLchar*)src, NULL);
   glCompileShader(_id);
   glGetShaderiv(_id, GL_COMPILE_STATUS, &compile_status);
   if(compile_status != GL_TRUE) {
@@ -22,7 +21,7 @@ void Shader::load(const String& src) {
 Shader::Shader(File file, GLenum type) : _id(glCreateShader(type)) {
   load(file.open("r").readAll());
 }
-Shader::Shader(const String& src, GLenum type) : _id(glCreateShader(type)) {
+Shader::Shader(const char* src, GLenum type) : _id(glCreateShader(type)) {
   load(src);
 }
 Shader::~Shader() {
