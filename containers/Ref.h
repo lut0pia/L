@@ -1,8 +1,6 @@
 #ifndef DEF_L_Ref
 #define DEF_L_Ref
 
-#include <cstdlib>
-
 namespace L {
   template<class T>
   class Ref {
@@ -26,7 +24,7 @@ namespace L {
         }
       }
     public:
-      inline Ref() : p(NULL), c(NULL) {}
+      inline Ref() : p(0), c(0) {}
       inline Ref(const Ref& other) {copy(other);}
       template <class R> inline Ref(const Ref<R>& other) {copy(other);}
       template <class R> inline Ref(R* p): p(p), c(new int(1)) {}
