@@ -9,12 +9,12 @@ namespace L {
       int* c; // Reference counter
 
       template <class R>
-      void copy(const Ref<R>& other) {
+      inline void copy(const Ref<R>& other) {
         p = other.p;
         c = other.c;
         if(c)(*c)++;
       }
-      void free() {
+      inline void free() {
         if(p) {
           (*c)--;
           if(*c==0) {
