@@ -19,6 +19,8 @@
 # define pclose _pclose
 #elif defined __unix__
 # define L_UNIX
+# include <unistd.h>
+# include <curses.h>
 #else
 # error Unknown OS
 #endif

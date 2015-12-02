@@ -3,15 +3,10 @@
 using namespace L;
 using namespace System;
 
-#if defined L_UNIX
-#include <unistd.h>
-#include <curses.h>
-#endif
-
 #include "Directory.h"
 #include "../Exception.h"
 
-String System::callGet(const String& cmd) {
+String System::callGet(const char* cmd) {
   String wtr = "";
   FILE* pipe = popen(cmd,"r");
   if(!pipe) throw Exception("Couldn't open pipe in System");
@@ -25,7 +20,7 @@ String System::callGet(const String& cmd) {
   }
   return wtr;
 }
-int System::call(const String& cmd) {
+int System::call(const char* cmd) {
   return system(cmd);
 }
 void System::sleep(int milliseconds) {
@@ -84,7 +79,7 @@ String System::fromClipboard() {
 #endif
   throw Exception("Cannot get clipboard data.");
 }
-String System::gEnv(const String& name) {
+String System::env(const String& name) {
   return getenv(name);
 }
 Vector2i System::screenSize() {
@@ -92,7 +87,7 @@ Vector2i System::screenSize() {
   return Vector2i(GetSystemMetrics(SM_CXSCREEN),GetSystemMetrics(SM_CYSCREEN));
 #endif
 }
-void System::sConsoleCursorPosition(ushort x,ushort y) {
+void System::consoleCursorPosition(ushort x,ushort y) {
 #if defined L_WINDOWS
   HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
   COORD position = {(short)x,(short)y};
