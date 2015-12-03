@@ -2,6 +2,7 @@
 #define DEF_L_Stream
 
 #include <cstdio>
+#include "../math/math.h"
 
 namespace L {
   class Stream {
@@ -30,11 +31,12 @@ namespace L {
       template<class T> inline Stream& operator<(const T& v) {write(&v,sizeof(v)); return *this;}
       template<class T> inline Stream& operator>(T& v) {read(&v,sizeof(v)); return *this;}
 
-      template<class T> inline Stream& operator<<(T* v) {return *this << numberToString<16>((uint)v,sizeof(v)*2);}
+      template<class T> inline Stream& operator<<(T* v) {return *this << numberToString<16>((unsigned int)v,sizeof(v)*2);}
 
       inline Stream& operator<<(bool v) {return *this << ((v)?"true":"false");}
       inline Stream& operator<<(char v) {fputc(v,_fd); return *this;}
       inline Stream& operator<<(char* v) {fputs(v,_fd); return *this;}
+      inline Stream& operator<<(unsigned char v) {return *this << numberToString<16>((unsigned int)v,2);}
       inline Stream& operator<<(const char* v) {fputs(v,_fd); return *this;}
       inline Stream& operator<<(short v) {fprintf(_fd,"%i",v); return *this;}
       inline Stream& operator<<(int v) {fprintf(_fd,"%i",v); return *this;}
