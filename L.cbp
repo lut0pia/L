@@ -111,12 +111,8 @@
 		<Unit filename="containers/XML.cpp" />
 		<Unit filename="containers/XML.h" />
 		<Unit filename="dynamic.h" />
-		<Unit filename="dynamic/Array.cpp" />
-		<Unit filename="dynamic/Array.h" />
 		<Unit filename="dynamic/Cast.cpp" />
 		<Unit filename="dynamic/Cast.h" />
-		<Unit filename="dynamic/Node.cpp" />
-		<Unit filename="dynamic/Node.h" />
 		<Unit filename="dynamic/Type.h" />
 		<Unit filename="dynamic/Variable.cpp" />
 		<Unit filename="dynamic/Variable.h" />
