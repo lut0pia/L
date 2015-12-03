@@ -1,7 +1,6 @@
 #include "Variable.h"
 
 using namespace L;
-using namespace Dynamic;
 
 void* Variable::value() {
   if(local()) // Value is contained locally
@@ -50,7 +49,7 @@ Variable& Variable::operator[](size_t i) {
   return as<Array<Variable> >()[i];
 }
 
-L::Stream& L::Dynamic::operator<<(L::Stream& s, const Variable& v) {
+Stream& L::operator<<(L::Stream& s, const Variable& v) {
   v.type()->out(s,v.value());
   return s;
 }

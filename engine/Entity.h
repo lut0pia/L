@@ -9,7 +9,7 @@
 namespace L {
   class Entity {
     private:
-      Array<KeyValue<const Dynamic::TypeDescription*,Component*> > _components;
+      Array<KeyValue<const TypeDescription*,Component*> > _components;
 
     public:
       inline void* operator new(size_t size) {return Pool<Entity>::global.allocate();}
@@ -18,7 +18,7 @@ namespace L {
 
       template <class CompType>
       CompType* component() {
-        const Dynamic::TypeDescription* td(Dynamic::Type<CompType>::description());
+        const TypeDescription* td(Type<CompType>::description());
         for(int i(0); i<_components.size(); i++)
           if(_components[i].key()==td)
             return (CompType*)_components[i].value();
@@ -28,7 +28,7 @@ namespace L {
       CompType* add() {
         CompType* component(Pool<CompType>::global.construct());
         component->entity(this);
-        _components.push(keyValue(Dynamic::Type<CompType>::description(),(Component*)component)); // Link the entity to the component
+        _components.push(keyValue(Type<CompType>::description(),(Component*)component)); // Link the entity to the component
         component->start();
         return component;
       }
