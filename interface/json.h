@@ -2,8 +2,6 @@
 #define DEF_L_Interface_json
 
 #include <L/L.h>
-#include <iostream>
-#include <iomanip>
 
 namespace L {
   class JSON : public Interface<Var> {
@@ -15,22 +13,22 @@ namespace L {
           stream << '"' << v.as<String>() << '"';
         else if(v.is<bool>())
           stream << v.as<bool>();
-        else if(v.is<Dynamic::Node>()) {
+        else if(v.is<Map<String,Var> >()) {
           stream << '{';
           bool first(true);
-          v.as<Dynamic::Node>().foreach([this,&v,&stream,&first](const KeyValue<String,Var>& e) {
+          v.as<Map<String,Var> >().foreach([this,&v,&stream,&first](const KeyValue<String,Var>& e) {
             if(first) first = false;
             else stream << ',';
             stream << '"' << e.key() << "\":";
             to(e.value(),stream);
           });
           stream << '}';
-        } else if(v.is<Dynamic::Array>()) {
+        } else if(v.is<Array<Var> >()) {
           stream << '[';
-          for(int i(0); i<v.as<Dynamic::Array>().size(); i++) {
+          for(int i(0); i<v.as<Array<Var> >().size(); i++) {
             if(i >0)
               stream << ',';
-            to(v.as<Dynamic::Array>()[i],stream);
+            to(v.as<Array<Var> >()[i],stream);
           }
           stream << ']';
         } else if(v.is<float>()) {
@@ -63,7 +61,7 @@ namespace L {
             }
             break;
           case '{':
-            v = Dynamic::Node();
+            v = Map<String,Var>();
             while(stream.peek()!='}') {
               stream.nospace();
               if(stream.get()!='"') throw Exception("Bad JSON input.");
@@ -82,7 +80,7 @@ namespace L {
             break;
           case '[': // Array
             i = 0;
-            v = Dynamic::Array();
+            v = Array<Var>();
             while(stream.peek()!=']') {
               from(v[i],stream);
               if(stream.peek()==',')stream.ignore();
