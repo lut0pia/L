@@ -9,7 +9,7 @@
 
 #include <cstdio>
 #include <cstdlib>
-#include "../dynamic.h"
+#include "../dynamic/Variable.h"
 #include "../macros.h"
 
 namespace L {

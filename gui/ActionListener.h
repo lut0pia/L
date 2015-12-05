@@ -2,7 +2,6 @@
 #define DEF_L_GUI_ActionListener
 
 #include <functional>
-#include "../dynamic.h"
 #include "Layer.h"
 
 namespace L {

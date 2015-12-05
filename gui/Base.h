@@ -5,7 +5,7 @@
 #include "../gl/Program.h"
 #include "../gl/GL.h"
 #include "../containers/Ref.h"
-#include "../dynamic.h"
+#include "../dynamic/Variable.h"
 #include "../system/Window.h"
 
 namespace L {
