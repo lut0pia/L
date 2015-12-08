@@ -28,6 +28,7 @@
 #include "gui.h"            // 2D graphical user interface
 #include "image.h"          // Images, textures, colors
 #include "math.h"           // Mathematical tools
+#include "network.h"        // Network tools
 #include "parallelism.h"    // Threads & synchronization
 #include "patterns.h"       // Design patterns
 #include "script.h"         // Scripting language

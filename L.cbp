@@ -222,6 +222,9 @@
 		<Unit filename="math/Real.cpp" />
 		<Unit filename="math/Real.h" />
 		<Unit filename="math/math.h" />
+		<Unit filename="network.h" />
+		<Unit filename="network/Network.cpp" />
+		<Unit filename="network/Network.h" />
 		<Unit filename="objects.h" />
 		<Unit filename="parallelism.h" />
 		<Unit filename="parallelism/Coroutine.cpp" />

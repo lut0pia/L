@@ -5,119 +5,87 @@ using namespace Network;
 
 #include <cstring>
 #include "../Exception.h"
+#include "../streams/NetStream.h"
 #include "../system/File.h"
-#include "Stream.h"
 
 #if defined L_WINDOWS
-    WSADATA WSAData;
+WSADATA WSAData;
 #endif
 
-void Network::init(){
-    #if defined L_WINDOWS
-        WSAStartup(MAKEWORD(2,0), &WSAData);
-    #endif
+void Network::init() {
+#if defined L_WINDOWS
+  WSAStartup(MAKEWORD(2,0), &WSAData);
+#endif
 }
-SOCKET Network::connectTo(const String& port, const String& ip){
-    SOCKET sd(0);
-
-    SOCKADDR_IN sin;
-    sin.sin_addr.s_addr = inet_addr(ip.c_str());
-    sin.sin_family = AF_INET;
-    sin.sin_port = htons(atoi(port.c_str()));
-
-    if((sd = socket(AF_INET,SOCK_STREAM,0)) < 0){
-        closesocket(sd);
-        throw Exception("Client socket error");
-    }
-    else if(connect(sd,(SOCKADDR*)&sin,sizeof(sin)) < 0){
-        closesocket(sd);
-        throw Exception("Client connect error");
-    }
-
-    /*
-    struct addrinfo hints, *res, *i;
-
-    memset(&hints, 0, sizeof hints);
-    hints.ai_family = AF_UNSPEC;
-    hints.ai_socktype = SOCK_STREAM;
-
-    if(getaddrinfo(ip, port, &hints, &res))
-        throw Exception("Client lookup error";
-
-    for(i = res;i != NULL;i = i->ai_next){
-        if((sd = socket(i->ai_family, i->ai_socktype, i->ai_protocol)) == INVALID_SOCKET){
-            throw Exception("Client socket error";
-            continue;
-        }
-        else if(connect(sd, i->ai_addr, i->ai_addrlen) == SOCKET_ERROR){
-            throw Exception("Client connect error " << WSAGetLastError();
-            closesocket(sd);
-            continue;
-        }
-        throw Exception("Client connection success";
-        break;
-    }
-    freeaddrinfo(res);
-    */
-    return sd;
+SOCKET Network::connectTo(short port, const char* ip) {
+  SOCKET sd(0);
+  SOCKADDR_IN sin;
+  sin.sin_addr.s_addr = inet_addr(ip);
+  sin.sin_family = AF_INET;
+  sin.sin_port = htons(port);
+  if((sd = socket(AF_INET,SOCK_STREAM,0)) < 0) {
+    closesocket(sd);
+    throw Exception("Couldn't create socket to "+String(ip)+":"+String::from(port)+" - "+error());
+  } else if(connect(sd,(SOCKADDR*)&sin,sizeof(sin)) < 0) {
+    closesocket(sd);
+    throw Exception("Couldn't connect to "+String(ip)+":"+String::from(port)+" - "+error());
+  }
+  return sd;
 }
-Set<String> Network::DNSLookup(const String& host){
-    struct addrinfo hints, *res, *p;
-    int status;
-    Set<String> wtr;
-
-    memset(&hints, 0, sizeof hints);
-    hints.ai_family = AF_UNSPEC; // AF_INET or AF_INET6 to force version
-    hints.ai_socktype = SOCK_STREAM;
-
-    if((status = getaddrinfo(host.c_str(), NULL, &hints, &res)) != 0){
-        fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(status));
-        return wtr;
-    }
-
-    for(p = res;p != NULL; p = p->ai_next){
-        // get the pointer to the address itself,
-        // different fields in IPv4 and IPv6:
-        if (p->ai_family == AF_INET){ // IPv4
-            struct sockaddr_in *ipv4 = (struct sockaddr_in *)p->ai_addr;
-
-            wtr.insert(inet_ntoa(ipv4->sin_addr));
-        }
-        /*else { // IPv6
-            struct sockaddr_in6 *ipv6 = (struct sockaddr_in6 *)p->ai_addr;
-            addr = &(ipv6->sin6_addr);
-            ipver = "IPv6";
-        }
-        */
+Set<String> Network::DNSLookup(const char* host) {
+  struct addrinfo hints, *res, *p;
+  Set<String> wtr;
+  memset(&hints, 0, sizeof hints);
+  hints.ai_family = AF_UNSPEC; // AF_INET or AF_INET6 to force version
+  hints.ai_socktype = SOCK_STREAM;
+  if(!getaddrinfo(host, NULL, &hints, &res)) {
+    for(p = res; p != NULL; p = p->ai_next) {
+      // get the pointer to the address itself,
+      // different fields in IPv4 and IPv6:
+      if(p->ai_family == AF_INET) { // IPv4
+        struct sockaddr_in *ipv4 = (struct sockaddr_in *)p->ai_addr;
+        wtr.insert(inet_ntoa(ipv4->sin_addr));
+      }
+      /*else { // IPv6
+          struct sockaddr_in6 *ipv6 = (struct sockaddr_in6 *)p->ai_addr;
+          addr = &(ipv6->sin6_addr);
+          ipver = "IPv6";
+      }
+      */
     }
     freeaddrinfo(res); // free the linked list
-    return wtr;
+  }
+  return wtr;
 }
-String Network::HTTPRequest(const String& url){
-    size_t tmp;
-    char buffer[1024];
-    String wtr;
-    SOCKET sd;
 
-    // Find out what's the host and what's the request
-    String host(url.substr(0,url.find_first_of('/'))), request;
-    if((tmp = url.find('/')) == String::npos)
-        request = "/";
-    else
-        request = url.substr(tmp);
-
-    // Connect to the server
-    Stream test(sd = connectTo("80",DNSLookup(host)[0]));
-
+String Network::HTTPRequest(const String& url) {
+  size_t tmp;
+  char buffer[1024];
+  String wtr;
+  SOCKET sd;
+  // Find out what's the host and what's the request
+  int slash(url.findFirst('/'));
+  String host((slash>=0)?url.substr(0,slash):url), request((slash>=0)?url.substr(slash):"/");
+  // Connect to the server
+  Set<String> ips(DNSLookup(host));
+  if(!ips.empty()) {
+    NetStream test(sd = connectTo(80,ips[0]));
     test << "GET " << request << " HTTP/1.1\r\nHost: " << host << "\r\nConnection: close\r\n\r\n";
-
-    while((tmp = recv(sd,buffer,1024,0)))
-        wtr += String(buffer,tmp);
+    test.flush();
+    while((tmp = ::recv(sd,buffer,1024,0)))
+      wtr += String(buffer,tmp);
     return wtr;
+  } else throw Exception("Could not find ip for "+host);
 }
-void Network::HTTPDownload(const String& url, const String& name){
-    String answer(HTTPRequest(url));
-    File file(name);
-    file.open("w");
-    file.write(String(answer,answer.find("\r\n\r\n")+4));
+void Network::HTTPDownload(const char* url, const char* name) {
+  String answer(HTTPRequest(url));
+  FileStream file(name,"wb");
+  file << String(answer,answer.findFirst("\r\n\r\n")+4);
+}
+String Network::error() {
+#if defined L_WINDOWS
+  return String::from(WSAGetLastError());
+#elif defined L_UNIX
+  return errno();
+#endif
 }
