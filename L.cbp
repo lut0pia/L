@@ -111,6 +111,8 @@
 		<Unit filename="containers/XML.cpp" />
 		<Unit filename="containers/XML.h" />
 		<Unit filename="dynamic.h" />
+		<Unit filename="dynamic/Assembly.cpp" />
+		<Unit filename="dynamic/Assembly.h" />
 		<Unit filename="dynamic/Cast.cpp" />
 		<Unit filename="dynamic/Cast.h" />
 		<Unit filename="dynamic/Type.h" />
