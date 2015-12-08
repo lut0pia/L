@@ -20,7 +20,7 @@
 #include "audio.h"          // Audio I/O, Wave & Midi
 #include "bytes.h"          // Byte to byte functions, encoding
 #include "containers.h"     // Classes that hold other classes
-#include "dynamic.h"        // Dynamic typing/casting
+#include "dynamic.h"        // Dynamic typing/casting/compiling
 #include "engine.h"         // Entity and components
 #include "font.h"           // Font handling
 #include "geometry.h"       // Vectors, intervals, surfaces, volumes, and all related functions
