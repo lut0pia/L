@@ -131,3 +131,16 @@ String System::pathFile(const String& path) {
   return path.substr(1+path.findLast(slash));
 }
 
+void* System::alloc(size_t size) {
+#if defined L_WINDOWS
+  return VirtualAlloc(0,size,MEM_COMMIT|MEM_RESERVE,PAGE_EXECUTE_READWRITE);
+#elif defined L_UNIX
+  return mmap(0,size,PROT_READ | PROT_WRITE | PROT_EXEC,MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+#endif
+}
+void System::dealloc(void* p) {
+#if defined L_WINDOWS
+  VirtualFree(p,0,MEM_RELEASE);
+#elif defined L_UNIX
+#endif
+}

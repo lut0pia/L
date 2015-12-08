@@ -28,6 +28,9 @@ namespace L {
     String pathDirectory(const String&);
     String pathFile(const String&);
 
+    void* alloc(size_t);
+    void dealloc(void*);
+
 #if defined L_WINDOWS
     const char slash = '\\';
 #elif defined L_UNIX
