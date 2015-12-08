@@ -258,6 +258,8 @@
 		<Unit filename="script/code/Node.h" />
 		<Unit filename="streams.h" />
 		<Unit filename="streams/FileStream.h" />
+		<Unit filename="streams/NetStream.cpp" />
+		<Unit filename="streams/NetStream.h" />
 		<Unit filename="streams/Stream.cpp" />
 		<Unit filename="streams/Stream.h" />
 		<Unit filename="system.h" />
