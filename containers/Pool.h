@@ -10,11 +10,10 @@ namespace L {
   class Pool {
       static const int tableSize = 16;
       static const int intBits = sizeof(int)*8;
-      static const int alignedTypeSize = alignment<T>::padded;
-      static const int blockSize = tableSize*intBits*alignedTypeSize;
-
     private:
       class Block {
+          static const int alignedTypeSize = alignment<T>::padded;
+          static const int blockSize = tableSize*intBits*alignedTypeSize;
         private:
           int _table[tableSize]; // Every bit of this array represents a object slot in _data
           byte _data[blockSize];
