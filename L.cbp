@@ -137,9 +137,9 @@
 		<Unit filename="font/Pixel.h" />
 		<Unit filename="geometry.h" />
 		<Unit filename="geometry/Interval.h" />
-		<Unit filename="geometry/Vector.h" />
 		<Unit filename="geometry/Segment.h" />
 		<Unit filename="geometry/Surface.h" />
+		<Unit filename="geometry/Vector.h" />
 		<Unit filename="geometry/Volume.h" />
 		<Unit filename="gl.h" />
 		<Unit filename="gl/Buffer.cpp" />
@@ -229,6 +229,8 @@
 		<Unit filename="parallelism.h" />
 		<Unit filename="parallelism/Coroutine.cpp" />
 		<Unit filename="parallelism/Coroutine.h" />
+		<Unit filename="parallelism/Fiber.cpp" />
+		<Unit filename="parallelism/Fiber.h" />
 		<Unit filename="parallelism/Mutex.cpp" />
 		<Unit filename="parallelism/Mutex.h" />
 		<Unit filename="parallelism/RWSync.cpp" />
