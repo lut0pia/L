@@ -29,7 +29,7 @@
 #include "image.h"          // Images, textures, colors
 #include "math.h"           // Mathematical tools
 #include "network.h"        // Network tools
-#include "parallelism.h"    // Threads & synchronization
+#include "parallelism.h"    // Threads, coroutines, fibers and synchronization
 #include "patterns.h"       // Design patterns
 #include "script.h"         // Scripting language
 #include "streams.h"        // C-Stream wrapper and friends
