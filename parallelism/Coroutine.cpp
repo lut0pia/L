@@ -3,13 +3,12 @@
 using namespace L;
 
 StaticStack<32,Coroutine*> Coroutine::_coroutines;
+Fiber* Coroutine::_mainFiber;
 
 bool Coroutine::jump() {
   if(!_returned && (_nextJump==0 || _nextJump<Time::now())) {
     _coroutines.push(this);
-    if(!setjmp(_caller))
-      longjmp(_callee,1);
-    _coroutines.pop();
+    _fiber->schedule();
   }
   return _returned;
 }
@@ -22,9 +21,11 @@ void Coroutine::terminate() {
   while(!_returned) jump();
 }
 bool Coroutine::yield() {
-  if((_coroutines.top()->_nextYield==0 || _coroutines.top()->_nextYield<Time::now())
-      && !setjmp(_coroutines.top()->_callee))
-    longjmp(_coroutines.top()->_caller,1);
+  if((_coroutines.top()->_nextYield==0 || _coroutines.top()->_nextYield<Time::now())) {
+    _coroutines.pop();
+    if(_coroutines.empty()) _mainFiber->schedule();
+    else _coroutines.top()->_fiber->schedule();
+  }
   return _coroutines.top()->_terminating;
 }
 bool Coroutine::yieldFor(const Time& time) {
