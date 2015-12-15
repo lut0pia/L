@@ -26,7 +26,7 @@
 #include "geometry.h"       // Vectors, intervals, surfaces, volumes, and all related functions
 #include "gl.h"             // Everything related to OpenGL
 #include "gui.h"            // 2D graphical user interface
-#include "image.h"          // Images, textures, colors
+#include "image.h"          // Images and colors
 #include "math.h"           // Mathematical tools
 #include "network.h"        // Network tools
 #include "parallelism.h"    // Threads, coroutines, fibers and synchronization
