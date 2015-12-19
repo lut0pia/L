@@ -112,7 +112,7 @@ namespace L {
             wtr(x,y) = (((x+y)%2)?-1:1) * sub(x,y).det();
         return wtr;
       }
-      Matrix inverse() const {
+      inline Matrix inverse() const {
         return adjugate().transpose()/det();
       }
 
