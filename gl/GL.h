@@ -3,11 +3,13 @@
 
 #include "Mesh.h"
 #include "Texture.h"
+#include "Program.h"
 
 namespace L {
   namespace GL {
     void init();
     const Texture& whiteTexture();
+    Program& baseProgram();
     const char* error();
     void drawAxes();
     void makeDisc(Mesh&, int slices);

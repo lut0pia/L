@@ -1,12 +1,14 @@
 #include "GL.h"
 
-#include "MeshBuilder.h"
 #include "../constants.h"
+#include "MeshBuilder.h"
+#include "Shader.h"
 
 using namespace L;
 using namespace GL;
 
 Texture* whiteTex;
+Program* program;
 MeshBuilder meshBuilder;
 
 void GL::init() {
@@ -15,11 +17,29 @@ void GL::init() {
     done = true;
     glewInit();
     whiteTex = new Texture(Bitmap(1,1,Color::white));
+    program = new Program(Shader(
+                            "#version 130\n"
+                            "uniform mat4 projection;"
+                            "varying vec4 color;"
+                            "void main() {"
+                            "gl_Position =  projection * gl_ModelViewMatrix * gl_Vertex;"
+                            "gl_TexCoord[0] = gl_MultiTexCoord0;"
+                            "color = gl_Color;"
+                            "}",GL_VERTEX_SHADER),
+                          Shader(
+                            "#version 130\n"
+                            "uniform sampler2D texture;"
+                            "varying vec4 color;"
+                            "void main(){"
+                            "gl_FragColor = color*texture2D(texture,gl_TexCoord[0].xy);"
+                            "}",GL_FRAGMENT_SHADER));
   }
 }
-
 const Texture& GL::whiteTexture() {
   return *whiteTex;
+}
+Program& GL::baseProgram() {
+  return *program;
 }
 const char* GL::error() {
   static char invalidEnum[] = "GL_INVALID_ENUM";
@@ -73,7 +93,6 @@ void GL::makeDisc(Mesh& mesh, int slices) {
   meshBuilder.addTriangle(center,first,last);
   reconstruct(mesh,meshBuilder);
 }
-
 void GL::draw2dLine(Vector<2,float> a, Vector<2,float> b, int size, const Color& c) {
   color(c);
   glBegin(GL_LINES);
@@ -81,4 +100,3 @@ void GL::draw2dLine(Vector<2,float> a, Vector<2,float> b, int size, const Color&
   glVertex2f(b.x(),b.y());
   glEnd();
 }
-
