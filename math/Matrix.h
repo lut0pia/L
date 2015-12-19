@@ -102,7 +102,7 @@ namespace L {
           }
         return wtr;
       }
-      T det() const {
+      inline T det() const {
         return L::det(*this);
       }
       Matrix adjugate() const {
