@@ -8,6 +8,7 @@
 #include "../time/Timer.h"
 
 namespace L {
+  class Camera;
   class Engine {
     private:
       template <class CompType>
@@ -15,7 +16,12 @@ namespace L {
         CompType::preupdates();
         Pool<CompType>::global.foreach([](CompType& c) {c.update();});
       }
+      template <class CompType>
+      static void renderAll(const Camera& cam) {
+        Pool<CompType>::global.foreach([&cam](CompType& c) {c.render(cam);});
+      }
       static Set<void (*)()> _updates;
+      static Set<void (*)(const Camera&)> _renders;
       static Map<String,Ref<GL::Texture> > _textures;
       static Timer _timer;
       static Time _deltaTime;
@@ -28,7 +34,12 @@ namespace L {
       static void update();
       static const Ref<GL::Texture>& texture(const char* filepath);
 
-      template <class CompType> inline static void addSystem() {_updates.insert(updateAll<CompType>);}
+      template <class CompType> inline static void add() {
+        if(CompType::enableUpdate)
+          _updates.insert(updateAll<CompType>);
+        if(CompType::enableRender)
+          _renders.insert(renderAll<CompType>);
+      }
   };
 }
 

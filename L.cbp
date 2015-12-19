@@ -119,12 +119,15 @@
 		<Unit filename="dynamic/Variable.cpp" />
 		<Unit filename="dynamic/Variable.h" />
 		<Unit filename="engine.h" />
+		<Unit filename="engine/Camera.cpp" />
+		<Unit filename="engine/Camera.h" />
 		<Unit filename="engine/Component.h" />
 		<Unit filename="engine/Engine.cpp" />
 		<Unit filename="engine/Engine.h" />
 		<Unit filename="engine/Entity.h" />
 		<Unit filename="engine/Sprite.h" />
 		<Unit filename="engine/SpriteAnimator.h" />
+		<Unit filename="engine/Transform.cpp" />
 		<Unit filename="engine/Transform.h" />
 		<Unit filename="font.h" />
 		<Unit filename="font/Base.cpp" />
