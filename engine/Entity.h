@@ -25,6 +25,12 @@ namespace L {
         return 0;
       }
       template <class CompType>
+      CompType* requireComponent() {
+        CompType* wtr(component<CompType>());
+        if(!wtr) throw Exception("Couldn't find required "+Type<CompType>::name()+" component");
+        return wtr;
+      }
+      template <class CompType>
       CompType* add() {
         CompType* component(Pool<CompType>::global.construct());
         component->entity(this);
