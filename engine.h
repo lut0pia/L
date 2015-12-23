@@ -4,4 +4,5 @@
 #include "engine/Engine.h"
 #include "engine/Sprite.h"
 #include "engine/SpriteAnimator.h"
+#include "engine/StaticMesh.h"
 #include "engine/Transform.h"
