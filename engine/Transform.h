@@ -16,6 +16,10 @@ namespace L {
       inline Transform* parent()const {return _parent;}
       inline void relative(const Matrix44f& m) {_relative = m; _absoluteFrame = -1;}
       inline void mult(const Matrix44f& m) { _relative = _relative * m; _absoluteFrame = -1;}
+      inline void rotate(const Vector3f& v, float d) {mult(Matrix44f::rotation(v,d));}
+      inline void phiLook(float d) {rotate(Vector3f(1,0,0),d);}
+      inline void thetaLook(float d) {rotate(Vector3f(0,0,1),d);}
+      inline void move(const Vector3f& d) {mult(Matrix44f::translation(d));}
 
       inline const Matrix44f& relative() {return _relative;}
       Vector3f right();
