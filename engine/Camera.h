@@ -2,7 +2,6 @@
 #define DEF_L_Camera
 
 #include "Transform.h"
-#include "../gl/Camera.h"
 
 namespace L {
   class Camera : public Component {
