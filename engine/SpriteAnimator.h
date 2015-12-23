@@ -17,7 +17,6 @@ namespace L {
         _time = _nextFrame = 0;
         _frame = 0;
       }
-      static const bool enableUpdate = true;
       void update() {
         _time += Engine::deltaSeconds();
         if(_time>=_nextFrame) {

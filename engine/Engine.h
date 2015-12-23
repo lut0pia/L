@@ -34,11 +34,11 @@ namespace L {
       static void update();
       static const Ref<GL::Texture>& texture(const char* filepath);
 
-      template <class CompType> inline static void add() {
-        if(CompType::enableUpdate)
-          _updates.insert(updateAll<CompType>);
-        if(CompType::enableRender)
-          _renders.insert(renderAll<CompType>);
+      template <class CompType> inline static void addUpdate() {
+        _updates.insert(updateAll<CompType>);
+      }
+      template <class CompType> inline static void addRender() {
+        _renders.insert(renderAll<CompType>);
       }
   };
 }
