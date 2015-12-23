@@ -10,8 +10,9 @@ void Camera::start() {
   _transform = entity().component<Transform>();
 }
 void Camera::prerender() {
+  static Matrix44f camOrient(Matrix44f::orientation(Vector3f(1,0,0),Vector3f(0,0,1),Vector3f(0,-1,0)).inverse());
   Matrix44f orientation(Matrix44f::orientation(_transform->right(),_transform->forward(),_transform->up()));
-  _view = _transform->absolute().inverse();
+  _view = camOrient * _transform->absolute().inverse();
   _viewProjection = _projection*_view;
   _ray = orientation*_projection.inverse();
   glLoadTransposeMatrixf(_viewProjection.array());
