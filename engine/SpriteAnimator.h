@@ -13,7 +13,7 @@ namespace L {
       int _frame;
     public:
       void start() {
-        _sprite = entity().component<Sprite>();
+        _sprite = entity().requireComponent<Sprite>();
         _time = _nextFrame = 0;
         _frame = 0;
       }
