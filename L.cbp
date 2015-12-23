@@ -125,6 +125,7 @@
 		<Unit filename="engine/Engine.cpp" />
 		<Unit filename="engine/Engine.h" />
 		<Unit filename="engine/Entity.h" />
+		<Unit filename="engine/Sprite.cpp" />
 		<Unit filename="engine/Sprite.h" />
 		<Unit filename="engine/SpriteAnimator.h" />
 		<Unit filename="engine/Transform.cpp" />
