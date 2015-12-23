@@ -5,6 +5,7 @@
 #include "../containers/Pool.h"
 #include "../containers/Ref.h"
 #include "../gl/Texture.h"
+#include "../gl/Mesh.h"
 #include "../time/Timer.h"
 
 namespace L {
@@ -23,6 +24,7 @@ namespace L {
       static Set<void (*)()> _updates;
       static Set<void (*)(const Camera&)> _renders;
       static Map<String,Ref<GL::Texture> > _textures;
+      static Map<String,Ref<GL::Mesh> > _meshes;
       static Timer _timer;
       static Time _deltaTime;
       static float _deltaSeconds, _fps;
@@ -33,6 +35,7 @@ namespace L {
       static inline uint frame() {return _frame;}
       static void update();
       static const Ref<GL::Texture>& texture(const char* filepath);
+      static const Ref<GL::Mesh>& mesh(const char* filepath);
 
       template <class CompType> inline static void addUpdate() {
         _updates.insert(updateAll<CompType>);
