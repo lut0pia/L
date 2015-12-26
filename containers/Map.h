@@ -33,7 +33,7 @@ namespace L {
       const V& operator[](const K& k) const {
         const KeyValue<K,V>* e(find(k));
         if(e) return e->value();
-        throw Exception("Nope");
+        throw Exception("Couldn't find key in Map");
       }
       inline const KeyValue<K,V>& operator[](int i) const {return Set<KeyValue<K,V> >::operator[](i);}
       inline bool has(const K& k) const {return find(k)!=0;}
