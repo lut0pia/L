@@ -1,6 +1,8 @@
 #ifndef DEF_L_Ref
 #define DEF_L_Ref
 
+#include "../streams/Stream.h"
+
 namespace L {
   template<class T>
   class Ref {
@@ -58,7 +60,10 @@ namespace L {
 
       template <class R> friend class Ref;
   };
-
+  template <class T>
+  Stream& operator<<(Stream& s, const Ref<T>& v) {
+    return s << '(' << ((T*)v) << ',' << v.references() << ')';
+  }
 }
 
 #endif
