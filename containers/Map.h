@@ -35,7 +35,7 @@ namespace L {
         if(e) return e->value();
         throw Exception("Couldn't find key in Map");
       }
-      inline const KeyValue<K,V>& operator[](int i) const {return Set<KeyValue<K,V> >::operator[](i);}
+      inline const KeyValue<K,V>& at(int i) const {return Set<KeyValue<K,V> >::operator[](i);}
       inline bool has(const K& k) const {return find(k)!=0;}
   };
   template <class K,class V> inline Stream& operator<<(Stream& s, const Map<K,V>& v) { return s << (const Array<KeyValue<K,V> >&)v;}
