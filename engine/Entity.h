@@ -17,7 +17,7 @@ namespace L {
       inline void operator delete(void* p) {Pool<Entity>::global.deallocate((Entity*)p);}
 
       template <class CompType>
-      CompType* component() {
+      CompType* component() const {
         const TypeDescription* td(Type<CompType>::description());
         for(int i(0); i<_components.size(); i++)
           if(_components[i].key()==td)
@@ -25,7 +25,7 @@ namespace L {
         return 0;
       }
       template <class CompType>
-      CompType* requireComponent() {
+      CompType* requireComponent() const {
         CompType* wtr(component<CompType>());
         if(!wtr) throw Exception("Couldn't find required "+Type<CompType>::name()+" component");
         return wtr;
