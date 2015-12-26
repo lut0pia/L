@@ -8,7 +8,7 @@
 namespace L {
   template <class K,class V>
   class Map : public Set<KeyValue<K,V> > {
-    typedef KeyValue<K,V> T;
+      typedef KeyValue<K,V> T;
     public:
       KeyValue<K,V>* find(const K& k) {
         KeyValue<K,V> key(k);
