@@ -29,7 +29,6 @@ void Camera::perspective(float fovy, float aspect, float near, float far) {
   _projection(2,3) = (-2.f*far*near)/(far-near);
   _projection(3,2) = -1.f;
   _projection(3,3) = 0.f;
-  update();
 }
 void Camera::ortho(float left, float right, float bottom, float top, float near, float far) {
   _projection = Matrix44f::identity();
@@ -39,7 +38,6 @@ void Camera::ortho(float left, float right, float bottom, float top, float near,
   _projection(0,3) = -(right+left)/(right-left);
   _projection(1,3) = -(top+bottom)/(top-bottom);
   _projection(2,3) = -(far+near)/(far-near);
-  update();
 }
 void Camera::pixels() {
   ortho(0,Window::width(),Window::height(),0);
