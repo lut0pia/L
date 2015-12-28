@@ -6,6 +6,7 @@
 
 namespace L {
   class Transform : public Component {
+      L_COMPONENT(Transform)
     private:
       Transform* _parent;
       Matrix44f _relative, _absolute;

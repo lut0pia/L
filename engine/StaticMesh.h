@@ -6,6 +6,7 @@
 
 namespace L {
   class StaticMesh : public Component {
+      L_COMPONENT(StaticMesh)
     private:
       Transform* _transform;
       Ref<GL::Mesh> _mesh;

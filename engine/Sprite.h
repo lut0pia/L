@@ -8,6 +8,7 @@
 
 namespace L {
   class Sprite : public Component {
+      L_COMPONENT(Sprite)
     private:
       Transform* _transform;
       Ref<GL::Texture> _texture;

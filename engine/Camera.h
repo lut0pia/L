@@ -5,6 +5,7 @@
 
 namespace L {
   class Camera : public Component {
+      L_COMPONENT(Camera)
     private:
       Transform* _transform;
     protected:

@@ -3,20 +3,23 @@
 
 namespace L {
   class Entity;
-  class Camera;
   class Component {
     private:
       Entity* _entity;
       inline void entity(Entity* e) {_entity = e;}
     public:
       inline Entity& entity() const {return *_entity;}
-      inline void start() {}
+      virtual void start() {}
       static inline void preupdates() {}
-      inline void update() {}
-      inline void render(const Camera&) {}
+
+      virtual Component* clone() = 0;
+
       friend class Entity;
   };
 }
+
+#define L_COMPONENT(name)\
+  Component* clone() {return Pool<name>::global.construct(*this);}
 
 #include "Entity.h"
 

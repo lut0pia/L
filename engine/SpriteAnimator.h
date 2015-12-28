@@ -5,6 +5,7 @@
 
 namespace L {
   class SpriteAnimator : public Component {
+      L_COMPONENT(SpriteAnimator)
     private:
       Sprite* _sprite;
       Vector2i _frames;
