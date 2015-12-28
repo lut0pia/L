@@ -11,3 +11,7 @@ Entity::Entity(const Entity* other) {
     p.value()->start();
   }
 }
+Entity::~Entity() {
+  for(int i(0); i<_components.size(); i++)
+    _components[i].value()->destruct();
+}

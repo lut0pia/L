@@ -14,6 +14,7 @@ namespace L {
     public:
       inline Entity() {}
       Entity(const Entity* other);
+      ~Entity();
       inline void* operator new(size_t size) {return Pool<Entity>::global.allocate();}
       inline void* operator new(size_t size, void* ptr) {return ptr;}
       inline void operator delete(void* p) {Pool<Entity>::global.deallocate((Entity*)p);}

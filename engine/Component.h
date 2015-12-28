@@ -13,13 +13,15 @@ namespace L {
       static inline void preupdates() {}
 
       virtual Component* clone() = 0;
+      virtual void destruct() = 0;
 
       friend class Entity;
   };
 }
 
 #define L_COMPONENT(name)\
-  Component* clone() {return Pool<name>::global.construct(*this);}
+  Component* clone() {return Pool<name>::global.construct(*this);}\
+  void destruct() {Pool<name>::global.destruct(this);}
 
 #include "Entity.h"
 
