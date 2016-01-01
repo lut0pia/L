@@ -6,15 +6,35 @@ namespace L {
   const char* numberToString(T v, int pad=0) {
     static char buffer[128] = {0};
     char* wtr(buffer+127);
-    while(pad>0 || v>0) {
-      char c('0'+(v%base));
+    // Check for negativity
+    bool negative;
+    if(v<0) {
+      negative = true;
+      v = -v;
+    } else negative = false;
+    // Check for point
+    int point(0);
+    if(T((int)v)!=v) {
+      while(T((int)v)!=v) {
+        v *= base;
+        point++;
+        if(point<0) break;
+      }
+    }
+    // Convert to int and stringify
+    int i(v);
+    while(pad>0 || i>0 || point>0) {
+      char c('0'+(i%base));
       if(c>'9') c += 'a'-'9'-1;
       *--wtr = c;
-      v /= base;
+      if(--point==0) *--wtr = '.';
+      i /= base;
       pad--;
     }
+    if(negative) *--wtr = '-'; // Add minus sign if negative
     return wtr;
   }
+  template <int base=10> inline const char* numberToString(double v, int pad = 0) {return numberToString<base,float>(v,pad);}
   template <int base=10,class T>
   T stringToNumber(const char* str) {
     T wtr(0);
