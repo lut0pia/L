@@ -23,15 +23,18 @@ namespace L {
     }
     // Convert to int and stringify
     int i(v);
-    while(pad>0 || i>0 || point>0) {
-      char c('0'+(i%base));
-      if(c>'9') c += 'a'-'9'-1;
-      *--wtr = c;
-      if(--point==0) *--wtr = '.';
-      i /= base;
-      pad--;
+    if(!i) *--wtr = '0';
+    else {
+      while(pad>0 || i>0 || point>0) {
+        char c('0'+(i%base));
+        if(c>'9') c += 'a'-'9'-1;
+        *--wtr = c;
+        if(--point==0) *--wtr = '.';
+        i /= base;
+        pad--;
+      }
+      if(negative) *--wtr = '-'; // Add minus sign if negative
     }
-    if(negative) *--wtr = '-'; // Add minus sign if negative
     return wtr;
   }
   template <int base=10> inline const char* numberToString(double v, int pad = 0) {return numberToString<base,float>(v,pad);}
