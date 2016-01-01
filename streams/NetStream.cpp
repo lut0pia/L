@@ -4,11 +4,9 @@ using namespace L;
 
 #include "../network/Network.h"
 
-void NetStream::flush() {
-  _writeBuffer.rewind();
-  size_t bufsize;
-  const char* buffer;
-  while(buffer = _writeBuffer.bufferize(&bufsize))
-    ::send(_sd,buffer,bufsize,0);
-  _writeBuffer.rewind();
+size_t NetStream::write(const void* data, size_t size) {
+  return ::send(_sd,(const char*)data,size,0);
+}
+size_t NetStream::read(void* data, size_t size) {
+  return ::recv(_sd,(char*)data,size,0);
 }

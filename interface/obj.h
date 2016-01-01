@@ -12,7 +12,7 @@ namespace L {
         GL::MeshBuilder mb;
         mb.reset(GL::Mesh::VERTEX|GL::Mesh::NORMAL,4194304,4194304);
         FileStream file(f.path(),"rb");
-        while(!file.eof()) {
+        while(!file.end()) {
           String line(file.line());
           Array<String> linePart(line.explode(' '));
           if(linePart[0]=="v") { // Vertex

@@ -8,7 +8,7 @@ using namespace L;
 using namespace Script;
 
 bool Lexer::nextToken() {
-  if(_stream.eof())
+  if(_stream.end())
     return false;
   else {
     _stream.nospace();
@@ -35,7 +35,7 @@ bool Lexer::nextToken() {
           }
         } else *w++ = c; // Regular character
       }
-    } while(!_stream.eof()); // Reached end of stream
+    } while(!_stream.end()); // Reached end of stream
     *w = '\0'; // Null-ended
     return true;
   }

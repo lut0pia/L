@@ -1,25 +1,21 @@
 #ifndef DEF_L_Stream
 #define DEF_L_Stream
 
-#include <cstdio>
+#include <cstring>
 #include "../math/math.h"
 
 namespace L {
   class Stream {
-    protected:
-      FILE* _fd;
     public:
-      inline Stream(FILE* fd) : _fd(fd) {}
+      virtual size_t write(const void* data, size_t size) = 0;
+      virtual size_t read(void* data, size_t size) = 0;
+      virtual char get() {char c; read(&c,1); return c;};
+      virtual void put(char c) {write(&c,1);}
+      virtual void unget(char c) = 0;
+      virtual bool end() {return false;}
 
-      inline size_t write(const void* data, size_t size) {return fwrite(data,1,size,_fd);}
-      inline size_t read(void* data, size_t size) {return fread(data,1,size,_fd);}
-      inline char peek() {char wtr(get()); unget(wtr); return wtr;}
-      inline char get() {return fgetc(_fd);}
-      inline void put(char c) {fputc(c,_fd);}
-      inline void unget(char c) {ungetc(c,_fd);}
+      inline char peek() {char c(get()); unget(c); return c;}
       inline void ignore(int n=1) {while(n--)get();}
-      inline bool eof() const {return feof(_fd);}
-      inline void flush() {fflush(_fd);}
 
       const char* line(); // Reads a line until \n
       const char* word(); // Reads a word until a space
@@ -34,29 +30,27 @@ namespace L {
       template<class T> inline Stream& operator<<(T* v) {return *this << numberToString<16>((unsigned int)v,sizeof(v)*2);}
 
       inline Stream& operator<<(bool v) {return *this << ((v)?"true":"false");}
-      inline Stream& operator<<(char v) {fputc(v,_fd); return *this;}
-      inline Stream& operator<<(char* v) {fputs(v,_fd); return *this;}
+      inline Stream& operator<<(char v) {put(v); return *this;}
+      inline Stream& operator<<(char* v) {write(v,strlen(v)); return *this;}
       inline Stream& operator<<(unsigned char v) {return *this << numberToString<16>((unsigned int)v,2);}
-      inline Stream& operator<<(const char* v) {fputs(v,_fd); return *this;}
-      inline Stream& operator<<(short v) {fprintf(_fd,"%i",v); return *this;}
-      inline Stream& operator<<(int v) {fprintf(_fd,"%i",v); return *this;}
-      inline Stream& operator<<(unsigned int v) {fprintf(_fd,"%u",v); return *this;}
-      inline Stream& operator<<(long long v) {fprintf(_fd,"%lld",v); return *this;}
-      inline Stream& operator<<(float v) {fprintf(_fd,"%f",v); return *this;}
-      inline Stream& operator<<(double v) {fprintf(_fd,"%f",v); return *this;}
-      inline Stream& operator<<(const void* v) {fprintf(_fd,"%p",v); return *this;}
+      inline Stream& operator<<(const char* v) {write(v,strlen(v)); return *this;}
+      inline Stream& operator<<(short v) {return *this << numberToString(v);}
+      inline Stream& operator<<(int v) {return *this << numberToString(v);}
+      inline Stream& operator<<(unsigned int v) {return *this << numberToString(v);}
+      inline Stream& operator<<(long long v) {return *this << numberToString(v);}
+      inline Stream& operator<<(float v) {return *this << numberToString(v);}
+      inline Stream& operator<<(double v) {return *this << numberToString(v);}
 
-      inline Stream& operator>>(char& v) {v = fgetc(_fd); return *this;}
-      inline Stream& operator>>(char* v) {fscanf(_fd,"%s",v); return *this;}
-      inline Stream& operator>>(int& v) {fscanf(_fd,"%i",&v); return *this;}
-      inline Stream& operator>>(unsigned int& v) {fscanf(_fd,"%u",&v); return *this;}
-      inline Stream& operator>>(float& v) {fscanf(_fd,"%f",&v); return *this;}
-      inline Stream& operator>>(double& v) {fscanf(_fd,"%f",&v); return *this;}
+      inline Stream& operator>>(char& v) {v = get(); return *this;}
+      inline Stream& operator>>(char* v) {strcpy(v,word()); return *this;}
+      inline Stream& operator>>(int& v) {v = stringToNumber<10,int>(word()); return *this;}
+      inline Stream& operator>>(unsigned int& v) {v = stringToNumber<10,unsigned int>(word()); return *this;}
+      inline Stream& operator>>(float& v) {v = stringToNumber<10,float>(word()); return *this;}
+      inline Stream& operator>>(double& v) {v = stringToNumber<10,double>(word()); return *this;}
 
       void nospace() {char tmp; while(isspace(tmp = get())) {} unget(tmp);}
       static inline bool isspace(char c) {return c==' '||c=='\t'||c=='\n'||c=='\v'||c=='\f'||c=='\r';}
   };
-  static Stream in(stdin), out(stdout), err(stderr);
 }
 
 #endif

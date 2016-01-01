@@ -1,6 +1,6 @@
 #include "Exception.h"
 
-#include "streams/Stream.h"
+#include "streams/FileStream.h"
 
 using namespace L;
 

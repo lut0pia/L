@@ -71,7 +71,6 @@ String Network::HTTPRequest(const String& url) {
   if(!ips.empty()) {
     NetStream test(sd = connectTo(80,ips[0]));
     test << "GET " << request << " HTTP/1.1\r\nHost: " << host << "\r\nConnection: close\r\n\r\n";
-    test.flush();
     while((tmp = ::recv(sd,buffer,1024,0)))
       wtr += String(buffer,tmp);
     return wtr;
