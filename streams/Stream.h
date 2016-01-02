@@ -12,7 +12,7 @@ namespace L {
       virtual char get() {char c; read(&c,1); return c;};
       virtual void put(char c) {write(&c,1);}
       virtual void unget(char c) = 0;
-      virtual bool end() {return false;}
+      virtual bool end() const {return false;}
 
       inline char peek() {char c(get()); unget(c); return c;}
       inline void ignore(int n=1) {while(n--)get();}
