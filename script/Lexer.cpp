@@ -8,10 +8,14 @@ using namespace L;
 using namespace Script;
 
 bool Lexer::nextToken() {
+  _stream.nospace();
+  if(_stream.peek()==';') { // Comment
+    _stream.line(); // Ignore until end of line
+    _stream.nospace();
+  }
   if(_stream.end())
     return false;
   else {
-    _stream.nospace();
     char* w(_buffer);
     char c;
     _literal = false;
