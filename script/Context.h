@@ -2,26 +2,25 @@
 #define DEF_L_Script_Context
 
 #include "../containers/StaticStack.h"
+#include "Lexer.h"
+#include "../containers/Map.h"
 #include "../containers/Ref.h"
 #include "../dynamic/Variable.h"
-#include "../containers/Map.h"
-#include "../system/File.h"
-#include "code/Base.h"
-#include "Parser.h"
 
 namespace L {
   namespace Script {
+    typedef Var(*Native)(Var*);
     class Context {
       private:
-        Parser _parser;
         StaticStack<4096,Var> _stack;
-        Map<String,Ref<Ref<Code::Base> > > _functions;
+        Map<String,Ref<Var> > _functions;
 
       public:
-        Context();
-        void read(const File&);
-        void declare(const String&, Ref<Code::Base>);
-        Ref<Code::Base>* function(const String&);
+        void read(Stream&);
+        void read(Var& v, Lexer& lexer);
+        void declare(const String&, const Var&);
+        Var* function(const String&);
+        Var execute(const Var& code, Var* stack);
     };
   }
 }

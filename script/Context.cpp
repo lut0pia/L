@@ -1,50 +1,45 @@
 #include "Context.h"
 
-#include "code/Base.h"
-#include "../streams/FileStream.h"
-
 using namespace L;
 using namespace Script;
 
-Context::Context() {
-  _parser.startSymbol("&block");
-  _parser.addRule(Array<const char*>::make("&block","{","&inblock","}"));
-  _parser.addRule(Array<const char*>::make("&inblock","&instruction","&inblock"));
-  _parser.addRule(Array<const char*>::make("&inblock"));
-  _parser.addRule(Array<const char*>::make("&instruction","&statement",";"));
-  _parser.addRule(Array<const char*>::make("&statement","&assignment"));
-  _parser.addRule(Array<const char*>::make("&statement","&expression"));
-  _parser.addRule(Array<const char*>::make("&assignment","&ident","=","&statement"));
-  _parser.addRule(Array<const char*>::make("&expression","&value"));
-  _parser.addRule(Array<const char*>::make("&expression","&expression","+","&expression"));
-  _parser.addRule(Array<const char*>::make("&value","&ident"));
-  _parser.addRule(Array<const char*>::make("&value","&const"));
-}
-void Context::read(const File& file) {
-  FileStream stream(file.path(),"rb");
-  Lexer lexer(stream);
-  while(lexer.nextToken()) {
-    out << lexer.token() << '\n';
-    if(lexer.literal()) { // Include
-      read(File(lexer.token()));
-    } else if(lexer.isToken("{")) { // Execute
-      _parser.parse(lexer);
-    } else { // Declare
-      String name(lexer.token()); // Fetch function name
-      lexer.nextToken();
-      lexer.expectToken("(");
-      while(!lexer.acceptToken(")"))
-        lexer.nextToken();
-      _parser.parse(lexer)->print();
-    }
+void Context::read(Stream& stream) {
+  Script::Lexer lexer(stream);
+  Var v;
+  lexer.nextToken();
+  while(!stream.end()) {
+    read(v,lexer);
+    execute(v,NULL);
   }
 }
-
-void Context::declare(const String& name, Ref<Code::Base> code) {
+void Context::read(Var& v, Lexer& lexer) {
+  if(lexer.acceptToken("(")) { // It's a list of expressions
+    v = Array<Var>();
+    int i(0);
+    while(!lexer.acceptToken(")"))
+      read(v[i++],lexer);
+  } else {
+    String token(lexer.token());
+    if(function(token))
+      v = *function(token);
+    else v = token;
+    lexer.nextToken();
+  }
+}
+void Context::declare(const String& name, const Var& code) {
   *function(name) = code;
 }
-Ref<Code::Base>* Context::function(const String& name) {
+Var* Context::function(const String& name) {
   if(_functions[name].null())
-    _functions[name] = new Ref<Code::Base>();
+    _functions[name] = new Var();
   return _functions[name];
+}
+Var Context::execute(const Var& code, Var* stack) {
+  //out << code << '\n';
+  if(code.is<Array<Var> >()) { // Function call
+    const Var& handle(execute(code.as<Array<Var> >()[0],stack));
+    if(handle.is<Native>())
+      handle.as<Native>()(stack);
+  }
+  return code;
 }
