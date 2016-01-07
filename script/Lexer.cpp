@@ -9,7 +9,7 @@ using namespace Script;
 
 bool Lexer::nextToken() {
   _stream.nospace();
-  if(_stream.peek()==';') { // Comment
+  while(!_stream.end() && _stream.peek()==';') { // Comment
     _stream.line(); // Ignore until end of line
     _stream.nospace();
   }
