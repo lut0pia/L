@@ -257,13 +257,6 @@
 		<Unit filename="script/Context.h" />
 		<Unit filename="script/Lexer.cpp" />
 		<Unit filename="script/Lexer.h" />
-		<Unit filename="script/Parser.cpp" />
-		<Unit filename="script/Parser.h" />
-		<Unit filename="script/code.h" />
-		<Unit filename="script/code/Base.cpp" />
-		<Unit filename="script/code/Base.h" />
-		<Unit filename="script/code/Node.cpp" />
-		<Unit filename="script/code/Node.h" />
 		<Unit filename="streams.h" />
 		<Unit filename="streams/FileStream.h" />
 		<Unit filename="streams/NetStream.cpp" />
