@@ -22,7 +22,25 @@ bool Lexer::nextToken() {
     do {
       c = _stream.get();
       if(_literal) { // Literal expression
-        if(c=='"') break; // End of string
+        if(*(w-1)=='\\')
+          switch(c) {
+            case 't':
+              *(w-1) = '\t';
+              break;
+            case 'n':
+              *(w-1) = '\n';
+              break;
+            case 'r':
+              *(w-1) = '\r';
+              break;
+            case '"':
+              *(w-1) = '"';
+              break;
+            default:
+              *w++ = c;
+              break;
+          }
+        else if(c=='"') break; // End of string
         else *w++ = c; // Character inside string
       } else { // Non-literal token
         if(Stream::isspace(c)) break;  // End of word
