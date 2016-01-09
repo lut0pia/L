@@ -44,7 +44,7 @@ bool Lexer::nextToken() {
         else *w++ = c; // Character inside string
       } else { // Non-literal token
         if(Stream::isspace(c)) break;  // End of word
-        else if((c>='!' && c<='/') || (c>=':' && c<='@') || (c>='['&&c<='`') || c>='{') { // Special char
+        else if(c=='(' || c==')' || c=='\'' || c=='"' || c=='!') { // Special char
           if(w>_buffer) { // Word already started
             _stream.unget(c);
             break;
