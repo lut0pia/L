@@ -50,10 +50,10 @@ namespace L {
         else return (*this = T()).as<T>();
       }
 
-      inline bool operator==(const Variable& other) const {return (_td == other._td && _td->hascmp())?(_td->cmp(_p,other._p) == 0):false;}
+      inline bool operator==(const Variable& other) const {return (_td == other._td && _td->hascmp())?(_td->cmp(value(),other.value()) == 0):false;}
       inline bool operator!=(const Variable& other) const {return !(*this == other);}
-      inline bool operator>(const Variable& other) const {return (_td == other._td && _td->hascmp())?(_td->cmp(_p,other._p) > 0):false;}
-      inline bool operator<(const Variable& other) const {return (_td == other._td && _td->hascmp())?(_td->cmp(_p,other._p) < 0):false;}
+      inline bool operator>(const Variable& other) const {return (_td == other._td && _td->hascmp())?(_td->cmp(value(),other.value()) > 0):false;}
+      inline bool operator<(const Variable& other) const {return (_td == other._td && _td->hascmp())?(_td->cmp(value(),other.value()) < 0):false;}
       inline bool operator>=(const Variable& other) const {return !(*this < other);}
       inline bool operator<=(const Variable& other) const {return !(*this > other);}
 
