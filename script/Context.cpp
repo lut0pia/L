@@ -64,6 +64,9 @@ void Context::read(Var& v, Lexer& lexer) {
   } else if(lexer.acceptToken("'")) {
     v = Quote();
     read(v.as<Quote>().var,lexer);
+  } else if(lexer.acceptToken("!")) {
+    read(v,lexer);
+    v = execute(v);
   } else {
     const char* token(lexer.token());
     if(lexer.literal()) v = token; // Character string
