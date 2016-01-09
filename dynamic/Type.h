@@ -17,7 +17,7 @@ namespace L {
     void (*del)(void*);
 
     void (*out)(Stream&,const void*);
-    int (*cmp)(void*,void*);
+    int (*cmp)(const void*,const void*);
 
     bool (*hascmp)();
   } TypeDescription;
@@ -52,7 +52,7 @@ namespace L {
 #endif
       }
       static void out(Stream& s, const void* p) {s << (*(const T*)p);}
-      static int cmp(void* a, void* b) {return 0;}
+      static int cmp(const void* a, const void* b) {return 0;}
 
       static bool hasout() {return false;}
       static bool hascmp() {return false;}
@@ -70,7 +70,7 @@ namespace L {
   template <> inline void* Type<void>::cpy(void* p) {return NULL;}
   template <> inline void Type<void>::del(void* p) {}
 
-#define L_TYPE_CMPABLE(T) template <> inline int Type< T >::cmp(void* a, void* b){\
+#define L_TYPE_CMPABLE(T) template <> inline int Type< T >::cmp(const void* a, const void* b){\
     if((*(T*)a)<(*(T*)b))       return -1;\
     else if((*(T*)a)==(*(T*)b)) return 0;\
     else                        return 1;} \
