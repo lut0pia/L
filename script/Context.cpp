@@ -8,20 +8,25 @@ Var dofunc(Context& c, const Array<Var>& a) {
     c.execute(a[i]);
   return c.execute(a.back());
 }
-Var set(Context& c, const Array<Var>& a) {
-  Var target(c.execute(a[1]));
-  if(a.size()==3 && target.is<Symbol>())
-    return c.variable(target.as<Symbol>()) = c.execute(a[2]);
-  return 0;
+Var whilefunc(Context& c, const Array<Var>& a) {
+  Var wtr;
+  while(c.execute(a[1]).get<bool>())
+    wtr = c.execute(a[2]);
+  return wtr;
 }
 Var iffunc(Context& c, const Array<Var>& a) {
   if(a.size()>2) {
-    Var condition(c.execute(a[1]));
-    if(condition.get<bool>())
+    if(c.execute(a[1]).get<bool>())
       return c.execute(a[2]);
     else if(a.size()>3)
       return c.execute(a[3]);
   }
+  return 0;
+}
+Var set(Context& c, const Array<Var>& a) {
+  Var target(c.execute(a[1]));
+  if(a.size()==3 && target.is<Symbol>())
+    return c.variable(target.as<Symbol>()) = c.execute(a[2]);
   return 0;
 }
 Var eq(Context& c, int params) {
@@ -63,8 +68,9 @@ Context::Context() {
   _frames.push(0); // Start current frame
   _frames.push(0); // Start next frame (no variable)
   variable(symbol("do")) = (Native)dofunc;
-  variable(symbol("set")) = (Native)set;
+  variable(symbol("while")) = (Native)whilefunc;
   variable(symbol("if")) = (Native)iffunc;
+  variable(symbol("set")) = (Native)set;
   variable(symbol("=")) = (Function)eq;
   variable(symbol("+")) = (Function)add;
   variable(symbol("*")) = (Function)mul;
