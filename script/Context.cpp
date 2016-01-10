@@ -24,12 +24,34 @@ Var iffunc(Context& c, const Array<Var>& a) {
   }
   return 0;
 }
+Var eq(Context& c, int params) {
+  if(params==2)
+    return c.parameter(0)==c.parameter(1);
+  else return false;
+}
 Var add(Context& c, int params) {
   int wtr(0);
   for(int i(0); i<params; i++)
     if(c.parameter(i).is<int>())
       wtr += c.parameter(i).as<int>();
   return wtr;
+}
+Var mul(Context& c, int params) {
+  int wtr(1);
+  for(int i(0); i<params; i++)
+    if(c.parameter(i).is<int>())
+      wtr *= c.parameter(i).as<int>();
+  return wtr;
+}
+Var div(Context& c, int params) {
+  if(params==2 && c.parameter(0).is<int>() && c.parameter(1).is<int>()) {
+    return c.parameter(0).as<int>()/c.parameter(1).as<int>();
+  } else return 0;
+}
+Var mod(Context& c, int params) {
+  if(params==2 && c.parameter(0).is<int>() && c.parameter(1).is<int>()) {
+    return c.parameter(0).as<int>()%c.parameter(1).as<int>();
+  } else return 0;
 }
 Var print(Context& c, int params) {
   for(int i(0); i<params; i++)
@@ -43,7 +65,11 @@ Context::Context() {
   variable(symbol("do")) = (Native)dofunc;
   variable(symbol("set")) = (Native)set;
   variable(symbol("if")) = (Native)iffunc;
+  variable(symbol("=")) = (Function)eq;
   variable(symbol("+")) = (Function)add;
+  variable(symbol("*")) = (Function)mul;
+  variable(symbol("/")) = (Function)div;
+  variable(symbol("%")) = (Function)mod;
   variable(symbol("print")) = (Function)print;
 }
 void Context::read(Stream& stream) {
