@@ -72,8 +72,8 @@ void Context::read(Var& v, Lexer& lexer) {
     if(lexer.literal()) v = token; // Character string
     else if(lexer.isToken("true")) v = true;
     else if(lexer.isToken("false")) v = false;
-    else if(token[strspn(token,"0123456789")]=='\0') v = atoi(token); // Integer
-    else if(token[strspn(token,"0123456789.")]=='\0') v = (float)atof(token); // Float
+    else if(token[strspn(token,"-0123456789")]=='\0') v = atoi(token); // Integer
+    else if(token[strspn(token,"-0123456789.")]=='\0') v = (float)atof(token); // Float
     else v = symbol(token);
     lexer.nextToken();
   }
