@@ -29,6 +29,9 @@ Var set(Context& c, const Array<Var>& a) {
     return c.variable(target.as<Symbol>()) = c.execute(a[2]);
   return 0;
 }
+Var typenamefunc(Context& c, int params) {
+  return c.parameter(0).type()->name;
+}
 Var eq(Context& c, int params) {
   if(params==2)
     return c.parameter(0)==c.parameter(1);
@@ -71,6 +74,7 @@ Context::Context() {
   variable(symbol("while")) = (Native)whilefunc;
   variable(symbol("if")) = (Native)iffunc;
   variable(symbol("set")) = (Native)set;
+  variable(symbol("typename")) = (Function)typenamefunc;
   variable(symbol("=")) = (Function)eq;
   variable(symbol("+")) = (Function)add;
   variable(symbol("*")) = (Function)mul;
