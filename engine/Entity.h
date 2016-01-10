@@ -30,7 +30,7 @@ namespace L {
       template <class CompType>
       CompType* requireComponent() const {
         CompType* wtr(component<CompType>());
-        if(!wtr) throw Exception("Couldn't find required "+Type<CompType>::name()+" component");
+        if(!wtr) throw Exception("Couldn't find required "+String(Type<CompType>::name())+" component");
         return wtr;
       }
       template <class CompType>

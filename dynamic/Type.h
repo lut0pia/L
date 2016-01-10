@@ -1,14 +1,13 @@
 #ifndef DEF_L_Dynamic_Type
 #define DEF_L_Dynamic_Type
 
-#include "../macros.h"
 #include "../String.h"
 #include "../streams/Stream.h"
 
 namespace L {
   // Structure to keep basic functions for a type
   typedef struct {
-    const String name;
+    char name[256];
     int size;
 
     void* (*cpy)(void*);
@@ -26,6 +25,30 @@ namespace L {
   class Type {
     private:
       static const TypeDescription td;
+      static TypeDescription makeDesc() {
+        TypeDescription wtr = {
+          "",sizeof(T),
+          cpy,cpyto,dtr,del,
+          out,cmp,
+          hascmp
+        };
+#if defined _MSC_VER
+        // "L::TypeDescription __cdecl L::Type<float>::makeDesc(void)
+        // "L::TypeDescription __cdecl L::Type<class L::String>::makeDesc(void)
+        char funcsig[] = __FUNCSIG__;
+        int start = (!memcmp(funcsig+35,"class ",6))?41:35;
+        int end = strlen(funcsig)-17;
+        if(funcsig[end-1]==' ') end--;
+        funcsig[end] = '\0';
+        strcpy(wtr.name,funcsig+start);
+#else
+        // "static L::TypeDescription L::Type<T>::makeDesc() [with T = XXX]"
+        char prettyfunc[] = __PRETTY_FUNCTION__;
+        prettyfunc[strlen(prettyfunc)-1] = '\0';
+        strcpy(wtr.name,prettyfunc+55);
+#endif
+        return wtr;
+      }
 
     public:
       static inline const TypeDescription* description() {return &td;}
@@ -35,22 +58,7 @@ namespace L {
       static void dtr(void* p) {((T*)p)->~T();}
       static void del(void* p) {delete(T*)p;}
 
-      static String name() {
-#if defined _MSC_VER
-        // "class L::String __cdecl L::Type<float>::name(void)"
-        // "class L::String __cdecl L::Type<class L::String>::name(void)"
-        String wtr(__FUNCSIG__); // Relies on MSVC
-        wtr = wtr.substr(32,wtr.size()-32-13);
-        if(wtr.substr(0,6) == "class ")
-          wtr = wtr.substr(6);
-        return wtr;
-#else
-        // "static L::String L::Type<T>::name() [with T = XXX]"
-        String wtr(__PRETTY_FUNCTION__); // Relies on GCC
-        wtr.trimRight(); // ]
-        return wtr.substr(46);
-#endif
-      }
+      inline static const char* name() {return td.name;}
       static void out(Stream& s, const void* p) {s << (*(const T*)p);}
       static int cmp(const void* a, const void* b) {return 0;}
 
@@ -59,12 +67,7 @@ namespace L {
   };
 
   // Instantiate structures
-  template <class T> const TypeDescription Type<T>::td = {
-    Type<T>::name(),sizeof(T),
-    cpy,cpyto,dtr,del,
-    out,cmp,
-    hascmp
-  };
+  template <class T> const TypeDescription Type<T>::td = Type<T>::makeDesc();
 
   // Specify void doesn't construct nor destruct
   template <> inline void* Type<void>::cpy(void* p) {return NULL;}
