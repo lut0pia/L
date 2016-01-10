@@ -8,7 +8,7 @@ namespace L {
   class Variable {
     private:
       union {
-        int _data;
+        char _data[12];
         void* _p;
       };
       const TypeDescription* _td;
@@ -17,7 +17,7 @@ namespace L {
       const void* value() const;
 
     public:
-      inline Variable() : _data(0), _td(Type<int>::description()) {}
+      inline Variable() : _td(Type<int>::description()) {}
       template <class T> Variable(const T& v) : _td(Type<T>::description()) {
         if(local())  // Value is to be contained locally
           new(&_data) T(v);
