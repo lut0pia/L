@@ -139,6 +139,7 @@ void Context::pushVariable(Symbol sym, const Var& v) {
   _frames.back()++; // Added variable to current frame, must push next frame
 }
 Var Context::execute(const Var& code) {
+  static const char empty[] = "";
   if(code.is<Array<Var> >()) { // Function call
     const Array<Var>& array(code.as<Array<Var> >()); // Get reference of array value
     const Var& handle(execute(array[0])); // Execute first child of array to get function handle
@@ -148,9 +149,8 @@ Var Context::execute(const Var& code) {
       Var wtr;
       _frames.push(nextFrame()); // Add new frame
       for(int i(1); i<array.size(); i++) { // For all parameters
-        Symbol sym(symbol(""));
-        if(handle.is<Array<Var> >()
-            && handle.as<Array<Var> >()[0].as<Array<Var> >().size()>=i) {
+        Symbol sym(empty);
+        if(handle.is<Array<Var> >() && handle.as<Array<Var> >()[0].as<Array<Var> >().size()>=i) {
           Var symVar(execute(handle.as<Array<Var> >()[0].as<Array<Var> >()[i-1]));
           if(symVar.is<Symbol>())
             sym = symVar.as<Symbol>();
