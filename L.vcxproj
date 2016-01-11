@@ -1,0 +1,319 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{F37E9035-9E1B-4F6E-9AE4-F1AF789FFF70}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>L</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>D:\Projects\CodeBlocks;C:\Environment\MSVC\include;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)bin\win\</OutDir>
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>D:\Projects\CodeBlocks;C:\Environment\MSVC\include;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)bin\win\</OutDir>
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;GLEW_STATIC;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)/%(RelativeDir)/</ObjectFileName>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <OutputFile>bin/win/L.lib</OutputFile>
+    </Lib>
+    <PostBuildEvent>
+      <Command>lib.exe /LTCG /NOLOGO /IGNORE:4006,4221 /LIBPATH:C:\Environment\MSVC\lib /OUT:"$(TargetPath)" "$(TargetPath)" gdi32.lib user32.lib opengl32.lib glew32s.lib glu32.lib ws2_32.lib</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;GLEW_STATIC;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ObjectFileName>$(IntDir)/%(RelativeDir)/</ObjectFileName>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <Lib>
+      <OutputFile>bin/win/L.lib</OutputFile>
+    </Lib>
+    <PostBuildEvent>
+      <Command>lib.exe /LTCG /NOLOGO /IGNORE:4006,4221 /LIBPATH:C:\Environment\MSVC\lib /OUT:"$(TargetPath)" "$(TargetPath)" gdi32.lib user32.lib opengl32.lib glew32s.lib glu32.lib ws2_32.lib</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="ai.h" />
+    <ClInclude Include="ai\MLP.h" />
+    <ClInclude Include="ai\Perceptron.h" />
+    <ClInclude Include="audio.h" />
+    <ClInclude Include="audio\Midi.h" />
+    <ClInclude Include="burp.h" />
+    <ClInclude Include="bytes.h" />
+    <ClInclude Include="bytes\BWT.h" />
+    <ClInclude Include="bytes\encoding.h" />
+    <ClInclude Include="bytes\Huffman.h" />
+    <ClInclude Include="bytes\MTF.h" />
+    <ClInclude Include="constants.h" />
+    <ClInclude Include="containers.h" />
+    <ClInclude Include="containers\Array.h" />
+    <ClInclude Include="containers\BTree.h" />
+    <ClInclude Include="containers\KeyValue.h" />
+    <ClInclude Include="containers\List.h" />
+    <ClInclude Include="containers\Map.h" />
+    <ClInclude Include="containers\MultiArray.h" />
+    <ClInclude Include="containers\Pool.h" />
+    <ClInclude Include="containers\Ref.h" />
+    <ClInclude Include="containers\Set.h" />
+    <ClInclude Include="containers\SortedArray.h" />
+    <ClInclude Include="containers\StaticRing.h" />
+    <ClInclude Include="containers\StaticStack.h" />
+    <ClInclude Include="containers\Tree.h" />
+    <ClInclude Include="containers\XML.h" />
+    <ClInclude Include="dynamic.h" />
+    <ClInclude Include="dynamic\Assembly.h" />
+    <ClInclude Include="dynamic\Cast.h" />
+    <ClInclude Include="dynamic\Type.h" />
+    <ClInclude Include="dynamic\Variable.h" />
+    <ClInclude Include="engine.h" />
+    <ClInclude Include="engine\Camera.h" />
+    <ClInclude Include="engine\Component.h" />
+    <ClInclude Include="engine\Engine.h" />
+    <ClInclude Include="engine\Entity.h" />
+    <ClInclude Include="engine\Sprite.h" />
+    <ClInclude Include="engine\SpriteAnimator.h" />
+    <ClInclude Include="engine\StaticMesh.h" />
+    <ClInclude Include="engine\Transform.h" />
+    <ClInclude Include="Exception.h" />
+    <ClInclude Include="font.h" />
+    <ClInclude Include="font\Base.h" />
+    <ClInclude Include="font\Bitmap.h" />
+    <ClInclude Include="font\Font.h" />
+    <ClInclude Include="font\Pixel.h" />
+    <ClInclude Include="geometry.h" />
+    <ClInclude Include="geometry\Interval.h" />
+    <ClInclude Include="geometry\Segment.h" />
+    <ClInclude Include="geometry\Surface.h" />
+    <ClInclude Include="geometry\Vector.h" />
+    <ClInclude Include="geometry\Volume.h" />
+    <ClInclude Include="gl.h" />
+    <ClInclude Include="gl\Buffer.h" />
+    <ClInclude Include="gl\Camera.h" />
+    <ClInclude Include="gl\FrameBuffer.h" />
+    <ClInclude Include="gl\GL.h" />
+    <ClInclude Include="gl\Light.h" />
+    <ClInclude Include="gl\Mesh.h" />
+    <ClInclude Include="gl\MeshBuilder.h" />
+    <ClInclude Include="gl\PostProcess.h" />
+    <ClInclude Include="gl\Program.h" />
+    <ClInclude Include="gl\RenderBuffer.h" />
+    <ClInclude Include="gl\Shader.h" />
+    <ClInclude Include="gl\Texture.h" />
+    <ClInclude Include="gui.h" />
+    <ClInclude Include="gui\ActionListener.h" />
+    <ClInclude Include="gui\Background.h" />
+    <ClInclude Include="gui\Base.h" />
+    <ClInclude Include="gui\Border.h" />
+    <ClInclude Include="gui\GridContainer.h" />
+    <ClInclude Include="gui\GUI.h" />
+    <ClInclude Include="gui\Image.h" />
+    <ClInclude Include="gui\Layer.h" />
+    <ClInclude Include="gui\Line.h" />
+    <ClInclude Include="gui\ListContainer.h" />
+    <ClInclude Include="gui\Mutex.h" />
+    <ClInclude Include="gui\Rectangle.h" />
+    <ClInclude Include="gui\RelativeContainer.h" />
+    <ClInclude Include="gui\Scrollable.h" />
+    <ClInclude Include="gui\Sizable.h" />
+    <ClInclude Include="gui\Slider.h" />
+    <ClInclude Include="gui\Solid.h" />
+    <ClInclude Include="gui\Text.h" />
+    <ClInclude Include="gui\TextInput.h" />
+    <ClInclude Include="image.h" />
+    <ClInclude Include="image\Bitmap.h" />
+    <ClInclude Include="image\Color.h" />
+    <ClInclude Include="Interface.h" />
+    <ClInclude Include="L.h" />
+    <ClInclude Include="macros.h" />
+    <ClInclude Include="math.h" />
+    <ClInclude Include="math\Fixed.h" />
+    <ClInclude Include="math\Integer.h" />
+    <ClInclude Include="math\Interpolation.h" />
+    <ClInclude Include="math\math.h" />
+    <ClInclude Include="math\Matrix.h" />
+    <ClInclude Include="math\Perlin.h" />
+    <ClInclude Include="math\Rational.h" />
+    <ClInclude Include="math\Real.h" />
+    <ClInclude Include="network.h" />
+    <ClInclude Include="network\Network.h" />
+    <ClInclude Include="objects.h" />
+    <ClInclude Include="parallelism.h" />
+    <ClInclude Include="parallelism\Coroutine.h" />
+    <ClInclude Include="parallelism\Fiber.h" />
+    <ClInclude Include="parallelism\Mutex.h" />
+    <ClInclude Include="parallelism\RWSync.h" />
+    <ClInclude Include="parallelism\Semaphore.h" />
+    <ClInclude Include="parallelism\Thread.h" />
+    <ClInclude Include="parallelism\ThreadPool.h" />
+    <ClInclude Include="parallelism\ThreadStore.h" />
+    <ClInclude Include="patterns.h" />
+    <ClInclude Include="patterns\Observable.h" />
+    <ClInclude Include="patterns\Observer.h" />
+    <ClInclude Include="patterns\Singleton.h" />
+    <ClInclude Include="Rand.h" />
+    <ClInclude Include="regex.h" />
+    <ClInclude Include="script.h" />
+    <ClInclude Include="script\Context.h" />
+    <ClInclude Include="script\Lexer.h" />
+    <ClInclude Include="streams.h" />
+    <ClInclude Include="streams\FileStream.h" />
+    <ClInclude Include="streams\NetStream.h" />
+    <ClInclude Include="streams\Stream.h" />
+    <ClInclude Include="String.h" />
+    <ClInclude Include="system.h" />
+    <ClInclude Include="systems.h" />
+    <ClInclude Include="system\Directory.h" />
+    <ClInclude Include="system\File.h" />
+    <ClInclude Include="system\System.h" />
+    <ClInclude Include="system\Window.h" />
+    <ClInclude Include="text.h" />
+    <ClInclude Include="time.h" />
+    <ClInclude Include="time\Time.h" />
+    <ClInclude Include="time\Timer.h" />
+    <ClInclude Include="tmp.h" />
+    <ClInclude Include="types.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ai\MLP.cpp" />
+    <ClCompile Include="ai\Perceptron.cpp" />
+    <ClCompile Include="audio\Midi.cpp" />
+    <ClCompile Include="bytes\BWT.cpp" />
+    <ClCompile Include="bytes\encoding.cpp" />
+    <ClCompile Include="bytes\Huffman.cpp" />
+    <ClCompile Include="bytes\MTF.cpp" />
+    <ClCompile Include="containers\XML.cpp" />
+    <ClCompile Include="dynamic\Assembly.cpp" />
+    <ClCompile Include="dynamic\Cast.cpp" />
+    <ClCompile Include="dynamic\Variable.cpp" />
+    <ClCompile Include="engine\Camera.cpp" />
+    <ClCompile Include="engine\Engine.cpp" />
+    <ClCompile Include="engine\Entity.cpp" />
+    <ClCompile Include="engine\Sprite.cpp" />
+    <ClCompile Include="engine\Transform.cpp" />
+    <ClCompile Include="Exception.cpp" />
+    <ClCompile Include="font\Base.cpp" />
+    <ClCompile Include="font\Bitmap.cpp" />
+    <ClCompile Include="font\Font.cpp" />
+    <ClCompile Include="font\Pixel.cpp" />
+    <ClCompile Include="gl\Buffer.cpp" />
+    <ClCompile Include="gl\Camera.cpp" />
+    <ClCompile Include="gl\FrameBuffer.cpp" />
+    <ClCompile Include="gl\GL.cpp" />
+    <ClCompile Include="gl\Light.cpp" />
+    <ClCompile Include="gl\Mesh.cpp" />
+    <ClCompile Include="gl\MeshBuilder.cpp" />
+    <ClCompile Include="gl\PostProcess.cpp" />
+    <ClCompile Include="gl\Program.cpp" />
+    <ClCompile Include="gl\RenderBuffer.cpp" />
+    <ClCompile Include="gl\Shader.cpp" />
+    <ClCompile Include="gl\Texture.cpp" />
+    <ClCompile Include="gui\ActionListener.cpp" />
+    <ClCompile Include="gui\Background.cpp" />
+    <ClCompile Include="gui\Base.cpp" />
+    <ClCompile Include="gui\Border.cpp" />
+    <ClCompile Include="gui\GridContainer.cpp" />
+    <ClCompile Include="gui\GUI.cpp" />
+    <ClCompile Include="gui\Image.cpp" />
+    <ClCompile Include="gui\Layer.cpp" />
+    <ClCompile Include="gui\Line.cpp" />
+    <ClCompile Include="gui\ListContainer.cpp" />
+    <ClCompile Include="gui\Mutex.cpp" />
+    <ClCompile Include="gui\Rectangle.cpp" />
+    <ClCompile Include="gui\RelativeContainer.cpp" />
+    <ClCompile Include="gui\Scrollable.cpp" />
+    <ClCompile Include="gui\Sizable.cpp" />
+    <ClCompile Include="gui\Slider.cpp" />
+    <ClCompile Include="gui\Solid.cpp" />
+    <ClCompile Include="gui\Text.cpp" />
+    <ClCompile Include="gui\TextInput.cpp" />
+    <ClCompile Include="image\Bitmap.cpp" />
+    <ClCompile Include="image\Color.cpp" />
+    <ClCompile Include="math\Fixed.cpp" />
+    <ClCompile Include="math\Integer.cpp" />
+    <ClCompile Include="math\Rational.cpp" />
+    <ClCompile Include="math\Real.cpp" />
+    <ClCompile Include="network\Network.cpp" />
+    <ClCompile Include="parallelism\Coroutine.cpp" />
+    <ClCompile Include="parallelism\Fiber.cpp" />
+    <ClCompile Include="parallelism\Mutex.cpp" />
+    <ClCompile Include="parallelism\RWSync.cpp" />
+    <ClCompile Include="parallelism\Thread.cpp" />
+    <ClCompile Include="parallelism\ThreadPool.cpp" />
+    <ClCompile Include="parallelism\ThreadStore.cpp" />
+    <ClCompile Include="Rand.cpp" />
+    <ClCompile Include="script\Context.cpp" />
+    <ClCompile Include="script\Lexer.cpp" />
+    <ClCompile Include="streams\NetStream.cpp" />
+    <ClCompile Include="streams\Stream.cpp" />
+    <ClCompile Include="String.cpp" />
+    <ClCompile Include="system\Directory.cpp" />
+    <ClCompile Include="system\File.cpp" />
+    <ClCompile Include="system\System.cpp" />
+    <ClCompile Include="system\Window.cpp" />
+    <ClCompile Include="time\Time.cpp" />
+    <ClCompile Include="time\Timer.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
