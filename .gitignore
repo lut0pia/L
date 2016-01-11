@@ -32,6 +32,8 @@
 *.layout
 
 # Visual Studio
+Debug/
+Release/
 ipch/
 *.suo
 *.aps
@@ -39,6 +41,10 @@ ipch/
 *.opensdf
 *.sdf
 *.cachefile
+*.user
+*.psess
+*.sln
+*.filters
 
 # Others
 *.xmind
