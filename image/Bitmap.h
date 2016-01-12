@@ -32,7 +32,7 @@ namespace L {
       const Color& at(int x, int y) const;
 
       // Image treatment
-      inline Color nearest(float x,float y) const {return operator()(x,y);}
+      inline Color nearest(float x,float y) const {return operator()((int)x,(int)y);}
       Color linear(float,float) const;
       Color cubic(float,float) const;
       Bitmap sub(int x, int y, int width, int height) const;
