@@ -27,6 +27,12 @@ namespace L {
             return (CompType*)_components[i].value();
         return 0;
       }
+      Component* component(const char* name) const {
+        for(uint i(0); i<_components.size(); i++)
+          if(!strcmp(_components[i].key()->name,name))
+            return _components[i].value();
+        return 0;
+      }
       template <class CompType>
       CompType* requireComponent() const {
         CompType* wtr(component<CompType>());
