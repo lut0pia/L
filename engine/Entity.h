@@ -22,7 +22,7 @@ namespace L {
       template <class CompType>
       CompType* component() const {
         const TypeDescription* td(Type<CompType>::description());
-        for(int i(0); i<_components.size(); i++)
+        for(uint i(0); i<_components.size(); i++)
           if(_components[i].key()==td)
             return (CompType*)_components[i].value();
         return 0;
