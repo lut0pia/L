@@ -18,6 +18,7 @@ namespace L {
       void render(const Camera&);
       inline void texture(const char* filename) {_texture = Engine::texture(filename);}
       inline void texture(const Ref<GL::Texture>& tex) {_texture = tex;}
+      inline const Ref<GL::Texture>& texture(){ return _texture; }
       inline void vertex(const Interval2f& v) {_vertex = v;}
       inline void uv(const Interval2f& u) {_uv = u;}
   };
