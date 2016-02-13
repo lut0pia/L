@@ -249,6 +249,7 @@
     <ClCompile Include="engine\Camera.cpp" />
     <ClCompile Include="engine\Engine.cpp" />
     <ClCompile Include="engine\Entity.cpp" />
+    <ClCompile Include="engine\ScriptComponent.cpp" />
     <ClCompile Include="engine\Sprite.cpp" />
     <ClCompile Include="engine\Transform.cpp" />
     <ClCompile Include="Exception.cpp" />
