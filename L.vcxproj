@@ -130,6 +130,7 @@
     <ClInclude Include="engine\Component.h" />
     <ClInclude Include="engine\Engine.h" />
     <ClInclude Include="engine\Entity.h" />
+    <ClInclude Include="engine\ScriptComponent.h" />
     <ClInclude Include="engine\Sprite.h" />
     <ClInclude Include="engine\SpriteAnimator.h" />
     <ClInclude Include="engine\StaticMesh.h" />
