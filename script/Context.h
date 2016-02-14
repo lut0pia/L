@@ -10,27 +10,18 @@ namespace L {
     typedef Var(*Function)(Context&,int);
     typedef Var(*Native)(Context&,const Array<Var>&);
     typedef struct {Var var;} Quote;
-    class Symbol {
-      private:
-        const char* _str;
-      public:
-        inline Symbol() : _str(0) {}
-        inline Symbol(const char* str) : _str(str) {}
-        inline bool operator==(const Symbol& other) const {return _str==other._str;}
-        inline const char* str() const {return _str;}
-    };
+    typedef struct {uint32 id;} Symbol;
     class Context {
       private:
         Array<KeyValue<Symbol,Var> > _stack;
         Array<int> _frames;
-        Array<Symbol> _symbols;
 
       public:
         Context();
         void read(Stream&);
         void read(Var& v, Lexer& lexer);
 
-        Symbol symbol(const char*);
+        static Symbol symbol(const char*);
         Var& variable(Symbol);
         void pushVariable(Symbol, const Var& = Var());
         inline void pushParameter(const Var& v) {pushVariable(symbol(""),v);}
@@ -40,7 +31,7 @@ namespace L {
         Var execute(const Var& code);
     };
   }
-  inline Stream& operator<<(Stream& s, const Script::Symbol& v) {return s << v.str();}
+  inline Stream& operator<<(Stream& s, const Script::Symbol& v) {return s << v.id;}
   inline Stream& operator<<(Stream& s, const Script::Quote& v) {return s << '\'' << v.var;}
 }
 

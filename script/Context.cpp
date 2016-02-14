@@ -116,20 +116,19 @@ void Context::read(Var& v, Lexer& lexer) {
 }
 
 Symbol Context::symbol(const char* str) {
-  // Search the known symbols
-  for(int i(0); i<_symbols.size(); i++)
-    if(!strcmp(_symbols[i].str(),str))
-      return _symbols[i];
-  // Create new symbol
-  char* sym((char*)malloc(strlen(str)));
-  strcpy(sym,str);
-  _symbols.push(sym);
-  return {sym};
+  // 32-bit FNV-1a algorithm
+  uint32 wtr(2166136261);
+  while(*str) {
+    wtr ^= *str;
+    wtr *= 16777619;
+    str++;
+  }
+  return {wtr};
 }
 Var& Context::variable(Symbol sym) {
   // Search the known variable
   for(int i(nextFrame()-1); i>=0; i--)
-    if(_stack[i].key()==sym)
+    if(_stack[i].key().id==sym.id)
       return _stack[i].value();
   pushVariable(sym);
   return _stack.back().value();
@@ -139,7 +138,6 @@ void Context::pushVariable(Symbol sym, const Var& v) {
   _frames.back()++; // Added variable to current frame, must push next frame
 }
 Var Context::execute(const Var& code) {
-  static const char empty[] = "";
   if(code.is<Array<Var> >()) { // Function call
     const Array<Var>& array(code.as<Array<Var> >()); // Get reference of array value
     const Var& handle(execute(array[0])); // Execute first child of array to get function handle
@@ -149,7 +147,7 @@ Var Context::execute(const Var& code) {
       Var wtr;
       _frames.push(nextFrame()); // Add new frame
       for(int i(1); i<array.size(); i++) { // For all parameters
-        Symbol sym(empty);
+        Symbol sym = {0};
         if(handle.is<Array<Var> >() && handle.as<Array<Var> >()[0].as<Array<Var> >().size()>=i) {
           Var symVar(execute(handle.as<Array<Var> >()[0].as<Array<Var> >()[i-1]));
           if(symVar.is<Symbol>())
