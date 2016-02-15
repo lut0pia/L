@@ -3,84 +3,76 @@
 using namespace L;
 using namespace Script;
 
-Var dofunc(Context& c, const Array<Var>& a) {
-  for(int i(1); i<a.size()-1; i++)
-    c.execute(a[i]);
-  return c.execute(a.back());
-}
-Var whilefunc(Context& c, const Array<Var>& a) {
-  Var wtr;
-  while(c.execute(a[1]).get<bool>())
-    wtr = c.execute(a[2]);
-  return wtr;
-}
-Var iffunc(Context& c, const Array<Var>& a) {
-  if(a.size()>2) {
-    if(c.execute(a[1]).get<bool>())
-      return c.execute(a[2]);
-    else if(a.size()>3)
-      return c.execute(a[3]);
-  }
-  return 0;
-}
-Var set(Context& c, const Array<Var>& a) {
-  Var target(c.execute(a[1]));
-  if(a.size()==3 && target.is<Symbol>())
-    return c.variable(target.as<Symbol>()) = c.execute(a[2]);
-  return 0;
-}
-Var typenamefunc(Context& c, int params) {
-  return c.parameter(0).type()->name;
-}
-Var eq(Context& c, int params) {
-  if(params==2)
-    return c.parameter(0)==c.parameter(1);
-  else return false;
-}
-Var add(Context& c, int params) {
-  int wtr(0);
-  for(int i(0); i<params; i++)
-    if(c.parameter(i).is<int>())
-      wtr += c.parameter(i).as<int>();
-  return wtr;
-}
-Var mul(Context& c, int params) {
-  int wtr(1);
-  for(int i(0); i<params; i++)
-    if(c.parameter(i).is<int>())
-      wtr *= c.parameter(i).as<int>();
-  return wtr;
-}
-Var div(Context& c, int params) {
-  if(params==2 && c.parameter(0).is<int>() && c.parameter(1).is<int>()) {
-    return c.parameter(0).as<int>()/c.parameter(1).as<int>();
-  } else return 0;
-}
-Var mod(Context& c, int params) {
-  if(params==2 && c.parameter(0).is<int>() && c.parameter(1).is<int>()) {
-    return c.parameter(0).as<int>()%c.parameter(1).as<int>();
-  } else return 0;
-}
-Var print(Context& c, int params) {
-  for(int i(0); i<params; i++)
-    out << c.parameter(i);
-  return 0;
-}
-
 Context::Context() {
   _frames.push(0); // Start current frame
   _frames.push(0); // Start next frame (no variable)
-  variable(symbol("do")) = (Native)dofunc;
-  variable(symbol("while")) = (Native)whilefunc;
-  variable(symbol("if")) = (Native)iffunc;
-  variable(symbol("set")) = (Native)set;
-  variable(symbol("typename")) = (Function)typenamefunc;
-  variable(symbol("=")) = (Function)eq;
-  variable(symbol("+")) = (Function)add;
-  variable(symbol("*")) = (Function)mul;
-  variable(symbol("/")) = (Function)div;
-  variable(symbol("%")) = (Function)mod;
-  variable(symbol("print")) = (Function)print;
+  variable(symbol("do")) = (Native)[](Context& c,const Array<Var>& a)->Var {
+    for(int i(1); i<a.size()-1; i++)
+      c.execute(a[i]);
+    return c.execute(a.back());
+  };
+  variable(symbol("while")) = (Native)[](Context& c,const Array<Var>& a)->Var {
+    Var wtr;
+    while(c.execute(a[1]).get<bool>())
+      wtr = c.execute(a[2]);
+    return wtr;
+  };
+  variable(symbol("if")) = (Native)[](Context& c,const Array<Var>& a)->Var {
+    if(a.size()>2) {
+      if(c.execute(a[1]).get<bool>())
+        return c.execute(a[2]);
+      else if(a.size()>3)
+        return c.execute(a[3]);
+    }
+    return 0;
+  };
+  variable(symbol("set")) = (Native)[](Context& c,const Array<Var>& a)->Var {
+    Var target(c.execute(a[1]));
+    if(a.size()==3) {
+      if(target.is<Symbol>())
+        return c.variable(target.as<Symbol>()) = c.execute(a[2]);
+      else if(target.is<Var*>())
+        return *target.as<Var*>() = c.execute(a[2]);
+    }
+    return 0;
+  };
+  variable(symbol("typename")) = (Function)[](Context& c,int params)->Var {
+    return c.parameter(0).type()->name;
+  };
+  variable(symbol("=")) = (Function)[](Context& c,int params)->Var {
+    if(params==2)
+      return c.parameter(0)==c.parameter(1);
+    else return false;
+  };
+  variable(symbol("+")) = (Function)[](Context& c,int params)->Var {
+    int wtr(0);
+    for(int i(0); i<params; i++)
+      if(c.parameter(i).is<int>())
+        wtr += c.parameter(i).as<int>();
+    return wtr;
+  };
+  variable(symbol("*")) = (Function)[](Context& c,int params)->Var {
+    int wtr(1);
+    for(int i(0); i<params; i++)
+      if(c.parameter(i).is<int>())
+        wtr *= c.parameter(i).as<int>();
+    return wtr;
+  };
+  variable(symbol("/")) = (Function)[](Context& c,int params)->Var {
+    if(params==2 && c.parameter(0).is<int>() && c.parameter(1).is<int>()) {
+      return c.parameter(0).as<int>()/c.parameter(1).as<int>();
+    } else return 0;
+  };
+  variable(symbol("%")) = (Function)[](Context& c,int params)->Var {
+    if(params==2 && c.parameter(0).is<int>() && c.parameter(1).is<int>()) {
+      return c.parameter(0).as<int>()%c.parameter(1).as<int>();
+    } else return 0;
+  };
+  variable(symbol("print")) = (Function)[](Context& c,int params)->Var {
+    for(int i(0); i<params; i++)
+      out << c.parameter(i);
+    return 0;
+  };
 }
 void Context::read(Stream& stream) {
   Script::Lexer lexer(stream);
