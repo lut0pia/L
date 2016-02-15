@@ -7,6 +7,7 @@ void Sprite::render(const Camera&) {
     glPushMatrix();
     glMultTransposeMatrixf(_transform->absolute().array());
     _texture->bind();
+    GL::color(Color::white);
     glBegin(GL_QUADS);
     glTexCoord2f(_uv.min().x(),_uv.max().y());
     glVertex2f(_vertex.min().x(),_vertex.min().y());
