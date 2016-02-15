@@ -12,10 +12,9 @@ namespace L {
       static const int intBits = sizeof(int)*8;
     private:
       class Block {
-          static const int alignedTypeSize = alignment<T>::padded;
-          static const int blockSize = tableSize*intBits*alignedTypeSize;
+          static const int blockSize = tableSize*intBits*sizeof(T);
         private:
-          int _table[tableSize]; // Every bit of this array represents a object slot in _data
+          uint _table[tableSize]; // Every bit of this array represents a object slot in _data
           byte _data[blockSize];
           Block* _next; // Pool works like a linked list, in case no more space is available
           bool _full;
@@ -34,12 +33,12 @@ namespace L {
                 if(_table[i]!=~0) { // This part of the block is not full
                   for(int j(0); j<intBits; j++)
                     if(_table[i]&(1<<j))
-                      wtr += alignedTypeSize;
+                      wtr += sizeof(T);
                     else {
                       _table[i] |= 1<<j;
                       return (T*)wtr;
                     }
-                } else wtr += alignedTypeSize*intBits; // This part of the block is full
+                } else wtr += sizeof(T)*intBits; // This part of the block is full
             _full = true;
             if(!_next)
               _next = new Block();
@@ -47,7 +46,7 @@ namespace L {
           }
           void deallocate(void* p) {
             if(_data<=p && p<=_data+sizeof(_data)) {
-              int i(((int)p-(int)_data)/alignedTypeSize);
+              int i(((int)p-(int)_data)/sizeof(T));
               int j(i%intBits); // Bit position
               i /= intBits; // Position in table
               _table[i] &= ~(1<<j);
@@ -57,7 +56,7 @@ namespace L {
           }
           bool allocated(void* p) const {
             if(_data<=p && p<=_data+sizeof(_data)) {
-              int i(((int)p-(int)_data)/alignedTypeSize);
+              int i(((int)p-(int)_data)/sizeof(T));
               int j(i%intBits); // Bit position
               i /= intBits; // Position in table
               return (_table[i]&(1<<j));
@@ -73,9 +72,9 @@ namespace L {
                 for(int j(0); j<intBits; j++) {
                   if(_table[i]&(1<<j))
                     f(*(T*)ptr);
-                  ptr += alignedTypeSize;
+                  ptr += sizeof(T);
                 }
-              } else ptr += alignedTypeSize*intBits; // This part of the block is empty
+              } else ptr += sizeof(T)*intBits; // This part of the block is empty
             if(_next)
               _next->foreach(f);
           }
