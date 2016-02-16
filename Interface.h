@@ -16,10 +16,10 @@ namespace L {
       static Map<String,Interface*> instance;
 
     protected:
-      Interface(const String& format) {
+      Interface(const char* format) {
         subscribe(format);
       }
-      void subscribe(const String& format) {
+      void subscribe(const char* format) {
         instance[format] = this;
       }
 

@@ -166,7 +166,7 @@ void eventTranslate(const XEvent& xev) {
 }
 #endif
 
-void Window::open(const String& title, int width, int height, int flags) {
+void Window::open(const char* title, int width, int height, int flags) {
   if(opened()) return;
   _width = width;
   _height = height;
@@ -233,7 +233,7 @@ void Window::open(const String& title, int width, int height, int flags) {
   if(flags & opengl)
     GL::init();
 }
-void Window::openFullscreen(const String& title, int flags) {
+void Window::openFullscreen(const char* title, int flags) {
   Vector2i screenSize(System::screenSize());
   open(title,screenSize.x(),screenSize.y(),borderless | flags);
 }
@@ -309,7 +309,7 @@ void Window::draw(const Bitmap& bmp) {
 #endif
 }
 
-void Window::title(const String& str) {
+void Window::title(const char* str) {
   if(!opened()) return;
 #if defined L_WINDOWS
   SetWindowText(hWND,str);

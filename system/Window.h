@@ -44,8 +44,8 @@ namespace L {
       static const int nocursor = 0x4;
       static const int opengl = 0x8;
     public:
-      static void open(const String& title, int width = 800, int height = 600, int flags = 0);
-      static void openFullscreen(const String& title, int flags = 0);
+      static void open(const char* title, int width = 800, int height = 600, int flags = 0);
+      static void openFullscreen(const char* title, int flags = 0);
       static void close();
       static bool opened();
       static bool loop();
@@ -56,7 +56,7 @@ namespace L {
       static void draw(const Bitmap&);
 
       // Setters & getters
-      static void title(const String&);
+      static void title(const char*);
       static void resize(int width, int height);
       static int width();
       static int height();
