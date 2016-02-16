@@ -11,11 +11,11 @@ namespace L {
   template <class T>
   class Array {
     private:
-      void* _data;
+      T* _data;
       size_t _size, _capacity;
 
       inline void shift(size_t i, int offset) {
-        memmove(&operator[](i+offset),&operator[](i),(_size-i)*sizeof(T));
+        memmove(_data+i+offset,_data+i,(_size-i)*sizeof(T));
       }
 
     public:
@@ -30,8 +30,8 @@ namespace L {
         size(s,args...);
       }
       Array(const Array& other) : _size(other._size), _capacity(other._size) {
-        _data = malloc(_size*sizeof(T));
-        copy(&operator[](0),&other[0],_size);
+        _data = (T*)malloc(_size*sizeof(T));
+        copy(_data,other._data,_size);
       }
       ~Array() {
         destruct((T*)_data,_size);
@@ -51,8 +51,8 @@ namespace L {
       inline size_t capacity() const {return _capacity;}
       inline bool empty() const {return size()==0;}
       inline void clear() {size(0);}
-      inline T& operator[](size_t i) {return *(((T*)_data)+i);}
-      inline const T& operator[](size_t i) const {return *(((T*)_data)+i);}
+      inline T& operator[](size_t i) {return _data[i];}
+      inline const T& operator[](size_t i) const {return _data[i];}
       inline T& front() {return operator[](0);}
       inline const T& front() const {return operator[](0);}
       inline T& back() {return operator[](_size-1);}
@@ -64,14 +64,14 @@ namespace L {
       template <typename... Args>
       void size(size_t n,Args&&... args) {
         if(_capacity<n) growTo(n);
-        if(_size<n) construct(&operator[](_size),n-_size,args...);
-        else destruct(&operator[](n),_size-n);
+        if(_size<n) construct(_data+_size,n-_size,args...);
+        else destruct(_data+n,_size-n);
         _size = n;
       }
       void capacity(size_t n) {
         if(n!=capacity()) {
           if(n<_size) size(n); // Have to resize because capacity cannot be below size
-          _data = realloc(_data,n*sizeof(T));
+          _data = (T*)realloc(_data,n*sizeof(T));
           _capacity = n;
         }
       }
@@ -100,22 +100,22 @@ namespace L {
         _size += alen-len;
       }
       void erase(size_t i) {
-        destruct(operator[](i)); // Destruct value
+        destruct(_data[i]); // Destruct value
         shift(i+1,-1); // Move right part
         _size--; // Decrease size
       }
       void erase(size_t i, size_t count) {
-        destruct(&operator[](i),count); // Destruct values
+        destruct(_data+i,count); // Destruct values
         shift(i+count,-count); // Move right part
         _size -= count; // Decrease size
       }
       void foreach(const std::function<void(const T&)>& f) const {
         for(size_t i(0); i<_size; i++)
-          f(operator[](i));
+          f(_data[i]);
       }
       void foreach(const std::function<void(T&)>& f) {
         for(size_t i(0); i<_size; i++)
-          f(operator[](i));
+          f(_data[i]);
       }
       template <typename... Args>
       inline static Array make(Args&&... args) {
