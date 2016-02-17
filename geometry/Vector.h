@@ -75,9 +75,7 @@ namespace L {
             return false;
         return true;
       }
-      bool operator!=(const Vector& other) const {
-        return !(*this == other);
-      }
+      inline bool operator!=(const Vector& other) const {return !(*this == other);}
       bool operator<(const Vector& other) const {
         for(int i(0); i<d; i++)
           if(_c[i] < other._c[i])
