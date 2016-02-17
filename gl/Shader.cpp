@@ -1,5 +1,6 @@
 #include "Shader.h"
 
+#include "../streams/FileStream.h"
 #include "../Exception.h"
 
 using namespace L;
@@ -19,7 +20,14 @@ void Shader::load(const char* src) {
   }
 }
 Shader::Shader(File file, GLenum type) : _id(glCreateShader(type)) {
-  load(file.open("r").readAll());
+  FileStream fs(file.path(),"rb");
+  String src;
+  while(!fs.end()) {
+    char c(fs.get());
+    if(c==EOF) break;
+    else src.push(c);
+  }
+  load(src);
 }
 Shader::Shader(const char* src, GLenum type) : _id(glCreateShader(type)) {
   load(src);
