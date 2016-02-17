@@ -1,5 +1,7 @@
 #include "ScriptComponent.h"
 
+#include "../streams/FileStream.h"
+
 using namespace L;
 using namespace Script;
 
