@@ -17,6 +17,7 @@ namespace L {
           Ref<Tree> zero, one;
         public:
           bool operator<(const Tree&) const;
+          bool operator>(const Tree&) const;
 
           void write(byte, Array<byte>&, size_t& bit) const;
           byte read(const Array<byte>&, size_t& bit) const;

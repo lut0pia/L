@@ -5,6 +5,9 @@ using namespace L;
 bool Huffman::Tree::operator<(const Tree& other) const {
   return weight < other.weight;
 }
+bool Huffman::Tree::operator>(const Tree& other) const {
+  return weight > other.weight;
+}
 void Huffman::Tree::write(byte b, Array<byte>& v, size_t& bit) const {
   if(v.size()<=bit/8)
     v.size((bit/8)+1);
