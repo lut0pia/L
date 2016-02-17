@@ -77,7 +77,7 @@ namespace L {
       }
       void growTo(size_t size) {
         if(size>capacity()) {
-          size_t tmp((_capacity)?_capacity:1);
+          size_t tmp((_capacity)?_capacity:8);
           while(size>tmp) tmp *= 2;
           capacity(tmp);
         }
