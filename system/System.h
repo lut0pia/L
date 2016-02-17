@@ -17,7 +17,7 @@ namespace L {
     ullong ticks();
     void toClipboard(const String&);
     String fromClipboard();
-    String env(const String&);
+    String env(const char*);
     String pwd();
     Vector2i screenSize();
 

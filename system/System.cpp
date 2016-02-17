@@ -79,7 +79,7 @@ String System::fromClipboard() {
 #endif
   throw Exception("Cannot get clipboard data.");
 }
-String System::env(const String& name) {
+String System::env(const char* name) {
   return getenv(name);
 }
 String System::pwd() {
