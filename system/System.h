@@ -18,6 +18,7 @@ namespace L {
     void toClipboard(const String&);
     String fromClipboard();
     String env(const String&);
+    String pwd();
     Vector2i screenSize();
 
     void consoleCursorPosition(unsigned short x,unsigned short y);

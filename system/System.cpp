@@ -82,6 +82,16 @@ String System::fromClipboard() {
 String System::env(const String& name) {
   return getenv(name);
 }
+String System::pwd() {
+  String wtr;
+#if defined L_WINDOWS
+  wtr = callGet("cd");
+#elif defined L_UNIX
+  wtr = callGet("pwd");
+#endif
+  wtr[wtr.size()-1] = slash; // Because there's a \n at the end
+  return wtr;
+}
 Vector2i System::screenSize() {
 #if defined L_WINDOWS
   return Vector2i(GetSystemMetrics(SM_CXSCREEN),GetSystemMetrics(SM_CYSCREEN));
