@@ -105,7 +105,7 @@ namespace L {
         AK::SoundEngine::RegisterGameObj(id);
       }
       // Events
-      static AkGameObjectID postEvent(const String& name, const Vector3f& position = Vector3f(0,0,0)) {
+      static AkGameObjectID postEvent(const char* name, const Vector3f& position = Vector3f(0,0,0)) {
         AkGameObjectID goid(_nextGameObject);
         _nextGameObject = (_nextGameObject+1)%_maxGameObject;
         AkSoundPosition soundPos = {{position.x(),position.y(),position.z()}};
@@ -113,11 +113,11 @@ namespace L {
         postEvent(name,goid);
         return goid;
       }
-      static void postEvent(const String& name, AkGameObjectID goid) {
+      static void postEvent(const char* name, AkGameObjectID goid) {
         AK::SoundEngine::PostEvent(name,goid);
       }
       // RTPC
-      static void rtpc(const String& name, float value) {
+      static void rtpc(const char* name, float value) {
         AK::SoundEngine::SetRTPCValue(name,value);
       }
       // Listeners
