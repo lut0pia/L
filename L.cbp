@@ -264,8 +264,6 @@
 		<Unit filename="streams/Stream.cpp" />
 		<Unit filename="streams/Stream.h" />
 		<Unit filename="system.h" />
-		<Unit filename="system/Directory.cpp" />
-		<Unit filename="system/Directory.h" />
 		<Unit filename="system/File.cpp" />
 		<Unit filename="system/File.h" />
 		<Unit filename="system/System.cpp" />
