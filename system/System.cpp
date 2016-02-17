@@ -131,7 +131,7 @@ String System::formatPath(String path) {
 #elif defined L_UNIX
   if(!path.size() || path[0]!='/')
 #endif
-    path = Directory::current.gPath()+path;
+    path = System::pwd()+path;
   return path;
 }
 String System::pathDirectory(const String& path) {
