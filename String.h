@@ -19,10 +19,15 @@ namespace L {
         return wtr += other;
       }
       String& operator+=(const String& other);
-      inline bool operator==(const String& other) const {return !strcmp(operator const char*(),(const char*)other);}
+      inline bool operator==(const char* other) const {return !strcmp(*this,other);}
+      inline bool operator!=(const char* other) const {return !operator==(other);}
+      inline bool operator<(const char* other) const {return strcmp(*this,other)<0;}
+      inline bool operator>(const char* other) const {return strcmp(*this,other)>0;}
+
+      inline bool operator==(const String& other) const {return !strcmp(*this,other);}
       inline bool operator!=(const String& other) const {return !operator==(other);}
-      inline bool operator<(const String& other) const {return strcmp(operator const char*(),(const char*)other)<0;}
-      inline bool operator>(const String& other) const {return strcmp(operator const char*(),(const char*)other)>0;}
+      inline bool operator<(const String& other) const {return strcmp(*this,other)<0;}
+      inline bool operator>(const String& other) const {return strcmp(*this,other)>0;}
 
       // Search methods
       inline int findFirst(char c) const {return strchr(*this,c)-operator const char*();}
@@ -80,8 +85,6 @@ namespace L {
       }
   };
   inline String operator+(const char* a, const String& b) {return String(a)+b;}
-  inline bool operator==(const String& a, const char* b) {return !strcmp(a,b);}
-  inline bool operator!=(const String& a, const char* b) {return !(a == b);}
   inline Stream& operator<<(Stream &s, const String& v) {return s << (const char*)v;}
 }
 
