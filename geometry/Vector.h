@@ -84,6 +84,7 @@ namespace L {
             return false;
         return false;
       }
+      inline bool operator>(const Vector& other) const { return other<*this;}
       T normSquared() const {
         T wtr(0);
         for(int i(0); i<d; i++)
