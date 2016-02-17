@@ -23,12 +23,12 @@ namespace L {
         ~Program();
         L_NoCopy(Program)
         void use() const;
-        GLuint uniformLocation(const String& name);
-        void uniform(const String& name, float);
-        void uniform(const String& name, float,float,float);
-        void uniform(const String& name, const Vector3f&);
-        void uniform(const String& name, const Matrix44f&);
-        void uniform(const String& name, const Texture&, GLenum unit = GL_TEXTURE0);
+        GLuint uniformLocation(const char* name);
+        void uniform(const char* name, float);
+        void uniform(const char* name, float,float,float);
+        void uniform(const char* name, const Vector3f&);
+        void uniform(const char* name, const Matrix44f&);
+        void uniform(const char* name, const Texture&, GLenum unit = GL_TEXTURE0);
 
         static void unuse();
     };
