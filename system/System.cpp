@@ -3,7 +3,6 @@
 using namespace L;
 using namespace System;
 
-#include "Directory.h"
 #include "../Exception.h"
 
 String System::callGet(const char* cmd) {
