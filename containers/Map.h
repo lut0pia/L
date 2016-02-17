@@ -8,34 +8,35 @@
 namespace L {
   template <class K,class V>
   class Map : public Set<KeyValue<K,V> > {
-      typedef KeyValue<K,V> T;
+      typedef KeyValue<K,V> KV;
     public:
-      KeyValue<K,V>* find(const K& k) {
-        KeyValue<K,V> key(k);
-        int i(index(key));
-        if(i>=Array<T>::size() || key<Array<T>::operator[](i))
+      template <class T>
+      KV* find(const T& k) {
+        int i(index(k));
+        if(i>=Array<KV>::size() || Array<KV>::operator[](i)>k)
           return 0;
-        else return &Array<T>::operator[](i);
+        else return &Array<KV>::operator[](i);
       }
-      const KeyValue<K,V>* find(const K& k) const {
-        KeyValue<K,V> key(k);
-        int i(index(key));
-        if(i>=Array<T>::size() || key<Array<T>::operator[](i))
+      template <class T>
+      const KV* find(const T& k) const {
+        int i(index(k));
+        if(i>=Array<KV>::size() || Array<KV>::operator[](i)>k)
           return 0;
-        else return &Array<T>::operator[](i);
+        else return &Array<KV>::operator[](i);
       }
-      V& operator[](const K& k) {
-        KeyValue<K,V>* e(find(k));
+      template <class T>
+      V& operator[](const T& k) {
+        KV* e(find(k));
         if(e) return e->value();
-        insert(KeyValue<K,V>(k,V()));
+        insert(KV(k,V()));
         return operator[](k);
       }
       const V& operator[](const K& k) const {
-        const KeyValue<K,V>* e(find(k));
+        const KV* e(find(k));
         if(e) return e->value();
         throw Exception("Couldn't find key in Map");
       }
-      inline const KeyValue<K,V>& at(int i) const {return Set<KeyValue<K,V> >::operator[](i);}
+      inline const KeyValue<K,V>& at(int i) const {return Set<KV>::operator[](i);}
       inline bool has(const K& k) const {return find(k)!=0;}
   };
   template <class K,class V> inline Stream& operator<<(Stream& s, const Map<K,V>& v) { return s << (const Array<KeyValue<K,V> >&)v;}

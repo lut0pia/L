@@ -7,19 +7,21 @@ namespace L {
   template <class T>
   class SortedArray : protected Array<T> {
     public:
-      int index(const T& e) const {
+      template <class R>
+      int index(const R& e) const {
         int l(0), r(size());
         while(l<r) {
           int m((l+r)/2);
           if(Array<T>::operator[](m)<e)
             l = m+1;
-          else if(e<Array<T>::operator[](m))
+          else if(Array<T>::operator[](m)>e)
             r = m;
           else return m;
         }
         return l;
       }
-      int first(const T& e) {
+      template <class R>
+      int first(const R& e) {
         int i(index(e));
         if(operator[](i)<e)
           return -1;
@@ -27,7 +29,8 @@ namespace L {
             i--;
         return i;
       }
-      int last(const T& e) {
+      template <class R>
+      int last(const R& e) {
         int i(index(e));
         if(e<operator[](i))
           return -1;
