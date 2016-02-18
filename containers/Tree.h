@@ -87,9 +87,10 @@ namespace L {
                   distance = tmp;
                 }
               }
+              Array<Node*> childNodes;
               for(int i(0); i<n; i++) { // Cycle through all children
                 Vector<d,K> childCenter(0);
-                Array<Node*> childNodes;
+                childNodes.clear();
                 for(int j(0); j<nodes.size(); j++)
                   if(node->childIndex(nodes[j]->key())==i) { // Find nodes that should go to that child
                     childNodes.push(nodes[j]);
