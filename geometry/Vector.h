@@ -97,7 +97,7 @@ namespace L {
       T manhattan() const {
         T wtr(0);
         for(int i(0); i<d; i++)
-          wtr += ::abs(_c[i]);
+          wtr += L::abs(_c[i]);
         return wtr;
       }
       Vector& normalize() {
@@ -138,7 +138,7 @@ namespace L {
       Vector abs() const {
         Vector wtr;
         for(int i(0); i<d; i++)
-          wtr = ::abs(_c[i]);
+          wtr = L::abs(_c[i]);
         return wtr;
       }
       bool increment(const Vector& min, const Vector& max, const Vector& delta = 1) {
