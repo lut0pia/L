@@ -5,7 +5,7 @@
 #include "../macros.h"
 #include "../String.h"
 #include "../time.h"
-#include "../geometry/Vector.h"
+#include "../math/Vector.h"
 
 namespace L {
   namespace System {

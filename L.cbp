@@ -143,12 +143,6 @@
 		<Unit filename="font/Font.h" />
 		<Unit filename="font/Pixel.cpp" />
 		<Unit filename="font/Pixel.h" />
-		<Unit filename="geometry.h" />
-		<Unit filename="geometry/Interval.h" />
-		<Unit filename="geometry/Segment.h" />
-		<Unit filename="geometry/Surface.h" />
-		<Unit filename="geometry/Vector.h" />
-		<Unit filename="geometry/Volume.h" />
 		<Unit filename="gl.h" />
 		<Unit filename="gl/Buffer.cpp" />
 		<Unit filename="gl/Buffer.h" />
@@ -223,12 +217,14 @@
 		<Unit filename="math/Integer.cpp" />
 		<Unit filename="math/Integer.h" />
 		<Unit filename="math/Interpolation.h" />
+		<Unit filename="math/Interval.h" />
 		<Unit filename="math/Matrix.h" />
 		<Unit filename="math/Perlin.h" />
 		<Unit filename="math/Rational.cpp" />
 		<Unit filename="math/Rational.h" />
 		<Unit filename="math/Real.cpp" />
 		<Unit filename="math/Real.h" />
+		<Unit filename="math/Vector.h" />
 		<Unit filename="math/math.h" />
 		<Unit filename="network.h" />
 		<Unit filename="network/Network.cpp" />

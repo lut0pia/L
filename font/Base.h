@@ -3,7 +3,7 @@
 
 #include "../containers/Map.h"
 #include "../image/Bitmap.h"
-#include "../geometry/Vector.h"
+#include "../math/Vector.h"
 
 namespace L {
   namespace Font {

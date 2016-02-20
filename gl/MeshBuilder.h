@@ -2,7 +2,7 @@
 #define DEF_L_GL_MeshBuilder
 
 #include "../image/Color.h"
-#include "../geometry/Vector.h"
+#include "../math/Vector.h"
 #include "../macros.h"
 
 namespace L {

@@ -2,7 +2,7 @@
 #define DEF_L_MultiArray
 
 #include "Array.h"
-#include "../geometry/Vector.h"
+#include "../math/Vector.h"
 #include "../objects.h"
 
 namespace L {

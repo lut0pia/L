@@ -43,7 +43,6 @@ namespace L {
       void scale(int width, int height, InterpolationType = CUBIC);
       void blur(int factor);
       void saturation(float percent);
-      void drawTriangle(Surface<2,float>,Color);
   };
 }
 

@@ -6,6 +6,7 @@
 #include "../gl/GL.h"
 #include "../containers/Ref.h"
 #include "../dynamic/Variable.h"
+#include "../math/Interval.h"
 #include "../system/Window.h"
 
 namespace L {

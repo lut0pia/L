@@ -3,7 +3,7 @@
 
 #include <GL/glew.h>
 #include "Shader.h"
-#include "../geometry/Vector.h"
+#include "../math/Vector.h"
 #include "../containers/Map.h"
 
 namespace L {

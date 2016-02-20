@@ -1,7 +1,7 @@
 #ifndef DEF_L_Tree
 #define DEF_L_Tree
 
-#include "../geometry/Vector.h"
+#include "../math/Vector.h"
 #include "../tmp.h"
 #include "Pool.h"
 

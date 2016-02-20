@@ -1,7 +1,7 @@
 #ifndef DEF_L_System_Window
 #define DEF_L_System_Window
 
-#include "../geometry/Vector.h"
+#include "../math/Vector.h"
 #include "../macros.h"
 #include "../String.h"
 #include "../image/Bitmap.h"

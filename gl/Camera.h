@@ -1,9 +1,9 @@
 #ifndef DEF_L_GL_Camera
 #define DEF_L_GL_Camera
 
-#include "../geometry/Vector.h"
-#include "../geometry/Interval.h"
+#include "../math/Interval.h"
 #include "../math/Matrix.h"
+#include "../math/Vector.h"
 
 namespace L {
   namespace GL {

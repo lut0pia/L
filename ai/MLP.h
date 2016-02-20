@@ -1,7 +1,7 @@
 #ifndef DEF_L_AI_MLP
 #define DEF_L_AI_MLP
 
-#include "../geometry/Vector.h"
+#include "../math/Vector.h"
 
 namespace L {
   namespace AI {

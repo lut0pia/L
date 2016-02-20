@@ -2,6 +2,7 @@
 #define DEF_L_Camera
 
 #include "Transform.h"
+#include "../math/Interval.h"
 
 namespace L {
   class Camera : public Component {

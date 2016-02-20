@@ -2,8 +2,8 @@
 #define DEF_L_Image_Color
 
 #include "../math/math.h"
+#include "../math/Vector.h"
 #include "../String.h"
-#include "../geometry/Vector.h"
 
 namespace L {
   class Color  : public Vector4b {

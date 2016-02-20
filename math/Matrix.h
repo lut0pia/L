@@ -1,7 +1,7 @@
 #ifndef DEF_L_Matrix
 #define DEF_L_Matrix
 
-#include "../geometry/Vector.h"
+#include "Vector.h"
 
 namespace L {
   template <int l, int c, class T>

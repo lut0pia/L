@@ -1,7 +1,7 @@
 #ifndef DEF_L_Interpolation
 #define DEF_L_Interpolation
 
-#include "../geometry/Vector.h"
+#include "../math/Vector.h"
 #include "../tmp.h"
 
 namespace L {
