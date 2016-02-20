@@ -100,6 +100,7 @@ namespace L {
       inline const Vector<d,T>& min() const {return _min;}
       inline const Vector<d,T>& max() const {return _max;}
   };
+  typedef Interval<1,float> Interval1f;
   typedef Interval<2,int> Interval2i;
   typedef Interval<3,int> Interval3i;
   typedef Interval<2,float> Interval2f;
