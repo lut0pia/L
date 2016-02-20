@@ -2,6 +2,7 @@
 #define DEF_L_Interval
 
 #include "../math/math.h"
+#include "Matrix.h"
 #include "Vector.h"
 
 namespace L {
@@ -29,6 +30,19 @@ namespace L {
           wtr._max[i] = L::max(_max[i],other._max[i]);
         }
         return wtr;
+      }
+      Interval transformed(const Matrix<d+1,d+1,T>& matrix) const {
+        if(!empty()) { // Empty should always return empty
+          Interval wtr;
+          Vector<d,T> p;
+          for(int c(0); c<(1<<d); c++) { // Cycle through corners of the interval
+            for(int i(0); i<d; i++)
+              p[i] = (c&(1<<i))?_min[i]:_max[i];
+            if(c) wtr.add(Vector<d,T>(matrix*p));
+            else wtr = Interval(Vector<d,T>(matrix*p)); // First
+          }
+          return wtr;
+        } else return *this;
       }
       bool operator&&(const Interval& other) const {
         for(int i(0); i<d; i++) {
