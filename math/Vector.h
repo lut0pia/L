@@ -169,18 +169,8 @@ namespace L {
       inline T& z() {return _c[2];}
       inline T& w() {return _c[3];}
 
-      static Vector min() {
-        Vector wtr;
-        for(int i(0); i<d; i++)
-          wtr[i] = std::numeric_limits<T>::min();
-        return wtr;
-      }
-      static Vector max() {
-        Vector wtr;
-        for(int i(0); i<d; i++)
-          wtr[i] = std::numeric_limits<T>::max();
-        return wtr;
-      }
+      static Vector min() {return Vector(std::numeric_limits<T>::min());}
+      static Vector max() {return Vector(std::numeric_limits<T>::max());}
       static Vector random() {
         Vector wtr;
         for(int i(0); i<d; i++)
