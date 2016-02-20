@@ -31,6 +31,12 @@ namespace L {
         }
         return wtr;
       }
+      Vector<d,T> corner(int c) const {
+        Vector<d,T> wtr;
+        for(int i(0); i<d; i++)
+          wtr[i] = (c&(1<<i))?_min[i]:_max[i];
+        return wtr;
+      }
       Interval transformed(const Matrix<d+1,d+1,T>& matrix) const {
         if(!empty()) { // Empty should always return empty
           Interval wtr;
