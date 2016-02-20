@@ -11,7 +11,7 @@ namespace L {
     protected:
       Vector<d,T> _min, _max;
     public:
-      inline Interval() {clear();}
+      inline Interval() = default;
       inline Interval(const Vector<d,T>& a) : _min(a), _max(a) {}
       inline Interval(const Vector<d,T>& a, const Vector<d,T>& b) : _min(a), _max(a) {add(b);}
       Interval(const Interval& a, const Interval& b) {

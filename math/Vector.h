@@ -13,7 +13,7 @@ namespace L {
     protected:
       T _c[d];
     public:
-      inline Vector() {}
+      inline Vector() = default;
       template <class R>
       inline Vector(const Vector<d,R>& other) {
         for(int i(0); i<d; i++)
