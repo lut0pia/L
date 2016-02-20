@@ -11,7 +11,7 @@ namespace L {
       Transform* _transform;
       Ref<GL::Mesh> _mesh;
     public:
-      inline void start() {_transform = entity().requireComponent<Transform>();}
+      inline void start() {_transform = entity()->requireComponent<Transform>();}
       inline void mesh(const char* filename) {_mesh = Engine::mesh(filename);}
       inline void render(const Camera&) {_mesh->draw();}
   };

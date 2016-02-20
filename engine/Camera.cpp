@@ -7,7 +7,7 @@ using namespace L;
 
 Camera::Camera() : _viewport(Vector2f(0,0),Vector2f(1,1)) {}
 void Camera::start() {
-  _transform = entity().component<Transform>();
+  _transform = entity()->component<Transform>();
 }
 void Camera::prerender() {
   static Matrix44f camOrient(Matrix44f::orientation(Vector3f(1,0,0),Vector3f(0,0,1),Vector3f(0,-1,0)).inverse());

@@ -14,7 +14,7 @@ namespace L {
       Ref<GL::Texture> _texture;
       Interval2f _vertex, _uv;
     public:
-      inline void start() {_transform = entity().requireComponent<Transform>();}
+      inline void start() {_transform = entity()->requireComponent<Transform>();}
       void render(const Camera&);
       inline void texture(const char* filename) {_texture = Engine::texture(filename);}
       inline void texture(const Ref<GL::Texture>& tex) {_texture = tex;}
