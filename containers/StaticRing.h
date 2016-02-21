@@ -15,7 +15,7 @@ namespace L {
       inline int index(int i) const {return pmod(i,n);}
       inline bool full() const {return _w==index(_r-1);}
       inline bool empty() const {return _w==_r;}
-      int size() const {return ((_r<_w)?(_w-_r):(n-(_r-_w)));}
+      int size() const {return ((_r<=_w)?(_w-_r):(n-(_r-_w)));}
       void push(const T& e) {
         if(full()) throw Exception("Cannot push because static ring is full.");
         _array[_w] = e;
