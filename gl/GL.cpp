@@ -77,7 +77,7 @@ void GL::drawAxes() {
   glEnd();
 }
 void GL::makeDisc(Mesh& mesh, int slices) {
-  meshBuilder.reset(Mesh::VERTEX,128,128);
+  meshBuilder.reset(Mesh::VERTEX);
   meshBuilder.setVertex(Vector3f(0,0,0));
   uint center(meshBuilder.addVertex());
   meshBuilder.setVertex(Vector3f(1,0,0));

@@ -10,7 +10,7 @@ namespace L {
 
       bool from(GL::Mesh& mesh, const File& f) {
         GL::MeshBuilder mb;
-        mb.reset(GL::Mesh::VERTEX|GL::Mesh::NORMAL,4194304,4194304);
+        mb.reset(GL::Mesh::VERTEX|GL::Mesh::NORMAL);
         FileStream file(f.path(),"rb");
         while(!file.end()) {
           String line(file.line());
