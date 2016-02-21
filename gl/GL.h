@@ -13,6 +13,7 @@ namespace L {
     const char* error();
     void drawAxes();
     void makeDisc(Mesh&, int slices);
+    void makeSphere(Mesh&, int rec);
     // Color drawing
     void draw2dLine(Vector<2,float>, Vector<2,float>, int size, const Color& c);
     inline void color(const Color& color) {

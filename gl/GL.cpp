@@ -93,6 +93,54 @@ void GL::makeDisc(Mesh& mesh, int slices) {
   meshBuilder.addTriangle(center,first,last);
   reconstruct(mesh,meshBuilder);
 }
+Map<uint64,int> middles;
+int vertexBetween(MeshBuilder& mb, uint a, uint b) {
+  if(a>b) swap(a,b);
+  uint64 id((uint64)a<<32|b);
+  if(!middles.has(id)) {
+    Vector3f va(mb.vertex(a)), vb(mb.vertex(b));
+    Vector3f v((va+vb)/2.f);
+    v.normalize();
+    mb.setVertex(v);
+    middles[id] = mb.addVertex();
+  }
+  return middles[id];
+}
+void refineTriangle(MeshBuilder& mb, uint a, uint b, uint c, uint rec) {
+  if(rec) {
+    int ab(vertexBetween(mb,a,b)), bc(vertexBetween(mb,b,c)), ac(vertexBetween(mb,a,c));
+    rec--;
+    refineTriangle(mb,a,ab,ac,rec);
+    refineTriangle(mb,b,bc,ab,rec);
+    refineTriangle(mb,c,ac,bc,rec);
+    refineTriangle(mb,ab,bc,ac,rec);
+  } else mb.addTriangle(a,b,c);
+}
+void GL::makeSphere(Mesh& mesh, int rec) {
+  middles.clear();
+  meshBuilder.reset(Mesh::VERTEX);
+  meshBuilder.setVertex(Vector3f(-1,0,0));
+  meshBuilder.addVertex();
+  meshBuilder.setVertex(Vector3f(1,0,0));
+  meshBuilder.addVertex();
+  meshBuilder.setVertex(Vector3f(0,-1,0));
+  meshBuilder.addVertex();
+  meshBuilder.setVertex(Vector3f(0,1,0));
+  meshBuilder.addVertex();
+  meshBuilder.setVertex(Vector3f(0,0,-1));
+  meshBuilder.addVertex();
+  meshBuilder.setVertex(Vector3f(0,0,1));
+  meshBuilder.addVertex();
+  refineTriangle(meshBuilder,0,2,5,rec);
+  refineTriangle(meshBuilder,0,3,4,rec);
+  refineTriangle(meshBuilder,0,4,2,rec);
+  refineTriangle(meshBuilder,0,5,3,rec);
+  refineTriangle(meshBuilder,1,2,4,rec);
+  refineTriangle(meshBuilder,1,3,5,rec);
+  refineTriangle(meshBuilder,1,4,3,rec);
+  refineTriangle(meshBuilder,1,5,2,rec);
+  reconstruct(mesh,meshBuilder);
+}
 void GL::draw2dLine(Vector<2,float> a, Vector<2,float> b, int size, const Color& c) {
   color(c);
   glBegin(GL_LINES);
