@@ -1,7 +1,7 @@
 #include "String.h"
 
 #include <cctype>
-#include "Exception.h"
+#include "macros.h"
 
 using namespace L;
 
@@ -71,7 +71,7 @@ size_t String::endOf(size_t i, bool dquotesEscape) const {
       move = -1;
       break;
     default:
-      throw Exception("Unhandled startChar in EndOf");
+      L_Error("Unhandled startChar in EndOf");
       break;
   }
   while((i+=move) < size() && i!=(size_t)~0) {
