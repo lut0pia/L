@@ -31,6 +31,8 @@
 #define L_DebugOnly(x)
 #endif
 
+#define L_Error(msg) {printf("Error: "L_Stringify(msg)" in file "__FILE__"\n");_exit(-1);}
+#define L_Assert(exp) L_DebugOnly(if(!(exp))L_Error(exp is false))
 
 #endif
 
