@@ -21,6 +21,7 @@ namespace L {
       inline void phiLook(float d) {rotate(Vector3f(1,0,0),d);}
       inline void thetaLook(float d) {rotate(Vector3f(0,0,1),d);}
       inline void move(const Vector3f& d) {mult(Matrix44f::translation(d));}
+      inline void moveAbsolute(const Vector3f& v) {mult(Matrix44f::orientation(right(),forward(),up()).inverse()*Matrix44f::translation(v)*Matrix44f::orientation(right(),forward(),up()));}
 
       inline const Matrix44f& relative() {return _relative;}
       Vector3f right();
