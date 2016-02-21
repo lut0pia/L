@@ -9,14 +9,6 @@ namespace L {
   template <int a> struct static_pow<a,0> : constant<int,1> {};
   template <uint f> struct flag : constant<uint,static_pow<2,f>::value> {};
   template <uint n> struct bitmask : constant<uint,~(~0<<n)> {};
-
-  template <class T>
-  struct alignment {
-    static const uint size = sizeof(T);
-    static const uint align = __alignof(T);
-    static const uint pad = (align-(size%align));
-    static const uint padded = size+pad;
-  };
 }
 
 #endif
