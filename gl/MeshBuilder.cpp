@@ -2,8 +2,7 @@
 
 #include <cstring>
 #include "Mesh.h"
-
-#include "../Exception.h"
+#include "../macros.h"
 
 using namespace L;
 using namespace GL;
@@ -18,8 +17,7 @@ void MeshBuilder::reset(byte vertexDesc) {
   _vertexBuffer.clear();
 }
 void MeshBuilder::computeNormals() {
-  if(!(_vertexDesc & Mesh::NORMAL))
-    throw Exception("There are no normals in this mesh.");
+  L_Assert(_vertexDesc & Mesh::NORMAL)
   uint vertexCount(vertexCount());
   for(uint i(0); i<vertexCount; i++)
     normal(i) = Vector3f(0,0,0);
