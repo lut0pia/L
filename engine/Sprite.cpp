@@ -5,7 +5,7 @@ using namespace L;
 void Sprite::render(const Camera&) {
   if(!_texture.null()) {
     glPushMatrix();
-    glMultTransposeMatrixf(_transform->absolute().array());
+    glMultTransposeMatrixf(_transform->matrix().array());
     _texture->bind();
     GL::color(Color::white);
     glBegin(GL_QUADS);
