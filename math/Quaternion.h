@@ -25,6 +25,7 @@ namespace L {
       }
 
       inline Quaternion inverse() const {return Quaternion(-x(),-y(),-z(),w());}
+      inline Vector<3,T> rotate(const Vector<3,T>& v) {return (*this)*v*inverse();}
       operator Vector<3,T>() const {return Vector<3,T>(x(),y(),z());}
   };
   typedef Quaternion<float> Quatf;
