@@ -5,6 +5,7 @@
 #include "math/math.h"
 #include "math/Matrix.h"
 #include "math/Perlin.h"
+#include "math/Quaternion.h"
 #include "math/Rational.h"
 #include "math/Real.h"
 #include "math/Vector.h"
