@@ -85,15 +85,13 @@ namespace L {
         return false;
       }
       inline bool operator>(const Vector& other) const { return other<*this;}
-      T normSquared() const {
+      T lengthSquared() const {
         T wtr(0);
         for(int i(0); i<d; i++)
           wtr += _c[i]*_c[i];
         return wtr;
       }
-      inline T norm() const {
-        return std::sqrt(normSquared());
-      }
+      inline T length() const {return std::sqrt(lengthSquared());}
       T manhattan() const {
         T wtr(0);
         for(int i(0); i<d; i++)
@@ -101,7 +99,7 @@ namespace L {
         return wtr;
       }
       Vector& normalize() {
-        T n(norm());
+        T n(length());
         for(int i(0); i<d; i++)
           _c[i] /= n;
         return *this;
