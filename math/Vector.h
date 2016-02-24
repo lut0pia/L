@@ -104,6 +104,11 @@ namespace L {
           _c[i] /= n;
         return *this;
       }
+      Vector normalized() const {
+        Vector wtr(*this);
+        wtr.normalize();
+        return wtr;
+      }
       inline T dist(const Vector& other) const {
         return (*this-other).norm();
       }
