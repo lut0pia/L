@@ -17,7 +17,7 @@ namespace L {
         y() = axis.y()*sin(angle/2);
         z() = axis.z()*sin(angle/2);
       }
-      Quaternion operator*(const Quaternion& other) {
+      Quaternion operator*(const Quaternion& other) const {
         return Quaternion(w()*other.x()+x()*other.w()+y()*other.z()-z()*other.y(),
                           w()*other.y()-x()*other.z()+y()*other.w()+z()*other.x(),
                           w()*other.z()+x()*other.y()-y()*other.x()+z()*other.w(),
@@ -25,7 +25,7 @@ namespace L {
       }
 
       inline Quaternion inverse() const {return Quaternion(-x(),-y(),-z(),w());}
-      inline Vector<3,T> rotate(const Vector<3,T>& v) {return (*this)*v*inverse();}
+      inline Vector<3,T> rotate(const Vector<3,T>& v) const {return (*this)*v*inverse();}
       operator Vector<3,T>() const {return Vector<3,T>(x(),y(),z());}
   };
   typedef Quaternion<float> Quatf;
