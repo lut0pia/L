@@ -15,12 +15,10 @@ namespace L {
       Quatf _rotation;
     public:
       inline Transform() : _parent(NULL), _translation(0,0,0) {}
-      Vector3f absolutePosition() {
-        return (_parent)?(_parent->absolutePosition()+parentRotation().rotate(_translation)):_translation;
-      }
-      Quatf absoluteRotation() {return (_parent)?_parent->absoluteRotation():_rotation;}
-      Quatf parentRotation() {return (_parent)?_parent->absoluteRotation():Quatf();}
+      inline Vector3f absolutePosition() const {return (_parent)?(_parent->absolutePosition()+parentRotation().rotate(_translation)):_translation;}
       inline Vector3f toAbsolute(const Vector3f& v) const {return absolutePosition()+_rotation.rotate(v);}
+      inline Quatf absoluteRotation() const {return (_parent)?_parent->absoluteRotation():_rotation;}
+      inline Quatf parentRotation() const {return (_parent)?_parent->absoluteRotation():Quatf();}
       inline void rotate(const Quatf& q) {_rotation = _rotation * q;}
       inline void rotate(const Vector3f& v, float d) {rotate(Quatf(v,d));}
       inline void phiLook(float d) {rotate(Vector3f(1,0,0),d);}
