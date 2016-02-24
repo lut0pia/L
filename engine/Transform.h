@@ -20,6 +20,7 @@ namespace L {
       }
       Quatf absoluteRotation() {return (_parent)?_parent->absoluteRotation():_rotation;}
       Quatf parentRotation() {return (_parent)?_parent->absoluteRotation():Quatf();}
+      inline Vector3f toAbsolute(const Vector3f& v) const {return absolutePosition()+_rotation.rotate(v);}
       inline void rotate(const Quatf& q) {_rotation = _rotation * q;}
       inline void rotate(const Vector3f& v, float d) {rotate(Quatf(v,d));}
       inline void phiLook(float d) {rotate(Vector3f(1,0,0),d);}
