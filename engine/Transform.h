@@ -27,13 +27,11 @@ namespace L {
       inline void moveAbsolute(const Vector3f& v) {_translation += parentRotation().inverse().rotate(v);}
 
       inline void parent(Transform* p) {_parent = p;}
-      inline Transform* parent()const {return _parent;}
-      inline Vector3f right() {return absoluteRotation().rotate(Vector3f(1,0,0));}
-      inline Vector3f forward() {return absoluteRotation().rotate(Vector3f(0,1,0));}
-      inline Vector3f up() {return absoluteRotation().rotate(Vector3f(0,0,1));}
-      Matrix44f matrix() {
-        return Matrix44f::translation(absolutePosition())*Matrix44f::orientation(right(),forward(),up());
-      }
+      inline Transform* parent() const {return _parent;}
+      inline Vector3f right() const {return absoluteRotation().rotate(Vector3f(1,0,0));}
+      inline Vector3f forward() const {return absoluteRotation().rotate(Vector3f(0,1,0));}
+      inline Vector3f up() const {return absoluteRotation().rotate(Vector3f(0,0,1));}
+      inline Matrix44f matrix() const {return Matrix44f::translation(absolutePosition())*Matrix44f::orientation(right(),forward(),up());}
   };
 }
 
