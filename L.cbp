@@ -121,11 +121,14 @@
 		<Unit filename="engine.h" />
 		<Unit filename="engine/Camera.cpp" />
 		<Unit filename="engine/Camera.h" />
+		<Unit filename="engine/Collider.cpp" />
+		<Unit filename="engine/Collider.h" />
 		<Unit filename="engine/Component.h" />
 		<Unit filename="engine/Engine.cpp" />
 		<Unit filename="engine/Engine.h" />
 		<Unit filename="engine/Entity.cpp" />
 		<Unit filename="engine/Entity.h" />
+		<Unit filename="engine/RigidBody.h" />
 		<Unit filename="engine/ScriptComponent.cpp" />
 		<Unit filename="engine/ScriptComponent.h" />
 		<Unit filename="engine/Sprite.cpp" />
