@@ -1,5 +1,6 @@
 #include "containers/Array.h"
 #include "containers/BTree.h"
+#include "containers/IntervalTree.h"
 #include "containers/KeyValue.h"
 #include "containers/List.h"
 #include "containers/Map.h"
