@@ -1,6 +1,9 @@
-# Binaries folder
+# Binaries folders
 bin/
 obj/
+
+# Projects folder
+prj/
 
 # Precompiled Headers
 *.gch
