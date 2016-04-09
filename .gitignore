@@ -1,29 +1,6 @@
-# Binaries folders
+# Binaries folder
 bin/
+# Object files folder
 obj/
-
 # Projects folder
 prj/
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Code::Blocks
-*.depend
-*.layout
-
-# Visual Studio
-Debug/
-Release/
-ipch/
-*.suo
-*.aps
-*.ncb
-*.opensdf
-*.sdf
-*.cachefile
-*.user
-*.psess
-*.sln
-*.filters

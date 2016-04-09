@@ -1,5 +1,0 @@
-#include "regex/Base.h"
-#include "regex/Char.h"
-#include "regex/Or.h"
-#include "regex/Regex.h"
-#include "regex/String.h"
