@@ -12,21 +12,21 @@ namespace L {
       inline Quaternion() : Vector<4,T>(0,0,0,1) {}
       inline Quaternion(const Vector<3,T>& v) : Vector<4,T>(v.x(),v.y(),v.z(),0) {}
       Quaternion(const Vector<3,T>& axis, const T& angle) {
-        w() = cos(angle/2);
-        x() = axis.x()*sin(angle/2);
-        y() = axis.y()*sin(angle/2);
-        z() = axis.z()*sin(angle/2);
+        this->w() = cos(angle/2);
+        this->x() = axis.x()*sin(angle/2);
+        this->y() = axis.y()*sin(angle/2);
+        this->z() = axis.z()*sin(angle/2);
       }
       Quaternion operator*(const Quaternion& other) const {
-        return Quaternion(w()*other.x()+x()*other.w()+y()*other.z()-z()*other.y(),
-                          w()*other.y()-x()*other.z()+y()*other.w()+z()*other.x(),
-                          w()*other.z()+x()*other.y()-y()*other.x()+z()*other.w(),
-                          w()*other.w()-x()*other.x()-y()*other.y()-z()*other.z());
+        return Quaternion(this->w()*other.x()+this->x()*other.w()+this->y()*other.z()-this->z()*other.y(),
+                          this->w()*other.y()-this->x()*other.z()+this->y()*other.w()+this->z()*other.x(),
+                          this->w()*other.z()+this->x()*other.y()-this->y()*other.x()+this->z()*other.w(),
+                          this->w()*other.w()-this->x()*other.x()-this->y()*other.y()-this->z()*other.z());
       }
 
-      inline Quaternion inverse() const {return Quaternion(-x(),-y(),-z(),w());}
+      inline Quaternion inverse() const {return Quaternion(-this->x(),-this->y(),-this->z(),this->w());}
       inline Vector<3,T> rotate(const Vector<3,T>& v) const {return (*this)*v*inverse();}
-      operator Vector<3,T>() const {return Vector<3,T>(x(),y(),z());}
+      operator Vector<3,T>() const {return Vector<3,T>(this->x(),this->y(),this->z());}
   };
   typedef Quaternion<float> Quatf;
 }

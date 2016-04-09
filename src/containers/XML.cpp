@@ -7,7 +7,8 @@ using namespace L;
 
 XML::XML() {}
 XML::XML(const char* filepath) {
-  read(FileStream(filepath,"rb"));
+  FileStream fs(filepath,"rb");
+  read(fs);
 }
 XML::XML(Stream& s) {
   read(s);

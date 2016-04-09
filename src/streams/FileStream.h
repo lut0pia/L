@@ -9,7 +9,7 @@ namespace L {
     protected:
       FILE* _fd;
     public:
-      inline FileStream(FILE* fd=tmpfile()) : _fd(fd) {}
+      inline FileStream(FILE* fd=::tmpfile()) : _fd(fd) {}
       inline FileStream(const char* filepath, const char* mode) : _fd(fopen(filepath,mode)) {}
       inline ~FileStream() {fclose(_fd);}
 

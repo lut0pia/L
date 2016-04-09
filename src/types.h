@@ -2,6 +2,7 @@
 #define DEF_L_types
 
 #include <cstdint>
+#include <cstddef>
 
 namespace L {
   typedef unsigned char byte;

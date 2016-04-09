@@ -18,8 +18,8 @@ void MeshBuilder::reset(byte vertexDesc) {
 }
 void MeshBuilder::computeNormals() {
   L_Assert(_vertexDesc & Mesh::NORMAL)
-  uint vertexCount(vertexCount());
-  for(uint i(0); i<vertexCount; i++)
+  uint vc(vertexCount());
+  for(uint i(0); i<vc; i++)
     normal(i) = Vector3f(0,0,0);
   for(uint i(0); i<_indexBuffer.size(); i+=3) {
     Vector3f& a(vertex(_indexBuffer[i]));
@@ -30,7 +30,7 @@ void MeshBuilder::computeNormals() {
     normal(_indexBuffer[i+1]) += n;
     normal(_indexBuffer[i+2]) += n;
   }
-  for(uint i(0); i<vertexCount; i++)
+  for(uint i(0); i<vc; i++)
     normal(i).normalize();
 }
 void MeshBuilder::setVertex(const Vector3f& vertex) {

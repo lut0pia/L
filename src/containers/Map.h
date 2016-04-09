@@ -12,14 +12,14 @@ namespace L {
     public:
       template <class T>
       KV* find(const T& k) {
-        int i(index(k));
+        int i(Set<KeyValue<K,V> >::index(k));
         if(i>=Array<KV>::size() || Array<KV>::operator[](i)>k)
           return 0;
         else return &Array<KV>::operator[](i);
       }
       template <class T>
       const KV* find(const T& k) const {
-        int i(index(k));
+        int i(Set<KeyValue<K,V> >::index(k));
         if(i>=Array<KV>::size() || Array<KV>::operator[](i)>k)
           return 0;
         else return &Array<KV>::operator[](i);
@@ -28,7 +28,7 @@ namespace L {
       V& operator[](const T& k) {
         KV* e(find(k));
         if(e) return e->value();
-        insert(KV(k,V()));
+        Set<KeyValue<K,V> >::insert(KV(k,V()));
         return operator[](k);
       }
       const V& operator[](const K& k) const {

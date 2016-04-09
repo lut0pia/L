@@ -24,7 +24,7 @@ namespace L {
         return *this;
       }
       void insert(const T& e) {
-        int i(index(e));
+        int i(SortedArray<T>::index(e));
         if(i>=Array<T>::size() || e<Array<T>::operator[](i))
           Array<T>::insert(i,e);
       }
@@ -34,7 +34,7 @@ namespace L {
           Array<T>::erase(i);
       }
       bool has(const T& e) {
-        return (Array<T>::size() && Array<T>::operator[](index(e))==e);
+        return (Array<T>::size() && Array<T>::operator[](SortedArray<T>::index(e))==e);
       }
       inline const T& operator[](int i) const {return Array<T>::operator[](i);}
       inline void clear() {Array<T>::clear();}

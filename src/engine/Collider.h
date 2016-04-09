@@ -11,13 +11,9 @@ namespace L {
     protected:
       Transform* _transform;
       RigidBody* _rigidbody;
-      union {
-        Interval3f _box;
-        struct {
-          Vector3f _center;
-          float _radius;
-        };
-      };
+      Interval3f _box;
+      Vector3f _center;
+      float _radius;
       enum {
         Box,Sphere
       } _type;

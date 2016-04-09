@@ -25,7 +25,7 @@ namespace L {
         Var& variable(Symbol);
         void pushVariable(Symbol, const Var& = Var());
         inline void pushParameter(const Var& v) {pushVariable(symbol(""),v);}
-        inline Var& Context::parameter(int i) {return _stack[currentFrame()+i].value();}
+        inline Var& parameter(int i) {return _stack[currentFrame()+i].value();}
         inline int currentFrame() const {return _frames[_frames.size()-2];}
         inline int nextFrame() const {return _frames.back();}
         Var execute(const Var& code);
