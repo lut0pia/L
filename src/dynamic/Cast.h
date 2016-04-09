@@ -29,7 +29,7 @@ namespace L {
         cd.types.from = from;
         cd.types.to = to;
         const KeyValue<ullong,CastFct>* it(casts.find(cd.id));
-        return (it)?it->value():NULL;
+        return (it)?it->value():nullptr;
       }
 
       template <class A, class B>

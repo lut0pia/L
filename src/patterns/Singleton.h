@@ -21,7 +21,7 @@ namespace L {
       static void unget() {
         if(instance) {
           delete instance;
-          instance = NULL;
+          instance = nullptr;
         }
       }
   };

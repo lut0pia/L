@@ -43,11 +43,11 @@ namespace L {
       Node* _root;
 
     public:
-      IntervalTree() : _root(NULL) {}
+      IntervalTree() : _root(nullptr) {}
       ~IntervalTree() { delete _root; }
       void insert(const Key& key,const V& value) {
         if(_root) _root->insert(key,value);
-        else _root = new Node(NULL,key,value);
+        else _root = new Node(nullptr,key,value);
       }
   };
 

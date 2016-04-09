@@ -20,7 +20,7 @@ namespace L {
         public:
           Node(const Key& key, const V& value) : _key(key), _value(value) {
             for(int i(0); i<n; i++)
-              _children[i] = NULL;
+              _children[i] = nullptr;
           }
           ~Node() {
             for(int i(0); i<n; i++)
@@ -56,7 +56,7 @@ namespace L {
             if(node) {
               int child(node->childIndex(key));
               return (child>=0) ? find(node->_children[child],key) : node;
-            } else return NULL;
+            } else return nullptr;
           }
           static void nearest(const Node* node, const Node*& bestNode, K& bestDistance, const Key& target) {
             if(node) {
@@ -107,7 +107,7 @@ namespace L {
               nodes.push(node); // Collect this now
               for(int i(0); i<n; i++) {
                 destruct(node->_children[i],nodes); // Go through children
-                node->_children[i] = NULL; // Remove all links
+                node->_children[i] = nullptr; // Remove all links
               }
             }
           }
@@ -152,7 +152,7 @@ namespace L {
       Node* _root;
 
     public:
-      Tree() : _root(NULL) {}
+      Tree() : _root(nullptr) {}
       ~Tree() {delete _root;}
       inline void insert(const Key& key, const V& value) {
         Node::insert(_root,key,value);
@@ -161,13 +161,13 @@ namespace L {
         return Node::find(_root,key);
       }
       inline const Node* nearest(const Key& key, const K& maxDistance) const {
-        const Node* best(NULL);
+        const Node* best(nullptr);
         K distance(maxDistance*maxDistance); // All distances are squared in the algorithm
         Node::nearest(_root,best,distance,key);
         return best;
       }
       inline const Node* nearest(const Key& key) const {
-        const Node* best(NULL);
+        const Node* best(nullptr);
         K distance(std::numeric_limits<K>::max());
         Node::nearest(_root,best,distance,key);
         return best;

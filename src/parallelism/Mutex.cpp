@@ -4,9 +4,9 @@ using namespace L;
 
 Mutex::Mutex(){
     #if defined L_WINDOWS
-        mutex = CreateMutex(NULL,FALSE,NULL);
+        mutex = CreateMutex(nullptr,FALSE,nullptr);
     #elif defined L_UNIX
-        pthread_mutex_init(&mutex, NULL);
+        pthread_mutex_init(&mutex, nullptr);
     #endif
 }
 Mutex::~Mutex(){

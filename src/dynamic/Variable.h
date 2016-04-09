@@ -35,7 +35,7 @@ namespace L {
       template <class T> inline const T& as() const {return *(T*)value();}
       template <class T> inline T& as() {return *(T*)value();}
 
-      inline bool canbe(TypeDescription* td) const {return (Cast::get(_td, td) != NULL);}
+      inline bool canbe(TypeDescription* td) const {return (Cast::get(_td, td) != nullptr);}
       template <class T> inline bool canbe() const {return canbe(Type<T>::description());}
 
       template <class T> T& get() {

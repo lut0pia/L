@@ -15,7 +15,7 @@ void RelativeContainer::place(const Ref<Base>& e, const Vector<2,int>& relPixPos
   dimensionsChanged((Base*)e,e->gDimensions());
 }
 void RelativeContainer::detach(Ref<Base> e) {
-  e->sParent(NULL);
+  e->sParent(nullptr);
   elements.erase(e);
 }
 void RelativeContainer::clear() {

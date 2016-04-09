@@ -75,7 +75,7 @@ Time Time::now() {
   return Time(nano/10LL);
 #elif defined L_UNIX
   struct timeval tv;
-  gettimeofday(&tv,NULL);
+  gettimeofday(&tv,nullptr);
   return Time(tv.tv_usec,0,tv.tv_sec);
 #endif
 }

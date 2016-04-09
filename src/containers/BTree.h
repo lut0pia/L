@@ -12,7 +12,7 @@ namespace L {
       BTree() {
         size = 0;
         for(size_t i(0); i<d; i++)
-          children[i] = NULL;
+          children[i] = nullptr;
       }
       bool find(const T& e) {
         return false;

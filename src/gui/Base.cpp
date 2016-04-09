@@ -3,7 +3,7 @@
 using namespace L;
 using namespace L::GUI;
 
-Base::Base() : parent(NULL) {}
+Base::Base() : parent(nullptr) {}
 
 void Base::sParent(Base* p) {
   parent = p;

@@ -19,9 +19,9 @@ void Thread::start(Function f, const Var& a) {
   function = f;
   arg = a;
 #if defined L_WINDOWS
-  threadHandle = CreateThread(NULL,0,(LPTHREAD_START_ROUTINE)proxy,(LPVOID)this,0,&threadId);
+  threadHandle = CreateThread(nullptr,0,(LPTHREAD_START_ROUTINE)proxy,(LPVOID)this,0,&threadId);
 #elif defined L_UNIX
-  pthread_create(&thread,NULL,(void* (*)(void*))proxy,this);
+  pthread_create(&thread,nullptr,(void* (*)(void*))proxy,this);
 #endif
 }
 void Thread::waitForEnd(int maxMilliseconds) {
@@ -30,7 +30,7 @@ void Thread::waitForEnd(int maxMilliseconds) {
 #if defined L_WINDOWS
     WaitForSingleObject(threadHandle,maxMilliseconds);
 #elif defined L_UNIX
-    pthread_join(thread,NULL);
+    pthread_join(thread,nullptr);
 #endif
   }
 }

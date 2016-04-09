@@ -54,8 +54,8 @@ namespace L {
       inline T& operator*() {return *p;}
       inline operator T*() const {return p;}
       inline T* operator->() const {return p;}
-      inline bool null() const {return (p==NULL);}
-      inline void clear() {free(); p=NULL; c=NULL;}
+      inline bool null() const {return (p==nullptr);}
+      inline void clear() {free(); p=nullptr; c=nullptr;}
       inline int references() const {return (c)?*c:0;}
 
       template <class R> friend class Ref;

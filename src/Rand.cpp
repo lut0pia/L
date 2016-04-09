@@ -6,7 +6,7 @@ using namespace L;
 
 //const ullong Rand::a(6364136223846793005LL), Rand::b(1442695040888963407LL);
 const ullong Rand::a(2862933555777941757LL), Rand::b(3037000493LL);
-ullong Rand::last(time(NULL));
+ullong Rand::last(time(nullptr));
 
 ullong Rand::next() {
   return last = last*a+b;

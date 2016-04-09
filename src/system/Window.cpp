@@ -115,7 +115,7 @@ LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
       } else return 0;
       break;
     case WM_SETCURSOR:
-      SetCursor((_flags & Window::nocursor)?NULL:LoadCursor(NULL,IDC_ARROW));
+      SetCursor((_flags & Window::nocursor)?nullptr:LoadCursor(nullptr,IDC_ARROW));
       break;
     default:
       return DefWindowProc(hwnd, uMsg, wParam, lParam);
@@ -178,11 +178,11 @@ void Window::open(const char* title, int width, int height, int flags) {
   wc.lpfnWndProc = MainWndProc;
   wc.cbClsExtra = 0;
   wc.cbWndExtra = 0;
-  wc.hInstance = GetModuleHandle(NULL);
-  wc.hIcon = LoadIcon(NULL,IDI_APPLICATION);
-  wc.hCursor = (flags & nocursor)?NULL:LoadCursor(NULL,IDC_ARROW);
+  wc.hInstance = GetModuleHandle(nullptr);
+  wc.hIcon = LoadIcon(nullptr,IDI_APPLICATION);
+  wc.hCursor = (flags & nocursor)?nullptr:LoadCursor(nullptr,IDC_ARROW);
   wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
-  wc.lpszMenuName = NULL;
+  wc.lpszMenuName = nullptr;
   wc.lpszClassName = "LWC";
   RegisterClass(&wc);
   DWORD wStyle = ((flags & borderless)?(WS_POPUP):(WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU))
@@ -197,7 +197,7 @@ void Window::open(const char* title, int width, int height, int flags) {
   // Create window
   hWND = CreateWindow("LWC",title,wStyle,   // Properties
                       CW_USEDEFAULT,CW_USEDEFAULT,width,height,
-                      NULL,NULL,GetModuleHandle(NULL),NULL);
+                      nullptr,nullptr,GetModuleHandle(nullptr),nullptr);
   hDC = GetDC(hWND); // Get the device context (DC)
   PIXELFORMATDESCRIPTOR pfd;
   ZeroMemory(&pfd,sizeof(pfd)); // Initialize pixel format descriptor
@@ -213,10 +213,10 @@ void Window::open(const char* title, int width, int height, int flags) {
     wglMakeCurrent(hDC,hRC);
   }
 #elif defined L_UNIX
-  if((dpy = XOpenDisplay(NULL)) == NULL)
+  if((dpy = XOpenDisplay(nullptr)) == nullptr)
     throw Exception("Cannot open X server display.");
   root = DefaultRootWindow(dpy);
-  if((vi = glXChooseVisual(dpy, 0, att)) == NULL)
+  if((vi = glXChooseVisual(dpy, 0, att)) == nullptr)
     throw Exception("No appropriate visual found for X server.");
   cmap = XCreateColormap(dpy, root, vi->visual, AllocNone);
   swa.colormap = cmap;
@@ -226,7 +226,7 @@ void Window::open(const char* title, int width, int height, int flags) {
   XSetWMProtocols(dpy, win, &delWindow, 1);
   XMapWindow(dpy, win);
   XStoreName(dpy, win, title.c_str());
-  glc = glXCreateContext(dpy, vi, NULL, GL_TRUE);
+  glc = glXCreateContext(dpy, vi, nullptr, GL_TRUE);
   glXMakeCurrent(dpy, win, glc);
   winOpened = true;
 #endif
@@ -243,7 +243,7 @@ void Window::close() {
   DestroyWindow(hWND);
   hWND = 0;
 #elif defined L_UNIX
-  glXMakeCurrent(dpy, None, NULL);
+  glXMakeCurrent(dpy, None, nullptr);
   glXDestroyContext(dpy, glc);
   XDestroyWindow(dpy, win);
   XCloseDisplay(dpy);
@@ -261,7 +261,7 @@ bool Window::opened() {
 bool Window::loop() {
 #if defined L_WINDOWS
   MSG msg;
-  while(opened() && PeekMessage(&msg,NULL,0,0,PM_REMOVE)) {
+  while(opened() && PeekMessage(&msg,nullptr,0,0,PM_REMOVE)) {
     TranslateMessage(&msg);
     DispatchMessage(&msg);
   }

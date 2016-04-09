@@ -12,7 +12,7 @@ void Huffman::Tree::write(byte b, Array<byte>& v, size_t& bit) const {
   if(v.size()<=bit/8)
     v.size((bit/8)+1);
   if(bytes.size()>1) {
-    if(zero != NULL && zero->bytes.has(b))
+    if(zero != nullptr && zero->bytes.has(b))
       zero->write(b,v,++bit);
     else {
       v[bit/8] |= (1 << (7-bit%8));

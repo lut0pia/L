@@ -38,8 +38,8 @@ Set<String> Network::DNSLookup(const char* host) {
   memset(&hints, 0, sizeof hints);
   hints.ai_family = AF_UNSPEC; // AF_INET or AF_INET6 to force version
   hints.ai_socktype = SOCK_STREAM;
-  if(!getaddrinfo(host, NULL, &hints, &res)) {
-    for(p = res; p != NULL; p = p->ai_next) {
+  if(!getaddrinfo(host, nullptr, &hints, &res)) {
+    for(p = res; p != nullptr; p = p->ai_next) {
       // get the pointer to the address itself,
       // different fields in IPv4 and IPv6:
       if(p->ai_family == AF_INET) { // IPv4

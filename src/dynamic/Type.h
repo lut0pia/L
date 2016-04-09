@@ -70,7 +70,7 @@ namespace L {
   template <class T> const TypeDescription Type<T>::td = Type<T>::makeDesc();
 
   // Specify void doesn't construct nor destruct
-  template <> inline void* Type<void>::cpy(void* p) {return NULL;}
+  template <> inline void* Type<void>::cpy(void* p) {return nullptr;}
   template <> inline void Type<void>::del(void* p) {}
 
 #define L_TYPE_CMPABLE(T) template <> inline int Type< T >::cmp(const void* a, const void* b){\

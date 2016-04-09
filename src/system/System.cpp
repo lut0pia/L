@@ -12,7 +12,7 @@ String System::callGet(const char* cmd) {
   else {
     char buffer[128];
     while(!feof(pipe)) {
-      if(fgets(buffer, 128, pipe) != NULL)
+      if(fgets(buffer, 128, pipe) != nullptr)
         wtr += buffer;
     }
     pclose(pipe);
@@ -57,7 +57,7 @@ ullong System::ticks() {
 }
 void System::toClipboard(const String& data) {
 #if defined L_WINDOWS
-  if(OpenClipboard(NULL) && EmptyClipboard()) {
+  if(OpenClipboard(nullptr) && EmptyClipboard()) {
     HGLOBAL tmp = GlobalAlloc(0,data.size()+1); // Allocate global memory
     GlobalLock(tmp); // Lock it
     strcpy((char*)tmp,data); // Copy data
@@ -70,7 +70,7 @@ void System::toClipboard(const String& data) {
 String System::fromClipboard() {
 #if defined L_WINDOWS
   HGLOBAL tmp;
-  if(OpenClipboard(NULL) && (tmp = GetClipboardData(CF_TEXT))) {
+  if(OpenClipboard(nullptr) && (tmp = GetClipboardData(CF_TEXT))) {
     String wtr((char*)tmp);
     CloseClipboard();
     return wtr;

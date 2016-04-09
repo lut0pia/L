@@ -19,7 +19,7 @@ namespace L {
           Block* _next; // Pool works like a linked list, in case no more space is available
           bool _full;
         public:
-          Block() : _next(NULL), _full(false) {
+          Block() : _next(nullptr), _full(false) {
             for(int i(0); i<tableSize; i++)
               _table[i] = 0;
           }
@@ -82,7 +82,7 @@ namespace L {
       Block* _root;
 
     public:
-      inline Pool() : _root(NULL) {}
+      inline Pool() : _root(nullptr) {}
       inline ~Pool() {delete _root;}
 
       template <typename... Args>

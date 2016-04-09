@@ -60,7 +60,7 @@ const char* GL::error() {
     case GL_OUT_OF_MEMORY:
       return outOfMemory;
     default:
-      return NULL;
+      return nullptr;
   }
 }
 void GL::drawAxes() {

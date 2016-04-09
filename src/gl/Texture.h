@@ -17,7 +17,7 @@ namespace L {
         ~Texture();
         L_NoCopy(Texture)
         void load(const Bitmap&, bool mipmaps = false);
-        void load(GLsizei width, GLsizei height, const void* data = NULL, bool mipmaps = false);
+        void load(GLsizei width, GLsizei height, const void* data = nullptr, bool mipmaps = false);
         void bind() const;
         void unbind() const;
         void parameter(GLenum name, GLint);
