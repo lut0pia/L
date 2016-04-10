@@ -8,6 +8,7 @@ namespace L {
       Entity* _entity;
       inline void entity(Entity* e) {_entity = e;}
     public:
+      ~Component();
       inline Entity* entity() const {return _entity;}
       virtual void start() {}
       static inline void preupdates() {}
