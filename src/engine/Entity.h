@@ -46,13 +46,7 @@ namespace L {
         component->start();
         return component;
       }
-      void remove(Component* c){
-        for(int i(0); i<_components.size();i++)
-          if(_components[i].value()==c){
-            _components.erase(i);
-            return;
-          }
-      }
+      void remove(Component*);
   };
 }
 

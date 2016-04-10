@@ -15,3 +15,11 @@ Entity::~Entity() {
   for(int i(0); i<_components.size(); i++)
     _components[i].value()->destruct();
 }
+
+void Entity::remove(Component* c){
+  for(int i(0); i<_components.size(); i++)
+    if(_components[i].value()==c){
+      _components.erase(i);
+      return;
+    }
+}
