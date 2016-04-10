@@ -20,10 +20,9 @@ namespace L {
 
       template <class CompType>
       CompType* component() const {
-        const TypeDescription* td(Type<CompType>::description());
-        for(uint i(0); i<_components.size(); i++)
-          if(_components[i].key()==td)
-            return (CompType*)_components[i].value();
+        for(auto&& pair : _components)
+          if(pair.key()==Type<CompType>::description())
+            return (CompType*)pair.value();
         return 0;
       }
       Component* component(const char* name) const {
