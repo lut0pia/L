@@ -29,10 +29,9 @@ void Fiber::schedule() {
 }
 void Fiber::yield() {
   Fiber* next(0);
-  _pool.foreach([&next](Fiber& fiber) {
+  for(auto&& fiber : _pool)
     if(!fiber._over)
       next = &fiber;
-  });
   if(next) next->schedule();
   else throw Exception("No more fibers in the pool");
 }

@@ -21,10 +21,10 @@ namespace L {
       void start();
       void update() {
         // TODO: replace with broadphase
-        Pool<Collider>::global.foreach([this](Collider& other) {
+        for(auto&& other : Pool<Collider>::global){
           if(&other!=this && other.entity()!=entity() && (_rigidbody || other._rigidbody) && &other<this)
             checkCollision(*this,other);
-        });
+        }
       }
       inline void box(const Interval3f& b) {_type = Box; _box = b;}
       inline void sphere(const Vector3f& center, float radius) {_type = Sphere; _center = center; _radius = radius;}

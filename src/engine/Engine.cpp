@@ -19,11 +19,11 @@ void Engine::update() {
   _fps = 1.f/_deltaSeconds;
   for(int i(0); i<_updates.size(); i++)
     _updates[i]();
-  Pool<Camera>::global.foreach([](Camera& camera) {
+  for(auto&& camera : Pool<Camera>::global){
     camera.prerender();
     for(int i(0); i<_renders.size(); i++)
       _renders[i](camera);
-  });
+  }
   _frame++;
 }
 const Ref<GL::Texture>& Engine::texture(const char* fp) {

@@ -15,11 +15,13 @@ namespace L {
       template <class CompType>
       static void updateAll() {
         CompType::preupdates();
-        Pool<CompType>::global.foreach([](CompType& c) {c.update();});
+        for(auto&& c : Pool<CompType>::global)
+          c.update();
       }
       template <class CompType>
       static void renderAll(const Camera& cam) {
-        Pool<CompType>::global.foreach([&cam](CompType& c) {c.render(cam);});
+        for(auto&& c : Pool<CompType>::global)
+          c.render(cam);
       }
       static Set<void (*)()> _updates;
       static Set<void (*)(const Camera&)> _renders;
