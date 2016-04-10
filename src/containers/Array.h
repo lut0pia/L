@@ -3,7 +3,6 @@
 
 #include <cstdlib>
 #include <cstring>
-#include <functional>
 #include "../objects.h"
 #include "../streams/Stream.h"
 

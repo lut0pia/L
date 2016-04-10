@@ -2,6 +2,7 @@
 #define DEF_L_objects
 
 #include <cstring>
+#include <new>
 #include "math/math.h"
 
 namespace L {

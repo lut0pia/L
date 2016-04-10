@@ -1,7 +1,6 @@
 #ifndef DEF_L_Pool
 #define DEF_L_Pool
 
-#include <functional>
 #include "../tmp.h"
 #include "../objects.h"
 
