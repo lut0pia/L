@@ -113,14 +113,6 @@ namespace L {
         shift(i+count,-count); // Move right part
         _size -= count; // Decrease size
       }
-      void foreach(const std::function<void(const T&)>& f) const {
-        for(size_t i(0); i<_size; i++)
-          f(_data[i]);
-      }
-      void foreach(const std::function<void(T&)>& f) {
-        for(size_t i(0); i<_size; i++)
-          f(_data[i]);
-      }
       template <typename... Args>
       inline static Array make(Args&&... args) {
         Array wtr;

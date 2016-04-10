@@ -37,9 +37,8 @@ GUI::Base* GUI::from(const XML& xml, Map<String,GUI::Base*>& ids) {
       ListContainer* wtr((xml.attributes.has("spacing"))
                          ? new ListContainer(String::to<int>(xml.attributes["spacing"]))
                          : new ListContainer());
-      xml.children.foreach([&wtr,&ids](const XML& child) {
+      for(auto&& child : xml.children)
         wtr->push_back(GUI::from(child,ids));
-      });
       return wtr;
     } else if(xml.name == "text") {
       return new Text(xml.children[0].name,(xml.attributes.has("font"))

@@ -63,14 +63,6 @@ namespace L {
         }
         _first = _last = 0;
       }
-
-      void foreach(const std::function<void(const T&)>& f) const {
-        const Node* node(first());
-        while(node) {
-          f(node->value());
-          node = node->next();
-        }
-      }
   };
 }
 

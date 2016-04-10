@@ -40,7 +40,8 @@ namespace L {
       inline void clear() {Array<T>::clear();}
       inline size_t size() const {return Array<T>::size();}
       inline bool empty() const {return Array<T>::empty();}
-      inline void foreach(const std::function<void(const T&)>& f) const {Array<T>::foreach(f);}
+      using Array<T>::begin;
+      using Array<T>::end;
   };
 
   template <class T> inline Stream& operator<<(Stream& s, const Set<T>& v) { return s << (const Array<T>&)v;}

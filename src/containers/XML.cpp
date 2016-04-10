@@ -25,9 +25,8 @@ void XML::write(Stream& s) const {
       s << "/>";
     else {
       s << '>';
-      children.foreach([&s](const XML& child) {
+      for(auto&& child : children)
         child.write(s);
-      });
       s << "</" << name << '>';
     }
   }

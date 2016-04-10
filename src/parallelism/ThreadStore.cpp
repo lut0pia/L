@@ -24,9 +24,8 @@ ThreadStore::ThreadStore() {
 }
 ThreadStore::~ThreadStore() {
   mutex.lock();
-  threads.foreach([](const Ref<Thread>& thread) {
+  for(auto&& thread : threads)
     thread->waitForEnd();
-  });
   mutex.unlock();
 }
 

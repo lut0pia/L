@@ -45,7 +45,6 @@ namespace L {
       inline const T& operator[](int i) const {return Array<T>::operator[](i);}
       inline void clear() {Array<T>::clear();}
       inline size_t size() const {return Array<T>::size();}
-      inline void foreach(const std::function<void(const T&)>& f) const {Array<T>::foreach(f);}
   };
 }
 
