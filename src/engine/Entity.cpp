@@ -12,8 +12,9 @@ Entity::Entity(const Entity* other) {
   }
 }
 Entity::~Entity() {
-  for(int i(0); i<_components.size(); i++)
-    _components[i].value()->destruct();
+  // Components remove themselves from entity on destruction
+  while(!_components.empty())
+    _components[0].value()->destruct();
 }
 
 void Entity::remove(Component* c){
