@@ -30,7 +30,7 @@ namespace L {
     public:
       Thread();
       Thread(Function,const Var& = Var());
-      L_NoCopy(Thread)
+      L_NOCOPY(Thread)
       ~Thread();
 
       void start(Function,const Var& = Var());

@@ -18,7 +18,7 @@ namespace L {
 
       public:
         Base();
-        L_NoCopy(Base)
+        L_NOCOPY(Base)
         virtual ~Base() {}
 
         virtual Vector2i gPos() = 0;

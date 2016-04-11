@@ -23,7 +23,7 @@ namespace L {
         Mesh(const String&);
         Mesh(const MeshBuilder&, GLenum primitive = GL_TRIANGLES);
         //Mesh(byte vertexDesc, float* vertices, GLsizei count, GLenum primitive = GL_TRIANGLES);
-        L_NoCopy(Mesh)
+        L_NOCOPY(Mesh)
         void draw();
 
         static GLsizei vertexSize(byte desc);

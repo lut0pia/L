@@ -12,7 +12,7 @@ namespace L {
       public:
         FrameBuffer(GLuint target);
         ~FrameBuffer();
-        L_NoCopy(FrameBuffer)
+        L_NOCOPY(FrameBuffer)
         void bind();
         void unbind();
         void attach(GLenum attachment, const RenderBuffer&);

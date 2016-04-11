@@ -15,7 +15,7 @@ namespace L {
         Shader(File file, GLenum type);
         Shader(const char* src, GLenum type);
         ~Shader();
-        L_NoCopy(Shader)
+        L_NOCOPY(Shader)
         inline GLuint id() const {return _id;}
     };
   }

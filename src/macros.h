@@ -16,23 +16,23 @@
 */
 
 // Forbids class from being copied
-#define L_NoCopy(class) \
+#define L_NOCOPY(class) \
   class(const class&); \
   class& operator=(const class&);
 
 // Allows true stringify
-#define L_Stringify(n) L_Stringify_(n)
-#define L_Stringify_(n) #n
+#define L_STRINGIFY(n) L_STRINGIFY_(n)
+#define L_STRINGIFY_(n) #n
 
 // Debugging macros
-#ifdef L_Debug
-#define L_DebugOnly(x) x
+#ifdef L_DEBUG
+#define L_DEBUGONLY(x) x
 #else
-#define L_DebugOnly(x)
+#define L_DEBUGONLY(x)
 #endif
 
-#define L_Error(msg) {printf("Error: "L_Stringify(msg)" in file "__FILE__"\n");_exit(-1);}
-#define L_Assert(exp) L_DebugOnly(if(!(exp))L_Error(exp is false))
+#define L_ERROR(msg) {printf("Error: "L_STRINGIFY(msg)" in file "__FILE__"\n");_exit(-1);}
+#define L_ASSERT(exp) L_DEBUGONLY(if(!(exp))L_ERROR(exp is false))
 
 #endif
 

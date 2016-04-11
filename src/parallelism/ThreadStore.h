@@ -14,7 +14,7 @@ namespace L {
 
     public:
       ThreadStore();
-      L_NoCopy(ThreadStore)
+      L_NOCOPY(ThreadStore)
       ~ThreadStore();
 
       void attach(const Ref<Thread>&);

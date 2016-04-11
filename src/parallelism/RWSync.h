@@ -10,7 +10,7 @@ namespace L{
             size_t readers;
         public:
             RWSync();
-            L_NoCopy(RWSync)
+            L_NOCOPY(RWSync)
             void startRead();
             void stopRead();
             void startWrite();

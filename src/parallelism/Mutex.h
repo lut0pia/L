@@ -19,7 +19,7 @@ namespace L {
 #endif
     public:
       Mutex();
-      L_NoCopy(Mutex)
+      L_NOCOPY(Mutex)
       ~Mutex();
       void lock();
       void unlock();

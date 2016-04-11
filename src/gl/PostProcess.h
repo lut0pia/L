@@ -16,7 +16,7 @@ namespace L {
         float _aspect;
       public:
         PostProcess(int width, int height);
-        L_NoCopy(PostProcess)
+        L_NOCOPY(PostProcess)
         void resize(int width, int height);
         void prerender();
         void postrender(Program&);

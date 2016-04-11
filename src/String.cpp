@@ -71,7 +71,7 @@ size_t String::endOf(size_t i, bool dquotesEscape) const {
       move = -1;
       break;
     default:
-      L_Error("Unhandled startChar in EndOf");
+      L_ERROR("Unhandled startChar in EndOf");
       break;
   }
   while((i+=move) < size() && i!=(size_t)~0) {

@@ -12,7 +12,7 @@ namespace L {
       public:
         RenderBuffer();
         ~RenderBuffer();
-        L_NoCopy(RenderBuffer)
+        L_NOCOPY(RenderBuffer)
         void bind();
         void storage(GLenum internalformat, GLsizei width, GLsizei height);
 

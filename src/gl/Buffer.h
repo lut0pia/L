@@ -12,7 +12,7 @@ namespace L {
       public:
         Buffer(GLuint target);
         ~Buffer();
-        L_NoCopy(Buffer)
+        L_NOCOPY(Buffer)
 
         void bind();
         void data(GLsizeiptr size, const void* data, GLuint usage);
