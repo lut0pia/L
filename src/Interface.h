@@ -2,7 +2,6 @@
 #define DEF_L_Interface
 
 #include "macros.h"
-#include "Exception.h"
 #include "containers/Map.h"
 #include "String.h"
 #include "containers/Array.h"
@@ -63,7 +62,7 @@ namespace L {
 
       static Interface& in(const String& format) {
         if(instance.has(format)) return *instance[format];
-        else throw Exception("Unhandled format "+format);
+        else L_ERROR("Unhandled format "+format);
       }
       static void fromFile(T& v, const String& path) {
         in(path.explode('.').back().toLower()).from(v,File(path));

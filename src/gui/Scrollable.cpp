@@ -27,7 +27,7 @@ void Scrollable::sValue(Vector<2,float> m) {
   child->updateFromAbove(pos-modifier,clip);
 }
 Vector<2,float> Scrollable::gValue() const {
-  throw Exception("This feature hasn't been done yet.");
+  L_ERROR("This feature hasn't been done yet.");
   //return Vector<2,float>(max(0,childDim.x-dimensions.x)/)
 }
 

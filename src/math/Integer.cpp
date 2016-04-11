@@ -1,6 +1,6 @@
 #include "Integer.h"
 
-#include "../Exception.h"
+#include "../macros.h"
 #include "math.h"
 
 using namespace L;
@@ -212,7 +212,7 @@ Integer& Integer::operator*=(const Integer& other) {
 }
 Integer& Integer::operator/=(const Integer& other) {
   if(other==0)
-    throw Exception("Trying to divide by zero.");
+    L_ERROR("Trying to divide by zero.");
   Integer a(abs()), b(other.abs());
   if(a < b)
     reset();
@@ -239,7 +239,7 @@ Integer& Integer::operator/=(const Integer& other) {
 }
 Integer& Integer::operator%=(const Integer& other) {
   if(other==0)
-    throw Exception("Trying to mod by zero.");
+    L_ERROR("Trying to mod by zero.");
   (*this) -= ((*this/other)*other);
   trim();
   return *this;

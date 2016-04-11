@@ -80,5 +80,5 @@ GLsizei Mesh::attributeOffset(byte desc, byte type) {
   if(desc&NORMAL) wtr += 3*sizeof(float);
   if(type==TEXCOORD) return wtr;
   if(desc&TEXCOORD) wtr += 2*sizeof(float);
-  throw Exception("Attribute could not be found in vertex description.");
+  L_ERROR("Attribute could not be found in vertex description.");
 }

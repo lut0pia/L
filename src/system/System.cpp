@@ -1,14 +1,12 @@
 #include "System.h"
 
-#include "../Exception.h"
-
 using namespace L;
 using namespace System;
 
 String System::callGet(const char* cmd) {
   String wtr = "";
   FILE* pipe = popen(cmd,"r");
-  if(!pipe) throw Exception("Couldn't open pipe in System");
+  if(!pipe) L_ERROR("Couldn't open pipe in System");
   else {
     char buffer[128];
     while(!feof(pipe)) {
@@ -36,7 +34,7 @@ void System::beep(uint frequency, uint milliseconds) {
 #if defined L_WINDOWS
   ::Beep(frequency,milliseconds);
 #elif defined L_UNIX
-  throw Exception("Cannot beep under UNIX.");
+  L_ERROR("Cannot beep under UNIX.");
 #endif
 }
 ullong System::ticks() {
@@ -64,7 +62,7 @@ void System::toClipboard(const String& data) {
     GlobalUnlock(tmp); // Unlock it
     SetClipboardData(CF_TEXT,tmp);
     CloseClipboard();
-  } else throw Exception("Couldn't open clipboard.");
+  } else L_ERROR("Couldn't open clipboard.");
 #endif
 }
 String System::fromClipboard() {
@@ -76,7 +74,7 @@ String System::fromClipboard() {
     return wtr;
   }
 #endif
-  throw Exception("Cannot get clipboard data.");
+  L_ERROR("Cannot get clipboard data.");
 }
 String System::env(const char* name) {
   return getenv(name);
@@ -117,7 +115,7 @@ void System::closeConsole() {
 #if defined L_WINDOWS
   FreeConsole();
 #elif defined L_UNIX
-  throw Exception("Closing the console under UNIX is impossible.");
+  L_ERROR("Closing the console under UNIX is impossible.");
 #endif
 }
 

@@ -1,7 +1,6 @@
 #include "Shader.h"
 
 #include "../streams/FileStream.h"
-#include "../Exception.h"
 
 using namespace L;
 using namespace GL;
@@ -16,7 +15,7 @@ void Shader::load(const char* src) {
     GLsizei count;
     glGetShaderInfoLog(_id,2048,&count,buffer);
     glDeleteShader(_id);
-    throw Exception("Couldn't compile shader: "+String(buffer,count));
+    L_ERROR("Couldn't compile shader: "+String(buffer,count));
   }
 }
 Shader::Shader(File file, GLenum type) : _id(glCreateShader(type)) {

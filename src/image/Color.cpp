@@ -1,6 +1,6 @@
 #include "Color.h"
 
-#include "../Exception.h"
+#include "../macros.h"
 
 using namespace L;
 
@@ -41,7 +41,7 @@ Color::Color(String str) {
   TMP(white)
   TMP(yellow)
 #undef TMP
-  throw Exception("Unknown color: "+str);
+  L_ERROR("Unknown color: "+str);
 }
 
 Color Color::from(float r, float g, float b, float a) {

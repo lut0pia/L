@@ -2,7 +2,7 @@
 
 #include <cstring>
 #include "../String.h"
-#include "../Exception.h"
+#include "../macros.h"
 
 using namespace L;
 using namespace Script;
@@ -75,5 +75,5 @@ bool Lexer::acceptToken(const char* str) {
 }
 void Lexer::expectToken(const char* str) {
   if(!acceptToken(str))
-    throw Exception("Script: Expected "+String(str)+" but got "+String(token())+" instead.");
+    L_ERROR("Script: Expected "+String(str)+" but got "+String(token())+" instead.");
 }

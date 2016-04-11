@@ -3,7 +3,7 @@
 
 #include "KeyValue.h"
 #include "Set.h"
-#include "../Exception.h"
+#include "../macros.h"
 
 namespace L {
   template <class K,class V>
@@ -34,7 +34,7 @@ namespace L {
       const V& operator[](const K& k) const {
         const KV* e(find(k));
         if(e) return e->value();
-        throw Exception("Couldn't find key in Map");
+        L_ERROR("Couldn't find key in Map");
       }
       inline const KeyValue<K,V>& at(int i) const {return Set<KV>::operator[](i);}
       inline bool has(const K& k) const {return find(k)!=0;}

@@ -1,7 +1,5 @@
 #include "Pixel.h"
 
-#include "../Exception.h"
-
 using namespace L;
 using namespace Font;
 

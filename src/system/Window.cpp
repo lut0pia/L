@@ -214,10 +214,10 @@ void Window::open(const char* title, int width, int height, int flags) {
   }
 #elif defined L_UNIX
   if((dpy = XOpenDisplay(nullptr)) == nullptr)
-    throw Exception("Cannot open X server display.");
+    L_ERROR("Cannot open X server display.");
   root = DefaultRootWindow(dpy);
   if((vi = glXChooseVisual(dpy, 0, att)) == nullptr)
-    throw Exception("No appropriate visual found for X server.");
+    L_ERROR("No appropriate visual found for X server.");
   cmap = XCreateColormap(dpy, root, vi->visual, AllocNone);
   swa.colormap = cmap;
   swa.event_mask = ExposureMask | KeyPressMask | VectorerMotionMask;

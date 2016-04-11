@@ -2,7 +2,7 @@
 
 #include <algorithm>
 #include <utility>
-#include "../Exception.h"
+#include "../macros.h"
 
 using namespace L;
 
@@ -19,7 +19,7 @@ bool cmp(const std::pair<const Array<byte>*,size_t>& a, const std::pair<const Ar
 }
 
 Array<byte> BWT::encode(const Array<byte>& bytes, size_t& index) {
-  throw Exception("BWT::encode needs to be rewritten");
+  L_ERROR("BWT::encode needs to be rewritten");
   /*
   size_t size = bytes.size();
   Array<std::pair<const Array<byte>*,size_t> > rotations(size);
@@ -34,7 +34,7 @@ Array<byte> BWT::encode(const Array<byte>& bytes, size_t& index) {
   */
 }
 Array<byte> BWT::decode(const Array<byte>& bytes, size_t index) {
-  throw Exception("BWT::decode needs to be rewritten");
+  L_ERROR("BWT::decode needs to be rewritten");
   /*
   size_t size = bytes.size();
   Array<byte> wtr(size), sorted(bytes);

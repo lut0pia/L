@@ -4,7 +4,6 @@ using namespace L;
 using namespace Network;
 
 #include <cstring>
-#include "../Exception.h"
 #include "../streams/NetStream.h"
 #include "../system/File.h"
 
@@ -25,10 +24,10 @@ SOCKET Network::connectTo(short port, const char* ip) {
   sin.sin_port = htons(port);
   if((sd = socket(AF_INET,SOCK_STREAM,0)) < 0) {
     closesocket(sd);
-    throw Exception("Couldn't create socket to "+String(ip)+":"+String::from(port)+" - "+error());
+    L_ERROR("Couldn't create socket to "+String(ip)+":"+String::from(port)+" - "+error());
   } else if(connect(sd,(SOCKADDR*)&sin,sizeof(sin)) < 0) {
     closesocket(sd);
-    throw Exception("Couldn't connect to "+String(ip)+":"+String::from(port)+" - "+error());
+    L_ERROR("Couldn't connect to "+String(ip)+":"+String::from(port)+" - "+error());
   }
   return sd;
 }
@@ -74,7 +73,7 @@ String Network::HTTPRequest(const String& url) {
     while((tmp = ::recv(sd,buffer,1024,0)))
       wtr += String(buffer,tmp);
     return wtr;
-  } else throw Exception("Could not find ip for "+host);
+  } else L_ERROR("Could not find ip for "+host);
 }
 void Network::HTTPDownload(const char* url, const char* name) {
   String answer(HTTPRequest(url));

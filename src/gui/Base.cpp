@@ -23,7 +23,7 @@ void Base::update() {
   updateFromAbove(gPos(),(parent) ? parent->gClip() : gClip());
 }
 void Base::dimensionsChanged(Base* child, Vector2i dimensions) {
-  throw Exception("GUI: Non-container is a parent.");
+  L_ERROR("GUI: Non-container is a parent.");
 }
 
 void Base::draw(GL::Program& program) {}

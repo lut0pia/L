@@ -1,6 +1,6 @@
 #include "FontBitmap.h"
 
-#include "../Exception.h"
+#include "../macros.h"
 
 using namespace L;
 using namespace Font;
@@ -28,5 +28,5 @@ size_t Font::Bitmap::descender() {
   return d;
 }
 Glyph Font::Bitmap::loadGlyph(size_t utf32) {
-  throw Exception("A bitmap font does not know that character.");
+  L_ERROR("A bitmap font does not know that character.");
 }

@@ -47,7 +47,7 @@ GLuint Program::uniformLocation(const char* name) {
   if(it) return it->value();
   else {
     GLuint location(glGetUniformLocation(_id, name));
-    if(location<0) throw Exception("Uniform "+String(name)+" cannot be found.");
+    if(location<0) L_ERROR("Uniform "+String(name)+" cannot be found.");
     return _uniformLocation[name] = location;
   }
 }

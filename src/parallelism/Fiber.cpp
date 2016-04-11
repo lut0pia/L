@@ -1,6 +1,7 @@
 #include "Fiber.h"
 
-#include "../Exception.h"
+#include <cstdio>
+#include "../macros.h"
 #include "../streams/Stream.h"
 
 using namespace L;
@@ -18,7 +19,7 @@ VOID __stdcall proxy(LPVOID p) { // Proxy is needed because of calling conventio
 Fiber::Fiber(Func f, void* p) : _func(f), _param(p), _over(false) {
 #ifdef L_WINDOWS
   if(!(_handle = CreateFiber(0,proxy,this)))
-    throw Exception("Creation of fiber failed.");
+    L_ERROR("Creation of fiber failed.");
 #endif
 }
 
@@ -33,7 +34,7 @@ void Fiber::yield() {
     if(!fiber._over)
       next = &fiber;
   if(next) next->schedule();
-  else throw Exception("No more fibers in the pool");
+  else L_ERROR("No more fibers in the pool");
 }
 void Fiber::remove() {
   _pool.destruct(this);
