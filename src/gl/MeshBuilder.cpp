@@ -17,7 +17,7 @@ void MeshBuilder::reset(byte vertexDesc) {
   _vertexBuffer.clear();
 }
 void MeshBuilder::computeNormals() {
-  L_ASSERT(_vertexDesc & Mesh::NORMAL)
+  L_ASSERT(_vertexDesc & Mesh::NORMAL);
   uint vc(vertexCount());
   for(uint i(0); i<vc; i++)
     normal(i) = Vector3f(0,0,0);
