@@ -63,6 +63,8 @@ namespace L {
       inline operator char*() {return &Array<char>::operator[](0);}
       inline const char& operator[](int i) const {return Array<char>::operator[](i);}
       inline char& operator[](int i) {return Array<char>::operator[](i);}
+      using Array<char>::begin;
+      using Array<char>::end;
 
       template <class T>
       static String from(const T& t) {
