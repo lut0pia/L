@@ -32,12 +32,11 @@ solution "L"
 		
 		configuration {"vs*","Debug"}
 			objdir("obj/".._ACTION.."/test/debug")
-			defines {"DEBUG"}
+			defines {"L_DEBUG"}
 			flags {"Symbols"}
 			
 		configuration  {"vs*","Release"}
 			objdir("obj/".._ACTION.."/test/release")
-			defines {"NDEBUG"}
 			flags {"Optimize"}
 	
 	-- Library project
@@ -56,13 +55,12 @@ solution "L"
 		-- Visual Studio Debug
 		configuration {"vs*","Debug"}
 			objdir("obj/".._ACTION.."/debug")
-			defines {"DEBUG"}
+			defines {"L_DEBUG"}
 			flags {"Symbols"}
 		
 		-- Visual Studio Release
 		configuration  {"vs*","Release"}
 			objdir("obj/".._ACTION.."/release")
-			defines {"NDEBUG"}
 			flags {"Optimize"}
 	
 	
