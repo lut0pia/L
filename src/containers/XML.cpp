@@ -19,8 +19,8 @@ void XML::write(Stream& s) const {
     s << name;
   else {
     s << '<' << name;
-    for(int i(0); i<attributes.size(); i++)
-      s << ' ' << attributes.at(i).key() << "=\"" << attributes.at(i).value() << '"';
+    for(auto&& attribute : attributes)
+      s << ' ' << attribute.key() << "=\"" << attribute.value() << '"';
     if(children.empty())
       s << "/>";
     else {

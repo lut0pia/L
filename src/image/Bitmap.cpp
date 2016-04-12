@@ -33,13 +33,13 @@ Color Bitmap::linear(float x, float y) const {
   x-= .5f;
   y-= .5f;
   float weight[2] = {pmod(x,1.f),pmod(y,1.f)};
-  x = floor(x);
-  y = floor(y);
+  int xi((int)floor(x));
+  int yi((int)floor(y));
   Vector4f cell[4] = {
-    at(x,y),
-    at(x,y+1),
-    at(x+1,y),
-    at(x+1,y+1)
+    at(xi,yi),
+    at(xi,yi+1),
+    at(xi+1,yi),
+    at(xi+1,yi+1)
   };
   Vector4f tmp(Interpolation<Vector4f>::linear<2>(cell,weight));
   return Color(clamp(tmp[0],0.f,255.f),clamp(tmp[1],0.f,255.f),clamp(tmp[2],0.f,255.f),clamp(tmp[3],0.f,255.f));
@@ -49,25 +49,25 @@ Color Bitmap::cubic(float x, float y) const {
   x-= .5f;
   y-= .5f;
   float weight[2] = {pmod(x,1.f),pmod(y,1.f)};
-  x = floor(x);
-  y = floor(y);
+  int xi((int)floor(x));
+  int yi((int)floor(y));
   Vector4f cell[16] = {
-    at(x-1,y-1),
-    at(x-1,y),
-    at(x-1,y+1),
-    at(x-1,y+2),
-    at(x,y-1),
-    at(x,y),
-    at(x,y+1),
-    at(x,y+2),
-    at(x+1,y-1),
-    at(x+1,y),
-    at(x+1,y+1),
-    at(x+1,y+2),
-    at(x+2,y-1),
-    at(x+2,y),
-    at(x+2,y+1),
-    at(x+2,y+2)
+    at(xi-1,yi-1),
+    at(xi-1,yi),
+    at(xi-1,yi+1),
+    at(xi-1,yi+2),
+    at(xi,yi-1),
+    at(xi,yi),
+    at(xi,yi+1),
+    at(xi,yi+2),
+    at(xi+1,yi-1),
+    at(xi+1,yi),
+    at(xi+1,yi+1),
+    at(xi+1,yi+2),
+    at(xi+2,yi-1),
+    at(xi+2,yi),
+    at(xi+2,yi+1),
+    at(xi+2,yi+2)
   };
   Vector4f tmp(Interpolation<Vector4f>::cubic<2>(cell,weight));
   return Color(clamp(tmp[0],0.f,255.f),clamp(tmp[1],0.f,255.f),clamp(tmp[2],0.f,255.f),clamp(tmp[3],0.f,255.f));
@@ -177,14 +177,14 @@ void Bitmap::blur(int factor) {
             if(m>=1) {
               pixelCount+=m;
               c = copy(i,j);
-              rt += c.r()*m;
-              gt += c.g()*m;
-              bt += c.b()*m;
+              rt += (byte)(c.r()*m);
+              gt += (byte)(c.g()*m);
+              bt += (byte)(c.b()*m);
             }
           }
-      c.r() = rt / pixelCount;
-      c.g() = gt / pixelCount;
-      c.b() = bt / pixelCount;
+      c.r() = (byte)(rt / pixelCount);
+      c.g() = (byte)(gt / pixelCount);
+      c.b() = (byte)(bt / pixelCount);
       (*this)(x,y) = c;
     }
 }

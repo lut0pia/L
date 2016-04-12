@@ -3,8 +3,7 @@
 using namespace L;
 
 Entity::Entity(const Entity* other) {
-  for(int i(0); i<other->_components.size(); i++) {
-    KeyValue<const TypeDescription*,Component*> p(other->_components[i]);
+  for(auto p : other->_components){
     p.value() = p.value()->clone();
     p.value()->entity(this);
     _components.push(p);
@@ -18,7 +17,7 @@ Entity::~Entity() {
 }
 
 void Entity::remove(Component* c){
-  for(int i(0); i<_components.size(); i++)
+  for(uint i(0); i<_components.size(); i++)
     if(_components[i].value()==c){
       _components.erase(i);
       return;

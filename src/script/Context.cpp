@@ -7,7 +7,7 @@ Context::Context() {
   _frames.push(0); // Start current frame
   _frames.push(0); // Start next frame (no variable)
   variable(symbol("do")) = (Native)[](Context& c,const Array<Var>& a)->Var {
-    for(int i(1); i<a.size()-1; i++)
+    for(uint i(1); i<a.size()-1; i++)
       c.execute(a[i]);
     return c.execute(a.back());
   };
@@ -138,7 +138,7 @@ Var Context::execute(const Var& code) {
     else if(handle.is<Function>() || handle.is<Array<Var> >()) {
       Var wtr;
       _frames.push(nextFrame()); // Add new frame
-      for(int i(1); i<array.size(); i++) { // For all parameters
+      for(uint i(1); i<array.size(); i++) { // For all parameters
         Symbol sym = {0};
         if(handle.is<Array<Var> >() && handle.as<Array<Var> >()[0].as<Array<Var> >().size()>=i) {
           Var symVar(execute(handle.as<Array<Var> >()[0].as<Array<Var> >()[i-1]));

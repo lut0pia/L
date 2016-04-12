@@ -120,7 +120,7 @@ namespace L {
         Matrix wtr;
         for(int x(0); x<c; x++)
           for(int y(0); y<l; y++)
-            wtr(x,y) = ((x==y)?1:0);
+            wtr(x,y) = ((x==y)?(T)1:(T)0);
         return wtr;
       }
       static Matrix<4,4,T> rotation(const Vector<3,T>& axis, T angle) {

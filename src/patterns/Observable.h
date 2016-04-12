@@ -19,8 +19,8 @@ namespace L {
         _observers.erase(o);
       }
       void notifyObservers(int msg = 0) {
-        for(int i(0); i<_observers.size(); i++)
-          _observers[i]->notification(this,msg);
+        for(auto&& observer : _observers)
+          observer->notification(this,msg);
       }
   };
 }

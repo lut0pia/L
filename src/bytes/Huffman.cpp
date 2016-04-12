@@ -53,15 +53,15 @@ Huffman::Tree Huffman::makeTree(size_t weight[256]) {
 }
 Huffman::Tree Huffman::makeTree(const Array<byte>& v) {
   size_t weight[256] = {0};
-  for(int i(0); i<v.size(); i++)
-    weight[v[i]]++;
+  for(auto&& b : v)
+    weight[b]++;
   return makeTree(weight);
 }
 Array<byte> Huffman::encode(const Array<byte>& v, const Tree& t) {
   Array<byte> wtr(1,0);
   size_t bit(0);
-  for(int i(0); i<v.size(); i++)
-    t.write(v[i],wtr,bit);
+  for(auto&& b : v)
+    t.write(b,wtr,bit);
   return wtr;
 }
 Array<byte> Huffman::decode(const Array<byte>& v, const Tree& t, size_t max) {

@@ -13,8 +13,7 @@ Integer::Integer(const int& n) : _negative(n<0) {
 }
 Integer::Integer(const String& b, int lbase) : _negative(false) {
   Integer base(lbase);
-  for(int i(0); i<b.size(); i++) {
-    char c(b[i]);
+  for(auto&& c : b){
     int v;
     if(c>='a'&&c<='z') // Go from visual char to actual value
       v = c-('a'-10);

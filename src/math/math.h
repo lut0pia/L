@@ -22,7 +22,7 @@ namespace L {
       }
     }
     // Convert to int and stringify
-    int i(v);
+    int i((int)v);
     if(!i) *--wtr = '0';
     else {
       while(pad>0 || i>0 || point>0) {
@@ -37,7 +37,7 @@ namespace L {
     }
     return wtr;
   }
-  template <int base=10> inline const char* numberToString(double v, int pad = 0) {return numberToString<base,float>(v,pad);}
+  template <int base=10> inline const char* numberToString(double v, int pad = 0) {return numberToString<base,float>((float)v,pad);}
   template <int base=10,class T>
   T stringToNumber(const char* str) {
     T wtr(0);

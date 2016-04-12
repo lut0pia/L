@@ -43,7 +43,7 @@ void ListContainer::updateFromAbove(Vector2i pos, Interval2i parentClip) {
   if(!blockInsert) {
     Vector2i oldDim(dimensions);
     dimensions.x() = dimensions.y() = 0;
-    for(int i(0); i<elements.size(); i++) {
+    for(uint i(0); i<elements.size(); i++) {
       const Ref<Base>& element(elements[i]);
       element->updateFromAbove(Vector<2,int>(pos.x(),pos.y()+dimensions.y()),parentClip);
       Vector2i childDim(element->gDimensions());
@@ -57,12 +57,12 @@ void ListContainer::updateFromAbove(Vector2i pos, Interval2i parentClip) {
   }
 }
 void ListContainer::draw(GL::Program& program) {
-  for(int i(0); i<elements.size(); i++)
-    elements[i]->draw(program);
+  for(auto&& element : elements)
+    element->draw(program);
 }
 bool ListContainer::event(const Window::Event& e) {
-  for(int i(0); i<elements.size(); i++)
-    if(elements[i]->event(e))
+  for(auto&& element : elements)
+    if(element->event(e))
       return true;
   return false;
 }

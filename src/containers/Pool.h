@@ -19,7 +19,7 @@ namespace L {
       bool _full;
       inline Block() : _next(nullptr),_full(false) { memset(_table,0,sizeof(_table)); }
       inline ~Block() { delete _next; }
-      inline bool allocated(int i) const{ return _table[i/intBits]&(1<<(i%intBits)); } // Check if element i is allocated
+      inline bool allocated(int i) const{ return (_table[i/intBits]&(1<<(i%intBits)))!=0; } // Check if element i is allocated
       inline T* pointer(int i) const{ return ((T*)_data) + i; } // Returns pointer to ith element
       inline T* allocate(int i) {
         _table[i/intBits] |= 1<<(i%intBits); // Mark slot allocated

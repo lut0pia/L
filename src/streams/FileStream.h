@@ -18,7 +18,7 @@ namespace L {
       inline char get() {return fgetc(_fd);}
       inline void put(char c) {fputc(c,_fd);}
       inline void unget(char c) {ungetc(c,_fd);}
-      inline bool end() const {return (bool)feof(_fd);}
+      inline bool end() const {return feof(_fd)!=0;}
 
       inline void rewind() {::rewind(_fd);}
       inline int tell() const {return ::ftell(_fd);}

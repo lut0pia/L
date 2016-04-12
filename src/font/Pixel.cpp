@@ -14,7 +14,7 @@ Pixel::Pixel(int height) : _ratio(height/7.f) {
     Bitmap bmp(tmp,w,h);\
     if(_ratio>1.f)\
       bmp.scale(w*_ratio,h*_ratio,Bitmap::InterpolationType::NEAREST);\
-    Glyph tmp2 = {bmp,Vector2i(0,_ratio),(w+1)*_ratio};\
+    Glyph tmp2 = {bmp,Vector2i(0,(int)_ratio),(int)((w+1)*_ratio)};\
     return tmp2;\
   }
 #define MAKE_UPPER_GLYPH(...) MAKE_GLYPH(5,7,__VA_ARGS__)

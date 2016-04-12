@@ -17,12 +17,12 @@ void Engine::update() {
   _deltaTime = _timer.frame();
   _deltaSeconds = _deltaTime.fSeconds();
   _fps = 1.f/_deltaSeconds;
-  for(int i(0); i<_updates.size(); i++)
-    _updates[i]();
+  for(auto&& update : _updates)
+    update();
   for(auto&& camera : Pool<Camera>::global){
     camera.prerender();
-    for(int i(0); i<_renders.size(); i++)
-      _renders[i](camera);
+    for(auto&& render : _renders)
+      render(camera);
   }
   _frame++;
 }

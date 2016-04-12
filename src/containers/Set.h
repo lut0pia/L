@@ -9,7 +9,7 @@ namespace L {
     public:
       Set operator+(const Set& other) {
         Set wtr;
-        int i(0), j(0);
+        uint i(0), j(0);
         while(i<size() || j<other.size()) {
           if(i==size() || (j<other.size() && other[j]<operator[](i)))
             wtr.push(other[j++]);
@@ -25,12 +25,12 @@ namespace L {
       }
       void insert(const T& e) {
         int i(SortedArray<T>::index(e));
-        if(i>=Array<T>::size() || e<Array<T>::operator[](i))
+        if(i>=(int)Array<T>::size() || e<Array<T>::operator[](i))
           Array<T>::insert(i,e);
       }
       void erase(const T& e) {
         int i(index(e));
-        if(i<Array<T>::size() && !(Array<T>::operator[](i)<e))
+        if(i<(int)Array<T>::size() && !(Array<T>::operator[](i)<e))
           Array<T>::erase(i);
       }
       bool has(const T& e) {

@@ -130,10 +130,10 @@ namespace L {
   Stream& operator<<(Stream& s, const Array<T>& v) {
     s << '[';
     bool first(true);
-    for(int i(0); i<v.size(); i++) {
+    for(auto&& e : v){
       if(first) first = false;
       else s << ',';
-      s << v[i];
+      s << e;
     }
     s << ']';
     return s;

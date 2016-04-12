@@ -1,6 +1,7 @@
 #include "String.h"
 
 #include <cctype>
+#include "types.h"
 #include "macros.h"
 
 using namespace L;
@@ -25,7 +26,7 @@ String& String::operator+=(const String& other) {
 }
 
 int String::findFirst(const String& str) const {
-  for(int i(0); i<size(); i++)
+  for(uint i(0); i<size(); i++)
     if(strncmp(&operator[](i),str,str.size())==0)
       return i;
   return -1;
@@ -93,7 +94,7 @@ size_t String::endOf(size_t i, bool dquotesEscape) const {
 }
 
 String& String::replaceAll(const String& search, const String& replace) {
-  for(int i(0); i<size(); i++)
+  for(uint i(0); i<size(); i++)
     if(strncmp(&operator[](i),search,search.size())==0) {
       this->replace(i,search.size(),replace);
       i += replace.size()-1;
