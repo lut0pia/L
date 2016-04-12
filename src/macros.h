@@ -26,7 +26,7 @@
 
 // Debugging macros
 #ifdef L_DEBUG
-#define L_DEBUGONLY(x) x
+#define L_DEBUGONLY(x) do{x;}while(false)
 #else
 #define L_DEBUGONLY(x)
 #endif
