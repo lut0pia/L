@@ -38,16 +38,23 @@ namespace L {
       inline bool canbe(TypeDescription* td) const {return (Cast::get(_td, td) != nullptr);}
       template <class T> inline bool canbe() const {return canbe(Type<T>::description());}
 
-      template <class T> T& get() {
-        CastFct cast;
+      template <class T> T& make() {
         if(is<T>()) return as<T>();
-        /*
-        else if((cast = Cast::get(_td,Type<T>::description()))) {
-        cast(value());
-        return as<T>();
+        else if(CastFct cast = Cast::get(_td,Type<T>::description())) {
+          Var tmp;
+          cast(*this,tmp);
+          swap(*this,tmp);
+          return as<T>();
         }
-        */
         else return (*this = T()).as<T>();
+      }
+      template <class T> const T& get() const {
+        if(is<T>()) return as<T>();
+        else if(CastFct cast = Cast::get(_td,Type<T>::description())) {
+          Var tmp;
+          cast(*this,tmp);
+          return tmp.as<T>();
+        } else return T();
       }
 
       inline bool operator==(const Variable& other) const {return (_td == other._td && _td->hascmp())?(_td->cmp(value(),other.value()) == 0):false;}

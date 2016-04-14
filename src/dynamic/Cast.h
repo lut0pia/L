@@ -6,21 +6,18 @@
 #include "../types.h"
 
 namespace L {
-  typedef void (*CastFct)(void*&);
-  typedef union {
-    struct {const TypeDescription *from, *to;} types;
-    ullong id;
-  } CastDescription;
+  class Variable;
+  typedef void (*CastFct)(const Variable& a,Variable& b);
   class Cast {
-    public:
+    private:
+      typedef union {
+        struct { const TypeDescription *from,*to; } types;
+        ullong id;
+      } CastDescription;
       static Map<ullong,CastFct> casts;
 
       template <class A, class B>
-      static void func(void*& p) {
-        B* wtr(new B((B)*(A*)p));
-        delete(A*)p;
-        p = wtr;
-      }
+      static void func(const Variable& a,Variable& b);
 
     public:
       static void init();
@@ -33,16 +30,26 @@ namespace L {
       }
 
       template <class A, class B>
-      static void declare() {
+      static inline void declare() {
         CastDescription cd;
         cd.types.from = Type<A>::description();
         cd.types.to = Type<B>::description();
-        declare(cd,func<A,B>);
+          declare(cd,func<A,B>);
       }
-      static void declare(CastDescription cd, CastFct cf) {
-        casts[cd.id] = cf;
+      static inline void declare(CastDescription cd, CastFct cf) {
+        if(cd.types.from!=cd.types.to) // Don't declare casts for the same type
+          casts[cd.id] = cf;
       }
   };
+}
+
+#include "Variable.h"
+
+namespace L{
+  template <class A,class B>
+  static void Cast::func(const Variable& a,Variable& b) {
+    b = (B)a.as<A>();
+  }
 }
 
 #endif
