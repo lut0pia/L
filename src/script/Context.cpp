@@ -1,5 +1,7 @@
 #include "Context.h"
 
+#include "../hash.h"
+
 using namespace L;
 using namespace Script;
 
@@ -108,14 +110,7 @@ void Context::read(Var& v, Lexer& lexer) {
 }
 
 Symbol Context::symbol(const char* str) {
-  // 32-bit FNV-1a algorithm
-  uint32_t wtr(2166136261);
-  while(*str) {
-    wtr ^= *str;
-    wtr *= 16777619;
-    str++;
-  }
-  return {wtr};
+  return {fnv1a(str)};
 }
 Var& Context::variable(Symbol sym) {
   // Search the known variable
