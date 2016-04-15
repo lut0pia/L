@@ -20,11 +20,11 @@ Color::Color(String str) {
   if(str.empty()) {}
   else if(str[0]=='#') { // Hexa color
     if(str.size()==7) { // #RRBBGG
-      uint32_t rgb(stringToNumber<16,uint32_t>(str.substr(1)));
+      uint32_t rgb(ston<16,uint32_t>(str.substr(1)));
       new(this)Color(rgb>>16,rgb>>8,rgb);
       return;
     } else if(str.size()==9) { // #RRGGBBAA
-      uint32_t rgba(stringToNumber<16,uint32_t>(str.substr(1)));
+      uint32_t rgba(ston<16,uint32_t>(str.substr(1)));
       new(this)Color(rgba>>24,rgba>>16,rgba>>8,rgba);
       return;
     }

@@ -34,7 +34,7 @@ namespace L {
     return s;
   }
   inline Stream& operator<<(Stream &s, const Color& v) {
-    return s << '#' << numberToString<16>(v.rgba(),8);
+    return s << '#' << ntos<16>(v.rgba(),8);
   }
 }
 

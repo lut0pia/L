@@ -286,13 +286,13 @@ String Integer::toString(long lbase) const {
   switch(lbase) {
     case 2:
       for(size_t i=size()-1; i!=(size_t)-1; i--)
-        wtr += numberToString<2>(part(i),sizeof(type)*8);
+        wtr += ntos<2>(part(i),sizeof(type)*8);
       while(wtr[0]=='0' && wtr.size()>1)
         wtr.erase(0,1);
       break;
     case 16:
       for(size_t i=size()-1; i!=(size_t)-1; i--)
-        wtr += numberToString<16>(part(i),sizeof(type)*2);
+        wtr += ntos<16>(part(i),sizeof(type)*2);
       while(wtr[0]=='0' && wtr.size()>1)
         wtr.erase(0,1);
       break;

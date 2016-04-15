@@ -1,9 +1,14 @@
-#ifndef DEF_L_math
-#define DEF_L_math
+#pragma once
+
+#include "../types.h"
 
 namespace L {
-  template <int base=10,class T>
-  const char* numberToString(T v, int pad=0) {
+  template <class T> struct inttype{ typedef int32_t type; };
+  template <> struct inttype<uint32_t>{ typedef uint32_t type; };
+  template <> struct inttype<uint64_t>{ typedef uint64_t type; };
+
+  template <int base = 10,class T>
+  const char* ntos(T v,int pad = 0) { // Converts a number to a string
     static char buffer[128] = {0};
     char* wtr(buffer+127);
     // Check for negativity
@@ -14,15 +19,15 @@ namespace L {
     } else negative = false;
     // Check for point
     int point(0);
-    if(T((int)v)!=v) {
+    inttype<T>::type i(v); // Convert to int
+    if(i!=v) {
       while(T((int)v)!=v) {
         v *= base;
         point++;
         if(point<0) break;
       }
     }
-    // Convert to int and stringify
-    int i((int)v);
+    // Stringify
     if(!i) *--wtr = '0';
     else {
       while(pad>0 || i>0 || point>0) {
@@ -37,17 +42,16 @@ namespace L {
     }
     return wtr;
   }
-  template <int base=10> inline const char* numberToString(double v, int pad = 0) {return numberToString<base,float>((float)v,pad);}
-  template <int base=10,class T>
-  T stringToNumber(const char* str) {
+  template <int base = 10> inline const char* ntos(double v,int pad = 0) { return ntos<base,float>((float)v,pad); }
+  template <int base = 10,class T>
+  T ston(const char* str) { // Converts a string to a number
     T wtr(0);
     bool negative(*str=='-' && *++str);
     int fract(0);
     char c;
-    while((c=*str++)!='\0') {
+    while((c = *str++)!='\0') {
       int v(0);
-      if(c=='.') {fract=1; continue;}
-      else if(c>='0'&&c<='9') v = c-'0';
+      if(c=='.') { fract = 1; continue; } else if(c>='0'&&c<='9') v = c-'0';
       else if(c>='a'&&c<='z') v = c-'a'+10;
       else if(c>='A'&&c<='Z') v = c-'A'+10;
       wtr *= base;
@@ -55,30 +59,24 @@ namespace L {
       if(fract) fract *= base;
     }
     if(fract) wtr /= fract;
-    return (negative)?-wtr:wtr;
+    return (negative) ? -wtr : wtr;
   }
-  template <int base=2,class T>
+  template <int base = 2,class T>
   const T& log(const T& v) {
   }
-  template <class T> inline T log(const T& x, const T& base) {return log(x)/log(base);}
-  template <class T> inline const T& max(const T& a, const T& b) {return (a>b)?a:b;}
-  template <class T> inline const T& min(const T& a, const T& b) {return (a<b)?a:b;}
-  template <class T> inline const T& clamp(const T& v, const T& min, const T& max) {return (v<min)?min:((v>max)?max:v);}
-  template <class T> inline T abs(const T& n) {return (n<0)?-n:n;}
+  template <class T> inline T log(const T& x,const T& base) { return log(x)/log(base); }
+  template <class T> inline const T& max(const T& a,const T& b) { return (a>b) ? a : b; }
+  template <class T> inline const T& min(const T& a,const T& b) { return (a<b) ? a : b; }
+  template <class T> inline const T& clamp(const T& v,const T& min,const T& max) { return (v<min) ? min : ((v>max) ? max : v); }
+  template <class T> inline T abs(const T& n) { return (n<0) ? -n : n; }
 
-  template <class T> T pmod(T x, const T& m) {
-    while(x>=m)x-=m;
-    while(x<0)x+=m;
+  template <class T> T pmod(T x,const T& m) {
+    while(x>=m)x -= m;
+    while(x<0)x += m;
     return x;
   }
-  template <> inline int pmod(int x, const int& m) {
+  template <> inline int pmod(int x,const int& m) {
     int wtr(x%m);
-    return (wtr<0)?wtr+m:wtr;
+    return (wtr<0) ? wtr+m : wtr;
   }
 }
-
-#endif
-
-
-
-

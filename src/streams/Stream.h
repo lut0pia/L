@@ -27,26 +27,26 @@ namespace L {
       template<class T> inline Stream& operator<(const T& v) {write(&v,sizeof(v)); return *this;}
       template<class T> inline Stream& operator>(T& v) {read(&v,sizeof(v)); return *this;}
 
-      template<class T> inline Stream& operator<<(T* v) {return *this << numberToString<16>((unsigned int)v,sizeof(v)*2);}
+      template<class T> inline Stream& operator<<(T* v) {return *this << ntos<16>((unsigned int)v,sizeof(v)*2);}
 
       inline Stream& operator<<(bool v) {return *this << ((v)?"true":"false");}
       inline Stream& operator<<(char v) {put(v); return *this;}
       inline Stream& operator<<(char* v) {write(v,strlen(v)); return *this;}
-      inline Stream& operator<<(unsigned char v) {return *this << numberToString<16>((unsigned int)v,2);}
+      inline Stream& operator<<(unsigned char v) {return *this << ntos<16>((unsigned int)v,2);}
       inline Stream& operator<<(const char* v) {write(v,strlen(v)); return *this;}
-      inline Stream& operator<<(short v) {return *this << numberToString(v);}
-      inline Stream& operator<<(int v) {return *this << numberToString(v);}
-      inline Stream& operator<<(unsigned int v) {return *this << numberToString(v);}
-      inline Stream& operator<<(long long v) {return *this << numberToString(v);}
-      inline Stream& operator<<(float v) {return *this << numberToString(v);}
-      inline Stream& operator<<(double v) {return *this << numberToString(v);}
+      inline Stream& operator<<(short v) {return *this << ntos(v);}
+      inline Stream& operator<<(int v) { return *this << ntos(v); }
+      inline Stream& operator<<(unsigned int v) {return *this << ntos(v);}
+      inline Stream& operator<<(long long v) {return *this << ntos(v);}
+      inline Stream& operator<<(float v) {return *this << ntos(v);}
+      inline Stream& operator<<(double v) {return *this << ntos(v);}
 
       inline Stream& operator>>(char& v) {v = get(); return *this;}
       inline Stream& operator>>(char* v) {strcpy(v,word()); return *this;}
-      inline Stream& operator>>(int& v) {v = stringToNumber<10,int>(word()); return *this;}
-      inline Stream& operator>>(unsigned int& v) {v = stringToNumber<10,unsigned int>(word()); return *this;}
-      inline Stream& operator>>(float& v) {v = stringToNumber<10,float>(word()); return *this;}
-      inline Stream& operator>>(double& v) {v = stringToNumber<10,double>(word()); return *this;}
+      inline Stream& operator>>(int& v) {v = ston<10,int>(word()); return *this;}
+      inline Stream& operator>>(unsigned int& v) {v = ston<10,unsigned int>(word()); return *this;}
+      inline Stream& operator>>(float& v) {v = ston<10,float>(word()); return *this;}
+      inline Stream& operator>>(double& v) {v = ston<10,double>(word()); return *this;}
 
       void nospace() {char tmp; while(isspace(tmp = get())); unget(tmp);}
       static inline bool isspace(char c) {return c==' '||c=='\t'||c=='\n'||c=='\v'||c=='\f'||c=='\r';}
