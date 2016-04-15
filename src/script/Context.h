@@ -3,6 +3,7 @@
 
 #include "Lexer.h"
 #include "../dynamic/Variable.h"
+#include "../hash.h"
 
 namespace L {
   namespace Script {
@@ -10,7 +11,7 @@ namespace L {
     typedef Var(*Function)(Context&,int);
     typedef Var(*Native)(Context&,const Array<Var>&);
     typedef struct {Var var;} Quote;
-    typedef struct {uint32_t id;} Symbol;
+    typedef uint32_t Symbol;
     class Context {
       private:
         Array<KeyValue<Symbol,Var> > _stack;
@@ -21,17 +22,16 @@ namespace L {
         void read(Stream&);
         void read(Var& v, Lexer& lexer);
 
-        static Symbol symbol(const char*);
         Var& variable(Symbol);
+        inline Var& variable(const char* str){ return variable(fnv1a(str)); }
         void pushVariable(Symbol, const Var& = Var());
-        inline void pushParameter(const Var& v) {pushVariable(symbol(""),v);}
+        inline void pushParameter(const Var& v) {pushVariable(FNV1A(""),v);}
         inline Var& parameter(int i) {return _stack[currentFrame()+i].value();}
         inline int currentFrame() const {return _frames[_frames.size()-2];}
         inline int nextFrame() const {return _frames.back();}
         Var execute(const Var& code);
     };
   }
-  inline Stream& operator<<(Stream& s, const Script::Symbol& v) {return s << v.id;}
   inline Stream& operator<<(Stream& s, const Script::Quote& v) {return s << '\'' << v.var;}
 }
 

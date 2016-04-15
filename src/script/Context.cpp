@@ -1,25 +1,23 @@
 #include "Context.h"
 
-#include "../hash.h"
-
 using namespace L;
 using namespace Script;
 
 Context::Context() {
   _frames.push(0); // Start current frame
   _frames.push(0); // Start next frame (no variable)
-  variable(symbol("do")) = (Native)[](Context& c,const Array<Var>& a)->Var {
+  variable(FNV1A("do")) = (Native)[](Context& c,const Array<Var>& a)->Var {
     for(uint32_t i(1); i<a.size()-1; i++)
       c.execute(a[i]);
     return c.execute(a.back());
   };
-  variable(symbol("while")) = (Native)[](Context& c,const Array<Var>& a)->Var {
+  variable(FNV1A("while")) = (Native)[](Context& c,const Array<Var>& a)->Var {
     Var wtr;
     while(c.execute(a[1]).get<bool>())
       wtr = c.execute(a[2]);
     return wtr;
   };
-  variable(symbol("if")) = (Native)[](Context& c,const Array<Var>& a)->Var {
+  variable(FNV1A("if")) = (Native)[](Context& c,const Array<Var>& a)->Var {
     if(a.size()>2) {
       if(c.execute(a[1]).get<bool>())
         return c.execute(a[2]);
@@ -28,7 +26,7 @@ Context::Context() {
     }
     return 0;
   };
-  variable(symbol("set")) = (Native)[](Context& c,const Array<Var>& a)->Var {
+  variable(FNV1A("set")) = (Native)[](Context& c,const Array<Var>& a)->Var {
     Var target(c.execute(a[1]));
     if(a.size()==3) {
       if(target.is<Symbol>())
@@ -38,39 +36,39 @@ Context::Context() {
     }
     return 0;
   };
-  variable(symbol("typename")) = (Function)[](Context& c,int params)->Var {
+  variable(FNV1A("typename")) = (Function)[](Context& c,int params)->Var {
     return c.parameter(0).type()->name;
   };
-  variable(symbol("=")) = (Function)[](Context& c,int params)->Var {
+  variable(FNV1A("=")) = (Function)[](Context& c,int params)->Var {
     if(params==2)
       return c.parameter(0)==c.parameter(1);
     else return false;
   };
-  variable(symbol("+")) = (Function)[](Context& c,int params)->Var {
+  variable(FNV1A("+")) = (Function)[](Context& c,int params)->Var {
     int wtr(0);
     for(int i(0); i<params; i++)
       if(c.parameter(i).is<int>())
         wtr += c.parameter(i).as<int>();
     return wtr;
   };
-  variable(symbol("*")) = (Function)[](Context& c,int params)->Var {
+  variable(FNV1A("*")) = (Function)[](Context& c,int params)->Var {
     int wtr(1);
     for(int i(0); i<params; i++)
       if(c.parameter(i).is<int>())
         wtr *= c.parameter(i).as<int>();
     return wtr;
   };
-  variable(symbol("/")) = (Function)[](Context& c,int params)->Var {
+  variable(FNV1A("/")) = (Function)[](Context& c,int params)->Var {
     if(params==2 && c.parameter(0).is<int>() && c.parameter(1).is<int>()) {
       return c.parameter(0).as<int>()/c.parameter(1).as<int>();
     } else return 0;
   };
-  variable(symbol("%")) = (Function)[](Context& c,int params)->Var {
+  variable(FNV1A("%")) = (Function)[](Context& c,int params)->Var {
     if(params==2 && c.parameter(0).is<int>() && c.parameter(1).is<int>()) {
       return c.parameter(0).as<int>()%c.parameter(1).as<int>();
     } else return 0;
   };
-  variable(symbol("print")) = (Function)[](Context& c,int params)->Var {
+  variable(FNV1A("print")) = (Function)[](Context& c,int params)->Var {
     for(int i(0); i<params; i++)
       out << c.parameter(i);
     return 0;
@@ -104,18 +102,15 @@ void Context::read(Var& v, Lexer& lexer) {
     else if(lexer.isToken("false")) v = false;
     else if(token[strspn(token,"-0123456789")]=='\0') v = atoi(token); // Integer
     else if(token[strspn(token,"-0123456789.")]=='\0') v = (float)atof(token); // Float
-    else v = symbol(token);
+    else v = fnv1a(token);
     lexer.nextToken();
   }
 }
 
-Symbol Context::symbol(const char* str) {
-  return {fnv1a(str)};
-}
 Var& Context::variable(Symbol sym) {
   // Search the known variable
   for(int i(nextFrame()-1); i>=0; i--)
-    if(_stack[i].key().id==sym.id)
+    if(_stack[i].key()==sym)
       return _stack[i].value();
   pushVariable(sym);
   return _stack.back().value();
