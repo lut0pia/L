@@ -9,7 +9,7 @@ namespace L {
     public:
       Set operator+(const Set& other) {
         Set wtr;
-        uint i(0), j(0);
+        uint32_t i(0), j(0);
         while(i<size() || j<other.size()) {
           if(i==size() || (j<other.size() && other[j]<operator[](i)))
             wtr.push(other[j++]);

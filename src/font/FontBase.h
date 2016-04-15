@@ -15,14 +15,14 @@ namespace L {
     class Base {
       protected:
         Glyph _ascii[128];
-        Map<uint32,Glyph> _glyphs;
+        Map<uint32_t,Glyph> _glyphs;
         int _lineheight;
       public:
         virtual ~Base() {}
-        const Glyph& glyph(uint32 utf32);
+        const Glyph& glyph(uint32_t utf32);
         virtual Bitmap render(const char*);
         virtual Vector2i guessSize(const char*);
-        virtual Glyph loadGlyph(uint32 utf32) = 0;
+        virtual Glyph loadGlyph(uint32_t utf32) = 0;
     };
   }
 }

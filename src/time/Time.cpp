@@ -69,7 +69,7 @@ Time Time::now() {
 #if defined L_WINDOWS
   union {
     FILETIME ft;
-    ullong nano;
+    uint64_t nano;
   };
   GetSystemTimeAsFileTime(&ft);
   return Time(nano/10LL);

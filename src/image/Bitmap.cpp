@@ -159,7 +159,7 @@ void Bitmap::scale(int newWidth, int newHeight, InterpolationType it) {
   }
 }
 void Bitmap::blur(int factor) {
-  uint rt, gt, bt;
+  uint32_t rt, gt, bt;
   float pixelCount, m;
   Color c;
   Bitmap copy(*this);

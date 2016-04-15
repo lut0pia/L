@@ -10,7 +10,7 @@ namespace L {
     typedef Var(*Function)(Context&,int);
     typedef Var(*Native)(Context&,const Array<Var>&);
     typedef struct {Var var;} Quote;
-    typedef struct {uint32 id;} Symbol;
+    typedef struct {uint32_t id;} Symbol;
     class Context {
       private:
         Array<KeyValue<Symbol,Var> > _stack;

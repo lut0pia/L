@@ -34,7 +34,7 @@ Mesh::Mesh(const MeshBuilder& builder, GLenum primitive)
     _primitive(primitive) {
   _vertexBuffer.data(_vertexCount*_vertexSize,builder.vertices(),GL_STATIC_DRAW);
   if(_indexCount)
-    _indexBuffer.data(_indexCount*sizeof(uint),builder.indices(),GL_STATIC_DRAW);
+    _indexBuffer.data(_indexCount*sizeof(uint32_t),builder.indices(),GL_STATIC_DRAW);
 }
 /*
 Mesh::Mesh(byte vertexDesc, float* vertices, GLsizei count, GLenum primitive)

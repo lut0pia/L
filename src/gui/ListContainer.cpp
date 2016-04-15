@@ -43,7 +43,7 @@ void ListContainer::updateFromAbove(Vector2i pos, Interval2i parentClip) {
   if(!blockInsert) {
     Vector2i oldDim(dimensions);
     dimensions.x() = dimensions.y() = 0;
-    for(uint i(0); i<elements.size(); i++) {
+    for(uint32_t i(0); i<elements.size(); i++) {
       const Ref<Base>& element(elements[i]);
       element->updateFromAbove(Vector<2,int>(pos.x(),pos.y()+dimensions.y()),parentClip);
       Vector2i childDim(element->gDimensions());

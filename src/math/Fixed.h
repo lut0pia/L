@@ -38,7 +38,7 @@ namespace L {
           rol eax,16 // Swap words
           mov dword ptr [ebx], eax
         }*/
-        _raw = ((llong)_raw*(llong)other._raw)>>halfbits;
+        _raw = ((int64_t)_raw*(int64_t)other._raw)>>halfbits;
         return *this;
       }
       inline Fixed& operator/=(const Fixed& other) {

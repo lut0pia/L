@@ -20,7 +20,7 @@ namespace L {
               Node *_left,*_right;
             };
           };
-          uint _leaf;
+          uint32_t _leaf;
         public:
           Node(Node* parent,const Key& key,const V& value) : _parent(parent),_key(key),_value(value) {
             _leaf = 1;

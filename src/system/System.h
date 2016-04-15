@@ -13,8 +13,8 @@ namespace L {
     int call(const char*); // Only makes a system call
     void sleep(int milliseconds);
     void sleep(const Time&);
-    void beep(uint frequency, uint milliseconds);
-    ullong ticks();
+    void beep(uint32_t frequency, uint32_t milliseconds);
+    uint64_t ticks();
     void toClipboard(const String&);
     String fromClipboard();
     String env(const char*);

@@ -5,7 +5,7 @@
 using namespace L;
 using namespace Font;
 
-const Glyph& Base::glyph(uint32 utf32) {
+const Glyph& Base::glyph(uint32_t utf32) {
   if(utf32<128) {
     if(_ascii[utf32].bmp.empty())
       _ascii[utf32] = loadGlyph(utf32);
@@ -23,7 +23,7 @@ Bitmap Base::render(const char* str) {
   wtr.resizeFast(guessSize(str));
   memset(&wtr[0],0,wtr.size()*sizeof(Color));
   while(*str) {
-    uint32 utf32(UTF8toUTF32(str,&utfsize));
+    uint32_t utf32(UTF8toUTF32(str,&utfsize));
     if(utf32==1) { // Cursor
       for(int y(height-_lineheight); y<height; y++)
         wtr(penx,y) = Color::white;

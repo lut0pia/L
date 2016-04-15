@@ -41,7 +41,7 @@ void XML::read(Stream& s) {
     s.ignore();
     if(s.peek()=='/') return; // It's an end tag
     else if(s.peek()=='!') { // It's a comment
-      uint n(0);
+      uint32_t n(0);
       char c;
       while((c = s.get()))
         if(c=='-') n++;

@@ -30,18 +30,18 @@ void System::sleep(const Time& t) {
   usleep(t.microseconds());
 #endif
 }
-void System::beep(uint frequency, uint milliseconds) {
+void System::beep(uint32_t frequency, uint32_t milliseconds) {
 #if defined L_WINDOWS
   ::Beep(frequency,milliseconds);
 #elif defined L_UNIX
   L_ERROR("Cannot beep under UNIX.");
 #endif
 }
-ullong System::ticks() {
+uint64_t System::ticks() {
 #if defined _MSC_VER // MSVC
   return __rdtsc();
 #else // GCC
-  ullong wtr;
+  uint64_t wtr;
   __asm__ __volatile__
   (
     "cpuid \n"
@@ -94,7 +94,7 @@ Vector2i System::screenSize() {
   return Vector2i(GetSystemMetrics(SM_CXSCREEN),GetSystemMetrics(SM_CYSCREEN));
 #endif
 }
-void System::consoleCursorPosition(ushort x,ushort y) {
+void System::consoleCursorPosition(uint16_t x,uint16_t y) {
 #if defined L_WINDOWS
   HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
   COORD position = {(short)x,(short)y};

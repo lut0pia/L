@@ -49,10 +49,10 @@ void Midi::stopNote(L::byte channel, L::byte noteNumber) {
   get().send(msgData);
 }
 void Midi::stopAll(L::byte channel) {
-  for(uint t(0); t<128; t++)
+  for(uint32_t t(0); t<128; t++)
     Audio::Midi::stopNote(channel,t);
 }
 void Midi::stopAll() {
-  for(uint c(0); c<16; c++)
+  for(uint32_t c(0); c<16; c++)
     Audio::Midi::stopAll(c);
 }

@@ -2,7 +2,7 @@
 
 using namespace L;
 
-Map<ullong,CastFct> Cast::casts;
+Map<uint64_t,CastFct> Cast::casts;
 
 void Cast::init() {
 #define TMP(T)\
@@ -11,7 +11,7 @@ void Cast::init() {
   declare<T,char>();\
   declare<T,unsigned short>();\
   declare<T,short>();\
-  declare<T,uint>();\
+  declare<T,uint32_t>();\
   declare<T,int>();\
   declare<T,unsigned long>();\
   declare<T,long>();\
@@ -25,7 +25,7 @@ void Cast::init() {
   TMP(char)
   TMP(unsigned short)
   TMP(short)
-  TMP(uint)
+  TMP(uint32_t)
   TMP(int)
   TMP(unsigned long)
   TMP(long)

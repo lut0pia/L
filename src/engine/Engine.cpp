@@ -11,7 +11,7 @@ Map<String,Ref<GL::Mesh> > Engine::_meshes;
 Timer Engine::_timer;
 Time Engine::_deltaTime;
 float Engine::_deltaSeconds, Engine::_fps;
-uint Engine::_frame(0);
+uint32_t Engine::_frame(0);
 
 void Engine::update() {
   _deltaTime = _timer.frame();

@@ -79,24 +79,24 @@ void GL::drawAxes() {
 void GL::makeDisc(Mesh& mesh, int slices) {
   meshBuilder.reset(Mesh::VERTEX);
   meshBuilder.setVertex(Vector3f(0,0,0));
-  uint center(meshBuilder.addVertex());
+  uint32_t center(meshBuilder.addVertex());
   meshBuilder.setVertex(Vector3f(1,0,0));
-  uint first(meshBuilder.addVertex());
-  uint last(first);
+  uint32_t first(meshBuilder.addVertex());
+  uint32_t last(first);
   for(int i(1); i<slices; i++) {
     float angle(((float)i/slices)*PI<float>()*2);
     meshBuilder.setVertex(Vector3f(cos(angle),sin(angle),0));
-    uint current(meshBuilder.addVertex());
+    uint32_t current(meshBuilder.addVertex());
     meshBuilder.addTriangle(center,current,last);
     last = current;
   }
   meshBuilder.addTriangle(center,first,last);
   reconstruct(mesh,meshBuilder);
 }
-Map<uint64,int> middles;
-int vertexBetween(MeshBuilder& mb, uint a, uint b) {
+Map<uint64_t,int> middles;
+int vertexBetween(MeshBuilder& mb, uint32_t a, uint32_t b) {
   if(a>b) swap(a,b);
-  uint64 id((uint64)a<<32|b);
+  uint64_t id((uint64_t)a<<32|b);
   if(!middles.has(id)) {
     Vector3f va(mb.vertex(a)), vb(mb.vertex(b));
     Vector3f v((va+vb)/2.f);
@@ -106,7 +106,7 @@ int vertexBetween(MeshBuilder& mb, uint a, uint b) {
   }
   return middles[id];
 }
-void refineTriangle(MeshBuilder& mb, uint a, uint b, uint c, uint rec) {
+void refineTriangle(MeshBuilder& mb, uint32_t a, uint32_t b, uint32_t c, uint32_t rec) {
   if(rec) {
     int ab(vertexBetween(mb,a,b)), bc(vertexBetween(mb,b,c)), ac(vertexBetween(mb,a,c));
     rec--;

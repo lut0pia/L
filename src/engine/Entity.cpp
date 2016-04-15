@@ -17,7 +17,7 @@ Entity::~Entity() {
 }
 
 void Entity::remove(Component* c){
-  for(uint i(0); i<_components.size(); i++)
+  for(uint32_t i(0); i<_components.size(); i++)
     if(_components[i].value()==c){
       _components.erase(i);
       return;

@@ -18,10 +18,10 @@ void MeshBuilder::reset(byte vertexDesc) {
 }
 void MeshBuilder::computeNormals() {
   L_ASSERT(_vertexDesc & Mesh::NORMAL);
-  uint vc(vertexCount());
-  for(uint i(0); i<vc; i++)
+  uint32_t vc(vertexCount());
+  for(uint32_t i(0); i<vc; i++)
     normal(i) = Vector3f(0,0,0);
-  for(uint i(0); i<_indexBuffer.size(); i+=3) {
+  for(uint32_t i(0); i<_indexBuffer.size(); i+=3) {
     Vector3f& a(vertex(_indexBuffer[i]));
     Vector3f n((vertex(_indexBuffer[i+1])-a)
                .cross(vertex(_indexBuffer[i+2])-a));
@@ -30,7 +30,7 @@ void MeshBuilder::computeNormals() {
     normal(_indexBuffer[i+1]) += n;
     normal(_indexBuffer[i+2]) += n;
   }
-  for(uint i(0); i<vc; i++)
+  for(uint32_t i(0); i<vc; i++)
     normal(i).normalize();
 }
 void MeshBuilder::setVertex(const Vector3f& vertex) {
@@ -39,16 +39,16 @@ void MeshBuilder::setVertex(const Vector3f& vertex) {
 void MeshBuilder::setVertexColor(const Color& color) {
   memcpy(_vertexTmp+_offsetColor,color.bytes(),sizeof(color));
 }
-uint MeshBuilder::addVertex() {
-  uint wtr(vertexCount());
+uint32_t MeshBuilder::addVertex() {
+  uint32_t wtr(vertexCount());
   _vertexBuffer.size(_vertexBuffer.size()+_vertexSize);
   memcpy(&_vertexBuffer[wtr*_vertexSize],_vertexTmp,_vertexSize);
   return wtr;
 }
-void MeshBuilder::addIndex(uint index) {
+void MeshBuilder::addIndex(uint32_t index) {
   _indexBuffer.push(index);
 }
-void MeshBuilder::addTriangle(uint a, uint b, uint c) {
+void MeshBuilder::addTriangle(uint32_t a, uint32_t b, uint32_t c) {
   addIndex(a);
   addIndex(b);
   addIndex(c);

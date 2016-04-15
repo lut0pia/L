@@ -14,7 +14,7 @@ namespace L {
     public:
       static const int size = tableSize*intBits;
       byte _data[size*sizeof(T)];
-      uint _table[tableSize]; // Every bit of this array represents a object slot in _data
+      uint32_t _table[tableSize]; // Every bit of this array represents a object slot in _data
       Block* _next; // Pool works like a linked list, in case no more space is available
       bool _full;
       inline Block() : _next(nullptr),_full(false) { memset(_table,0,sizeof(_table)); }

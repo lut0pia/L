@@ -5,10 +5,10 @@
 using namespace L;
 
 //const ullong Rand::a(6364136223846793005LL), Rand::b(1442695040888963407LL);
-const ullong Rand::a(2862933555777941757LL), Rand::b(3037000493LL);
-ullong Rand::last(time(nullptr));
+const uint64_t Rand::a(2862933555777941757LL), Rand::b(3037000493LL);
+uint64_t Rand::last(time(nullptr));
 
-ullong Rand::next() {
+uint64_t Rand::next() {
   return last = last*a+b;
 }
 int Rand::nextInt() {
@@ -18,10 +18,10 @@ byte Rand::nextByte() {
   return next()>>48;
 }
 float Rand::nextFloat() {
-  return next()/(float)(ullong)-1;
+  return next()/(float)(uint64_t)-1;
 }
 
-ullong Rand::next(ullong min, ullong max) {
+uint64_t Rand::next(uint64_t min,uint64_t max) {
   return (next()%(max-min+1))+min;
 }
 int Rand::next(int min, int max) {
@@ -37,15 +37,15 @@ void Rand::fill(byte* dst, size_t size) {
   }
 }
 
-float Rand::gauss(uint i) {
+float Rand::gauss(uint32_t i) {
   float wtr(0);
-  for(uint j(0); j<i; j++)
+  for(uint32_t j(0); j<i; j++)
     wtr += nextFloat();
   return wtr/i;
 }
-ullong Rand::next(ullong ave) {
+uint64_t Rand::next(uint64_t ave) {
   if(ave) {
-    ullong wtr(0), thres(((ullong)-1)/(ave+1));
+    uint64_t wtr(0), thres(((uint64_t)-1)/(ave+1));
     while(next()>thres) wtr++;
     return wtr;
   } else return 0;

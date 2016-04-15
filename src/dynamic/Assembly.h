@@ -18,7 +18,7 @@ namespace L {
 
       void load(void*);
       inline void clear() {_assembly.clear();}
-      inline uint32 label() const {return _assembly.size();}
+      inline uint32_t label() const {return _assembly.size();}
 
       template <typename... Args> inline void emit(byte b,Args&&... args) {_assembly.push(b); emit(args...);}
       inline void emit() {}
@@ -36,33 +36,33 @@ namespace L {
       }
       inline void modregrm(byte mod, byte reg, byte rm) {emit((mod<<6)|((reg&0x7)<<3)|(rm&0x7));}
       inline void sib(byte scale, byte index, byte base) {emit((scale<<6)|((index&0x7)<<3)|(base&0x7));}
-      inline void imm(uint32 i) {emit(i,i>>8,i>>16,i>>24);}
+      inline void imm(uint32_t i) {emit(i,i>>8,i>>16,i>>24);}
 
-      inline void add(Register dst, uint32 i) {instruction(0x81,0,dst); imm(i);}
+      inline void add(Register dst, uint32_t i) {instruction(0x81,0,dst); imm(i);}
       inline void add(Register dst, Register src) {instruction(0x03,dst,src);}
       inline void inc(Register r) {emit(0x40+r);}
 
-      inline void sub(Register dst, uint32 i) {instruction(0x81,5,dst); imm(i);}
+      inline void sub(Register dst, uint32_t i) {instruction(0x81,5,dst); imm(i);}
       inline void sub(Register dst, Register src) {instruction(0x2b,dst,src);}
       inline void dec(Register r) {emit(0x48+r);}
 
-      inline void mov(Register r, uint32 i) {emit(0xb8+r); imm(i);}
+      inline void mov(Register r, uint32_t i) {emit(0xb8+r); imm(i);}
       inline void mov(Register dst, Register src, int disp) {instruction(0x8b,dst,src,disp);}
       inline void mov(Register dst, Register src) {instruction(0x8b,dst,src);}
-      inline void mov(Register dst, int disp, uint32 i) {instruction(0xc7,0,dst,disp); imm(i);}
+      inline void mov(Register dst, int disp, uint32_t i) {instruction(0xc7,0,dst,disp); imm(i);}
       inline void mov(Register dst, int disp, Register src) {instruction(0x89,src,dst,disp);}
 
       inline void xor(Register dst, Register src) {instruction(0x33,dst,src);}
       inline void clr(Register r) {xor(r,r);}
 
-      inline void push(uint32 i) {emit(0x68); imm(i);}
+      inline void push(uint32_t i) {emit(0x68); imm(i);}
       inline void push(Register r) {emit(0x50+r);}
 
       inline void pop(Register r) {emit(0x58+r);}
-      inline void pop(uint32 n=1) {add(esp,4*n);}
+      inline void pop(uint32_t n=1) {add(esp,4*n);}
 
       // Subroutines
-      inline void call(void* f) {mov(Assembly::eax,(uint32)f); emit(0xff,0xd0);}
+      inline void call(void* f) {mov(Assembly::eax,(uint32_t)f); emit(0xff,0xd0);}
       inline void include(void* f) {
         sub(esp,4);
         load(f);
@@ -72,11 +72,11 @@ namespace L {
       inline void retn() {emit(0xc3);}
 
       // Jumps
-      inline void jmp(uint32 i) {
+      inline void jmp(uint32_t i) {
         emit(0xe9);
         imm(i-(_assembly.size()+4));
       }
-      inline void jcc(byte opcode,uint32 i) {
+      inline void jcc(byte opcode,uint32_t i) {
         int rel(i-_assembly.size());
         if(rel>=-128&&rel<=127)
           emit(opcode,rel-2);
@@ -85,10 +85,10 @@ namespace L {
           imm(rel-6);
         }
       }
-      inline void jle(uint32 i) {jcc(0x7e,i);}
-      inline void jg(uint32 i) {jcc(0x7f,i);}
+      inline void jle(uint32_t i) {jcc(0x7e,i);}
+      inline void jg(uint32_t i) {jcc(0x7f,i);}
 
-      inline void cmp(Register r, uint32 i) {instruction(0x81,r,r); imm(i);}
+      inline void cmp(Register r, uint32_t i) {instruction(0x81,r,r); imm(i);}
       inline void cmp(Register r1, Register r2) {instruction(0x39,r2,r1);}
 
       void* commit() const;

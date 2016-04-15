@@ -30,11 +30,11 @@ namespace L {
       static Timer _timer;
       static Time _deltaTime;
       static float _deltaSeconds, _fps;
-      static uint _frame;
+      static uint32_t _frame;
     public:
       static inline float deltaSeconds() {return _deltaSeconds;}
       static inline float fps() {return _fps;}
-      static inline uint frame() {return _frame;}
+      static inline uint32_t frame() {return _frame;}
       static void update();
       static const Ref<GL::Texture>& texture(const char* filepath);
       static const Ref<GL::Mesh>& mesh(const char* filepath);

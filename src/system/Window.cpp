@@ -25,7 +25,7 @@ HWND hWND;
 HDC hDC;
 HGLRC hRC;
 HBITMAP hBITMAP = 0;
-LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+LRESULT CALLBACK MainWndProc(HWND hwnd, uint32_t uMsg, WPARAM wParam, LPARAM lParam) {
   Window::Event e;
   switch(uMsg) {
     case WM_CREATE:

@@ -4,7 +4,7 @@
 
 using namespace L;
 
-const char* L::UTF16toUTF8(uint16 utf16) {
+const char* L::UTF16toUTF8(uint16_t utf16) {
   static char wtr[4];
   if(utf16<static_pow<2,7>::value) {
     wtr[0] = utf16;
@@ -21,8 +21,8 @@ const char* L::UTF16toUTF8(uint16 utf16) {
   }
   return wtr;
 }
-uint32 L::UTF8toUTF32(const char* str, int* size) {
-  uint32 wtr((byte)*str);
+uint32_t L::UTF8toUTF32(const char* str, int* size) {
+  uint32_t wtr((byte)*str);
   if(wtr>>5==0x6) { // 2 bytes
     wtr <<= 6;
     wtr |= ((byte)*(++str)) & bitmask<6>::value;
@@ -38,8 +38,8 @@ uint32 L::UTF8toUTF32(const char* str, int* size) {
   } else *size = 1;
   return wtr;
 }
-Array<uint32> L::UTF8toUTF32(const char* str) {
-  Array<uint32> wtr;
+Array<uint32_t> L::UTF8toUTF32(const char* str) {
+  Array<uint32_t> wtr;
   int utfsize;
   while(*str) {
     wtr.push(UTF8toUTF32(str,&utfsize));

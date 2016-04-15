@@ -12,9 +12,9 @@ namespace L {
     private:
       typedef union {
         struct { const TypeDescription *from,*to; } types;
-        ullong id;
+        uint64_t id;
       } CastDescription;
-      static Map<ullong,CastFct> casts;
+      static Map<uint64_t,CastFct> casts;
 
       template <class A, class B>
       static void func(const Variable& a,Variable& b);
@@ -25,7 +25,7 @@ namespace L {
         CastDescription cd;
         cd.types.from = from;
         cd.types.to = to;
-        const KeyValue<ullong,CastFct>* it(casts.find(cd.id));
+        const KeyValue<uint64_t,CastFct>* it(casts.find(cd.id));
         return (it)?it->value():nullptr;
       }
 

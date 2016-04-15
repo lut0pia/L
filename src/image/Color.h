@@ -18,8 +18,8 @@ namespace L {
       inline byte g() const {return _c[1];}
       inline byte b() const {return _c[0];}
       inline byte a() const {return _c[3];}
-      inline uint rgb() const {return r()|g()<<8|b()<<16;}
-      inline uint rgba() const {return r()<<8|g()<<16|b()<<24|a();}
+      inline uint32_t rgb() const {return r()|g()<<8|b()<<16;}
+      inline uint32_t rgba() const {return r()<<8|g()<<16|b()<<24|a();}
       inline byte& r() {return _c[2];}
       inline byte& g() {return _c[1];}
       inline byte& b() {return _c[0];}
