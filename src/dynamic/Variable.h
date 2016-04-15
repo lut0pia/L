@@ -48,7 +48,7 @@ namespace L {
         }
         else return (*this = T()).as<T>();
       }
-      template <class T> const T& get() const {
+      template <class T> T get() const {
         if(is<T>()) return as<T>();
         else if(CastFct cast = Cast::get(_td,Type<T>::description())) {
           Var tmp;
