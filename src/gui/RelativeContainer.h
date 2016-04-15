@@ -7,7 +7,7 @@
 
 namespace L {
   namespace GUI {
-    static const Vector<2,float> TL(0,0),CL(0,.5),BL(0,1),TC(.5,0),CC(.5,.5),BC(.5,1),TR(1,0),CR(1,.5),BR(1,1);
+    static const Vector2f TL(0.f,0.f),CL(0.f,.5f),BL(0.f,1.f),TC(.5f,0.f),CC(.5f,.5f),BC(.5f,1.f),TR(1.f,0.f),CR(1.f,.5f),BR(1.f,1.f);
     typedef struct {
       Vector2i relPixPos; // Relative position to matched point in pixels
       Vector<2,float> srcRatPos,tarRatPos; // Matching points ratio
