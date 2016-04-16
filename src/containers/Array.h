@@ -48,6 +48,13 @@ namespace L {
         }
         return *this;
       }
+      inline Array& operator=(Array&& other){
+        _data = other._data;
+        _size = other._size;
+        _capacity = other._capacity;
+        other._data = nullptr;
+        return *this;
+      }
       inline Array operator+(const Array& other) {Array wtr(*this); return wtr += other;}
       inline Array& operator+=(const Array& other) {insertArray(_size,other); return *this;}
 
