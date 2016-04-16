@@ -3,7 +3,10 @@
 #include "../types.h"
 
 namespace L {
+  // Describes the best integer type to convert T to (used for stringification)
   template <class T> struct inttype{ typedef int32_t type; };
+  template <> struct inttype<int64_t>{ typedef int64_t type; };
+  template <> struct inttype<float>{ typedef int64_t type; };
   template <> struct inttype<uint32_t>{ typedef uint32_t type; };
   template <> struct inttype<uint64_t>{ typedef uint64_t type; };
 
