@@ -31,10 +31,14 @@ namespace L {
 
       template <class A, class B>
       static inline void declare() {
+        declare<A,B>(func<A,B>);
+      }
+      template <class A,class B>
+      static inline void declare(CastFct cf){
         CastDescription cd;
         cd.types.from = Type<A>::description();
         cd.types.to = Type<B>::description();
-          declare(cd,func<A,B>);
+        declare(cd,cf);
       }
       static inline void declare(CastDescription cd, CastFct cf) {
         if(cd.types.from!=cd.types.to) // Don't declare casts for the same type
