@@ -120,7 +120,7 @@ namespace L {
         shift(i+1,-1); // Move right part
         _size--; // Decrease size
       }
-      void erase(size_t i, size_t count) {
+      void erase(size_t i, int count) {
         destruct(_data+i,count); // Destruct values
         shift(i+count,-count); // Move right part
         _size -= count; // Decrease size

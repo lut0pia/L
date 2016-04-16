@@ -7,7 +7,7 @@ using namespace L;
 const char* L::UTF16toUTF8(uint16_t utf16) {
   static char wtr[4];
   if(utf16<static_pow<2,7>::value) {
-    wtr[0] = utf16;
+    wtr[0] = (char)utf16;
     wtr[1] = 0;
   } else if(utf16<static_pow<2,11>::value) {
     wtr[0] = 0xC0 | (utf16>>6);

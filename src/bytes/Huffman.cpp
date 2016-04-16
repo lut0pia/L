@@ -37,7 +37,7 @@ Huffman::Tree Huffman::makeTree(size_t weight[256]) {
   for(size_t i=0; i<256; i++) { // Initialize ordered container
     tmp.weight = weight[i];
     tmp.bytes.clear();
-    tmp.bytes.insert(i);
+    tmp.bytes.insert((byte)i);
     trees.insert(tmp);
   }
   while(trees.size()>1) {

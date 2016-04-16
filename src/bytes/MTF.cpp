@@ -6,8 +6,8 @@ Array<byte> MTF::encode(const Array<byte>& bytes){
     size_t size = bytes.size();
     Array<byte> wtr(size);
     byte t[256];
-    for(size_t i=0;i<256;i++) t[i] = i;
-    for(size_t i=0;i<size;i++){
+    for(size_t i(0);i<256;i++) t[i] = (byte)i;
+    for(size_t i(0);i<size;i++){
         byte b = bytes[i];
         wtr[i] = t[b];
         if(t[b]!=0){ // Need to move the index
@@ -22,8 +22,8 @@ Array<byte> MTF::decode(const Array<byte>& bytes){
     size_t size = bytes.size();
     Array<byte> wtr(size);
     byte t[256];
-    for(size_t i=0;i<256;i++) t[i] = i;
-    for(size_t i=0;i<size;i++){
+    for(size_t i(0);i<256;i++) t[i] = (byte)i;
+    for(size_t i(0);i<size;i++){
         byte b = bytes[i];
         wtr[i] = t[b];
         for(size_t j=b;j>0;j--)
