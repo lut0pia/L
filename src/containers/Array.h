@@ -33,8 +33,10 @@ namespace L {
         copy(_data,other._data,_size);
       }
       ~Array() {
-        destruct((T*)_data,_size);
-        free(_data);
+        if(_data){
+          destruct((T*)_data,_size);
+          free(_data);
+        }
       }
       inline Array& operator=(const Array& other) {
         if(this!=&other) {
