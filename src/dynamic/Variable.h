@@ -24,6 +24,7 @@ namespace L {
       }
       Variable(const char*);
       Variable(const Variable&);
+      Variable(Variable&&);
       Variable& operator=(const Variable&);
       ~Variable();
 

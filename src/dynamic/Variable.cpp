@@ -23,6 +23,10 @@ Variable::Variable(const Variable& other) : _td(other._td) {
     _td->cpyto(value(),other.value());
   else _p = _td->cpy(other._p);
 }
+Variable::Variable(Variable&& other) : _td(other._td) {
+  memcpy(_data,other._data,sizeof(_data));
+  other._td = Type<int>::description();
+}
 Variable& Variable::operator=(const Variable& other) {
   if(this != &other) {
     if(_td==other._td) // Same type
