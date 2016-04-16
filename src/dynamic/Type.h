@@ -12,6 +12,7 @@ namespace L {
 
     void* (*cpy)(void*);
     void (*cpyto)(void*,const void*);
+    void (*assign)(void*,const void*);
     void (*dtr)(void*);
     void (*del)(void*);
 
@@ -28,7 +29,7 @@ namespace L {
       static TypeDescription makeDesc() {
         TypeDescription wtr = {
           "",sizeof(T),
-          cpy,cpyto,dtr,del,
+          cpy,cpyto,assign,dtr,del,
           out,cmp,
           hascmp
         };
@@ -54,7 +55,8 @@ namespace L {
       static inline const TypeDescription* description() {return &td;}
 
       static void* cpy(void* p) {return new T(*(T*)p);}
-      static void cpyto(void* dst, const void* src) {new((T*)dst) T(*(const T*)src);}
+      static void cpyto(void* dst,const void* src) { new((T*)dst) T(*(const T*)src); }
+      static void assign(void* dst,const void* src) { *(T*)dst = *(const T*)src; }
       static void dtr(void* p) {((T*)p)->~T();}
       static void del(void* p) {delete(T*)p;}
 
