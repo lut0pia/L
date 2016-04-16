@@ -45,10 +45,10 @@ Color::Color(String str) {
 }
 
 Color Color::from(float r, float g, float b, float a) {
-  return Color(r*255,g*255,b*255,a*255);
+  return Color((byte)(r*255.f),(byte)(g*255.f),(byte)(b*255.f),(byte)(a*255.f));
 }
 Color Color::lerp(Color a, Color b, float w) {
   float nw(1.f-w);
-  return Color(nw*a.r() + w*b.r(), w*a.g() + w*b.g(), w*a.b() + w*b.b(), w*a.a() + w*b.a());
+  return Color((byte)(nw*a.r() + w*b.r()),(byte)(w*a.g() + w*b.g()),(byte)(w*a.b() + w*b.b()),(byte)(w*a.a() + w*b.a()));
 }
 
