@@ -49,6 +49,7 @@ namespace L {
         return *this;
       }
       inline Array& operator=(Array&& other){
+        destruct(*this);
         _data = other._data;
         _size = other._size;
         _capacity = other._capacity;
