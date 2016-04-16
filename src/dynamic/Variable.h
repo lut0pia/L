@@ -39,14 +39,19 @@ namespace L {
       template <class T> inline bool canbe() const {return canbe(Type<T>::description());}
 
       template <class T> T& make() {
-        if(is<T>()) return as<T>();
-        else if(CastFct cast = Cast::get(_td,Type<T>::description())) {
+        if(is<T>()) return as<T>(); // Return as-is
+        else if(CastFct cast = Cast::get(_td,Type<T>::description())) { // Try to find cast 
           Var tmp;
           cast(*this,tmp);
           swap(*this,tmp);
           return as<T>();
         }
-        else return (*this = T()).as<T>();
+        else{ // Default construct it
+          if(local()) new(&_data) T();
+          else _p = new T();
+          _td = Type<T>::description();
+          return as<T>();
+        }
       }
       template <class T> T get() const {
         if(is<T>()) return as<T>();
