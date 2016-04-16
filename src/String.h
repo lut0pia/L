@@ -58,7 +58,7 @@ namespace L {
       inline void clear() {Array<char>::size(1); Array<char>::operator[](0)='\0';}
       inline void size(size_t s) {Array<char>::size(s+1); Array<char>::back()='\0';} // Add one because of '\0'
       inline size_t size() const {return Array<char>::size()-1;} // Subtract one because of '\0'
-      inline bool empty() const {return Array<char>::empty();}
+      inline bool empty() const {return Array<char>::size()<=1;} // Always has trailing '\0'
       inline operator const char*() const {return &Array<char>::operator[](0);}
       inline operator char*() {return &Array<char>::operator[](0);}
       inline const char& operator[](int i) const {return Array<char>::operator[](i);}
