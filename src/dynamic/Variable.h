@@ -1,5 +1,4 @@
-#ifndef DEF_L_Dynamic_Variable
-#define DEF_L_Dynamic_Variable
+#pragma once
 
 #include "Cast.h"
 #include "Type.h"
@@ -75,5 +74,3 @@ namespace L {
   Stream& operator<<(Stream&, const Variable&);
   typedef Variable Var;
 }
-
-#endif
