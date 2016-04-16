@@ -13,7 +13,7 @@ Pixel::Pixel(int height) : _ratio(height/7.f) {
     Color tmp[] = {__VA_ARGS__};\
     Bitmap bmp(tmp,w,h);\
     if(_ratio>1.f)\
-      bmp.scale(w*_ratio,h*_ratio,Bitmap::InterpolationType::NEAREST);\
+      bmp.scale((int)(w*_ratio),(int)(h*_ratio),Bitmap::InterpolationType::NEAREST);\
     Glyph tmp2 = {bmp,Vector2i(0,(int)_ratio),(int)((w+1)*_ratio)};\
     return tmp2;\
   }
