@@ -65,8 +65,8 @@ namespace L {
 
       inline bool operator==(const Variable& other) const {return (_td == other._td && _td->hascmp())?(_td->cmp(value(),other.value()) == 0):false;}
       inline bool operator!=(const Variable& other) const {return !(*this == other);}
-      inline bool operator>(const Variable& other) const {return (_td == other._td && _td->hascmp())?(_td->cmp(value(),other.value()) > 0):false;}
-      inline bool operator<(const Variable& other) const {return (_td == other._td && _td->hascmp())?(_td->cmp(value(),other.value()) < 0):false;}
+      inline bool operator>(const Variable& other) const {return (_td == other._td && _td->hascmp())?(_td->cmp(value(),other.value()) > 0):(_td>other._td);}
+      inline bool operator<(const Variable& other) const {return (_td == other._td && _td->hascmp())?(_td->cmp(value(),other.value()) < 0):(_td<other._td);}
       inline bool operator>=(const Variable& other) const {return !(*this < other);}
       inline bool operator<=(const Variable& other) const {return !(*this > other);}
 
