@@ -26,6 +26,7 @@ namespace L {
       Variable(const Variable&);
       Variable(Variable&&);
       Variable& operator=(const Variable&);
+      Variable& operator=(Variable&&);
       ~Variable();
 
       inline const TypeDescription* type() const {return _td;}

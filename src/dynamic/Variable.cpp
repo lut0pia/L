@@ -38,6 +38,14 @@ Variable& Variable::operator=(const Variable& other) {
   }
   return *this;
 }
+Variable& Variable::operator=(Variable&& other){
+  if(this != &other) {
+    this->~Variable();
+    memcpy(this,&other,sizeof(Variable));
+    other._td = Type<int>::description();
+  }
+  return *this;
+}
 Variable::~Variable() {
   if(local()) // Value is contained locally
     _td->dtr(&_data);
