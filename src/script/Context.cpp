@@ -3,9 +3,7 @@
 using namespace L;
 using namespace Script;
 
-Context::Context() {
-  _frames.push(0); // Start current frame
-  _frames.push(0); // Start next frame (no variable)
+Context::Context() : _frames(2,0) {
   variable(FNV1A("do")) = (Native)[](Context& c,const Array<Var>& a)->Var {
     for(uint32_t i(1); i<a.size()-1; i++)
       c.execute(a[i]);
