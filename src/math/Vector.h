@@ -17,7 +17,7 @@ namespace L {
       template <class R>
       inline Vector(const Vector<d,R>& other) {
         for(int i(0); i<d; i++)
-          _c[i] = other[i];
+          _c[i] = T(other[i]);
       }
       inline Vector(const T& v) {
         for(int i(0); i<d; i++)
