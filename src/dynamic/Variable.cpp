@@ -2,17 +2,6 @@
 
 using namespace L;
 
-void* Variable::value() {
-  if(local()) // Value is contained locally
-    return (void*)&_data;
-  else return _p; // Value has been dynamically allocated
-}
-const void* Variable::value() const {
-  if(local()) // Value is contained locally
-    return (void*)&_data;
-  else return _p; // Value has been dynamically allocated
-}
-
 Variable::Variable(const char* s) : _td(Type<String>::description()) {
   if(local())
     new(&_data) String(s);

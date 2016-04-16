@@ -12,8 +12,8 @@ namespace L {
       };
       const TypeDescription* _td;
 
-      void* value();
-      const void* value() const;
+      inline void* value(){ return (local()) ? (void*)&_data : _p; }
+      inline const void* value() const{ return (local()) ? (void*)&_data : _p; }
 
     public:
       inline Variable() : _td(Type<int>::description()) {}
