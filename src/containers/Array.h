@@ -18,24 +18,24 @@ namespace L {
       }
 
     public:
-      Array() : _data(nullptr), _size(0), _capacity(0) {}
-      Array(const T* a, size_t size) : _data(nullptr), _size(0), _capacity(0) {
+      inline Array() : _data(nullptr), _size(0), _capacity(0) {}
+      inline Array(const T* a, size_t size) : _data(nullptr), _size(0), _capacity(0) {
         capacity(size);
         while(_size<size)
           push(*a++);
       }
       template <typename... Args>
-      Array(size_t s, Args&&... args) : _data(nullptr), _size(0), _capacity(0) {
+      inline Array(size_t s, Args&&... args) : _data(nullptr), _size(0), _capacity(0) {
         size(s,args...);
       }
-      Array(const Array& other) : _size(other._size), _capacity(other._size) {
+      inline Array(const Array& other) : _size(other._size), _capacity(other._size) {
         _data = (T*)malloc(_size*sizeof(T));
         copy(_data,other._data,_size);
       }
-      Array(Array&& other) : _data(other._data),_size(other._size),_capacity(other._capacity){
+      inline Array(Array&& other) : _data(other._data),_size(other._size),_capacity(other._capacity){
         other._data = nullptr;
       }
-      ~Array() {
+      inline ~Array() {
         if(_data){
           destruct((T*)_data,_size);
           free(_data);
