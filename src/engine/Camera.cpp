@@ -40,7 +40,7 @@ void Camera::ortho(float left, float right, float bottom, float top, float near,
   _projection(2,3) = -(far+near)/(far-near);
 }
 void Camera::pixels() {
-  ortho(0,Window::width(),Window::height(),0);
+  ortho(0.f,(float)Window::width(),(float)Window::height(),0.f);
 }
 
 bool Camera::worldToScreen(const Vector3f& p, Vector2f& wtr) const {
