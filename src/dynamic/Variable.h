@@ -48,9 +48,10 @@ namespace L {
           return as<T>();
         }
         else{ // Default construct it
-          if(local()) new(&_data) T();
-          else _p = new T();
-          _td = Type<T>::description();
+          this->~Variable(); // Destruct current
+          _td = Type<T>::description(); // Change type description
+          if(local()) new(&_data) T(); // Local construct if small enough type
+          else _p = new T(); // Dynamic allocation if large type
           return as<T>();
         }
       }
