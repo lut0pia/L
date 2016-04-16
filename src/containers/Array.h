@@ -32,6 +32,9 @@ namespace L {
         _data = (T*)malloc(_size*sizeof(T));
         copy(_data,other._data,_size);
       }
+      Array(Array&& other) : _data(other._data),_size(other._size),_capacity(other._capacity){
+        other._data = nullptr;
+      }
       ~Array() {
         if(_data){
           destruct((T*)_data,_size);
