@@ -23,7 +23,7 @@ namespace L {
         else _p = new T(v);
       }
       Variable(const char*);
-      Variable(const Variable& other);
+      Variable(const Variable&);
       Variable& operator=(const Variable&);
       ~Variable();
 

@@ -25,8 +25,12 @@ Variable::Variable(const Variable& other) : _td(other._td) {
 }
 Variable& Variable::operator=(const Variable& other) {
   if(this != &other) {
-    this->~Variable();
-    new(this) Variable(other);
+    if(_td==other._td) // Same type
+      _td->assign(value(),other.value()); // Simple assignment
+    else{ // Different type
+      this->~Variable();
+      new(this) Variable(other);
+    }
   }
   return *this;
 }
