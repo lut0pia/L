@@ -42,7 +42,10 @@ Color Bitmap::linear(float x, float y) const {
     at(xi+1,yi+1)
   };
   Vector4f tmp(Interpolation<Vector4f>::linear<2>(cell,weight));
-  return Color(clamp(tmp[0],0.f,255.f),clamp(tmp[1],0.f,255.f),clamp(tmp[2],0.f,255.f),clamp(tmp[3],0.f,255.f));
+  return Color((byte)clamp(tmp[0],0.f,255.f),
+               (byte)clamp(tmp[1],0.f,255.f),
+               (byte)clamp(tmp[2],0.f,255.f),
+               (byte)clamp(tmp[3],0.f,255.f));
 }
 
 Color Bitmap::cubic(float x, float y) const {
@@ -70,7 +73,10 @@ Color Bitmap::cubic(float x, float y) const {
     at(xi+2,yi+2)
   };
   Vector4f tmp(Interpolation<Vector4f>::cubic<2>(cell,weight));
-  return Color(clamp(tmp[0],0.f,255.f),clamp(tmp[1],0.f,255.f),clamp(tmp[2],0.f,255.f),clamp(tmp[3],0.f,255.f));
+  return Color((byte)clamp(tmp[0],0.f,255.f),
+               (byte)clamp(tmp[1],0.f,255.f),
+               (byte)clamp(tmp[2],0.f,255.f),
+               (byte)clamp(tmp[3],0.f,255.f));
 }
 Bitmap Bitmap::sub(int x, int y, int width, int height) const {
   Bitmap wtr;
