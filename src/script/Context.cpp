@@ -4,6 +4,16 @@ using namespace L;
 using namespace Script;
 
 Context::Context() : _frames(2,0) {
+  // Local allows to define local variables without overriding more global variables
+  variable(FNV1A("local")) = (Native)[](Context& c,const Array<Var>& a)->Var {
+    Var value;
+    if(a.size()>1){
+      if(a.size()>2)
+        value = c.execute(a[2]);
+      c.pushVariable(c.execute(a[1]).as<Symbol>(),value); // Add variable to frame
+    }
+    return value;
+  };
   variable(FNV1A("do")) = (Native)[](Context& c,const Array<Var>& a)->Var {
     for(uint32_t i(1); i<a.size()-1; i++)
       c.execute(a[i]);
