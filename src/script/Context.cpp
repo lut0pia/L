@@ -98,8 +98,7 @@ void Context::read(Var& v, Lexer& lexer) {
     while(!lexer.acceptToken(")"))
       read(v[i++],lexer);
   } else if(lexer.acceptToken("'")) {
-    v = Quote();
-    read(v.as<Quote>().var,lexer);
+    read(v.make<Quote>().var,lexer);
   } else if(lexer.acceptToken("!")) {
     read(v,lexer);
     v = execute(v);
