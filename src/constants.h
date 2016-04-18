@@ -1,5 +1,4 @@
-#ifndef DEF_L_constants
-#define DEF_L_constants
+#pragma once
 
 namespace L {
   template <class T> inline const T& PI() {
@@ -15,5 +14,3 @@ namespace L {
     return wtr;
   }
 }
-
-#endif
