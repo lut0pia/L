@@ -20,6 +20,7 @@ solution "L"
 		linkoptions {"/NODEFAULTLIB:libc.lib","/NODEFAULTLIB:msvcrt.lib","/NODEFAULTLIB:libcd.lib","/NODEFAULTLIB:msvcrtd.lib"}
 		defines {"_CRT_SECURE_NO_WARNINGS"}
 		buildoptions {"/wd4200","/wd4146","/wd4244"}
+		characterset "MBCS" -- Don't use UNICODE
 	configuration {"vs*","Debug"}
 		linkoptions {"/NODEFAULTLIB:libcmt.lib"}
 	configuration {"vs*","Release"}
