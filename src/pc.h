@@ -9,6 +9,7 @@
 
 // STL
 #include <algorithm>
+#include <functional>
 #include <limits>
 #include <utility>
 
