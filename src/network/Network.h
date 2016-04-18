@@ -8,11 +8,11 @@
 #include "../containers/Set.h"
 #include "../String.h"
 
-#include "../systems.h"
 #include "../macros.h"
 #if defined L_WINDOWS
 typedef int socklen_t;
 #include <stdio.h>
+#include <WinSock2.h>
 #elif defined L_UNIX
 #include <sys/types.h>
 #include <sys/socket.h>
