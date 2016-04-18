@@ -7,6 +7,12 @@ solution "L"
 	defines {"GLEW_STATIC"}
 	flags {"StaticRuntime"}
 	
+	-- Platform
+	configuration {"windows"}
+		defines {"L_WINDOWS","WIN32_LEAN_AND_MEAN","NOMINMAX","NOCRYPT"}
+	configuration {"linux"}
+		defines {"L_UNIX"}
+	
 	-- Visual Studio
 	configuration {"vs*"}
 		includedirs {"ext/include"}
