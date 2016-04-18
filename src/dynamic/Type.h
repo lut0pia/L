@@ -1,5 +1,4 @@
-#ifndef DEF_L_Dynamic_Type
-#define DEF_L_Dynamic_Type
+#pragma once
 
 #include "../String.h"
 #include "../streams/Stream.h"
@@ -21,7 +20,6 @@ namespace L {
 
     bool (*hascmp)();
   } TypeDescription;
-
   template <class T>
   class Type {
     private:
@@ -99,8 +97,6 @@ namespace L {
   L_TYPE_PRIMITIVE(long double)
   L_TYPE_PRIMITIVE(String)
 }
-
-#endif
 
 
 
