@@ -21,13 +21,7 @@ namespace L {
 
     public:
       static void init();
-      static CastFct get(const TypeDescription* from, const TypeDescription* to) {
-        CastDescription cd;
-        cd.types.from = from;
-        cd.types.to = to;
-        const KeyValue<uint64_t,CastFct>* it(casts.find(cd.id));
-        return (it)?it->value():nullptr;
-      }
+      static CastFct get(const TypeDescription* from,const TypeDescription* to);
 
       template <class A, class B>
       static inline void declare() {

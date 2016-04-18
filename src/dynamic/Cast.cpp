@@ -62,3 +62,10 @@ void Cast::init() {
     b = !a.as<String>().empty();
   });
 }
+CastFct Cast::get(const TypeDescription* from,const TypeDescription* to) {
+  CastDescription cd;
+  cd.types.from = from;
+  cd.types.to = to;
+  const KeyValue<uint64_t,CastFct>* it(casts.find(cd.id));
+  return (it) ? it->value() : nullptr;
+}
