@@ -33,4 +33,9 @@
 # include <unistd.h>
 # include <curses.h>
 # include <sys/types.h>
+# include <sys/socket.h>
+# include <netdb.h>
+# include <netinet/in.h>
+# include <arpa/inet.h>
+# include <pthread.h>
 #endif
