@@ -1,7 +1,5 @@
 #include "Window.h"
 
-#include "../systems.h"
-
 #include <cstring>
 #include "../gl/GL.h"
 #include "../bytes/encoding.h"

@@ -7,7 +7,6 @@
 */
 
 #include "../patterns/Singleton.h"
-#include "../systems.h"
 #include "../types.h"
 
 #if defined L_WINDOWS

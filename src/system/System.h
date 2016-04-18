@@ -1,7 +1,6 @@
 #ifndef DEF_L_System
 #define DEF_L_System
 
-#include "../systems.h"
 #include "../macros.h"
 #include "../String.h"
 #include "../time.h"

@@ -55,6 +55,10 @@ solution "L"
 		files {"src/**.h","src/**.cpp"}
 		excludes {"src/interface/**"} -- Interface files are not to be compiled by the library
 		
+		-- PCH
+		pchheader "pc.h"
+		pchsource "src/pc.cpp"
+		forceincludes {"pc.h"}
 		
 		-- Visual Studio
 		configuration {"vs*"}

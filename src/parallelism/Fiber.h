@@ -1,7 +1,6 @@
 #ifndef DEF_L_Fiber
 #define DEF_L_Fiber
 
-#include "../systems.h"
 #include "../containers/Pool.h"
 
 namespace L {
