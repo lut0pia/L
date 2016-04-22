@@ -26,9 +26,9 @@
 
 // Debugging macros
 #ifdef L_DEBUG
-#define L_DEBUGONLY(x) do{x;}while(false)
+#define L_DEBUGONLY(...) do{__VA_ARGS__;}while(false)
 #else
-#define L_DEBUGONLY(x)
+#define L_DEBUGONLY(...) ((void)0)
 #endif
 
 #define L_ERROR(msg) do{fprintf(stderr,"Error: "L_STRINGIFY(msg)" in %s:%d\n",__FILE__,__LINE__);_exit(-1);}while(false)
