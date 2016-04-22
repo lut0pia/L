@@ -1,5 +1,7 @@
 #include "Variable.h"
 
+#include "../String.h"
+
 using namespace L;
 
 Variable::Variable(const char* s) : _td(Type<String>::description()) {
@@ -54,7 +56,7 @@ Variable& Variable::operator[](size_t i) {
   return as<Array<Variable> >()[i];
 }
 
-Stream& L::operator<<(L::Stream& s, const Variable& v) {
+Stream& L::operator<<(L::Stream& s,const Variable& v) {
   v.type()->out(s,v.value());
   return s;
 }

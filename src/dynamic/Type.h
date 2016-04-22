@@ -1,12 +1,13 @@
 #pragma once
 
-#include "../String.h"
+#include "../containers/Map.h"
 #include "../streams/Stream.h"
 #include "../types.h"
 
 namespace L {
+  typedef void(*Cast)(void*,const void*);
   // Structure to keep basic functions for a type
-  typedef struct {
+  struct TypeDescription{
     // Mandatory
     char name[256];
     int size;
@@ -26,7 +27,11 @@ namespace L {
     void(*mod)(void*,const void*);
 
     int(*cmp)(const void*,const void*);
-  } TypeDescription;
+
+    // Casts
+    Map<intptr_t,Cast> casts;
+    Cast cast(const TypeDescription* target) const; // Return Cast for target type if available or nullptr otherwise
+  };
 
   template <class T>
   class Type {
@@ -38,10 +43,10 @@ namespace L {
         cpy,cpyto,assign,dtr,del,out,0
       };
 #if defined _MSC_VER
-      // "L::TypeDescription __cdecl L::Type<float>::makeDesc(void)
-      // "L::TypeDescription __cdecl L::Type<class L::String>::makeDesc(void)
+      // "struct L::TypeDescription __cdecl L::Type<int>::makeDesc(void)"
+      // "struct L::TypeDescription __cdecl L::Type<class L::String>::makeDesc(void)"
       char funcsig[] = __FUNCSIG__;
-      int start = (!memcmp(funcsig+35,"class ",6)) ? 41 : 35;
+      int start = (!memcmp(funcsig+42,"class ",6)) ? 48 : 42;
       int end = strlen(funcsig)-17;
       if(funcsig[end-1]==' ') end--;
       funcsig[end] = '\0';
@@ -65,6 +70,11 @@ namespace L {
     static inline const TypeDescription* description() { return &td; }
     static inline const char* name() { return td.name; }
 
+    // Casts
+    static inline void addcast(const TypeDescription* td,Cast cast){ Type::td.casts[(intptr_t)td] = cast; }
+    template <class R> static inline void addcast(Cast cast){ addcast(Type<R>::description(),cast); }
+    template <class R> static inline void addcast(){ addcast<R>([](void* dst,const void* src){new(dst)R(*(T*)src); }); }
+
     // Operator setters
     static inline void useadd(void(*add)(void*,const void*)){ td.add = add; }
     static inline void usesub(void(*sub)(void*,const void*)){ td.sub = sub; }
@@ -84,31 +94,14 @@ namespace L {
     template <class dummy = void> static inline void cancmp(){
       usecmp([](const void* a,const void* b)->int {
         if((*(T*)a)<(*(T*)b))       return -1;
-        else if((*(T*)a)==(*(T*)b)) return 0;
-        else                        return 1;
+        else if((*(T*)b)<(*(T*)a))  return 1;
+        else                        return 0;
       });
     }
   };
 
   // Instantiate structures
-  template <class T> TypeDescription Type<T>::td = Type<T>::makeDesc();
+  template <class T> TypeDescription Type<T>::td(Type<T>::makeDesc());
 
-  inline void TypeInit(){
-    Type<uint8_t>::canall<>();
-    Type<int8_t>::canall<>();
-    Type<uint16_t>::canall<>();
-    Type<int16_t>::canall<>();
-    Type<uint32_t>::canall<>();
-    Type<int32_t>::canall<>();
-    Type<uint64_t>::canall<>();
-    Type<int64_t>::canall<>();
-    Type<float>::canmath<>();
-    Type<float>::cancmp<>();
-    Type<double>::canmath<>();
-    Type<double>::cancmp<>();
-    Type<long double>::canmath<>();
-    Type<long double>::cancmp<>();
-    Type<String>::canadd<>();
-    Type<String>::cancmp<>();
-  }
+  void TypeInit();
 }
