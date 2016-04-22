@@ -31,7 +31,13 @@
 #define L_DEBUGONLY(...) ((void)0)
 #endif
 
-#define L_ERROR(msg) do{fprintf(stderr,"Error: "L_STRINGIFY(msg)" in %s:%d\n",__FILE__,__LINE__);_exit(-1);}while(false)
+#if defined _MSC_VER
+# define L_BREAKPOINT DebugBreak()
+#elif defined __GNUC__
+# define L_BREAKPOINT raise(SIGTRAP)
+#endif
+
+#define L_ERROR(msg) do{fprintf(stderr,"Error: "L_STRINGIFY(msg)" in %s:%d\n",__FILE__,__LINE__);L_BREAKPOINT;_exit(-1);}while(false)
 #define L_ASSERT(exp) L_DEBUGONLY(if(!(exp))L_ERROR(exp is false))
 
 #endif
