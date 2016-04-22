@@ -1,11 +1,13 @@
 #include "Type.h"
 
+#include "../macros.h"
 #include "../String.h"
 
 using namespace L;
 
 Cast TypeDescription::cast(const TypeDescription* target) const{
   const KeyValue<intptr_t,Cast>* it(casts.find((intptr_t)target));
+  L_ASSERT(it);
   return (it) ? it->value() : nullptr;
 }
 
