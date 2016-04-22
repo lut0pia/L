@@ -3,7 +3,6 @@
 #include "Type.h"
 
 namespace L {
-  class String;
   class Variable {
   private:
     union {
@@ -115,8 +114,8 @@ namespace L {
     inline bool operator>=(const Variable& other) const { return !(*this < other); }
     inline bool operator<=(const Variable& other) const { return !(*this > other); }
 
-    Variable& operator[](const String&);
-    const Variable& operator[](const String&) const;
+    Variable& operator[](const Variable&);
+    const Variable& operator[](const Variable&) const;
     Variable& operator[](size_t);
 
     template<class T> inline operator T() { return get<T>(); }

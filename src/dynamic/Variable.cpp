@@ -43,12 +43,12 @@ Variable::~Variable() {
   else _td->del(_p); // Value has been dynamically allocated
 }
 
-Variable& Variable::operator[](const L::String& str) {
-  if(!is<Map<String,Variable> >()) *this = Map<String,Variable>();
-  return as<Map<String,Variable> >()[str];
+Variable& Variable::operator[](const Variable& key) {
+  if(!is<Map<String,Variable> >()) *this = Map<Variable,Variable>();
+  return as<Map<Variable,Variable> >()[key];
 }
-const Variable& Variable::operator[](const L::String& str) const {
-  return as<Map<String,Variable> >()[str];
+const Variable& Variable::operator[](const Variable& key) const {
+  return as<Map<Variable,Variable> >()[key];
 }
 Variable& Variable::operator[](size_t i) {
   if(!is<Array<Variable> >()) *this = Array<Variable>();
