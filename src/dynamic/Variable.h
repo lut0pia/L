@@ -68,12 +68,12 @@ namespace L {
       }
     }
     template <class T> T get() const {
-      if(is<T>()) return as<T>();
-      else if(Cast cast = _td->cast(Type<T>::description())) {
+      if(is<T>()) return as<T>(); // It's already the right type: return as-is
+      else if(Cast cast = _td->cast(Type<T>::description())) { // Try to find cast
         Var tmp;
-        cast(tmp.allocate<T>(),value());
-        return tmp.as<T>();
-      } else return T();
+        cast(tmp.allocate<T>(),value()); // Allocate memory for new type then cast current value to allocated memory
+        return tmp.as<T>(); // Returns temporary casted value
+      } else return T(); // Returns default constructed type
     }
 
     inline Variable& operator+=(const Variable& other){
