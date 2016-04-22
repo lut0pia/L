@@ -1,5 +1,7 @@
 #include "Context.h"
 
+#include "../streams/FileStream.h"
+
 using namespace L;
 using namespace Script;
 
@@ -44,42 +46,24 @@ Context::Context() : _frames(2,0) {
     }
     return 0;
   };
-  variable(FNV1A("typename")) = (Function)[](Context& c,int params)->Var {
-    return c.parameter(0).type()->name;
-  };
-  variable(FNV1A("=")) = (Function)[](Context& c,int params)->Var {
-    if(params==2)
-      return c.parameter(0)==c.parameter(1);
-    else return false;
-  };
-  variable(FNV1A("+")) = (Function)[](Context& c,int params)->Var {
-    int wtr(0);
-    for(int i(0); i<params; i++)
-      if(c.parameter(i).is<int>())
-        wtr += c.parameter(i).as<int>();
-    return wtr;
-  };
-  variable(FNV1A("*")) = (Function)[](Context& c,int params)->Var {
-    int wtr(1);
-    for(int i(0); i<params; i++)
-      if(c.parameter(i).is<int>())
-        wtr *= c.parameter(i).as<int>();
-    return wtr;
-  };
-  variable(FNV1A("/")) = (Function)[](Context& c,int params)->Var {
-    if(params==2 && c.parameter(0).is<int>() && c.parameter(1).is<int>()) {
-      return c.parameter(0).as<int>()/c.parameter(1).as<int>();
-    } else return 0;
-  };
-  variable(FNV1A("%")) = (Function)[](Context& c,int params)->Var {
-    if(params==2 && c.parameter(0).is<int>() && c.parameter(1).is<int>()) {
-      return c.parameter(0).as<int>()%c.parameter(1).as<int>();
-    } else return 0;
-  };
+  variable(FNV1A("=")) = (Binary)[](const Var& a,const Var& b)->Var {return a==b; };
+  variable(FNV1A("<>")) = (Binary)[](const Var& a,const Var& b)->Var {return a!=b; };
+  variable(FNV1A(">")) = (Binary)[](const Var& a,const Var& b)->Var {return a>b; };
+  variable(FNV1A("<")) = (Binary)[](const Var& a,const Var& b)->Var {return a<b; };
+  variable(FNV1A(">=")) = (Binary)[](const Var& a,const Var& b)->Var {return a>=b; };
+  variable(FNV1A("<=")) = (Binary)[](const Var& a,const Var& b)->Var {return a<=b; };
+  variable(FNV1A("+")) = (Binary)[](const Var& a,const Var& b)->Var {return a+b; };
+  variable(FNV1A("-")) = (Binary)[](const Var& a,const Var& b)->Var {return a-b; };
+  variable(FNV1A("*")) = (Binary)[](const Var& a,const Var& b)->Var {return a*b; };
+  variable(FNV1A("/")) = (Binary)[](const Var& a,const Var& b)->Var {return a/b; };
+  variable(FNV1A("%")) = (Binary)[](const Var& a,const Var& b)->Var {return a%b; };
   variable(FNV1A("print")) = (Function)[](Context& c,int params)->Var {
     for(int i(0); i<params; i++)
       out << c.parameter(i);
     return 0;
+  };
+  variable(FNV1A("typename")) = (Function)[](Context& c,int params)->Var {
+    return c.parameter(0).type()->name;
   };
 }
 void Context::read(Stream& stream) {
@@ -91,7 +75,7 @@ void Context::read(Stream& stream) {
     execute(v);
   }
 }
-void Context::read(Var& v, Lexer& lexer) {
+void Context::read(Var& v,Lexer& lexer) {
   if(lexer.acceptToken("(")) { // It's a list of expressions
     v = Array<Var>();
     int i(0);
@@ -122,7 +106,7 @@ Var& Context::variable(Symbol sym) {
   pushVariable(sym);
   return _stack.back().value();
 }
-void Context::pushVariable(Symbol sym, const Var& v) {
+void Context::pushVariable(Symbol sym,const Var& v) {
   _stack.push(keyValue(sym,v));
   _frames.back()++; // Added variable to current frame, must push next frame
 }
@@ -151,6 +135,16 @@ Var Context::execute(const Var& code) {
         wtr = handle.as<Function>()(*this,array.size()-1); // Call function
       _frames.pop(); // Remove current frame
       _stack.size(nextFrame()); // Remove elements from previous frame
+      return wtr;
+    } else if(array.size()==3){ // May be a binary operator
+      const Var& middle(execute(array[1]));
+      if(middle.is<Binary>())
+        return middle.as<Binary>()(handle,execute(array[2]));
+    } else{ // Return an array of the computed values
+      Array<Var> wtr;
+      wtr.push(handle);
+      for(uint32_t i(1); i<array.size(); i++)
+        wtr.push(execute(array[i]));
       return wtr;
     }
   } else if(code.is<Symbol>()) return variable(code.as<Symbol>()); // Evaluate symbol

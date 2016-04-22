@@ -10,6 +10,7 @@ namespace L {
     class Context;
     typedef Var(*Function)(Context&,int);
     typedef Var(*Native)(Context&,const Array<Var>&);
+    typedef Var(*Binary)(const Var&,const Var&);
     typedef struct {Var var;} Quote;
     typedef uint32_t Symbol;
     class Context {
