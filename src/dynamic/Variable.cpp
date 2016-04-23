@@ -43,6 +43,16 @@ Variable::~Variable() {
   else _td->del(_p); // Value has been dynamically allocated
 }
 
+void Variable::cast(const TypeDescription* td,Cast cast){
+  if(_td==td) return; // It's already the right type
+  byte tmp[256];
+  cast(tmp,value()); // Cast to temporary
+  this->~Variable(); // Destruct currently held value
+  _td = td; // Change current type
+  if(!local()) _p = ::operator new(td->size); // Allocate memory for placement
+  memcpy(value(),tmp,td->size); // Copy casted temporary to this
+}
+
 Variable& Variable::operator[](const Variable& key) {
   if(!is<Map<String,Variable> >()) *this = Map<Variable,Variable>();
   return as<Map<Variable,Variable> >()[key];

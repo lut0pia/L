@@ -38,6 +38,8 @@ namespace L {
     inline bool canbe(TypeDescription* td) const { return (_td->cast(td) != nullptr); }
     template <class T> inline bool canbe() const { return canbe(Type<T>::description()); }
 
+    void cast(const TypeDescription* td,Cast cast);
+
     template <class T> T& make(){
       this->~Variable(); // Destruct current
       _td = Type<T>::description(); // Change type description
