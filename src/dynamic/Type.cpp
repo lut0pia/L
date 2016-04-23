@@ -31,7 +31,7 @@ void L::TypeInit(){
   Type<String>::cancmp<>();
 
   // Casts
-  Type<int>::addcast<bool>([](void* dst,const void* src){new(dst)bool(((int*)src)!=0); });
+  Type<int>::addcast<bool>([](void* dst,const void* src){new(dst)bool((*(int*)src)!=0); });
   Type<int>::addcast<float>();
   Type<float>::addcast<int>();
   Type<String>::addcast<bool>([](void* dst,const void* src){new(dst)bool(!((String*)src)->empty()); });
