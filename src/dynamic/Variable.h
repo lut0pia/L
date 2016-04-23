@@ -68,31 +68,12 @@ namespace L {
       } else return T(); // Returns default constructed type
     }
 
-    inline Variable& operator+=(const Variable& other){
-      if(type()==other.type() && type()->add)
-        type()->add(value(),other.value());
-      return *this;
-    }
-    inline Variable& operator-=(const Variable& other){
-      if(type()==other.type() && type()->sub)
-        type()->sub(value(),other.value());
-      return *this;
-    }
-    inline Variable& operator*=(const Variable& other){
-      if(type()==other.type() && type()->mul)
-        type()->mul(value(),other.value());
-      return *this;
-    }
-    inline Variable& operator/=(const Variable& other){
-      if(type()==other.type() && type()->div)
-        type()->div(value(),other.value());
-      return *this;
-    }
-    inline Variable& operator%=(const Variable& other){
-      if(type()==other.type() && type()->mod)
-        type()->mod(value(),other.value());
-      return *this;
-    }
+    Variable& operator+=(const Variable&);
+    Variable& operator-=(const Variable&);
+    Variable& operator*=(const Variable&);
+    Variable& operator/=(const Variable&);
+    Variable& operator%=(const Variable&);
+
     inline Variable operator+(const Variable& other) const{ Variable wtr(*this); wtr += other; return wtr; }
     inline Variable operator-(const Variable& other) const{ Variable wtr(*this); wtr -= other; return wtr; }
     inline Variable operator*(const Variable& other) const{ Variable wtr(*this); wtr *= other; return wtr; }

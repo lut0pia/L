@@ -53,6 +53,29 @@ void Variable::cast(const TypeDescription* td,Cast cast){
   memcpy(value(),tmp,td->size); // Copy casted temporary to this
 }
 
+#define OPERATOR(op) {\
+  if(type()==other.type() && type()->op) \
+    type()->op(value(),other.value()); \
+  else{ \
+    Cast c; \
+    if(type()->op && (c = other.type()->cast(_td))){ /* This type has operator and other can become this type */\
+      byte tmp[256]; \
+      c(tmp,other.value()); /* Cast other to tmp */\
+      type()->op(value(),tmp); \
+      type()->dtr(tmp); /* Destruct temporary value */\
+    } else if(other.type()->op && (c = _td->cast(other.type()))){ /* Other's type has operator and this can become other's type */\
+      cast(other.type(),c); /* Cast this to other's type */\
+      type()->op(value(),other.value()); \
+    } \
+  } \
+  return *this; \
+}
+Variable& Variable::operator+=(const Variable& other) OPERATOR(add)
+Variable& Variable::operator-=(const Variable& other) OPERATOR(sub)
+Variable& Variable::operator*=(const Variable& other) OPERATOR(mul)
+Variable& Variable::operator/=(const Variable& other) OPERATOR(div)
+Variable& Variable::operator%=(const Variable& other) OPERATOR(mod)
+
 Variable& Variable::operator[](const Variable& key) {
   if(!is<Map<String,Variable> >()) *this = Map<Variable,Variable>();
   return as<Map<Variable,Variable> >()[key];
