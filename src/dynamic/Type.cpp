@@ -33,6 +33,7 @@ void L::TypeInit(){
   // Casts
   Type<int>::addcast<bool>([](void* dst,const void* src){new(dst)bool((*(int*)src)!=0); });
   Type<int>::addcast<float>();
+  Type<int>::addcast<String>([](void* dst,const void* src){new(dst)String(ntos(*(int*)src)); });
   Type<float>::addcast<int>();
   Type<String>::addcast<bool>([](void* dst,const void* src){new(dst)bool(!((String*)src)->empty()); });
 }
