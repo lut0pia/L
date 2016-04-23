@@ -13,13 +13,6 @@ namespace L {
 
     inline void* value(){ return (local()) ? (void*)&_data : _p; }
     inline const void* value() const{ return (local()) ? (void*)&_data : _p; }
-    template <class T>
-    void* allocate(){
-      this->~Variable(); // Destruct currently held value
-      _td = Type<T>::description(); // Change current type
-      if(!local()) _p = std::allocator<T>().allocate(1); // Allocate memory for placement
-      return value();
-    }
 
   public:
     inline Variable() : _td(Type<int>::description()) {}
@@ -54,25 +47,22 @@ namespace L {
     }
     template <class T> T& cast() {
       if(is<T>()) return as<T>(); // It's already the right type: return as-is
-      else if(Cast cast = _td->cast(Type<T>::description())) { // Try to find cast 
-        Var tmp;
-        cast(tmp.allocate<T>(),value()); // Allocate memory for new type then cast current value to allocated memory
-        swap(*this,tmp); // Swap so this becomes the casted type and the old value gets destructed with tmp
+      else if(Cast cast = _td->cast(Type<T>::description())) { // Try to find cast
+        byte tmp[sizeof(T)]; // Temporary buffer
+        cast(tmp,value()); // Cast current value to temporary buffer
+        *this = static_cast<T&&>(*(T*)tmp); // Move casted value to this
+        ((T*)tmp)->~T(); // Destruct temporary value
         return as<T>();
-      } else{ // There's no cast available: default construct it
-        this->~Variable(); // Destruct current
-        _td = Type<T>::description(); // Change type description
-        if(local()) new(&_data) T(); // Local construct if small enough type
-        else _p = new T(); // Dynamic allocation if large type
-        return as<T>();
-      }
+      } else return make<T>(); // There's no cast available: default construct it
     }
     template <class T> T get() const {
       if(is<T>()) return as<T>(); // It's already the right type: return as-is
       else if(Cast cast = _td->cast(Type<T>::description())) { // Try to find cast
-        Var tmp;
-        cast(tmp.allocate<T>(),value()); // Allocate memory for new type then cast current value to allocated memory
-        return tmp.as<T>(); // Returns temporary casted value
+        byte tmp[sizeof(T)]; // Temporary buffer
+        cast(tmp,value()); // Cast current value to temporary buffer
+        T wtr(static_cast<T&&>(*(T*)tmp)); // Move casted value to return object
+        ((T*)tmp)->~T(); // Destruct temporary value
+        return wtr; // Returns temporary casted value
       } else return T(); // Returns default constructed type
     }
 
