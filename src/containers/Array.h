@@ -29,8 +29,10 @@ namespace L {
         size(s,args...);
       }
       inline Array(const Array& other) : _size(other._size), _capacity(other._size) {
-        _data = (T*)malloc(_size*sizeof(T));
-        copy(_data,other._data,_size);
+        if(!other.empty()){ 
+          _data = (T*)malloc(_size*sizeof(T));
+          copy(_data,other._data,_size);
+        } else _data = nullptr;
       }
       inline Array(Array&& other) : _data(other._data),_size(other._size),_capacity(other._capacity){
         other._data = nullptr;
