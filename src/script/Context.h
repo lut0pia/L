@@ -30,6 +30,7 @@ namespace L {
         inline int currentFrame() const {return _frames[_frames.size()-2];}
         inline int nextFrame() const {return _frames.back();}
         Var execute(const Var& code);
+        Var* reference(const Var& code);
     };
   }
   inline Stream& operator<<(Stream& s, const Script::Quote& v) {return s << '\'' << v.var;}
