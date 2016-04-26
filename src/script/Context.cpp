@@ -115,7 +115,8 @@ void Context::pushVariable(Symbol sym,const Var& v) {
   _frames.back()++; // Added variable to current frame, must push next frame
 }
 Var Context::execute(const Var& code) {
-  if(code.is<Array<Var> >()) { // Function call
+  if(Var* ref = reference(code)) return *ref; // 
+  else if(code.is<Array<Var> >()) { // Function call
     const Array<Var>& array(code.as<Array<Var> >()); // Get reference of array value
     const Var& handle(execute(array[0])); // Execute first child of array to get function handle
     if(handle.is<Native>())
@@ -145,8 +146,7 @@ Var Context::execute(const Var& code) {
       if(middle.is<Binary>())
         return middle.as<Binary>()(handle,execute(array[2]));
     }
-  } else if(code.is<Symbol>()) return variable(code.as<Symbol>()); // Evaluate symbol
-  else if(code.is<Quote>()) return code.as<Quote>().var; // Return raw data
+  } else if(code.is<Quote>()) return code.as<Quote>().var; // Return raw data
   return code;
 }
 Var* Context::reference(const Var& code) {
