@@ -9,10 +9,10 @@ Context::Context() : _frames(2,0) {
   // Local allows to define local variables without overriding more global variables
   variable(FNV1A("local")) = (Native)[](Context& c,const Array<Var>& a)->Var {
     Var value;
-    if(a.size()>1){
+    if(a.size()>1 && a[1].is<Symbol>()){
       if(a.size()>2)
         value = c.execute(a[2]);
-      c.pushVariable(c.execute(a[1]).as<Symbol>(),value); // Add variable to frame
+      c.pushVariable(a[1].as<Symbol>(),value); // Add variable to frame
     }
     return value;
   };
@@ -37,13 +37,9 @@ Context::Context() : _frames(2,0) {
     return 0;
   };
   variable(FNV1A("set")) = (Native)[](Context& c,const Array<Var>& a)->Var {
-    Var target(c.execute(a[1]));
-    if(a.size()==3) {
-      if(target.is<Symbol>())
-        return c.variable(target.as<Symbol>()) = c.execute(a[2]);
-      else if(target.is<Var*>())
-        return *target.as<Var*>() = c.execute(a[2]);
-    }
+    Var* target;
+    if(a.size()==3 && (target = c.reference(a[1])))
+      return *target = c.execute(a[2]);
     return 0;
   };
   variable(FNV1A("=")) = (Binary)[](const Var& a,const Var& b)->Var {return a==b; };
