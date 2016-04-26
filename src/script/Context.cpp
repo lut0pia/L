@@ -65,6 +65,14 @@ Context::Context() : _frames(2,0) {
   variable(FNV1A("typename")) = (Function)[](Context& c,int params)->Var {
     return c.parameter(0).type()->name;
   };
+  variable(FNV1A("object")) = (Function)[](Context& c,int params)->Var {
+    Var wtr;
+    wtr.make<Map<Var,Var> >();
+    Map<Var,Var>& map(wtr.as<Map<Var,Var> >());
+    for(int i(1); i<params; i += 2)
+      map[c.parameter(i-1)] = c.parameter(i);
+    return wtr;
+  };
 }
 void Context::read(Stream& stream) {
   Script::Lexer lexer(stream);
