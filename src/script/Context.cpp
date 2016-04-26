@@ -144,12 +144,6 @@ Var Context::execute(const Var& code) {
       const Var& middle(execute(array[1]));
       if(middle.is<Binary>())
         return middle.as<Binary>()(handle,execute(array[2]));
-    } else{ // Return an array of the computed values
-      Array<Var> wtr;
-      wtr.push(handle);
-      for(uint32_t i(1); i<array.size(); i++)
-        wtr.push(execute(array[i]));
-      return wtr;
     }
   } else if(code.is<Symbol>()) return variable(code.as<Symbol>()); // Evaluate symbol
   else if(code.is<Quote>()) return code.as<Quote>().var; // Return raw data
