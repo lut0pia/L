@@ -97,7 +97,7 @@ namespace L {
       Block* block(_root);
       while(block){ // Stop when the block doesn't exist
         if(block->hasAddress(p)) { // Pointer is in this block
-          int i(((int)p-(int)block->_data)/sizeof(T)); // Compute element's index
+          int i(((intptr_t)p-(intptr_t)block->_data)/sizeof(T)); // Compute element's index
           block->deallocate(i);
         } else block = block->_next;
       }
