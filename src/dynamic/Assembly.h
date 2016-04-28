@@ -62,7 +62,7 @@ namespace L {
       inline void pop(uint32_t n=1) {add(esp,4*n);}
 
       // Subroutines
-      inline void call(void* f) {mov(Assembly::eax,(uint32_t)f); emit(0xff,0xd0);}
+      inline void call(void* f) {mov(Assembly::eax,(uint32_t)(uintptr_t)f); emit(0xff,0xd0);}
       inline void include(void* f) {
         sub(esp,4);
         load(f);
