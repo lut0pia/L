@@ -35,12 +35,11 @@ int String::findFirst(const String& str) const {
 Array<String> String::explode(char c, size_t limit) const {
   Array<String> wtr; // Will contain parts
   Array<size_t> delimiters(1,0); // Will contain delimiters for the split (already contains 0)
-  size_t size(size());
-  if(!size) return wtr;
-  for(size_t i(0); (!limit || delimiters.size()<limit) && i<size; i++)
+  if(!size()) return wtr;
+  for(size_t i(0); (!limit || delimiters.size()<limit) && i<size(); i++)
     if(operator[](i)==c) // Add delimiter
       delimiters.push(i+1);
-  delimiters.push(size+1); // Add end delimiter
+  delimiters.push(size()+1); // Add end delimiter
   for(size_t i(0); i<delimiters.size()-1; i++)
     wtr.push(substr(delimiters[i],delimiters[i+1]-delimiters[i]-1));
   return wtr;
