@@ -1,5 +1,4 @@
-#ifndef DEF_L_Time
-#define DEF_L_Time
+#pragma once
 
 #include "../String.h"
 
@@ -41,8 +40,6 @@ namespace L {
   };
   Stream& operator<<(Stream &s, const Time& v);
 }
-
-#endif
 
 
 
