@@ -49,7 +49,7 @@ namespace L {
     char buffer[16384];
     if(a==b) return;
     while(count>0) {
-      size_t bufsize(min(min(count,(size_t)abs((int)a-(int)b)),16384u));
+      size_t bufsize(min(min(count,(size_t)abs((intptr_t)a-(intptr_t)b)),(size_t)16384));
       memcpy(buffer,a,bufsize);
       memcpy(a,b,bufsize);
       memcpy(b,buffer,bufsize);
