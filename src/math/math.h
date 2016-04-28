@@ -22,12 +22,12 @@ namespace L {
     } else negative = false;
     // Check for point
     int point(0);
-    while(T((inttype<T>::type)v)!=v) {
+    while(T((typename inttype<T>::type)v)!=v) {
       v *= base;
       point++;
       if(point<0) break;
     }
-    inttype<T>::type i(v); // Convert to int
+    typename inttype<T>::type i(v); // Convert to int
     // Stringify
     if(!i) *--wtr = '0';
     else {
