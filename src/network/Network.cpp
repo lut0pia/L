@@ -84,6 +84,6 @@ String Network::error() {
 #if defined L_WINDOWS
   return String::from(WSAGetLastError());
 #elif defined L_UNIX
-  return errno();
+  return strerror(errno);
 #endif
 }
