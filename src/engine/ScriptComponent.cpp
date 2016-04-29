@@ -19,7 +19,8 @@ ScriptComponent::ScriptComponent() {
 }
 void ScriptComponent::load(const char* filename) {
   _context.variable("entity") = entity();
-  _context.read(FileStream(filename,"rb"));
+  FileStream stream(filename,"rb");
+  _context.read(stream);
   _context.execute(_context.variable("start"));
 }
 void ScriptComponent::update() {
