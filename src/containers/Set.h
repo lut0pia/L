@@ -29,7 +29,7 @@ namespace L {
           Array<T>::insert(i,e);
       }
       void erase(const T& e) {
-        int i(index(e));
+        int i(SortedArray<T>::index(e));
         if(i<(int)Array<T>::size() && !(Array<T>::operator[](i)<e))
           Array<T>::erase(i);
       }
