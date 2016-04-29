@@ -27,7 +27,7 @@ namespace L {
       template<class T> inline Stream& operator<(const T& v) {write(&v,sizeof(v)); return *this;}
       template<class T> inline Stream& operator>(T& v) {read(&v,sizeof(v)); return *this;}
 
-      template<class T> inline Stream& operator<<(T* v) {return *this << ntos<16>((unsigned int)v,sizeof(v)*2);}
+      template<class T> inline Stream& operator<<(T* v) {return *this << ntos<16>((uintptr_t)v,sizeof(v)*2);}
 
       inline Stream& operator<<(bool v) {return *this << ((v)?"true":"false");}
       inline Stream& operator<<(char v) {put(v); return *this;}
