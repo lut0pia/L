@@ -41,7 +41,8 @@ namespace L {
       }
 
       virtual bool to(const T& v, const File& file) {
-        return to(v,FileStream(file.path(),"wb"));
+        FileStream stream(file.path(),"wb");
+        return to(v,stream);
       }
       virtual bool to(const T& v, String& str) {
         return false;
