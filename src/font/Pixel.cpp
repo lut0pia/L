@@ -19,7 +19,7 @@ Pixel::Pixel(int height) : _ratio(height/7.f) {
   }
 #define MAKE_UPPER_GLYPH(...) MAKE_GLYPH(5,7,__VA_ARGS__)
 #define MAKE_LOWER_GLYPH(...) MAKE_GLYPH(3,9,__VA_ARGS__)
-Glyph Pixel::loadGlyph(size_t utf32) {
+Glyph Pixel::loadGlyph(uint32_t utf32) {
   switch(utf32) {
     case 'A':
       MAKE_UPPER_GLYPH(_,O,O,O,_,

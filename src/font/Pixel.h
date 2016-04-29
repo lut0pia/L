@@ -10,7 +10,7 @@ namespace L {
         float _ratio;
       public:
         Pixel(int=14);
-        Glyph loadGlyph(size_t utf32);
+        Glyph loadGlyph(uint32_t utf32);
     };
   }
 }
