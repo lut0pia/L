@@ -42,6 +42,18 @@ Context::Context() : _frames(2,0) {
       return *target = c.execute(a[2]);
     return 0;
   };
+  variable(FNV1A("fun")) = (Native)[](Context& c,const Array<Var>& a)->Var {
+    if(a.size()>1){
+      CodeFunction wtr;
+      if(a.size()>2 && a[1].is<Array<Var> >()) // There's a list of parameter symbols
+        for(auto&& sym : a[1].as<Array<Var> >())
+          if(sym.is<Symbol>())
+            wtr.parameters.push(sym.as<Symbol>());
+      wtr.code = a.back(); // The last part is always the code
+      return wtr;
+    }
+    return 0;
+  };
   variable(FNV1A("=")) = (Binary)[](const Var& a,const Var& b)->Var {return a==b; };
   variable(FNV1A("<>")) = (Binary)[](const Var& a,const Var& b)->Var {return a!=b; };
   variable(FNV1A(">")) = (Binary)[](const Var& a,const Var& b)->Var {return a>b; };
@@ -121,21 +133,18 @@ Var Context::execute(const Var& code) {
     const Var& handle(execute(array[0])); // Execute first child of array to get function handle
     if(handle.is<Native>())
       return handle.as<Native>()(*this,array);
-    else if(handle.is<Function>() || handle.is<Array<Var> >()) {
+    else if(handle.is<Function>() || handle.is<CodeFunction>()) {
       Var wtr;
       _frames.push(nextFrame()); // Add new frame
       for(uint32_t i(1); i<array.size(); i++) { // For all parameters
         Symbol sym = {0};
-        if(handle.is<Array<Var> >() && handle.as<Array<Var> >()[0].as<Array<Var> >().size()>=i) {
-          Var symVar(execute(handle.as<Array<Var> >()[0].as<Array<Var> >()[i-1]));
-          if(symVar.is<Symbol>())
-            sym = symVar.as<Symbol>();
-        }
+        if(handle.is<CodeFunction>() && handle.as<CodeFunction>().parameters.size()>=i)
+          sym = handle.as<CodeFunction>().parameters[i-1];
         pushVariable(sym,execute(array[i])); // Compute parameter values
       }
       //out << _stack << '\n';
-      if(handle.is<Array<Var> >())
-        wtr = execute(handle.as<Array<Var> >()[1]);
+      if(handle.is<CodeFunction>())
+        wtr = execute(handle.as<CodeFunction>().code);
       else if(handle.is<Function>()) // It's a function pointer
         wtr = handle.as<Function>()(*this,array.size()-1); // Call function
       _frames.pop(); // Remove current frame

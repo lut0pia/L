@@ -13,6 +13,7 @@ namespace L {
     typedef Var(*Binary)(const Var&,const Var&);
     typedef struct { Var var; } Quote;
     typedef uint32_t Symbol;
+    typedef struct { Array<Symbol> parameters; Var code; } CodeFunction;
     class Context {
     private:
       Array<KeyValue<Symbol,Var> > _stack;
