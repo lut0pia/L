@@ -62,7 +62,7 @@ solution "L"
 		excludes {"src/interface/**"} -- Interface files are not to be compiled by the library
 		
 		-- PCH
-    if _ACTION != "gmake" then
+    if _ACTION ~= "gmake" then
   		pchheader "pc.h"
   		pchsource "src/pc.cpp"
     end
