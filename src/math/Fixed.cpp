@@ -5,10 +5,7 @@
 using namespace L;
 
 Fixed::Fixed(float f) {
-  float g;
-  f = modf(f,&g);
-  _raw = ((int)g<<halfbits);
-  if(f!=0) _raw |= (int)(f*0xffff+1);
+  new (this) Fixed((double)f);
 }
 Fixed::Fixed(double f) {
   double g;
