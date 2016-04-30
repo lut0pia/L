@@ -62,10 +62,12 @@ solution "L"
 		excludes {"src/interface/**"} -- Interface files are not to be compiled by the library
 		
 		-- PCH
-		pchheader "pc.h"
-		pchsource "src/pc.cpp"
-		forceincludes {"pc.h"}
-		
+    if _ACTION != "gmake" then
+  		pchheader "pc.h"
+  		pchsource "src/pc.cpp"
+    end
+		forceincludes {"src/pc.h"}
+
 		-- Visual Studio
 		configuration {"vs*"}
 			postbuildcommands {[[lib.exe /LTCG /NOLOGO /IGNORE:4006,4221 /LIBPATH:../../ext/lib /OUT:"$(TargetPath)" "$(TargetPath)" gdi32.lib user32.lib opengl32.lib glew32s.lib glu32.lib ws2_32.lib]]}
