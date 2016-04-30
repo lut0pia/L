@@ -92,7 +92,12 @@ String System::pwd() {
 Vector2i System::screenSize() {
 #if defined L_WINDOWS
   return Vector2i(GetSystemMetrics(SM_CXSCREEN),GetSystemMetrics(SM_CYSCREEN));
+#elif defined L_UNIX
+  Array<String> res(callGet("xdpyinfo | grep 'dimensions:' | grep -o '[[:digit:]]\\+'").explode('\n'));
+  if(res.size()>=2)
+    return Vector2i(ston<10,int>(res[0]),ston<10,int>(res[1]));
 #endif
+  return Vector2i(1024,768);
 }
 
 String System::formatPath(String path) {
