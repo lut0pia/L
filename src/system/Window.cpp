@@ -6,6 +6,13 @@
 #include "System.h"
 #include "../containers/StaticRing.h"
 
+#ifdef L_UNIX
+# include <X11/X.h>
+# include <X11/Xlib.h>
+# include <GL/glx.h>
+# include <GL/glu.h>
+#endif
+
 using namespace L;
 using L::Window;
 
@@ -160,7 +167,7 @@ void eventTranslate(const XEvent& xev) {
       return;
       break;
   }
-  _events.push_back(e);
+  _events.push(e);
 }
 #endif
 
@@ -218,12 +225,12 @@ void Window::open(const char* title, int width, int height, int flags) {
     L_ERROR("No appropriate visual found for X server.");
   cmap = XCreateColormap(dpy, root, vi->visual, AllocNone);
   swa.colormap = cmap;
-  swa.event_mask = ExposureMask | KeyPressMask | VectorerMotionMask;
+  swa.event_mask = ExposureMask | KeyPressMask;
   win = XCreateWindow(dpy, root, 0, 0, width, height, 0, vi->depth, InputOutput, vi->visual, CWColormap | CWEventMask, &swa);
   Atom delWindow = XInternAtom(dpy,"WM_DELETE_WINDOW",0); // This is for the window close operation
   XSetWMProtocols(dpy, win, &delWindow, 1);
   XMapWindow(dpy, win);
-  XStoreName(dpy, win, title.c_str());
+  XStoreName(dpy, win, title);
   glc = glXCreateContext(dpy, vi, nullptr, GL_TRUE);
   glXMakeCurrent(dpy, win, glc);
   winOpened = true;
