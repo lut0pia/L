@@ -1,7 +1,7 @@
-(set 'start '(do
-	(set 'c (component entity "L::Transform"))
+(set start '(do
+	(set transform (component entity "L::Transform"))
 ))
-(set 'update '(do
-	;(move c 0 delta 0)
+(set update '(do
+	(move transform 0 delta 0)
 	;(print "caca\n")
 ))
