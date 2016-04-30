@@ -35,9 +35,12 @@
 # define pclose _pclose
 #elif defined L_UNIX
 # include <unistd.h>
-# include <curses.h>
+# include <signal.h>
+# include <sys/mman.h>
 # include <sys/types.h>
 # include <sys/socket.h>
+# include <sys/stat.h>
+# include <fcntl.h>
 # include <netdb.h>
 # include <netinet/in.h>
 # include <arpa/inet.h>

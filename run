@@ -1,0 +1,4 @@
+#!/bin/sh
+
+./premake5 gmake
+(cd prj/gmake && make) && ./bin/Test
