@@ -1,6 +1,13 @@
 #ifndef DEF_L_macros
 #define DEF_L_macros
 
+#include <cstdio>
+#include <cstdlib>
+
+#ifdef L_UNIX
+# include <signal.h>
+#endif
+
 #define typeof __typeof__ // static operator replaced by type name of expression
 
 #if defined(__x86_64__) || defined(_M_X64)
@@ -37,8 +44,7 @@
 # define L_BREAKPOINT raise(SIGTRAP)
 #endif
 
-#define L_ERROR(msg) do{fprintf(stderr,"Error: " L_STRINGIFY(msg) " in %s:%d\n",__FILE__,__LINE__);L_BREAKPOINT;_exit(-1);}while(false)
+#define L_ERROR(msg) do{fprintf(stderr,"Error: " L_STRINGIFY(msg) " in %s:%d\n",__FILE__,__LINE__);L_BREAKPOINT;exit(-1);}while(false)
 #define L_ASSERT(exp) L_DEBUGONLY(if(!(exp))L_ERROR(exp is false))
 
 #endif
-
