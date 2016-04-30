@@ -1,6 +1,6 @@
-#ifndef DEF_L_Quaternion
-#define DEF_L_Quaternion
+#pragma once
 
+#include "math.h"
 #include "Vector.h"
 
 namespace L {
@@ -30,5 +30,3 @@ namespace L {
   };
   typedef Quaternion<float> Quatf;
 }
-
-#endif
