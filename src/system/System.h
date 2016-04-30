@@ -20,10 +20,6 @@ namespace L {
     String pwd();
     Vector2i screenSize();
 
-    void consoleCursorPosition(unsigned short x,unsigned short y);
-    void clearConsole();
-    void closeConsole();
-
     String formatPath(String);
     String pathDirectory(const String&);
     String pathFile(const String&);

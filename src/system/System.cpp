@@ -94,30 +94,6 @@ Vector2i System::screenSize() {
   return Vector2i(GetSystemMetrics(SM_CXSCREEN),GetSystemMetrics(SM_CYSCREEN));
 #endif
 }
-void System::consoleCursorPosition(uint16_t x,uint16_t y) {
-#if defined L_WINDOWS
-  HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
-  COORD position = {(short)x,(short)y};
-  SetConsoleCursorPosition(hStdout,position);
-#elif defined L_UNIX
-  move(y,x);
-  refresh();
-#endif
-}
-void System::clearConsole() {
-#if defined L_WINDOWS
-  call("cls");
-#elif defined L_UNIX
-  call("clear");
-#endif
-}
-void System::closeConsole() {
-#if defined L_WINDOWS
-  FreeConsole();
-#elif defined L_UNIX
-  L_ERROR("Closing the console under UNIX is impossible.");
-#endif
-}
 
 String System::formatPath(String path) {
 #if defined L_WINDOWS
