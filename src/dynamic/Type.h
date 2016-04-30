@@ -53,7 +53,8 @@ namespace L {
       strcpy(wtr.name,funcsig+start);
 #else
       // "static L::TypeDescription L::Type<T>::makeDesc() [with T = XXX]"
-      char prettyfunc[] = __PRETTY_FUNCTION__;
+      char prettyfunc[256];
+      strcpy(prettyfunc,__PRETTY_FUNCTION__);
       prettyfunc[strlen(prettyfunc)-1] = '\0';
       strcpy(wtr.name,prettyfunc+55);
 #endif
