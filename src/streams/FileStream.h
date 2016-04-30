@@ -11,7 +11,7 @@ namespace L {
     public:
       inline FileStream(FILE* fd=::tmpfile()) : _fd(fd) {}
       inline FileStream(const char* filepath, const char* mode) : _fd(fopen(filepath,mode)) {}
-      inline ~FileStream() {fclose(_fd);}
+      inline ~FileStream() {if(_fd)fclose(_fd);}
 
       inline size_t write(const void* data, size_t size) {return fwrite(data,1,size,_fd);}
       inline size_t read(void* data, size_t size) {return fread(data,1,size,_fd);}
