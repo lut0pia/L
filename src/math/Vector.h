@@ -1,6 +1,7 @@
 #ifndef DEF_L_Point
 #define DEF_L_Point
 
+#include <cmath>
 #include <limits>
 #include "../types.h"
 #include "../Rand.h"
