@@ -1,5 +1,4 @@
-#ifndef DEF_L_Fixed
-#define DEF_L_Fixed
+#pragma once
 
 #include "../streams/Stream.h"
 #include "../types.h"
@@ -42,6 +41,7 @@ namespace L {
         return *this;
       }
       inline Fixed& operator/=(const Fixed& other) {
+        #ifdef _MSC_VER
         _asm {
           mov ebx, this
           mov eax, dword ptr [ebx] // Get this value
@@ -56,6 +56,7 @@ namespace L {
           idiv ecx // Divide remainder
           add dword ptr[ebx], eax // Move fractional part
         }
+        #endif
         return *this;
       }
       inline Fixed& operator%=(const Fixed& other) {_raw %= other._raw; return *this;}
@@ -72,9 +73,3 @@ namespace L {
   };
   Stream& operator<<(Stream&, const Fixed&);
 }
-
-#endif
-
-
-
-
