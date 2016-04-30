@@ -1,5 +1,4 @@
-#ifndef DEF_L_Perlin
-#define DEF_L_Perlin
+#pragma once
 
 #include "Vector.h"
 #include "../containers/MultiArray.h"
@@ -45,14 +44,7 @@ namespace L {
           values[i] = _gradients(ip).dot(point-Vector<d,float>(ip));
         }
         // Interpolate all dimensions
-        return Interpolation<float>::linear<d>(values,weight.array());
+        return Interpolation<float,d>::linear(values,weight.array());
       }
   };
 }
-
-#endif
-
-
-
-
-
