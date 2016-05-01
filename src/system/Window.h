@@ -1,5 +1,4 @@
-#ifndef DEF_L_System_Window
-#define DEF_L_System_Window
+#pragma once
 
 #include "../math/Vector.h"
 #include "../macros.h"
@@ -66,10 +65,3 @@ namespace L {
       static Vector2f normalizedToPixels(const Vector2f&);
   };
 }
-
-#endif
-
-
-
-
-
