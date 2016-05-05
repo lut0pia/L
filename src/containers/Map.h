@@ -10,6 +10,12 @@ namespace L {
   class Map : public Set<KeyValue<K,V> > {
       typedef KeyValue<K,V> KV;
     public:
+      inline Map() {}
+      inline Map(const std::initializer_list<KV>& il){
+        Array<KV>::growTo(il.size());
+        for(auto&& e : il)
+          insert(e);
+      }
       template <class T>
       KV* find(const T& k) {
         int i(Set<KeyValue<K,V> >::index(k));
