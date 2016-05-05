@@ -132,18 +132,6 @@ namespace L {
         shift(i+count,-count); // Move right part
         _size -= count; // Decrease size
       }
-      template <typename... Args>
-      inline static Array make(Args&&... args) {
-        Array wtr;
-        staticPush(wtr,args...);
-        return wtr;
-      }
-      template <typename... Args>
-      inline static void staticPush(Array& a, const T& e, Args&&... args) {
-        a.push(e);
-        staticPush(a,args...);
-      }
-      inline static void staticPush(Array& a) {}
   };
 
   template <class T>
