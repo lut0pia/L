@@ -1,5 +1,4 @@
-#ifndef DEF_L_Set
-#define DEF_L_Set
+#pragma once
 
 #include "SortedArray.h"
 
@@ -52,6 +51,3 @@ namespace L {
 
   template <class T> inline Stream& operator<<(Stream& s, const Set<T>& v) { return s << (const Array<T>&)v;}
 }
-
-#endif
-
