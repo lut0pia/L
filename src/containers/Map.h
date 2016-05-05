@@ -1,5 +1,4 @@
-#ifndef DEF_L_Map
-#define DEF_L_Map
+#pragma once
 
 #include "KeyValue.h"
 #include "Set.h"
@@ -47,6 +46,3 @@ namespace L {
   };
   template <class K,class V> inline Stream& operator<<(Stream& s, const Map<K,V>& v) { return s << (const Array<KeyValue<K,V> >&)v;}
 }
-
-#endif
-
