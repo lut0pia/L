@@ -7,6 +7,12 @@ namespace L {
   template <class T>
   class Set : protected SortedArray<T> {
     public:
+      inline Set() {}
+      inline Set(const std::initializer_list<T>& il){
+        Array<T>::growTo(il.size());
+        for(auto&& e : il)
+          insert(e);
+      }
       Set operator+(const Set& other) {
         Set wtr;
         uint32_t i(0), j(0);
