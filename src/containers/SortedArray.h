@@ -45,6 +45,8 @@ namespace L {
       inline const T& operator[](int i) const {return Array<T>::operator[](i);}
       inline void clear() {Array<T>::clear();}
       inline size_t size() const {return Array<T>::size();}
+      using Array<T>::begin;
+      using Array<T>::end;
   };
 
   template <class T> inline Stream& operator<<(Stream& s,const SortedArray<T>& v){ return s << (const Array<T>&)v;}
