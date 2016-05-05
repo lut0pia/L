@@ -7,6 +7,12 @@ namespace L {
   template <class T>
   class SortedArray : protected Array<T> {
     public:
+      inline SortedArray() {}
+      inline SortedArray(const std::initializer_list<T>& il){
+        Array<T>::growTo(il.size());
+        for(auto&& e : il)
+          insert(e);
+      }
       template <class R>
       int index(const R& e) const {
         int l(0), r(size());
