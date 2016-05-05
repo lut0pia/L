@@ -1,5 +1,4 @@
-#ifndef DEF_L_SortedArray
-#define DEF_L_SortedArray
+#pragma once
 
 #include "Array.h"
 
@@ -57,6 +56,3 @@ namespace L {
 
   template <class T> inline Stream& operator<<(Stream& s,const SortedArray<T>& v){ return s << (const Array<T>&)v;}
 }
-
-#endif
-
