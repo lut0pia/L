@@ -16,11 +16,12 @@ namespace L {
     typedef struct { Array<Symbol> parameters; Var code; } CodeFunction;
     class Context {
     private:
+      static Map<Symbol,Var> _globals;
       Array<KeyValue<Symbol,Var> > _stack;
       Array<int> _frames;
 
     public:
-      Context();
+      inline Context() : _frames(2,0){}
       void read(Stream&);
       void read(Var& v,Lexer& lexer);
 
@@ -32,6 +33,8 @@ namespace L {
       inline int nextFrame() const { return _frames.back(); }
       Var execute(const Var& code);
       Var* reference(const Var& code);
+
+      static void init();
     };
   }
   inline Stream& operator<<(Stream& s,const Script::Quote& v) { return s << '\'' << v.var; }
