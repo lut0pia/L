@@ -35,6 +35,7 @@ namespace L {
       Var* reference(const Var& code);
 
       static void init();
+      static inline Var& global(Symbol s){ return _globals[s]; }
     };
   }
   inline Stream& operator<<(Stream& s,const Script::Quote& v) { return s << '\'' << v.var; }
