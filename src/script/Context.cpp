@@ -30,10 +30,12 @@ void Context::read(Var& v,Lexer& lexer) {
   } else {
     const char* token(lexer.token());
     if(lexer.literal()) v = token; // Character string
-    else if(lexer.isToken("true")) v = true;
+    else if(strpbrk(token,"0123456789")){ // Has digits
+      if(token[strspn(token,"-0123456789")]=='\0') v = atoi(token); // Integer
+      else if(token[strspn(token,"-0123456789.")]=='\0') v = (float)atof(token); // Float
+      else v = fnv1a(token);
+    } else if(lexer.isToken("true")) v = true;
     else if(lexer.isToken("false")) v = false;
-    else if(token[strspn(token,"-0123456789")]=='\0') v = atoi(token); // Integer
-    else if(token[strspn(token,"-0123456789.")]=='\0') v = (float)atof(token); // Float
     else v = fnv1a(token);
     lexer.nextToken();
   }
