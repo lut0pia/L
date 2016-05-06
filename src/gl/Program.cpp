@@ -1,6 +1,7 @@
 #include "Program.h"
 
 #include "GL.h"
+#include "../hash.h"
 
 using namespace L;
 using namespace GL;
@@ -43,12 +44,12 @@ void Program::use() const {
   glUseProgram(_id);
 }
 GLuint Program::uniformLocation(const char* name) {
-  KeyValue<String,GLuint>* it(_uniformLocation.find(name));
+  KeyValue<uint32_t,GLuint>* it(_uniformLocation.find(fnv1a(name)));
   if(it) return it->value();
   else {
     GLuint location(glGetUniformLocation(_id, name));
     if(location<0) L_ERROR("Uniform "+String(name)+" cannot be found.");
-    return _uniformLocation[name] = location;
+    return _uniformLocation[fnv1a(name)] = location;
   }
 }
 void Program::uniform(const char* name, float v) {

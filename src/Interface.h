@@ -7,19 +7,20 @@
 #include "containers/Array.h"
 #include "system/File.h"
 #include "streams/FileStream.h"
+#include "hash.h"
 
 namespace L {
   template <class T>
   class Interface {
     private:
-      static Map<String,Interface*> instance;
+      static Map<uint32_t,Interface*> instance;
 
     protected:
       Interface(const char* format) {
         subscribe(format);
       }
       void subscribe(const char* format) {
-        instance[format] = this;
+        instance[fnv1a(format)] = this;
       }
 
     public:
@@ -61,8 +62,8 @@ namespace L {
         return true;
       }
 
-      static Interface& in(const String& format) {
-        if(instance.has(format)) return *instance[format];
+      static Interface& in(const char* format) {
+        if(instance.has(fnv1a(format))) return *instance[fnv1a(format)];
         else L_ERROR("Unhandled format "+format);
       }
       static void fromFile(T& v, const String& path) {
@@ -72,7 +73,7 @@ namespace L {
         in(path.explode('.').back().toLower()).to(v,File(path));
       }
   };
-  template <class T> Map<String,Interface<T>*> Interface<T>::instance;
+  template <class T> Map<uint32_t,Interface<T>*> Interface<T>::instance;
 }
 
 #endif

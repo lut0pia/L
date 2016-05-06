@@ -12,7 +12,7 @@ namespace L {
     class Program {
       private:
         GLuint _id;
-        Map<String,GLuint> _uniformLocation;
+        Map<uint32_t,GLuint> _uniformLocation;
         void attach(const Shader&);
         void detach(const Shader&);
         void link();

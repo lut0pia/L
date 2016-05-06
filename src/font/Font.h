@@ -5,8 +5,8 @@
 
 namespace L {
   namespace Font {
-    Base& get(const String& = "");
-    void set(Base*, const String& = "");
+    Base& get(const char* = "");
+    void set(Base*, const char* = "");
   }
 }
 

@@ -77,7 +77,7 @@ Variable& Variable::operator/=(const Variable& other) OPERATOR(div)
 Variable& Variable::operator%=(const Variable& other) OPERATOR(mod)
 
 Variable& Variable::operator[](const Variable& key) {
-  if(!is<Map<String,Variable> >()) *this = Map<Variable,Variable>();
+  if(!is<Map<Variable,Variable> >()) *this = Map<Variable,Variable>();
   return as<Map<Variable,Variable> >()[key];
 }
 const Variable& Variable::operator[](const Variable& key) const {

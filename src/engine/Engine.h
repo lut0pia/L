@@ -25,8 +25,8 @@ namespace L {
       }
       static Set<void (*)()> _updates;
       static Set<void (*)(const Camera&)> _renders;
-      static Map<String,Ref<GL::Texture> > _textures;
-      static Map<String,Ref<GL::Mesh> > _meshes;
+      static Map<uint32_t,Ref<GL::Texture> > _textures;
+      static Map<uint32_t,Ref<GL::Mesh> > _meshes;
       static Timer _timer;
       static Time _deltaTime;
       static float _deltaSeconds, _fps;
