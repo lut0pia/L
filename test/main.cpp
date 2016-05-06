@@ -31,6 +31,7 @@ int main(int argc,const char* argv[]) {
   new STB();
   new OBJ();
   TypeInit();
+  Script::Context::init();
   /*
   Vector3f* v = create<Vector3f>(1,1,1);
   out << v << " -> " << *v << '\n';
