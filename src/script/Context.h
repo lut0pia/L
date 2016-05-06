@@ -1,5 +1,4 @@
-#ifndef DEF_L_Script_Context
-#define DEF_L_Script_Context
+#pragma once
 
 #include "Lexer.h"
 #include "../dynamic/Variable.h"
@@ -41,5 +40,4 @@ namespace L {
   inline Stream& operator<<(Stream& s,const Script::Quote& v) { return s << '\'' << v.var; }
 }
 
-#endif
 
