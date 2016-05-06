@@ -1,5 +1,4 @@
-#ifndef DEF_L_Interface
-#define DEF_L_Interface
+#pragma once
 
 #include "macros.h"
 #include "containers/Map.h"
@@ -75,6 +74,3 @@ namespace L {
   };
   template <class T> Map<uint32_t,Interface<T>*> Interface<T>::instance;
 }
-
-#endif
-

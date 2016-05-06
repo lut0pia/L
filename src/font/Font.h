@@ -1,5 +1,4 @@
-#ifndef DEF_L_Font
-#define DEF_L_Font
+#pragma once
 
 #include "FontBase.h"
 
@@ -9,6 +8,3 @@ namespace L {
     void set(Base*, const char* = "");
   }
 }
-
-#endif
-

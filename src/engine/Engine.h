@@ -1,5 +1,4 @@
-#ifndef DEF_L_Engine
-#define DEF_L_Engine
+#pragma once
 
 #include "../containers/Map.h"
 #include "../containers/Pool.h"
@@ -47,6 +46,3 @@ namespace L {
       }
   };
 }
-
-#endif
-
