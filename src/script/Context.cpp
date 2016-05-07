@@ -1,6 +1,7 @@
 #include "Context.h"
 
 #include "../streams/FileStream.h"
+#include "../time/Time.h"
 
 using namespace L;
 using namespace Script;
@@ -177,5 +178,8 @@ void Context::init() {
     for(int i(1); i<params; i += 2)
       map[c.parameter(i-1)] = c.parameter(i);
     return wtr;
+  });
+  _globals[FNV1A("now")] = (Native)([](Context& c,const Array<Var>&)->Var {
+    return Time::now();
   });
 }

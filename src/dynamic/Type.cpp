@@ -2,6 +2,7 @@
 
 #include "../macros.h"
 #include "../String.h"
+#include "../time/Time.h"
 
 using namespace L;
 
@@ -28,6 +29,8 @@ void L::TypeInit(){
   Type<long double>::cancmp<>();
   Type<String>::canadd<>();
   Type<String>::cancmp<>();
+  Type<Time>::canmath<>();
+  Type<Time>::cancmp<>();
 
   // Casts
   Type<int>::addcast<bool>([](void* dst,const void* src){new(dst)bool((*(int*)src)!=0); });
