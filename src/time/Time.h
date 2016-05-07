@@ -1,44 +1,47 @@
 #pragma once
 
-#include "../String.h"
-
 namespace L {
+  class String;
+  class Stream;
   class Time {
-    protected:
-      long long usec;
-    public:
-      Time();
-      Time(long long useconds);
-      Time(long useconds, long mseconds, long seconds = 0, long minutes = 0, long hours = 0, long days = 0);
+  protected:
+    int64_t usec;
+  public:
+    inline Time() = default;
+    inline Time(int64_t us) : usec(us) {}
+    inline Time(long us,long ms,long s = 0,long m = 0,long h = 0,long d = 0)
+      : usec(us+ms*1000LL+s*1000000LL+m*60000000LL+h*3600000000LL+d*86400000000LL) {}
 
-      Time operator+(const Time&) const;
-      Time operator-(const Time&) const;
-      Time operator*(float) const;
-      Time operator*(const long long&) const;
-      Time operator/(const long long&) const;
-      bool operator==(const Time&) const;
-      bool operator!=(const Time&) const;
-      bool operator>(const Time&) const;
-      bool operator<(const Time&) const;
-      bool operator>=(const Time&) const;
-      bool operator<=(const Time&) const;
-      Time& operator+=(const Time&);
-      Time& operator-=(const Time&);
+    inline Time operator+(const Time& other) const{ return Time(usec+other.usec); }
+    inline Time operator-(const Time& other) const{ return Time(usec-other.usec); }
+    inline Time operator*(const Time& other) const{ return Time(usec*other.usec); }
+    inline Time operator/(const Time& other) const{ return Time(usec/other.usec); }
+    inline Time operator*(float other) const{ return Time(usec*other); }
+    inline Time operator*(int64_t other) const{ return Time(usec*other); }
+    inline Time operator/(int64_t other) const{ return Time(usec/other); }
+    inline Time& operator+=(const Time& other){ usec += other.usec; return *this; }
+    inline Time& operator-=(const Time& other){ usec -= other.usec; return *this; }
+    inline Time& operator*=(const Time& other){ usec *= other.usec; return *this; }
+    inline Time& operator/=(const Time& other){ usec /= other.usec; return *this; }
+    inline bool operator==(const Time& other) const { return usec == other.usec; }
+    inline bool operator!=(const Time& other) const { return usec != other.usec; }
+    inline bool operator>(const Time& other) const { return usec > other.usec; }
+    inline bool operator<(const Time& other) const { return usec < other.usec; }
+    inline bool operator>=(const Time& other) const { return usec >= other.usec; }
+    inline bool operator<=(const Time& other) const { return usec <= other.usec; }
 
-      inline long days() const {return (long)(usec/86400000000LL);}
-      inline long hours() const {return (long)(usec/3600000000LL);}
-      inline long minutes() const {return (long)(usec/60000000LL);}
-      inline long seconds() const {return (long)(usec/1000000LL);}
-      inline long long milliseconds() const {return usec/1000LL;}
-      inline long long microseconds() const {return usec;}
+    inline long days() const { return (long)(usec/86400000000LL); }
+    inline long hours() const { return (long)(usec/3600000000LL); }
+    inline long minutes() const { return (long)(usec/60000000LL); }
+    inline long seconds() const { return (long)(usec/1000000LL); }
+    inline long long milliseconds() const { return usec/1000LL; }
+    inline long long microseconds() const { return usec; }
 
-      float fSeconds() const;
+    float fSeconds() const;
 
-      static Time now();
-      static float fps();
-      static String format(String, Time = now());
+    static Time now();
   };
-  Stream& operator<<(Stream &s, const Time& v);
+  Stream& operator<<(Stream &s,const Time& v);
 }
 
 
