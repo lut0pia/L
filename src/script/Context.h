@@ -17,19 +17,16 @@ namespace L {
     private:
       static Map<Symbol,Var> _globals;
       Array<KeyValue<Symbol,Var> > _stack;
-      Array<int> _frames;
+      size_t _currentFrame;
 
     public:
-      inline Context() : _frames(2,0){}
       void read(Stream&);
       void read(Var& v,Lexer& lexer);
 
       Var& variable(Symbol);
       inline Var& variable(const char* str){ return variable(fnv1a(str)); }
       void pushVariable(Symbol,const Var& = Var());
-      inline Var& parameter(int i) { return _stack[currentFrame()+i].value(); }
-      inline int currentFrame() const { return _frames[_frames.size()-2]; }
-      inline int nextFrame() const { return _frames.back(); }
+      inline Var& parameter(int i) { return _stack[_currentFrame+i].value(); }
       Var execute(const Var& code);
       Var* reference(const Var& code);
 

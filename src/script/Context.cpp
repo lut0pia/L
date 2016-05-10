@@ -44,7 +44,7 @@ void Context::read(Var& v,Lexer& lexer) {
 
 Var& Context::variable(Symbol sym) {
   // Search symbol in locals and sub-locals
-  for(int i(nextFrame()-1); i>=0; i--)
+  for(int i(_stack.size()-1); i>=0; i--)
     if(_stack[i].key()==sym)
       return _stack[i].value();
   // Search symbol in globals
@@ -52,7 +52,6 @@ Var& Context::variable(Symbol sym) {
 }
 void Context::pushVariable(Symbol sym,const Var& v) {
   _stack.push(keyValue(sym,v));
-  _frames.back()++; // Added variable to current frame, must push next frame
 }
 Var Context::execute(const Var& code) {
   if(Var* ref = reference(code)) return *ref; // 
@@ -63,20 +62,20 @@ Var Context::execute(const Var& code) {
       return handle.as<Native>()(*this,array);
     else if(handle.is<Function>() || handle.is<CodeFunction>()) {
       Var wtr;
-      _frames.push(nextFrame()); // Add new frame
+      size_t localFrame(_stack.size()); // Save local frame
+      _currentFrame = localFrame; // Current frame is local frame
       for(uint32_t i(1); i<array.size(); i++) { // For all parameters
-        Symbol sym = {0};
+        Symbol sym = 0;
         if(handle.is<CodeFunction>() && handle.as<CodeFunction>().parameters.size()>=i)
           sym = handle.as<CodeFunction>().parameters[i-1];
-        pushVariable(sym,execute(array[i])); // Compute parameter values
+        _stack.push(sym,execute(array[i])); // Compute parameter values
       }
-      //out << _stack << '\n';
       if(handle.is<CodeFunction>())
         wtr = execute(handle.as<CodeFunction>().code);
       else if(handle.is<Function>()) // It's a function pointer
         wtr = handle.as<Function>()(*this,array.size()-1); // Call function
-      _frames.pop(); // Remove current frame
-      _stack.size(nextFrame()); // Remove elements from previous frame
+      _stack.size(localFrame); // Resize to the local frame
+      _currentFrame = localFrame; // Current frame is local frame
       return wtr;
     } else if(array.size()==3){ // May be a binary operator
       const Var& middle(execute(array[1]));
