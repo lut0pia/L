@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Transform.h"
+#include "Component.h"
 #include "../script/Context.h"
 
 namespace L {
@@ -10,6 +10,7 @@ namespace L {
     Script::Context _context;
   public:
     ScriptComponent();
+    void start();
     void load(const char* filename);
     void update();
   };
