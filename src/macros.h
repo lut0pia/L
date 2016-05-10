@@ -46,3 +46,4 @@
 #define L_ERROR(msg) do{fprintf(stderr,"Error: " L_STRINGIFY(msg) " in %s:%d\n",__FILE__,__LINE__);L_BREAKPOINT;exit(-1);}while(false)
 #define L_ASSERT(exp) L_DEBUGONLY(if(!(exp))L_ERROR(exp is false))
 
+#define L_ONCE do{static bool DONE_ONCE(false);if(init) return;init = true;}while(false)
