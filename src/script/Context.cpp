@@ -65,9 +65,10 @@ Var Context::execute(const Var& code) {
       size_t localFrame(_stack.size()); // Save local frame
       _currentFrame = localFrame; // Current frame is local frame
       for(uint32_t i(1); i<array.size(); i++) { // For all parameters
-        Symbol sym = 0;
+        Symbol sym;
         if(handle.is<CodeFunction>() && handle.as<CodeFunction>().parameters.size()>=i)
           sym = handle.as<CodeFunction>().parameters[i-1];
+        else sym = FNV1A("");
         _stack.push(sym,execute(array[i])); // Compute parameter values
       }
       if(handle.is<CodeFunction>())
