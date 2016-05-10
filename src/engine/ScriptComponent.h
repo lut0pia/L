@@ -1,5 +1,4 @@
-#ifndef DEF_L_ScriptComponent
-#define DEF_L_ScriptComponent
+#pragma once
 
 #include "Transform.h"
 #include "../script/Context.h"
@@ -15,7 +14,3 @@ namespace L {
     void update();
   };
 }
-
-
-#endif
-

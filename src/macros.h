@@ -1,5 +1,4 @@
-#ifndef DEF_L_macros
-#define DEF_L_macros
+#pragma once
 
 #include <cstdio>
 #include <cstdlib>
@@ -47,4 +46,3 @@
 #define L_ERROR(msg) do{fprintf(stderr,"Error: " L_STRINGIFY(msg) " in %s:%d\n",__FILE__,__LINE__);L_BREAKPOINT;exit(-1);}while(false)
 #define L_ASSERT(exp) L_DEBUGONLY(if(!(exp))L_ERROR(exp is false))
 
-#endif
