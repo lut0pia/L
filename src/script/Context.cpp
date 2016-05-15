@@ -103,7 +103,8 @@ Var* Context::reference(const Var& code) {
   return nullptr;
 }
 
-void Context::init() {
+Context::Context(){
+  L_ONCE;
   // Local allows to define local variables without overriding more global variables
   _globals[FNV1A("local")] = (Native)([](Context& c,const Array<Var>& a)->Var {
     Var value;

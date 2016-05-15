@@ -20,6 +20,7 @@ namespace L {
       size_t _currentFrame;
 
     public:
+      Context();
       void read(Stream&);
       void read(Var& v,Lexer& lexer);
 
@@ -30,7 +31,6 @@ namespace L {
       Var execute(const Var& code);
       Var* reference(const Var& code);
 
-      static void init();
       static inline Var& global(Symbol s){ return _globals[s]; }
     };
   }
