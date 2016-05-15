@@ -1,5 +1,6 @@
 #include "Context.h"
 
+#include "../Rand.h"
 #include "../streams/FileStream.h"
 #include "../time/Time.h"
 
@@ -182,5 +183,8 @@ Context::Context(){
   });
   _globals[FNV1A("now")] = (Native)([](Context& c,const Array<Var>&)->Var {
     return Time::now();
+  });
+  _globals[FNV1A("rand")] = (Native)([](Context& c,const Array<Var>&)->Var {
+    return Rand::nextFloat();
   });
 }
