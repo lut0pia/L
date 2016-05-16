@@ -19,7 +19,7 @@ using L::Window;
 bool buttonstate[Window::Event::LAST] = {false};
 StaticRing<512,Window::Event> _events;
 Vector2i _mousePos;
-int _width, _height, _flags;
+int _width,_height,_flags;
 
 Window::Event::Event() {
   memset(this,0,sizeof(*this));
@@ -30,7 +30,7 @@ HWND hWND;
 HDC hDC;
 HGLRC hRC;
 HBITMAP hBITMAP = 0;
-LRESULT CALLBACK MainWndProc(HWND hwnd, uint32_t uMsg, WPARAM wParam, LPARAM lParam) {
+LRESULT CALLBACK MainWndProc(HWND hwnd,uint32_t uMsg,WPARAM wParam,LPARAM lParam) {
   Window::Event e;
   switch(uMsg) {
     case WM_CREATE:
@@ -46,7 +46,7 @@ LRESULT CALLBACK MainWndProc(HWND hwnd, uint32_t uMsg, WPARAM wParam, LPARAM lPa
       e.type = (uMsg==WM_KEYDOWN) ? Window::Event::BUTTONDOWN : Window::Event::BUTTONUP;
       switch(wParam) {
 #define MAP(a,b) case a: e.button = Window::Event::b; break;
-          MAP(VK_BACK,BACKSPACE)
+        MAP(VK_BACK,BACKSPACE)
           MAP(VK_TAB,TAB)
           MAP(VK_RETURN,ENTER)
           MAP(VK_SHIFT,SHIFT)
@@ -120,10 +120,10 @@ LRESULT CALLBACK MainWndProc(HWND hwnd, uint32_t uMsg, WPARAM wParam, LPARAM lPa
       } else return 0;
       break;
     case WM_SETCURSOR:
-      SetCursor((_flags & Window::nocursor)?nullptr:LoadCursor(nullptr,IDC_ARROW));
+      SetCursor((_flags & Window::nocursor) ? nullptr : LoadCursor(nullptr,IDC_ARROW));
       break;
     default:
-      return DefWindowProc(hwnd, uMsg, wParam, lParam);
+      return DefWindowProc(hwnd,uMsg,wParam,lParam);
       break;
   }
   if(e.type==Window::Event::BUTTONDOWN)
@@ -137,7 +137,7 @@ LRESULT CALLBACK MainWndProc(HWND hwnd, uint32_t uMsg, WPARAM wParam, LPARAM lPa
 bool                    winOpened(false);
 Display                 *dpy;
 ::Window                root;
-GLint                   att[] = { GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None };
+GLint                   att[] = {GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None};
 XVisualInfo             *vi;
 Colormap                cmap;
 XSetWindowAttributes    swa;
@@ -171,7 +171,7 @@ void eventTranslate(const XEvent& xev) {
 }
 #endif
 
-void Window::open(const char* title, int width, int height, int flags) {
+void Window::open(const char* title,int width,int height,int flags) {
   if(opened()) return;
   _width = width;
   _height = height;
@@ -185,15 +185,15 @@ void Window::open(const char* title, int width, int height, int flags) {
   wc.cbWndExtra = 0;
   wc.hInstance = GetModuleHandle(nullptr);
   wc.hIcon = LoadIcon(nullptr,IDI_APPLICATION);
-  wc.hCursor = (flags & nocursor)?nullptr:LoadCursor(nullptr,IDC_ARROW);
+  wc.hCursor = (flags & nocursor) ? nullptr : LoadCursor(nullptr,IDC_ARROW);
   wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
   wc.lpszMenuName = nullptr;
   wc.lpszClassName = "LWC";
   RegisterClass(&wc);
-  DWORD wStyle = ((flags & borderless)?(WS_POPUP):(WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU))
-                 | ((flags & resizable)?(WS_MAXIMIZEBOX):0)
-                 | ((flags & resizable)?(WS_SIZEBOX):0)
-                 | WS_VISIBLE;
+  DWORD wStyle = ((flags & borderless) ? (WS_POPUP) : (WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU))
+    | ((flags & resizable) ? (WS_MAXIMIZEBOX) : 0)
+    | ((flags & resizable) ? (WS_SIZEBOX) : 0)
+    | WS_VISIBLE;
   // Find out needed window size for wanted client area size
   RECT rect = {0,0,(int)width,(int)height};
   AdjustWindowRect(&rect,wStyle,false);
@@ -208,7 +208,7 @@ void Window::open(const char* title, int width, int height, int flags) {
   ZeroMemory(&pfd,sizeof(pfd)); // Initialize pixel format descriptor
   pfd.nSize = sizeof(pfd);
   pfd.nVersion = 1;
-  pfd.dwFlags = PFD_DRAW_TO_WINDOW | ((flags & opengl)?PFD_SUPPORT_OPENGL:0) | PFD_DOUBLEBUFFER;
+  pfd.dwFlags = PFD_DRAW_TO_WINDOW | ((flags & opengl) ? PFD_SUPPORT_OPENGL : 0) | PFD_DOUBLEBUFFER;
   pfd.iPixelType = PFD_TYPE_RGBA;
   pfd.cColorBits = 24;
   pfd.cDepthBits = 16;
@@ -221,24 +221,24 @@ void Window::open(const char* title, int width, int height, int flags) {
   if((dpy = XOpenDisplay(nullptr)) == nullptr)
     L_ERROR("Cannot open X server display.");
   root = DefaultRootWindow(dpy);
-  if((vi = glXChooseVisual(dpy, 0, att)) == nullptr)
+  if((vi = glXChooseVisual(dpy,0,att)) == nullptr)
     L_ERROR("No appropriate visual found for X server.");
-  cmap = XCreateColormap(dpy, root, vi->visual, AllocNone);
+  cmap = XCreateColormap(dpy,root,vi->visual,AllocNone);
   swa.colormap = cmap;
   swa.event_mask = ExposureMask | KeyPressMask;
-  win = XCreateWindow(dpy, root, 0, 0, width, height, 0, vi->depth, InputOutput, vi->visual, CWColormap | CWEventMask, &swa);
+  win = XCreateWindow(dpy,root,0,0,width,height,0,vi->depth,InputOutput,vi->visual,CWColormap | CWEventMask,&swa);
   Atom delWindow = XInternAtom(dpy,"WM_DELETE_WINDOW",0); // This is for the window close operation
-  XSetWMProtocols(dpy, win, &delWindow, 1);
-  XMapWindow(dpy, win);
-  XStoreName(dpy, win, title);
-  glc = glXCreateContext(dpy, vi, nullptr, GL_TRUE);
-  glXMakeCurrent(dpy, win, glc);
+  XSetWMProtocols(dpy,win,&delWindow,1);
+  XMapWindow(dpy,win);
+  XStoreName(dpy,win,title);
+  glc = glXCreateContext(dpy,vi,nullptr,GL_TRUE);
+  glXMakeCurrent(dpy,win,glc);
   winOpened = true;
 #endif
   if(flags & opengl)
     GL::init();
 }
-void Window::openFullscreen(const char* title, int flags) {
+void Window::openFullscreen(const char* title,int flags) {
   Vector2i screenSize(System::screenSize());
   open(title,screenSize.x(),screenSize.y(),borderless | flags);
 }
@@ -248,9 +248,9 @@ void Window::close() {
   DestroyWindow(hWND);
   hWND = 0;
 #elif defined L_UNIX
-  glXMakeCurrent(dpy, None, nullptr);
-  glXDestroyContext(dpy, glc);
-  XDestroyWindow(dpy, win);
+  glXMakeCurrent(dpy,None,nullptr);
+  glXDestroyContext(dpy,glc);
+  XDestroyWindow(dpy,win);
   XCloseDisplay(dpy);
   winOpened = false;
 #endif
@@ -297,17 +297,17 @@ void Window::swapBuffers() {
 #if defined L_WINDOWS
   SwapBuffers(hDC);
 #elif defined L_UNIX
-  glXSwapBuffers(dpy, win);
+  glXSwapBuffers(dpy,win);
 #endif
 }
 void Window::draw(const Bitmap& bmp) {
   if(!opened()) return;
 #if defined L_WINDOWS
-  HBITMAP hbmp = CreateBitmap(bmp.width(),bmp.height(),1,32,&bmp(0,0)), htmp;
+  HBITMAP hbmp = CreateBitmap(bmp.width(),bmp.height(),1,32,&bmp(0,0)),htmp;
   HDC hMemDC = CreateCompatibleDC(hDC);
   htmp = (HBITMAP)SelectObject(hMemDC,hbmp);
   BitBlt(hDC,0,0,bmp.width(),bmp.height(),hMemDC,0,0,SRCCOPY);
-  SelectObject(hMemDC, htmp);
+  SelectObject(hMemDC,htmp);
   DeleteObject(hbmp);
   DeleteDC(hMemDC);
 #elif defined L_UNIX
@@ -321,7 +321,7 @@ void Window::title(const char* str) {
 #elif defined L_UNIX
 #endif
 }
-void Window::resize(int width, int height) {
+void Window::resize(int width,int height) {
   if(!opened()) return;
   _width = width;
   _height = height;
