@@ -65,8 +65,10 @@ solution "L"
     if _ACTION ~= "gmake" then
   		pchheader "pc.h"
   		pchsource "src/pc.cpp"
+			forceincludes {"pc.h"}
+		else
+			forceincludes {"src/pc.h"}
     end
-		forceincludes {"src/pc.h"}
 
 		-- Visual Studio
 		configuration {"vs*"}
