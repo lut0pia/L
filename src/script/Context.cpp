@@ -91,7 +91,7 @@ Var* Context::reference(const Var& code) {
   if(code.is<Symbol>()) // It's a symbol so it's a simple reference to a variable
     return &variable(code.as<Symbol>());
   else if(code.is<Array<Var> >()){ // It's an array so it may be a reference to an object field or a
-    const Array<Var> array(code.as<Array<Var> >());
+    const Array<Var>& array(code.as<Array<Var> >());
     if(array.size()==2){ // It's a pair
       if(Var* first = reference(array[0])){ // The first is a reference
         if(first->is<Map<Var,Var> >()) // It's an object
