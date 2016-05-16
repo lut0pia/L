@@ -55,7 +55,7 @@ void Context::pushVariable(Symbol sym,const Var& v) {
   _stack.push(keyValue(sym,v));
 }
 Var Context::execute(const Var& code) {
-  if(Var* ref = reference(code)) return *ref; // 
+  if(Var* ref = reference(code)) return *ref;
   else if(code.is<Array<Var> >()) { // Function call
     const Array<Var>& array(code.as<Array<Var> >()); // Get reference of array value
     const Var& handle(execute(array[0])); // Execute first child of array to get function handle
