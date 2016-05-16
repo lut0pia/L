@@ -61,6 +61,7 @@ namespace L {
       static int height();
       static float aspect();
       static Vector2i mousePosition();
+      static void mousePosition(const Vector2i&);
       static Vector2f normalizedMousePosition();
       static Vector2f normalizedToPixels(const Vector2f&);
   };

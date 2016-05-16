@@ -342,6 +342,13 @@ float Window::aspect() {
 Vector2i Window::mousePosition() {
   return _mousePos;
 }
+void Window::mousePosition(const Vector2i& p){
+#if defined L_WINDOWS
+  SetCursorPos(p.x(),p.y());
+#elif defined L_UNIX
+
+#endif
+}
 Vector2f Window::normalizedMousePosition() {
   return Vector2f((2*(float)_mousePos.x()/_width)-1,-((2*(float)_mousePos.y()/_height)-1));
 }
