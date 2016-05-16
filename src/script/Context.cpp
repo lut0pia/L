@@ -20,7 +20,7 @@ void Context::read(Stream& stream) {
 }
 void Context::read(Var& v,Lexer& lexer) {
   if(lexer.acceptToken("(")) { // It's a list of expressions
-    v = Array<Var>();
+    v.make<Array<Var> >();
     int i(0);
     while(!lexer.acceptToken(")"))
       read(v[i++],lexer);
