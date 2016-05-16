@@ -117,7 +117,7 @@ Context::Context(){
     return value;
   });
   _globals[FNV1A("do")] = (Native)([](Context& c,const Array<Var>& a)->Var {
-    for(uint32_t i(1); i<a.size()-1; i++)
+    for(uintptr_t i(1); i<a.size()-1; i++)
       c.execute(a[i]);
     return c.execute(a.back());
   });
