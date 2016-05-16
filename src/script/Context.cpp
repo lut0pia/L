@@ -64,7 +64,6 @@ Var Context::execute(const Var& code) {
     else if(handle.is<Function>() || handle.is<CodeFunction>()) {
       Var wtr;
       size_t localFrame(_stack.size()); // Save local frame
-      _currentFrame = localFrame; // Current frame is local frame
       for(uint32_t i(1); i<array.size(); i++) { // For all parameters
         Symbol sym;
         if(handle.is<CodeFunction>() && handle.as<CodeFunction>().parameters.size()>=i)
@@ -72,6 +71,7 @@ Var Context::execute(const Var& code) {
         else sym = FNV1A("");
         _stack.push(sym,execute(array[i])); // Compute parameter values
       }
+      _currentFrame = localFrame; // Current frame is local frame
       if(handle.is<CodeFunction>())
         wtr = execute(handle.as<CodeFunction>().code);
       else if(handle.is<Function>()) // It's a function pointer
