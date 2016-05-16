@@ -38,7 +38,7 @@
 #endif
 
 #if defined _MSC_VER
-# define L_BREAKPOINT DebugBreak()
+# define L_BREAKPOINT __debugbreak()
 #elif defined __GNUC__
 # define L_BREAKPOINT raise(SIGTRAP)
 #endif
