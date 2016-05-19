@@ -139,7 +139,7 @@ Context::Context(){
   _globals[FNV1A("set")] = (Native)([](Context& c,const Array<Var>& a)->Var {
     Var* target;
     if(a.size()==3 && (target = c.reference(a[1])))
-      return *target = c.execute(a[2]);
+      *target = c.execute(a[2]);
     return 0;
   });
   _globals[FNV1A("fun")] = (Native)([](Context& c,const Array<Var>& a)->Var {
