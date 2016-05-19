@@ -16,7 +16,9 @@ void GL::init() {
   if(!done) {
     done = true;
     glewInit();
-    whiteTex = new Texture(Bitmap(1,1,Color::white));
+    Color white(Color::white);
+    whiteTex = new Texture();
+    whiteTex->load(1,1,&white);
     program = new Program(Shader(
                             "#version 130\n"
                             "uniform mat4 projection;"
