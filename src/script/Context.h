@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Lexer.h"
+#include "../containers/StaticStack.h"
 #include "../dynamic/Variable.h"
 #include "../hash.h"
 
@@ -16,7 +17,7 @@ namespace L {
     class Context {
     private:
       static Map<Symbol,Var> _globals;
-      Array<KeyValue<Symbol,Var> > _stack;
+      StaticStack<128,KeyValue<Symbol,Var> > _stack;
       size_t _currentFrame;
 
     public:
@@ -26,8 +27,8 @@ namespace L {
 
       Var& variable(Symbol);
       inline Var& variable(const char* str){ return variable(fnv1a(str)); }
-      void pushVariable(Symbol,const Var& = Var());
-      inline Var& parameter(int i) { return _stack[_currentFrame+i].value(); }
+      Var& local(Symbol);
+      inline Var& parameter(int i) { return _stack.bottom(_currentFrame+i).value(); }
       Var execute(const Var& code);
       Var* reference(const Var& code);
 

@@ -45,14 +45,15 @@ void Context::read(Var& v,Lexer& lexer) {
 
 Var& Context::variable(Symbol sym) {
   // Search symbol in locals and sub-locals
-  for(int i(_stack.size()-1); i>=0; i--)
+  for(int i(0); i<_stack.size(); i++)
     if(_stack[i].key()==sym)
       return _stack[i].value();
   // Search symbol in globals
   return _globals[sym];
 }
-void Context::pushVariable(Symbol sym,const Var& v) {
-  _stack.push(keyValue(sym,v));
+Var& Context::local(Symbol sym){
+  _stack.push(KeyValue<Symbol,Var>(sym));
+  return _stack.top().value();
 }
 Var Context::execute(const Var& code) {
   if(Var* ref = reference(code)) return *ref;
@@ -108,13 +109,12 @@ Context::Context(){
   L_ONCE;
   // Local allows to define local variables without overriding more global variables
   _globals[FNV1A("local")] = (Native)([](Context& c,const Array<Var>& a)->Var {
-    Var value;
     if(a.size()>1 && a[1].is<Symbol>()){
       if(a.size()>2)
-        value = c.execute(a[2]);
-      c.pushVariable(a[1].as<Symbol>(),value); // Add variable to frame
+        c.local(a[1].as<Symbol>()) = c.execute(a[2]);
+      else c.local(a[1].as<Symbol>());
     }
-    return value;
+    return 0;
   });
   _globals[FNV1A("do")] = (Native)([](Context& c,const Array<Var>& a)->Var {
     for(uintptr_t i(1); i<a.size()-1; i++)
