@@ -1,5 +1,6 @@
 #include "Context.h"
 
+#include "../containers/Ref.h"
 #include "../Rand.h"
 #include "../streams/FileStream.h"
 #include "../time/Time.h"
@@ -62,19 +63,19 @@ Var Context::execute(const Var& code) {
     const Var& handle(execute(array[0])); // Execute first child of array to get function handle
     if(handle.is<Native>())
       return handle.as<Native>()(*this,array);
-    else if(handle.is<Function>() || handle.is<CodeFunction>()) {
+    else if(handle.is<Function>() || handle.is<Ref<CodeFunction> >()) {
       Var wtr;
       size_t localFrame(_stack.size()); // Save local frame
       for(uint32_t i(1); i<array.size(); i++) { // For all parameters
         Symbol sym;
-        if(handle.is<CodeFunction>() && handle.as<CodeFunction>().parameters.size()>=i)
-          sym = handle.as<CodeFunction>().parameters[i-1];
+        if(handle.is<Ref<CodeFunction> >() && handle.as<Ref<CodeFunction> >()->parameters.size()>=i)
+          sym = handle.as<Ref<CodeFunction> >()->parameters[i-1];
         else sym = FNV1A("");
         _stack.push(sym,execute(array[i])); // Compute parameter values
       }
       _currentFrame = localFrame; // Current frame is local frame
-      if(handle.is<CodeFunction>())
-        wtr = execute(handle.as<CodeFunction>().code);
+      if(handle.is<Ref<CodeFunction> >())
+        wtr = execute(handle.as<Ref<CodeFunction> >()->code);
       else if(handle.is<Function>()) // It's a function pointer
         wtr = handle.as<Function>()(*this,array.size()-1); // Call function
       _stack.size(localFrame); // Resize to the local frame
@@ -144,12 +145,12 @@ Context::Context(){
   });
   _globals[FNV1A("fun")] = (Native)([](Context& c,const Array<Var>& a)->Var {
     if(a.size()>1){
-      CodeFunction wtr;
+      Ref<CodeFunction> wtr(new CodeFunction());
       if(a.size()>2 && a[1].is<Array<Var> >()) // There's a list of parameter symbols
         for(auto&& sym : a[1].as<Array<Var> >())
           if(sym.is<Symbol>())
-            wtr.parameters.push(sym.as<Symbol>());
-      wtr.code = a.back(); // The last part is always the code
+            wtr->parameters.push(sym.as<Symbol>());
+      wtr->code = a.back(); // The last part is always the code
       return wtr;
     }
     return 0;
