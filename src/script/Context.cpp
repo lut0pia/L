@@ -3,6 +3,8 @@
 #include "../containers/Ref.h"
 #include "../Rand.h"
 #include "../streams/FileStream.h"
+#include "../math/Vector.h"
+#include "../system/Window.h"
 #include "../time/Time.h"
 
 using namespace L;
@@ -187,5 +189,31 @@ Context::Context(){
   });
   _globals[FNV1A("rand")] = (Native)([](Context& c,const Array<Var>&)->Var {
     return Rand::nextFloat();
+  });
+  _globals[FNV1A("mouse-x")] = (Native)([](Context& c,const Array<Var>&)->Var {
+    return Window::mousePosition().x();
+  });
+  _globals[FNV1A("mouse-y")] = (Native)([](Context& c,const Array<Var>&)->Var {
+    return Window::mousePosition().y();
+  });
+  _globals[FNV1A("mouse-set")] = (Function)([](Context& c,int params)->Var {
+    Window::mousePosition(Vector2i(c.parameter(0).get<int>(),c.parameter(1).get<int>()));
+    return 0;
+  });
+  _globals[FNV1A("key-pressed")] = (Native)([](Context& c,const Array<Var>& a)->Var {
+    if(a.size()==2 && a[1].is<Symbol>())
+      switch(a[1].as<Symbol>()) {
+#define KEY_BIND(k) case FNV1A(#k): return Window::isPressed(Window::Event::k)
+        KEY_BIND(Z);
+        KEY_BIND(Q);
+        KEY_BIND(S);
+        KEY_BIND(D);
+      }
+    return false;
+  });
+  _globals[FNV1A("vec")] = (Function)([](Context& c,int params)->Var {
+    if(params==3)
+      return Vector3f(c.parameter(0).get<float>(),c.parameter(1).get<float>(),c.parameter(2).get<float>());
+    return 0;
   });
 }
