@@ -98,8 +98,8 @@ Var* Context::reference(const Var& code) {
     const Array<Var>& array(code.as<Array<Var> >());
     if(array.size()==2){ // It's a pair
       if(Var* first = reference(array[0])){ // The first is a reference
-        if(first->is<Map<Var,Var> >()) // It's an object
-          return &first->as<Map<Var,Var> >()[execute(array[1])]; // Compute index and return pointer to field
+        if(first->is<Ref<Map<Var,Var> > >()) // It's an object
+          return &(*first->as<Ref<Map<Var,Var> > >())[execute(array[1])]; // Compute index and return pointer to field
         else if(first->is<Array<Var> >()) // It's an array
           return &first->as<Array<Var> >()[execute(array[1]).get<int>()]; // Compute index and return pointer to element
       }
@@ -178,9 +178,9 @@ Context::Context(){
     return c.parameter(0).type()->name;
   });
   _globals[FNV1A("object")] = (Function)([](Context& c,int params)->Var {
-    Var wtr;
-    wtr.make<Map<Var,Var> >();
-    Map<Var,Var>& map(wtr.as<Map<Var,Var> >());
+    Ref<Map<Var,Var> > wtr;
+    wtr.make();
+    Map<Var,Var>& map(*wtr);
     for(int i(1); i<params; i += 2)
       map[c.parameter(i-1)] = c.parameter(i);
     return wtr;
