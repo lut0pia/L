@@ -24,7 +24,7 @@ namespace L {
       inline bool operator<(const char* other) const {return strcmp(*this,other)<0;}
       inline bool operator>(const char* other) const {return strcmp(*this,other)>0;}
 
-      inline bool operator==(const String& other) const {return !strcmp(*this,other);}
+      inline bool operator==(const String& other) const {return size()==other.size() && !strcmp(*this,other);}
       inline bool operator!=(const String& other) const {return !operator==(other);}
       inline bool operator<(const String& other) const {return strcmp(*this,other)<0;}
       inline bool operator>(const String& other) const {return strcmp(*this,other)>0;}
