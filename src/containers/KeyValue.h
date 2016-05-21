@@ -20,6 +20,10 @@ namespace L {
       inline const K& key() const {return _key;}
       inline const V& value() const {return _value;}
       inline V& value() {return _value;}
+      inline const V* operator->() const { return &_value; }
+      inline V* operator->() { return &_value; }
+      inline const V* operator*() const { return &_value; }
+      inline V* operator*() { return &_value; }
   };
   template <class K, class V>
   inline KeyValue<K,V> keyValue(const K& k, const V& v) {
