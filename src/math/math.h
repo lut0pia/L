@@ -80,4 +80,13 @@ namespace L {
     int wtr(x%m);
     return (wtr<0) ? wtr+m : wtr;
   }
+
+  template <typename T>
+  constexpr T orright(T v,int i){
+    return (i) ? (v|orright(v>>1,i-1)) : 0;
+  }
+  template <typename T>
+  constexpr T upperpow2(T v){ // Returns next upper power of 2
+    return orright(v-1,sizeof(T)*8)+1;
+  }
 }
