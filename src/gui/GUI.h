@@ -6,8 +6,8 @@
 
 namespace L {
   namespace GUI {
-    Base* from(const XML&);
-    Base* from(const XML&, Map<String,Base*>&);
+    Ref<Base> from(const XML&);
+    Ref<Base> from(const XML&, Map<String,Base*>&);
 
     Vector2i point(const String&);
   }

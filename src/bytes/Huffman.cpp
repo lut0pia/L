@@ -41,9 +41,9 @@ Huffman::Tree Huffman::makeTree(size_t weight[256]) {
     trees.insert(tmp);
   }
   while(trees.size()>1) {
-    tmp.zero = new Tree(trees[0]);
+    tmp.zero = Ref<Tree>(trees[0]);
     trees.erase(0);
-    tmp.one = new Tree(trees[0]);
+    tmp.one = Ref<Tree>(trees[0]);
     trees.erase(0);
     tmp.weight = tmp.zero->weight + tmp.one->weight;
     tmp.bytes = tmp.zero->bytes + tmp.one->bytes;

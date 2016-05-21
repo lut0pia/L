@@ -23,7 +23,7 @@ void TextInput::updateTextElement(Vector2i dim) {
                                ((2*pos.y()+dimensions.y())/2)-(dim.y()/2)),clip);
 }
 
-TextInput::TextInput(Vector2i d, const String& font, String placeholder, bool password) : Sizable(d), textElement(new Text("",font)) {
+TextInput::TextInput(Vector2i d, const String& font, String placeholder, bool password) : Sizable(d), textElement("",font) {
   textElement->sParent(this);
   this->placeholder = placeholder;
   this->password = password;

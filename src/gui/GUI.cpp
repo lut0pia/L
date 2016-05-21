@@ -4,48 +4,49 @@
 
 using namespace L;
 
-GUI::Base* GUI::from(const XML& xml) {
+Ref<GUI::Base> GUI::from(const XML& xml) {
   Map<String,Base*> nothing;
   return from(xml,nothing);
 }
-GUI::Base* GUI::from(const XML& xml, Map<String,GUI::Base*>& ids) {
+Ref<GUI::Base> GUI::from(const XML& xml, Map<String,GUI::Base*>& ids) {
   if(xml.text) // Text node
-    return new Text(xml.name);
+    return Ref<Text>(xml.name);
   else {
-    Base* wtr;
+    Ref<Base> wtr;
     if(xml.name == "background") {
       if(!xml.attributes.has("color"))
         L_ERROR("GUI: A background must have a color.");
       if(!xml.children.size())
         L_ERROR("GUI: A background must have a child.");
-      return new Background(GUI::from(xml.children[0],ids),Color(xml.attributes["color"]));
+      wtr = Ref<Background>(GUI::from(xml.children[0],ids),Color(xml.attributes["color"]));
     } else if(xml.name == "border") {
-      return new Border(GUI::from(xml.children[0],ids),
+      wtr = Ref<Border>(GUI::from(xml.children[0],ids),
                         (xml.attributes.has("size")) ? String::to<size_t>(xml.attributes["size"]) : 1,
                         Color(xml.attributes["color"]));
     } else if(xml.name == "image") {
       if(!xml.attributes.has("src"))
         L_ERROR("GUI: An image needs the src attribute");
-      return new Image(xml.attributes["src"]);
+      wtr = Ref<Image>(xml.attributes["src"]);
     } else if(xml.name == "rectangle") {
-      return new Rectangle(point(xml.attributes["size"]),
+      wtr = Ref<Rectangle>(point(xml.attributes["size"]),
                            Color(xml.attributes["color"]));
     } else if(xml.name == "line") {
-      return new Line(point(xml.attributes["size"]),
+      wtr = Ref<Line>(point(xml.attributes["size"]),
                       Color(xml.attributes["color"]));
     } else if(xml.name == "list") {
-      ListContainer* wtr((xml.attributes.has("spacing"))
-                         ? new ListContainer(String::to<int>(xml.attributes["spacing"]))
-                         : new ListContainer());
+      Ref<ListContainer> wtr;
+      if(xml.attributes.has("spacing"))
+        wtr.make(String::to<int>(xml.attributes["spacing"]));
+      else wtr.make();
       for(auto&& child : xml.children)
         wtr->push_back(GUI::from(child,ids));
-      return wtr;
+      wtr = wtr;
     } else if(xml.name == "text") {
-      return new Text(xml.children[0].name,(xml.attributes.has("font"))
+      wtr = Ref<Text>(xml.children[0].name,(xml.attributes.has("font"))
                       ? xml.attributes["font"]
                       : "");
     } else if(xml.name == "textinput") {
-      return new TextInput((xml.attributes.has("size"))           ? GUI::point(xml.attributes["size"])   : Vector<2,int>(100,20),
+      wtr = Ref<TextInput>((xml.attributes.has("size"))           ? GUI::point(xml.attributes["size"])   : Vector<2,int>(100,20),
                            (xml.attributes.has("font"))           ? xml.attributes["font"]               : "",
                            (xml.attributes.has("placeholder"))    ? xml.attributes["placeholder"]        : "",
                            xml.attributes.has("password"));

@@ -20,7 +20,7 @@ Var ThreadStore::garbageCollector(Thread* thread) {
   return Var();
 }
 ThreadStore::ThreadStore() {
-  attach(new Thread(garbageCollector,this));
+  attach(Ref<Thread>(garbageCollector,this));
 }
 ThreadStore::~ThreadStore() {
   mutex.lock();

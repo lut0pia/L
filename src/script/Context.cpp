@@ -147,7 +147,8 @@ Context::Context(){
   });
   _globals[FNV1A("fun")] = (Native)([](Context& c,const Array<Var>& a)->Var {
     if(a.size()>1){
-      Ref<CodeFunction> wtr(new CodeFunction());
+      Ref<CodeFunction> wtr;
+      wtr.make();
       if(a.size()>2 && a[1].is<Array<Var> >()) // There's a list of parameter symbols
         for(auto&& sym : a[1].as<Array<Var> >())
           if(sym.is<Symbol>())
