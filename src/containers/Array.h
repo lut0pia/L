@@ -24,7 +24,7 @@ namespace L {
           push(e);
       }
       inline Array(const T* a, size_t size) : _data(nullptr), _size(0), _capacity(0) {
-        capacity(size);
+        growTo(size);
         while(_size<size)
           push(*a++);
       }
