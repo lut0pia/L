@@ -99,7 +99,8 @@ namespace L {
       }
       void growTo(size_t size) {
         if(size>capacity()) {
-          size_t tmp((_capacity)?_capacity:8);
+          // Avoid too low start (8 bytes min) and target power of two (byte-wise)
+          size_t tmp((_capacity)?_capacity:(max(8u,upperpow2(sizeof(T)))/sizeof(T)));
           while(size>tmp) tmp *= 2;
           capacity(tmp);
         }
