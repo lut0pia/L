@@ -55,7 +55,7 @@ Var& Context::variable(Symbol sym) {
   return _globals[sym];
 }
 Var& Context::local(Symbol sym){
-  _stack.push(KeyValue<Symbol,Var>(sym));
+  _stack.push(SymbolVar(sym));
   return _stack.top().value();
 }
 Var Context::execute(const Var& code) {
@@ -67,7 +67,8 @@ Var Context::execute(const Var& code) {
       return handle.as<Native>()(*this,array);
     else if(handle.is<Function>() || handle.is<Ref<CodeFunction> >()) {
       Var wtr;
-      size_t localFrame(_stack.size()); // Save local frame
+      size_t frame(_stack.size()); // Save local frame
+      SymbolVar* stack(&_stack.top()+1);
       for(uint32_t i(1); i<array.size(); i++) { // For all parameters
         Symbol sym;
         if(handle.is<Ref<CodeFunction> >() && handle.as<Ref<CodeFunction> >()->parameters.size()>=i)
@@ -75,13 +76,11 @@ Var Context::execute(const Var& code) {
         else sym = FNV1A("");
         _stack.push(sym,execute(array[i])); // Compute parameter values
       }
-      _currentFrame = localFrame; // Current frame is local frame
       if(handle.is<Ref<CodeFunction> >())
         wtr = execute(handle.as<Ref<CodeFunction> >()->code);
       else if(handle.is<Function>()) // It's a function pointer
-        wtr = handle.as<Function>()(*this,array.size()-1); // Call function
-      _stack.size(localFrame); // Resize to the local frame
-      _currentFrame = localFrame; // Current frame is local frame
+        wtr = handle.as<Function>()(stack,array.size()-1); // Call function
+      _stack.size(frame); // Resize to the previous frame
       return wtr;
     } else if(array.size()==3){ // May be a binary operator
       const Var& middle(execute(array[1]));
@@ -169,20 +168,20 @@ Context::Context(){
   _globals[FNV1A("*")] = (Binary)([](const Var& a,const Var& b)->Var {return a*b; });
   _globals[FNV1A("/")] = (Binary)([](const Var& a,const Var& b)->Var {return a/b; });
   _globals[FNV1A("%")] = (Binary)([](const Var& a,const Var& b)->Var {return a%b; });
-  _globals[FNV1A("print")] = (Function)([](Context& c,int params)->Var {
+  _globals[FNV1A("print")] = (Function)([](SymbolVar* stack,size_t params)->Var {
     for(int i(0); i<params; i++)
-      out << c.parameter(i);
+      out << *stack[i];
     return 0;
   });
-  _globals[FNV1A("typename")] = (Function)([](Context& c,int params)->Var {
-    return c.parameter(0).type()->name;
+  _globals[FNV1A("typename")] = (Function)([](SymbolVar* stack,size_t params)->Var {
+    return stack[0]->type()->name;
   });
-  _globals[FNV1A("object")] = (Function)([](Context& c,int params)->Var {
+  _globals[FNV1A("object")] = (Function)([](SymbolVar* stack,size_t params)->Var {
     Ref<Map<Var,Var> > wtr;
     wtr.make();
     Map<Var,Var>& map(*wtr);
     for(int i(1); i<params; i += 2)
-      map[c.parameter(i-1)] = c.parameter(i);
+      map[*stack[i-1]] = *stack[i];
     return wtr;
   });
   _globals[FNV1A("now")] = (Native)([](Context& c,const Array<Var>&)->Var {
@@ -197,8 +196,8 @@ Context::Context(){
   _globals[FNV1A("mouse-y")] = (Native)([](Context& c,const Array<Var>&)->Var {
     return Window::mousePosition().y();
   });
-  _globals[FNV1A("mouse-set")] = (Function)([](Context& c,int params)->Var {
-    Window::mousePosition(Vector2i(c.parameter(0).get<int>(),c.parameter(1).get<int>()));
+  _globals[FNV1A("mouse-set")] = (Function)([](SymbolVar* stack,size_t params)->Var {
+    Window::mousePosition(Vector2i(stack[0]->get<int>(),stack[1]->get<int>()));
     return 0;
   });
   _globals[FNV1A("key-pressed")] = (Native)([](Context& c,const Array<Var>& a)->Var {
@@ -212,9 +211,9 @@ Context::Context(){
       }
     return false;
   });
-  _globals[FNV1A("vec")] = (Function)([](Context& c,int params)->Var {
+  _globals[FNV1A("vec")] = (Function)([](SymbolVar* stack,size_t params)->Var {
     if(params==3)
-      return Vector3f(c.parameter(0).get<float>(),c.parameter(1).get<float>(),c.parameter(2).get<float>());
+      return Vector3f(stack[0]->get<float>(),stack[1]->get<float>(),stack[2]->get<float>());
     return 0;
   });
 }

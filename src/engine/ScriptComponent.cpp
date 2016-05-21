@@ -25,49 +25,50 @@ void ScriptComponent::update() {
 
 void ScriptComponent::init() {
   L_ONCE;
-#define L_FUNCTION(name,...) Context::global(FNV1A(name)) = (Function)([](Context& c,int params)->Var {__VA_ARGS__ return 0;})
+#define L_FUNCTION(name,...) Context::global(FNV1A(name)) = (Function)([](SymbolVar* stack,size_t params)->Var {__VA_ARGS__ return 0;})
 #define L_COMPONENT_ADD(fname,cname) L_FUNCTION(fname,\
-    if(params==1 && c.parameter(0).is<Entity*>())\
-      return c.parameter(0).as<Entity*>()->add<cname>();)
+    if(params==1 && stack[0]->is<Entity*>())\
+      return stack[0]->as<Entity*>()->add<cname>();)
 #define L_COMPONENT_GET(fname,cname) L_FUNCTION(fname,\
-    if(params==1 && c.parameter(0).is<Entity*>())\
-      return c.parameter(0).as<Entity*>()->component<cname>();)
+    if(params==1 && stack[0]->is<Entity*>())\
+      return stack[0]->as<Entity*>()->component<cname>();)
   // Entity ///////////////////////////////////////////////////////////////////
-  Context::global(FNV1A("entity-make")) = (Function)([](Context& c,int params)->Var {
+  Context::global(FNV1A("entity-make")) = (Function)([](SymbolVar* stack,size_t params)->Var {
     return new Entity();
   });
-  Context::global(FNV1A("entity-copy")) = (Function)([](Context& c,int params)->Var {
-    if(params && c.parameter(0).is<Entity*>())
-      return new Entity(c.parameter(0).as<Entity*>());
+  Context::global(FNV1A("entity-copy")) = (Function)([](SymbolVar* stack,size_t params)->Var {
+    if(params && stack[0]->is<Entity*>())
+      return new Entity(stack[0]->as<Entity*>());
     return 0;
   });
-  Context::global(FNV1A("entity-destroy")) = (Function)([](Context& c,int params)->Var {
-    if(params && c.parameter(0).is<Entity*>())
-      delete c.parameter(0).as<Entity*>();
+  Context::global(FNV1A("entity-destroy")) = (Function)([](SymbolVar* stack,size_t params)->Var {
+    if(params && stack[0]->is<Entity*>())
+      delete stack[0]->as<Entity*>();
     return 0;
   });
   // Transform ///////////////////////////////////////////////////////////////////
   L_COMPONENT_ADD("transform-add",Transform);
   L_COMPONENT_GET("transform-get",Transform);
-  Context::global(FNV1A("transform-move")) = (Function)([](Context& c,int params)->Var {
-    if(params==2 && c.parameter(0).is<Transform*>())
-      c.parameter(0).as<Transform*>()->move(c.parameter(1).get<Vector3f>());
+  Context::global(FNV1A("transform-move")) = (Function)([](SymbolVar* stack,size_t params)->Var {
+    if(params==2 && stack[0]->is<Transform*>())
+      stack[0]->as<Transform*>()->move(stack[1]->get<Vector3f>());
     return 0;
   });
-  Context::global(FNV1A("transform-rotate")) = (Function)([](Context& c,int params)->Var {
-    if(params==5 && c.parameter(0).is<Transform*>())
-      c.parameter(0).as<Transform*>()->rotate(Vector3f(c.parameter(1).get<float>(),c.parameter(2).get<float>(),c.parameter(3).get<float>()),c.parameter(4).get<float>());
+  Context::global(FNV1A("transform-rotate")) = (Function)([](SymbolVar* stack,size_t params)->Var {
+    if(params==5 && stack[0]->is<Transform*>())
+      stack[0]->as<Transform*>()->rotate(Vector3f(stack[1]->get<float>(),stack[2]->get<float>(),stack[3]->get<float>()),stack[4]->get<float>());
     return 0;
   });
   // Collider ///////////////////////////////////////////////////////////////////
   L_COMPONENT_ADD("collider-add",Collider);
   L_COMPONENT_GET("collider-get",Collider);
-  Context::global(FNV1A("collider-box")) = (Function)([](Context& c,int params)->Var {
-    Vector3f size(1.f,1.f,1.f);
-    if(params == 2 && c.parameter(1).is<Vector3f>())
-      size = c.parameter(1).get<Vector3f>();
-    if(params && c.parameter(0).is<Collider*>())
-      c.parameter(0).as<Collider*>()->box(Interval3f(-size/2.f,size/2.f));
+  Context::global(FNV1A("collider-box")) = (Function)([](SymbolVar* stack,size_t params)->Var {
+    if(params && stack[0]->is<Collider*>()){
+      Vector3f size(1.f,1.f,1.f);
+      if(params == 2 && stack[1]->is<Vector3f>())
+        size = stack[1]->get<Vector3f>();
+      stack[0]->as<Collider*>()->box(Interval3f(-size/2.f,size/2.f));
+    }
     return 0;
   });
   // RigidBody ///////////////////////////////////////////////////////////////////
@@ -76,16 +77,16 @@ void ScriptComponent::init() {
   // Camera ///////////////////////////////////////////////////////////////////
   L_COMPONENT_ADD("camera-add",Camera);
   L_COMPONENT_GET("camera-get",Camera);
-  Context::global(FNV1A("camera-perspective")) = (Function)([](Context& c,int params)->Var {
-    if(params==5 && c.parameter(0).is<Camera*>())
-      c.parameter(0).as<Camera*>()->perspective(c.parameter(1).get<float>(),c.parameter(2).get<float>(),c.parameter(3).get<float>(),c.parameter(4).get<float>());
+  Context::global(FNV1A("camera-perspective")) = (Function)([](SymbolVar* stack,size_t params)->Var {
+    if(params==5 && stack[0]->is<Camera*>())
+      stack[0]->as<Camera*>()->perspective(stack[1]->get<float>(),stack[2]->get<float>(),stack[3]->get<float>(),stack[4]->get<float>());
     return 0;
   });
   // Script ///////////////////////////////////////////////////////////////////
   L_COMPONENT_ADD("script-add",ScriptComponent);
   L_COMPONENT_GET("script-get",ScriptComponent);
   L_FUNCTION("script-load",
-             if(params==2 && c.parameter(0).is<ScriptComponent*>())
-               c.parameter(0).as<ScriptComponent*>()->load(c.parameter(1).get<String>());
+             if(params==2 && stack[0]->is<ScriptComponent*>())
+               stack[0]->as<ScriptComponent*>()->load(stack[1]->get<String>());
   );
 }

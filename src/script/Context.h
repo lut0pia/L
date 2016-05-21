@@ -8,17 +8,17 @@
 namespace L {
   namespace Script {
     class Context;
-    typedef Var(*Function)(Context&,int);
+    typedef uint32_t Symbol;
+    typedef KeyValue<Symbol,Var> SymbolVar;
+    typedef Var(*Function)(SymbolVar*,size_t);
     typedef Var(*Native)(Context&,const Array<Var>&);
     typedef Var(*Binary)(const Var&,const Var&);
     typedef struct { Var var; } Quote;
-    typedef uint32_t Symbol;
     typedef struct { Array<Symbol> parameters; Var code; } CodeFunction;
     class Context {
     private:
       static Map<Symbol,Var> _globals;
-      StaticStack<128,KeyValue<Symbol,Var> > _stack;
-      size_t _currentFrame;
+      StaticStack<128,SymbolVar> _stack;
 
     public:
       Context();
@@ -28,7 +28,6 @@ namespace L {
       Var& variable(Symbol);
       inline Var& variable(const char* str){ return variable(fnv1a(str)); }
       Var& local(Symbol);
-      inline Var& parameter(int i) { return _stack.bottom(_currentFrame+i).value(); }
       Var execute(const Var& code);
       Var* reference(const Var& code);
 
