@@ -1,5 +1,4 @@
-#ifndef DEF_L_Array
-#define DEF_L_Array
+#pragma once
 
 #include <cstdlib>
 #include <cstring>
@@ -147,7 +146,3 @@ namespace L {
     return s;
   }
 }
-
-#endif
-
-
