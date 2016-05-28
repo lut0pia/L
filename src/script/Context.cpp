@@ -48,7 +48,7 @@ void Context::read(Var& v,Lexer& lexer) {
 
 Var& Context::variable(Symbol sym) {
   // Search symbol in locals and sub-locals
-  for(int i(0); i<_stack.size(); i++)
+  for(uintptr_t i(0); i<_stack.size(); i++)
     if(_stack[i].key()==sym)
       return _stack[i].value();
   // Search symbol in globals
@@ -169,7 +169,7 @@ Context::Context(){
   _globals[FNV1A("/")] = (Binary)([](const Var& a,const Var& b)->Var {return a/b; });
   _globals[FNV1A("%")] = (Binary)([](const Var& a,const Var& b)->Var {return a%b; });
   _globals[FNV1A("print")] = (Function)([](SymbolVar* stack,size_t params)->Var {
-    for(int i(0); i<params; i++)
+    for(uintptr_t i(0); i<params; i++)
       out << *stack[i];
     return 0;
   });
@@ -180,7 +180,7 @@ Context::Context(){
     Ref<Map<Var,Var> > wtr;
     wtr.make();
     Map<Var,Var>& map(*wtr);
-    for(int i(1); i<params; i += 2)
+    for(uintptr_t i(1); i<params; i += 2)
       map[*stack[i-1]] = *stack[i];
     return wtr;
   });
