@@ -1,5 +1,4 @@
-#ifndef DEF_L_List
-#define DEF_L_List
+#pragma once
 
 namespace L {
   template <class T>
@@ -65,7 +64,3 @@ namespace L {
       }
   };
 }
-
-#endif
-
-
