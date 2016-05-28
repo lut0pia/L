@@ -2,8 +2,9 @@
 
 #include "../streams/FileStream.h"
 #include "Camera.h"
-#include "Transform.h"
 #include "Collider.h"
+#include "Sprite.h"
+#include "Transform.h"
 
 using namespace L;
 using namespace Script;
@@ -32,6 +33,10 @@ void ScriptComponent::init() {
 #define L_COMPONENT_GET(fname,cname) L_FUNCTION(fname,\
     if(params==1 && stack[0]->is<Entity*>())\
       return stack[0]->as<Entity*>()->component<cname>();)
+#define L_COMPONENT_REQUIRE(fname,cname) L_FUNCTION(fname,\
+    if(params==1 && stack[0]->is<Entity*>())\
+      return stack[0]->as<Entity*>()->requireComponent<cname>();)
+#define L_COMPONENT_BIND(name,cname) L_COMPONENT_ADD(name "-add",cname); L_COMPONENT_GET(name "-get",cname); L_COMPONENT_REQUIRE(name "-require",cname);
   // Entity ///////////////////////////////////////////////////////////////////
   Context::global(FNV1A("entity-make")) = (Function)([](SymbolVar* stack,size_t params)->Var {
     return new Entity();
@@ -47,8 +52,7 @@ void ScriptComponent::init() {
     return 0;
   });
   // Transform ///////////////////////////////////////////////////////////////////
-  L_COMPONENT_ADD("transform-add",Transform);
-  L_COMPONENT_GET("transform-get",Transform);
+  L_COMPONENT_BIND("transform",Transform);
   Context::global(FNV1A("transform-move")) = (Function)([](SymbolVar* stack,size_t params)->Var {
     if(params==2 && stack[0]->is<Transform*>())
       stack[0]->as<Transform*>()->move(stack[1]->get<Vector3f>());
@@ -60,8 +64,7 @@ void ScriptComponent::init() {
     return 0;
   });
   // Collider ///////////////////////////////////////////////////////////////////
-  L_COMPONENT_ADD("collider-add",Collider);
-  L_COMPONENT_GET("collider-get",Collider);
+  L_COMPONENT_BIND("collider",Collider);
   Context::global(FNV1A("collider-box")) = (Function)([](SymbolVar* stack,size_t params)->Var {
     if(params && stack[0]->is<Collider*>()){
       Vector3f size(1.f,1.f,1.f);
@@ -72,21 +75,20 @@ void ScriptComponent::init() {
     return 0;
   });
   // RigidBody ///////////////////////////////////////////////////////////////////
-  L_COMPONENT_ADD("rigidbody-add",RigidBody);
-  L_COMPONENT_GET("rigidbody-get",RigidBody);
+  L_COMPONENT_BIND("rigidbody",RigidBody);
   // Camera ///////////////////////////////////////////////////////////////////
-  L_COMPONENT_ADD("camera-add",Camera);
-  L_COMPONENT_GET("camera-get",Camera);
+  L_COMPONENT_BIND("camera",Camera);
   Context::global(FNV1A("camera-perspective")) = (Function)([](SymbolVar* stack,size_t params)->Var {
     if(params==5 && stack[0]->is<Camera*>())
       stack[0]->as<Camera*>()->perspective(stack[1]->get<float>(),stack[2]->get<float>(),stack[3]->get<float>(),stack[4]->get<float>());
     return 0;
   });
   // Script ///////////////////////////////////////////////////////////////////
-  L_COMPONENT_ADD("script-add",ScriptComponent);
-  L_COMPONENT_GET("script-get",ScriptComponent);
+  L_COMPONENT_BIND("script",ScriptComponent);
   L_FUNCTION("script-load",
              if(params==2 && stack[0]->is<ScriptComponent*>())
                stack[0]->as<ScriptComponent*>()->load(stack[1]->get<String>());
   );
+  // Sprite ///////////////////////////////////////////////////////////////////
+  L_COMPONENT_BIND("sprite",Sprite);
 }
