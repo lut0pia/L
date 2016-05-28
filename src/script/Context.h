@@ -3,6 +3,7 @@
 #include "Lexer.h"
 #include "../containers/StaticStack.h"
 #include "../dynamic/Variable.h"
+#include "../containers/Table.h"
 #include "../hash.h"
 
 namespace L {
@@ -17,7 +18,7 @@ namespace L {
     typedef struct { Array<Symbol> parameters; Var code; } CodeFunction;
     class Context {
     private:
-      static Map<Symbol,Var> _globals;
+      static Table<Symbol,Var> _globals;
       StaticStack<128,SymbolVar> _stack;
 
     public:

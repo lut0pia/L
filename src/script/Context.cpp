@@ -10,7 +10,7 @@
 using namespace L;
 using namespace Script;
 
-Map<Symbol,Var> Context::_globals;
+Table<Symbol,Var> Context::_globals;
 
 void Context::read(Stream& stream) {
   Script::Lexer lexer(stream);
