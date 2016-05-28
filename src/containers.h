@@ -11,5 +11,6 @@
 #include "containers/SortedArray.h"
 #include "containers/StaticRing.h"
 #include "containers/StaticStack.h"
+#include "containers/Table.h"
 #include "containers/Tree.h"
 #include "containers/XML.h"
