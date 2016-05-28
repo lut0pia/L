@@ -16,8 +16,9 @@ uint32_t Engine::_frame(0);
 
 void Engine::update() {
   _deltaTime = _timer.frame();
+  _fps = 1.f/_deltaTime.fSeconds();
+  _deltaTime = min(_deltaTime,Time(0,50)); // Delta time shouldn't be over 50ms
   _deltaSeconds = _deltaTime.fSeconds();
-  _fps = 1.f/_deltaSeconds;
   for(auto&& update : _updates)
     update();
   for(auto&& camera : Pool<Camera>::global){
