@@ -3,7 +3,10 @@
 (local center-y (1080 / 2))
 
 (local start (fun (do
-	(set transform (transform-get entity))
+	(set transform (transform-require entity))
+	(transform-move transform (vec 0 -16 0))
+  (local camera (camera-require entity))
+  (camera-perspective camera 80 (16.0 / 9.0) .1 512)
 	(mouse-set !center-x !center-y)
 )))
 (local update (fun (do

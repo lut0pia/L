@@ -23,17 +23,8 @@
 	(transform-move transform (vec -4 0 0))
 	(transform-rotate transform 0 1 0 1)
 )))
-(local make-camera (fun (do
-  (local entity (entity-make))
-  (local transform (transform-add entity))
-	(transform-move transform (vec 0 -16 0))
-  (local camera (camera-add entity))
-  (camera-perspective camera 80 (16.0 / 9.0) .1 512)
-	(local script (script-add entity))
-	(script-load script "camera.ls")
-)))
 
-(make-camera)
+(script-load (script-add (entity-make)) "camera.ls")
 (make-terrain)
 
 ; Create all boxes
