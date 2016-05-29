@@ -1,5 +1,4 @@
-#ifndef DEF_L_KeyValue
-#define DEF_L_KeyValue
+#pragma once
 
 #include "../streams/Stream.h"
 
@@ -31,8 +30,3 @@ namespace L {
   }
   template <class K, class V> Stream& operator<<(Stream& s, const KeyValue<K,V>& v) {return s << '(' << v.key() << ':' << v.value() << ')';}
 }
-
-#endif
-
-
-
