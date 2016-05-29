@@ -91,4 +91,8 @@ void ScriptComponent::init() {
   );
   // Sprite ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND("sprite",Sprite);
+  L_FUNCTION("sprite-load",
+             if(params==2 && stack[0]->is<Sprite*>())
+               stack[0]->as<Sprite*>()->texture((const char*)stack[1]->get<String>());
+  );
 }
