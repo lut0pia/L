@@ -1,5 +1,4 @@
-#ifndef DEF_L
-#define DEF_L
+#pragma once
 
 // General definitions
 #include "constants.h"      // Constant values
@@ -32,7 +31,3 @@
 #include "streams.h"        // C-Stream wrapper and friends
 #include "system.h"         // Filesystem, Window
 #include "time.h"           // Timey-wimey wibbly-wobbly stuff
-
-#endif
-
-
