@@ -1,5 +1,4 @@
-#ifndef DEF_L_Sprite
-#define DEF_L_Sprite
+#pragma once
 
 #include "Transform.h"
 #include "../math/Interval.h"
@@ -23,7 +22,3 @@ namespace L {
       inline void uv(const Interval2f& u) {_uv = u;}
   };
 }
-
-
-#endif
-
