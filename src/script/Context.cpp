@@ -208,6 +208,10 @@ Context::Context(){
         KEY_BIND(Q);
         KEY_BIND(S);
         KEY_BIND(D);
+        KEY_BIND(UP);
+        KEY_BIND(DOWN);
+        KEY_BIND(LEFT);
+        KEY_BIND(RIGHT);
       }
     return false;
   });

@@ -27,16 +27,18 @@ void ScriptComponent::update() {
 void ScriptComponent::init() {
   L_ONCE;
 #define L_FUNCTION(name,...) Context::global(FNV1A(name)) = (Function)([](SymbolVar* stack,size_t params)->Var {__VA_ARGS__ return 0;})
-#define L_COMPONENT_ADD(fname,cname) L_FUNCTION(fname,\
+#define L_COMPONENT_FUNCTION(cname,fname,n,...) L_FUNCTION(fname,if(params==n && stack[0]->is<cname*>()){__VA_ARGS__})
+#define L_COMPONENT_METHOD(cname,fname,n,...) L_COMPONENT_FUNCTION(cname,fname,n,stack[0]->as<cname*>()->__VA_ARGS__;)
+#define L_COMPONENT_ADD(cname,fname) L_FUNCTION(fname,\
     if(params==1 && stack[0]->is<Entity*>())\
       return stack[0]->as<Entity*>()->add<cname>();)
-#define L_COMPONENT_GET(fname,cname) L_FUNCTION(fname,\
+#define L_COMPONENT_GET(cname,fname) L_FUNCTION(fname,\
     if(params==1 && stack[0]->is<Entity*>())\
       return stack[0]->as<Entity*>()->component<cname>();)
-#define L_COMPONENT_REQUIRE(fname,cname) L_FUNCTION(fname,\
+#define L_COMPONENT_REQUIRE(cname,fname) L_FUNCTION(fname,\
     if(params==1 && stack[0]->is<Entity*>())\
       return stack[0]->as<Entity*>()->requireComponent<cname>();)
-#define L_COMPONENT_BIND(name,cname) L_COMPONENT_ADD(name "-add",cname); L_COMPONENT_GET(name "-get",cname); L_COMPONENT_REQUIRE(name "-require",cname);
+#define L_COMPONENT_BIND(cname,name) L_COMPONENT_ADD(cname,name "-add"); L_COMPONENT_GET(cname,name "-get"); L_COMPONENT_REQUIRE(cname,name "-require");
   // Entity ///////////////////////////////////////////////////////////////////
   Context::global(FNV1A("entity-make")) = (Function)([](SymbolVar* stack,size_t params)->Var {
     return new Entity();
@@ -52,19 +54,11 @@ void ScriptComponent::init() {
     return 0;
   });
   // Transform ///////////////////////////////////////////////////////////////////
-  L_COMPONENT_BIND("transform",Transform);
-  Context::global(FNV1A("transform-move")) = (Function)([](SymbolVar* stack,size_t params)->Var {
-    if(params==2 && stack[0]->is<Transform*>())
-      stack[0]->as<Transform*>()->move(stack[1]->get<Vector3f>());
-    return 0;
-  });
-  Context::global(FNV1A("transform-rotate")) = (Function)([](SymbolVar* stack,size_t params)->Var {
-    if(params==5 && stack[0]->is<Transform*>())
-      stack[0]->as<Transform*>()->rotate(Vector3f(stack[1]->get<float>(),stack[2]->get<float>(),stack[3]->get<float>()),stack[4]->get<float>());
-    return 0;
-  });
+  L_COMPONENT_BIND(Transform,"transform");
+  L_COMPONENT_METHOD(Transform,"transform-move",2,move(stack[1]->get<Vector3f>()));
+  L_COMPONENT_METHOD(Transform,"transform-rotate",3,rotate(stack[1]->get<Vector3f>(),stack[2]->get<float>()));
   // Collider ///////////////////////////////////////////////////////////////////
-  L_COMPONENT_BIND("collider",Collider);
+  L_COMPONENT_BIND(Collider,"collider");
   Context::global(FNV1A("collider-box")) = (Function)([](SymbolVar* stack,size_t params)->Var {
     if(params && stack[0]->is<Collider*>()){
       Vector3f size(1.f,1.f,1.f);
@@ -75,24 +69,14 @@ void ScriptComponent::init() {
     return 0;
   });
   // RigidBody ///////////////////////////////////////////////////////////////////
-  L_COMPONENT_BIND("rigidbody",RigidBody);
+  L_COMPONENT_BIND(RigidBody,"rigidbody");
   // Camera ///////////////////////////////////////////////////////////////////
-  L_COMPONENT_BIND("camera",Camera);
-  Context::global(FNV1A("camera-perspective")) = (Function)([](SymbolVar* stack,size_t params)->Var {
-    if(params==5 && stack[0]->is<Camera*>())
-      stack[0]->as<Camera*>()->perspective(stack[1]->get<float>(),stack[2]->get<float>(),stack[3]->get<float>(),stack[4]->get<float>());
-    return 0;
-  });
+  L_COMPONENT_BIND(Camera,"camera");
+  L_COMPONENT_METHOD(Camera,"camera-perspective",5,perspective(stack[1]->get<float>(),stack[2]->get<float>(),stack[3]->get<float>(),stack[4]->get<float>()));
   // Script ///////////////////////////////////////////////////////////////////
-  L_COMPONENT_BIND("script",ScriptComponent);
-  L_FUNCTION("script-load",
-             if(params==2 && stack[0]->is<ScriptComponent*>())
-               stack[0]->as<ScriptComponent*>()->load(stack[1]->get<String>());
-  );
+  L_COMPONENT_BIND(ScriptComponent,"script");
+  L_COMPONENT_METHOD(ScriptComponent,"script-load",2,load(stack[1]->get<String>()));
   // Sprite ///////////////////////////////////////////////////////////////////
-  L_COMPONENT_BIND("sprite",Sprite);
-  L_FUNCTION("sprite-load",
-             if(params==2 && stack[0]->is<Sprite*>())
-               stack[0]->as<Sprite*>()->texture((const char*)stack[1]->get<String>());
-  );
+  L_COMPONENT_BIND(Sprite,"sprite");
+  L_COMPONENT_METHOD(Sprite,"sprite-load",2,texture((const char*)stack[1]->get<String>()));
 }
