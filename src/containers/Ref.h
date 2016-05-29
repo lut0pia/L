@@ -20,12 +20,12 @@ namespace L {
     }
     inline Ref(const Ref& other) {
       _holder = other._holder;
-      _holder->_references++;
+      if(_holder) _holder->_references++;
     }
     template <class R> inline Ref(const Ref<R>& other) {
       static_assert(std::is_base_of<T,R>::value,"Cannot convert to a non-base class");
       _holder = (Ref<T>::Holder*)other._holder;
-      _holder->_references++;
+      if(_holder) _holder->_references++;
     }
     inline ~Ref() {
       if(_holder && --_holder->_references==0){
