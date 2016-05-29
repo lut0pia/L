@@ -1,5 +1,4 @@
-#ifndef DEF_L_String
-#define DEF_L_String
+#pragma once
 
 #include <cstring>
 #include "containers/Array.h"
@@ -89,6 +88,3 @@ namespace L {
   inline String operator+(const char* a, const String& b) {return String(a)+b;}
   inline Stream& operator<<(Stream &s, const String& v) {return s << (const char*)v;}
 }
-
-#endif
-
