@@ -1,5 +1,4 @@
-#ifndef DEF_L_RigidBody
-#define DEF_L_RigidBody
+#pragma once
 
 #include "Transform.h"
 
@@ -30,7 +29,3 @@ namespace L {
       }
   };
 }
-
-
-#endif
-
