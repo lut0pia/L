@@ -86,5 +86,5 @@ namespace L {
       }
   };
   inline String operator+(const char* a, const String& b) {return String(a)+b;}
-  inline Stream& operator<<(Stream &s, const String& v) {return s << (const char*)v;}
+  inline Stream& operator<<(Stream &s,const String& v) { s.write(&v[0],v.size()); return s; }
 }
