@@ -27,7 +27,7 @@ void ScriptComponent::update() {
 void ScriptComponent::init() {
   L_ONCE;
 #define L_FUNCTION(name,...) Context::global(FNV1A(name)) = (Function)([](SymbolVar* stack,size_t params)->Var {__VA_ARGS__ return 0;})
-#define L_COMPONENT_FUNCTION(cname,fname,n,...) L_FUNCTION(fname,if(params==n && stack[0]->is<cname*>()){__VA_ARGS__})
+#define L_COMPONENT_FUNCTION(cname,fname,n,...) L_FUNCTION(fname,if(params>=n && stack[0]->is<cname*>()){__VA_ARGS__})
 #define L_COMPONENT_METHOD(cname,fname,n,...) L_COMPONENT_FUNCTION(cname,fname,n,stack[0]->as<cname*>()->__VA_ARGS__;)
 #define L_COMPONENT_ADD(cname,fname) L_FUNCTION(fname,\
     if(params==1 && stack[0]->is<Entity*>())\
@@ -59,14 +59,11 @@ void ScriptComponent::init() {
   L_COMPONENT_METHOD(Transform,"transform-rotate",3,rotate(stack[1]->get<Vector3f>(),stack[2]->get<float>()));
   // Collider ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(Collider,"collider");
-  Context::global(FNV1A("collider-box")) = (Function)([](SymbolVar* stack,size_t params)->Var {
-    if(params && stack[0]->is<Collider*>()){
-      Vector3f size(1.f,1.f,1.f);
-      if(params == 2 && stack[1]->is<Vector3f>())
-        size = stack[1]->get<Vector3f>();
-      stack[0]->as<Collider*>()->box(Interval3f(-size/2.f,size/2.f));
-    }
-    return 0;
+  L_COMPONENT_FUNCTION(Collider,"collider-box",1,{
+    Vector3f size(1.f,1.f,1.f);
+    if(params == 2 && stack[1]->is<Vector3f>())
+      size = stack[1]->get<Vector3f>();
+    stack[0]->as<Collider*>()->box(Interval3f(-size/2.f,size/2.f));
   });
   // RigidBody ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(RigidBody,"rigidbody");
