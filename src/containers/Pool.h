@@ -1,5 +1,4 @@
-#ifndef DEF_L_Pool
-#define DEF_L_Pool
+#pragma once
 
 #include "../tmp.h"
 #include "../objects.h"
@@ -108,8 +107,3 @@ namespace L {
   };
   template <class T> Pool<T> Pool<T>::global;
 }
-
-#endif
-
-
-
