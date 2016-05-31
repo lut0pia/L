@@ -1,5 +1,5 @@
-#ifndef DEF_L_StaticRing
-#define DEF_L_StaticRing
+#pragma once
+
 #include "../macros.h"
 
 namespace L {
@@ -30,7 +30,3 @@ namespace L {
       }
   };
 }
-
-#endif
-
-
