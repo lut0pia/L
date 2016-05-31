@@ -1,18 +1,18 @@
 #!lua
 solution "L"
 	configurations {"Debug", "Release"}
-	
+
 	-- General options
 	location("prj/".._ACTION)
 	defines {"GLEW_STATIC"}
 	flags {"StaticRuntime"}
-	
+
 	-- Platform
 	configuration {"windows"}
 		defines {"L_WINDOWS","WIN32_LEAN_AND_MEAN","NOMINMAX","NOCRYPT"}
 	configuration {"linux"}
 		defines {"L_UNIX"}
-	
+
 	-- Visual Studio
 	configuration {"vs*"}
 		includedirs {"ext/include"}
@@ -34,7 +34,6 @@ solution "L"
 
 	-- Test project (startup)
 	project "Test"
-		targetdir "bin"
 		targetname "Test"
 		kind "ConsoleApp"
 		language "C++"
@@ -45,14 +44,16 @@ solution "L"
 		links {"L"}
 
 		configuration {"Debug"}
+			targetdir "bin/debug"
 			objdir("obj/".._ACTION.."/test/debug")
 			defines {"L_DEBUG"}
 			flags {"Symbols"}
 
 		configuration  {"Release"}
+			targetdir "bin/release"
 			objdir("obj/".._ACTION.."/test/release")
 			flags {"Optimize"}
-	
+
 	-- Library project
 	project "L"
 		targetdir "bin"
@@ -60,7 +61,7 @@ solution "L"
 		language "C++"
 		files {"src/**.h","src/**.cpp"}
 		excludes {"src/interface/**"} -- Interface files are not to be compiled by the library
-		
+
 		-- PCH
     if _ACTION ~= "gmake" then
   		pchheader "pc.h"
@@ -75,10 +76,12 @@ solution "L"
 			postbuildcommands {[[lib.exe /LTCG /NOLOGO /IGNORE:4006,4221 /LIBPATH:../../ext/lib /OUT:"$(TargetPath)" "$(TargetPath)" gdi32.lib user32.lib opengl32.lib glew32s.lib glu32.lib ws2_32.lib]]}
 
 		configuration {"Debug"}
+			targetdir "bin/debug"
 			objdir("obj/".._ACTION.."/debug")
 			defines {"L_DEBUG"}
 			flags {"Symbols"}
 
 		configuration  {"Release"}
+			targetdir "bin/release"
 			objdir("obj/".._ACTION.."/release")
 			flags {"Optimize"}
