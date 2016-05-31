@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../macros.h"
+#include "../math/math.h"
 
 namespace L {
   template <int n, class T>
