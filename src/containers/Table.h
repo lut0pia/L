@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../hash.h"
 #include "KeyValue.h"
 #include "List.h"
 
