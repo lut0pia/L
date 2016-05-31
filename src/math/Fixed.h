@@ -15,7 +15,7 @@ namespace L {
 
       inline Fixed() {}
       inline Fixed(int i) : _raw(i<<halfbits) {}
-      Fixed(float);
+      inline Fixed(float f) : Fixed((double)f) {}
       Fixed(double);
 
       template <class T> inline Fixed operator+(const T& other) {Fixed wtr(*this); return wtr+=other;}

@@ -4,9 +4,6 @@
 
 using namespace L;
 
-Fixed::Fixed(float f) {
-  new (this) Fixed((double)f);
-}
 Fixed::Fixed(double f) {
   double g;
   f = modf(f,&g);
