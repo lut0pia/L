@@ -62,6 +62,12 @@ solution "L"
 		files {"src/**.h","src/**.cpp"}
 		excludes {"src/interface/**"} -- Interface files are not to be compiled by the library
 
+		-- Exclude system-specific files
+		configuration {"not windows"}
+			excludes {"**_win**"}
+		configuration {"not linux"}
+			excludes {"**_unix**"}
+
 		-- PCH
     if _ACTION ~= "gmake" then
   		pchheader "pc.h"
