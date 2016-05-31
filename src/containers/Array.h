@@ -2,6 +2,7 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <initializer_list>
 #include "../objects.h"
 #include "../streams/Stream.h"
 
