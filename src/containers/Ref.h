@@ -1,5 +1,6 @@
 #pragma once
 
+#include <type_traits>
 #include "../streams/Stream.h"
 
 namespace L {
