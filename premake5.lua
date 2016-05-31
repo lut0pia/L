@@ -49,7 +49,7 @@ solution "L"
 			defines {"L_DEBUG"}
 			flags {"Symbols"}
 
-		configuration  {"Release"}
+		configuration {"Release"}
 			targetdir "bin/release"
 			objdir("obj/".._ACTION.."/test/release")
 			flags {"Optimize"}
