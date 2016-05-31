@@ -67,7 +67,8 @@ solution "L"
 			excludes {"**_win**"}
 		configuration {"not linux"}
 			excludes {"**_unix**"}
-
+    configuration {}
+    
 		-- PCH
     if _ACTION ~= "gmake" then
   		pchheader "pc.h"
