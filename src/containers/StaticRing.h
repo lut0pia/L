@@ -1,5 +1,6 @@
 #ifndef DEF_L_StaticRing
 #define DEF_L_StaticRing
+#include "../macros.h"
 
 namespace L {
   template <int n, class T>
