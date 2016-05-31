@@ -6,8 +6,10 @@
 #include <GL/glu.h>
 
 #include "System.h"
+#include "../gl/GL.h"
 
 using namespace L;
+using L::Window;
 
 bool                    winOpened(false);
 Display                 *dpy;
@@ -42,7 +44,7 @@ void eventTranslate(const XEvent& xev) {
       return;
       break;
   }
-  _events.push(e);
+  Window::_events.push(e);
 }
 
 void Window::open(const char* title,int width,int height,int flags) {
