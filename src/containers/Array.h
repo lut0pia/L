@@ -34,7 +34,7 @@ namespace L {
         size(s,args...);
       }
       inline Array(const Array& other) : _size(other._size), _capacity(other._capacity) {
-        if(!other.empty()){ 
+        if(!other.empty()){
           _data = (T*)malloc(_capacity*sizeof(T));
           copy(_data,other._data,_size);
         } else _data = nullptr;
