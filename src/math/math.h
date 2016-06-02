@@ -65,11 +65,11 @@ namespace L {
   template <int base = 2,class T>
   const T& log(const T& v) {
   }
-  template <class T> inline T log(const T& x,const T& base) { return log(x)/log(base); }
-  template <class T> inline const T& max(const T& a,const T& b) { return (a>b) ? a : b; }
-  template <class T> inline const T& min(const T& a,const T& b) { return (a<b) ? a : b; }
-  template <class T> inline const T& clamp(const T& v,const T& min,const T& max) { return (v<min) ? min : ((v>max) ? max : v); }
-  template <class T> inline T abs(const T& n) { return (n<0) ? -n : n; }
+  template <class T> inline constexpr T log(const T& x,const T& base) { return log(x)/log(base); }
+  template <class T> inline constexpr const T& max(const T& a,const T& b) { return (a>b) ? a : b; }
+  template <class T> inline constexpr const T& min(const T& a,const T& b) { return (a<b) ? a : b; }
+  template <class T> inline constexpr const T& clamp(const T& v,const T& min,const T& max) { return (v<min) ? min : ((v>max) ? max : v); }
+  template <class T> inline constexpr T abs(const T& n) { return (n<0) ? -n : n; }
 
   template <class T> T pmod(T x,const T& m) {
     while(x>=m)x -= m;
