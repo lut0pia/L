@@ -1,5 +1,4 @@
-#ifndef DEF_L_Transform
-#define DEF_L_Transform
+#pragma once
 
 #include "Component.h"
 #include "../math/Matrix.h"
@@ -34,7 +33,3 @@ namespace L {
       inline Matrix44f matrix() const {return Matrix44f::translation(absolutePosition())*Matrix44f::orientation(right(),forward(),up());}
   };
 }
-
-
-#endif
-
