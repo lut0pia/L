@@ -32,11 +32,11 @@ const Ref<GL::Texture>& Engine::texture(const char* fp) {
   String filepath(fp);
   if(_textures.has(fnv1a(filepath)))
     return _textures[fnv1a(filepath)];
-  else return _textures[fnv1a(filepath)] = Ref<GL::Texture>(Bitmap(filepath));
+  else return _textures[fnv1a(filepath)] = ref<GL::Texture>(Bitmap(filepath));
 }
 const Ref<GL::Mesh>& Engine::mesh(const char* fp) {
   String filepath(fp);
   if(_meshes.has(fnv1a(filepath)))
     return _meshes[fnv1a(filepath)];
-  else return _meshes[fnv1a(filepath)] = Ref<GL::Mesh>(filepath);
+  else return _meshes[fnv1a(filepath)] = ref<GL::Mesh>(filepath);
 }

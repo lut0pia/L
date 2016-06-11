@@ -7,67 +7,67 @@ namespace L {
   template<class T>
   class Ref {
   private:
-    struct Holder{
-      int _references;
-      byte _value[sizeof(T)];
-    };
-    Holder* _holder;
+    static const size_t offset = 8;
+    byte* _p;
+    inline int& counter(){ return *((int*)_p-1); }
+
   public:
-    inline Ref() : _holder(nullptr) {}
-    template <typename... Args>
-    inline Ref(const Args&... args) : _holder(new Holder) {
-      _holder->_references = 1;
-      new (_holder->_value)T(args...);
-    }
+    inline Ref() : _p(nullptr) {}
     inline Ref(const Ref& other) {
-      _holder = other._holder;
-      if(_holder) _holder->_references++;
+      _p = other._p;
+      if(_p) counter()++;
     }
     template <class R> inline Ref(const Ref<R>& other) {
       static_assert(std::is_base_of<T,R>::value,"Cannot convert to a non-base class");
-      _holder = (Ref<T>::Holder*)other._holder;
-      if(_holder) _holder->_references++;
+      _p = other._p;
+      if(_p) counter()++;
     }
     inline ~Ref() {
-      if(_holder && --_holder->_references==0){
+      if(_p && --counter()==0){
         destruct(**this);
-        delete _holder;
+        free(_p-offset);
       }
     }
-    Ref& operator=(const Ref& other) {
-      if(_holder != other._holder) {
+    inline Ref& operator=(const Ref& other) {
+      if(_p != other._p) {
         destruct(*this);
         construct(*this,other);
       }
       return *this;
     }
     template <class R>
-    Ref& operator=(const Ref<R>& other) {
-      if((uintptr_t)_holder != (uintptr_t)other._holder) {
+    inline Ref& operator=(const Ref<R>& other) {
+      if(_p != _p) {
         destruct(*this);
         construct(*this,other);
       }
       return *this;
     }
     template <typename... Args>
-    void make(const Args&... args){
+    void make(Args&&... args){
       destruct(*this);
-      _holder = new Holder;
-      _holder->_references = 1;
-      new (_holder->_value)T(args...);
+      _p = (byte*)malloc(sizeof(T)+offset)+offset;
+      counter() = 1;
+      construct(**this,args...);
     }
     template <class R> inline bool operator==(const Ref<R>& other) { return (uintptr_t)_holder==(uintptr_t)other._holder; }
-    inline const T& operator*() const { return *((T*)&_holder->_value); }
-    inline T& operator*() { return *((T*)&_holder->_value); }
-    inline operator T*() const { return ((T*)&_holder->_value); }
-    inline T* operator->() const { return ((T*)&_holder->_value); }
-    inline bool null() const { return (_holder==nullptr); }
-    inline void clear() { destruct(*this); _holder = nullptr; }
-    inline int references() const { return (_holder) ? _holder->_references : 0; }
+    inline const T& operator*() const { return *((T*)_p); }
+    inline T& operator*() { return *((T*)_p); }
+    inline operator T*() const { return (T*)_p; }
+    inline T* operator->() const { return (T*)_p; }
+    inline bool null() const { return _p==nullptr; }
+    inline void clear() { destruct(*this); _p = nullptr; }
+    inline int counter() const { return (_p) ? counter() : 0; }
     template <class R> friend class Ref;
   };
+  template <class T,typename... Args>
+  inline Ref<T> ref(Args&&... args){
+    Ref<T> wtr;
+    wtr.make(args...);
+    return wtr;
+  }
   template <class T>
   Stream& operator<<(Stream& s,const Ref<T>& v) {
-    return s << '(' << ((T*)v) << ',' << v.references() << ')';
+    return s << '(' << ((T*)v) << ',' << v.counter() << ')';
   }
 }
