@@ -1,4 +1,5 @@
 #include "math/Fixed.h"
+#include "math/geometry.h"
 #include "math/Integer.h"
 #include "math/Interpolation.h"
 #include "math/Interval.h"
