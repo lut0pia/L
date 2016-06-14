@@ -7,16 +7,16 @@
 namespace L {
   template <class K,class V,uint32_t S = 389>
   class Table {
-    typedef KeyValue<K,V> KV;
+    typedef KeyValue<uint32_t,V> KV;
     List<KV> _slots[S];
   public:
     V& operator[](const K& k){
-      auto index(hash(k)%S);
-      for(auto&& slot : _slots[index])
-        if(slot.key()==k)
+      uint32_t h(hash(k)),i(h%S);
+      for(auto&& slot : _slots[i])
+        if(slot.key()==h)
           return slot.value();
-      _slots[index].push(k);
-      return _slots[index].back().value();
+      _slots[i].push(h);
+      return _slots[i].back().value();
     }
   };
 }
