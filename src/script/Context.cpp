@@ -212,6 +212,7 @@ Context::Context(){
         KEY_BIND(DOWN);
         KEY_BIND(LEFT);
         KEY_BIND(RIGHT);
+        KEY_BIND(SPACE);
       }
     return false;
   });
