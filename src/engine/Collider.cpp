@@ -142,7 +142,8 @@ void Collider::checkCollision(const Collider& a,const Collider& b) {
     else{
       Vector3f avertex(a.leastToAxis(normal)),bvertex(b.leastToAxis(-normal));
       const Vector3f& aaxis(axes[(axis-6)/3]),baxis(axes[((axis-6)%3)+3]);
-      lineLineIntersect(avertex,avertex+aaxis,bvertex,bvertex+baxis,&avertex,&bvertex);
+      if(!lineLineIntersect(avertex,avertex+aaxis,bvertex,bvertex+baxis,&avertex,&bvertex))
+        return; // Unable to compute intersection
       impactPoint = (avertex+bvertex)/2.f;
     }
     RigidBody::collision(a._rigidbody,b._rigidbody,impactPoint,normal);
