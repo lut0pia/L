@@ -11,18 +11,6 @@
 			((rand) * 4)))
 	(transform-rotate transform (vec 0 1 0) (((rand) - .5) * 5))
 )))
-; (local make-terrain (fun (do
-; 	(local entity (entity-make))
-; 	(local transform (transform-add entity))
-; 	(local collider (collider-add entity))
-; 	(collider-box collider (vec 16 16 1))
-; 	(transform-move transform (vec 0 0 -4))
-; 	(transform-rotate transform 0 1 0 -0.5)
-; 	(set entity (entity-copy entity))
-; 	(set transform (transform-get entity))
-; 	(transform-move transform (vec -4 0 0))
-; 	(transform-rotate transform 0 1 0 1)
-; )))
 
 (local make-terrain (fun (do
 	(local entity (entity-make))
