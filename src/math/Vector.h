@@ -115,7 +115,7 @@ namespace L {
       inline T distSquared(const Vector& other) const {
         return (*this-other).normSquared();
       }
-      Vector cross(const Vector& other) {
+      Vector cross(const Vector& other) const {
         return Vector(y()*other.z() - z()*other.y(),
                       z()*other.x() - x()*other.z(),
                       x()*other.y() - y()*other.x());
