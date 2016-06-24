@@ -20,6 +20,8 @@ namespace L {
       inline Quatf parentRotation() const {return (_parent)?_parent->absoluteRotation():Quatf();}
       inline void rotate(const Quatf& q) {_rotation = _rotation * q;}
       inline void rotate(const Vector3f& v, float d) {rotate(Quatf(v,d));}
+      inline void rotateAbsolute(const Quatf& q){ _rotation = q * _rotation; } // Wrong
+      inline void rotateAbsolute(const Vector3f& v,float d) { rotateAbsolute(Quatf(v,d)); }
       inline void phiLook(float d) {rotate(Vector3f(1,0,0),d);}
       inline void thetaLook(float d) {rotate(Vector3f(0,0,1),d);}
       inline void move(const Vector3f& d) {_translation += _rotation.rotate(d);}
