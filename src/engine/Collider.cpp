@@ -133,8 +133,6 @@ void Collider::checkCollision(const Collider& a,const Collider& b) {
         } else return; // No overlap means no collision
       }
     }
-    // Compute edges
-
     // Compute impact point
     Vector3f impactPoint(0,0,0);
     if(axis<6)
