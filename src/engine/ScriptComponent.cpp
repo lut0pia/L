@@ -57,6 +57,15 @@ void ScriptComponent::init() {
   L_COMPONENT_BIND(Transform,"transform");
   L_COMPONENT_METHOD(Transform,"transform-move",2,move(stack[1]->get<Vector3f>()));
   L_COMPONENT_METHOD(Transform,"transform-rotate",3,rotate(stack[1]->get<Vector3f>(),stack[2]->get<float>()));
+  L_COMPONENT_FUNCTION(Transform,"transform-copy",2,{
+    if(stack[1]->is<Transform*>()){
+      Transform& a(*stack[0]->as<Transform*>());
+      const Transform& b(*stack[1]->as<Transform*>());
+      a.parent(b.parent());
+      a.translation(b.translation());
+      a.rotation(b.rotation());
+    }
+  });
   // Collider ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(Collider,"collider");
   L_COMPONENT_FUNCTION(Collider,"collider-box",1,{
