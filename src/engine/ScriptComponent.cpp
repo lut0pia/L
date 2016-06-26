@@ -39,6 +39,12 @@ void ScriptComponent::init() {
     if(params==1 && stack[0]->is<Entity*>())\
       return stack[0]->as<Entity*>()->requireComponent<cname>();)
 #define L_COMPONENT_BIND(cname,name) L_COMPONENT_ADD(cname,name "-add"); L_COMPONENT_GET(cname,name "-get"); L_COMPONENT_REQUIRE(cname,name "-require");
+  // Engine ///////////////////////////////////////////////////////////////////
+  L_FUNCTION("engine-timescale",{
+    if(params>0)
+      Engine::timescale(stack[0]->get<float>());
+    return Engine::timescale();
+  });
   // Entity ///////////////////////////////////////////////////////////////////
   Context::global(FNV1A("entity-make")) = (Function)([](SymbolVar* stack,size_t params)->Var {
     return new Entity();
