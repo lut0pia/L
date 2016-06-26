@@ -1,5 +1,4 @@
-#ifndef DEF_L_Collider
-#define DEF_L_Collider
+#pragma once
 
 #include "Transform.h"
 #include "RigidBody.h"
@@ -35,7 +34,3 @@ namespace L {
       void checkCollision(const Collider& a, const Collider& b);
   };
 }
-
-
-#endif
-
