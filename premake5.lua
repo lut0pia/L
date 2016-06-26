@@ -75,7 +75,7 @@ solution "L"
   		pchsource "src/pc.cpp"
 			forceincludes {"pc.h"}
 		else
-			forceincludes {"src/pc.h"}
+      pchheader "src/pc.h"
     end
 
 		-- Visual Studio
