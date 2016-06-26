@@ -133,6 +133,12 @@ void Collider::checkCollision(const Collider& a,const Collider& b) {
         } else return; // No overlap means no collision
       }
     }
+    // Resolve interpenetration
+    if(b._rigidbody){
+      a._transform->moveAbsolute(normal*minOverlap*.5f);
+      b._transform->moveAbsolute(normal*minOverlap*-.5f);
+    }
+    else a._transform->moveAbsolute(normal*minOverlap);
     // Compute impact point
     Vector3f impactPoint(0,0,0);
     if(axis<6)
