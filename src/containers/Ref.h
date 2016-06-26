@@ -50,7 +50,7 @@ namespace L {
       counter() = 1;
       construct(**this,args...);
     }
-    template <class R> inline bool operator==(const Ref<R>& other) { return (uintptr_t)_holder==(uintptr_t)other._holder; }
+    template <class R> inline bool operator==(const Ref<R>& other) { return _p==other._p; }
     inline const T& operator*() const { return *((T*)_p); }
     inline T& operator*() { return *((T*)_p); }
     inline operator T*() const { return (T*)_p; }
