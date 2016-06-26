@@ -7,26 +7,21 @@ namespace L {
     L_COMPONENT(RigidBody)
   protected:
     Transform* _transform;
-    Vector3f _speed,_rotSpeed;
-    float _mass;
+    Vector3f _velocity,_rotVel;
+    float _invMass;
+    Matrix33f _invInertiaTensor;
   public:
-    void start() {
-      _transform = entity()->requireComponent<Transform>();
-      _mass = 1.f;
-      _speed = Vector3f(0,0,0);
-    }
-    void update() {
-      _transform->moveAbsolute(_speed*Engine::deltaSeconds());
-      _speed += Engine::deltaSeconds()*Vector3f(0,0,-9.8f);
-    }
-    inline void addSpeed(const Vector3f& v){ _speed += v; }
-    void collide(const Vector3f& impact,const Vector3f& normal) {
-      if(_speed.dot(normal)<0.f) // Only
-        _speed = normal.reflect(_speed)*-.5f;
-    }
-    static void collision(RigidBody* a,RigidBody* b,const Vector3f& impact,const Vector3f& normal) {
-      if(a)a->collide(impact,normal);
-      if(b)b->collide(impact,-normal);
-    }
+    void start();
+    void update();
+
+    inline Vector3f com() const{ return _transform->absolutePosition(); }
+    inline void addSpeed(const Vector3f& v){ _velocity += v; }
+    inline void addForce(const Vector3f& f){ addSpeed(f*_invMass); }
+    inline void addTorque(const Vector3f& t){ _rotVel += _invInertiaTensor*t; }
+
+    Vector3f velocityAt(const Vector3f& offset) const;
+    float deltaVelocity(const Vector3f& impact,const Vector3f& normal) const;
+    void applyImpulse(const Vector3f& impulse,const Vector3f& offset);
+    static void collision(RigidBody* a,RigidBody* b,const Vector3f& impact,const Vector3f& normal);
   };
 }
