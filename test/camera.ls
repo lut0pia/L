@@ -4,7 +4,7 @@
 
 (local start (fun (do
 	(set transform (transform-require entity))
-	(transform-move transform (vec 0 -16 0))
+	(transform-move transform (vec 0 -20 10))
   (local camera (camera-require entity))
   (camera-perspective camera 80 (16.0 / 9.0) 0.01 512)
 	(mouse-set !center-x !center-y)
