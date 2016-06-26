@@ -151,10 +151,5 @@ void Collider::checkCollision(const Collider& a,const Collider& b) {
       impactPoint = (avertex+bvertex)/2.f;
     }
     RigidBody::collision(a._rigidbody,b._rigidbody,impactPoint,normal);
-    GL::color(Color::green);
-    glPointSize(50);
-    glBegin(GL_POINTS);
-    glVertex3f(impactPoint.x(),impactPoint.y(),impactPoint.z());
-    glEnd();
   }
 }
