@@ -21,8 +21,10 @@ namespace L {
       void update() {
         // TODO: replace with broadphase
         for(auto&& other : Pool<Collider>::global){
-          if(&other!=this && other.entity()!=entity() && (_rigidbody || other._rigidbody) && &other<this)
-            checkCollision(*this,other);
+          if(&other!=this && other.entity()!=entity() && &other<this){
+            if(_rigidbody) checkCollision(*this,other); // Rigidbody is always first argument
+            else if(other._rigidbody) checkCollision(other,*this);
+          }
         }
       }
       inline void box(const Interval3f& b) {_type = Box; _box = b;}
