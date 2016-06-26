@@ -121,7 +121,7 @@ void Collider::checkCollision(const Collider& a,const Collider& b) {
     float minOverlap;
     Vector3f normal;
     for(uintptr_t i(0); i<sizeof(axes)/sizeof(Vector3f); i++) {
-      if(axes[i].lengthSquared()>0.001f) { // The axis is not a null vector (caused by a cross product)
+      if(axes[i].lengthSquared()>0.00001f) { // The axis is not a null vector (caused by a cross product)
         Interval1f axisA(a.project(axes[i])),axisB(b.project(axes[i])),intersection(axisA,axisB); // Compute projections and intersection
         float overlap(intersection.size().x());
         if(overlap>0.f) {
