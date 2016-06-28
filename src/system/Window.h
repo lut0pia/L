@@ -39,8 +39,8 @@ namespace L {
       };
       Event();
     };
-  public:
-    static bool buttonstate[Event::LAST];
+  private:
+    static bool _buttonstate[Event::LAST];
     static StaticRing<512,Event> _events;
     static Vector2i _mousePos;
     static int _width,_height,_flags;
@@ -69,7 +69,7 @@ namespace L {
     static inline float aspect(){ return (float)_width/_height; }
     static inline Vector2i mousePosition(){ return _mousePos; }
     static void mousePosition(const Vector2i&);
-    static inline bool isPressed(Event::Button button){ return buttonstate[button]; }
+    static inline bool isPressed(Event::Button button){ return _buttonstate[button]; }
     static Vector2f normalizedMousePosition();
     static Vector2f normalizedToPixels(const Vector2f&);
   };

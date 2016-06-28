@@ -4,7 +4,7 @@
 
 using namespace L;
 
-bool Window::buttonstate[Window::Event::LAST] = {false};
+bool Window::_buttonstate[Window::Event::LAST] = {false};
 StaticRing<512,Window::Event> Window::_events;
 Vector2i Window::_mousePos;
 int Window::_width,Window::_height,Window::_flags;

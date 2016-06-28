@@ -2,9 +2,14 @@
 
 #include "../gl/GL.h"
 #include "../bytes/encoding.h"
+#include <windows.h>
 
 using namespace L;
-using L::Window;
+
+bool* buttonstate;
+StaticRing<512,Window::Event>* events;
+Vector2i* mousePos;
+int* flags;
 
 HWND hWND;
 HDC hDC;
@@ -82,7 +87,7 @@ LRESULT CALLBACK MainWndProc(HWND hwnd,uint32_t uMsg,WPARAM wParam,LPARAM lParam
       }
       e.x = GET_X_LPARAM(lParam);
       e.y = GET_Y_LPARAM(lParam);
-      Window::_mousePos = Vector2i(e.x,e.y);
+      *mousePos = Vector2i(e.x,e.y);
       break;
     case WM_MOUSEWHEEL:
       e.type = Window::Event::MOUSEWHEEL;
@@ -100,21 +105,25 @@ LRESULT CALLBACK MainWndProc(HWND hwnd,uint32_t uMsg,WPARAM wParam,LPARAM lParam
       } else return 0;
       break;
     case WM_SETCURSOR:
-      SetCursor((Window::_flags & Window::nocursor) ? nullptr : LoadCursor(nullptr,IDC_ARROW));
+      SetCursor((*flags & Window::nocursor) ? nullptr : LoadCursor(nullptr,IDC_ARROW));
       break;
     default:
       return DefWindowProc(hwnd,uMsg,wParam,lParam);
       break;
   }
   if(e.type==Window::Event::BUTTONDOWN)
-    Window::buttonstate[e.button] = true;
+    buttonstate[e.button] = true;
   else if(e.type==Window::Event::BUTTONUP)
-    Window::buttonstate[e.button] = false;
-  Window::_events.push(e);
+    buttonstate[e.button] = false;
+  events->push(e);
   return 0;
 }
 
 void Window::open(const char* title,int width,int height,int flags) {
+  buttonstate = _buttonstate;
+  events = &_events;
+  mousePos = &_mousePos;
+  ::flags = &_flags;
   if(opened()) return;
   _width = width;
   _height = height;
