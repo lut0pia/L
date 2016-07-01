@@ -1,5 +1,4 @@
 #include "gl/Buffer.h"
-#include "gl/GLCamera.h"
 #include "gl/FrameBuffer.h"
 #include "gl/GL.h"
 #include "gl/Light.h"
