@@ -1,5 +1,4 @@
-#ifndef DEF_L_objects
-#define DEF_L_objects
+#pragma once
 
 #include <cstring>
 #include <new>
@@ -59,6 +58,3 @@ namespace L {
     }
   }
 }
-
-#endif
-

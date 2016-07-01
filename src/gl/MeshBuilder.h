@@ -1,5 +1,4 @@
-#ifndef DEF_L_GL_MeshBuilder
-#define DEF_L_GL_MeshBuilder
+#pragma once
 
 #include "../image/Color.h"
 #include "../math/Vector.h"
@@ -34,8 +33,3 @@ namespace L {
     };
   }
 }
-
-#endif
-
-
-

@@ -1,5 +1,4 @@
-#ifndef DEF_L_StaticMesh
-#define DEF_L_StaticMesh
+#pragma once
 
 #include "Component.h"
 #include "../gl/Mesh.h"
@@ -16,7 +15,3 @@ namespace L {
       inline void render(const Camera&) {_mesh->draw();}
   };
 }
-
-
-#endif
-

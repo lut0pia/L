@@ -1,5 +1,4 @@
-#ifndef DEF_L_GL
-#define DEF_L_GL
+#pragma once
 
 #include "Mesh.h"
 #include "Texture.h"
@@ -21,10 +20,3 @@ namespace L {
     }
   }
 }
-
-#endif
-
-
-
-
-

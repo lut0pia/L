@@ -1,5 +1,4 @@
-#ifndef DEF_L_GL_FrameBuffer
-#define DEF_L_GL_FrameBuffer
+#pragma once
 
 #include "RenderBuffer.h"
 #include "Texture.h"
@@ -20,8 +19,3 @@ namespace L {
     };
   }
 }
-
-#endif
-
-
-

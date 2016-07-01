@@ -1,5 +1,4 @@
-#ifndef DEF_L_Point
-#define DEF_L_Point
+#pragma once
 
 #include <cmath>
 #include <limits>
@@ -204,5 +203,3 @@ namespace L {
     return s;
   }
 }
-
-#endif

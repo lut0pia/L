@@ -1,5 +1,4 @@
-#ifndef DEF_L_GL_RenderBuffer
-#define DEF_L_GL_RenderBuffer
+#pragma once
 
 #include "../macros.h"
 #include <GL/glew.h>
@@ -20,8 +19,3 @@ namespace L {
     };
   }
 }
-
-#endif
-
-
-

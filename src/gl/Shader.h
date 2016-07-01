@@ -1,5 +1,4 @@
-#ifndef DEF_L_Shader
-#define DEF_L_Shader
+#pragma once
 
 #include <GL/glew.h>
 #include "../system/File.h"
@@ -20,8 +19,3 @@ namespace L {
     };
   }
 }
-
-#endif
-
-
-

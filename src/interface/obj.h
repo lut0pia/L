@@ -1,5 +1,4 @@
-#ifndef DEF_L_Interface_obj
-#define DEF_L_Interface_obj
+#pragma once
 
 #include <L/src/L.h>
 
@@ -58,6 +57,3 @@ namespace L {
       }
   };
 }
-
-#endif
-

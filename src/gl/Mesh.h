@@ -1,5 +1,4 @@
-#ifndef DEF_L_GL_Mesh
-#define DEF_L_GL_Mesh
+#pragma once
 
 #include "Buffer.h"
 #include "MeshBuilder.h"
@@ -31,8 +30,3 @@ namespace L {
     };
   }
 }
-
-#endif
-
-
-

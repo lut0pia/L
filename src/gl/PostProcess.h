@@ -1,5 +1,4 @@
-#ifndef DEF_L_GL_PostProcess
-#define DEF_L_GL_PostProcess
+#pragma once
 
 #include "FrameBuffer.h"
 #include "RenderBuffer.h"
@@ -23,9 +22,4 @@ namespace L {
     };
   }
 }
-
-#endif
-
-
-
 

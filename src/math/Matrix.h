@@ -1,5 +1,4 @@
-#ifndef DEF_L_Matrix
-#define DEF_L_Matrix
+#pragma once
 
 #include "Vector.h"
 
@@ -188,10 +187,3 @@ namespace L {
     return s;
   }
 }
-
-#endif
-
-
-
-
-

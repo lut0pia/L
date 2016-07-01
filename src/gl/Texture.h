@@ -1,5 +1,4 @@
-#ifndef DEF_L_Texture
-#define DEF_L_Texture
+#pragma once
 
 #include <GL/glew.h>
 #include "../image/Bitmap.h"
@@ -29,7 +28,3 @@ namespace L {
     };
   }
 }
-
-#endif
-
-

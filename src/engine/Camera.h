@@ -1,5 +1,4 @@
-#ifndef DEF_L_Camera
-#define DEF_L_Camera
+#pragma once
 
 #include "Transform.h"
 #include "../math/Interval.h"
@@ -32,7 +31,3 @@ namespace L {
       inline const Matrix44f& viewProjection() const {return _viewProjection;}
   };
 }
-
-
-#endif
-
