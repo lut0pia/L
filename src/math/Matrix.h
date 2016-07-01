@@ -26,6 +26,11 @@ namespace L {
       T _m[l][c];
     public:
       inline Matrix() = default;
+      Matrix(const T& s){
+        for(int i(0); i<l; i++)
+          for(int j(0); j<c; j++)
+            _m[i][j] = (i==j) ? s : 0;
+      }
       Matrix(const Vector<l,T>& v) {
         for(int i(0); i<l; i++)
           _m[i][0] = v[i];
