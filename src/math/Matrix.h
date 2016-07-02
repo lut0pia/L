@@ -170,6 +170,12 @@ namespace L {
         wtr(2,2) = newz.z();
         return wtr;
       }
+      static Matrix<4,4,T> scale(const Vector<3,T>& axes){
+        Matrix<4,4,T> wtr(1);
+        for(int i(0); i<3; i++)
+          wtr(i,i) = axes[i];
+        return wtr;
+      }
 
       operator Vector<l,T>() {
         Vector<l,T> wtr;
