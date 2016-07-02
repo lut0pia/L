@@ -15,7 +15,7 @@ You can either run the premake and build from there, or you can run the run scri
 
 ## Dependencies
 - Premake (binaries supplied)
-- OpenGL
+- OpenGL 3.3
 - GLEW (Windows binaries supplied)
 
 ### Windows
@@ -23,6 +23,9 @@ You can either run the premake and build from there, or you can run the run scri
 
 ### Unix
 - Xlib
+
+## Conventions
+
 
 ## Interfaces included
 Interfaces are small binding files that register in/out functions to the engine for it to be able to read/write files.
