@@ -17,10 +17,9 @@ bool Lexer::nextToken() {
     return false;
   else {
     char* w(_buffer);
-    char c;
     _literal = false;
     do {
-      c = _stream.get();
+      char c(_stream.get());
       if(_literal) { // Literal expression
         if(*(w-1)=='\\')
           switch(c) {
