@@ -1,7 +1,6 @@
 #include "gl/Buffer.h"
 #include "gl/FrameBuffer.h"
 #include "gl/GL.h"
-#include "gl/Light.h"
 #include "gl/Mesh.h"
 #include "gl/MeshBuilder.h"
 #include "gl/PostProcess.h"
