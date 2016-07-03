@@ -47,3 +47,4 @@
 #define L_ASSERT(exp) L_DEBUGONLY(if(!(exp))L_ERROR(exp is false))
 
 #define L_ONCE do{static bool DONE_ONCE(false);if(DONE_ONCE) return;DONE_ONCE = true;}while(false)
+#define L_DO_ONCE static bool DONE_ONCE(false);if(!DONE_ONCE && (DONE_ONCE = true))
