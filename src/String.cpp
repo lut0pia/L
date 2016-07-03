@@ -41,7 +41,8 @@ Array<String> String::explode(char c, size_t limit) const {
       delimiters.push(i+1);
   delimiters.push(size()+1); // Add end delimiter
   for(size_t i(0); i<delimiters.size()-1; i++)
-    wtr.push(substr(delimiters[i],delimiters[i+1]-delimiters[i]-1));
+    if(delimiters[i]<delimiters[i+1]-1)
+      wtr.push(substr(delimiters[i],delimiters[i+1]-delimiters[i]-1));
   return wtr;
 }
 size_t String::endOf(size_t i, bool dquotesEscape) const {
