@@ -3,15 +3,15 @@
 using namespace L;
 using namespace GL;
 
-PostProcess::PostProcess(int width, int height) : _frameBuffer(GL_FRAMEBUFFER) {
-  resize(width, height);
+PostProcess::PostProcess(int width,int height) : _frameBuffer(GL_FRAMEBUFFER) {
+  resize(width,height);
   _color.parameter(GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
   _color.parameter(GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
   _frameBuffer.attach(GL_COLOR_ATTACHMENT0,_color);
   _frameBuffer.attach(GL_DEPTH_ATTACHMENT,_depth);
   _frameBuffer.unbind();
 }
-void PostProcess::resize(int width, int height) {
+void PostProcess::resize(int width,int height) {
   _aspect = (float)width/height;
   _color.load(width,height);
   _depth.storage(GL_DEPTH_COMPONENT32F,width,height);

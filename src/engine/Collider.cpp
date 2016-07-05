@@ -1,6 +1,7 @@
 #include "Collider.h"
 
 #include "../gl/GL.h"
+#include "../gl/Program.h"
 #include "../math/geometry.h"
 
 using namespace L;
@@ -66,40 +67,9 @@ Vector3f Collider::leastToAxis(const Vector3f& axis) const {
   return wtr;
 }
 void Collider::render(const Camera& camera) {
-  glPushMatrix();
-  glMultTransposeMatrixf(_transform->matrix().array());
-  GL::whiteTexture().bind();
-  GL::color(Color::red);
-  glBegin(GL_LINES);
-  // X
-  glVertex3f(_box.min().x(),_box.min().y(),_box.min().z());
-  glVertex3f(_box.max().x(),_box.min().y(),_box.min().z());
-  glVertex3f(_box.min().x(),_box.max().y(),_box.min().z());
-  glVertex3f(_box.max().x(),_box.max().y(),_box.min().z());
-  glVertex3f(_box.min().x(),_box.min().y(),_box.max().z());
-  glVertex3f(_box.max().x(),_box.min().y(),_box.max().z());
-  glVertex3f(_box.min().x(),_box.max().y(),_box.max().z());
-  glVertex3f(_box.max().x(),_box.max().y(),_box.max().z());
-  // Y
-  glVertex3f(_box.min().x(),_box.min().y(),_box.min().z());
-  glVertex3f(_box.min().x(),_box.max().y(),_box.min().z());
-  glVertex3f(_box.max().x(),_box.min().y(),_box.min().z());
-  glVertex3f(_box.max().x(),_box.max().y(),_box.min().z());
-  glVertex3f(_box.min().x(),_box.min().y(),_box.max().z());
-  glVertex3f(_box.min().x(),_box.max().y(),_box.max().z());
-  glVertex3f(_box.max().x(),_box.min().y(),_box.max().z());
-  glVertex3f(_box.max().x(),_box.max().y(),_box.max().z());
-  // Z
-  glVertex3f(_box.min().x(),_box.min().y(),_box.min().z());
-  glVertex3f(_box.min().x(),_box.min().y(),_box.max().z());
-  glVertex3f(_box.max().x(),_box.min().y(),_box.min().z());
-  glVertex3f(_box.max().x(),_box.min().y(),_box.max().z());
-  glVertex3f(_box.min().x(),_box.max().y(),_box.min().z());
-  glVertex3f(_box.min().x(),_box.max().y(),_box.max().z());
-  glVertex3f(_box.max().x(),_box.max().y(),_box.min().z());
-  glVertex3f(_box.max().x(),_box.max().y(),_box.max().z());
-  glEnd();
-  glPopMatrix();
+  GL::baseProgram().use();
+  GL::baseProgram().uniform("model",_transform->matrix()*Matrix44f::scale(_box.size()*.5f));
+  GL::cube().draw();
 }
 void Collider::checkCollision(const Collider& a,const Collider& b) {
   if(a._type==Box && b._type==Box) {

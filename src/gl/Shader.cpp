@@ -7,9 +7,9 @@ using namespace GL;
 
 void Shader::load(const char* src) {
   GLint compile_status(GL_TRUE);
-  glShaderSource(_id, 1, (const GLchar**)&src, nullptr);
+  glShaderSource(_id,1,(const GLchar**)&src,nullptr);
   glCompileShader(_id);
-  glGetShaderiv(_id, GL_COMPILE_STATUS, &compile_status);
+  glGetShaderiv(_id,GL_COMPILE_STATUS,&compile_status);
   if(compile_status != GL_TRUE) {
     GLchar buffer[2048];
     GLsizei count;
@@ -18,7 +18,7 @@ void Shader::load(const char* src) {
     L_ERROR("Couldn't compile shader: "+String(buffer,count));
   }
 }
-Shader::Shader(File file, GLenum type) : _id(glCreateShader(type)) {
+Shader::Shader(File file,GLenum type) : _id(glCreateShader(type)) {
   FileStream fs(file.path(),"rb");
   String src;
   while(!fs.end()) {
@@ -28,7 +28,7 @@ Shader::Shader(File file, GLenum type) : _id(glCreateShader(type)) {
   }
   load(src);
 }
-Shader::Shader(const char* src, GLenum type) : _id(glCreateShader(type)) {
+Shader::Shader(const char* src,GLenum type) : _id(glCreateShader(type)) {
   load(src);
 }
 Shader::~Shader() {

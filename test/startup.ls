@@ -30,13 +30,24 @@
 	(transform-move (transform-require entity) position)
 	(collider-box (collider-require entity) size)
 )))
+(local make-mesh (fun (mesh tex pos) (do
+	(local entity (entity-make))
+	(local entity-transform (transform-require entity))
+	(local entity-mesh (staticmesh-require entity))
+	(transform-move entity-transform pos)
+	(staticmesh-mesh entity-mesh mesh)
+	(staticmesh-texture entity-mesh tex)
+)))
 
 (script-load (script-add (entity-make)) "camera.ls")
 (script-load (script-add (entity-make)) "character.ls")
 (make-terrain)
 
+(make-mesh "smartphone.obj" "smartphone.png" (vec 0 0 10))
+(make-mesh "jerrican.obj" "jerrican.png" (vec 0 0 0))
+
 ; Create all boxes
-(local box-count 64)
+(local box-count 8)
 (while (box-count > 0) (do
 	(make-box)
 	(set box-count (box-count - 1))

@@ -1,84 +1,57 @@
 #include "Mesh.h"
 
+#include "Buffer.h"
+#include "MeshBuilder.h"
 #include "../Interface.h"
 
 using namespace L;
 using namespace GL;
 
-Mesh::Mesh()
-  : _vertexDesc(0),
-    _vertexBuffer(GL_ARRAY_BUFFER),
-    _indexBuffer(GL_ELEMENT_ARRAY_BUFFER),
-    _vertexCount(0),
-    _vertexSize(0),
-    _indexCount(0),
-    _primitive(0) {
-}
-Mesh::Mesh(const String& path)
-  : _vertexDesc(0),
-    _vertexBuffer(GL_ARRAY_BUFFER),
-    _indexBuffer(GL_ELEMENT_ARRAY_BUFFER),
-    _vertexCount(0),
-    _vertexSize(0),
-    _indexCount(0),
-    _primitive(0) {
-  Interface<Mesh>::fromFile(*this,path);
-}
-Mesh::Mesh(const MeshBuilder& builder, GLenum primitive)
-  : _vertexDesc(builder.vertexDesc()),
-    _vertexBuffer(GL_ARRAY_BUFFER),
-    _indexBuffer(GL_ELEMENT_ARRAY_BUFFER),
-    _vertexCount(builder.vertexCount()),
-    _vertexSize(vertexSize(_vertexDesc)),
-    _indexCount(builder.indexCount()),
-    _primitive(primitive) {
-  _vertexBuffer.data(_vertexCount*_vertexSize,builder.vertices(),GL_STATIC_DRAW);
-  if(_indexCount)
-    _indexBuffer.data(_indexCount*sizeof(uint32_t),builder.indices(),GL_STATIC_DRAW);
-}
-/*
-Mesh::Mesh(byte vertexDesc, float* vertices, GLsizei count, GLenum primitive)
-  : _vertexDesc(vertexDesc), _vertexBuffer(GL_ARRAY_BUFFER), _vertexCount(count),
-    _vertexSize(vertexSize(_vertexDesc)), _primitive(primitive) {
-  _vertexBuffer.data(_vertexCount*_vertexSize*sizeof(float),vertices,GL_STATIC_DRAW);
-}
-*/
 
-void Mesh::draw() {
-  if(!_vertexCount) return; // It's an empty mesh
-  _vertexBuffer.bind();
-  if(_indexCount)
-    _indexBuffer.bind();
-  if(_vertexDesc&VERTEX) glEnableClientState(GL_VERTEX_ARRAY);
-  if(_vertexDesc&COLOR) glEnableClientState(GL_COLOR_ARRAY);
-  if(_vertexDesc&NORMAL) glEnableClientState(GL_NORMAL_ARRAY);
-  if(_vertexDesc&VERTEX) glVertexPointer(3, GL_FLOAT, _vertexSize, (void*)(attributeOffset(_vertexDesc,VERTEX)));
-  if(_vertexDesc&COLOR) glColorPointer(GL_BGRA, GL_UNSIGNED_BYTE, _vertexSize, (void*)(attributeOffset(_vertexDesc,COLOR)));
-  if(_vertexDesc&NORMAL) glNormalPointer(GL_FLOAT, _vertexSize, (void*)(attributeOffset(_vertexDesc,NORMAL)));
-  if(_indexCount) glDrawElements(_primitive, _indexCount, GL_UNSIGNED_INT, (void*)0);
-  else glDrawArrays(_primitive, 0, _vertexCount);
-  if(_vertexDesc&VERTEX) glDisableClientState(GL_VERTEX_ARRAY);
-  if(_vertexDesc&COLOR) glDisableClientState(GL_COLOR_ARRAY);
-  if(_vertexDesc&NORMAL) glDisableClientState(GL_NORMAL_ARRAY);
+Mesh::Mesh(GLenum mode,GLsizei count,const void* data,GLsizeiptr size,const std::initializer_list<Attribute>& attributes,const GLushort* iarray,GLsizei icount)
+  : _vao(0),_eab(0){
+  load(mode,count,data,size,attributes,iarray,icount);
 }
-
-GLsizei Mesh::vertexSize(byte desc) {
-  GLsizei wtr(0);
-  if(desc&VERTEX) wtr += 3*sizeof(float);
-  if(desc&COLOR) wtr += 4;
-  if(desc&NORMAL) wtr += 3*sizeof(float);
-  if(desc&TEXCOORD) wtr += 2*sizeof(float);
-  return wtr;
+Mesh::Mesh(const char* filename) : _vao(0),_eab(0){
+  Interface<Mesh>::fromFile(*this,filename);
 }
-GLsizei Mesh::attributeOffset(byte desc, byte type) {
-  GLsizei wtr(0);
-  if(type==VERTEX) return wtr;
-  if(desc&VERTEX) wtr += 3*sizeof(float);
-  if(type==COLOR) return wtr;
-  if(desc&COLOR) wtr += 4;
-  if(type==NORMAL) return wtr;
-  if(desc&NORMAL) wtr += 3*sizeof(float);
-  if(type==TEXCOORD) return wtr;
-  if(desc&TEXCOORD) wtr += 2*sizeof(float);
-  L_ERROR("Attribute could not be found in vertex description.");
+Mesh::~Mesh(){
+  if(_vao){
+    if(_eab)
+    {
+    }
+  }
+}
+void Mesh::indices(const GLushort* data,GLsizei count){
+  _count = count;
+  glGenBuffers(1,&_eab);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,_eab);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER,count*sizeof(GLushort),data,GL_STATIC_DRAW);
+}
+void Mesh::load(GLenum mode,GLsizei count,const void* data,GLsizeiptr size,const std::initializer_list<Attribute>& attributes,const GLushort* iarray,GLsizei icount){
+  if(_vao) this->~Mesh();
+  _mode = mode;
+  _count = count;
+  glGenVertexArrays(1,&_vao);
+  glBindVertexArray(_vao);
+  glGenBuffers(1,&_vbo);
+  glBindBuffer(GL_ARRAY_BUFFER,_vbo);
+  glBufferData(GL_ARRAY_BUFFER,size,data,GL_STATIC_DRAW);
+  for(auto&& a : attributes){
+    glEnableVertexAttribArray(a.index);
+    glVertexAttribPointer(a.index,a.size,a.type,a.normalized,a.stride,a.pointer);
+  }
+  if(iarray) indices(iarray,icount);
+}
+void Mesh::load(const MeshBuilder& mb,GLenum mode,const std::initializer_list<Attribute>& attributes){
+  load(mode,mb.vertexCount(),mb.vertices(),mb.verticesSize(),attributes,mb.indices(),mb.indexCount());
+}
+void Mesh::draw() const{
+  if(_vao){
+    glBindVertexArray(_vao);
+    if(_eab){
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,_eab);
+      glDrawElements(_mode,_count,GL_UNSIGNED_SHORT,0);
+    } else glDrawArrays(_mode,0,_count);
+  }
 }

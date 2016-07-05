@@ -7,15 +7,15 @@
 namespace L {
   namespace GL {
     class Shader {
-      private:
-        GLuint _id;
-        void load(const char* src);
-      public:
-        Shader(File file, GLenum type);
-        Shader(const char* src, GLenum type);
-        ~Shader();
-        L_NOCOPY(Shader)
-        inline GLuint id() const {return _id;}
+      L_NOCOPY(Shader)
+    private:
+      GLuint _id;
+      void load(const char* src);
+    public:
+      Shader(File file,GLenum type);
+      Shader(const char* src,GLenum type);
+      ~Shader();
+      inline GLuint id() const { return _id; }
     };
   }
 }

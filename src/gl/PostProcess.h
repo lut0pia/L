@@ -8,17 +8,17 @@
 namespace L {
   namespace GL {
     class PostProcess {
-      private:
-        FrameBuffer _frameBuffer;
-        Texture _color;
-        RenderBuffer _depth;
-        float _aspect;
-      public:
-        PostProcess(int width, int height);
-        L_NOCOPY(PostProcess)
-        void resize(int width, int height);
-        void prerender();
-        void postrender(Program&);
+      L_NOCOPY(PostProcess)
+    private:
+      FrameBuffer _frameBuffer;
+      Texture _color;
+      RenderBuffer _depth;
+      float _aspect;
+    public:
+      PostProcess(int width,int height);
+      void resize(int width,int height);
+      void prerender();
+      void postrender(Program&);
     };
   }
 }

@@ -5,6 +5,8 @@
 #include "Collider.h"
 #include "Sprite.h"
 #include "Transform.h"
+#include "StaticMesh.h"
+#include "../String.h"
 
 using namespace L;
 using namespace Script;
@@ -92,4 +94,8 @@ void ScriptComponent::init() {
   // Sprite ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(Sprite,"sprite");
   L_COMPONENT_METHOD(Sprite,"sprite-load",2,texture((const char*)stack[1]->get<String>()));
+  // StaticMesh ///////////////////////////////////////////////////////////////////
+  L_COMPONENT_BIND(StaticMesh,"staticmesh");
+  L_COMPONENT_METHOD(StaticMesh,"staticmesh-mesh",2,mesh((const char*)stack[1]->get<String>()));
+  L_COMPONENT_METHOD(StaticMesh,"staticmesh-texture",2,texture((const char*)stack[1]->get<String>()));
 }

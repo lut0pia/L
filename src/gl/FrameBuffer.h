@@ -1,21 +1,24 @@
 #pragma once
 
-#include "RenderBuffer.h"
-#include "Texture.h"
+#include <initializer_list>
+#include "../macros.h"
 
 namespace L {
   namespace GL {
+    class RenderBuffer;
+    class Texture;
     class FrameBuffer {
-      private:
-        GLuint _id, _target;
-      public:
-        FrameBuffer(GLuint target);
-        ~FrameBuffer();
-        L_NOCOPY(FrameBuffer)
-        void bind();
-        void unbind();
-        void attach(GLenum attachment, const RenderBuffer&);
-        void attach(GLenum attachment, const Texture&);
+      L_NOCOPY(FrameBuffer)
+    private:
+      GLuint _id,_target;
+    public:
+      FrameBuffer(GLuint target);
+      FrameBuffer(GLuint target,const std::initializer_list<Texture*>& colors,Texture* depth,const GLenum* attachments,GLsizei attachmentCount);
+      ~FrameBuffer();
+      void bind();
+      void unbind();
+      void attach(GLenum attachment,const RenderBuffer&);
+      void attach(GLenum attachment,const Texture&);
     };
   }
 }

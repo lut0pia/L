@@ -9,27 +9,29 @@
 namespace L {
   namespace GL {
     class Program {
-      private:
-        GLuint _id;
-        Map<uint32_t,GLuint> _uniformLocation;
-        void attach(const Shader&);
-        void detach(const Shader&);
-        void link();
-      public:
-        Program(const Shader&);
-        Program(const Shader&, const Shader&);
-        Program(const Shader&, const Shader&, const Shader&);
-        ~Program();
-        L_NOCOPY(Program)
-        void use() const;
-        GLuint uniformLocation(const char* name);
-        void uniform(const char* name, float);
-        void uniform(const char* name, float,float,float);
-        void uniform(const char* name, const Vector3f&);
-        void uniform(const char* name, const Matrix44f&);
-        void uniform(const char* name, const Texture&, GLenum unit = GL_TEXTURE0);
+      L_NOCOPY(Program)
+    private:
+      GLuint _id;
+      Map<uint32_t,GLuint> _uniformLocation;
+      void attach(const Shader&);
+      void detach(const Shader&);
+      void link();
+    public:
+      Program(const Shader&);
+      Program(const Shader&,const Shader&);
+      Program(const Shader&,const Shader&,const Shader&);
+      ~Program();
+      void use() const;
+      GLuint uniformLocation(const char* name);
+      GLuint uniformBlockIndex(const char* name);
+      void uniformBlockBinding(const char* name,GLuint binding);
+      void uniform(const char* name,float);
+      void uniform(const char* name,float,float,float);
+      void uniform(const char* name,const Vector3f&);
+      void uniform(const char* name,const Matrix44f&);
+      void uniform(const char* name,const Texture&,GLenum unit = GL_TEXTURE0);
 
-        static void unuse();
+      static void unuse();
     };
   }
 }

@@ -31,20 +31,25 @@ namespace L {
       static float _deltaSeconds, _fps, _timescale;
       static uint32_t _frame;
     public:
-      static inline float deltaSeconds() {return _deltaSeconds;}
-      static inline float fps() {return _fps;}
+      static inline float deltaSeconds() { return _deltaSeconds; }
+      static inline float fps() { return _fps; }
       static inline float timescale() { return _timescale; }
       static inline void timescale(float ts) { _timescale = ts; }
-      static inline uint32_t frame() {return _frame;}
-      static void update();
-      static const Ref<GL::Texture>& texture(const char* filepath);
-      static const Ref<GL::Mesh>& mesh(const char* filepath);
+      static inline uint32_t frame() { return _frame; }
 
+      static void update();
       template <class CompType> inline static void addUpdate() {
         _updates.insert(updateAll<CompType>);
       }
       template <class CompType> inline static void addRender() {
         _renders.insert(renderAll<CompType>);
       }
+
+      // Rendering
+      static GL::Buffer& sharedUniform();
+
+      // Resources
+      static const Ref<GL::Texture>& texture(const char* filepath);
+      static const Ref<GL::Mesh>& mesh(const char* filepath);
   };
 }

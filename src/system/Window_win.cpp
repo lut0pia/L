@@ -3,6 +3,7 @@
 #include "../gl/GL.h"
 #include "../bytes/encoding.h"
 #include <windows.h>
+#include <GL/wglew.h>
 
 using namespace L;
 
@@ -119,6 +120,68 @@ LRESULT CALLBACK MainWndProc(HWND hwnd,uint32_t uMsg,WPARAM wParam,LPARAM lParam
   return 0;
 }
 
+void registerClass(){
+  L_ONCE;
+  WNDCLASS wc;
+  wc.style = CS_OWNDC;
+  wc.lpfnWndProc = MainWndProc;
+  wc.cbClsExtra = 0;
+  wc.cbWndExtra = 0;
+  wc.hInstance = GetModuleHandle(nullptr);
+  wc.hIcon = LoadIcon(nullptr,IDI_APPLICATION);
+  wc.hCursor = (*flags & Window::nocursor) ? nullptr : LoadCursor(nullptr,IDC_ARROW);
+  wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
+  wc.lpszMenuName = nullptr;
+  wc.lpszClassName = "LWC";
+  RegisterClass(&wc);
+}
+
+PIXELFORMATDESCRIPTOR pfd;
+PIXELFORMATDESCRIPTOR* initPFD(){
+  L_DO_ONCE{
+    ZeroMemory(&pfd,sizeof(pfd)); // Initialize pixel format descriptor
+    pfd.nSize = sizeof(pfd);
+    pfd.nVersion = 1;
+    pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+    pfd.iPixelType = PFD_TYPE_RGBA;
+    pfd.cColorBits = 32;
+    pfd.cDepthBits = 32;
+    pfd.cStencilBits = 8;
+    pfd.iPixelType = PFD_TYPE_RGBA;
+  }
+  return &pfd;
+}
+
+void initGlew(HINSTANCE hInstance){
+  L_ONCE;
+  registerClass();
+
+  HWND hWndFake = CreateWindow("LWC","FAKE",WS_OVERLAPPEDWINDOW | WS_MAXIMIZE | WS_CLIPCHILDREN,
+                               0,0,CW_USEDEFAULT,CW_USEDEFAULT,NULL,
+                               NULL,hInstance,NULL);
+
+  hDC = GetDC(hWndFake);
+
+  int pf = ChoosePixelFormat(hDC,initPFD());
+  if(!pf)
+    L_ERROR("ChoosePixelFormat failed during Glew initialization");
+
+  if(!SetPixelFormat(hDC,pf,&pfd))
+    L_ERROR("SetPixelFormat failed during Glew initialization");
+
+  HGLRC hRCFake = wglCreateContext(hDC);
+  wglMakeCurrent(hDC,hRCFake);
+
+  if(glewInit() != GLEW_OK)
+    L_ERROR("Couldn't initialize Glew");
+
+  wglMakeCurrent(NULL,NULL);
+  wglDeleteContext(hRCFake);
+  ReleaseDC(hWndFake,hDC);
+  DestroyWindow(hWndFake);
+}
+
+
 void Window::open(const char* title,int width,int height,int flags) {
   buttonstate = _buttonstate;
   events = &_events;
@@ -129,49 +192,60 @@ void Window::open(const char* title,int width,int height,int flags) {
   _height = height;
   _flags = flags;
 
-  WNDCLASS wc;
-  // Register window class
-  wc.style = CS_OWNDC;
-  wc.lpfnWndProc = MainWndProc;
-  wc.cbClsExtra = 0;
-  wc.cbWndExtra = 0;
-  wc.hInstance = GetModuleHandle(nullptr);
-  wc.hIcon = LoadIcon(nullptr,IDI_APPLICATION);
-  wc.hCursor = (flags & nocursor) ? nullptr : LoadCursor(nullptr,IDC_ARROW);
-  wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
-  wc.lpszMenuName = nullptr;
-  wc.lpszClassName = "LWC";
-  RegisterClass(&wc);
+  HINSTANCE hInstance(GetModuleHandle(nullptr));
+  initGlew(hInstance);
+
+  // Create window style
   DWORD wStyle = ((flags & borderless) ? (WS_POPUP) : (WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU))
     | ((flags & resizable) ? (WS_MAXIMIZEBOX) : 0)
     | ((flags & resizable) ? (WS_SIZEBOX) : 0)
     | WS_VISIBLE;
+
   // Find out needed window size for wanted client area size
   RECT rect = {0,0,(int)width,(int)height};
   AdjustWindowRect(&rect,wStyle,false);
   width = rect.right-rect.left;
   height = rect.bottom-rect.top;
-  // Create window
-  hWND = CreateWindow("LWC",title,wStyle,   // Properties
-                      CW_USEDEFAULT,CW_USEDEFAULT,width,height,
-                      nullptr,nullptr,GetModuleHandle(nullptr),nullptr);
-  hDC = GetDC(hWND); // Get the device context (DC)
-  PIXELFORMATDESCRIPTOR pfd;
-  ZeroMemory(&pfd,sizeof(pfd)); // Initialize pixel format descriptor
-  pfd.nSize = sizeof(pfd);
-  pfd.nVersion = 1;
-  pfd.dwFlags = PFD_DRAW_TO_WINDOW | ((flags & opengl) ? PFD_SUPPORT_OPENGL : 0) | PFD_DOUBLEBUFFER;
-  pfd.iPixelType = PFD_TYPE_RGBA;
-  pfd.cColorBits = 24;
-  pfd.cDepthBits = 16;
-  SetPixelFormat(hDC,ChoosePixelFormat(hDC,&pfd),&pfd); // Set pixel format (according to descriptor) to device context
-  if(flags & opengl) {
-    hRC = wglCreateContext(hDC); // create and enable the render context (RC)
-    wglMakeCurrent(hDC,hRC);
-  }
 
-  if(flags & opengl)
-    GL::init();
+  // Create window
+  hWND = CreateWindow("LWC",title,wStyle,
+                      CW_USEDEFAULT,CW_USEDEFAULT,width,height,
+                      nullptr,nullptr,hInstance,nullptr);
+
+  hDC = GetDC(hWND);
+
+  if(WGLEW_ARB_create_context && WGLEW_ARB_pixel_format) {
+    const int iPixelFormatAttribList[] =
+    {
+      WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
+      WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
+      WGL_DOUBLE_BUFFER_ARB, GL_TRUE,
+      WGL_PIXEL_TYPE_ARB, WGL_TYPE_RGBA_ARB,
+      WGL_COLOR_BITS_ARB, 32,
+      WGL_DEPTH_BITS_ARB, 24,
+      WGL_STENCIL_BITS_ARB, 8,
+      0 // End of attributes list
+    };
+    int iContextAttribs[] =
+    {
+      WGL_CONTEXT_MAJOR_VERSION_ARB, 3,
+      WGL_CONTEXT_MINOR_VERSION_ARB, 3,
+      WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
+      0 // End of attributes list
+    };
+
+    int iPixelFormat,iNumFormats;
+    wglChoosePixelFormatARB(hDC,iPixelFormatAttribList,NULL,1,&iPixelFormat,(UINT*)&iNumFormats);
+
+    // PFD seems to be only redundant parameter now
+    if(!SetPixelFormat(hDC,iPixelFormat,initPFD()))
+      L_ERROR("SetPixelFormat failed during window initialization");
+
+    if(!(hRC = wglCreateContextAttribsARB(hDC,0,iContextAttribs)))
+      L_ERROR("wglMakeCurrent failed");
+    wglMakeCurrent(hDC,hRC);
+  } else L_ERROR("WGLEW_ARB_create_context and WGLEW_ARB_pixel_format "
+                 "do not seem to be available on your system.");
 }
 void Window::close() {
   if(!opened()) return;

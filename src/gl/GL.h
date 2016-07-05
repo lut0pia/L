@@ -1,22 +1,19 @@
 #pragma once
 
-#include "Mesh.h"
-#include "Texture.h"
-#include "Program.h"
+#include "../math/Vector.h"
+#include "../math/Matrix.h"
 
 namespace L {
   namespace GL {
-    void init();
+    class Mesh;
+    class Texture;
+    class Program;
     const Texture& whiteTexture();
     Program& baseProgram();
     const char* error();
-    void drawAxes();
-    void makeDisc(Mesh&, int slices);
-    void makeSphere(Mesh&, int rec);
-    // Color drawing
-    void draw2dLine(Vector<2,float>, Vector<2,float>, int size, const Color& c);
-    inline void color(const Color& color) {
-      glColor4ub(color.r(),color.g(),color.b(),color.a());
-    }
+    const Mesh& quad();
+    const Mesh& cube();
+    void makeDisc(Mesh&,int slices);
+    void makeSphere(Mesh&,int rec);
   }
 }
