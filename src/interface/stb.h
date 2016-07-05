@@ -5883,12 +5883,13 @@ namespace L {
       }
       bool from(Bitmap& bmp, const File& file) {
         int width, height, comp;
-        unsigned char* i(stbi_load(file.path(),&width,&height,&comp,4));
-        if(i) {
+        byte* img(stbi_load(file.path(),&width,&height,&comp,4));
+        if(img) {
           bmp.resizeFast(width,height);
           size_t s(width*height);
-          unsigned char* a(i);
-          unsigned char* b((unsigned char*)&bmp[0]);
+          byte* a(img);
+          byte* b((byte*)&bmp[0]);
+
           while(s--) {
             b[2] = a[0];
             b[1] = a[1];
@@ -5897,9 +5898,12 @@ namespace L {
             a += 4;
             b += 4;
           }
-          stbi_image_free(i);
+          stbi_image_free(img);
           return true;
-        } else return false;
+        } else {
+          out << stbi_failure_reason() << '\n';
+          return false;
+        }
       }
   };
 }
