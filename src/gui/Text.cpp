@@ -1,6 +1,6 @@
 #include "Text.h"
 
-#include "../time.h"
+#include "../font/Font.h"
 
 using namespace L;
 using namespace GUI;

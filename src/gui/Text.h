@@ -3,7 +3,7 @@
 
 #include <cstdlib>
 #include "Image.h"
-#include "../font.h"
+#include "../font/FontBase.h"
 
 namespace L {
   namespace GUI {

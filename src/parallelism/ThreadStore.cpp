@@ -1,6 +1,6 @@
 #include "ThreadStore.h"
 
-#include "../system.h"
+#include "../system/System.h"
 
 using namespace L;
 

@@ -1,13 +1,13 @@
 #include "Midi.h"
 
+#include "../macros.h"
+
 using namespace L;
 using namespace Audio;
 
 #if defined L_WINDOWS
-Midi::Midi() {
-  midiOutOpen(&device, 0, 0, 0, CALLBACK_NULL);
-}
 void Midi::send(L::byte msgData[4]) {
+    midiOutOpen(&device,0,0,0,CALLBACK_NULL);
   union {unsigned long word; L::byte data[4];} message;
   message.data[0] = msgData[0];
   message.data[1] = msgData[1];
@@ -16,10 +16,9 @@ void Midi::send(L::byte msgData[4]) {
   midiOutShortMsg(device, message.word);
 }
 #else
-Midi::Midi() {
-  fd = open("/dev/midi", O_WRONLY);
-}
 void Midi::send(L::byte msgData[4]) {
+  L_DO_ONCE
+    fd = open("/dev/midi",O_WRONLY);
   write(fd,msgData,4);
 }
 #endif
@@ -30,7 +29,7 @@ void Midi::sInstrument(L::byte channel, L::byte instrument) {
   msgData[1] = instrument%128; // New instrument id
   msgData[2] = 0;
   msgData[3] = 0;
-  get().send(msgData);
+  send(msgData);
 }
 void Midi::playNote(L::byte channel, L::byte noteNumber, L::byte velocity) {
   L::byte msgData[4];
@@ -38,7 +37,7 @@ void Midi::playNote(L::byte channel, L::byte noteNumber, L::byte velocity) {
   msgData[1] = noteNumber%128; // Note
   msgData[2] = velocity%128; // Velocity
   msgData[3] = 0;
-  get().send(msgData);
+  send(msgData);
 }
 void Midi::stopNote(L::byte channel, L::byte noteNumber) {
   L::byte msgData[4];
@@ -46,7 +45,7 @@ void Midi::stopNote(L::byte channel, L::byte noteNumber) {
   msgData[1] = noteNumber%128; // Note
   msgData[2] = 0; // Velocity
   msgData[3] = 0;
-  get().send(msgData);
+  send(msgData);
 }
 void Midi::stopAll(L::byte channel) {
   for(uint32_t t(0); t<128; t++)

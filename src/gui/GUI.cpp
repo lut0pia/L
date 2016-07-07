@@ -1,6 +1,12 @@
 #include "GUI.h"
 
-#include "../gui.h"
+#include "Background.h"
+#include "Border.h"
+#include "Rectangle.h"
+#include "Line.h"
+#include "ListContainer.h"
+#include "Text.h"
+#include "TextInput.h"
 
 using namespace L;
 
