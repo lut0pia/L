@@ -2,7 +2,6 @@
 #define DEF_L_Tree
 
 #include "../math/Vector.h"
-#include "../tmp.h"
 #include "Pool.h"
 
 namespace L {

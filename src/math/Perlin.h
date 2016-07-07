@@ -2,7 +2,6 @@
 
 #include "Vector.h"
 #include "../containers/MultiArray.h"
-#include "../tmp.h"
 #include "Interpolation.h"
 
 namespace L {

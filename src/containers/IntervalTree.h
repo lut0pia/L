@@ -2,7 +2,6 @@
 #define DEF_L_IntervalTree
 
 #include "../math/Interval.h"
-#include "../tmp.h"
 #include "Pool.h"
 
 namespace L {

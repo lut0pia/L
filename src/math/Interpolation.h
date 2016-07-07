@@ -1,7 +1,6 @@
 #pragma once 
 
 #include "../math/Vector.h"
-#include "../tmp.h"
 
 namespace L {
   template <class T,int d>

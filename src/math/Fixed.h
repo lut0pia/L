@@ -2,7 +2,6 @@
 
 #include "../streams/Stream.h"
 #include "../types.h"
-#include "../tmp.h"
 
 namespace L {
   class Fixed {
@@ -11,7 +10,7 @@ namespace L {
     public:
       static const int bits = sizeof(int)*8;
       static const int halfbits = bits/2;
-      static const int mul = static_pow<2,halfbits>::value;
+      static const int mul = 1<<halfbits;
 
       inline Fixed() {}
       inline Fixed(int i) : _raw(i<<halfbits) {}

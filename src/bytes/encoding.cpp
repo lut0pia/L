@@ -1,22 +1,20 @@
 #include "encoding.h"
 
-#include "../tmp.h"
-
 using namespace L;
 
 const char* L::UTF16toUTF8(uint16_t utf16) {
   static char wtr[4];
-  if(utf16<static_pow<2,7>::value) {
+  if(utf16<(1<<7)) {
     wtr[0] = (char)utf16;
     wtr[1] = 0;
-  } else if(utf16<static_pow<2,11>::value) {
+  } else if(utf16<(1<<11)) {
     wtr[0] = 0xC0 | (utf16>>6);
-    wtr[1] = 0x80 | (utf16 & bitmask<6>::value);
+    wtr[1] = 0x80 | (utf16 & bitmask(6));
     wtr[2] = 0;
   } else {
     wtr[0] = 0xE0 | (utf16>>12);
-    wtr[1] = 0x80 | ((utf16>>6) & bitmask<6>::value);
-    wtr[2] = 0x80 | (utf16 & bitmask<6>::value);
+    wtr[1] = 0x80 | ((utf16>>6) & bitmask(6));
+    wtr[2] = 0x80 | (utf16 & bitmask(6));
     wtr[3] = 0;
   }
   return wtr;
@@ -25,15 +23,15 @@ uint32_t L::UTF8toUTF32(const char* str, int* size) {
   uint32_t wtr((byte)*str);
   if(wtr>>5==0x6) { // 2 bytes
     wtr <<= 6;
-    wtr |= ((byte)*(++str)) & bitmask<6>::value;
-    wtr &= bitmask<11>::value;
+    wtr |= ((byte)*(++str)) & bitmask(6);
+    wtr &= bitmask(11);
     *size = 2;
   } else if(wtr>>4==0xE) { // 3 bytes
     wtr <<= 6;
-    wtr |= ((byte)*(++str)) & bitmask<6>::value;
+    wtr |= ((byte)*(++str)) & bitmask(6);
     wtr <<= 6;
-    wtr |= ((byte)*(++str)) & bitmask<6>::value;
-    wtr &= bitmask<16>::value;
+    wtr |= ((byte)*(++str)) & bitmask(6);
+    wtr &= bitmask(16);
     *size = 3;
   } else *size = 1;
   return wtr;

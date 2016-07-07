@@ -4,7 +4,6 @@
 #include "constants.h"      // Constant values
 #include "macros.h"         // Useful macros
 #include "objects.h"        // Construct/destruct/copy/move/swap objects
-#include "tmp.h"            // Template Meta-Programming
 #include "types.h"          // Useful typedefs
 
 // General classes

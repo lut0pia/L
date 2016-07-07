@@ -70,6 +70,7 @@ namespace L {
   template <class T> inline constexpr const T& min(const T& a,const T& b) { return (a<b) ? a : b; }
   template <class T> inline constexpr const T& clamp(const T& v,const T& min,const T& max) { return (v<min) ? min : ((v>max) ? max : v); }
   template <class T> inline constexpr T abs(const T& n) { return (n<0) ? -n : n; }
+  inline constexpr uint32_t bitmask(uint32_t bits){ return ~(~0<<bits); }
 
   template <class T> T pmod(T x,const T& m) {
     while(x>=m)x -= m;
