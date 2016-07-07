@@ -9,7 +9,6 @@
 
 // General classes
 #include "Interface.h"      // Helping to go from a format to another
-#include "Rand.h"           // Random number generation
 #include "String.h"         // Mandatory string class
 
 // Artifical Intelligence
@@ -113,6 +112,7 @@
 #include "math/Matrix.h"
 #include "math/Perlin.h"
 #include "math/Quaternion.h"
+#include "math/Rand.h"
 #include "math/Rational.h"
 #include "math/Real.h"
 #include "math/Vector.h"

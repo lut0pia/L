@@ -1,7 +1,7 @@
 #include "Context.h"
 
 #include "../containers/Ref.h"
-#include "../Rand.h"
+#include "../math/Rand.h"
 #include "../streams/FileStream.h"
 #include "../math/Vector.h"
 #include "../system/Window.h"

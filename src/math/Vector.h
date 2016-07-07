@@ -3,7 +3,7 @@
 #include <cmath>
 #include <limits>
 #include "../types.h"
-#include "../Rand.h"
+#include "../math/Rand.h"
 #include "../streams/Stream.h"
 
 namespace L {

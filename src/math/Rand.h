@@ -1,7 +1,7 @@
 #ifndef DEF_L_Rand
 #define DEF_L_Rand
 
-#include "types.h"
+#include "../types.h"
 
 namespace L {
   class Rand {
