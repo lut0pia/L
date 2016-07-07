@@ -7,7 +7,7 @@ void RigidBody::start() {
   _invMass = 1.f;
   _velocity = Vector3f(0.f,0.f,0.f);
   _rotVel = Vector3f(0.f,0.f,0.f);
-  _invInertiaTensor = Matrix33f::identity();
+  _invInertiaTensor = Matrix33f(1.f);
 }
 void RigidBody::update() {
   _transform->moveAbsolute(_velocity*Engine::deltaSeconds());

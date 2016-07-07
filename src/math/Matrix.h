@@ -120,13 +120,6 @@ namespace L {
         return adjugate().transpose()/det();
       }
 
-      static Matrix identity() {
-        Matrix wtr;
-        for(int x(0); x<c; x++)
-          for(int y(0); y<l; y++)
-            wtr(x,y) = ((x==y)?(T)1:(T)0);
-        return wtr;
-      }
       static Matrix<4,4,T> rotation(const Vector<3,T>& axis, T angle) {
         Matrix<4,4,T> wtr(Matrix<4,4,T>::identity());
         if(angle < 0.001 && angle > -0.001)
@@ -151,14 +144,14 @@ namespace L {
         return wtr;
       }
       static Matrix<4,4,T> translation(const Vector<3,T>& vector) {
-        Matrix<4,4,T> wtr(Matrix<4,4,T>::identity());
+        Matrix<4,4,T> wtr(1);
         wtr(0,3) = vector.x();
         wtr(1,3) = vector.y();
         wtr(2,3) = vector.z();
         return wtr;
       }
       static Matrix<4,4,T> orientation(const Vector<3,T>& newx, const Vector<3,T>& newy,const Vector<3,T>& newz) {
-        Matrix<4,4,T> wtr(Matrix<4,4,T>::identity());
+        Matrix<4,4,T> wtr(1);
         wtr(0,0) = newx.x();
         wtr(1,0) = newx.y();
         wtr(2,0) = newx.z();
