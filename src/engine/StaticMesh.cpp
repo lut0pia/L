@@ -27,7 +27,6 @@ void StaticMesh::render(const Camera& c){
       "in vec2 ftexcoords;"
       "in vec3 fnormal;"
       "void main(){"
-      //"ocolor = vec3(ftexcoords,0.f);"
       "ocolor = texture(tex,ftexcoords).rgb;"
       "onormal = fnormal;"
       "}",GL_FRAGMENT_SHADER));

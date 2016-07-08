@@ -34,7 +34,7 @@ void Camera::prerender() {
   _ray = orientation*_projection.inverse();
   glViewport(_viewport.min().x()*Window::width(),_viewport.min().y()*Window::height(),
              _viewport.size().x()*Window::width(),_viewport.size().y()*Window::height());
-  Engine::sharedUniform().subData(0,sizeof(_viewProjection),_viewProjection.transpose().array());
+  Engine::sharedUniform().subData(0,sizeof(_viewProjection),_viewProjection.array());
   Engine::sharedUniform().unbind();
   _gbuffer.bind();
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

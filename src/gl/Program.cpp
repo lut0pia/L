@@ -74,7 +74,7 @@ void Program::uniform(const char* name,const Vector3f& p) {
   uniform(name,p.x(),p.y(),p.z());
 }
 void Program::uniform(const char* name,const Matrix44f& m) {
-  glUniformMatrix4fv(uniformLocation(name),1,GL_TRUE,m.array());
+  glUniformMatrix4fv(uniformLocation(name),1,GL_FALSE,m.array());
 }
 void Program::uniform(const char* name,const Texture& texture,GLenum unit) {
   glUniform1i(uniformLocation(name),unit-GL_TEXTURE0);
