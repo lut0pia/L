@@ -22,8 +22,10 @@ int main(int argc,const char* argv[]) {
   {
     ScriptComponent::init();
     FileStream file("startup.ls","rb");
-    Script::Context startupContext;
-    startupContext.read(file);
+    if(file){
+      Script::Context startupContext;
+      startupContext.read(file);
+    } else out << "Couldn't open file startup.ls\n";
   }
   while(Window::loop()) {
     Window::Event e;
