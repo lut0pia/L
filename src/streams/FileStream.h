@@ -24,6 +24,7 @@ namespace L {
       inline int tell() const {return ::ftell(_fd);}
       inline void flush() {fflush(_fd);}
 
+      operator bool() const{ return _fd != nullptr; }
   };
   static FileStream tmpfile, in(stdin), out(stdout), err(stderr);
 }
