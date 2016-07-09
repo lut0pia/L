@@ -28,6 +28,7 @@ You can either run the [premake](https://github.com/premake/premake-core/wiki/Us
 - #pragma once (less name repetition and preprocessor pollution)
 - 2-spaces indentation
 - X is right, Y is forward, Z is up
+- Matrices and Vectors are column-major
 
 ## Interfaces included
 Interfaces are small binding files (found in src/interface) that register in/out functions to the engine for it to be able to read/write files.
