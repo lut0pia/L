@@ -8,7 +8,7 @@ int main(int argc,const char* argv[]) {
   new STB();
   new OBJ();
   TypeInit();
-  Window::openFullscreen("Test",Window::opengl|Window::nocursor);
+  Window::openFullscreen("Test",Window::nocursor);
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
