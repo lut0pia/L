@@ -80,7 +80,7 @@ void ScriptComponent::init() {
     Vector3f size(1.f,1.f,1.f);
     if(params == 2 && stack[1]->is<Vector3f>())
       size = stack[1]->get<Vector3f>();
-    stack[0]->as<Collider*>()->box(Interval3f(-size/2.f,size/2.f));
+    stack[0]->as<Collider*>()->box(Vector3f(0,0,0),size*.5f);
   });
   // RigidBody ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(RigidBody,"rigidbody");

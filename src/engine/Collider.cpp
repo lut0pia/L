@@ -9,32 +9,22 @@ using namespace L;
 void Collider::start() {
   _transform = entity()->requireComponent<Transform>();
   _rigidbody = entity()->component<RigidBody>();
+  _center = 0.f;
 }
-Interval1f Collider::project(const Vector3f& axis) const {
-  Interval1f wtr;
-  switch(_type) {
-    case Box:
-      for(int i(0); i<8; i++) {
-        float p(axis.dot(Vector3f(_transform->toAbsolute(_box.corner(i)))));
-        if(i)
-          wtr.add(p);
-        else
-          wtr = Interval1f(p);
-      }
-      break;
-    case Sphere:
-    {
-      float pcenter(axis.dot(_transform->toAbsolute(_center)));
-      wtr = Interval1f(pcenter-_radius,pcenter+_radius);
+void Collider::update() {
+  // TODO: replace with broadphase
+  Interval3f bb(boundingBox());
+  for(auto&& other : Pool<Collider>::global){
+    if(&other!=this && other.entity()!=entity() && &other<this && bb.overlaps(other.boundingBox())){
+      if(_rigidbody) checkCollision(*this,other); // Rigidbody is always first argument
+      else if(other._rigidbody) checkCollision(other,*this);
     }
-    break;
   }
-  return wtr;
 }
 Interval3f Collider::boundingBox() const {
   switch(_type) {
     case Box:
-      return _box.transformed(_transform->matrix());
+      return Interval3f(_center-_radius,_center+_radius).transformed(_transform->matrix());
     case Sphere:
     {
       Vector3f center(_transform->toAbsolute(_center));
@@ -44,58 +34,82 @@ Interval3f Collider::boundingBox() const {
       return Interval3f();
   }
 }
-Vector3f Collider::leastToAxis(const Vector3f& axis) const {
-  Vector3f wtr;
-  switch(_type) {
-    case Box:
-    {
-      float leastProjected;
-      for(int i(0); i<8; i++) {
-        Vector3f p(_transform->toAbsolute(_box.corner(i)));
-        float projected(axis.dot(p));
-        if(!i || projected<leastProjected) {
-          wtr = p;
-          leastProjected = projected;
-        }
-      }
-    }
-    break;
-    case Sphere:
-      wtr = _transform->toAbsolute(_center)-axis*_radius;
-      break;
-  }
-  return wtr;
-}
 void Collider::render(const Camera& camera) {
   GL::baseProgram().use();
-  GL::baseProgram().uniform("model",_transform->matrix()*Matrix44f::scale(_box.size()*.5f));
+  GL::baseProgram().uniform("model",_transform->matrix()*Matrix44f::scale(_radius));
   GL::cube().draw();
+}
+Interval1f project(const Vector3f& axis,const Vector3f* points,size_t count){
+  if(count--){
+    Interval1f wtr(Interval1f(axis.dot(points[count])));
+    while(count--)
+      wtr.add(axis.dot(points[count]));
+    return wtr;
+  }
+  return Interval1f();
+}
+Vector3f leastToAxis(const Vector3f& axis,const Vector3f* points,size_t count) {
+  if(count--){
+    Vector3f wtr(points[count]);
+    float leastProjected(axis.dot(points[count]));
+    while(count--){
+      const Vector3f& p(points[count]);
+      float projected(axis.dot(p));
+      if(projected<leastProjected) {
+        wtr = p;
+        leastProjected = projected;
+      }
+    }
+    return wtr;
+  }
+  return Vector3f();
 }
 void Collider::checkCollision(const Collider& a,const Collider& b) {
   if(a._type==Box && b._type==Box) {
     const Transform *at(a._transform),*bt(b._transform);
-    Vector3f ar(at->right()),af(at->forward()),au(at->up()),
+    const Vector3f ar(at->right()),af(at->forward()),au(at->up()),
       br(bt->right()),bf(bt->forward()),bu(bt->up());
-    Vector3f axes[] = {ar,af,au,br,bf,bu,
-                       ar.cross(br).normalized(),
-                       ar.cross(bf).normalized(),
-                       ar.cross(bu).normalized(),
-                       af.cross(br).normalized(),
-                       af.cross(bf).normalized(),
-                       af.cross(bu).normalized(),
-                       au.cross(br).normalized(),
-                       au.cross(bf).normalized(),
-                       au.cross(bu).normalized()
+    const Vector3f axes[] = {
+      ar,af,au,br,bf,bu,
+      ar.cross(br).normalized(),
+      ar.cross(bf).normalized(),
+      ar.cross(bu).normalized(),
+      af.cross(br).normalized(),
+      af.cross(bf).normalized(),
+      af.cross(bu).normalized(),
+      au.cross(br).normalized(),
+      au.cross(bf).normalized(),
+      au.cross(bu).normalized()
     };
-    uintptr_t axis(-1);
+    const Vector3f apoints[] = {
+      at->toAbsolute(a._center+Vector3f(-a._radius.x(),-a._radius.y(),-a._radius.z())),
+      at->toAbsolute(a._center+Vector3f(-a._radius.x(),-a._radius.y(),a._radius.z())),
+      at->toAbsolute(a._center+Vector3f(-a._radius.x(),a._radius.y(),-a._radius.z())),
+      at->toAbsolute(a._center+Vector3f(-a._radius.x(),a._radius.y(),a._radius.z())),
+      at->toAbsolute(a._center+Vector3f(a._radius.x(),-a._radius.y(),-a._radius.z())),
+      at->toAbsolute(a._center+Vector3f(a._radius.x(),-a._radius.y(),a._radius.z())),
+      at->toAbsolute(a._center+Vector3f(a._radius.x(),a._radius.y(),-a._radius.z())),
+      at->toAbsolute(a._center+Vector3f(a._radius.x(),a._radius.y(),a._radius.z())),
+    };
+    const Vector3f bpoints[] = {
+      bt->toAbsolute(b._center+Vector3f(-b._radius.x(),-b._radius.y(),-b._radius.z())),
+      bt->toAbsolute(b._center+Vector3f(-b._radius.x(),-b._radius.y(),b._radius.z())),
+      bt->toAbsolute(b._center+Vector3f(-b._radius.x(),b._radius.y(),-b._radius.z())),
+      bt->toAbsolute(b._center+Vector3f(-b._radius.x(),b._radius.y(),b._radius.z())),
+      bt->toAbsolute(b._center+Vector3f(b._radius.x(),-b._radius.y(),-b._radius.z())),
+      bt->toAbsolute(b._center+Vector3f(b._radius.x(),-b._radius.y(),b._radius.z())),
+      bt->toAbsolute(b._center+Vector3f(b._radius.x(),b._radius.y(),-b._radius.z())),
+      bt->toAbsolute(b._center+Vector3f(b._radius.x(),b._radius.y(),b._radius.z())),
+    };
+    uintptr_t axis(sizeof(axes));
     float minOverlap;
     Vector3f normal;
     for(uintptr_t i(0); i<sizeof(axes)/sizeof(Vector3f); i++) {
       if(axes[i].lengthSquared()>0.00001f) { // The axis is not a null vector (caused by a cross product)
-        Interval1f axisA(a.project(axes[i])),axisB(b.project(axes[i])),intersection(axisA,axisB); // Compute projections and intersection
+        Interval1f axisA(project(axes[i],apoints,8)),axisB(project(axes[i],bpoints,8)),intersection(axisA,axisB); // Compute projections and intersection
         float overlap(intersection.size().x());
         if(overlap>0.f) {
-          if(axis==-1 || overlap<minOverlap) { // First or smallest overlap yet
+          if(axis==sizeof(axes) || overlap<minOverlap) { // First or smallest overlap yet
             normal = (axisA.center().x()<axisB.center().x()) ? -axes[i] : axes[i];
             minOverlap = overlap;
             axis = i;
@@ -107,14 +121,13 @@ void Collider::checkCollision(const Collider& a,const Collider& b) {
     if(b._rigidbody){
       a._transform->moveAbsolute(normal*minOverlap*.5f);
       b._transform->moveAbsolute(normal*minOverlap*-.5f);
-    }
-    else a._transform->moveAbsolute(normal*minOverlap);
+    } else a._transform->moveAbsolute(normal*minOverlap);
     // Compute impact point
     Vector3f impactPoint(0,0,0);
     if(axis<6)
-      impactPoint = (axis<3) ? b.leastToAxis(-normal) : a.leastToAxis(normal);
+      impactPoint = (axis<3) ? leastToAxis(-normal,bpoints,8) : leastToAxis(normal,apoints,8);
     else{
-      Vector3f avertex(a.leastToAxis(normal)),bvertex(b.leastToAxis(-normal));
+      Vector3f avertex(leastToAxis(normal,apoints,8)),bvertex(leastToAxis(-normal,bpoints,8));
       const Vector3f& aaxis(axes[(axis-6)/3]),baxis(axes[((axis-6)%3)+3]);
       if(!lineLineIntersect(avertex,avertex+aaxis,bvertex,bvertex+baxis,&avertex,&bvertex))
         return; // Unable to compute intersection
