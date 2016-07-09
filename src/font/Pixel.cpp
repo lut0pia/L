@@ -7,7 +7,7 @@ Pixel::Pixel(int height) : _ratio(height/7.f) {
   _lineheight = (height*11)/7;
 }
 #define O Color::white
-#define _ Color()
+#define _ Color::black
 #define MAKE_GLYPH(w,h,...)\
   {\
     Color tmp[] = {__VA_ARGS__};\
