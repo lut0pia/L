@@ -1,5 +1,4 @@
-#ifndef DEF_L_IntervalTree
-#define DEF_L_IntervalTree
+#pragma once
 
 #include "../math/Interval.h"
 #include "Pool.h"
@@ -53,8 +52,3 @@ namespace L {
   // Regular trees
   template <class K,class V> class AABBTree : public IntervalTree<3,K,V> {};
 }
-
-#endif
-
-
-
