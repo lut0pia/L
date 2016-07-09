@@ -5,7 +5,7 @@
 
 namespace L {
   template <class T>
-  class Quaternion : private Vector<4,T> {
+  class Quaternion : public Vector<4,T> {
     private:
       inline Quaternion(const T& x, const T& y, const T& z, const T& w) : Vector<4,T>(x,y,z,w) {}
     public:
