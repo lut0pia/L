@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Component.h"
+#include "../math/geometry.h"
 #include "../math/Matrix.h"
 #include "../math/Quaternion.h"
 #include "../math/Vector.h"
@@ -36,6 +37,6 @@ namespace L {
     inline Vector3f right() const { return absoluteRotation().rotate(Vector3f(1,0,0)); }
     inline Vector3f forward() const { return absoluteRotation().rotate(Vector3f(0,1,0)); }
     inline Vector3f up() const { return absoluteRotation().rotate(Vector3f(0,0,1)); }
-    inline Matrix44f matrix() const { return Matrix44f::translation(absolutePosition())*Matrix44f::orientation(right(),forward(),up()); }
+    inline Matrix44f matrix() const { return quatToMat(absoluteRotation(),absolutePosition()); }
   };
 }
