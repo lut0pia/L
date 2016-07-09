@@ -12,12 +12,13 @@
 // STL
 #include <algorithm>
 #include <functional>
+#include <initializer_list>
 #include <limits>
 #include <utility>
 
 // OpenGL
 #include <GL/glew.h>
-#include <GL/glu.h>
+#include <GL/wglew.h>
 
 // Platform
 #if defined L_WINDOWS
