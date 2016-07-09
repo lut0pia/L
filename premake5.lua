@@ -19,7 +19,7 @@ solution "L"
 		libdirs {"ext/lib"}
 		linkoptions {"/NODEFAULTLIB:libc.lib","/NODEFAULTLIB:msvcrt.lib","/NODEFAULTLIB:libcd.lib","/NODEFAULTLIB:msvcrtd.lib"}
 		defines {"_CRT_SECURE_NO_WARNINGS"}
-		buildoptions {"/wd4200","/wd4244"}
+		buildoptions {"/wd4100","/wd4146","/wd4200","/wd4244","/wd4706"}
 		characterset "MBCS" -- Don't use UNICODE
 		flags {"ExtraWarnings"}
 	configuration {"vs*","Debug"}
