@@ -201,19 +201,27 @@ Context::Context(){
     return 0;
   });
   _globals[FNV1A("key-pressed")] = (Native)([](Context& c,const Array<Var>& a)->Var {
-    if(a.size()==2 && a[1].is<Symbol>())
-      switch(a[1].as<Symbol>()) {
+    if(a.size()==2){
+      if(a[1].is<Symbol>())
+        switch(a[1].as<Symbol>()) {
 #define KEY_BIND(k) case FNV1A(#k): return Window::isPressed(Window::Event::k)
-        KEY_BIND(Z);
-        KEY_BIND(Q);
-        KEY_BIND(S);
-        KEY_BIND(D);
-        KEY_BIND(UP);
-        KEY_BIND(DOWN);
-        KEY_BIND(LEFT);
-        KEY_BIND(RIGHT);
-        KEY_BIND(SPACE);
-      }
+          KEY_BIND(A); KEY_BIND(B); KEY_BIND(C); KEY_BIND(D); KEY_BIND(E); KEY_BIND(F);
+          KEY_BIND(G); KEY_BIND(H); KEY_BIND(I); KEY_BIND(J); KEY_BIND(K); KEY_BIND(L);
+          KEY_BIND(M); KEY_BIND(N); KEY_BIND(O); KEY_BIND(P); KEY_BIND(Q); KEY_BIND(R);
+          KEY_BIND(S); KEY_BIND(T); KEY_BIND(U); KEY_BIND(V); KEY_BIND(W); KEY_BIND(X);
+          KEY_BIND(Y); KEY_BIND(Z); KEY_BIND(BACKSPACE); KEY_BIND(TAB); KEY_BIND(ENTER);
+          KEY_BIND(PAUSE); KEY_BIND(CAPS); KEY_BIND(ESCAPE); KEY_BIND(SPACE); KEY_BIND(SHIFT);
+          KEY_BIND(LSHIFT); KEY_BIND(RSHIFT); KEY_BIND(CTRL); KEY_BIND(LCTRL); KEY_BIND(RCTRL);
+          KEY_BIND(ALT); KEY_BIND(LALT); KEY_BIND(RALT); KEY_BIND(LEFT); KEY_BIND(RIGHT);
+          KEY_BIND(UP); KEY_BIND(DOWN); KEY_BIND(PAGEUP); KEY_BIND(PAGEDOWN); KEY_BIND(END);
+          KEY_BIND(HOME); KEY_BIND(NUMLOCK); KEY_BIND(NUM0); KEY_BIND(NUM1); KEY_BIND(NUM2);
+          KEY_BIND(NUM3); KEY_BIND(NUM4); KEY_BIND(NUM5); KEY_BIND(NUM6); KEY_BIND(NUM7);
+          KEY_BIND(NUM8); KEY_BIND(NUM9); KEY_BIND(F1); KEY_BIND(F2); KEY_BIND(F3); KEY_BIND(F4);
+          KEY_BIND(F5); KEY_BIND(F6); KEY_BIND(F7); KEY_BIND(F8); KEY_BIND(F9); KEY_BIND(F10);
+          KEY_BIND(F11); KEY_BIND(F12); KEY_BIND(LBUTTON); KEY_BIND(RBUTTON); KEY_BIND(MBUTTON);
+        } else if(a[1].is<int>())
+          return Window::isPressed((Window::Event::Button)(a[1].as<int>()+'0'));
+    }
     return false;
   });
   _globals[FNV1A("vec")] = (Function)([](SymbolVar* stack,size_t params)->Var {
