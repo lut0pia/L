@@ -1,5 +1,4 @@
-#ifndef DEF_L_Image_Color
-#define DEF_L_Image_Color
+#pragma once
 
 #include "../math/math.h"
 #include "../math/Vector.h"
@@ -37,10 +36,5 @@ namespace L {
     return s << '#' << ntos<16>(v.rgba(),8);
   }
 }
-
-#endif
-
-
-
 
 
