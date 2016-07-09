@@ -4,7 +4,7 @@ using namespace L;
 using namespace GL;
 
 RenderBuffer::RenderBuffer() {
-  glGenRenderbuffers(1,&_id);
+  glCreateRenderbuffers(1,&_id);
 }
 RenderBuffer::~RenderBuffer() {
   glDeleteRenderbuffers(1,&_id);

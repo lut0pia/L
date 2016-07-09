@@ -21,9 +21,9 @@ namespace L {
         GLenum type;
         GLboolean normalized;
         GLsizei stride;
-        const void* pointer;
+        GLintptr offset;
       };
-      inline Mesh() : _vao(0),_eab(0){}
+      inline Mesh() : _vao(0),_vbo(0),_eab(0){}
       Mesh(GLenum mode,GLsizei count,const void* data,GLsizeiptr size,const std::initializer_list<Attribute>&,const GLushort* indices = nullptr,GLsizei icount = 0);
       Mesh(const char* filename);
       ~Mesh();

@@ -55,8 +55,8 @@ namespace L {
       }
       mesh.load(mb,GL_TRIANGLES,{
         GL::Mesh::Attribute{0,3,GL_FLOAT,GL_FALSE,sizeof(float)*8,0},
-        GL::Mesh::Attribute{1,2,GL_FLOAT,GL_FALSE,sizeof(float)*8,(void*)(sizeof(float)*3)},
-        GL::Mesh::Attribute{2,3,GL_FLOAT,GL_FALSE,sizeof(float)*8,(void*)(sizeof(float)*5)},
+        GL::Mesh::Attribute{1,2,GL_FLOAT,GL_FALSE,sizeof(float)*8,sizeof(float)*3},
+        GL::Mesh::Attribute{2,3,GL_FLOAT,GL_FALSE,sizeof(float)*8,sizeof(float)*5},
       });
       return true;
     }
