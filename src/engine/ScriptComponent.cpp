@@ -25,6 +25,19 @@ void ScriptComponent::update() {
   _context.variable("delta") = Engine::deltaSeconds();
   _context.execute(updateCall);
 }
+void ScriptComponent::event(const Window::Event& e){
+  auto table(ref<Map<Var,Var>>());
+  auto& typeSlot((*table)[FNV1A("type")]);
+  switch(e.type){ // TODO: handle other event types
+    case Window::Event::MOUSEMOVE:
+      typeSlot = FNV1A("MOUSEMOVE");
+      break;
+  }
+  (*table)[FNV1A("x")] = e.x;
+  (*table)[FNV1A("y")] = e.y;
+  Var eventCall(Array<Var>{FNV1A("event"),table});
+  _context.execute(eventCall);
+}
 
 void ScriptComponent::init() {
   L_ONCE;

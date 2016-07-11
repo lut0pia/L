@@ -8,7 +8,7 @@ int main(int argc,const char* argv[]) {
   new STB();
   new OBJ();
   TypeInit();
-  Window::openFullscreen("Test",Window::nocursor);
+  Window::openFullscreen("Test",Window::nocursor|Window::capturecursor);
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
@@ -19,6 +19,7 @@ int main(int argc,const char* argv[]) {
   Engine::addRender<Sprite>();
   Engine::addRender<StaticMesh>();
   Engine::addRender<Collider>();
+  Engine::addEvent<ScriptComponent>();
   {
     ScriptComponent::init();
     FileStream file("startup.ls","rb");
@@ -27,10 +28,7 @@ int main(int argc,const char* argv[]) {
       startupContext.read(file);
     } else out << "Couldn't open file startup.ls\n";
   }
-  while(Window::loop()) {
-    Window::Event e;
-    while(Window::newEvent(e)) {}
+  while(Window::loop())
     Engine::update();
-  }
   return 0;
 }

@@ -12,6 +12,7 @@ namespace L {
     void start();
     void load(const char* filename);
     void update();
+    void event(const Window::Event&);
     static void init();
   };
 }

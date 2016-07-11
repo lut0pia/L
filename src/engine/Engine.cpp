@@ -11,6 +11,7 @@ using namespace L;
 
 Set<void(*)()> Engine::_updates;
 Set<void(*)(const Camera&)> Engine::_renders;
+Set<void(*)(const Window::Event&)> Engine::_events;
 Map<uint32_t,Ref<GL::Texture> > Engine::_textures;
 Map<uint32_t,Ref<GL::Mesh> > Engine::_meshes;
 Timer Engine::_timer;
@@ -23,6 +24,11 @@ void Engine::update() {
   _fps = 1.f/_deltaTime.fSeconds();
   _deltaTime = min(_deltaTime,Time(0,50))*_timescale; // Delta time shouldn't be over 50ms
   _deltaSeconds = _deltaTime.fSeconds();
+
+  Window::Event e;
+  while(Window::newEvent(e))
+    for(auto&& event : _events)
+      event(e);
   for(auto&& update : _updates)
     update();
   for(auto&& camera : Pool<Camera>::global){
