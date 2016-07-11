@@ -190,16 +190,6 @@ Context::Context(){
   _globals[FNV1A("rand")] = (Native)([](Context& c,const Array<Var>&)->Var {
     return Rand::nextFloat();
   });
-  _globals[FNV1A("mouse-x")] = (Native)([](Context& c,const Array<Var>&)->Var {
-    return Window::mousePosition().x();
-  });
-  _globals[FNV1A("mouse-y")] = (Native)([](Context& c,const Array<Var>&)->Var {
-    return Window::mousePosition().y();
-  });
-  _globals[FNV1A("mouse-set")] = (Function)([](SymbolVar* stack,size_t params)->Var {
-    Window::mousePosition(Vector2i(stack[0]->get<int>(),stack[1]->get<int>()));
-    return 0;
-  });
   _globals[FNV1A("key-pressed")] = (Native)([](Context& c,const Array<Var>& a)->Var {
     if(a.size()==2){
       if(a[1].is<Symbol>())
