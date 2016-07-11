@@ -89,6 +89,14 @@ LRESULT CALLBACK MainWndProc(HWND hwnd,uint32_t uMsg,WPARAM wParam,LPARAM lParam
       e.x = GET_X_LPARAM(lParam);
       e.y = GET_Y_LPARAM(lParam);
       *mousePos = Vector2i(e.x,e.y);
+      if(uMsg==WM_MOUSEMOVE && *flags&Window::capturecursor){
+        const int halfWidth(Window::width()/2),halfHeight(Window::height()/2);
+        e.x -= halfWidth;
+        e.y -= halfHeight;
+        if(e.x || e.y)
+          SetCursorPos(halfWidth,halfHeight);
+        else return 0;
+      }
       break;
     case WM_MOUSEWHEEL:
       e.type = Window::Event::MOUSEWHEEL;
@@ -112,11 +120,13 @@ LRESULT CALLBACK MainWndProc(HWND hwnd,uint32_t uMsg,WPARAM wParam,LPARAM lParam
       return DefWindowProc(hwnd,uMsg,wParam,lParam);
       break;
   }
-  if(e.type==Window::Event::BUTTONDOWN)
-    buttonstate[e.button] = true;
-  else if(e.type==Window::Event::BUTTONUP)
-    buttonstate[e.button] = false;
-  events->push(e);
+  if(e.type!=Window::Event::NONE){
+    if(e.type==Window::Event::BUTTONDOWN)
+      buttonstate[e.button] = true;
+    else if(e.type==Window::Event::BUTTONUP)
+      buttonstate[e.button] = false;
+    events->push(e);
+  }
   return 0;
 }
 
@@ -211,6 +221,9 @@ void Window::open(const char* title,int width,int height,int flags) {
   hWND = CreateWindow("LWC",title,wStyle,
                       CW_USEDEFAULT,CW_USEDEFAULT,width,height,
                       nullptr,nullptr,hInstance,nullptr);
+
+  if(flags&capturecursor)
+    SetCursorPos(width/2,height/2);
 
   hDC = GetDC(hWND);
 
