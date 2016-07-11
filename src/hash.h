@@ -24,7 +24,7 @@ namespace L{
   constexpr uint32_t FNV1A(const char* str,uint32_t r){ return (*str) ? FNV1A(str+1,(r^*str)*16777619) : r; }
   constexpr uint32_t FNV1A(const char* str){ return FNV1A(str,2166136261); }
 
-  template <class T> inline uint32_t hash(const T& v){ return fnv1a(&v,sizeof(v)); }
+  template <class T> inline uint32_t hash(const T& v){ return fnv1a((const char*)&v,sizeof(v)); }
   inline uint32_t hash(const char* str){ return fnv1a(str); }
   inline uint32_t hash(uint32_t v){ return v; }
 }
