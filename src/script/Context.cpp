@@ -170,7 +170,7 @@ Context::Context(){
   _globals[FNV1A("%")] = (Binary)([](const Var& a,const Var& b)->Var {return a%b; });
   _globals[FNV1A("print")] = (Function)([](SymbolVar* stack,size_t params)->Var {
     for(uintptr_t i(0); i<params; i++)
-      out << *stack[i];
+      out << stack[i].value();
     return 0;
   });
   _globals[FNV1A("typename")] = (Function)([](SymbolVar* stack,size_t params)->Var {
