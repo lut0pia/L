@@ -1,12 +1,14 @@
 #pragma once
 
 #include "Transform.h"
+#include "ScriptComponent.h"
 
 namespace L {
   class RigidBody : public Component {
     L_COMPONENT(RigidBody)
   protected:
     Transform* _transform;
+    ScriptComponent* _script;
     Vector3f _velocity,_rotVel;
     float _invMass;
     Matrix33f _invInertiaTensor;

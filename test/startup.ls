@@ -1,5 +1,6 @@
-(local make-box (fun (do
+(set make-box (fun (do
 	(local entity (entity-make))
+	(script-load (script-add entity) "box.ls")
 	(local rigidbody (rigidbody-add entity))
 	(local collider (collider-add entity))
 	(local transform (transform-require entity))

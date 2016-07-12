@@ -4,6 +4,7 @@
 	(set transform (transform-require entity))
 	(transform-move transform (vec 0 0 2))
 	(set rigidbody (rigidbody-require entity))
+	(set character-rigidbody rigidbody)
 	(sprite-load (sprite-add entity) "spritesheet.png")
 	(local collider (collider-add entity))
 	(collider-box collider)
