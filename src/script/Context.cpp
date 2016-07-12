@@ -82,10 +82,6 @@ Var Context::execute(const Var& code) {
         wtr = handle.as<Function>()(stack,array.size()-1); // Call function
       _stack.size(frame); // Resize to the previous frame
       return wtr;
-    } else if(array.size()==3){ // May be a binary operator
-      const Var& middle(execute(array[1]));
-      if(middle.is<Binary>())
-        return middle.as<Binary>()(handle,execute(array[2]));
     }
   } else if(code.is<Quote>()) return code.as<Quote>().var; // Return raw data
   return code;
@@ -157,17 +153,54 @@ Context::Context(){
     }
     return 0;
   });
-  _globals[FNV1A("=")] = (Binary)([](const Var& a,const Var& b)->Var {return a==b; });
-  _globals[FNV1A("<>")] = (Binary)([](const Var& a,const Var& b)->Var {return a!=b; });
-  _globals[FNV1A(">")] = (Binary)([](const Var& a,const Var& b)->Var {return a>b; });
-  _globals[FNV1A("<")] = (Binary)([](const Var& a,const Var& b)->Var {return a<b; });
-  _globals[FNV1A(">=")] = (Binary)([](const Var& a,const Var& b)->Var {return a>=b; });
-  _globals[FNV1A("<=")] = (Binary)([](const Var& a,const Var& b)->Var {return a<=b; });
-  _globals[FNV1A("+")] = (Binary)([](const Var& a,const Var& b)->Var {return a+b; });
-  _globals[FNV1A("-")] = (Binary)([](const Var& a,const Var& b)->Var {return a-b; });
-  _globals[FNV1A("*")] = (Binary)([](const Var& a,const Var& b)->Var {return a*b; });
-  _globals[FNV1A("/")] = (Binary)([](const Var& a,const Var& b)->Var {return a/b; });
-  _globals[FNV1A("%")] = (Binary)([](const Var& a,const Var& b)->Var {return a%b; });
+#define CMP(name,cop)\
+  _globals[FNV1A(name)] = (Function)([](SymbolVar* stack,size_t params)->Var {\
+    L_ASSERT(params>=2);\
+    for(uintptr_t i(0); i<params-1; i++)\
+      if(stack[i].value() cop stack[i+1].value())\
+        return false;\
+    return true;\
+  })
+  CMP("=",!=);
+  CMP("<>",==);
+  CMP(">",<=);
+  CMP("<",>=);
+  CMP(">=",<);
+  CMP("<=",>);
+#undef CMP
+  _globals[FNV1A("+")] = (Function)([](SymbolVar* stack,size_t params)->Var {
+    L_ASSERT(params>=1);
+    Var wtr(stack[0].value());
+    for(uintptr_t i(1); i<params; i++)
+      wtr += stack[i].value();
+    return wtr;
+  });
+  _globals[FNV1A("*")] = (Function)([](SymbolVar* stack,size_t params)->Var {
+    L_ASSERT(params>=1);
+    Var wtr(stack[0].value());
+    for(uintptr_t i(1); i<params; i++)
+      wtr *= stack[i].value();
+    return wtr;
+  });
+  _globals[FNV1A("-")] = (Function)([](SymbolVar* stack,size_t params)->Var {
+    L_ASSERT(params>=1);
+    if(params==1)
+      return Var(0) - stack[0].value(); // TODO: replace with actual neg dynamic operator
+    else{
+      Var wtr(stack[0].value());
+      for(uintptr_t i(1); i<params; i++)
+        wtr -= stack[i].value();
+      return wtr;
+    }
+  });
+  _globals[FNV1A("/")] = (Function)([](SymbolVar* stack,size_t params)->Var {
+    L_ASSERT(params==2);
+    return stack[0].value()/stack[1].value();
+  });
+  _globals[FNV1A("%")] = (Function)([](SymbolVar* stack,size_t params)->Var {
+    L_ASSERT(params==2);
+    return stack[0].value()%stack[1].value();
+  });
   _globals[FNV1A("print")] = (Function)([](SymbolVar* stack,size_t params)->Var {
     for(uintptr_t i(0); i<params; i++)
       out << stack[i].value();

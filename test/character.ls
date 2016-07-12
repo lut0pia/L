@@ -10,10 +10,10 @@
 	(collider-box collider)
 )))
 (local update (fun (do
-	(local movement (delta * 16))
+	(local movement (* delta 16))
 	(if (key-pressed UP) 		(rigidbody-addspeed rigidbody (vec 0 movement 0)))
-	(if (key-pressed LEFT) 	(rigidbody-addspeed rigidbody (vec (0.0 - movement) 0 0)))
-	(if (key-pressed DOWN)	(rigidbody-addspeed rigidbody (vec 0 (0.0 - movement) 0)))
+	(if (key-pressed LEFT) 	(rigidbody-addspeed rigidbody (vec (- movement) 0 0)))
+	(if (key-pressed DOWN)	(rigidbody-addspeed rigidbody (vec 0 (- movement) 0)))
 	(if (key-pressed RIGHT) (rigidbody-addspeed rigidbody (vec movement 0 0)))
 	(if (key-pressed SPACE) (rigidbody-addspeed rigidbody (vec 0 0 movement)))
 )))

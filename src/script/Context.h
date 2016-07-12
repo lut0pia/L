@@ -13,7 +13,6 @@ namespace L {
     typedef KeyValue<Symbol,Var> SymbolVar;
     typedef Var(*Function)(SymbolVar*,size_t);
     typedef Var(*Native)(Context&,const Array<Var>&);
-    typedef Var(*Binary)(const Var&,const Var&);
     typedef struct { Var var; } Quote;
     typedef struct { Array<Symbol> parameters; Var code; } CodeFunction;
     class Context {
