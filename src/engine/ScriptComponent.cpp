@@ -35,7 +35,10 @@ void ScriptComponent::event(const Window::Event& e){
   }
   (*table)[FNV1A("x")] = e.x;
   (*table)[FNV1A("y")] = e.y;
-  Var eventCall(Array<Var>{FNV1A("event"),table});
+  event(table);
+}
+void ScriptComponent::event(const Ref<Map<Var,Var>>&e){
+  Var eventCall(Array<Var>{FNV1A("event"),e});
   _context.execute(eventCall);
 }
 
