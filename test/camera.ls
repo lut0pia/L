@@ -16,7 +16,7 @@
 )))
 (local event (fun (e) (do
 	(if ((e'type) = 'MOUSEMOVE) (do
-		(transform-rotate transform (vec 0 0 1) ((e'x) * -0.01))
-		(transform-rotate transform (vec 1 0 0) ((e'y) * -0.01))
+		(transform-rotate transform (vec 0 0 1) ((e'x) * -0.005))
+		(transform-rotate transform (vec 1 0 0) ((e'y) * -0.005))
 	))
 )))
