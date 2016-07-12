@@ -40,6 +40,7 @@
 	(staticmesh-texture entity-mesh tex)
 )))
 
+(engine-gravity (vec 0 0 -9.8))
 (script-load (script-add (entity-make)) "camera.ls")
 (script-load (script-add (entity-make)) "character.ls")
 (make-terrain)

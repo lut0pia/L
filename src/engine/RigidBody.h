@@ -7,6 +7,7 @@ namespace L {
   class RigidBody : public Component {
     L_COMPONENT(RigidBody)
   protected:
+    static Vector3f _gravity;
     Transform* _transform;
     ScriptComponent* _script;
     Vector3f _velocity,_rotVel;
@@ -25,5 +26,8 @@ namespace L {
     float deltaVelocity(const Vector3f& impact,const Vector3f& normal) const;
     void applyImpulse(const Vector3f& impulse,const Vector3f& offset);
     static void collision(RigidBody* a,RigidBody* b,const Vector3f& impact,const Vector3f& normal);
+
+    static void gravity(const Vector3f& g){ _gravity = g; }
+    static const Vector3f& gravity(){ return _gravity; }
   };
 }

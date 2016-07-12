@@ -63,6 +63,11 @@ void ScriptComponent::init() {
       Engine::timescale(stack[0]->get<float>());
     return Engine::timescale();
   });
+  Context::global(FNV1A("engine-gravity")) = (Function)([](SymbolVar* stack,size_t params)->Var {
+    if(params>0)
+      RigidBody::gravity(stack[0]->get<Vector3f>());
+    return RigidBody::gravity();
+  });
   // Entity ///////////////////////////////////////////////////////////////////
   Context::global(FNV1A("entity-make")) = (Function)([](SymbolVar* stack,size_t params)->Var {
     return new Entity();

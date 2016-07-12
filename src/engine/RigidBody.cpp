@@ -2,6 +2,8 @@
 
 using namespace L;
 
+Vector3f RigidBody::_gravity(0.f,0.f,.0f);
+
 void RigidBody::start() {
   _transform = entity()->requireComponent<Transform>();
   _script = entity()->component<ScriptComponent>();
@@ -15,7 +17,7 @@ void RigidBody::update() {
   float rotLength(_rotVel.length());
   if(rotLength>.001f)
     _transform->rotateAbsolute(_rotVel*(1.f/rotLength),rotLength*Engine::deltaSeconds());
-  _velocity += Engine::deltaSeconds()*Vector3f(0.f,0.f,-9.8f);
+  _velocity += Engine::deltaSeconds()*_gravity;
 }
 
 Vector3f RigidBody::velocityAt(const Vector3f& offset) const{
