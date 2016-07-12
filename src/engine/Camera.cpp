@@ -58,11 +58,11 @@ void Camera::postrender(){
       "uniform sampler2D depthBuffer;"
       "void main(){"
       "vec3 color = texture(colorBuffer,ftexcoords).rgb;"
-      "vec3 normal = texture(normalBuffer,ftexcoords).xyz;"
+      "vec3 normal = normalize(texture(normalBuffer,ftexcoords).xyz);"
       "float depth = texture(depthBuffer,ftexcoords).r;"
       "vec4 position = inverse(viewProj) * vec4(ftexcoords*2.f-1.f,depth*2.f-1.f,1.f);"
       "position = vec4(position.xyz/position.w,1.f);"
-      "fragcolor = vec4(color,1.f) * max(.2f,dot(normal,vec3(1,1,1)));"
+      "fragcolor = vec4(color,1.f) * (1.f+dot(normal,normalize(vec3(1,-2,3))))*.5f;"
       "}",GL_FRAGMENT_SHADER));
   _gbuffer.unbind();
   glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
