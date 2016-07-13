@@ -2,7 +2,9 @@
 
 using namespace L;
 
-Vector3f RigidBody::_gravity(0.f,0.f,.0f);
+Vector3f
+RigidBody::_gravity(0.f,0.f,.0f),
+RigidBody::_scale(1.f,1.f,1.f);
 
 void RigidBody::start() {
   _transform = entity()->requireComponent<Transform>();
@@ -33,8 +35,9 @@ float RigidBody::deltaVelocity(const Vector3f& offset,const Vector3f& normal) co
   return angularComponent+_invMass;
 }
 void RigidBody::applyImpulse(const Vector3f& impulse,const Vector3f& offset){
-  addForce(impulse);
-  addTorque(offset.cross(impulse));
+  Vector3f scaledImpulse(impulse*_scale);
+  addForce(scaledImpulse);
+  addTorque((offset*_scale).cross(scaledImpulse));
 }
 void RigidBody::collision(RigidBody* a,RigidBody* b,const Vector3f& impact,const Vector3f& normal) {
   Vector3f
