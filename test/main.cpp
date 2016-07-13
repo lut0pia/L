@@ -11,7 +11,6 @@ int main(int argc,const char* argv[]) {
   Window::openFullscreen("Test",Window::nocursor|Window::capturecursor);
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_CULL_FACE);
-  glCullFace(GL_BACK);
   Engine::addUpdate<SpriteAnimator>();
   Engine::addUpdate<ScriptComponent>();
   Engine::addUpdate<RigidBody>();
