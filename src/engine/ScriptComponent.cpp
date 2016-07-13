@@ -56,7 +56,15 @@ void ScriptComponent::init() {
 #define L_COMPONENT_REQUIRE(cname,fname) L_FUNCTION(fname,\
     if(params==1 && stack[0]->is<Entity*>())\
       return stack[0]->as<Entity*>()->requireComponent<cname>();)
-#define L_COMPONENT_BIND(cname,name) L_COMPONENT_ADD(cname,name "-add"); L_COMPONENT_GET(cname,name "-get"); L_COMPONENT_REQUIRE(cname,name "-require"); Type<cname*>::cancmp<>();
+#define L_COMPONENT_ENTITY(cname,fname) L_FUNCTION(fname,\
+    if(params==1 && stack[0]->is<cname*>())\
+      return stack[0]->as<cname*>()->entity();)
+#define L_COMPONENT_BIND(cname,name)\
+  L_COMPONENT_ADD(cname,name "-add");\
+  L_COMPONENT_GET(cname,name "-get");\
+  L_COMPONENT_REQUIRE(cname,name "-require");\
+  L_COMPONENT_ENTITY(cname,name "-entity");\
+  Type<cname*>::cancmp<>();
   // Engine ///////////////////////////////////////////////////////////////////
   L_FUNCTION("engine-timescale",{
     if(params>0)
