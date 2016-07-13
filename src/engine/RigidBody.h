@@ -17,6 +17,11 @@ namespace L {
     void start();
     void update();
 
+    inline float mass() const{ return 1.f/_invMass; }
+    inline void mass(float m){ _invMass = 1.f/m; }
+    inline float restitution() const{ return _restitution; }
+    inline void restitution(float r){ _restitution = r; }
+
     inline Vector3f center() const{ return _transform->absolutePosition(); }
     inline void addSpeed(const Vector3f& v){ _velocity += v; }
     inline void addForce(const Vector3f& f){ addSpeed(f*_invMass); }

@@ -110,7 +110,11 @@ void ScriptComponent::init() {
   });
   // RigidBody ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(RigidBody,"rigidbody");
+  L_COMPONENT_METHOD(RigidBody,"rigidbody-mass",2,mass(stack[1]->get<float>()));
+  L_COMPONENT_METHOD(RigidBody,"rigidbody-restitution",2,restitution(stack[1]->get<float>()));
   L_COMPONENT_METHOD(RigidBody,"rigidbody-addspeed",2,addSpeed(stack[1]->get<Vector3f>()));
+  L_COMPONENT_METHOD(RigidBody,"rigidbody-addforce",2,addForce(stack[1]->get<Vector3f>()));
+  L_COMPONENT_METHOD(RigidBody,"rigidbody-addtorque",2,addTorque(stack[1]->get<Vector3f>()));
   // Camera ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(Camera,"camera");
   L_COMPONENT_METHOD(Camera,"camera-perspective",5,perspective(stack[1]->get<float>(),stack[2]->get<float>(),stack[3]->get<float>(),stack[4]->get<float>()));
