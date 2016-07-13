@@ -10,9 +10,9 @@ namespace L {
     static Vector3f _gravity;
     Transform* _transform;
     ScriptComponent* _script;
-    Vector3f _velocity,_rotVel;
-    float _invMass;
     Matrix33f _invInertiaTensor;
+    Vector3f _velocity,_rotVel;
+    float _invMass,_restitution;
   public:
     void start();
     void update();

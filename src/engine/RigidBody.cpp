@@ -8,6 +8,7 @@ void RigidBody::start() {
   _transform = entity()->requireComponent<Transform>();
   _script = entity()->component<ScriptComponent>();
   _invMass = 1.f;
+  _restitution = .5f;
   _velocity = Vector3f(0.f,0.f,0.f);
   _rotVel = Vector3f(0.f,0.f,0.f);
   _invInertiaTensor = Matrix33f(1.f);
@@ -35,7 +36,6 @@ void RigidBody::applyImpulse(const Vector3f& impulse,const Vector3f& offset){
   addForce(impulse);
   addTorque(offset.cross(impulse));
 }
-float restitution(.3f);
 void RigidBody::collision(RigidBody* a,RigidBody* b,const Vector3f& impact,const Vector3f& normal) {
   Vector3f
     arel(impact-a->_transform->absolutePosition()),
@@ -44,6 +44,7 @@ void RigidBody::collision(RigidBody* a,RigidBody* b,const Vector3f& impact,const
     bv((b) ? b->velocityAt(brel) : 0);
 
   float contactVelocity((av-bv).dot(normal));
+  float restitution((b) ? min(a->_restitution,b->_restitution) : a->_restitution);
   float desiredDeltaVelocity(-contactVelocity*(1.f+restitution));
   float deltaVelocity(a->deltaVelocity(arel,normal));
   if(b) deltaVelocity += b->deltaVelocity(brel,normal);
