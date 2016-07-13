@@ -17,7 +17,7 @@ namespace L {
     void start();
     void update();
 
-    inline Vector3f com() const{ return _transform->absolutePosition(); }
+    inline Vector3f center() const{ return _transform->absolutePosition(); }
     inline void addSpeed(const Vector3f& v){ _velocity += v; }
     inline void addForce(const Vector3f& f){ addSpeed(f*_invMass); }
     inline void addTorque(const Vector3f& t){ _rotVel += _invInertiaTensor*t; }

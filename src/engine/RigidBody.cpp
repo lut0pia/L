@@ -38,8 +38,8 @@ void RigidBody::applyImpulse(const Vector3f& impulse,const Vector3f& offset){
 }
 void RigidBody::collision(RigidBody* a,RigidBody* b,const Vector3f& impact,const Vector3f& normal) {
   Vector3f
-    arel(impact-a->_transform->absolutePosition()),
-    brel((b) ? impact-b->_transform->absolutePosition() : 0),
+    arel(impact-a->center()),
+    brel((b) ? impact-b->center() : 0),
     av(a->velocityAt(arel)),
     bv((b) ? b->velocityAt(brel) : 0);
 
