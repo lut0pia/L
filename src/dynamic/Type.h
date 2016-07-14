@@ -3,6 +3,7 @@
 #include "../containers/Map.h"
 #include "../streams/Stream.h"
 #include "../types.h"
+#include "../hash.h"
 
 namespace L {
   typedef void(*Cast)(void*,const void*);
@@ -18,6 +19,7 @@ namespace L {
     void(*dtr)(void*);
     void(*del)(void*);
     void(*out)(Stream&,const void*);
+    uint32_t(*hash)(const void*);
 
     // Optional
     void(*add)(void*,const void*);
@@ -40,7 +42,7 @@ namespace L {
     static TypeDescription makeDesc() {
       TypeDescription wtr = {
         "",sizeof(T),
-        cpy,cpyto,assign,dtr,del,out,0
+        cpy,cpyto,assign,dtr,del,out,Type<T>::hash,0
       };
 #if defined _MSC_VER
       // "struct L::TypeDescription __cdecl L::Type<int>::makeDesc(void)"
@@ -64,6 +66,7 @@ namespace L {
     static void dtr(void* p) { ((T*)p)->~T(); }
     static void del(void* p) { delete(T*)p; }
     static void out(Stream& s,const void* p) { s << (*(const T*)p); }
+    static uint32_t hash(const void* p) { return L::hash(*(const T*)p); }
 
   public:
     static inline const TypeDescription* description() { return &td; }

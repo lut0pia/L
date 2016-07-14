@@ -88,8 +88,3 @@ Variable& Variable::operator[](size_t i) {
   if(as<Array<Variable> >().size()<=i) as<Array<Variable> >().size(i+1);
   return as<Array<Variable> >()[i];
 }
-
-Stream& L::operator<<(L::Stream& s,const Variable& v) {
-  v.type()->out(s,v.value());
-  return s;
-}
