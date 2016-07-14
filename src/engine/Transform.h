@@ -13,12 +13,14 @@ namespace L {
     Transform* _parent;
     Vector3f _translation;
     Quatf _rotation;
+    float _scale;
   public:
-    inline Transform() : _parent(nullptr),_translation(0,0,0) {}
+    inline Transform() : _parent(nullptr),_translation(0,0,0), _scale(1.f) {}
     inline Vector3f absolutePosition() const { return (_parent) ? (_parent->absolutePosition()+parentRotation().rotate(_translation)) : _translation; }
     inline Vector3f toAbsolute(const Vector3f& v) const { return absolutePosition()+_rotation.rotate(v); }
     inline Quatf absoluteRotation() const { return (_parent) ? _parent->absoluteRotation() : _rotation; }
     inline Quatf parentRotation() const { return (_parent) ? _parent->absoluteRotation() : Quatf(); }
+    inline float absoluteScale() const{ return (_parent) ? _parent->absoluteScale()*_scale : _scale; }
     inline void rotate(const Quatf& q) { _rotation = _rotation * q; }
     inline void rotate(const Vector3f& v,float d) { rotate(Quatf(v,d)); }
     inline void rotateAbsolute(const Quatf& q){ _rotation = q * _rotation; } // Wrong
@@ -34,9 +36,11 @@ namespace L {
     inline const Vector3f& translation() const{ return _translation; }
     inline void rotation(const Quatf& r){ _rotation = r; }
     inline const Quatf& rotation() const{ return _rotation; }
+    inline void scale(float s){ _scale = s; }
+    inline float scale() const{ return _scale; }
     inline Vector3f right() const { return absoluteRotation().rotate(Vector3f(1,0,0)); }
     inline Vector3f forward() const { return absoluteRotation().rotate(Vector3f(0,1,0)); }
     inline Vector3f up() const { return absoluteRotation().rotate(Vector3f(0,0,1)); }
-    inline Matrix44f matrix() const { return quatToMat(absoluteRotation(),absolutePosition()); }
+    inline Matrix44f matrix() const { return SQTToMat(absoluteRotation(),absolutePosition(),absoluteScale()); }
   };
 }
