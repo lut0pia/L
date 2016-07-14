@@ -127,6 +127,7 @@ void ScriptComponent::init() {
   // Camera ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(Camera,"camera");
   L_COMPONENT_METHOD(Camera,"camera-perspective",5,perspective(stack[1]->get<float>(),stack[2]->get<float>(),stack[3]->get<float>(),stack[4]->get<float>()));
+  L_COMPONENT_METHOD(Camera,"camera-ortho",5,ortho(stack[1]->get<float>(),stack[2]->get<float>(),stack[3]->get<float>(),stack[4]->get<float>()));
   // Script ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(ScriptComponent,"script");
   L_COMPONENT_METHOD(ScriptComponent,"script-load",2,load(stack[1]->get<String>()));
