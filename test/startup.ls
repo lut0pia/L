@@ -4,7 +4,7 @@
 	(local rigidbody (rigidbody-add entity))
 	(local collider (collider-add entity))
 	(local transform (transform-require entity))
-	(collider-box collider)
+	(collider-box collider (vec 1 1 1))
 	(transform-move transform
 		(vec
 			(* (- (rand) 0.5) 16)

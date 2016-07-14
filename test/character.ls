@@ -7,7 +7,7 @@
 	(set character-rigidbody rigidbody)
 	(sprite-load (sprite-add entity) "spritesheet.png")
 	(local collider (collider-add entity))
-	(collider-box collider)
+	(collider-box collider (vec 1 1 1))
 )))
 (local update (fun (do
 	(local movement (* delta 16))
