@@ -87,4 +87,5 @@ namespace L {
   };
   inline String operator+(const char* a, const String& b) {return String(a)+b;}
   inline Stream& operator<<(Stream &s,const String& v) { s.write(&v[0],v.size()); return s; }
+  inline uint32_t hash(const String& v){ return hash((const char*)v); }
 }
