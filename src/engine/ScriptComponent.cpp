@@ -26,7 +26,7 @@ void ScriptComponent::update() {
   _context.execute(updateCall);
 }
 void ScriptComponent::event(const Window::Event& e){
-  auto table(ref<Map<Var,Var>>());
+  auto table(ref<Table<Var,Var>>());
   auto& typeSlot((*table)[FNV1A("type")]);
   switch(e.type){ // TODO: handle other event types
     case Window::Event::MOUSEMOVE:
@@ -37,7 +37,7 @@ void ScriptComponent::event(const Window::Event& e){
   (*table)[FNV1A("y")] = e.y;
   event(table);
 }
-void ScriptComponent::event(const Ref<Map<Var,Var>>&e){
+void ScriptComponent::event(const Ref<Table<Var,Var>>&e){
   Var eventCall(Array<Var>{FNV1A("event"),e});
   _context.execute(eventCall);
 }

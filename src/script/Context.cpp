@@ -93,8 +93,8 @@ Var* Context::reference(const Var& code) {
     const Array<Var>& array(code.as<Array<Var> >());
     if(array.size()==2){ // It's a pair
       if(Var* first = reference(array[0])){ // The first is a reference
-        if(first->is<Ref<Map<Var,Var> > >()) // It's an object
-          return &(*first->as<Ref<Map<Var,Var> > >())[execute(array[1])]; // Compute index and return pointer to field
+        if(first->is<Ref<Table<Var,Var> > >()) // It's an object
+          return &(*first->as<Ref<Table<Var,Var> > >())[execute(array[1])]; // Compute index and return pointer to field
         else if(first->is<Array<Var> >()) // It's an array
           return &first->as<Array<Var> >()[execute(array[1]).get<int>()]; // Compute index and return pointer to element
       }
@@ -210,11 +210,10 @@ Context::Context(){
     return stack[0]->type()->name;
   });
   _globals[FNV1A("object")] = (Function)([](SymbolVar* stack,size_t params)->Var {
-    Ref<Map<Var,Var> > wtr;
-    wtr.make();
-    Map<Var,Var>& map(*wtr);
+    Ref<Table<Var,Var> > wtr(ref<Table<Var,Var>>());
+    Table<Var,Var>& table(*wtr);
     for(uintptr_t i(1); i<params; i += 2)
-      map[*stack[i-1]] = *stack[i];
+      table[stack[i-1].value()] = stack[i].value();
     return wtr;
   });
   _globals[FNV1A("now")] = (Native)([](Context& c,const Array<Var>&)->Var {

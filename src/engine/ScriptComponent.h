@@ -13,7 +13,7 @@ namespace L {
     void load(const char* filename);
     void update();
     void event(const Window::Event&);
-    void event(const Ref<Map<Var,Var>>&);
+    void event(const Ref<Table<Var,Var>>&);
     static void init();
   };
 }
