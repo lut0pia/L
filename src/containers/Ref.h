@@ -67,7 +67,5 @@ namespace L {
     return wtr;
   }
   template <class T>
-  Stream& operator<<(Stream& s,const Ref<T>& v) {
-    return s << '(' << ((T*)v) << ',' << v.counter() << ')';
-  }
+  inline Stream& operator<<(Stream& s,const Ref<T>& v) { return (v.null()) ? s<< "null" : s << *((T*)v); }
 }
