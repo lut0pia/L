@@ -57,7 +57,7 @@ namespace L {
     inline T* operator->() const { return (T*)_p; }
     inline bool null() const { return _p==nullptr; }
     inline void clear() { destruct(*this); _p = nullptr; }
-    inline int counter() const { return (_p) ? counter() : 0; }
+    inline int counter() const { return (_p) ? *((int*)_p-1) : 0; }
     template <class R> friend class Ref;
   };
   template <class T,typename... Args>
