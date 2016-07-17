@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Transform.h"
-#include "ScriptComponent.h"
 
 namespace L {
   class RigidBody : public Component {
@@ -9,7 +8,6 @@ namespace L {
   protected:
     static Vector3f _gravity,_scale;
     Transform* _transform;
-    ScriptComponent* _script;
     Matrix33f _invInertiaTensor;
     Vector3f _velocity,_rotVel;
     float _invMass,_restitution;

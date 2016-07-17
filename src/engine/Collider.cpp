@@ -9,6 +9,7 @@ using namespace L;
 void Collider::start() {
   _transform = entity()->requireComponent<Transform>();
   _rigidbody = entity()->component<RigidBody>();
+  _script = entity()->component<ScriptComponent>();
   _center = 0.f;
 }
 void Collider::update() {
@@ -64,7 +65,7 @@ Vector3f leastToAxis(const Vector3f& axis,const Vector3f* points,size_t count) {
   }
   return Vector3f();
 }
-void Collider::checkCollision(const Collider& a,const Collider& b) {
+void Collider::checkCollision(Collider& a,Collider& b) {
   if(a._type==Box && b._type==Box) {
     const Transform *at(a._transform),*bt(b._transform);
     const Vector3f ar(at->right()),af(at->forward()),au(at->up()),
@@ -132,6 +133,16 @@ void Collider::checkCollision(const Collider& a,const Collider& b) {
       if(!lineLineIntersect(avertex,avertex+aaxis,bvertex,bvertex+baxis,&avertex,&bvertex))
         return; // Unable to compute intersection
       impactPoint = (avertex+bvertex)/2.f;
+    }
+    auto e(ref<Table<Var,Var>>());
+    (*e)[FNV1A("type")] = FNV1A("COLLISION");
+    if(a._script){
+      (*e)[FNV1A("other")] = &b;
+      a._script->event(e);
+    }
+    if(b._script){
+      (*e)[FNV1A("other")] = &a;
+      b._script->event(e);
     }
     RigidBody::collision(a._rigidbody,b._rigidbody,impactPoint,normal);
   }

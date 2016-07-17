@@ -2,6 +2,7 @@
 
 #include "Transform.h"
 #include "RigidBody.h"
+#include "ScriptComponent.h"
 #include "../math/Interval.h"
 
 namespace L {
@@ -10,6 +11,7 @@ namespace L {
   protected:
     Transform* _transform;
     RigidBody* _rigidbody;
+    ScriptComponent* _script;
     Vector3f _center,_radius;
     enum {
       Box,Sphere
@@ -21,6 +23,6 @@ namespace L {
     inline void sphere(const Vector3f& center,float radius) { _type = Sphere; _center = center; _radius = radius; }
     Interval3f boundingBox() const;
     void render(const Camera& camera);
-    void checkCollision(const Collider& a,const Collider& b);
+    void checkCollision(Collider& a,Collider& b);
   };
 }

@@ -8,7 +8,6 @@ RigidBody::_scale(1.f,1.f,1.f);
 
 void RigidBody::start() {
   _transform = entity()->requireComponent<Transform>();
-  _script = entity()->component<ScriptComponent>();
   _invMass = 1.f;
   _restitution = .5f;
   _velocity = Vector3f(0.f,0.f,0.f);
@@ -55,15 +54,5 @@ void RigidBody::collision(RigidBody* a,RigidBody* b,const Vector3f& impact,const
   if(contactVelocity<0.f){
     a->applyImpulse(impulse,arel);
     if(b) b->applyImpulse(-impulse,brel);
-    auto e(ref<Table<Var,Var>>());
-    (*e)[FNV1A("type")] = FNV1A("COLLISION");
-    if(a->_script){
-      (*e)[FNV1A("other")] = b;
-      a->_script->event(e);
-    }
-    if(b && b->_script){
-      (*e)[FNV1A("other")] = a;
-      b->_script->event(e);
-    }
   }
 }
