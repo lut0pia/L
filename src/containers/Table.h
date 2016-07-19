@@ -14,34 +14,12 @@ namespace L {
       if(_slots){
         size_t oldsize(_size);
         KV* oldslots(_slots);
-        _size *= 2;
-        _slots = (KV*)calloc(_size,sizeof(KV));
+        _slots = (KV*)calloc(_size *= 2,sizeof(KV));
         for(uintptr_t i(0); i<oldsize; i++)
           if(oldslots[i].key())
-            copyIn(oldslots[i]);
+            memcpy(find(oldslots[i].key()),oldslots+i,sizeof(KV));
         free(oldslots);
       } else _slots = (KV*)calloc(_size = 4,sizeof(KV));
-    }
-    void copyIn(const KV& e){
-      uint32_t h(e.key());
-      for(uintptr_t i(h*((float)_size/UINT32_MAX)); i<_size; i++){
-        if(!_slots[i].key()){
-          memcpy((void*)(_slots+i),&e,sizeof(e));
-          return;
-        } else if(_slots[i].key()>h){
-          if(uintptr_t k = nextEmpty(i)){
-            memmove(_slots+i+1,_slots+i,(k-i)*sizeof(KV));
-            memcpy((void*)(_slots+i),&e,sizeof(e));
-            return;
-          } else L_ERROR("No more space while resizing Table... Sorry.");
-        }
-      }
-    }
-    uintptr_t nextEmpty(uintptr_t i) const{
-      while(_slots[i].key())
-        if(++i>=_size)
-          return 0;
-      return i;
     }
     class Iterator{
     private:
@@ -67,36 +45,38 @@ namespace L {
     }
     ~Table(){
       if(_slots){
-        for(auto&& e : *this)
-          destruct(e);
+        if(_count)
+          for(uintptr_t i(0); i<_size; i++)
+            if(_slots[i].key())
+              destruct(_slots[i].value());
         free(_slots);
       }
     }
     inline size_t size() const{ return _size; }
     inline size_t count() const{ return _count; }
-    inline Iterator begin() const{ return (_slots) ? ++Iterator(_slots-1) : Iterator(nullptr); }
-    inline Iterator end() const{ return (_slots) ? _slots+_size : Iterator(nullptr); }
+    inline Iterator begin() const{ return (_count) ? ++Iterator(_slots-1) : Iterator(nullptr); }
+    inline Iterator end() const{ return (_count) ? _slots+_size : Iterator(nullptr); }
     V& operator[](const K& k){
-      if(_count*10>=_size*7) grow();
+      if(_count*10>=_size*7)
+        grow();
       uint32_t h(hash(k));
-      for(uintptr_t i(h*((float)_size/UINT32_MAX)); i<_size; i++){
-        if(!_slots[i].key()){
-          construct(_slots[i],h);
-          _count++;
-          return _slots[i].value();
-        } else if(_slots[i].key()==h)
-          return _slots[i].value();
-        else if(_slots[i].key()>h){
-          if(uintptr_t k = nextEmpty(i)){
-            memmove(_slots+i+1,_slots+i,(k-i)*sizeof(KV));
-            construct(_slots[i],h);
-            _count++;
-            return _slots[i].value();
-          } else break;
-        }
+      KV* slot(find(h));
+      if(!slot->key()){
+        construct(*slot,hash(k));
+        _count++;
       }
-      grow();
-      return this->operator[](k);
+      return slot->value();
+    }
+    KV* find(uint32_t h){
+      do{
+        const uintptr_t i(h*((float)_size/UINT32_MAX));
+        for(uintptr_t j(0); j<_size; j++){
+          const uintptr_t k((i+j)%_size);
+          if(!_slots[k].key() || _slots[k].key()==h)
+            return _slots+k;
+        }
+        grow();
+      } while(true);
     }
   };
   template <class K,class V> inline Stream& operator<<(Stream& s,const Table<K,V>& v) {
