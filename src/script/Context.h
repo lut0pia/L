@@ -3,6 +3,7 @@
 #include "Lexer.h"
 #include "../containers/StaticStack.h"
 #include "../dynamic/Variable.h"
+#include "../containers/Ref.h"
 #include "../containers/Table.h"
 #include "../hash.h"
 
@@ -28,8 +29,8 @@ namespace L {
       Var& variable(Symbol);
       inline Var& variable(const char* str){ return variable(fnv1a(str)); }
       Var& local(Symbol);
-      Var execute(const Var& code);
-      Var* reference(const Var& code);
+      Var execute(const Var& code,Ref<Table<Var,Var>>* src = nullptr);
+      Var* reference(const Var& code,Ref<Table<Var,Var>>* src = nullptr);
 
       static inline Var& global(Symbol s){ return _globals[s]; }
     };

@@ -58,16 +58,18 @@ Var& Context::local(Symbol sym){
   _stack.push(SymbolVar(sym));
   return _stack.top().value();
 }
-Var Context::execute(const Var& code) {
-  if(Var* ref = reference(code)) return *ref;
+Var Context::execute(const Var& code,Ref<Table<Var,Var>>* src) {
+  if(Var* ref = reference(code,src)) return *ref;
   else if(code.is<Array<Var> >()) { // Function call
     const Array<Var>& array(code.as<Array<Var> >()); // Get reference of array value
-    const Var& handle(execute(array[0])); // Execute first child of array to get function handle
+    Ref<Table<Var,Var>> source;
+    const Var& handle(execute(array[0],&source)); // Execute first child of array to get function handle
     if(handle.is<Native>())
       return handle.as<Native>()(*this,array);
     else if(handle.is<Function>() || handle.is<Ref<CodeFunction> >()) {
       Var wtr;
       size_t frame(_stack.size()); // Save local frame
+      if(!source.null())_stack.push(FNV1A("self"),source);
       SymbolVar* stack(&_stack.top()+1);
       for(uint32_t i(1); i<array.size(); i++) { // For all parameters
         Symbol sym;
@@ -86,16 +88,17 @@ Var Context::execute(const Var& code) {
   } else if(code.is<Quote>()) return code.as<Quote>().var; // Return raw data
   return code;
 }
-Var* Context::reference(const Var& code) {
+Var* Context::reference(const Var& code,Ref<Table<Var,Var>>* src) {
   if(code.is<Symbol>()) // It's a symbol so it's a simple reference to a variable
     return &variable(code.as<Symbol>());
   else if(code.is<Array<Var> >()){ // It's an array so it may be a reference to an object field or a
     const Array<Var>& array(code.as<Array<Var> >());
     if(array.size()==2){ // It's a pair
       if(Var* first = reference(array[0])){ // The first is a reference
-        if(first->is<Ref<Table<Var,Var> > >()) // It's an object
+        if(first->is<Ref<Table<Var,Var> > >()){ // It's an object
+          if(src) *src = first->as<Ref<Table<Var,Var> > >();
           return &(*first->as<Ref<Table<Var,Var> > >())[execute(array[1])]; // Compute index and return pointer to field
-        else if(first->is<Array<Var> >()) // It's an array
+        } else if(first->is<Array<Var> >()) // It's an array
           return &first->as<Array<Var> >()[execute(array[1]).get<int>()]; // Compute index and return pointer to element
       }
     }
