@@ -8,7 +8,7 @@ namespace L {
   class Ref {
   private:
     static const size_t offset = 8;
-    byte* _p;
+    T* _p;
     inline int& counter(){ return *((int*)_p-1); }
 
   public:
@@ -25,7 +25,7 @@ namespace L {
     inline ~Ref() {
       if(_p && --counter()==0){
         destruct(**this);
-        free(_p-offset);
+        free((byte*)_p-offset);
       }
     }
     inline Ref& operator=(const Ref& other) {
@@ -46,15 +46,15 @@ namespace L {
     template <typename... Args>
     void make(Args&&... args){
       destruct(*this);
-      _p = (byte*)malloc(sizeof(T)+offset)+offset;
+      _p = (T*)((byte*)malloc(sizeof(T)+offset)+offset);
       counter() = 1;
       construct(**this,args...);
     }
     template <class R> inline bool operator==(const Ref<R>& other) { return _p==other._p; }
-    inline const T& operator*() const { return *((T*)_p); }
-    inline T& operator*() { return *((T*)_p); }
-    inline operator T*() const { return (T*)_p; }
-    inline T* operator->() const { return (T*)_p; }
+    inline const T& operator*() const { return *_p; }
+    inline T& operator*() { return *_p; }
+    inline operator T*() const { return _p; }
+    inline T* operator->() const { return _p; }
     inline bool null() const { return _p==nullptr; }
     inline void clear() { destruct(*this); _p = nullptr; }
     inline int counter() const { return (_p) ? *((int*)_p-1) : 0; }
@@ -67,5 +67,5 @@ namespace L {
     return wtr;
   }
   template <class T>
-  inline Stream& operator<<(Stream& s,const Ref<T>& v) { return (v.null()) ? s<< "null" : s << *((T*)v); }
+  inline Stream& operator<<(Stream& s,const Ref<T>& v) { return (v.null()) ? s << "null" : s << *v; }
 }
