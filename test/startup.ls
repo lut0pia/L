@@ -1,17 +1,17 @@
 (set make-box (fun (do
 	(local entity (entity-make))
-	(script-load (script-add entity) "box.ls")
-	(local rigidbody (rigidbody-add entity))
-	(local collider (collider-add entity))
-	(local transform (transform-require entity))
-	(collider-box collider (vec 1 1 1))
-	(transform-move transform
+	((((entity'require-script))'load) "box.ls")
+	(local rigidbody ((entity'add-rigidbody)))
+	(local collider ((entity'add-collider)))
+	(local transform ((entity'require-transform)))
+	((collider'box) (vec 1 1 1))
+	((transform'move)
 		(vec
 			(* (- (rand) 0.5) 16)
 			(* (- (rand) 0.5) 16)
 			(* (rand) 16.0)))
-	(transform-rotate transform (vec 0 1 0) (* (- (rand) .5) 5))
-	(rigidbody-addspeed rigidbody (vec 0 0 (* (rand) 10)))
+	((transform'rotate) (vec 0 1 0) (* (- (rand) .5) 5))
+	((rigidbody'addspeed) (vec 0 0 (* (rand) 10)))
 )))
 
 (local make-terrain (fun (do
@@ -28,21 +28,21 @@
 )))
 (local make-static-box (fun (position size) (do
 	(local entity (entity-make))
-	(transform-move (transform-require entity) position)
-	(collider-box (collider-require entity) size)
+	((((entity'require-transform))'move) position)
+	((((entity'require-collider))'box) size)
 )))
 (local make-mesh (fun (mesh tex pos) (do
 	(local entity (entity-make))
-	(local entity-transform (transform-require entity))
-	(local entity-mesh (staticmesh-require entity))
-	(transform-move entity-transform pos)
-	(staticmesh-mesh entity-mesh mesh)
-	(staticmesh-texture entity-mesh tex)
+	(local transform ((entity'require-transform)))
+	(local staticmesh ((entity'require-staticmesh)))
+	((transform'move) pos)
+	((staticmesh'mesh) mesh)
+	((staticmesh'texture) tex)
 )))
 
 (engine-gravity (vec 0 0 -9.8))
-(script-load (script-add (entity-make)) "camera.ls")
-(script-load (script-add (entity-make)) "character.ls")
+(((((entity-make)'add-script))'load) "camera.ls")
+(((((entity-make)'add-script))'load) "character.ls")
 (make-terrain)
 
 (make-mesh "smartphone.obj" "smartphone.png" (vec 0 0 10))
