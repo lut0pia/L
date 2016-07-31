@@ -6,6 +6,8 @@ solution "L"
 	location("prj/".._ACTION)
 	defines {"GLEW_STATIC"}
 	flags {"StaticRuntime"}
+	exceptionhandling "Off"
+	rtti "Off"
 
 	-- Platform
 	configuration {"windows"}
