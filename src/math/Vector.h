@@ -143,7 +143,7 @@ namespace L {
       Vector abs() const {
         Vector wtr;
         for(int i(0); i<d; i++)
-          wtr = L::abs(_c[i]);
+          wtr[i] = L::abs(_c[i]);
         return wtr;
       }
       bool increment(const Vector& min, const Vector& max, const Vector& delta = 1) {
