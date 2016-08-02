@@ -22,10 +22,6 @@ void RigidBody::update() {
   _velocity += Engine::deltaSeconds()*_gravity;
 }
 
-Vector3f RigidBody::velocityAt(const Vector3f& offset) const{
-  return _rotVel.cross(offset)+_velocity;
-}
-
 float RigidBody::deltaVelocity(const Vector3f& offset,const Vector3f& normal) const{
   Vector3f torquePerUnitImpulse(offset.cross(normal));
   Vector3f rotationPerUnitImpulse(_invInertiaTensor*torquePerUnitImpulse);
