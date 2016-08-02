@@ -129,7 +129,7 @@ void Collider::checkCollision(Collider& a,Collider& b) {
       impactPoint = (axis<3) ? leastToAxis(-normal,bpoints,8) : leastToAxis(normal,apoints,8);
     else{
       Vector3f avertex(leastToAxis(normal,apoints,8)),bvertex(leastToAxis(-normal,bpoints,8));
-      const Vector3f& aaxis(axes[(axis-6)/3]),baxis(axes[((axis-6)%3)+3]);
+      const Vector3f& aaxis(axes[(axis-6)/3]),baxis(axes[((axis-6)%3)+3]); // Find axes used in cross product
       if(!lineLineIntersect(avertex,avertex+aaxis,bvertex,bvertex+baxis,&avertex,&bvertex))
         return; // Unable to compute intersection
       impactPoint = (avertex+bvertex)/2.f;
