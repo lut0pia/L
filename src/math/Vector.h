@@ -91,6 +91,10 @@ namespace L {
       return wtr;
     }
     inline T length() const { return std::sqrt(lengthSquared()); }
+    Vector& length(const T& s){
+      normalize();
+      return this->operator*=(s);
+    }
     T manhattan() const {
       T wtr(0);
       for(int i(0); i<d; i++)
