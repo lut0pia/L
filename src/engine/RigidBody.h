@@ -6,7 +6,7 @@ namespace L {
   class RigidBody : public Component {
     L_COMPONENT(RigidBody)
   protected:
-    static Vector3f _gravity,_scale;
+    static Vector3f _gravity;
     Transform* _transform;
     Matrix33f _invInertiaTensor;
     Vector3f _velocity,_rotVel;
@@ -32,7 +32,5 @@ namespace L {
 
     static void gravity(const Vector3f& g){ _gravity = g; }
     static const Vector3f& gravity(){ return _gravity; }
-    static void scale(const Vector3f& s){ _scale = s; }
-    static const Vector3f& scale(){ return _scale; }
   };
 }
