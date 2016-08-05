@@ -46,12 +46,12 @@ namespace L {
     inline Matrix<l,1,T> operator*(const Vector<l,T>& v) const {
       return (*this)*(*(const Matrix<l,1,T>*)&v);
     }
-    Matrix& operator*=(const T& scalar) {
+    inline Matrix& operator*=(const T& scalar) {
       for(int i(0); i<l*c; i++)
         array()[i] *= scalar;
       return *this;
     }
-    Matrix& operator/=(const T& scalar) {
+    inline Matrix& operator/=(const T& scalar) {
       for(int i(0); i<l*c; i++)
         array()[i] /= scalar;
       return *this;
