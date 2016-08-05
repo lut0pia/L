@@ -104,9 +104,11 @@ void ScriptComponent::init() {
   L_COMPONENT_BIND(RigidBody,"rigidbody");
   L_COMPONENT_METHOD(RigidBody,"mass",1,mass(stack[0]->get<float>()));
   L_COMPONENT_METHOD(RigidBody,"restitution",1,restitution(stack[0]->get<float>()));
-  L_COMPONENT_METHOD(RigidBody,"addspeed",1,addSpeed(stack[0]->get<Vector3f>()));
-  L_COMPONENT_METHOD(RigidBody,"addforce",1,addForce(stack[0]->get<Vector3f>()));
-  L_COMPONENT_METHOD(RigidBody,"addtorque",1,addTorque(stack[0]->get<Vector3f>()));
+  L_COMPONENT_METHOD(RigidBody,"add-speed",1,addSpeed(stack[0]->get<Vector3f>()));
+  L_COMPONENT_METHOD(RigidBody,"add-force",1,addForce(stack[0]->get<Vector3f>()));
+  L_COMPONENT_METHOD(RigidBody,"add-relative-force",1,addRelativeForce(stack[0]->get<Vector3f>()));
+  L_COMPONENT_METHOD(RigidBody,"add-torque",1,addTorque(stack[0]->get<Vector3f>()));
+  L_COMPONENT_METHOD(RigidBody,"add-relative-torque",1,addRelativeTorque(stack[0]->get<Vector3f>()));
   // Camera ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(Camera,"camera");
   L_COMPONENT_METHOD(Camera,"perspective",4,perspective(stack[0]->get<float>(),stack[1]->get<float>(),stack[2]->get<float>(),stack[3]->get<float>()));
