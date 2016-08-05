@@ -3,6 +3,7 @@
 #include "../macros.h"
 #include "../String.h"
 #include "../time/Time.h"
+#include "../math/Vector.h"
 
 using namespace L;
 
@@ -31,6 +32,7 @@ void L::TypeInit(){
   Type<String>::cancmp<>();
   Type<Time>::canmath<>();
   Type<Time>::cancmp<>();
+  Type<Vector3f>::canmath();
 
   // Casts
   Type<int>::addcast<bool>([](void* dst,const void* src){new(dst)bool((*(int*)src)!=0); });
