@@ -38,7 +38,6 @@ solution "L"
 	-- Test project (startup)
 	project "Test"
 		targetname "Test"
-		kind "ConsoleApp"
 		language "C++"
 		files {"test/**.h","test/**.cpp"}
 		debugdir("test")
@@ -47,12 +46,14 @@ solution "L"
 		links {"L"}
 
 		configuration {"Debug"}
+			kind "ConsoleApp"
 			targetdir "bin/debug"
 			objdir("obj/".._ACTION.."/test/debug")
 			defines {"L_DEBUG"}
 			flags {"Symbols"}
 
 		configuration {"Release"}
+			kind "WindowedApp"
 			targetdir "bin/release"
 			objdir("obj/".._ACTION.."/test/release")
 			flags {"Optimize"}
