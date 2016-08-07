@@ -36,6 +36,7 @@ Program& GL::baseProgram() {
       "smooth in vec4 position;"
       "void main(){"
       "NormalOut = normalize(cross(dFdx(position.xyz),dFdy(position.xyz)).xyz);"
+      "if(isnan(NormalOut.x)) NormalOut = normalize(eye-position.xyz);"
       "DiffuseOut = vec3(1,1,1);"
       "}",GL_FRAGMENT_SHADER));
   return program;
