@@ -36,6 +36,7 @@ void Camera::prerender() {
   glViewport(_viewport.min().x()*Window::width(),_viewport.min().y()*Window::height(),
              _viewport.size().x()*Window::width(),_viewport.size().y()*Window::height());
   Engine::sharedUniform().subData(L_SHAREDUNIFORM_VIEWPROJ,sizeof(Matrix44f),_viewProjection.array());
+  Engine::sharedUniform().subData(L_SHAREDUNIFORM_INVVIEWPROJ,sizeof(Matrix44f),_viewProjection.inverse().array());
   Engine::sharedUniform().subData(L_SHAREDUNIFORM_EYE,sizeof(Vector3f),_transform->absolutePosition().array());
   Engine::sharedUniform().unbind();
   _gbuffer.bind();
@@ -62,7 +63,7 @@ void Camera::postrender(){
       "vec3 color = texture(colorBuffer,ftexcoords).rgb;"
       "vec3 normal = normalize(texture(normalBuffer,ftexcoords).xyz);"
       "float depth = texture(depthBuffer,ftexcoords).r;"
-      "vec4 position = inverse(viewProj) * vec4(ftexcoords*2.f-1.f,depth*2.f-1.f,1.f);"
+      "vec4 position = invViewProj * vec4(ftexcoords*2.f-1.f,depth*2.f-1.f,1.f);"
       "position = vec4(position.xyz/position.w,1.f);"
       "fragcolor = vec4(color,1.f) * (1.f+dot(normal,normalize(vec3(1,-2,3))))*.5f;"
       "}",GL_FRAGMENT_SHADER));
