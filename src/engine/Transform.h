@@ -15,9 +15,10 @@ namespace L {
     Quatf _rotation;
     float _scale;
   public:
-    inline Transform() : _parent(nullptr),_translation(0,0,0), _scale(1.f) {}
+    inline Transform() : _parent(nullptr),_translation(0,0,0),_scale(1.f) {}
     inline Vector3f absolutePosition() const { return (_parent) ? (_parent->absolutePosition()+parentRotation().rotate(_translation)) : _translation; }
     inline Vector3f toAbsolute(const Vector3f& v) const { return absolutePosition()+_rotation.rotate(v); }
+    inline Vector3f fromAbsolute(const Vector3f& v) const { return _rotation.inverse().rotate(v-absolutePosition()); }
     inline Quatf absoluteRotation() const { return (_parent) ? _parent->absoluteRotation() : _rotation; }
     inline Quatf parentRotation() const { return (_parent) ? _parent->absoluteRotation() : Quatf(); }
     inline float absoluteScale() const{ return (_parent) ? _parent->absoluteScale()*_scale : _scale; }
