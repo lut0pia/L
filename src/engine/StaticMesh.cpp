@@ -1,16 +1,17 @@
 #include "StaticMesh.h"
 
 #include "../gl/Program.h"
+#include "SharedUniform.h"
 
 using namespace L;
 
 void StaticMesh::render(const Camera& c){
   static GL::Program program(GL::Shader(
     "#version 330 core\n"
+    L_SHAREDUNIFORM
     "layout (location = 0) in vec3 vposition;"
     "layout (location = 1) in vec2 vtexcoords;"
     "layout (location = 2) in vec3 vnormal;"
-    "layout (std140) uniform Shared {mat4 viewProj;};"
     "uniform mat4 model;"
     "out vec2 ftexcoords;"
     "out vec3 fnormal;"

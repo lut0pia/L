@@ -6,6 +6,7 @@
 #include "Shader.h"
 #include "Program.h"
 #include "../image/Color.h"
+#include "../engine/SharedUniform.h"
 
 using namespace L;
 using namespace GL;
@@ -19,8 +20,8 @@ const Texture& GL::whiteTexture() {
 Program& GL::baseProgram() {
   static Program program(Shader(
     "#version 330 core\n"
+    L_SHAREDUNIFORM
     "layout (location = 0) in vec3 modelPosition;"
-    "layout (std140) uniform Shared {mat4 viewProj;};"
     "uniform mat4 model;"
     "smooth out vec4 position;"
     "void main(){"
@@ -29,6 +30,7 @@ Program& GL::baseProgram() {
     "}",GL_VERTEX_SHADER),
     Shader(
       "#version 330 core\n"
+      L_SHAREDUNIFORM
       "layout(location = 0) out vec3 DiffuseOut;"
       "layout(location = 1) out vec3 NormalOut;"
       "smooth in vec4 position;"

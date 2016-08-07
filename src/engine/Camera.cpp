@@ -5,6 +5,7 @@
 #include "../gl/GL.h"
 #include "../gl/Program.h"
 #include "../system/Window.h"
+#include "SharedUniform.h"
 
 using namespace L;
 
@@ -34,7 +35,8 @@ void Camera::prerender() {
   _ray = orientation*_projection.inverse();
   glViewport(_viewport.min().x()*Window::width(),_viewport.min().y()*Window::height(),
              _viewport.size().x()*Window::width(),_viewport.size().y()*Window::height());
-  Engine::sharedUniform().subData(0,sizeof(_viewProjection),_viewProjection.array());
+  Engine::sharedUniform().subData(L_SHAREDUNIFORM_VIEWPROJ,sizeof(Matrix44f),_viewProjection.array());
+  Engine::sharedUniform().subData(L_SHAREDUNIFORM_EYE,sizeof(Vector3f),_transform->absolutePosition().array());
   Engine::sharedUniform().unbind();
   _gbuffer.bind();
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -50,7 +52,7 @@ void Camera::postrender(){
     "}",GL_VERTEX_SHADER),
     GL::Shader(
       "#version 330 core\n"
-      "layout (std140) uniform Shared {mat4 viewProj;};"
+      L_SHAREDUNIFORM
       "in vec2 ftexcoords;"
       "out vec4 fragcolor;"
       "uniform sampler2D colorBuffer;"

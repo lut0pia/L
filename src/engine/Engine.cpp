@@ -6,6 +6,7 @@
 #include "../gl/GL.h"
 #include "../gl/Program.h"
 #include "../system/Window.h"
+#include "SharedUniform.h"
 
 using namespace L;
 
@@ -41,7 +42,7 @@ void Engine::update() {
 }
 
 GL::Buffer& Engine::sharedUniform(){
-  static GL::Buffer u(GL_UNIFORM_BUFFER,sizeof(Matrix44f),nullptr,GL_DYNAMIC_DRAW,0);
+  static GL::Buffer u(GL_UNIFORM_BUFFER,L_SHAREDUNIFORM_SIZE,nullptr,GL_DYNAMIC_DRAW,0);
   return u;
 }
 
