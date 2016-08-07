@@ -38,7 +38,14 @@ Interval3f Collider::boundingBox() const {
 void Collider::render(const Camera& camera) {
   GL::baseProgram().use();
   GL::baseProgram().uniform("model",_transform->matrix()*Matrix44f::scale(_radius));
-  GL::cube().draw();
+  switch(_type){
+    case Box:
+      GL::wireCube().draw();
+      break;
+    case Sphere:
+      GL::wireSphere().draw();
+      break;
+  }
 }
 Interval1f project(const Vector3f& axis,const Vector3f* points,size_t count){
   if(count--){

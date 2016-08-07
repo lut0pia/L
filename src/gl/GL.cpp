@@ -94,6 +94,49 @@ const Mesh& GL::cube(){
   static Mesh mesh(GL_TRIANGLES,6*2*3,cube,sizeof(cube),{Mesh::Attribute{0,3,GL_FLOAT,GL_FALSE,0,0}});
   return mesh;
 }
+const Mesh& GL::wireCube(){
+  static const GLfloat wireCube[] = {
+    // Bottom face
+    -1,-1,-1, -1,1,-1,
+    -1,-1,-1, 1,-1,-1,
+    1,-1,-1,  1,1,-1,
+    -1,1,-1,  1,1,-1,
+    // Top face
+    -1,-1,1, -1,1,1,
+    -1,-1,1, 1,-1,1,
+    1,-1,1,  1,1,1,
+    -1,1,1,  1,1,1,
+    // Sides
+    -1,-1,-1, -1,-1,1,
+    -1,1,-1,  -1,1,1,
+    1,-1,-1,  1,-1,1,
+    1,1,-1,   1,1,1,
+  };
+  static Mesh mesh(GL_LINES,12*2,wireCube,sizeof(wireCube),{Mesh::Attribute{0,3,GL_FLOAT,GL_FALSE,0,0}});
+  return mesh;
+}
+const Mesh& GL::wireSphere(){
+  static const float d(sqrt(.5f));
+  static const GLfloat wireSphere[] = {
+    // X circle
+    0,0,-1, 0,-d,-d, 0,-d,-d, 0,-1,0,
+    0,-1,0, 0,-d,d,  0,-d,d,  0,0,1,
+    0,0,1,  0,d,d,   0,d,d,   0,1,0,
+    0,1,0,  0,d,-d,  0,d,-d,  0,0,-1,
+    // Y circle
+    0,0,-1, -d,0,-d, -d,0,-d, -1,0,0,
+    -1,0,0, -d,0,d,  -d,0,d,  0,0,1,
+    0,0,1,  d,0,d,   d,0,d,   1,0,0,
+    1,0,0,  d,0,-d,  d,0,-d,  0,0,-1,
+    // Z circle
+    0,-1,0, -d,-d,0, -d,-d,0, -1,0,0,
+    -1,0,0, -d,d,0,  -d,d,0,  0,1,0,
+    0,1,0,  d,d,0,   d,d,0,   1,0,0,
+    1,0,0, d,-d,0,   d,-d,0,  0,-1,0,
+  };
+  static Mesh mesh(GL_LINES,24*2,wireSphere,sizeof(wireSphere),{Mesh::Attribute{0,3,GL_FLOAT,GL_FALSE,0,0}});
+  return mesh;
+}
 void GL::makeDisc(Mesh& mesh,int slices) {
   /*
   meshBuilder.reset(Mesh::VERTEX);
