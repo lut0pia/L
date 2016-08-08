@@ -19,12 +19,15 @@ void Sprite::render(const Camera&) {
     "}",GL_VERTEX_SHADER),
     GL::Shader(
       "#version 330 core\n"
+      L_SHAREDUNIFORM
       "layout(location = 0) out vec3 ocolor;"
       "layout(location = 1) out vec3 onormal;"
       "uniform sampler2D tex;"
       "in vec2 ftexcoords;"
       "void main(){"
-      "ocolor = texture(tex,ftexcoords).rgb;"
+      "vec4 color = texture(tex,ftexcoords);"
+      "if(alpha(color.a)) discard;"
+      "ocolor = color.rgb;"
       "onormal = vec3(0,0,1.0);"
       "}",GL_FRAGMENT_SHADER));
   program.use();

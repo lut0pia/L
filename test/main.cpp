@@ -27,6 +27,8 @@ int main(int argc,const char* argv[]) {
       startupContext.read(file);
     } else out << "Couldn't open file startup.ls\n";
   }
+  float bayer[] = {.2f,.6f,.8f,.4f};
+  Engine::ditherMatrix(bayer,2,2);
   while(Window::loop())
     Engine::update();
   return 0;

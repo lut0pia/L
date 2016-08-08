@@ -45,6 +45,11 @@ GL::Buffer& Engine::sharedUniform(){
   static GL::Buffer u(GL_UNIFORM_BUFFER,L_SHAREDUNIFORM_SIZE,nullptr,GL_DYNAMIC_DRAW,0);
   return u;
 }
+void Engine::ditherMatrix(const float* data, size_t width, size_t height){
+  sharedUniform().subData(L_SHAREDUNIFORM_DITHERMATRIXSIZE,4,&width);
+  sharedUniform().subData(L_SHAREDUNIFORM_DITHERMATRIXSIZE+4,4,&height);
+  sharedUniform().subData(L_SHAREDUNIFORM_DITHERMATRIX,width*height*4,data);
+}
 
 const Ref<GL::Texture>& Engine::texture(const char* fp) {
   String filepath(fp);

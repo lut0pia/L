@@ -57,6 +57,7 @@ namespace L {
 
     // Rendering
     static GL::Buffer& sharedUniform();
+    static void ditherMatrix(const float* data,size_t width,size_t height);
 
     // Resources
     static const Ref<GL::Texture>& texture(const char* filepath);

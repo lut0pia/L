@@ -22,13 +22,16 @@ void StaticMesh::render(const Camera& c){
     "}",GL_VERTEX_SHADER),
     GL::Shader(
       "#version 330 core\n"
+      L_SHAREDUNIFORM
       "layout(location = 0) out vec3 ocolor;"
       "layout(location = 1) out vec3 onormal;"
       "uniform sampler2D tex;"
       "in vec2 ftexcoords;"
       "in vec3 fnormal;"
       "void main(){"
-      "ocolor = texture(tex,ftexcoords).rgb;"
+      "vec4 color = texture(tex,ftexcoords);"
+      "if(alpha(color.a)) discard;"
+      "ocolor = color.rgb;"
       "onormal = fnormal;"
       "}",GL_FRAGMENT_SHADER));
   program.use();
