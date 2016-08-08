@@ -38,7 +38,6 @@ void Camera::prerender() {
   Engine::sharedUniform().subData(L_SHAREDUNIFORM_VIEWPROJ,sizeof(Matrix44f),_viewProjection.array());
   Engine::sharedUniform().subData(L_SHAREDUNIFORM_INVVIEWPROJ,sizeof(Matrix44f),_viewProjection.inverse().array());
   Engine::sharedUniform().subData(L_SHAREDUNIFORM_EYE,sizeof(Vector3f),_transform->absolutePosition().array());
-  Engine::sharedUniform().unbind();
   _gbuffer.bind();
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
