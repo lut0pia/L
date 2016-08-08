@@ -2,6 +2,7 @@
 
 #include "../gl/Program.h"
 #include "../gl/Shader.h"
+#include "SharedUniform.h"
 
 using namespace L;
 
@@ -9,7 +10,7 @@ void Sprite::render(const Camera&) {
   static GL::Program program(GL::Shader(
     "#version 330 core\n"
     "layout (location = 0) in vec3 vposition;"
-    "layout (std140) uniform Shared {mat4 viewProj;};"
+    L_SHAREDUNIFORM
     "uniform mat4 model;"
     "out vec2 ftexcoords;"
     "void main(){"
