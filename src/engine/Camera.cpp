@@ -35,6 +35,8 @@ void Camera::prerender() {
   _ray = orientation*_projection.inverse();
   glViewport(_viewport.min().x()*Window::width(),_viewport.min().y()*Window::height(),
              _viewport.size().x()*Window::width(),_viewport.size().y()*Window::height());
+  Engine::sharedUniform().subData(L_SHAREDUNIFORM_VIEW,sizeof(Matrix44f),_view.array());
+  Engine::sharedUniform().subData(L_SHAREDUNIFORM_INVVIEW,sizeof(Matrix44f),_view.inverse().array());
   Engine::sharedUniform().subData(L_SHAREDUNIFORM_VIEWPROJ,sizeof(Matrix44f),_viewProjection.array());
   Engine::sharedUniform().subData(L_SHAREDUNIFORM_INVVIEWPROJ,sizeof(Matrix44f),_viewProjection.inverse().array());
   Engine::sharedUniform().subData(L_SHAREDUNIFORM_EYE,sizeof(Vector3f),_transform->absolutePosition().array());
