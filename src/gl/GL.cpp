@@ -31,13 +31,14 @@ Program& GL::baseProgram() {
     Shader(
       "#version 330 core\n"
       L_SHAREDUNIFORM
-      "layout(location = 0) out vec3 DiffuseOut;"
-      "layout(location = 1) out vec3 NormalOut;"
+      "layout(location = 0) out vec3 ocolor;"
+      "layout(location = 1) out vec3 onormal;"
       "smooth in vec4 position;"
       "void main(){"
-      "NormalOut = normalize(cross(dFdx(position.xyz),dFdy(position.xyz)).xyz);"
-      "if(isnan(NormalOut.x)) NormalOut = normalize(eye-position.xyz);"
-      "DiffuseOut = vec3(1,1,1);"
+      "vec3 normal = cross(dFdx(position.xyz),dFdy(position.xyz)).xyz;"
+      "if(isnan(normal.x)) normal = eye-position.xyz;"
+      "onormal.xy = encodeNormal(normal);"
+      "ocolor = vec3(1,1,1);"
       "}",GL_FRAGMENT_SHADER));
   return program;
 }

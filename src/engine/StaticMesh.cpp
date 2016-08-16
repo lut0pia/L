@@ -32,7 +32,7 @@ void StaticMesh::render(const Camera& c){
       "vec4 color = texture(tex,ftexcoords);"
       "if(alpha(color.a)) discard;"
       "ocolor = color.rgb;"
-      "onormal = fnormal;"
+      "onormal.xy = encodeNormal(fnormal);"
       "}",GL_FRAGMENT_SHADER));
   program.use();
   program.uniform("tex",*_texture);

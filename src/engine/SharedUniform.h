@@ -20,4 +20,14 @@
 "int ditherSlot = ditherPos.x+ditherPos.y*ditherMatrixSize.x;" \
 "float ditherThreshold = ditherMatrix[ditherSlot/4][ditherSlot%4];" \
 "return a<ditherThreshold;" \
+"}" \
+"vec2 encodeNormal(vec3 n){" \
+"n = normalize((view*vec4(n,0.f)).xyz);" \
+"return (n.xy/sqrt(n.z*8.f+8.f))+.5f;" \
+"}" \
+"vec3 decodeNormal(vec2 e){" \
+"e = e*4.f-2.f;" \
+"float l = dot(e,e);" \
+"float g = sqrt(1.f-l/4.f);" \
+"return normalize((invView*vec4(e*g,1.f-l/2.f,0.f)).xyz);" \
 "}"

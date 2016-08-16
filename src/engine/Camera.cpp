@@ -62,7 +62,7 @@ void Camera::postrender(){
       "uniform sampler2D depthBuffer;"
       "void main(){"
       "vec3 color = texture(colorBuffer,ftexcoords).rgb;"
-      "vec3 normal = normalize(texture(normalBuffer,ftexcoords).xyz);"
+      "vec3 normal = decodeNormal(texture(normalBuffer,ftexcoords).xy);"
       "float depth = texture(depthBuffer,ftexcoords).r;"
       "vec4 position = invViewProj * vec4(ftexcoords*2.f-1.f,depth*2.f-1.f,1.f);"
       "position = vec4(position.xyz/position.w,1.f);"
