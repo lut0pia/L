@@ -36,7 +36,7 @@ Program& GL::baseProgram() {
       "smooth in vec4 position;"
       "void main(){"
       "vec3 normal = cross(dFdx(position.xyz),dFdy(position.xyz)).xyz;"
-      "if(isnan(normal.x)) normal = eye-position.xyz;"
+      "if(isnan(normal.x) || length(normal)<=0.f) normal = eye-position.xyz;"
       "onormal.xy = encodeNormal(normal);"
       "ocolor = vec3(1,1,1);"
       "}",GL_FRAGMENT_SHADER));
