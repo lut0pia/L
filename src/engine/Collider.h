@@ -13,6 +13,8 @@ namespace L {
     RigidBody* _rigidbody;
     ScriptComponent* _script;
     Vector3f _center,_radius;
+    mutable Interval3f _boundingBox;
+    mutable uint32_t _updateFrame;
     enum {
       Box,Sphere
     } _type;

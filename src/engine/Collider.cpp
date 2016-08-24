@@ -23,17 +23,21 @@ void Collider::update() {
   }
 }
 Interval3f Collider::boundingBox() const {
-  switch(_type) {
-    case Box:
-      return Interval3f(_center-_radius,_center+_radius).transformed(_transform->matrix());
-    case Sphere:
-    {
-      const Vector3f center(_transform->toAbsolute(_center));
-      return Interval3f(center-_radius,center+_radius);
+  if(Engine::frame()!=_updateFrame){
+    switch(_type) {
+      case Box:
+        _boundingBox = Interval3f(_center-_radius,_center+_radius).transformed(_transform->matrix());
+        break;
+      case Sphere:
+      {
+        const Vector3f center(_transform->toAbsolute(_center));
+        _boundingBox = Interval3f(center-_radius,center+_radius);
+        break;
+      }
     }
-    default:
-      return Interval3f();
+    _updateFrame = Engine::frame();
   }
+  return _boundingBox;
 }
 void Collider::render(const Camera& camera) {
   GL::baseProgram().use();
