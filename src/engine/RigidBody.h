@@ -10,7 +10,7 @@ namespace L {
     Transform* _transform;
     Matrix33f _invInertiaTensor;
     Vector3f _velocity,_rotVel;
-    float _invMass,_restitution;
+    float _invMass,_restitution,_drag,_angDrag;
   public:
     void start();
     void update();
@@ -19,6 +19,10 @@ namespace L {
     inline void mass(float m){ _invMass = 1.f/m; }
     inline float restitution() const{ return _restitution; }
     inline void restitution(float r){ _restitution = r; }
+    inline float drag() const{ return _drag; }
+    inline void drag(float d){ _drag = d; }
+    inline float angularDrag() const{ return _angDrag; }
+    inline void angularDrag(float d){ _angDrag = d; }
 
     inline Vector3f center() const{ return _transform->absolutePosition(); }
     inline void addSpeed(const Vector3f& v){ _velocity += v; }

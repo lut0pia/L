@@ -104,6 +104,8 @@ void ScriptComponent::init() {
   L_COMPONENT_BIND(RigidBody,"rigidbody");
   L_COMPONENT_METHOD(RigidBody,"mass",1,mass(stack[0]->get<float>()));
   L_COMPONENT_METHOD(RigidBody,"restitution",1,restitution(stack[0]->get<float>()));
+  L_COMPONENT_METHOD(RigidBody,"drag",1,drag(stack[0]->get<float>()));
+  L_COMPONENT_METHOD(RigidBody,"angular-drag",1,angularDrag(stack[0]->get<float>()));
   L_COMPONENT_METHOD(RigidBody,"add-speed",1,addSpeed(stack[0]->get<Vector3f>()));
   L_COMPONENT_METHOD(RigidBody,"add-force",1,addForce(stack[0]->get<Vector3f>()));
   L_COMPONENT_METHOD(RigidBody,"add-relative-force",1,addRelativeForce(stack[0]->get<Vector3f>()));
