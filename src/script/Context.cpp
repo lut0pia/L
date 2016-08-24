@@ -27,7 +27,9 @@ void Context::read(Var& v,Lexer& lexer) {
     v.make<Array<Var> >();
     int i(0);
     while(!lexer.acceptToken(")"))
-      read(v[i++],lexer);
+      if(lexer.acceptToken("|"))
+        v = Array<Var>{v}, i = 1;
+      else read(v[i++],lexer);
   } else if(lexer.acceptToken("'")) {
     read(v.make<Quote>().var,lexer);
   } else if(lexer.acceptToken("!")) {
@@ -85,8 +87,7 @@ Var Context::execute(const Var& code,Var* src) {
         wtr = handle.as<Function>()(source,stack,array.size()-1); // Call function
       _stack.size(frame); // Resize to the previous frame
       return wtr;
-    }
-    else if(array.size()>1){
+    } else if(array.size()>1){
       Ref<Table<Var,Var>> table;
       if(src) *src = handle;
       if(handle.is<Ref<Table<Var,Var>>>())
@@ -95,8 +96,7 @@ Var Context::execute(const Var& code,Var* src) {
         table = typeTable(handle.type());
       return (*table)[execute(array[1])];
     }
-  }
-  else if(code.is<Symbol>()) return variable(code.as<Symbol>()); // It's a simple variable
+  } else if(code.is<Symbol>()) return variable(code.as<Symbol>()); // It's a simple variable
   else if(code.is<Quote>()) return code.as<Quote>().var; // Return raw data
   return code;
 }

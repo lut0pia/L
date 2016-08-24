@@ -45,7 +45,7 @@ bool Lexer::nextToken() {
         else if(c==';'){ // Comment
           _stream.line();
           break;
-        } else if(c=='(' || c==')' || c=='\'' || c=='"' || c=='!') { // Special char
+        } else if(c=='(' || c==')' || c=='\'' || c=='"' || c=='!' || c=='|') { // Special char
           if(w>_buffer) { // Word already started
             _stream.unget(c);
             break;
