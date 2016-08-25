@@ -9,26 +9,31 @@ void RigidBody::start() {
   _invMass = 1.f;
   _restitution = .5f;
   _drag = _angDrag = .0f;
-  _velocity = Vector3f(0.f,0.f,0.f);
-  _rotation = Vector3f(0.f,0.f,0.f);
+  _velocity = _rotation = _force = _torque = 0.f;
   _invInertiaTensor = Matrix33f(1.f);
 }
 void RigidBody::update() {
-  _transform->moveAbsolute(_velocity*Engine::deltaSeconds());
-  float rotLength(_rotation.length());
-  if(rotLength>.001f)
-    _transform->rotateAbsolute(_rotation*(1.f/rotLength),rotLength*Engine::deltaSeconds());
-  _velocity += Engine::deltaSeconds()*_gravity; // Apply gravity
+  addForce(Engine::deltaSeconds()*_gravity/_invMass); // Apply gravity
   if(_velocity.length()>.0f){ // Apply linear drag
     Vector3f dragForce(_velocity);
     dragForce.length(-_drag*_velocity.lengthSquared());
     addForce(dragForce);
   }
-  if(rotLength>.0f){ // Apply rotation drag
+  if(_rotation.length()>.0f){ // Apply angular drag
     Vector3f dragTorque(_rotation);
     dragTorque.length(-_angDrag*_rotation.lengthSquared());
     addTorque(dragTorque);
   }
+  // Integrate
+  const Vector3f oldVelocity(_velocity),oldRotation(_rotation);
+  _velocity += _invMass*_force;
+  _rotation += _invInertiaTensor*_torque;
+  _transform->moveAbsolute((_velocity+oldVelocity)*Engine::deltaSeconds()*.5f);
+  const Vector3f rotationAvg((_rotation+oldRotation)*.5f);
+  float rotLength(rotationAvg.length());
+  if(rotLength>.0f)
+    _transform->rotateAbsolute(rotationAvg*(1.f/rotLength),rotLength*Engine::deltaSeconds());
+  _force = _torque = 0.f; // Reset force and torque for next frame
 }
 
 float RigidBody::deltaVelocity(const Vector3f& offset,const Vector3f& normal) const{
