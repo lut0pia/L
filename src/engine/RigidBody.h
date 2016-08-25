@@ -9,7 +9,7 @@ namespace L {
     static Vector3f _gravity;
     Transform* _transform;
     Matrix33f _invInertiaTensor;
-    Vector3f _velocity,_rotVel;
+    Vector3f _velocity,_rotation;
     float _invMass,_restitution,_drag,_angDrag;
   public:
     void start();
@@ -28,9 +28,9 @@ namespace L {
     inline void addSpeed(const Vector3f& v){ _velocity += v; }
     inline void addForce(const Vector3f& f){ addSpeed(f*_invMass); }
     inline void addRelativeForce(const Vector3f& f){ addForce(_transform->absoluteRotation().rotate(f)); }
-    inline void addTorque(const Vector3f& t){ _rotVel += _invInertiaTensor*t; }
+    inline void addTorque(const Vector3f& t){ _rotation += _invInertiaTensor*t; }
     inline void addRelativeTorque(const Vector3f& t){ addTorque(_transform->absoluteRotation().rotate(t)); }
-    inline Vector3f velocityAt(const Vector3f& offset) const{ return _rotVel.cross(offset)+_velocity; }
+    inline Vector3f velocityAt(const Vector3f& offset) const{ return _rotation.cross(offset)+_velocity; }
 
     float deltaVelocity(const Vector3f& impact,const Vector3f& normal) const;
     void applyImpulse(const Vector3f& impulse,const Vector3f& offset);

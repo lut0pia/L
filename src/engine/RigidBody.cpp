@@ -10,14 +10,14 @@ void RigidBody::start() {
   _restitution = .5f;
   _drag = _angDrag = .0f;
   _velocity = Vector3f(0.f,0.f,0.f);
-  _rotVel = Vector3f(0.f,0.f,0.f);
+  _rotation = Vector3f(0.f,0.f,0.f);
   _invInertiaTensor = Matrix33f(1.f);
 }
 void RigidBody::update() {
   _transform->moveAbsolute(_velocity*Engine::deltaSeconds());
-  float rotLength(_rotVel.length());
+  float rotLength(_rotation.length());
   if(rotLength>.001f)
-    _transform->rotateAbsolute(_rotVel*(1.f/rotLength),rotLength*Engine::deltaSeconds());
+    _transform->rotateAbsolute(_rotation*(1.f/rotLength),rotLength*Engine::deltaSeconds());
   _velocity += Engine::deltaSeconds()*_gravity; // Apply gravity
   if(_velocity.length()>.0f){ // Apply linear drag
     Vector3f dragForce(_velocity);
@@ -25,8 +25,8 @@ void RigidBody::update() {
     addForce(dragForce);
   }
   if(rotLength>.0f){ // Apply rotation drag
-    Vector3f dragTorque(_rotVel);
-    dragTorque.length(-_angDrag*_rotVel.lengthSquared());
+    Vector3f dragTorque(_rotation);
+    dragTorque.length(-_angDrag*_rotation.lengthSquared());
     addTorque(dragTorque);
   }
 }
