@@ -1,30 +1,26 @@
-#ifndef DEF_L_Component
-#define DEF_L_Component
+#pragma once
 
 namespace L {
   class Entity;
   class Component {
-    private:
-      Entity* _entity;
-      inline void entity(Entity* e) {_entity = e;}
-    public:
-      ~Component();
-      inline Entity* entity() const {return _entity;}
-      virtual void start() {}
-      static inline void preupdates() {}
+  private:
+    Entity* _entity;
+    inline void entity(Entity* e) { _entity = e; }
+  public:
+    ~Component();
+    inline Entity* entity() const { return _entity; }
+    virtual void start() {}
+    static inline void preupdates() {}
 
-      virtual Component* clone() = 0;
-      virtual void destruct() = 0;
+    virtual Component* clone() = 0;
 
-      friend class Entity;
+    friend class Entity;
   };
 }
 
 #define L_COMPONENT(name)\
-  Component* clone() {return Pool<name>::global.construct(*this);}\
-  void destruct() {Pool<name>::global.destruct(this);}
+  public:\
+  Component* clone() { return Pool<name>::global.construct(*this); }\
+  inline void operator delete(void* p) { Pool<name>::global.deallocate(p); }
 
 #include "Entity.h"
-
-#endif
-
