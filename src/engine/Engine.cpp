@@ -25,6 +25,7 @@ void Engine::update() {
   _fps = 1.f/_deltaTime.fSeconds();
   _deltaTime = min(_deltaTime,Time(0,50))*_timescale; // Delta time shouldn't be over 50ms
   _deltaSeconds = _deltaTime.fSeconds();
+  Engine::sharedUniform().subData(L_SHAREDUNIFORM_FRAME,sizeof(uint32_t),&_frame);
 
   Window::Event e;
   while(Window::newEvent(e))

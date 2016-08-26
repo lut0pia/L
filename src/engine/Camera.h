@@ -10,7 +10,7 @@ namespace L {
   private:
     Transform* _transform;
   protected:
-    Matrix44f _view,_projection,_viewProjection,_ray;
+    Matrix44f _view,_projection,_viewProjection,_prevViewProjection,_ray;
     Interval2f _viewport;
     GL::Texture _gcolor,_gnormal,_gdepth;
     GL::FrameBuffer _gbuffer;

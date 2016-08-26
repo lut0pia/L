@@ -31,6 +31,7 @@ void Camera::prerender() {
   static Matrix44f camOrient(Matrix44f::orientation(Vector3f(1,0,0),Vector3f(0,0,1),Vector3f(0,-1,0)).inverse());
   Matrix44f orientation(Matrix44f::orientation(_transform->right(),_transform->forward(),_transform->up()));
   _view = camOrient * _transform->matrix().inverse();
+  _prevViewProjection = _viewProjection;
   _viewProjection = _projection*_view;
   _ray = orientation*_projection.inverse();
   glViewport(_viewport.min().x()*Window::width(),_viewport.min().y()*Window::height(),
@@ -39,6 +40,7 @@ void Camera::prerender() {
   Engine::sharedUniform().subData(L_SHAREDUNIFORM_INVVIEW,sizeof(Matrix44f),_view.inverse().array());
   Engine::sharedUniform().subData(L_SHAREDUNIFORM_VIEWPROJ,sizeof(Matrix44f),_viewProjection.array());
   Engine::sharedUniform().subData(L_SHAREDUNIFORM_INVVIEWPROJ,sizeof(Matrix44f),_viewProjection.inverse().array());
+  Engine::sharedUniform().subData(L_SHAREDUNIFORM_PREVVIEWPROJ,sizeof(Matrix44f),_prevViewProjection.array());
   Engine::sharedUniform().subData(L_SHAREDUNIFORM_EYE,sizeof(Vector3f),_transform->absolutePosition().array());
   _gbuffer.bind();
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
