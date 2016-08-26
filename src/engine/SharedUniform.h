@@ -13,7 +13,7 @@
 "mat4 view, invView, viewProj, invViewProj;" \
 "vec4 ditherMatrix[256];" \
 "ivec4 ditherMatrixSize;" \
-"vec3 eye;" \
+"vec4 eye;" \
 "};" \
 "bool alpha(float a){" \
 "ivec2 ditherPos = ivec2(mod(gl_FragCoord.xy,ditherMatrixSize.xy));" \
