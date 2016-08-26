@@ -27,8 +27,14 @@ int main(int argc,const char* argv[]) {
       startupContext.read(file);
     } else out << "Couldn't open file startup.ls\n";
   }
-  float bayer[] = {.2f,.6f,.8f,.4f};
-  Engine::ditherMatrix(bayer,2,2);
+  float bayer[] = {
+    0,12,3,15,
+    8,4,11,7,
+    2,14,1,13,
+    10,6,9,5
+  };
+  for(auto&& b : bayer) b = (1+b)/(4*4+1);
+  Engine::ditherMatrix(bayer,4,4);
   while(Window::loop())
     Engine::update();
   return 0;
