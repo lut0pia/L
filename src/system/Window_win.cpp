@@ -88,15 +88,9 @@ LRESULT CALLBACK MainWndProc(HWND hwnd,uint32_t uMsg,WPARAM wParam,LPARAM lParam
       }
       e.x = GET_X_LPARAM(lParam);
       e.y = GET_Y_LPARAM(lParam);
-      *mousePos = Vector2i(e.x,e.y);
-      if(uMsg==WM_MOUSEMOVE && *flags&Window::capturecursor){
-        const int halfWidth(Window::width()/2),halfHeight(Window::height()/2);
-        e.x -= halfWidth;
-        e.y -= halfHeight;
-        if(e.x || e.y)
-          SetCursorPos(halfWidth,halfHeight);
-        else return 0;
-      }
+      e.x -= mousePos->x();
+      e.y -= mousePos->y();
+      *mousePos += Vector2i(e.x,e.y);
       break;
     case WM_MOUSEWHEEL:
       e.type = Window::Event::MOUSEWHEEL;
@@ -222,8 +216,8 @@ void Window::open(const char* title,int width,int height,int flags) {
                       CW_USEDEFAULT,CW_USEDEFAULT,width,height,
                       nullptr,nullptr,hInstance,nullptr);
 
-  if(flags&capturecursor)
-    SetCursorPos(width/2,height/2);
+  _mousePos = Vector2i(width/2,height/2);
+  SetCursorPos(width/2,height/2);
 
   hDC = GetDC(hWND);
 
@@ -265,11 +259,21 @@ void Window::close() {
   DestroyWindow(hWND);
   hWND = 0;
 }
-bool Window::opened() {
-  return hWND!=0;
-}
+bool Window::opened() { return hWND!=0; }
 bool Window::loop() {
   MSG msg;
+  if(_flags&loopcursor){
+    bool changed(false);
+    if(_mousePos.x()<=0)
+      _mousePos.x() = _width-5,changed = true;
+    else if(_mousePos.x()>=_width-1)
+      _mousePos.x() = 5,changed = true;
+    if(_mousePos.y()<=0)
+      _mousePos.y() = _height-5,changed = true;
+    else if(_mousePos.y()>=_height-1)
+      _mousePos.y() = 5,changed = true;
+    if(changed) SetCursorPos(_mousePos.x(),_mousePos.y());
+  }
   while(opened() && PeekMessage(&msg,nullptr,0,0,PM_REMOVE)) {
     TranslateMessage(&msg);
     DispatchMessage(&msg);

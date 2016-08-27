@@ -49,7 +49,7 @@ namespace L {
     static const int resizable = 0x1;
     static const int borderless = 0x2;
     static const int nocursor = 0x4;
-    static const int capturecursor = 0x8;
+    static const int loopcursor = 0x8;
 
     static void open(const char* title,int width = 800,int height = 600,int flags = 0);
     static void openFullscreen(const char* title,int flags = 0);
