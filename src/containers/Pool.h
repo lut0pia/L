@@ -71,6 +71,10 @@ namespace L {
         L::destruct(e);
       delete _root;
     }
+    void clear(){
+      for(auto&& e : *this)
+        destruct(&e);
+    }
 
     template <typename... Args>
     T* construct(Args&&... args) {
