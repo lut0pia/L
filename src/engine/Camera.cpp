@@ -24,7 +24,7 @@ Camera::Camera() :
   _gdepth.parameter(GL_TEXTURE_MIN_FILTER,GL_NEAREST);
   _gdepth.parameter(GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 }
-void Camera::start() {
+void Camera::updateComponents() {
   _transform = entity()->requireComponent<Transform>();
 }
 void Camera::prerender() {

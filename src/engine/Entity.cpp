@@ -1,5 +1,7 @@
 #include "Entity.h"
 
+#include "Component.h"
+
 using namespace L;
 
 Entity::Entity(const Entity* other) {
@@ -7,7 +9,7 @@ Entity::Entity(const Entity* other) {
     p.value() = p.value()->clone();
     p.value()->entity(this);
     _components.push(p);
-    p.value()->start();
+    p.value()->updateComponents();
   }
 }
 Entity::~Entity() {
@@ -16,10 +18,15 @@ Entity::~Entity() {
     _components[0].key()->del(_components[0].value());
 }
 
+void Entity::updateComponents(){
+  for(auto&& c : _components)
+    c.value()->updateComponents();
+}
 void Entity::remove(Component* c){
   for(uint32_t i(0); i<_components.size(); i++)
     if(_components[i].value()==c){
       _components.erase(i);
-      return;
+      break;
     }
+  updateComponents();
 }

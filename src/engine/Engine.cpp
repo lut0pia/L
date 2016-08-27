@@ -10,9 +10,9 @@
 
 using namespace L;
 
-Set<void(*)()> Engine::_updates;
-Set<void(*)(const Camera&)> Engine::_renders;
-Set<void(*)(const Window::Event&)> Engine::_events;
+Array<void(*)()> Engine::_updates, Engine::_cleanups;
+Array<void(*)(const Camera&)> Engine::_renders;
+Array<void(*)(const Window::Event&)> Engine::_events;
 Map<uint32_t,Ref<GL::Texture> > Engine::_textures;
 Map<uint32_t,Ref<GL::Mesh> > Engine::_meshes;
 Timer Engine::_timer;
@@ -41,12 +41,16 @@ void Engine::update() {
   }
   _frame++;
 }
+void Engine::clear() {
+  for(auto&& cleanup : _cleanups)
+    cleanup();
+}
 
 GL::Buffer& Engine::sharedUniform(){
   static GL::Buffer u(GL_UNIFORM_BUFFER,L_SHAREDUNIFORM_SIZE,nullptr,GL_DYNAMIC_DRAW,0);
   return u;
 }
-void Engine::ditherMatrix(const float* data, size_t width, size_t height){
+void Engine::ditherMatrix(const float* data,size_t width,size_t height){
   sharedUniform().subData(L_SHAREDUNIFORM_DITHERMATRIXSIZE,4,&width);
   sharedUniform().subData(L_SHAREDUNIFORM_DITHERMATRIXSIZE+4,4,&height);
   sharedUniform().subData(L_SHAREDUNIFORM_DITHERMATRIX,width*height*4,data);

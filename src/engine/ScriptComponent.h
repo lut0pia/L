@@ -9,7 +9,8 @@ namespace L {
   protected:
     Script::Context _context;
   public:
-    void start();
+    ScriptComponent();
+    void updateComponents();
     void load(const char* filename);
     void update();
     void event(const Window::Event&);

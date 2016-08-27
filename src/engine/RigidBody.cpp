@@ -4,13 +4,12 @@ using namespace L;
 
 Vector3f RigidBody::_gravity(0.f,0.f,.0f);
 
-void RigidBody::start() {
+RigidBody::RigidBody() :
+  _invInertiaTensor(1.f),
+  _velocity(0.f),_rotation(0.f),_force(0.f),_torque(0.f),
+  _invMass(1.f),_restitution(.5f),_drag(0.f),_angDrag(0.f){}
+void RigidBody::updateComponents(){
   _transform = entity()->requireComponent<Transform>();
-  _invMass = 1.f;
-  _restitution = .5f;
-  _drag = _angDrag = .0f;
-  _velocity = _rotation = _force = _torque = 0.f;
-  _invInertiaTensor = Matrix33f(1.f);
 }
 void RigidBody::update() {
   addForce(Engine::deltaSeconds()*_gravity/_invMass); // Apply gravity

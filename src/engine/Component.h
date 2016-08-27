@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Entity.h"
+
 namespace L {
   class Entity;
   class Component {
@@ -7,10 +9,9 @@ namespace L {
     Entity* _entity;
     inline void entity(Entity* e) { _entity = e; }
   public:
-    ~Component();
+    inline ~Component() { entity()->remove(this); }
     inline Entity* entity() const { return _entity; }
-    virtual void start() {}
-    static inline void preupdates() {}
+    virtual void updateComponents() {}
 
     virtual Component* clone() = 0;
 
@@ -22,5 +23,3 @@ namespace L {
   public:\
   Component* clone() { return Pool<name>::global.construct(*this); }\
   inline void operator delete(void* p) { Pool<name>::global.deallocate(p); }
-
-#include "Entity.h"

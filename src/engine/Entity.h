@@ -1,12 +1,11 @@
-#ifndef DEF_L_Entity
-#define DEF_L_Entity
+#pragma once
 
-#include "Component.h"
 #include "../containers/KeyValue.h"
 #include "../dynamic/Type.h"
 #include "Engine.h"
 
 namespace L {
+  class Component;
   class Entity {
     private:
       Array<KeyValue<const TypeDescription*,Component*> > _components;
@@ -42,13 +41,10 @@ namespace L {
         CompType* component(Pool<CompType>::global.construct());
         component->entity(this);
         _components.push(keyValue(Type<CompType>::description(),(Component*)component)); // Link the entity to the component
-        component->start();
+        updateComponents();
         return component;
       }
+      void updateComponents();
       void remove(Component*);
   };
 }
-
-
-#endif
-

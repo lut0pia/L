@@ -11,8 +11,13 @@
 using namespace L;
 using namespace Script;
 
-void ScriptComponent::start(){
-  _context.local(FNV1A("entity")) = entity();
+ScriptComponent::ScriptComponent(){
+  _context.local(FNV1A("entity")) = nullptr;
+}
+void ScriptComponent::updateComponents(){
+  static Var updateComponentsCall(Array<Var>{FNV1A("update-components")});
+  _context.variable(FNV1A("entity")) = entity();
+  _context.execute(updateComponentsCall);
 }
 void ScriptComponent::load(const char* filename) {
   static Var startCall(Array<Var>{FNV1A("start")});

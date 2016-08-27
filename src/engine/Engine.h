@@ -14,9 +14,12 @@ namespace L {
   private:
     template <class CompType>
     static void updateAll() {
-      CompType::preupdates();
       for(auto&& c : Pool<CompType>::global)
         c.update();
+    }
+    template <class CompType>
+    static void cleanupComp() {
+      Pool<CompType>::global.clear();
     }
     template <class CompType>
     static void renderAll(const Camera& cam) {
@@ -28,9 +31,9 @@ namespace L {
       for(auto&& c : Pool<CompType>::global)
         c.event(e);
     }
-    static Set<void(*)()> _updates;
-    static Set<void(*)(const Camera&)> _renders;
-    static Set<void(*)(const Window::Event&)> _events;
+    static Array<void(*)()> _updates,_cleanups;
+    static Array<void(*)(const Camera&)> _renders;
+    static Array<void(*)(const Window::Event&)> _events;
     static Map<uint32_t,Ref<GL::Texture> > _textures;
     static Map<uint32_t,Ref<GL::Mesh> > _meshes;
     static Timer _timer;
@@ -45,14 +48,16 @@ namespace L {
     static inline uint32_t frame() { return _frame; }
 
     static void update();
+    static void clear();
     template <class CompType> inline static void addUpdate() {
-      _updates.insert(updateAll<CompType>);
+      _updates.push(updateAll<CompType>);
+      _cleanups.push(cleanupComp<CompType>);
     }
     template <class CompType> inline static void addRender() {
-      _renders.insert(renderAll<CompType>);
+      _renders.push(renderAll<CompType>);
     }
     template <class CompType> inline static void addEvent() {
-      _events.insert(eventAll<CompType>);
+      _events.push(eventAll<CompType>);
     }
 
     // Rendering

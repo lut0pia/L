@@ -14,7 +14,7 @@ namespace L {
     Interval2f _vertex,_uv;
   public:
     inline Sprite() : _vertex(Vector2f(-.5f,-.5f),Vector2f(.5f,.5f)),_uv(Vector2f(0.f,0.f),Vector2f(1.f,1.f)){}
-    inline void start() { _transform = entity()->requireComponent<Transform>(); }
+    inline void updateComponents() { _transform = entity()->requireComponent<Transform>(); }
     void render(const Camera&);
     inline void texture(const char* filename) { _texture = Engine::texture(filename); }
     inline void texture(const Ref<GL::Texture>& tex) { _texture = tex; }

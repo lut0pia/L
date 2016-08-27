@@ -13,10 +13,9 @@ namespace L {
       float _time, _nextFrame;
       int _frame;
     public:
-      void start() {
+      inline SpriteAnimator() : _time(0),_nextFrame(0),_frame(0){}
+      void updateComponents() {
         _sprite = entity()->requireComponent<Sprite>();
-        _time = _nextFrame = 0;
-        _frame = 0;
       }
       void update() {
         _time += Engine::deltaSeconds();

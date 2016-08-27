@@ -19,7 +19,8 @@ namespace L {
       Box,Sphere
     } _type;
   public:
-    void start();
+    Collider();
+    void updateComponents();
     void update();
     inline void box(const Vector3f& center,const Vector3f& radius) { _type = Box; _center = center; _radius = radius; }
     inline void sphere(const Vector3f& center,float radius) { _type = Sphere; _center = center; _radius = radius; }

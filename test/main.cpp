@@ -37,5 +37,6 @@ int main(int argc,const char* argv[]) {
   Engine::ditherMatrix(bayer,4,4);
   while(Window::loop())
     Engine::update();
+  Engine::clear();
   return 0;
 }

@@ -12,7 +12,8 @@ namespace L {
     Vector3f _velocity,_rotation,_force,_torque;
     float _invMass,_restitution,_drag,_angDrag;
   public:
-    void start();
+    RigidBody();
+    void updateComponents();
     void update();
 
     inline float mass() const{ return 1.f/_invMass; }

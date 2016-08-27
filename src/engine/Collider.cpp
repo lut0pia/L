@@ -6,11 +6,11 @@
 
 using namespace L;
 
-void Collider::start() {
+Collider::Collider() : _center(0.f),_radius(1.f),_type(Sphere){}
+void Collider::updateComponents(){
   _transform = entity()->requireComponent<Transform>();
   _rigidbody = entity()->component<RigidBody>();
   _script = entity()->component<ScriptComponent>();
-  _center = 0.f;
 }
 void Collider::update() {
   // TODO: replace with broadphase
