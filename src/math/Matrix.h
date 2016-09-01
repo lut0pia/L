@@ -29,6 +29,16 @@ namespace L {
     inline const T& operator()(int line,int column) const { return _m[column][line]; }
     inline T* array() { return &_m[0][0]; }
     inline const T* array() const { return &_m[0][0]; }
+    inline Matrix& operator+=(const Matrix& other) {
+      for(int i(0); i<l*c; i++)
+        array()[i] += other.array()[i];
+      return *this;
+    }
+    inline Matrix& operator-=(const Matrix& other) {
+      for(int i(0); i<l*c; i++)
+        array()[i] -= other.array()[i];
+      return *this;
+    }
     inline Matrix operator+(const Matrix& other) const { return Matrix(*this) += other; }
     inline Matrix operator-(const Matrix& other) const { return Matrix(*this) -= other; }
     template<int oc>
