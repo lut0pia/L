@@ -39,6 +39,20 @@ Interval3f Collider::boundingBox() const {
   }
   return _boundingBox;
 }
+Matrix33f Collider::inertiaTensor() const{
+  Matrix33f wtr(0.f);
+  switch(_type){
+    case Box:
+      wtr(0,0) = (sqr(_radius.y())+sqr(_radius.z()))*(1.f/12.f);
+      wtr(1,1) = (sqr(_radius.x())+sqr(_radius.z()))*(1.f/12.f);
+      wtr(2,2) = (sqr(_radius.x())+sqr(_radius.y()))*(1.f/12.f);
+      break;
+    case Sphere:
+      wtr(0,0) = wtr(1,1) = wtr(2,2) = sqr(_radius.x())*(2.f/5.f);
+      break;
+  }
+  return wtr;
+}
 void Collider::render(const Camera& camera) {
   GL::baseProgram().use();
   GL::baseProgram().uniform("model",_transform->matrix()*Matrix44f::scale(_radius));
