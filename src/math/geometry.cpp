@@ -54,3 +54,23 @@ Matrix44f L::SQTToMat(const Quatf& q,const Vector3f& t,float s){
   wtr(3,3) = 1.f;
   return wtr;
 }
+Matrix33f L::quatToMat(const Quatf& q){
+  Matrix33f wtr;
+  const float& x(q.x());
+  const float& y(q.y());
+  const float& z(q.z());
+  const float& w(q.w());
+  const float x2(x*x);
+  const float y2(y*y);
+  const float z2(z*z);
+  wtr(0,0) = 1.f - 2.f*y2 - 2.f*z2;
+  wtr(0,1) = 2.f*x*y - 2.f*z*w;
+  wtr(0,2) = 2.f*x*z + 2.f*y*w;
+  wtr(1,0) = 2.f*x*y + 2.f*z*w;
+  wtr(1,1) = 1.f - 2.f*x2 - 2.f*z2;
+  wtr(1,2) = 2.f*y*z - 2.f*x*w;
+  wtr(2,0) = 2.f*x*z - 2.f*y*w;
+  wtr(2,1) = 2.f*y*z + 2.f*x*w;
+  wtr(2,2) = 1.f - 2.f*x2 - 2.f*y2;
+  return wtr;
+}
