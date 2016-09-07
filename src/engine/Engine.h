@@ -18,10 +18,6 @@ namespace L {
         c.update();
     }
     template <class CompType>
-    static void cleanupComp() {
-      Pool<CompType>::global.clear();
-    }
-    template <class CompType>
     static void renderAll(const Camera& cam) {
       for(auto&& c : Pool<CompType>::global)
         c.render(cam);
@@ -31,7 +27,7 @@ namespace L {
       for(auto&& c : Pool<CompType>::global)
         c.event(e);
     }
-    static Array<void(*)()> _updates,_cleanups;
+    static Array<void(*)()> _updates;
     static Array<void(*)(const Camera&)> _renders;
     static Array<void(*)(const Window::Event&)> _events;
     static Map<uint32_t,Ref<GL::Texture> > _textures;
@@ -51,7 +47,6 @@ namespace L {
     static void clear();
     template <class CompType> inline static void addUpdate() {
       _updates.push(updateAll<CompType>);
-      _cleanups.push(cleanupComp<CompType>);
     }
     template <class CompType> inline static void addRender() {
       _renders.push(renderAll<CompType>);

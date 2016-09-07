@@ -10,7 +10,7 @@
 
 using namespace L;
 
-Array<void(*)()> Engine::_updates, Engine::_cleanups;
+Array<void(*)()> Engine::_updates;
 Array<void(*)(const Camera&)> Engine::_renders;
 Array<void(*)(const Window::Event&)> Engine::_events;
 Map<uint32_t,Ref<GL::Texture> > Engine::_textures;
@@ -42,8 +42,7 @@ void Engine::update() {
   _frame++;
 }
 void Engine::clear() {
-  for(auto&& cleanup : _cleanups)
-    cleanup();
+  Pool<Entity>::global.clear();
 }
 
 GL::Buffer& Engine::sharedUniform(){
