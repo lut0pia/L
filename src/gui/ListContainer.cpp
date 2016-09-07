@@ -1,6 +1,5 @@
 #include "ListContainer.h"
 
-#include <algorithm>
 #include "GUI.h"
 
 using namespace L;
@@ -50,7 +49,7 @@ void ListContainer::updateFromAbove(Vector2i pos, Interval2i parentClip) {
       dimensions.y() += childDim.y();
       if(i+1<elements.size())
         dimensions.y() += spacing;
-      dimensions.x() = std::max(dimensions.x(), childDim.x());
+      dimensions.x() = max(dimensions.x(), childDim.x());
     }
     if(dimensions != oldDim)
       Base::dimensionsChanged(dimensions);

@@ -1,6 +1,5 @@
 #include "BWT.h"
 
-#include <algorithm>
 #include <utility>
 #include "../macros.h"
 

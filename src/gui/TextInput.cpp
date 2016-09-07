@@ -1,7 +1,5 @@
 #include "TextInput.h"
 
-#include <algorithm>
-
 #include "GUI.h"
 
 using namespace L;
@@ -19,7 +17,7 @@ void TextInput::updateText() {
   textElement->text(tmp,c);
 }
 void TextInput::updateTextElement(Vector2i dim) {
-  textElement->updateFromAbove(Vector<2,int>(std::min(pos.x(),pos.x()+dimensions.x()-dim.x()),
+  textElement->updateFromAbove(Vector<2,int>(min(pos.x(),pos.x()+dimensions.x()-dim.x()),
                                ((2*pos.y()+dimensions.y())/2)-(dim.y()/2)),clip);
 }
 

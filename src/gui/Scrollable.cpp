@@ -1,7 +1,5 @@
 #include "Scrollable.h"
 
-#include <algorithm>
-
 using namespace L;
 using namespace GUI;
 
@@ -23,7 +21,7 @@ Vector2i Scrollable::gModifier() const {
   return modifier;
 }
 void Scrollable::sValue(Vector<2,float> m) {
-  modifier = Vector<2,int>(std::max(0,childDim.x()-dimensions.x())*m.x(),std::max(0,childDim.y()-dimensions.y())*m.y());
+  modifier = Vector<2,int>(max(0,childDim.x()-dimensions.x())*m.x(),max(0,childDim.y()-dimensions.y())*m.y());
   child->updateFromAbove(pos-modifier,clip);
 }
 Vector<2,float> Scrollable::gValue() const {

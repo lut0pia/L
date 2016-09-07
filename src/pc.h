@@ -10,7 +10,6 @@
 #include <ctime>
 
 // STL
-#include <algorithm>
 #include <functional>
 #include <initializer_list>
 #include <limits>
