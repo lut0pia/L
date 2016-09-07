@@ -14,23 +14,25 @@ namespace L {
       byte _data[size*sizeof(T)];
       uint32_t _table[tableSize]; // Every bit of this array represents a object slot in _data
       Block* _next; // Pool works like a linked list, in case no more space is available
-      uint32_t _head,_tail;
-      inline Block() : _table{0},_next(nullptr),_head(0),_tail(0){}
+      uint32_t _start,_head,_tail; // First allocated, first unallocated, last allocated
+      inline Block() : _table{0},_next(nullptr),_start(size-1),_head(0),_tail(0){}
       inline ~Block() { delete _next; }
       inline bool allocated(uint32_t i) const{ return i<_head || (_table[i/intBits]&(1u<<(i%intBits)))!=0; } // Check if element i is allocated
       inline bool full() const{ return _head==size; }
       inline T* pointer(uint32_t i) const{ return ((T*)_data) + i; } // Returns pointer to ith element
       inline T* allocate() {
         uint32_t i(_head);
-        while(allocated(++_head)); // Move head to first unallocated slot
-        if(i>_tail) _tail = i;
         _table[i/intBits] |= 1<<(i%intBits); // Mark slot allocated
+        if(i<_start) _start = i;
+        if(i>_tail) _tail = i;
+        while(_head<size && allocated(_head)) _head++;
         return pointer(i); // Return pointer to element
       }
       inline void deallocate(uint32_t i) {
-        if(i<_head) _head = i;
-        if(_tail==i) _tail--;
         _table[i/intBits] &= ~(1u<<(i%intBits)); // Mark slot as free
+        while(_start<size && !allocated(_start)) _start++;
+        if(i<_head) _head = i;
+        while(_tail>0 && !allocated(_tail)) _tail--;
       }
       inline void deallocate(void* p){ deallocate(((uintptr_t)p-(uintptr_t)_data)/sizeof(T)); }
       inline bool hasAddress(void *p) const{ return _data<=p && p<_data+sizeof(_data); }
@@ -41,16 +43,19 @@ namespace L {
       uint32_t _i;
 
     public:
-      Iterator() : _block(0),_i(0){}
-      Iterator(Block* block) : _block(block),_i(0){}
+      Iterator(Block* block = nullptr) : _block(block){
+        if(_block){
+          if(_block->_start<_block->_head)
+            _i = _block->_start;
+          else new(this)Iterator(_block->_next);
+        }
+      }
 
       Iterator& operator++(){
         if(_block){
           do{
-            if(++_i>_block->_tail){ // End of the block
-              _block = _block->_next;
-              _i = 0;
-            }
+            if(++_i>_block->_tail) // End of the block
+              new(this)Iterator(_block->_next);
           } while(_block && !_block->allocated(_i)); // Stop when no more block or allocated slot is found
         }
         return *this;
@@ -98,7 +103,7 @@ namespace L {
         if(block->hasAddress(p)) return block->deallocate(p);
     }
     inline Iterator begin() const{ return Iterator(_root); }
-    inline Iterator end() const{ return Iterator(nullptr); }
+    inline Iterator end() const{ return Iterator(); }
     static Pool global;
   };
   template <class T> Pool<T> Pool<T>::global;
