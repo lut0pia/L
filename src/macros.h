@@ -7,8 +7,6 @@
 # include <signal.h>
 #endif
 
-#define typeof __typeof__ // static operator replaced by type name of expression
-
 #if defined(__x86_64__) || defined(_M_X64)
 #define L_X86_64
 #elif defined(__i386) || defined(_M_IX86)
