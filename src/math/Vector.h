@@ -200,4 +200,11 @@ namespace L {
       wtr[i] = clamp(v[i],min[i],max[i]);
     return wtr;
   }
+  template <int d,class T>
+  Vector<d,T> abs(const Vector<d,T>& v) {
+    Vector<d,T> wtr;
+    for(int i(0); i<d; i++)
+      wtr[i] = abs(v[i]);
+    return wtr;
+  }
 }
