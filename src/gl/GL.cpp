@@ -117,6 +117,53 @@ const Mesh& GL::wireCube(){
   static Mesh mesh(GL_LINES,12*2,wireCube,sizeof(wireCube),{Mesh::Attribute{0,3,GL_FLOAT,GL_FALSE,0,0}});
   return mesh;
 }
+const Mesh& GL::sphere(){
+  static const float d(sqrt(.5f));
+  static const GLfloat sphere[] = {
+    // -X-Y-Z octant
+    0,0,-1,  0,-d,-d, -d,0,-d,
+    0,-1,0,  -d,-d,0, 0,-d,-d,
+    -1,0,0,  -d,0,-d, -d,-d,0,
+    0,-d,-d, -d,-d,0, -d,0,-d,
+    // -X-Y+Z octant
+    0,0,1,   -d,0,d,  0,-d,d,
+    0,-1,0,  0,-d,d,  -d,-d,0,
+    -1,0,0,  -d,-d,0, -d,0,d,
+    0,-d,d,  -d,0,d,  -d,-d,0,
+    // -X+Y-Z octant
+    0,0,-1,  -d,0,-d, 0,d,-d,
+    0,1,0,   0,d,-d,  -d,d,0,
+    -1,0,0,  -d,d,0,  -d,0,-d,
+    0,d,-d,  -d,0,-d, -d,d,0,
+    // -X+Y+Z octant
+    0,0,1,   0,d,d,   -d,0,d,
+    0,1,0,   -d,d,0,  0,d,d,
+    -1,0,0,  -d,0,d,  -d,d,0,
+    0,d,d,   -d,d,0,  -d,0,d,
+    // +X-Y-Z octant
+    0,0,-1,  d,0,-d,  0,-d,-d,
+    0,-1,0,  0,-d,-d, d,-d,0,
+    1,0,0,   d,-d,0,  d,0,-d,
+    0,-d,-d, d,0,-d,  d,-d,0,
+    // +X-Y+Z octant
+    0,0,1,   0,-d,d,  d,0,d,
+    0,-1,0,  d,-d,0,  0,-d,d,
+    1,0,0,   d,0,d,   d,-d,0,
+    0,-d,d,  d,-d,0,  d,0,d,
+    // +X+Y-Z octant
+    0,0,-1,  0,d,-d,  d,0,-d,
+    0,1,0,   d,d,0,   0,d,-d,
+    1,0,0,   d,0,-d,  d,d,0,
+    0,d,-d,  d,d,0,   d,0,-d,
+    // +X+Y+Z octant
+    0,0,1,  d,0,d, 0,d,d,
+    0,1,0,  0,d,d, d,d,0,
+    1,0,0,  d,d,0, d,0,d,
+    0,d,d,  d,0,d, d,d,0,
+  };
+  static Mesh mesh(GL_TRIANGLES,8*4*3,sphere,sizeof(sphere),{Mesh::Attribute{0,3,GL_FLOAT,GL_FALSE,0,0}});
+  return mesh;
+}
 const Mesh& GL::wireSphere(){
   static const float d(sqrt(.5f));
   static const GLfloat wireSphere[] = {
