@@ -4,9 +4,9 @@
 	(local transform ((entity'require-transform)))
 	(transform'move |
 		(vec
-			(* (- (rand) 0.5) 16)
-			(* (- (rand) 0.5) 16)
-			(* (rand) 16.0)))
+			(rand-range -8 8)
+			(rand-range -8 8)
+			(rand-range 2 8)))
 	(transform'rotate | (vec 0 1 0) (* (- (rand) .5) 5))
 	; Add rigid body
 	(entity'require-rigidbody || 'add-speed | (vec (rand-range -2 2) (rand-range -2 2) (rand-range 1 2)))
@@ -28,12 +28,10 @@
 	(local nsize (- size))
 	(local half (/ size 2))
 	(local nhalf (- half))
-	(make-static-box (vec 0 0 0) (vec half half 1))
-	(make-static-box (vec 0 0 size) (vec half half 1))
-	(make-static-box (vec half 0 half) (vec 1 half half))
-	(make-static-box (vec nhalf 0 half) (vec 1 half half))
-	(make-static-box (vec 0 half half) (vec half 1 half))
-	;(make-static-box (vec 0 nhalf half) (vec size 1 size))
+	(make-static-box (vec 0 0 0) (vec half half 0.5))
+	(make-static-box (vec half 0 half) (vec 0.5 half half))
+	(make-static-box (vec nhalf 0 half) (vec 0.5 half half))
+	(make-static-box (vec 0 half half) (vec half 0.5 half))
 )))
 (local make-static-box (fun (position size) (do
 	(local entity (entity-make))
@@ -54,12 +52,12 @@
 (entity-make | 'add-script || 'load | "camera.ls")
 (make-terrain)
 
-(make-mesh "smartphone.obj" "smartphone.png" (vec 0 0 10))
-(make-mesh "jerrican.obj" "jerrican.png" (vec 0 0 0))
-(make-mesh "bush.obj" "bush.png" (vec 0 0 0))
+(make-mesh "smartphone.obj" "smartphone.png" (vec -16 -20 5))
+(make-mesh "jerrican.obj" "jerrican.png" (vec 4 -16 5))
+(make-mesh "bush.obj" "bush.png" (vec -16 -28 0))
 
 ; Create all boxes
-(local box-count 16)
+(local box-count 256)
 (while (> box-count 0) (do
 	(make-box)
 	(set box-count (- box-count 1))
