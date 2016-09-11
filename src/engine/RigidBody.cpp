@@ -29,17 +29,17 @@ void RigidBody::update() {
   _rotation += _invInertiaTensor*_torque;
   _transform->moveAbsolute((_velocity+oldVelocity)*Engine::deltaSeconds()*.5f);
   const Vector3f rotationAvg((_rotation+oldRotation)*.5f);
-  float rotLength(rotationAvg.length());
+  const float rotLength(rotationAvg.length());
   if(rotLength>.0f)
     _transform->rotateAbsolute(rotationAvg*(1.f/rotLength),rotLength*Engine::deltaSeconds());
   _force = _torque = 0.f; // Reset force and torque for next frame
 }
 
 float RigidBody::deltaVelocity(const Vector3f& offset,const Vector3f& normal) const{
-  Vector3f torquePerUnitImpulse(offset.cross(normal));
-  Vector3f rotationPerUnitImpulse(_invInertiaTensor*torquePerUnitImpulse);
-  Vector3f velocityPerUnitImpulse(rotationPerUnitImpulse.cross(offset));
-  float angularComponent(velocityPerUnitImpulse.dot(normal));
+  const Vector3f torquePerUnitImpulse(offset.cross(normal));
+  const Vector3f rotationPerUnitImpulse(_invInertiaTensor*torquePerUnitImpulse);
+  const Vector3f velocityPerUnitImpulse(rotationPerUnitImpulse.cross(offset));
+  const float angularComponent(velocityPerUnitImpulse.dot(normal));
   return angularComponent+_invMass;
 }
 void RigidBody::applyImpulse(const Vector3f& impulse,const Vector3f& offset){
@@ -47,7 +47,7 @@ void RigidBody::applyImpulse(const Vector3f& impulse,const Vector3f& offset){
   addTorque(offset.cross(impulse));
 }
 void RigidBody::collision(RigidBody* a,RigidBody* b,const Vector3f& impact,const Vector3f& normal) {
-  Vector3f
+  const Vector3f
     arel(impact-a->center()),
     brel((b) ? impact-b->center() : 0),
     av(a->velocityAt(arel)),
@@ -58,7 +58,7 @@ void RigidBody::collision(RigidBody* a,RigidBody* b,const Vector3f& impact,const
   float desiredDeltaVelocity(-contactVelocity*(1.f+restitution));
   float deltaVelocity(a->deltaVelocity(arel,normal));
   if(b) deltaVelocity += b->deltaVelocity(brel,normal);
-  Vector3f impulse(normal*(desiredDeltaVelocity/deltaVelocity));
+  const Vector3f impulse(normal*(desiredDeltaVelocity/deltaVelocity));
   if(contactVelocity<0.f){
     a->applyImpulse(impulse,arel);
     if(b) b->applyImpulse(-impulse,brel);
