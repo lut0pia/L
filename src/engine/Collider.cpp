@@ -202,17 +202,33 @@ void Collider::checkCollision(Collider& a,Collider& b) {
     const Vector3f sphereCenter(sphere->_transform->toAbsolute(sphere->_center));
     const Vector3f relCenter(box->_transform->fromAbsolute(sphereCenter));
     const Vector3f closest(clamp(relCenter,-box->_radius,box->_radius));
-    impactPoint = box->_transform->toAbsolute(closest);
-    const float overlap(sphere->_radius.x()-impactPoint.dist(sphereCenter));
-    if(overlap>.0f){
-      normal = (box==&a) ? impactPoint-sphereCenter : sphereCenter-impactPoint;
-      normal.normalize();
-      // Resolve interpenetration
-      if(b._rigidbody){
-        a._transform->moveAbsolute(normal*overlap*.5f);
-        b._transform->moveAbsolute(normal*overlap*-.5f);
-      } else a._transform->moveAbsolute(normal*overlap);
-    } else return; // No collision
+    float overlap;
+    if(relCenter == closest){ // The sphere's center is in the box
+      const Vector3f dist(abs(box->_radius-relCenter)); // Distance to box border
+      if(dist.x() < dist.y() && dist.x() < dist.z()){
+        normal = (box==&a) ? Vector3f(1.f,0,0) : Vector3f(-1.f,0,0);
+        overlap = dist.x();
+      } else if(dist.y() < dist.x() && dist.y() < dist.z()){
+        normal = (box==&a) ? Vector3f(0,1.f,0) : Vector3f(0,-1.f,0);
+        overlap = dist.y();
+      } else {
+        normal = (box==&a) ? Vector3f(0,0,1.f) : Vector3f(0,0,-1.f);
+        overlap = dist.z();
+      }
+      normal = box->_transform->toAbsolute(normal);
+    } else {
+      impactPoint = box->_transform->toAbsolute(closest);
+      overlap = sphere->_radius.x()-impactPoint.dist(sphereCenter);
+      if(overlap>.0f){
+        normal = (box==&a) ? impactPoint-sphereCenter : sphereCenter-impactPoint;
+        normal.normalize();
+      } else return; // No collision
+    }
+    // Resolve interpenetration
+    if(b._rigidbody){
+      a._transform->moveAbsolute(normal*overlap*.5f);
+      b._transform->moveAbsolute(normal*overlap*-.5f);
+    } else a._transform->moveAbsolute(normal*overlap);
   }
   // Send collision events to scripts
   auto e(ref<Table<Var,Var>>());
