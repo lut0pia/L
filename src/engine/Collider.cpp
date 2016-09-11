@@ -22,6 +22,23 @@ void Collider::update() {
     }
   }
 }
+void Collider::center(const Vector3f& center){
+  _center = center;
+  if(_rigidbody)
+    _rigidbody->updateInertiaTensor();
+}
+void Collider::box(const Vector3f& radius) {
+  _type = Box;
+  _radius = radius;
+  if(_rigidbody)
+    _rigidbody->updateInertiaTensor();
+}
+void Collider::sphere(float radius) {
+  _type = Sphere;
+  _radius = radius;
+  if(_rigidbody)
+    _rigidbody->updateInertiaTensor();
+}
 Interval3f Collider::boundingBox() const {
   if(Engine::frame()!=_updateFrame){
     switch(_type) {

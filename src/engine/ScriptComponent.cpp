@@ -103,8 +103,9 @@ void ScriptComponent::init() {
   });
   // Collider ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(Collider,"collider");
-  L_COMPONENT_METHOD(Collider,"box",1,box(Vector3f(0,0,0),stack[0]->get<Vector3f>()*.5f));
-  L_COMPONENT_METHOD(Collider,"sphere",1,sphere(Vector3f(0,0,0),stack[0]->get<float>()*.5f));
+  L_COMPONENT_METHOD(Collider,"center",1,center(stack[0]->get<Vector3f>()));
+  L_COMPONENT_METHOD(Collider,"box",1,box(stack[0]->get<Vector3f>()));
+  L_COMPONENT_METHOD(Collider,"sphere",1,sphere(stack[0]->get<float>()));
   // RigidBody ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(RigidBody,"rigidbody");
   L_COMPONENT_METHOD(RigidBody,"mass",1,mass(stack[0]->get<float>()));

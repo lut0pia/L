@@ -1,18 +1,36 @@
 #include "RigidBody.h"
 
+#include "Collider.h"
+
 using namespace L;
 
 Vector3f RigidBody::_gravity(0.f,0.f,.0f);
 
 RigidBody::RigidBody() :
-  _invInertiaTensor(1.f),
+  _invInertiaTensor(1.f),_invInertiaTensorWorld(1.f),
   _velocity(0.f),_rotation(0.f),_force(0.f),_torque(0.f),
   _invMass(1.f),_restitution(.5f),_drag(0.f),_angDrag(0.f){}
 void RigidBody::updateComponents(){
   _transform = entity()->requireComponent<Transform>();
+  updateInertiaTensor();
+}
+void RigidBody::updateInertiaTensor(){
+  Matrix33f inertiaTensor(0.f);
+  int count(0);
+  for(auto&& c : entity()->components())
+    if(c.key()==Type<Collider>::description()){
+      inertiaTensor += ((Collider*)c.value())->inertiaTensor();
+      count++;
+    }
+  inertiaTensor *= (1.f/_invMass)/count;
+  //_invInertiaTensor = inertiaTensor.inverse();
 }
 void RigidBody::update() {
-  addForce(Engine::deltaSeconds()*_gravity/_invMass); // Apply gravity
+  // Compute world inertia tensor
+  const Matrix33f orientation(quatToMat(_transform->absoluteRotation()));
+  _invInertiaTensorWorld = orientation.transpose()*_invInertiaTensor*orientation;
+
+  addForce(_gravity/_invMass); // Apply gravity
   if(_velocity.length()>.0f){ // Apply linear drag
     Vector3f dragForce(_velocity);
     dragForce.length(-_drag*_velocity.lengthSquared());
@@ -25,14 +43,19 @@ void RigidBody::update() {
   }
   // Integrate
   const Vector3f oldVelocity(_velocity),oldRotation(_rotation);
-  _velocity += _invMass*_force;
-  _rotation += _invInertiaTensor*_torque;
+  _velocity += (_invMass*_force)*Engine::deltaSeconds();
+  _rotation += (_invInertiaTensorWorld*_torque)*Engine::deltaSeconds();
   _transform->moveAbsolute((_velocity+oldVelocity)*Engine::deltaSeconds()*.5f);
   const Vector3f rotationAvg((_rotation+oldRotation)*.5f);
   const float rotLength(rotationAvg.length());
   if(rotLength>.0f)
     _transform->rotateAbsolute(rotationAvg*(1.f/rotLength),rotLength*Engine::deltaSeconds());
   _force = _torque = 0.f; // Reset force and torque for next frame
+}
+
+void RigidBody::mass(float m){
+  _invMass = 1.f/m;
+  updateInertiaTensor();
 }
 
 float RigidBody::deltaVelocity(const Vector3f& offset,const Vector3f& normal) const{
@@ -43,8 +66,8 @@ float RigidBody::deltaVelocity(const Vector3f& offset,const Vector3f& normal) co
   return angularComponent+_invMass;
 }
 void RigidBody::applyImpulse(const Vector3f& impulse,const Vector3f& offset){
-  addForce(impulse);
-  addTorque(offset.cross(impulse));
+  _velocity += _invMass*impulse;
+  _rotation += _invInertiaTensorWorld*offset.cross(impulse);
 }
 void RigidBody::collision(RigidBody* a,RigidBody* b,const Vector3f& impact,const Vector3f& normal) {
   const Vector3f

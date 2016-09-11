@@ -8,16 +8,17 @@ namespace L {
   protected:
     static Vector3f _gravity;
     Transform* _transform;
-    Matrix33f _invInertiaTensor;
+    Matrix33f _invInertiaTensor, _invInertiaTensorWorld;
     Vector3f _velocity,_rotation,_force,_torque;
     float _invMass,_restitution,_drag,_angDrag;
   public:
     RigidBody();
     void updateComponents();
+    void updateInertiaTensor();
     void update();
 
     inline float mass() const{ return 1.f/_invMass; }
-    inline void mass(float m){ _invMass = 1.f/m; }
+    void mass(float m);
     inline float restitution() const{ return _restitution; }
     inline void restitution(float r){ _restitution = r; }
     inline float drag() const{ return _drag; }
