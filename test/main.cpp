@@ -15,10 +15,13 @@ int main(int argc,const char* argv[]) {
   Engine::addUpdate<ScriptComponent>();
   Engine::addUpdate<RigidBody>();
   Engine::addUpdate<Collider>();
+  Engine::addRender<Primitive>();
   Engine::addRender<Sprite>();
   Engine::addRender<StaticMesh>();
-  Engine::addRender<Collider>();
   Engine::addEvent<ScriptComponent>();
+#ifdef L_DEBUG
+  Engine::addRender<Collider>();
+#endif
   {
     ScriptComponent::init();
     FileStream file("startup.ls","rb");

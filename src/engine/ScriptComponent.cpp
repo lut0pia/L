@@ -6,6 +6,7 @@
 #include "Sprite.h"
 #include "Transform.h"
 #include "StaticMesh.h"
+#include "Primitive.h"
 #include "../String.h"
 
 using namespace L;
@@ -131,4 +132,9 @@ void ScriptComponent::init() {
   L_COMPONENT_BIND(StaticMesh,"staticmesh");
   L_COMPONENT_METHOD(StaticMesh,"mesh",1,mesh((const char*)stack[0]->get<String>()));
   L_COMPONENT_METHOD(StaticMesh,"texture",1,texture((const char*)stack[0]->get<String>()));
+  // Primitive ///////////////////////////////////////////////////////////////////
+  L_COMPONENT_BIND(Primitive,"primitive");
+  L_COMPONENT_METHOD(Primitive,"center",1,center(stack[0]->get<Vector3f>()));
+  L_COMPONENT_METHOD(Primitive,"box",1,box(stack[0]->get<Vector3f>()));
+  L_COMPONENT_METHOD(Primitive,"sphere",1,sphere(stack[0]->get<float>()));
 }

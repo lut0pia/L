@@ -1,19 +1,26 @@
 (set rand-range (fun (min max) (+ min (* (- max min) (rand)))))
 (set make-box (fun (do
 	(local entity (entity-make))
-	(local rigidbody ((entity'add-rigidbody)))
-	(local collider ((entity'add-collider)))
 	(local transform ((entity'require-transform)))
-	(if (< (rand) 0.5)
-		(collider'sphere | 0.5)
-		(collider'box | (vec 0.5 0.5 0.5)))
 	(transform'move |
 		(vec
 			(* (- (rand) 0.5) 16)
 			(* (- (rand) 0.5) 16)
 			(* (rand) 16.0)))
 	(transform'rotate | (vec 0 1 0) (* (- (rand) .5) 5))
-	(rigidbody'add-speed | (vec (rand-range -5 5) (rand-range -5 5) (rand-range 2.5 5)))
+	; Add rigid body
+	(entity'require-rigidbody || 'add-speed | (vec (rand-range -2 2) (rand-range -2 2) (rand-range 1 2)))
+	; Add collider
+	(if (< (rand) 0.5)
+		(do
+			(entity'require-collider || 'sphere | 0.5)
+			(entity'require-primitive || 'sphere | 0.5)
+		)
+		(do
+			(entity'require-collider || 'box | (vec 0.5 0.5 0.5))
+			(entity'require-primitive || 'box | (vec 0.5 0.5 0.5))
+		)
+	)
 )))
 
 (local make-terrain (fun (do
@@ -32,6 +39,7 @@
 	(local entity (entity-make))
 	(entity'require-transform || 'move | position)
 	(entity'require-collider || 'box | size)
+	(entity'require-primitive || 'box | size)
 )))
 (local make-mesh (fun (mesh tex pos) (do
 	(local entity (entity-make))

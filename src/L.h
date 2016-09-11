@@ -52,6 +52,7 @@
 #include "engine/Component.h"
 #include "engine/Engine.h"
 #include "engine/Entity.h"
+#include "engine/Primitive.h"
 #include "engine/RigidBody.h"
 #include "engine/ScriptComponent.h"
 #include "engine/Sprite.h"
