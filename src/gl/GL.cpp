@@ -1,10 +1,8 @@
 #include "GL.h"
 
 #include "../constants.h"
-#include "Mesh.h"
 #include "MeshBuilder.h"
 #include "Shader.h"
-#include "Program.h"
 #include "../image/Color.h"
 #include "../engine/SharedUniform.h"
 

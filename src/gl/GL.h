@@ -2,12 +2,12 @@
 
 #include "../math/Vector.h"
 #include "../math/Matrix.h"
+#include "Mesh.h"
+#include "Texture.h"
+#include "Program.h"
 
 namespace L {
   namespace GL {
-    class Mesh;
-    class Texture;
-    class Program;
     const Texture& whiteTexture();
     Program& baseProgram();
     const char* error();
