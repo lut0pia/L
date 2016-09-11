@@ -28,7 +28,7 @@ void Context::read(Var& v,Lexer& lexer) {
     int i(0);
     while(!lexer.acceptToken(")"))
       if(lexer.acceptToken("|"))
-        v = Array<Var>{v}, i = 1;
+        v = Array<Var>{v},i = 1;
       else read(v[i++],lexer);
   } else if(lexer.acceptToken("'")) {
     read(v.make<Quote>().var,lexer);
@@ -144,6 +144,18 @@ Context::Context(){
     for(uintptr_t i(1); i<a.size()-1; i++)
       c.execute(a[i]);
     return c.execute(a.back());
+  });
+  _globals[FNV1A("and")] = (Native)([](Context& c,const Array<Var>& a)->Var {
+    for(uintptr_t i(1); i<a.size(); i++)
+      if(!c.execute(a[i]).get<bool>())
+        return false;
+    return true;
+  });
+  _globals[FNV1A("or")] = (Native)([](Context& c,const Array<Var>& a)->Var {
+    for(uintptr_t i(1); i<a.size(); i++)
+      if(c.execute(a[i]).get<bool>())
+        return true;
+    return false;
   });
   _globals[FNV1A("while")] = (Native)([](Context& c,const Array<Var>& a)->Var {
     Var wtr;
