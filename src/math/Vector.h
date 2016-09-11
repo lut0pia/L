@@ -194,7 +194,7 @@ namespace L {
     return s;
   }
   template <int d,class T>
-  const Vector<d,T>& clamp(const Vector<d,T>& v,const Vector<d,T>& min,const Vector<d,T>& max) {
+  Vector<d,T> clamp(const Vector<d,T>& v,const Vector<d,T>& min,const Vector<d,T>& max) {
     Vector<d,T> wtr;
     for(int i(0); i<d; i++)
       wtr[i] = clamp(v[i],min[i],max[i]);
