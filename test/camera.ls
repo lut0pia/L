@@ -9,8 +9,8 @@
 (local update (fun (do
 	; Camera movement
 	(local movement (* delta 4))
-	(if (key-pressed Z) (transform'move | (vec 0 movement 0)))
-	(if (key-pressed Q) (transform'move | (vec (- movement) 0 0)))
+	(if (or (key-pressed Z) (key-pressed W)) (transform'move | (vec 0 movement 0)))
+	(if (or (key-pressed Q) (key-pressed A)) (transform'move | (vec (- movement) 0 0)))
 	(if (key-pressed S) (transform'move | (vec 0 (- movement) 0)))
 	(if (key-pressed D) (transform'move | (vec movement 0 0)))
 )))
