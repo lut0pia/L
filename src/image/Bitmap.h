@@ -27,7 +27,7 @@ namespace L {
     Bitmap& save(const String& filePath);
     inline int width() const { return size(0); }
     inline int height() const { return size(1); }
-    const Color& at(int x,int y) const;
+    inline const Color& at(int x,int y) const{ return operator()(clamp(x,0,width()-1),clamp(y,0,height()-1)); }
 
     // Image treatment
     inline Color nearest(float x,float y) const { return operator()((int)x,(int)y); }
