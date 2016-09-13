@@ -2,11 +2,10 @@
 
 #include "../Interface.h"
 #include "../math/Interpolation.h"
-#include <cmath>
 
 using namespace L;
 
-Bitmap::Bitmap(int width, int height, const Color& c) : MultiArray<2,Color>(width,height) {
+Bitmap::Bitmap(int width,int height,const Color& c) : MultiArray<2,Color>(width,height) {
   for(int x(0); x<width; x++)
     for(int y(0); y<height; y++)
       (*this)(x,y) = c;
@@ -22,16 +21,16 @@ Bitmap& Bitmap::save(const String& filePath) {
   Interface<Bitmap>::toFile(*this,filePath);
   return *this;
 }
-const Color& Bitmap::at(int x, int y) const {
+const Color& Bitmap::at(int x,int y) const {
   static Color outside;
   if(x<0 || y<0 || x>=width() || y>=height())
     return outside;
   else return MultiArray<2,Color>::operator()(x,y);
 }
 
-Color Bitmap::linear(float x, float y) const {
-  x-= .5f;
-  y-= .5f;
+Color Bitmap::linear(float x,float y) const {
+  x -= .5f;
+  y -= .5f;
   float weight[2] = {pmod(x,1.f),pmod(y,1.f)};
   int xi((int)floor(x));
   int yi((int)floor(y));
@@ -43,14 +42,14 @@ Color Bitmap::linear(float x, float y) const {
   };
   Vector4f tmp(Interpolation<Vector4f,2>::linear(cell,weight));
   return Color((byte)clamp(tmp[0],0.f,255.f),
-               (byte)clamp(tmp[1],0.f,255.f),
+    (byte)clamp(tmp[1],0.f,255.f),
                (byte)clamp(tmp[2],0.f,255.f),
                (byte)clamp(tmp[3],0.f,255.f));
 }
 
-Color Bitmap::cubic(float x, float y) const {
-  x-= .5f;
-  y-= .5f;
+Color Bitmap::cubic(float x,float y) const {
+  x -= .5f;
+  y -= .5f;
   float weight[2] = {pmod(x,1.f),pmod(y,1.f)};
   int xi((int)floor(x));
   int yi((int)floor(y));
@@ -74,19 +73,19 @@ Color Bitmap::cubic(float x, float y) const {
   };
   Vector4f tmp(Interpolation<Vector4f,2>::cubic(cell,weight));
   return Color((byte)clamp(tmp[0],0.f,255.f),
-               (byte)clamp(tmp[1],0.f,255.f),
+    (byte)clamp(tmp[1],0.f,255.f),
                (byte)clamp(tmp[2],0.f,255.f),
                (byte)clamp(tmp[3],0.f,255.f));
 }
-Bitmap Bitmap::sub(int x, int y, int width, int height) const {
+Bitmap Bitmap::sub(int x,int y,int width,int height) const {
   Bitmap wtr;
   wtr.resize(width,height);
-  for(int i=0; i<width; i++)
-    for(int j=0; j<height; j++)
+  for(int i = 0; i<width; i++)
+    for(int j = 0; j<height; j++)
       wtr(i,j) = (*this)(x+i,y+j);
   return wtr;
 }
-void Bitmap::blit(const Bitmap& bmp, int x, int y) {
+void Bitmap::blit(const Bitmap& bmp,int x,int y) {
   size_t linesize(bmp.width()*sizeof(Color));
   for(int j(0); j<bmp.height(); j++)
     memcpy(&operator()(x,j+y),&bmp(0,j),linesize);
@@ -103,46 +102,46 @@ void Bitmap::filter(Color c) {
     }
 }
 Bitmap Bitmap::trim(Color c) const {
-  int left = 0, right = width()-1,
-      top = 0, bottom = height()-1,
-      x,y;
+  int left = 0,right = width()-1,
+    top = 0,bottom = height()-1,
+    x,y;
   // Left
   y = top;
   while(c == (*this)(left,y)) {
     if(y<bottom) y++;
-    else {y = top; left++;}
+    else { y = top; left++; }
   }
   // Top
   x = left;
   while(c == (*this)(x,top)) {
     if(x<right) x++;
-    else {x = left; top++;}
+    else { x = left; top++; }
   }
   // Right
   y = top;
   while(c == (*this)(right,y)) {
     if(y<bottom) y++;
-    else {y = top; right--;}
+    else { y = top; right--; }
   }
   // Bottom
   x = left;
   while(c == (*this)(x,bottom)) {
     if(x<right) x++;
-    else {x = left; bottom--;}
+    else { x = left; bottom--; }
   }
   return trim(left,right+1,top,bottom+1);
 }
-Bitmap Bitmap::trim(int left, int right, int top, int bottom) const {
+Bitmap Bitmap::trim(int left,int right,int top,int bottom) const {
   Bitmap wtr;
   wtr.resize(right-left,bottom-top);
-  for(int x=left; x<right; x++)
-    for(int y=top; y<bottom; y++)
+  for(int x = left; x<right; x++)
+    for(int y = top; y<bottom; y++)
       wtr(x-left,y-top) = (*this)(x,y);
   return wtr;
 }
-void Bitmap::scale(int newWidth, int newHeight, InterpolationType it) {
+void Bitmap::scale(int newWidth,int newHeight,InterpolationType it) {
   float hf((float)height()/(float)newHeight),
-        wf((float)width()/(float)newWidth);
+    wf((float)width()/(float)newWidth);
   Bitmap copy(*this);
   resizeFast(newWidth,newHeight);
   switch(it) {
@@ -165,8 +164,8 @@ void Bitmap::scale(int newWidth, int newHeight, InterpolationType it) {
   }
 }
 void Bitmap::blur(int factor) {
-  uint32_t rt, gt, bt;
-  float pixelCount, m;
+  uint32_t rt,gt,bt;
+  float pixelCount,m;
   Color c;
   Bitmap copy(*this);
   for(int x = 0; x<(int)width(); x++)
@@ -175,13 +174,13 @@ void Bitmap::blur(int factor) {
       rt = 0;
       gt = 0;
       bt = 0;
-      for(int i=x-factor; i<=x+factor; i++)
-        for(int j=y-factor; j<=y+factor; j++)
+      for(int i = x-factor; i<=x+factor; i++)
+        for(int j = y-factor; j<=y+factor; j++)
           if(i>=0 && i<(int)width()
-              && j>=0 && j<(int)height()) {
+             && j>=0 && j<(int)height()) {
             m = (float)factor-sqrt(pow((float)(x-i),2)+pow((float)(y-j),2));
             if(m>=1) {
-              pixelCount+=m;
+              pixelCount += m;
               c = copy(i,j);
               rt += (byte)(c.r()*m);
               gt += (byte)(c.g()*m);
