@@ -127,8 +127,6 @@
 #include "parallelism/RWSync.h"
 #include "parallelism/Semaphore.h"
 #include "parallelism/Thread.h"
-#include "parallelism/ThreadPool.h"
-#include "parallelism/ThreadStore.h"
 
 // Scripting language
 #include "script/Context.h"
