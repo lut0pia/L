@@ -19,7 +19,7 @@
 "int frame;" \
 "};" \
 "bool alpha(float a){" \
-"ivec2 frameOffset = ivec2(frame,frame*2);" \
+"ivec2 frameOffset = ivec2(frame*31,frame*37);" \
 "ivec2 ditherPos = ivec2(mod(gl_FragCoord.xy+frameOffset,ditherMatrixSize.xy));" \
 "int ditherSlot = ditherPos.x+ditherPos.y*ditherMatrixSize.x;" \
 "float ditherThreshold = ditherMatrix[ditherSlot/4][ditherSlot%4];" \
