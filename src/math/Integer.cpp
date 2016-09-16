@@ -5,15 +5,10 @@
 
 using namespace L;
 
-Integer::Integer() : _negative(false) {
-  _part.push(0);
-}
-Integer::Integer(const int& n) : _negative(n<0) {
-  _part.push((negative())?-n:n);
-}
-Integer::Integer(const String& b, int lbase) : _negative(false) {
+Integer::Integer(const char* str,int lbase) : _negative(false) {
   Integer base(lbase);
-  for(auto&& c : b){
+  for(const char* i(str); *i; i++){
+    const char c(*i);
     int v;
     if(c>='a'&&c<='z') // Go from visual char to actual value
       v = c-('a'-10);
@@ -25,60 +20,38 @@ Integer::Integer(const String& b, int lbase) : _negative(false) {
     operator*=(base);
     operator+=(v);
   }
-  _negative = (b[0]=='-');
+  _negative = (str[0]=='-');
 }
 
-Integer Integer::operator+(const Integer& other) const {
-  Integer wtr(*this);
-  return wtr += other;
-}
-Integer Integer::operator-(const Integer& other) const {
-  Integer wtr(*this);
-  return wtr -= other;
-}
-Integer Integer::operator+() const {
-  return *this;
-}
 Integer Integer::operator-() const {
   Integer wtr(*this);
   wtr._negative = !wtr.negative();
   return wtr;
 }
-Integer Integer::operator*(const Integer& other) const {
-  Integer wtr(*this);
-  return wtr *= other;
-}
-Integer Integer::operator/(const Integer& other) const {
-  Integer wtr(*this);
-  return wtr /= other;
-}
-Integer Integer::operator%(const Integer& other) const {
-  Integer wtr(*this);
-  return wtr %= other;
-}
+
 Integer& Integer::operator++() {
-  *this+=(long)1;
+  *this += (long)1;
   return *this;
 }
 Integer Integer::operator++(int) {
-  Integer wtr = *this;
-  *this+=(long)1;
+  Integer wtr(*this);
+  ++*this;
   return wtr;
 }
 Integer& Integer::operator--() {
-  *this-=(long)1;
+  *this -= (long)1;
   return *this;
 }
 Integer Integer::operator--(int) {
-  Integer wtr = *this;
-  *this-=(long)1;
+  Integer wtr(*this);
+  --*this;
   return wtr;
 }
 
 bool Integer::operator==(const Integer& other) const {
   size_t maxp(max(size(),other.size()));
-  type zeroTest = 0, equalityTest = 0;
-  for(size_t n=0; n<maxp; n++) {
+  type zeroTest = 0,equalityTest = 0;
+  for(size_t n = 0; n<maxp; n++) {
     if(part(n)==other.part(n)) {
       equalityTest++;
       if(part(n)==0)
@@ -92,25 +65,10 @@ bool Integer::operator==(const Integer& other) const {
   else
     return false;
 }
-bool Integer::operator!=(const Integer& other) const {
-  return !(*this==other);
-}
-bool Integer::operator>(const Integer& other) const {
-  if(negative()==other.negative()) {
-    size_t maxp(max(size(),other.size()));
-    for(size_t n=maxp-1; n<=maxp; n--) {
-      if(part(n)>other.part(n))
-        return !negative();
-      else if(part(n)<other.part(n))
-        return negative();
-    }
-    return false;
-  } else return other.negative(); // This is negative -> false, other is negative -> true
-}
 bool Integer::operator<(const Integer& other) const {
   if(negative()==other.negative()) {
     size_t maxp(max(size(),other.size()));
-    for(size_t n=maxp-1; n<=maxp; n--) {
+    for(size_t n = maxp-1; n<=maxp; n--) {
       if(part(n)<other.part(n))
         return !negative();
       else if(part(n)>other.part(n))
@@ -118,36 +76,6 @@ bool Integer::operator<(const Integer& other) const {
     }
     return false;
   } else return negative(); // This is negative -> true, b is negative -> false
-}
-bool Integer::operator>=(const Integer& other) const {
-  return !(*this<other);
-}
-bool Integer::operator<=(const Integer& other) const {
-  return !(*this>other);
-}
-
-Integer Integer::operator<<(const size_t& n) const {
-  /*
-  Integer wtr;
-  for(size_t i=part.size();i!=(size_t)-1;i--){
-      wtr.sPart(i,gPart(i)<<b);
-      wtr.sPart(i+1,wtr.gPart(i+1)|(gPart(i)>>(32-b)));
-  }
-  return wtr;
-  */
-  Integer wtr(*this);
-  return wtr <<= n;
-}
-Integer Integer::operator>>(const size_t& n) const {
-  /*
-  Integer wtr;
-  for(size_t i=0;i<part.size();i++){
-      wtr.sPart(i,gPart(i)>>b);
-      if(i)wtr.sPart(i-1,wtr.gPart(i-1)|(gPart(i)<<(32-b)));
-  }
-  */
-  Integer wtr(*this);
-  return wtr >>= n;
 }
 
 Integer& Integer::operator+=(const Integer& other) {
@@ -159,7 +87,7 @@ Integer& Integer::operator+=(const Integer& other) {
       type tmp(part(n));
       part(n,tmp+other.part(n));
       if(tmp>part(n)) {
-        int i=0;
+        int i = 0;
         do {
           i++;
           part(n+i,part(n+i)+1);
@@ -193,16 +121,16 @@ Integer& Integer::operator-=(const Integer& other) {
   return *this;
 }
 Integer& Integer::operator*=(const Integer& other) {
-  Integer x(abs()), y(other.abs());
+  Integer x(abs()),y(other.abs());
   bool resNeg(negative()!=other.negative());
   reset(); // Make this zero
   while(y>0) {
     if(y.part(0)&1) {
-      (*this)+=x;
+      (*this) += x;
       y--;
     } else {
-      y>>=1;
-      x<<=1;
+      y >>= 1;
+      x <<= 1;
     }
   }
   _negative = resNeg;
@@ -212,11 +140,11 @@ Integer& Integer::operator*=(const Integer& other) {
 Integer& Integer::operator/=(const Integer& other) {
   if(other==0)
     L_ERROR("Trying to divide by zero.");
-  Integer a(abs()), b(other.abs());
+  Integer a(abs()),b(other.abs());
   if(a < b)
     reset();
   else {
-    Integer limDown, limUp(1);
+    Integer limDown,limUp(1);
     size_t n(0);
     bool resNeg(negative() != other.negative());
     // Calculating first limits
@@ -226,7 +154,7 @@ Integer& Integer::operator/=(const Integer& other) {
     }
     limDown = limUp >> 1;
     // Using dichotomy
-    for(size_t i=0; i<n; i++) {
+    for(size_t i = 0; i<n; i++) {
       (*this) = (limDown + limUp) >> 1;
       if((*this)*b <= a)  limDown = (*this);
       else                limUp = (*this);
@@ -243,7 +171,7 @@ Integer& Integer::operator%=(const Integer& other) {
   trim();
   return *this;
 }
-Integer& Integer::operator<<=(const size_t& n) {
+Integer& Integer::operator<<=(size_t n) {
   for(size_t i(size()); i!=(size_t)-1; i--) {
     type tmp(part(i));
     part(i,tmp<<n);
@@ -252,7 +180,7 @@ Integer& Integer::operator<<=(const size_t& n) {
   trim();
   return *this;
 }
-Integer& Integer::operator>>=(const size_t& n) {
+Integer& Integer::operator>>=(size_t n) {
   for(size_t i(0); i<size(); i++) {
     type tmp(part(i));
     part(i,tmp>>n);
@@ -268,30 +196,39 @@ Integer Integer::abs() const {
   return wtr;
 }
 String Integer::toShortString() const {
-  switch(size()) {
-    case 0:
-      return "0";
-    case 1:
-      return ((negative())?"-":"")+String::from(_part[0]);
-    case 2:
-      return ((negative())?"-":"")+String::from(_part.back())+"*(2^32)";
-    default:
-      return ((negative())?"-":"")+String::from(_part.back())+"*(2^32^"+String::from(size()-1)+")";
+  if(!size())
+    return "0";
+  else{
+    String wtr((negative()) ? "-" : "");
+    switch(size()){
+      case 1: wtr += ntos(_part[0]); break;
+      case 2:
+        wtr += ntos(_part.back());
+        wtr += "*(2^32)";
+        break;
+      default:
+        wtr += ntos(_part.back());
+        wtr += "*(2^32^";
+        wtr += ntos(size()-1);
+        wtr += ")";
+        break;
+    }
+    return wtr;
   }
 }
 String Integer::toString(long lbase) const {
-  Integer base = lbase, n;
+  Integer base(lbase),n;
   type buff;
-  String wtr = "";
+  String wtr("");
   switch(lbase) {
     case 2:
-      for(size_t i=size()-1; i!=(size_t)-1; i--)
+      for(size_t i = size()-1; i!=(size_t)-1; i--)
         wtr += ntos<2>(part(i),sizeof(type)*8);
       while(wtr[0]=='0' && wtr.size()>1)
         wtr.erase(0,1);
       break;
     case 16:
-      for(size_t i=size()-1; i!=(size_t)-1; i--)
+      for(size_t i = size()-1; i!=(size_t)-1; i--)
         wtr += ntos<16>(part(i),sizeof(type)*2);
       while(wtr[0]=='0' && wtr.size()>1)
         wtr.erase(0,1);
@@ -315,7 +252,7 @@ Integer::type Integer::part(size_t position) const {
   else
     return 0;
 }
-void Integer::part(size_t position, type p) {
+void Integer::part(size_t position,type p) {
   while(size()<=position)
     _part.push(0);
   _part[position] = p;
@@ -329,17 +266,17 @@ void Integer::trim() {
     _part.pop();
 }
 
-Integer Integer::lcd(const Integer& a, const Integer& b) {
-  Integer c = a, d = b;
+Integer Integer::lcd(const Integer& a,const Integer& b) {
+  Integer c = a,d = b;
   while(c!=d) {
     if(c<d)
-      c+=a;
+      c += a;
     else
-      d+=b;
+      d += b;
   }
   return c;
 }
-Integer Integer::gcd(Integer a, Integer b) {
+Integer Integer::gcd(Integer a,Integer b) {
   if(a<b) swap(a,b);
   if(b!=0) {
     Integer c;
@@ -351,26 +288,24 @@ Integer Integer::gcd(Integer a, Integer b) {
     return b;
   } else return a;
 }
-Integer Integer::pow(const Integer& a, Integer b) {
-  Integer wtr = 1;
-  while(b--!=0) wtr *= a;
+Integer Integer::pow(const Integer& a,Integer b) {
+  Integer wtr(1);
+  while(--b>=0) wtr *= a;
   return wtr;
 }
 
-Stream& L::operator<<(Stream &stream, const Integer& v) {
+Stream& L::operator<<(Stream &stream,const Integer& v) {
   if(v.size()) {
     if(v._negative)
       stream << '-';
-    stream << String::from(v._part.back());
+    stream << v._part.back();
     if(v.size()>1) {
       stream << "*(2^32";
       if(v.size()==2)
         stream << ')';
       else
-        stream << '^' << String::from(v.size()-1) << ')';
+        stream << '^' << (v.size()-1) << ')';
     }
   } else stream << '0';
   return stream;
 }
-
-
