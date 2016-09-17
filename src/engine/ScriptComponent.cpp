@@ -60,6 +60,7 @@ void ScriptComponent::init() {
 #define L_FUNCTION(name,...) Context::global(FNV1A(name)) = (Function)([](const Var& src,SymbolVar* stack,size_t params)->Var {__VA_ARGS__ return 0;})
 #define L_COMPONENT_FUNCTION(cname,fname,n,...) Context::typeValue(Type<cname*>::description(),FNV1A(fname)) = (Function)([](const Var& src,SymbolVar* stack,size_t params)->Var {L_ASSERT(params>=n && src.is<cname*>());__VA_ARGS__ return 0;})
 #define L_COMPONENT_METHOD(cname,fname,n,...) L_COMPONENT_FUNCTION(cname,fname,n,src.as<cname*>()->__VA_ARGS__;)
+#define L_COMPONENT_RETURN_METHOD(cname,fname,n,...) L_COMPONENT_FUNCTION(cname,fname,n,return src.as<cname*>()->__VA_ARGS__;)
 #define L_COMPONENT_ADD(cname,fname) L_COMPONENT_FUNCTION(Entity,fname,0,return src.as<Entity*>()->add<cname>();)
 #define L_COMPONENT_GET(cname,fname) L_COMPONENT_FUNCTION(Entity,fname,0,return src.as<Entity*>()->component<cname>();)
 #define L_COMPONENT_REQUIRE(cname,fname) L_COMPONENT_FUNCTION(Entity,fname,0,return src.as<Entity*>()->requireComponent<cname>();)
