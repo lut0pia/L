@@ -297,6 +297,6 @@ Context::Context(){
   _globals[FNV1A("vec")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
     if(params==3)
       return Vector3f(stack[0]->get<float>(),stack[1]->get<float>(),stack[2]->get<float>());
-    return 0;
+    return Vector3f();
   });
 }
