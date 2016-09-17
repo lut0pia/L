@@ -164,13 +164,12 @@ Context::Context(){
     return wtr;
   });
   _globals[FNV1A("if")] = (Native)([](Context& c,const Array<Var>& a)->Var {
-    if(a.size()>2) {
-      if(c.execute(a[1]).get<bool>())
-        return c.execute(a[2]);
-      else if(a.size()>3)
-        return c.execute(a[3]);
-    }
-    return 0;
+    for(uintptr_t i(1); i<a.size()-1; i += 2)
+      if(c.execute(a[i]).get<bool>())
+        return c.execute(a[i+1]);
+    if(!(a.size()&1))
+      return c.execute(a.back());
+    else return 0;
   });
   _globals[FNV1A("set")] = (Native)([](Context& c,const Array<Var>& a)->Var {
     Var* target;
