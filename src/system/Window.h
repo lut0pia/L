@@ -72,5 +72,7 @@ namespace L {
     static inline bool isPressed(Event::Button button){ return _buttonstate[button]; }
     static Vector2f normalizedMousePosition();
     static Vector2f normalizedToPixels(const Vector2f&);
+    static uint32_t buttonToHash(Event::Button);
+    static Event::Button hashToButton(uint32_t);
   };
 }
