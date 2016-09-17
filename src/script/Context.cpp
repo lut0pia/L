@@ -270,12 +270,12 @@ Context::Context(){
   _globals[FNV1A("rand")] = (Native)([](Context& c,const Array<Var>&)->Var {
     return Rand::nextFloat();
   });
-  _globals[FNV1A("button-pressed")] = (Native)([](Context& c,const Array<Var>& a)->Var {
-    if(a.size()==2){
-      if(a[1].is<Symbol>())
-        return Window::isPressed(Window::hashToButton(a[1].as<Symbol>()));
-      else if(a[1].is<int>())
-        return Window::isPressed((Window::Event::Button)(a[1].as<int>()+'0'));
+  _globals[FNV1A("button-pressed")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
+    if(params){
+      if(stack[0]->is<Symbol>())
+        return Window::isPressed(Window::hashToButton(stack[0]->as<Symbol>()));
+      else if(stack[0]->is<int>())
+        return Window::isPressed((Window::Event::Button)(stack[0]->as<int>()+'0'));
     }
     return false;
   });
