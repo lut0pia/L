@@ -62,4 +62,5 @@ Window::Event::Button Window::hashToButton(uint32_t h){
   switch(h){
     KEYS(HTB)
   }
+  return (Event::Button)0;
 }
