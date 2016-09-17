@@ -270,7 +270,7 @@ Context::Context(){
   _globals[FNV1A("rand")] = (Native)([](Context& c,const Array<Var>&)->Var {
     return Rand::nextFloat();
   });
-  _globals[FNV1A("key-pressed")] = (Native)([](Context& c,const Array<Var>& a)->Var {
+  _globals[FNV1A("button-pressed")] = (Native)([](Context& c,const Array<Var>& a)->Var {
     if(a.size()==2){
       if(a[1].is<Symbol>())
         switch(a[1].as<Symbol>()) {
