@@ -100,6 +100,9 @@ void ScriptComponent::init() {
   });
   // Transform ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(Transform,"transform");
+  L_COMPONENT_RETURN_METHOD(Transform,"right",0,right());
+  L_COMPONENT_RETURN_METHOD(Transform,"forward",0,forward());
+  L_COMPONENT_RETURN_METHOD(Transform,"up",0,up());
   L_COMPONENT_METHOD(Transform,"move",1,move(stack[0]->get<Vector3f>()));
   L_COMPONENT_METHOD(Transform,"rotate",2,rotate(stack[0]->get<Vector3f>(),stack[1]->get<float>()));
   L_COMPONENT_METHOD(Transform,"scale",1,scale(stack[0]->get<float>()));
