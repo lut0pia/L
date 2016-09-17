@@ -5,7 +5,7 @@ solution "L"
 	-- General options
 	location("prj/".._ACTION)
 	defines {"GLEW_STATIC"}
-	flags {"StaticRuntime"}
+	flags {"StaticRuntime","C++11"}
 	exceptionhandling "Off"
 	rtti "Off"
 
@@ -33,7 +33,6 @@ solution "L"
 	configuration {"gmake"}
 		buildoptions {"-fno-operator-names"}
     links {"GL","GLU","GLEW","X11"}
-		flags {"C++11"}
 
 	-- Sample project (startup)
 	project "Sample"
