@@ -63,12 +63,14 @@ void ScriptComponent::init() {
 #define L_COMPONENT_ADD(cname,fname) L_COMPONENT_FUNCTION(Entity,fname,0,return src.as<Entity*>()->add<cname>();)
 #define L_COMPONENT_GET(cname,fname) L_COMPONENT_FUNCTION(Entity,fname,0,return src.as<Entity*>()->component<cname>();)
 #define L_COMPONENT_REQUIRE(cname,fname) L_COMPONENT_FUNCTION(Entity,fname,0,return src.as<Entity*>()->requireComponent<cname>();)
+#define L_COMPONENT_COPY(cname) L_COMPONENT_FUNCTION(cname,"copy",1,if(stack[0]->is<cname*>())*(src.as<cname*>()) = *(stack[0]->as<cname*>());)
 #define L_COMPONENT_ENTITY(cname) L_COMPONENT_METHOD(cname,"entity",0,entity())
 #define L_COMPONENT_BIND(cname,name)\
   L_COMPONENT_ADD(cname,"add-" name);\
   L_COMPONENT_GET(cname,"get-" name);\
   L_COMPONENT_REQUIRE(cname,"require-" name);\
   L_COMPONENT_ENTITY(cname);\
+  L_COMPONENT_COPY(cname);\
   Type<cname*>::cancmp<>();
   // Engine ///////////////////////////////////////////////////////////////////
   L_FUNCTION("engine-timescale",{
@@ -100,15 +102,6 @@ void ScriptComponent::init() {
   L_COMPONENT_METHOD(Transform,"move",1,move(stack[0]->get<Vector3f>()));
   L_COMPONENT_METHOD(Transform,"rotate",2,rotate(stack[0]->get<Vector3f>(),stack[1]->get<float>()));
   L_COMPONENT_METHOD(Transform,"scale",1,scale(stack[0]->get<float>()));
-  L_COMPONENT_FUNCTION(Transform,"copy",2,{
-    if(stack[1]->is<Transform*>()){
-      Transform& a(*stack[0]->as<Transform*>());
-      const Transform& b(*stack[1]->as<Transform*>());
-      a.parent(b.parent());
-      a.translation(b.translation());
-      a.rotation(b.rotation());
-    }
-  });
   // Collider ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(Collider,"collider");
   L_COMPONENT_METHOD(Collider,"center",1,center(stack[0]->get<Vector3f>()));
