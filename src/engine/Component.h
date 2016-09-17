@@ -9,6 +9,9 @@ namespace L {
     Entity* _entity;
     inline void entity(Entity* e) { _entity = e; }
   public:
+    inline Component() {}
+    inline Component(const Component&) {}
+    inline Component& operator=(const Component&) { return *this; }
     inline ~Component() { entity()->remove(this); }
     inline Entity* entity() const { return _entity; }
     virtual void updateComponents() {}
