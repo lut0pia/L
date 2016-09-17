@@ -83,7 +83,7 @@ solution "L"
 
 		-- Visual Studio
 		configuration {"vs*"}
-			postbuildcommands {[[lib.exe /LTCG /NOLOGO /IGNORE:4006,4221 /LIBPATH:../../ext/lib /OUT:"$(TargetPath)" "$(TargetPath)" gdi32.lib user32.lib opengl32.lib glew32s.lib glu32.lib ws2_32.lib]]}
+			postbuildcommands {[[lib.exe /LTCG /NOLOGO /IGNORE:4006,4221 /LIBPATH:../../ext/lib /OUT:"$(TargetPath)" "$(TargetPath)" user32.lib opengl32.lib glew32s.lib ws2_32.lib]]}
 
 		configuration {"Debug"}
 			targetdir "bin/debug"
