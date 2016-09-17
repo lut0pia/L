@@ -38,7 +38,14 @@ void ScriptComponent::event(const Window::Event& e){
     case Window::Event::MOUSEMOVE:
       typeSlot = FNV1A("MOUSEMOVE");
       break;
+    case Window::Event::BUTTONDOWN:
+      typeSlot = FNV1A("BUTTONDOWN");
+      break;
+    case Window::Event::BUTTONUP:
+      typeSlot = FNV1A("BUTTONUP");
+      break;
   }
+  (*table)[FNV1A("button")] = Window::buttonToHash(e.button);
   (*table)[FNV1A("x")] = e.x;
   (*table)[FNV1A("y")] = e.y;
   event(table);
