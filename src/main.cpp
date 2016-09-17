@@ -8,7 +8,7 @@ int main(int argc,const char* argv[]) {
   new STB();
   new OBJ();
   TypeInit();
-  Window::openFullscreen("Test",Window::nocursor|Window::loopcursor);
+  Window::openFullscreen("Sample",Window::nocursor|Window::loopcursor);
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_CULL_FACE);
   Engine::addUpdate<SpriteAnimator>();

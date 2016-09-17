@@ -35,27 +35,27 @@ solution "L"
     links {"GL","GLU","GLEW","X11"}
 		flags {"C++11"}
 
-	-- Test project (startup)
-	project "Test"
-		targetname "Test"
+	-- Sample project (startup)
+	project "Sample"
 		language "C++"
-		files {"test/**.h","test/**.cpp"}
-		debugdir("test")
+		files {"src/main.cpp"}
+		debugdir "smp"
+		targetdir "smp"
 		includedirs {".."}
 		libdirs {"bin"}
 		links {"L"}
 
 		configuration {"Debug"}
+			targetname "Ld"
 			kind "ConsoleApp"
-			targetdir "bin/debug"
-			objdir("obj/".._ACTION.."/test/debug")
+			objdir("obj/".._ACTION.."/smp/debug")
 			defines {"L_DEBUG"}
 			flags {"Symbols"}
 
 		configuration {"Release"}
+			targetname "L"
 			kind "WindowedApp"
-			targetdir "bin/release"
-			objdir("obj/".._ACTION.."/test/release")
+			objdir("obj/".._ACTION.."/smp/release")
 			flags {"Optimize"}
 
 	-- Library project
@@ -64,7 +64,7 @@ solution "L"
 		kind "StaticLib"
 		language "C++"
 		files {"src/**.h","src/**.cpp"}
-		excludes {"src/interface/**"} -- Interface files are not to be compiled by the library
+		excludes {"src/main.cpp","src/interface/**"} -- Interface files are not to be compiled by the library
 
 		-- Exclude system-specific files
 		configuration {"not windows"}
