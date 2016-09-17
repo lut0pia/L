@@ -52,6 +52,10 @@ namespace L {
         _c[i] *= other._c[i];
       return *this;
     }
+    Vector& operator*=(const T& scalar){
+      for(auto& c : _c) c *= scalar;
+      return *this;
+    }
     Vector& operator/=(const Vector& other) {
       for(int i(0); i<d; i++)
         _c[i] /= other._c[i];
@@ -66,6 +70,7 @@ namespace L {
       return wtr;
     }
     inline Vector operator*(const Vector& other) const { return Vector(*this) *= other; }
+    inline Vector operator*(const T& scalar) const { return Vector(*this) *= scalar; }
     inline Vector operator/(const Vector& other) const { return Vector(*this) /= other; }
 
     bool operator==(const Vector& other) const {
