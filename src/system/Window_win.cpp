@@ -220,39 +220,40 @@ void Window::open(const char* title,int width,int height,int flags) {
   SetCursorPos(width/2,height/2);
 
   hDC = GetDC(hWND);
+#define L_CHECK_EXTENSION(ext) if(!ext) L_ERROR("OpenGL extension "ext" is unavailable yet necessary, make sure you're running on your dedicated graphics card.")
+  L_CHECK_EXTENSION(WGLEW_ARB_create_context);
+  L_CHECK_EXTENSION(WGLEW_ARB_pixel_format);
+  L_CHECK_EXTENSION(GLEW_ARB_direct_state_access);
 
-  if(WGLEW_ARB_create_context && WGLEW_ARB_pixel_format) {
-    const int iPixelFormatAttribList[] =
-    {
-      WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
-      WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
-      WGL_DOUBLE_BUFFER_ARB, GL_TRUE,
-      WGL_PIXEL_TYPE_ARB, WGL_TYPE_RGBA_ARB,
-      WGL_COLOR_BITS_ARB, 32,
-      WGL_DEPTH_BITS_ARB, 24,
-      WGL_STENCIL_BITS_ARB, 8,
-      0 // End of attributes list
-    };
-    int iContextAttribs[] =
-    {
-      WGL_CONTEXT_MAJOR_VERSION_ARB, 3,
-      WGL_CONTEXT_MINOR_VERSION_ARB, 3,
-      WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
-      0 // End of attributes list
-    };
+  const int iPixelFormatAttribList[] =
+  {
+    WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
+    WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
+    WGL_DOUBLE_BUFFER_ARB, GL_TRUE,
+    WGL_PIXEL_TYPE_ARB, WGL_TYPE_RGBA_ARB,
+    WGL_COLOR_BITS_ARB, 32,
+    WGL_DEPTH_BITS_ARB, 24,
+    WGL_STENCIL_BITS_ARB, 8,
+    0 // End of attributes list
+  };
+  int iContextAttribs[] =
+  {
+    WGL_CONTEXT_MAJOR_VERSION_ARB, 3,
+    WGL_CONTEXT_MINOR_VERSION_ARB, 3,
+    WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
+    0 // End of attributes list
+  };
 
-    int iPixelFormat,iNumFormats;
-    wglChoosePixelFormatARB(hDC,iPixelFormatAttribList,NULL,1,&iPixelFormat,(UINT*)&iNumFormats);
+  int iPixelFormat,iNumFormats;
+  wglChoosePixelFormatARB(hDC,iPixelFormatAttribList,NULL,1,&iPixelFormat,(UINT*)&iNumFormats);
 
-    // PFD seems to be only redundant parameter now
-    if(!SetPixelFormat(hDC,iPixelFormat,initPFD()))
-      L_ERROR("SetPixelFormat failed during window initialization");
+  // PFD seems to be only redundant parameter now
+  if(!SetPixelFormat(hDC,iPixelFormat,initPFD()))
+    L_ERROR("SetPixelFormat failed during window initialization");
 
-    if(!(hRC = wglCreateContextAttribsARB(hDC,0,iContextAttribs)))
-      L_ERROR("wglMakeCurrent failed");
-    wglMakeCurrent(hDC,hRC);
-  } else L_ERROR("WGLEW_ARB_create_context and WGLEW_ARB_pixel_format "
-                 "do not seem to be available on your system.");
+  if(!(hRC = wglCreateContextAttribsARB(hDC,0,iContextAttribs)))
+    L_ERROR("wglMakeCurrent failed");
+  wglMakeCurrent(hDC,hRC);
 }
 void Window::close() {
   if(!opened()) return;
