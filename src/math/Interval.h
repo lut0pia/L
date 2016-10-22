@@ -46,10 +46,9 @@ namespace L {
       } else return *this;
     }
     bool operator&&(const Interval& other) const {
-      for(int i(0); i<d; i++) {
+      for(int i(0); i<d; i++)
         if(L::max(_min[i],other._min[i]) > L::min(_max[i],other._max[i]))
           return false;
-      }
       return true;
     }
     inline bool overlaps(const Interval& other) const {
