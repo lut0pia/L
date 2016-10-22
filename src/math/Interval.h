@@ -63,6 +63,15 @@ namespace L {
           _max[i] = p[i];
       }
     }
+    void extend(const T& scalar) {
+      _min -= scalar;
+      _max += scalar;
+    }
+    Interval extended(const T& scalar) const {
+      Interval wtr(*this);
+      wtr.extend(scalar);
+      return wtr;
+    }
     bool contains(Vector<d,T> p) const {
       for(int i(0); i<d; i++)
         if(_min[i] > p[i] || p[i] > _max[i])
