@@ -64,12 +64,16 @@ namespace L {
       }
     }
     bool contains(Vector<d,T> p) const {
-      if(empty()) return false;
-      bool wtr(true);
-      for(size_t i(0); i<d&&wtr; i++)
-        if(!(_min[i] <= p[i] && p[i] <= _max[i]))
-          wtr = false;
-      return wtr;
+      for(int i(0); i<d; i++)
+        if(_min[i] > p[i] || p[i] > _max[i])
+          return false;
+      return true;
+    }
+    bool contains(Interval other) const{
+      for(int i(0); i<d; i++)
+        if(_min[i] > other._min[i] || other._max[i] > _max[i])
+          return false;
+      return true;
     }
     Vector<d,T> closestTo(Vector<d,T> p) const {
       for(size_t i(0); i<d; i++) {
