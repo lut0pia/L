@@ -28,6 +28,6 @@ namespace L {
     const Interval3f& boundingBox() const;
     Matrix33f inertiaTensor() const;
     void render(const Camera& camera);
-    void checkCollision(Collider& a,Collider& b);
+    static void checkCollision(Collider& a,Collider& b);
   };
 }
