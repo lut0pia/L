@@ -12,21 +12,6 @@ namespace L {
   class Camera;
   class Engine {
   private:
-    template <class CompType>
-    static void updateAll() {
-      for(auto&& c : Pool<CompType>::global)
-        c.update();
-    }
-    template <class CompType>
-    static void renderAll(const Camera& cam) {
-      for(auto&& c : Pool<CompType>::global)
-        c.render(cam);
-    }
-    template <class CompType>
-    static void eventAll(const Window::Event& e) {
-      for(auto&& c : Pool<CompType>::global)
-        c.event(e);
-    }
     static Array<void(*)()> _updates;
     static Array<void(*)(const Camera&)> _renders;
     static Array<void(*)(const Window::Event&)> _events;
@@ -46,13 +31,13 @@ namespace L {
     static void update();
     static void clear();
     template <class CompType> inline static void addUpdate() {
-      _updates.push(updateAll<CompType>);
+      _updates.push(updateAllComponents<CompType>);
     }
     template <class CompType> inline static void addRender() {
-      _renders.push(renderAll<CompType>);
+      _renders.push(renderAllComponents<CompType>);
     }
     template <class CompType> inline static void addEvent() {
-      _events.push(eventAll<CompType>);
+      _events.push(eventAllComponents<CompType>);
     }
 
     // Rendering
@@ -63,4 +48,20 @@ namespace L {
     static const Ref<GL::Texture>& texture(const char* filepath);
     static const Ref<GL::Mesh>& mesh(const char* filepath);
   };
+
+  template <class CompType>
+  static void updateAllComponents() {
+    for(auto&& c : Pool<CompType>::global)
+      c.update();
+  }
+  template <class CompType>
+  static void renderAllComponents(const Camera& cam) {
+    for(auto&& c : Pool<CompType>::global)
+      c.render(cam);
+  }
+  template <class CompType>
+  static void eventAllComponents(const Window::Event& e) {
+    for(auto&& c : Pool<CompType>::global)
+      c.event(e);
+  }
 }
