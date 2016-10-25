@@ -39,7 +39,7 @@ void Collider::sphere(float radius) {
   if(_rigidbody)
     _rigidbody->updateInertiaTensor();
 }
-Interval3f Collider::boundingBox() const {
+const Interval3f& Collider::boundingBox() const {
   if(Engine::frame()!=_updateFrame){
     switch(_type) {
       case Box:

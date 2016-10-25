@@ -25,7 +25,7 @@ namespace L {
     void center(const Vector3f& center);
     void box(const Vector3f& radius);
     void sphere(float radius);
-    Interval3f boundingBox() const;
+    const Interval3f& boundingBox() const;
     Matrix33f inertiaTensor() const;
     void render(const Camera& camera);
     void checkCollision(Collider& a,Collider& b);
