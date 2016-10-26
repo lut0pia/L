@@ -6,19 +6,36 @@
 
 using namespace L;
 
-Collider::Collider() : _center(0.f),_radius(1.f),_type(Sphere){}
+Interval3fTree<Collider*> Collider::tree;
+
+Collider::Collider() : _node(nullptr),_center(0.f),_radius(1.f),_type(Sphere){}
+Collider::~Collider(){
+  if(_node)
+    tree.remove(_node);
+}
 void Collider::updateComponents(){
   _transform = entity()->requireComponent<Transform>();
   _rigidbody = entity()->component<RigidBody>();
   _script = entity()->component<ScriptComponent>();
+  if(!_node)
+    _node = tree.insert(_boundingBox,this);
 }
-void Collider::update() {
-  // TODO: replace with broadphase
-  Interval3f bb(boundingBox());
-  for(auto&& other : Pool<Collider>::global){
-    if(&other!=this && other.entity()!=entity() && &other<this && bb.overlaps(other.boundingBox())){
-      if(_rigidbody) checkCollision(*this,other); // Rigidbody is always first argument
-      else if(other._rigidbody) checkCollision(other,*this);
+void Collider::updateAll() {
+  // Update all AABB nodes
+  for(auto&& c : Pool<Collider>::global){
+    c.updateBoundingBox();
+    const Interval3f& bb(c._boundingBox);
+    if(!c._node->key().contains(bb))
+      c._node = tree.update(c._node,bb.extended(c._radius.x()));
+  }
+  // Search for colliding pairs
+  static Array<Interval3fTree<Collider*>::Node*> pairs;
+  tree.collisions(pairs);
+  for(int i(0); i<pairs.size(); i += 2){
+    Collider *a(pairs[i]->value()),*b(pairs[i+1]->value());
+    if(a->entity()!=b->entity() && a->_boundingBox.overlaps(b->_boundingBox)){
+      if(a->_rigidbody) checkCollision(*a,*b); // Rigidbody is always first argument
+      else if(b->_rigidbody) checkCollision(*b,*a);
     }
   }
 }
@@ -39,22 +56,18 @@ void Collider::sphere(float radius) {
   if(_rigidbody)
     _rigidbody->updateInertiaTensor();
 }
-const Interval3f& Collider::boundingBox() const {
-  if(Engine::frame()!=_updateFrame){
-    switch(_type) {
-      case Box:
-        _boundingBox = Interval3f(_center-_radius,_center+_radius).transformed(_transform->matrix());
-        break;
-      case Sphere:
-      {
-        const Vector3f center(_transform->toAbsolute(_center));
-        _boundingBox = Interval3f(center-_radius,center+_radius);
-        break;
-      }
+void Collider::updateBoundingBox() {
+  switch(_type) {
+    case Box:
+      _boundingBox = Interval3f(_center-_radius,_center+_radius).transformed(_transform->matrix());
+      break;
+    case Sphere:
+    {
+      const Vector3f center(_transform->toAbsolute(_center));
+      _boundingBox = Interval3f(center-_radius,center+_radius);
+      break;
     }
-    _updateFrame = Engine::frame();
   }
-  return _boundingBox;
 }
 Matrix33f Collider::inertiaTensor() const{
   Matrix33f wtr(0.f);

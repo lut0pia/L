@@ -3,31 +3,34 @@
 #include "Transform.h"
 #include "RigidBody.h"
 #include "ScriptComponent.h"
-#include "../math/Interval.h"
+#include "../containers/IntervalTree.h"
 
 namespace L {
   class Collider : public Component {
     L_COMPONENT(Collider)
   protected:
+    static Interval3fTree<Collider*> tree;
+    Interval3fTree<Collider*>::Node* _node;
     Transform* _transform;
     RigidBody* _rigidbody;
     ScriptComponent* _script;
     Vector3f _center,_radius;
-    mutable Interval3f _boundingBox;
-    mutable uint32_t _updateFrame;
+    Interval3f _boundingBox;
     enum {
       Box,Sphere
     } _type;
   public:
     Collider();
+    ~Collider();
     void updateComponents();
-    void update();
+    static void updateAll();
     void center(const Vector3f& center);
     void box(const Vector3f& radius);
     void sphere(float radius);
-    const Interval3f& boundingBox() const;
+    void updateBoundingBox();
     Matrix33f inertiaTensor() const;
     void render(const Camera& camera);
     static void checkCollision(Collider& a,Collider& b);
   };
+  template <> inline void updateAllComponents<Collider>(){ Collider::updateAll(); }
 }
