@@ -109,7 +109,7 @@ namespace L {
         collisions(_root->_left,_root->_right,pairs);
       }
     }
-    void collisions(Node* a,Node* b,Array<Node*>& pairs,bool crossed = false){
+    void collisions(Node* a,Node* b,Array<Node*>& pairs){
       const bool colliding(a->_key.overlaps(b->_key));
       if(colliding){
         if(a->leaf()){
@@ -134,11 +134,11 @@ namespace L {
       }
       if(a->branch() && !a->_crossed){
         a->_crossed = true;
-        collisions(a->_left,a->_right,pairs,true);
+        collisions(a->_left,a->_right,pairs);
       }
       if(b->branch() && !b->_crossed){
         b->_crossed = true;
-        collisions(b->_left,b->_right,pairs,true);
+        collisions(b->_left,b->_right,pairs);
       }
     }
     static void uncross(Node* node){
