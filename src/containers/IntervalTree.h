@@ -106,7 +106,7 @@ namespace L {
         collisions(_root->_left,_root->_right,pairs);
       }
     }
-    void collisions(Node* a,Node* b,Array<Node*>& pairs){
+    static void collisions(Node* a,Node* b,Array<Node*>& pairs){
       const bool colliding(a->_key.overlaps(b->_key));
       if(colliding){
         if(a->leaf()){
