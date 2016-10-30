@@ -28,16 +28,16 @@ namespace L {
           delete _right;
         }
       }
+      inline const Key& key() const { return _key; }
+      inline const V& value() const { return _value; }
       inline bool branch() const{ return _left!=nullptr; }
       inline bool leaf() const{ return _left==nullptr; }
-      inline Node* childNot(Node* node){ return (_left!=node) ? _left : _right; }
-      inline Node* sibling(){ return _parent->childNot(this); }
+      inline Node* childNot(Node* node) { return (_left!=node) ? _left : _right; }
+      inline Node* sibling() { return _parent->childNot(this); }
       inline void replace(Node* oldNode,Node* newNode){
         ((_left==oldNode) ? _left : _right) = newNode;
         newNode->_parent = this;
       }
-      inline const Key& key() const { return _key; }
-      inline const V& value() const { return _value; }
 
       inline void* operator new(size_t size) { return Pool<Node>::global.allocate(); }
       inline void operator delete(void* p) { Pool<Node>::global.deallocate(p); }
@@ -58,10 +58,7 @@ namespace L {
           const Key newLeft(leftKey+key),newRight(rightKey+key);
           const float extentDiffLeft(newLeft.extent()-leftKey.extent()),
             extentDiffRight(newRight.extent()-rightKey.extent());
-          if(extentDiffLeft<extentDiffRight)
-            cur = &(*cur)->_left;
-          else
-            cur = &(*cur)->_right;
+          cur = (extentDiffLeft<extentDiffRight) ? (&(*cur)->_left) : (&(*cur)->_right);
         }
         *cur = new Node((*cur)->_parent,*cur,node);
         sync(*cur);
