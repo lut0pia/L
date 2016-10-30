@@ -158,7 +158,7 @@ namespace L {
       }
     }
     inline void print(){ if(_root) print(_root); }
-    void print(Node* node){
+    static void print(Node* node){
       static int level(0);
       for(int i(0); i<level; i++)
         out << "  ";
