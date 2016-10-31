@@ -57,16 +57,24 @@ void Collider::sphere(float radius) {
     _rigidbody->updateInertiaTensor();
 }
 void Collider::updateBoundingBox() {
+  const Vector3f center(_transform->toAbsolute(_center));
   switch(_type) {
     case Box:
-      _boundingBox = Interval3f(_center-_radius,_center+_radius).transformed(_transform->matrix());
-      break;
-    case Sphere:
     {
-      const Vector3f center(_transform->toAbsolute(_center));
-      _boundingBox = Interval3f(center-_radius,center+_radius);
+      const Vector3f right(_transform->right()*_radius.x()),forward(_transform->forward()*_radius.y()),up(_transform->up()*_radius.z());
+      _boundingBox = (center-right-forward-up);
+      _boundingBox.add(center-right-forward+up);
+      _boundingBox.add(center-right+forward-up);
+      _boundingBox.add(center-right+forward+up);
+      _boundingBox.add(center+right-forward-up);
+      _boundingBox.add(center+right-forward+up);
+      _boundingBox.add(center+right+forward-up);
+      _boundingBox.add(center+right+forward+up);
       break;
     }
+    case Sphere:
+      _boundingBox = Interval3f(center-_radius,center+_radius);
+      break;
   }
 }
 Matrix33f Collider::inertiaTensor() const{
