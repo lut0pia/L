@@ -160,7 +160,7 @@ namespace L {
       for(int i(0); i<level; i++)
         out << "  ";
       if(node->branch()){
-        out << node->_key << ":\n";
+        out << node->_key << ": " << node->_height << "\n";
         level++;
         print(node->_left);
         print(node->_right);
