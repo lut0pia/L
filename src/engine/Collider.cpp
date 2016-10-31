@@ -26,7 +26,7 @@ void Collider::updateAll() {
     c.updateBoundingBox();
     const Interval3f& bb(c._boundingBox);
     if(!c._node->key().contains(bb))
-      c._node = tree.update(c._node,bb.extended(c._radius.x()));
+      tree.update(c._node,bb.extended(c._radius.x()));
   }
   // Search for colliding pairs
   static Array<Interval3fTree<Collider*>::Node*> pairs;

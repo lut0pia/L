@@ -38,6 +38,12 @@ namespace L {
         ((_left==oldNode) ? _left : _right) = newNode;
         newNode->_parent = this;
       }
+      inline void refit(){
+        if(branch()){
+          _height = 1+max(_left->_height,_right->_height);
+          _key = _left->_key+_right->_key;
+        }
+      }
 
       inline void* operator new(size_t size) { return Pool<Node>::global.allocate(); }
       inline void operator delete(void* p) { Pool<Node>::global.deallocate(p); }
@@ -83,10 +89,9 @@ namespace L {
       }
       delete node;
     }
-    Node* update(Node* node,const Key& key){ // TODO
-      const V value(node->value());
-      remove(node);
-      return insert(key,value);
+    void update(Node* node,const Key& key){
+      node->_key = key;
+      sync(node);
     }
     void query(const Key& zone,Array<Node*>& nodes){
       nodes.clear();
@@ -145,14 +150,77 @@ namespace L {
         uncross(node->_right);
       }
     }
-    void sync(Node* node){
+    static void sync(Node* node){
+      refit(node);
+      balance(node);
+    }
+    static void refit(Node* node){
       if(node->leaf())
         node = node->_parent;
       while(node){
-        node->_height = 1+max(node->_left->_height,node->_right->_height);
-        node->_key = node->_left->_key+node->_right->_key;
+        node->refit();
         node = node->_parent;
       }
+    }
+    static float SAH(const Key& k){
+      auto s(k.size());
+      return (s.x()*s.y()+s.x()*s.z()+s.y()*s.z())*2.f;
+    }
+    static inline float cost(const Key& a,const Key& b){
+      return abs(a.extent()-b.extent())+(a*b).extent();
+      //(abs((AC).extent()-(BC).extent()))
+      //((AC).extent()+(BC).extent())
+      //(((AC)*(BC)).extent())
+      //(SAH(AC)+SAH(BC))
+    }
+    static void balance(Node* node){
+      while(node && node->_height<2)
+        node = node->_parent;
+      while(node){
+        /*
+              node
+             /   \
+            L     R
+           / \   / \
+          LL LR RL RR
+        */
+        Node *L(node->_left),*R(node->_right),*LL(L->_left),*LR(L->_right),*RL(R->_left),*RR(R->_right);
+        Node *a(nullptr),*b;
+        float minCost(cost(L->_key,R->_key));
+#define L_ROTATION_COST(A,B,AC,BC) { \
+  const float c(cost(AC,BC)); \
+  if(c<minCost){ \
+    minCost = c; \
+    a = A; \
+    b = B; \
+  } \
+}
+#define L_ROTATION_COST_GC_C(A,B) L_ROTATION_COST(A,B,A->sibling()->_key+B->_key,A->_key)
+        if(L->branch()){
+          L_ROTATION_COST_GC_C(LL,R);
+          L_ROTATION_COST_GC_C(LR,R);
+        }
+        if(R->branch()){
+          L_ROTATION_COST_GC_C(RL,L);
+          L_ROTATION_COST_GC_C(RR,L);
+        }
+        /* GC to GC
+        if(L->branch() && R->branch()){
+          L_ROTATION_COST(LL,RR,RR->_key+LR->_key,LL->_key+RL->_key);
+          L_ROTATION_COST(LL,RL,LL->_key+RR->_key,LR->_key+RL->_key);
+        }*/
+        if(a) // We found a beneficial rotation
+          swap(a,b); // Do the rotation
+        node = node->_parent;
+      }
+    }
+    static void swap(Node* a,Node* b){
+      L_ASSERT(a->_parent && b->_parent && a->_parent!=b->_parent);
+      Node *aParent(a->_parent),*bParent(b->_parent);
+      aParent->replace(a,b);
+      bParent->replace(b,a);
+      refit(a);
+      refit(b);
     }
     inline void print(){ if(_root) print(_root); }
     static void print(Node* node){
