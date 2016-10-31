@@ -1,6 +1,6 @@
 #!lua
 solution "L"
-	configurations {"Debug", "Release"}
+	configurations {"Debug", "Development", "Release"}
 
 	-- General options
 	location("prj/".._ACTION)
@@ -45,16 +45,23 @@ solution "L"
 		links {"L"}
 
 		configuration {"Debug"}
-			targetname "Ld"
+			targetname "Ldbg"
 			kind "ConsoleApp"
-			objdir("obj/".._ACTION.."/smp/debug")
+			objdir("obj/".._ACTION.."/smp/dbg")
 			defines {"L_DEBUG"}
 			flags {"Symbols"}
+
+		configuration {"Development"}
+			targetname "Ldev"
+			kind "ConsoleApp"
+			objdir("obj/".._ACTION.."/smp/dev")
+			defines {"L_DEBUG"}
+			flags {"Symbols","Optimize"}
 
 		configuration {"Release"}
 			targetname "L"
 			kind "WindowedApp"
-			objdir("obj/".._ACTION.."/smp/release")
+			objdir("obj/".._ACTION.."/smp/rls")
 			flags {"Optimize"}
 
 	-- Library project
@@ -86,12 +93,18 @@ solution "L"
 			postbuildcommands {[[lib.exe /LTCG /NOLOGO /IGNORE:4006,4221 /LIBPATH:../../ext/lib /OUT:"$(TargetPath)" "$(TargetPath)" user32.lib opengl32.lib glew32s.lib ws2_32.lib]]}
 
 		configuration {"Debug"}
-			targetdir "bin/debug"
-			objdir("obj/".._ACTION.."/debug")
+			targetdir "bin/dbg"
+			objdir("obj/".._ACTION.."/dbg")
 			defines {"L_DEBUG"}
 			flags {"Symbols"}
 
+		configuration {"Development"}
+			targetdir "bin/dev"
+			objdir("obj/".._ACTION.."/dev")
+			defines {"L_DEBUG"}
+			flags {"Symbols","Optimize"}
+
 		configuration  {"Release"}
 			targetdir "bin/release"
-			objdir("obj/".._ACTION.."/release")
+			objdir("obj/".._ACTION.."/rls")
 			flags {"Optimize"}
