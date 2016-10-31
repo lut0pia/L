@@ -30,21 +30,6 @@ namespace L {
       }
       return wtr;
     }
-    Vector<d,T> corner(int c) const {
-      Vector<d,T> wtr;
-      for(int i(0); i<d; i++)
-        wtr[i] = (c&(1<<i)) ? _min[i] : _max[i];
-      return wtr;
-    }
-    Interval transformed(const Matrix<d+1,d+1,T>& matrix) const {
-      if(!empty()) { // Empty should always return empty
-        Interval wtr;
-        for(int c(0); c<(1<<d); c++) // Cycle through corners of the interval
-          if(c) wtr.add(Vector<d,T>(matrix*corner(c)));
-          else wtr = Interval(Vector<d,T>(matrix*corner(c))); // First
-          return wtr;
-      } else return *this;
-    }
     bool operator&&(const Interval& other) const {
       for(int i(0); i<d; i++)
         if(L::max(_min[i],other._min[i]) > L::min(_max[i],other._max[i]))
