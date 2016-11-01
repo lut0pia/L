@@ -162,16 +162,8 @@ namespace L {
         node = node->_parent;
       }
     }
-    static float SAH(const Key& k){
-      auto s(k.size());
-      return (s.x()*s.y()+s.x()*s.z()+s.y()*s.z())*2.f;
-    }
     static inline float cost(const Key& a,const Key& b){
       return abs(a.extent()-b.extent())+(a*b).extent();
-      //(abs((AC).extent()-(BC).extent()))
-      //((AC).extent()+(BC).extent())
-      //(((AC)*(BC)).extent())
-      //(SAH(AC)+SAH(BC))
     }
     static void balance(Node* node){
       while(node && node->_height<2)
@@ -187,14 +179,7 @@ namespace L {
         Node *L(node->_left),*R(node->_right),*LL(L->_left),*LR(L->_right),*RL(R->_left),*RR(R->_right);
         Node *a(nullptr),*b;
         float minCost(cost(L->_key,R->_key));
-#define L_ROTATION_COST(A,B,AC,BC) { \
-  const float c(cost(AC,BC)); \
-  if(c<minCost){ \
-    minCost = c; \
-    a = A; \
-    b = B; \
-  } \
-}
+#define L_ROTATION_COST(A,B,AC,BC) {const float c(cost(AC,BC)); if(c<minCost){ minCost = c; a = A; b = B; } }
 #define L_ROTATION_COST_GC_C(A,B) L_ROTATION_COST(A,B,A->sibling()->_key+B->_key,A->_key)
         if(L->branch()){
           L_ROTATION_COST_GC_C(LL,R);
@@ -209,8 +194,7 @@ namespace L {
           L_ROTATION_COST(LL,RR,RR->_key+LR->_key,LL->_key+RL->_key);
           L_ROTATION_COST(LL,RL,LL->_key+RR->_key,LR->_key+RL->_key);
         }*/
-        if(a) // We found a beneficial rotation
-          swap(a,b); // Do the rotation
+        if(a) swap(a,b); // We found a beneficial rotation
         node = node->_parent;
       }
     }
