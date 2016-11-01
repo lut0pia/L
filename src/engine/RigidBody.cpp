@@ -26,10 +26,7 @@ void RigidBody::updateInertiaTensor(){
   //_invInertiaTensor = inertiaTensor.inverse();
 }
 void RigidBody::update() {
-  // Compute world inertia tensor
-  const Matrix33f orientation(quatToMat(_transform->absoluteRotation()));
-  _invInertiaTensorWorld = orientation.transpose()*_invInertiaTensor*orientation;
-
+  _force = _torque = 0.f; // Reset force and torque
   addForce(_gravity/_invMass); // Apply gravity
   if(_velocity.length()>.0f){ // Apply linear drag
     Vector3f dragForce(_velocity);
@@ -41,16 +38,22 @@ void RigidBody::update() {
     dragTorque.length(-_angDrag*_rotation.lengthSquared());
     addTorque(dragTorque);
   }
+}
+void RigidBody::subUpdate(){
+  const float delta(Engine::subDeltaSeconds());
+  // Compute world inertia tensor
+  const Matrix33f orientation(quatToMat(_transform->absoluteRotation()));
+  _invInertiaTensorWorld = orientation.transpose()*_invInertiaTensor*orientation;
+
   // Integrate
   const Vector3f oldVelocity(_velocity),oldRotation(_rotation);
-  _velocity += (_invMass*_force)*Engine::deltaSeconds();
-  _rotation += (_invInertiaTensorWorld*_torque)*Engine::deltaSeconds();
-  _transform->moveAbsolute((_velocity+oldVelocity)*Engine::deltaSeconds()*.5f);
+  _velocity += (_invMass*_force)*delta;
+  _rotation += (_invInertiaTensorWorld*_torque)*delta;
+  _transform->moveAbsolute((_velocity+oldVelocity)*delta*.5f);
   const Vector3f rotationAvg((_rotation+oldRotation)*.5f);
   const float rotLength(rotationAvg.length());
   if(rotLength>.0f)
-    _transform->rotateAbsolute(rotationAvg*(1.f/rotLength),rotLength*Engine::deltaSeconds());
-  _force = _torque = 0.f; // Reset force and torque for next frame
+    _transform->rotateAbsolute(rotationAvg*(1.f/rotLength),rotLength*delta);
 }
 
 void RigidBody::mass(float m){

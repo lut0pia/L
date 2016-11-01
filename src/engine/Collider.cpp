@@ -20,7 +20,7 @@ void Collider::updateComponents(){
   if(!_node)
     _node = tree.insert(_boundingBox,this);
 }
-void Collider::updateAll() {
+void Collider::subUpdateAll() {
   // Update all AABB nodes
   for(auto&& c : Pool<Collider>::global){
     c.updateBoundingBox();

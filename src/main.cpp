@@ -14,7 +14,8 @@ int main(int argc,const char* argv[]) {
   Engine::addUpdate<SpriteAnimator>();
   Engine::addUpdate<ScriptComponent>();
   Engine::addUpdate<RigidBody>();
-  Engine::addUpdate<Collider>();
+  Engine::addSubUpdate<RigidBody>();
+  Engine::addSubUpdate<Collider>();
   Engine::addRender<Primitive>();
   Engine::addRender<Sprite>();
   Engine::addRender<StaticMesh>();

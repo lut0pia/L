@@ -8,7 +8,7 @@ namespace L {
   protected:
     static Vector3f _gravity;
     Transform* _transform;
-    Matrix33f _invInertiaTensor, _invInertiaTensorWorld;
+    Matrix33f _invInertiaTensor,_invInertiaTensorWorld;
     Vector3f _velocity,_rotation,_force,_torque;
     float _invMass,_restitution,_drag,_angDrag;
   public:
@@ -16,6 +16,7 @@ namespace L {
     void updateComponents();
     void updateInertiaTensor();
     void update();
+    void subUpdate();
 
     inline float mass() const{ return 1.f/_invMass; }
     void mass(float m);

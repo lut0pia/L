@@ -23,7 +23,7 @@ namespace L {
     Collider();
     ~Collider();
     void updateComponents();
-    static void updateAll();
+    static void subUpdateAll();
     void center(const Vector3f& center);
     void box(const Vector3f& radius);
     void sphere(float radius);
@@ -32,5 +32,5 @@ namespace L {
     void render(const Camera& camera);
     static void checkCollision(Collider& a,Collider& b);
   };
-  template <> inline void updateAllComponents<Collider>(){ Collider::updateAll(); }
+  template <> inline void subUpdateAllComponents<Collider>(){ Collider::subUpdateAll(); }
 }
