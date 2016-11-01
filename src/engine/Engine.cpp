@@ -10,29 +10,43 @@
 
 using namespace L;
 
-Array<void(*)()> Engine::_updates;
+Array<void(*)()> Engine::_updates,Engine::_subUpdates;
 Array<void(*)(const Camera&)> Engine::_renders;
 Array<void(*)(const Window::Event&)> Engine::_events;
 Map<uint32_t,Ref<GL::Texture> > Engine::_textures;
 Map<uint32_t,Ref<GL::Mesh> > Engine::_meshes;
 Timer Engine::_timer;
 Time Engine::_deltaTime;
-float Engine::_deltaSeconds,Engine::_fps,Engine::_timescale(1.f);
+float Engine::_deltaSeconds,Engine::_subDeltaSeconds,Engine::_fps,Engine::_timescale(1.f);
 uint32_t Engine::_frame(0);
 
 void Engine::update() {
   _deltaTime = _timer.frame();
   _fps = 1.f/_deltaTime.fSeconds();
-  _deltaTime = min(_deltaTime,Time(0,33))*_timescale; // Delta time shouldn't be over 33ms
+  _deltaTime = _deltaTime*_timescale;
   _deltaSeconds = _deltaTime.fSeconds();
   Engine::sharedUniform().subData(L_SHAREDUNIFORM_FRAME,sizeof(uint32_t),&_frame);
 
-  Window::Event e;
-  while(Window::newEvent(e))
-    for(auto&& event : _events)
-      event(e);
+  {
+    Window::Event e;
+    while(Window::newEvent(e))
+      for(auto&& event : _events)
+        event(e);
+  }
   for(auto&& update : _updates)
     update();
+  {
+    static Time subDelta(0,10);
+    Time deltaCountDown(_deltaTime);
+    while(deltaCountDown>Time(500)){
+      Timer timer;
+      _subDeltaSeconds = min(deltaCountDown,subDelta).fSeconds();
+      for(auto&& subUpdate : _subUpdates)
+        subUpdate();
+      deltaCountDown -= subDelta;
+      subDelta = min(timer.since()*4.f,_deltaTime);
+    }
+  }
   for(auto&& camera : Pool<Camera>::global){
     camera.prerender();
     for(auto&& render : _renders)

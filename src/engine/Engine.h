@@ -12,17 +12,18 @@ namespace L {
   class Camera;
   class Engine {
   private:
-    static Array<void(*)()> _updates;
+    static Array<void(*)()> _updates,_subUpdates;
     static Array<void(*)(const Camera&)> _renders;
     static Array<void(*)(const Window::Event&)> _events;
     static Map<uint32_t,Ref<GL::Texture> > _textures;
     static Map<uint32_t,Ref<GL::Mesh> > _meshes;
     static Timer _timer;
     static Time _deltaTime;
-    static float _deltaSeconds,_fps,_timescale;
+    static float _deltaSeconds,_subDeltaSeconds,_fps,_timescale;
     static uint32_t _frame;
   public:
     static inline float deltaSeconds() { return _deltaSeconds; }
+    static inline float subDeltaSeconds() { return _subDeltaSeconds; }
     static inline float fps() { return _fps; }
     static inline float timescale() { return _timescale; }
     static inline void timescale(float ts) { _timescale = ts; }
@@ -30,15 +31,10 @@ namespace L {
 
     static void update();
     static void clear();
-    template <class CompType> inline static void addUpdate() {
-      _updates.push(updateAllComponents<CompType>);
-    }
-    template <class CompType> inline static void addRender() {
-      _renders.push(renderAllComponents<CompType>);
-    }
-    template <class CompType> inline static void addEvent() {
-      _events.push(eventAllComponents<CompType>);
-    }
+    template <class T> inline static void addUpdate() { _updates.push(updateAllComponents<T>); }
+    template <class T> inline static void addSubUpdate() { _subUpdates.push(subUpdateAllComponents<T>); }
+    template <class T> inline static void addRender() { _renders.push(renderAllComponents<T>); }
+    template <class T> inline static void addEvent() { _events.push(eventAllComponents<T>); }
 
     // Rendering
     static GL::Buffer& sharedUniform();
@@ -49,19 +45,8 @@ namespace L {
     static const Ref<GL::Mesh>& mesh(const char* filepath);
   };
 
-  template <class CompType>
-  static void updateAllComponents() {
-    for(auto&& c : Pool<CompType>::global)
-      c.update();
-  }
-  template <class CompType>
-  static void renderAllComponents(const Camera& cam) {
-    for(auto&& c : Pool<CompType>::global)
-      c.render(cam);
-  }
-  template <class CompType>
-  static void eventAllComponents(const Window::Event& e) {
-    for(auto&& c : Pool<CompType>::global)
-      c.event(e);
-  }
+  template <class T> static void updateAllComponents() { for(auto&& c : Pool<T>::global) c.update(); }
+  template <class T> static void subUpdateAllComponents() { for(auto&& c : Pool<T>::global) c.subUpdate(); }
+  template <class T> static void renderAllComponents(const Camera& cam) { for(auto&& c : Pool<T>::global) c.render(cam); }
+  template <class T> static void eventAllComponents(const Window::Event& e) { for(auto&& c : Pool<T>::global) c.event(e); }
 }
