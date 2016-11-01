@@ -30,6 +30,8 @@ namespace L {
       }
       inline const Key& key() const { return _key; }
       inline const V& value() const { return _value; }
+      inline const Node* left() const{ return _left; }
+      inline const Node* right() const{ return _right; }
       inline bool branch() const{ return _left!=nullptr; }
       inline bool leaf() const{ return _left==nullptr; }
       inline Node* childNot(Node* node) { return (_left!=node) ? _left : _right; }
@@ -54,6 +56,7 @@ namespace L {
   public:
     inline IntervalTree() : _root(nullptr) {}
     inline ~IntervalTree() { delete _root; }
+    inline const Node* root() const{ return _root; }
     Node* insert(const Key& key,const V& value) {
       Node* node(new Node(key,value));
       if(_root){
