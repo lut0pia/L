@@ -100,6 +100,7 @@ void ScriptComponent::init() {
   });
   // Transform ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(Transform,"transform");
+  L_COMPONENT_RETURN_METHOD(Transform,"position",0,absolutePosition());
   L_COMPONENT_RETURN_METHOD(Transform,"right",0,right());
   L_COMPONENT_RETURN_METHOD(Transform,"forward",0,forward());
   L_COMPONENT_RETURN_METHOD(Transform,"up",0,up());
