@@ -45,7 +45,7 @@ namespace L {
     public:
       Iterator(Block* block = nullptr) : _block(block){
         if(_block){
-          if(_block->_start<_block->_head)
+          if(_block->_start<=_block->_tail)
             _i = _block->_start;
           else new(this)Iterator(_block->_next);
         }
