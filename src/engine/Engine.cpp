@@ -23,7 +23,7 @@ uint32_t Engine::_frame(0);
 void Engine::update() {
   _deltaTime = _timer.frame();
   _fps = 1.f/_deltaTime.fSeconds();
-  _deltaTime = _deltaTime*_timescale;
+  _deltaTime = min(_deltaTime*_timescale,Time(0,100)); // Cap delta time to avoid weird behaviour
   _deltaSeconds = _deltaTime.fSeconds();
   Engine::sharedUniform().subData(L_SHAREDUNIFORM_FRAME,sizeof(uint32_t),&_frame);
 
