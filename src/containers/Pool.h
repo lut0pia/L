@@ -30,8 +30,8 @@ namespace L {
       }
       inline void deallocate(uint32_t i) {
         _table[i/intBits] &= ~(1u<<(i%intBits)); // Mark slot as free
-        while(_start<size && !allocated(_start)) _start++;
         if(i<_head) _head = i;
+        while(_start<size && !allocated(_start)) _start++;
         while(_tail>0 && !allocated(_tail)) _tail--;
       }
       inline void deallocate(void* p){ deallocate(((uintptr_t)p-(uintptr_t)_data)/sizeof(T)); }
