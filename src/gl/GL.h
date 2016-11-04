@@ -10,6 +10,7 @@ namespace L {
   namespace GL {
     const Texture& whiteTexture();
     Program& baseProgram();
+    Program& baseColorProgram();
     const char* error();
     const Mesh& quad();
     const Mesh& cube();

@@ -15,29 +15,46 @@ const Texture& GL::whiteTexture() {
   static Texture tex(1,1,&Color::white);
   return tex;
 }
+#define L_VERTEX_SHADER \
+"#version 330 core\n" \
+L_SHAREDUNIFORM \
+"layout (location = 0) in vec3 modelPosition;" \
+"uniform mat4 model;" \
+"smooth out vec4 position;" \
+"void main(){" \
+  "position = model * vec4(modelPosition,1.0);" \
+  "gl_Position = viewProj * position;" \
+"}"
 Program& GL::baseProgram() {
-  static Program program(Shader(
+  static Program program(Shader(L_VERTEX_SHADER,GL_VERTEX_SHADER),Shader(
     "#version 330 core\n"
     L_SHAREDUNIFORM
-    "layout (location = 0) in vec3 modelPosition;"
-    "uniform mat4 model;"
-    "smooth out vec4 position;"
+    "layout(location = 0) out vec3 ocolor;"
+    "layout(location = 1) out vec3 onormal;"
+    "smooth in vec4 position;"
     "void main(){"
-    "position = model * vec4(modelPosition,1.0);"
-    "gl_Position = viewProj * position;"
-    "}",GL_VERTEX_SHADER),
-    Shader(
-      "#version 330 core\n"
-      L_SHAREDUNIFORM
-      "layout(location = 0) out vec3 ocolor;"
-      "layout(location = 1) out vec3 onormal;"
-      "smooth in vec4 position;"
-      "void main(){"
-      "vec3 normal = cross(dFdx(position.xyz),dFdy(position.xyz)).xyz;"
-      "if(isnan(normal.x) || length(normal)<=0.f) normal = eye.xyz-position.xyz;"
-      "onormal.xy = encodeNormal(normal);"
-      "ocolor = vec3(1,1,1);"
-      "}",GL_FRAGMENT_SHADER));
+    "vec3 normal = cross(dFdx(position.xyz),dFdy(position.xyz)).xyz;"
+    "if(isnan(normal.x) || length(normal)<=0.f) normal = eye.xyz-position.xyz;"
+    "onormal.xy = encodeNormal(normal);"
+    "ocolor = vec3(1,1,1);"
+    "}",GL_FRAGMENT_SHADER));
+  return program;
+}
+Program& GL::baseColorProgram() {
+  static Program program(Shader(L_VERTEX_SHADER,GL_VERTEX_SHADER),Shader(
+    "#version 330 core\n"
+    L_SHAREDUNIFORM
+    "layout(location = 0) out vec3 ocolor;"
+    "layout(location = 1) out vec3 onormal;"
+    "uniform vec4 color;"
+    "smooth in vec4 position;"
+    "void main(){"
+    "if(alpha(color.a)) discard;"
+    "vec3 normal = cross(dFdx(position.xyz),dFdy(position.xyz)).xyz;"
+    "if(isnan(normal.x) || length(normal)<=0.f) normal = eye.xyz-position.xyz;"
+    "onormal.xy = encodeNormal(normal);"
+    "ocolor = color.rgb;"
+    "}",GL_FRAGMENT_SHADER));
   return program;
 }
 const char* GL::error() {
