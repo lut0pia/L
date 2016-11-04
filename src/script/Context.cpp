@@ -155,6 +155,10 @@ Context::Context(){
     L_ASSERT(params==1);
     return stack[0].value().get<bool>();
   });
+  _globals[FNV1A("non-null")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
+    L_ASSERT(params==1);
+    return stack[0].value().as<void*>()!=nullptr;
+  });
   _globals[FNV1A("or")] = (Native)([](Context& c,const Array<Var>& a)->Var {
     for(uintptr_t i(1); i<a.size(); i++)
       if(c.execute(a[i]).get<bool>())
