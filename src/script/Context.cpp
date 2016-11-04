@@ -295,8 +295,15 @@ Context::Context(){
   _globals[FNV1A("color")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
     Color wtr(Color::white);
     params = min(params,4u);
-    for(size_t i(0); i<params; i++)
-      wtr[i] = (stack[i]->is<float>()) ? (stack[i]->as<float>()*255) : stack[i]->get<int>();
+    for(size_t i(0); i<params; i++){
+      byte b((stack[i]->is<float>()) ? (stack[i]->as<float>()*255) : stack[i]->get<int>());
+      switch(i){
+        case 0: wtr.r() = b; break;
+        case 1: wtr.g() = b; break;
+        case 2: wtr.b() = b; break;
+        case 3: wtr.a() = b; break;
+      }
+    }
     return wtr;
   });
 }
