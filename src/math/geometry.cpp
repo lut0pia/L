@@ -74,6 +74,14 @@ Matrix33f L::quatToMat(const Quatf& q){
   wtr(2,2) = 1.f - 2.f*x2 - 2.f*y2;
   return wtr;
 }
+bool L::raySphereIntersect(const Vector3f& c,float r,const Vector3f& o,const Vector3f& d,float& t){
+  const float radiusSqr(sqr(r));
+  const Vector3f oc(o - c);
+  const float ddotoc(d.dot(oc));
+  const float delta(ddotoc*ddotoc-oc.lengthSquared()+radiusSqr);
+  t = -ddotoc-sqrt(delta);
+  return t>=0;
+}
 bool L::rayBoxIntersect(const Interval3f& b,const Vector3f& o,const Vector3f& d,float& t,const Vector3f& id){
   const float xmin = (b.min().x() - o.x())*id.x();
   const float xmax = (b.max().x() - o.x())*id.x();
