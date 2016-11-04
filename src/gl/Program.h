@@ -4,6 +4,7 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "../containers/Map.h"
+#include "../image/Color.h"
 #include "../math/Matrix.h"
 
 namespace L {
@@ -27,7 +28,10 @@ namespace L {
       void uniformBlockBinding(const char* name,GLuint binding);
       void uniform(const char* name,float);
       void uniform(const char* name,float,float,float);
-      void uniform(const char* name,const Vector3f&);
+      void uniform(const char* name,float,float,float,float);
+      inline void uniform(const char* name,const Vector3f& v) { uniform(name,v.x(),v.y(),v.z()); }
+      inline void uniform(const char* name,const Vector4f& v) { uniform(name,v.x(),v.y(),v.z(),v.w()); }
+      inline void uniform(const char* name,const Color& c) { uniform(name,c.rf(),c.gf(),c.bf(),c.af()); }
       void uniform(const char* name,const Matrix44f&);
       void uniform(const char* name,const Texture&,GLenum unit = GL_TEXTURE0);
 

@@ -70,8 +70,8 @@ void Program::uniform(const char* name,float v) {
 void Program::uniform(const char* name,float x,float y,float z) {
   glUniform3f(uniformLocation(name),x,y,z);
 }
-void Program::uniform(const char* name,const Vector3f& p) {
-  uniform(name,p.x(),p.y(),p.z());
+void Program::uniform(const char* name,float x,float y,float z,float w) {
+  glUniform4f(uniformLocation(name),x,y,z,w);
 }
 void Program::uniform(const char* name,const Matrix44f& m) {
   glUniformMatrix4fv(uniformLocation(name),1,GL_FALSE,m.array());
