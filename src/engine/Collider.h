@@ -8,7 +8,7 @@
 namespace L {
   class Collider : public Component {
     L_COMPONENT(Collider)
-  protected:
+  public:
     static Interval3fTree<Collider*> tree;
     Interval3fTree<Collider*>::Node* _node;
     Transform* _transform;
@@ -28,9 +28,11 @@ namespace L {
     void box(const Vector3f& radius);
     void sphere(float radius);
     void updateBoundingBox();
+    bool raycastSingle(const Vector3f& origin,const Vector3f& direction,float& t) const;
     Matrix33f inertiaTensor() const;
     void render(const Camera& camera);
     static void checkCollision(Collider& a,Collider& b);
+    static Collider* raycast(const Vector3f& origin,Vector3f direction,float& t);
   };
   template <> inline void subUpdateAllComponents<Collider>(){ Collider::subUpdateAll(); }
 }

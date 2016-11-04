@@ -114,6 +114,16 @@ void ScriptComponent::init() {
   L_COMPONENT_METHOD(Collider,"center",1,center(stack[0]->get<Vector3f>()));
   L_COMPONENT_METHOD(Collider,"box",1,box(stack[0]->get<Vector3f>()));
   L_COMPONENT_METHOD(Collider,"sphere",1,sphere(stack[0]->get<float>()));
+  Context::global(FNV1A("raycast")) = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
+    if(params==2 && stack[0]->is<Vector3f>() && stack[1]->is<Vector3f>()){
+      auto wtr(ref<Table<Var,Var>>());
+      float t;
+      (*wtr)[FNV1A("collider")] = Collider::raycast(stack[0]->as<Vector3f>(),stack[1]->as<Vector3f>(),t);
+      (*wtr)[FNV1A("position")] = stack[0]->as<Vector3f>()+stack[1]->as<Vector3f>()*t;
+      return wtr;
+    }
+    return nullptr;
+  });
   // RigidBody ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(RigidBody,"rigidbody");
   L_COMPONENT_METHOD(RigidBody,"mass",1,mass(stack[0]->get<float>()));

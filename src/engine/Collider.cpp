@@ -77,6 +77,20 @@ void Collider::updateBoundingBox() {
       break;
   }
 }
+bool Collider::raycastSingle(const Vector3f& origin,const Vector3f& direction,float& t) const{
+  switch(_type){
+    case Box:
+      return rayBoxIntersect(
+        Interval3f(_center-_radius,_center+_radius),
+        _transform->fromAbsolute(origin),
+        _transform->absoluteRotation().inverse().rotate(direction),t);
+      break;
+    case Sphere:
+      return raySphereIntersect(_transform->toAbsolute(_center),_radius.x(),origin,direction,t);
+      break;
+  }
+  return false;
+}
 Matrix33f Collider::inertiaTensor() const{
   Matrix33f wtr(0.f);
   switch(_type){
@@ -264,4 +278,35 @@ void Collider::checkCollision(Collider& a,Collider& b) {
   }
   // Physically resolve collision
   RigidBody::collision(a._rigidbody,b._rigidbody,impactPoint,normal);
+}
+Collider* Collider::raycast(const Vector3f& origin,Vector3f direction,float& t){
+  typedef Interval3fTree<Collider*>::Node Node;
+  static Array<const Node*> queue;
+  queue.clear();
+  if(tree.root())
+    queue.push(tree.root());
+
+  direction.normalize();
+  const Vector3f invDir(1.f/direction.x(),1.f/direction.y(),1.f/direction.z());
+  Collider* wtr(nullptr);
+  while(!queue.empty()){
+    const Node* node(queue.back());
+    queue.pop();
+    float hitT;
+    const Interval3f& aabb(node->leaf() ? node->value()->_boundingBox : node->key());
+    if(rayBoxIntersect(aabb,origin,direction,hitT,invDir)){
+      if(wtr && t<hitT) // Already have closer hit
+        continue;
+      if(node->leaf()){
+        if(node->value()->raycastSingle(origin,direction,hitT)){
+          wtr = node->value();
+          t = hitT;
+        }
+      } else {
+        queue.push(node->left());
+        queue.push(node->right());
+      }
+    }
+  }
+  return wtr;
 }
