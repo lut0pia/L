@@ -292,4 +292,11 @@ Context::Context(){
       return Vector3f(stack[0]->get<float>(),stack[1]->get<float>(),stack[2]->get<float>());
     return Vector3f();
   });
+  _globals[FNV1A("color")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
+    Color wtr(Color::white);
+    params = min(params,4u);
+    for(size_t i(0); i<params; i++)
+      wtr[i] = (stack[i]->is<float>()) ? (stack[i]->as<float>()*255) : stack[i]->get<int>();
+    return wtr;
+  });
 }
