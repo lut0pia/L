@@ -142,4 +142,5 @@ void ScriptComponent::init() {
   L_COMPONENT_METHOD(Primitive,"center",1,center(stack[0]->get<Vector3f>()));
   L_COMPONENT_METHOD(Primitive,"box",1,box(stack[0]->get<Vector3f>()));
   L_COMPONENT_METHOD(Primitive,"sphere",1,sphere(stack[0]->get<float>()));
+  L_COMPONENT_METHOD(Primitive,"color",1,color(stack[0]->get<Color>()));
 }
