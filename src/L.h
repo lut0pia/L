@@ -142,6 +142,9 @@
 #include "system/System.h"
 #include "system/Window.h"
 
+// Text
+#include "text/Symbol.h"
+
 // Timey-wimey wibbly-wobbly stuff
 #include "time/Time.h"
 #include "time/Timer.h"
