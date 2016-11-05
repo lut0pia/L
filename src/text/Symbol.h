@@ -13,9 +13,9 @@ namespace L {
   public:
     inline Symbol() : _string(nullptr){}
     Symbol(const char* str){
-      const KeyValue<uint32_t,const char*>* kv(_symbols.find(str));
-      if(kv)
-        _string = kv->value();
+      const Table<const char*,const char*>::Slot* slot(_symbols.find(str));
+      if(slot)
+        _string = slot->value();
       else {
         const size_t length(strlen(str));
         if(((size_t)_blobEnd-(size_t)_blobNext)<=length){
