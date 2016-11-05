@@ -267,13 +267,13 @@ void Collider::checkCollision(Collider& a,Collider& b) {
   }
   // Send collision events to scripts
   auto e(ref<Table<Var,Var>>());
-  (*e)[FNV1A("type")] = FNV1A("COLLISION");
+  (*e)[Symbol("type")] = Symbol("COLLISION");
   if(a._script){
-    (*e)[FNV1A("other")] = &b;
+    (*e)[Symbol("other")] = &b;
     a._script->event(e);
   }
   if(b._script){
-    (*e)[FNV1A("other")] = &a;
+    (*e)[Symbol("other")] = &a;
     b._script->event(e);
   }
   // Physically resolve collision

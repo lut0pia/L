@@ -13,52 +13,52 @@ using namespace L;
 using namespace Script;
 
 ScriptComponent::ScriptComponent(){
-  _context.local(FNV1A("entity")) = nullptr;
+  _context.local(Symbol("entity")) = nullptr;
 }
 void ScriptComponent::updateComponents(){
-  static Var updateComponentsCall(Array<Var>{FNV1A("update-components")});
-  _context.variable(FNV1A("entity")) = entity();
+  static Var updateComponentsCall(Array<Var>{Symbol("update-components")});
+  _context.variable(Symbol("entity")) = entity();
   _context.execute(updateComponentsCall);
 }
 void ScriptComponent::load(const char* filename) {
-  static Var startCall(Array<Var>{FNV1A("start")});
+  static Var startCall(Array<Var>{Symbol("start")});
   FileStream stream(filename,"rb");
   _context.read(stream);
   _context.execute(startCall);
 }
 void ScriptComponent::update() {
-  static Var updateCall(Array<Var>{FNV1A("update")});
+  static Var updateCall(Array<Var>{Symbol("update")});
   _context.variable("delta") = Engine::deltaSeconds();
   _context.execute(updateCall);
 }
 void ScriptComponent::event(const Window::Event& e){
   auto table(ref<Table<Var,Var>>());
-  auto& typeSlot((*table)[FNV1A("type")]);
+  Var& typeSlot((*table)[Symbol("type")]);
   switch(e.type){ // TODO: handle other event types
     case Window::Event::MOUSEMOVE:
-      typeSlot = FNV1A("MOUSEMOVE");
+      typeSlot = Symbol("MOUSEMOVE");
       break;
     case Window::Event::BUTTONDOWN:
-      typeSlot = FNV1A("BUTTONDOWN");
+      typeSlot = Symbol("BUTTONDOWN");
       break;
     case Window::Event::BUTTONUP:
-      typeSlot = FNV1A("BUTTONUP");
+      typeSlot = Symbol("BUTTONUP");
       break;
   }
-  (*table)[FNV1A("button")] = Window::buttonToHash(e.button);
-  (*table)[FNV1A("x")] = e.x;
-  (*table)[FNV1A("y")] = e.y;
+  (*table)[Symbol("button")] = Window::buttonToSymbol(e.button);
+  (*table)[Symbol("x")] = e.x;
+  (*table)[Symbol("y")] = e.y;
   event(table);
 }
 void ScriptComponent::event(const Ref<Table<Var,Var>>&e){
-  Var eventCall(Array<Var>{FNV1A("event"),e});
+  Var eventCall(Array<Var>{Symbol("event"),e});
   _context.execute(eventCall);
 }
 
 void ScriptComponent::init() {
   L_ONCE;
-#define L_FUNCTION(name,...) Context::global(FNV1A(name)) = (Function)([](const Var& src,SymbolVar* stack,size_t params)->Var {__VA_ARGS__ return 0;})
-#define L_COMPONENT_FUNCTION(cname,fname,n,...) Context::typeValue(Type<cname*>::description(),FNV1A(fname)) = (Function)([](const Var& src,SymbolVar* stack,size_t params)->Var {L_ASSERT(params>=n && src.is<cname*>());__VA_ARGS__ return 0;})
+#define L_FUNCTION(name,...) Context::global(Symbol(name)) = (Function)([](const Var& src,SymbolVar* stack,size_t params)->Var {__VA_ARGS__ return 0;})
+#define L_COMPONENT_FUNCTION(cname,fname,n,...) Context::typeValue(Type<cname*>::description(),Symbol(fname)) = (Function)([](const Var& src,SymbolVar* stack,size_t params)->Var {L_ASSERT(params>=n && src.is<cname*>());__VA_ARGS__ return 0;})
 #define L_COMPONENT_METHOD(cname,fname,n,...) L_COMPONENT_FUNCTION(cname,fname,n,src.as<cname*>()->__VA_ARGS__;)
 #define L_COMPONENT_RETURN_METHOD(cname,fname,n,...) L_COMPONENT_FUNCTION(cname,fname,n,return src.as<cname*>()->__VA_ARGS__;)
 #define L_COMPONENT_ADD(cname,fname) L_COMPONENT_FUNCTION(Entity,fname,0,return src.as<Entity*>()->add<cname>();)
@@ -79,21 +79,21 @@ void ScriptComponent::init() {
       Engine::timescale(stack[0]->get<float>());
     return Engine::timescale();
   });
-  Context::global(FNV1A("engine-gravity")) = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
+  Context::global(Symbol("engine-gravity")) = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
     if(params>0)
       RigidBody::gravity(stack[0]->get<Vector3f>());
     return RigidBody::gravity();
   });
   // Entity ///////////////////////////////////////////////////////////////////
-  Context::global(FNV1A("entity-make")) = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
+  Context::global(Symbol("entity-make")) = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
     return new Entity();
   });
-  Context::global(FNV1A("entity-copy")) = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
+  Context::global(Symbol("entity-copy")) = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
     if(params && stack[0]->is<Entity*>())
       return new Entity(stack[0]->as<Entity*>());
     return 0;
   });
-  Context::global(FNV1A("entity-destroy")) = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
+  Context::global(Symbol("entity-destroy")) = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
     if(params && stack[0]->is<Entity*>())
       delete stack[0]->as<Entity*>();
     return 0;
@@ -114,12 +114,12 @@ void ScriptComponent::init() {
   L_COMPONENT_METHOD(Collider,"center",1,center(stack[0]->get<Vector3f>()));
   L_COMPONENT_METHOD(Collider,"box",1,box(stack[0]->get<Vector3f>()));
   L_COMPONENT_METHOD(Collider,"sphere",1,sphere(stack[0]->get<float>()));
-  Context::global(FNV1A("raycast")) = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
+  Context::global(Symbol("raycast")) = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
     if(params==2 && stack[0]->is<Vector3f>() && stack[1]->is<Vector3f>()){
       auto wtr(ref<Table<Var,Var>>());
       float t;
-      (*wtr)[FNV1A("collider")] = Collider::raycast(stack[0]->as<Vector3f>(),stack[1]->as<Vector3f>(),t);
-      (*wtr)[FNV1A("position")] = stack[0]->as<Vector3f>()+stack[1]->as<Vector3f>()*t;
+      (*wtr)[Symbol("collider")] = Collider::raycast(stack[0]->as<Vector3f>(),stack[1]->as<Vector3f>(),t);
+      (*wtr)[Symbol("position")] = stack[0]->as<Vector3f>()+stack[1]->as<Vector3f>()*t;
       return wtr;
     }
     return nullptr;

@@ -41,10 +41,10 @@ void Context::read(Var& v,Lexer& lexer) {
     else if(strpbrk(token,"0123456789")){ // Has digits
       if(token[strspn(token,"-0123456789")]=='\0') v = atoi(token); // Integer
       else if(token[strspn(token,"-0123456789.")]=='\0') v = (float)atof(token); // Float
-      else v = fnv1a(token);
+      else v = Symbol(token);
     } else if(lexer.isToken("true")) v = true;
     else if(lexer.isToken("false")) v = false;
-    else v = fnv1a(token);
+    else v = Symbol(token);
     lexer.nextToken();
   }
 }
@@ -72,13 +72,12 @@ Var Context::execute(const Var& code,Var* src) {
       Var wtr;
       size_t frame(_stack.size()); // Save local frame
       if(!source.is<bool>() && handle.is<Ref<CodeFunction> >())
-        _stack.push(FNV1A("self"),source);
+        _stack.push(Symbol("self"),source);
       SymbolVar* stack(&_stack.top()+1);
       for(uint32_t i(1); i<array.size(); i++) { // For all parameters
         Symbol sym;
         if(handle.is<Ref<CodeFunction> >() && handle.as<Ref<CodeFunction> >()->parameters.size()>=i)
           sym = handle.as<Ref<CodeFunction> >()->parameters[i-1];
-        else sym = FNV1A("");
         _stack.push(sym,execute(array[i])); // Compute parameter values
       }
       if(handle.is<Ref<CodeFunction> >())
@@ -132,7 +131,7 @@ Ref<Table<Var,Var>> Context::typeTable(const TypeDescription* td){
 Context::Context(){
   L_ONCE;
   // Local allows to define local variables without overriding more global variables
-  _globals[FNV1A("local")] = (Native)([](Context& c,const Array<Var>& a)->Var {
+  _globals[Symbol("local")] = (Native)([](Context& c,const Array<Var>& a)->Var {
     if(a.size()>1 && a[1].is<Symbol>()){
       if(a.size()>2)
         c.local(a[1].as<Symbol>()) = c.execute(a[2]);
@@ -140,38 +139,38 @@ Context::Context(){
     }
     return 0;
   });
-  _globals[FNV1A("do")] = (Native)([](Context& c,const Array<Var>& a)->Var {
+  _globals[Symbol("do")] = (Native)([](Context& c,const Array<Var>& a)->Var {
     for(uintptr_t i(1); i<a.size()-1; i++)
       c.execute(a[i]);
     return c.execute(a.back());
   });
-  _globals[FNV1A("and")] = (Native)([](Context& c,const Array<Var>& a)->Var {
+  _globals[Symbol("and")] = (Native)([](Context& c,const Array<Var>& a)->Var {
     for(uintptr_t i(1); i<a.size(); i++)
       if(!c.execute(a[i]).get<bool>())
         return false;
     return true;
   });
-  _globals[FNV1A("not")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
+  _globals[Symbol("not")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
     L_ASSERT(params==1);
     return stack[0].value().get<bool>();
   });
-  _globals[FNV1A("non-null")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
+  _globals[Symbol("non-null")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
     L_ASSERT(params==1);
     return stack[0].value().as<void*>()!=nullptr;
   });
-  _globals[FNV1A("or")] = (Native)([](Context& c,const Array<Var>& a)->Var {
+  _globals[Symbol("or")] = (Native)([](Context& c,const Array<Var>& a)->Var {
     for(uintptr_t i(1); i<a.size(); i++)
       if(c.execute(a[i]).get<bool>())
         return true;
     return false;
   });
-  _globals[FNV1A("while")] = (Native)([](Context& c,const Array<Var>& a)->Var {
+  _globals[Symbol("while")] = (Native)([](Context& c,const Array<Var>& a)->Var {
     Var wtr;
     while(c.execute(a[1]).get<bool>())
       wtr = c.execute(a[2]);
     return wtr;
   });
-  _globals[FNV1A("if")] = (Native)([](Context& c,const Array<Var>& a)->Var {
+  _globals[Symbol("if")] = (Native)([](Context& c,const Array<Var>& a)->Var {
     for(uintptr_t i(1); i<a.size()-1; i += 2)
       if(c.execute(a[i]).get<bool>())
         return c.execute(a[i+1]);
@@ -179,7 +178,7 @@ Context::Context(){
       return c.execute(a.back());
     else return 0;
   });
-  _globals[FNV1A("switch")] = (Native)([](Context& c,const Array<Var>& a)->Var {
+  _globals[Symbol("switch")] = (Native)([](Context& c,const Array<Var>& a)->Var {
     if(a.size()>1){
       const Var v(c.execute(a[1]));
       for(uintptr_t i(2); i<a.size()-1; i += 2)
@@ -190,13 +189,13 @@ Context::Context(){
     }
     return 0;
   });
-  _globals[FNV1A("set")] = (Native)([](Context& c,const Array<Var>& a)->Var {
+  _globals[Symbol("set")] = (Native)([](Context& c,const Array<Var>& a)->Var {
     Var* target;
     if(a.size()==3 && (target = c.reference(a[1])))
       *target = c.execute(a[2]);
     return 0;
   });
-  _globals[FNV1A("fun")] = (Native)([](Context& c,const Array<Var>& a)->Var {
+  _globals[Symbol("fun")] = (Native)([](Context& c,const Array<Var>& a)->Var {
     if(a.size()>1){
       Ref<CodeFunction> wtr;
       wtr.make();
@@ -210,7 +209,7 @@ Context::Context(){
     return 0;
   });
 #define CMP(name,cop)\
-  _globals[FNV1A(name)] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {\
+  _globals[Symbol(name)] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {\
     L_ASSERT(params>=2);\
     for(uintptr_t i(0); i<params-1; i++)\
       if(stack[i].value() cop stack[i+1].value())\
@@ -224,21 +223,21 @@ Context::Context(){
   CMP(">=",<);
   CMP("<=",>);
 #undef CMP
-  _globals[FNV1A("+")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
+  _globals[Symbol("+")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
     L_ASSERT(params>=1);
     Var wtr(stack[0].value());
     for(uintptr_t i(1); i<params; i++)
       wtr += stack[i].value();
     return wtr;
   });
-  _globals[FNV1A("*")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
+  _globals[Symbol("*")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
     L_ASSERT(params>=1);
     Var wtr(stack[0].value());
     for(uintptr_t i(1); i<params; i++)
       wtr *= stack[i].value();
     return wtr;
   });
-  _globals[FNV1A("-")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
+  _globals[Symbol("-")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
     L_ASSERT(params>=1);
     if(params==1)
       return Var(0) - stack[0].value(); // TODO: replace with actual neg dynamic operator
@@ -249,50 +248,50 @@ Context::Context(){
       return wtr;
     }
   });
-  _globals[FNV1A("/")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
+  _globals[Symbol("/")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
     L_ASSERT(params==2);
     return stack[0].value()/stack[1].value();
   });
-  _globals[FNV1A("%")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
+  _globals[Symbol("%")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
     L_ASSERT(params==2);
     return stack[0].value()%stack[1].value();
   });
-  _globals[FNV1A("print")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
+  _globals[Symbol("print")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
     for(uintptr_t i(0); i<params; i++)
       out << stack[i].value();
     return 0;
   });
-  _globals[FNV1A("typename")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
+  _globals[Symbol("typename")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
     return stack[0]->type()->name;
   });
-  _globals[FNV1A("object")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
+  _globals[Symbol("object")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
     Ref<Table<Var,Var> > wtr(ref<Table<Var,Var>>());
     Table<Var,Var>& table(*wtr);
     for(uintptr_t i(1); i<params; i += 2)
       table[stack[i-1].value()] = stack[i].value();
     return wtr;
   });
-  _globals[FNV1A("now")] = (Native)([](Context& c,const Array<Var>&)->Var {
+  _globals[Symbol("now")] = (Native)([](Context& c,const Array<Var>&)->Var {
     return Time::now();
   });
-  _globals[FNV1A("rand")] = (Native)([](Context& c,const Array<Var>&)->Var {
+  _globals[Symbol("rand")] = (Native)([](Context& c,const Array<Var>&)->Var {
     return Rand::nextFloat();
   });
-  _globals[FNV1A("button-pressed")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
+  _globals[Symbol("button-pressed")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
     if(params){
       if(stack[0]->is<Symbol>())
-        return Window::isPressed(Window::hashToButton(stack[0]->as<Symbol>()));
+        return Window::isPressed(Window::symbolToButton(stack[0]->as<Symbol>()));
       else if(stack[0]->is<int>())
         return Window::isPressed((Window::Event::Button)(stack[0]->as<int>()+'0'));
     }
     return false;
   });
-  _globals[FNV1A("vec")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
+  _globals[Symbol("vec")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
     if(params==3)
       return Vector3f(stack[0]->get<float>(),stack[1]->get<float>(),stack[2]->get<float>());
     return Vector3f();
   });
-  _globals[FNV1A("color")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
+  _globals[Symbol("color")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
     Color wtr(Color::white);
     params = min(params,4u);
     for(size_t i(0); i<params; i++){
