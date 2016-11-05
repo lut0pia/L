@@ -2,6 +2,7 @@
 
 #include <cstdlib>
 #include "../containers/Table.h"
+#include "../macros.h"
 
 namespace L {
   class Symbol {
@@ -14,9 +15,10 @@ namespace L {
     inline Symbol() : _string(nullptr){}
     Symbol(const char* str){
       const Table<const char*,const char*>::Slot* slot(_symbols.find(str));
-      if(slot)
+      if(slot){
+        L_ASSERT(strcmp(str,slot->value())==0);
         _string = slot->value();
-      else {
+      } else {
         const size_t length(strlen(str));
         if(((size_t)_blobEnd-(size_t)_blobNext)<=length){
           _blobNext = (char*)malloc(blobSize);
