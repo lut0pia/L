@@ -2,6 +2,7 @@
 
 #include "../hash.h"
 #include "KeyValue.h"
+#include "../objects.h"
 
 namespace L {
   template <class K,class V>
@@ -77,6 +78,18 @@ namespace L {
         }
         grow();
       } while(true);
+    }
+    KV* find(const K& key) const{
+      const uint32_t h(hash(key));
+      const uintptr_t i(h*((float)_size/UINT32_MAX));
+      for(uintptr_t j(0); j<_size; j++){
+        const uintptr_t k((i+j)%_size);
+        if(_slots[k].key()==h)
+          return _slots+k;
+        else if(!_slots[k].key())
+          return nullptr;
+      }
+      return nullptr;
     }
   };
   template <class K,class V> inline Stream& operator<<(Stream& s,const Table<K,V>& v) {
