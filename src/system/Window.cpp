@@ -64,3 +64,13 @@ Window::Event::Button Window::hashToButton(uint32_t h){
   }
   return (Event::Button)0;
 }
+Symbol Window::buttonToSymbol(Event::Button b){
+#define BTS(B) if(b==Event::B) return Symbol(#B);
+  KEYS(BTS)
+    return Symbol("NONE");
+}
+Window::Event::Button Window::symbolToButton(Symbol s){
+#define STB(B) if(s==Symbol(#B)) return Event::B;
+  KEYS(STB)
+    return (Event::Button)0;
+}

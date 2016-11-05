@@ -4,6 +4,7 @@
 #include "../math/Vector.h"
 #include "../String.h"
 #include "../image/Bitmap.h"
+#include "../text/Symbol.h"
 
 namespace L {
   class Window {
@@ -73,5 +74,7 @@ namespace L {
     static Vector2f normalizedToPixels(const Vector2f&);
     static uint32_t buttonToHash(Event::Button);
     static Event::Button hashToButton(uint32_t);
+    static Symbol buttonToSymbol(Event::Button);
+    static Event::Button symbolToButton(Symbol);
   };
 }
