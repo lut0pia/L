@@ -2,8 +2,9 @@
 
 #include "../macros.h"
 #include "../String.h"
-#include "../time/Time.h"
 #include "../math/Vector.h"
+#include "../text/Symbol.h"
+#include "../time/Time.h"
 
 using namespace L;
 
@@ -30,6 +31,7 @@ void L::TypeInit(){
   Type<long double>::cancmp<>();
   Type<String>::canadd<>();
   Type<String>::cancmp<>();
+  Type<Symbol>::cancmp<>();
   Type<Time>::canmath<>();
   Type<Time>::cancmp<>();
   Type<Vector3f>::canmath();
