@@ -1,43 +1,66 @@
 #pragma once
 
 #include "../hash.h"
-#include "KeyValue.h"
-#include "../objects.h"
+#include "../streams/Stream.h"
 
 namespace L {
   template <class K,class V>
   class Table {
-    typedef KeyValue<uint32_t,V> KV;
+  public:
+    class Slot{
+    private:
+      struct Layout{
+        uint32_t _hash;
+        K _key;
+        V _value;
+      };
+      byte _data[sizeof(Layout)];
+      inline Layout& layout() { return *(Layout*)&_data; }
+      inline const Layout& layout() const { return *(Layout*)&_data; }
+      inline uint32_t& hash() { return layout()._hash; }
+    public:
+      inline Slot(uint32_t h,const K& key) {
+        hash() = h;
+        new(&layout()._key)K(key);
+        new(&layout()._value)V();
+      }
+      inline bool empty() const { return !hash(); }
+      inline uint32_t hash() const { return layout()._hash; }
+      inline const K& key() const { return layout()._key; }
+      inline const V& value() const { return layout()._value; }
+      inline V& value() { return layout()._value; }
+      friend Table;
+    };
   protected:
-    KV* _slots;
+    Slot* _slots;
     size_t _size,_count;
     void grow(){
       if(_slots){
         size_t oldsize(_size);
-        KV* oldslots(_slots);
-        _slots = (KV*)calloc(_size *= 2,sizeof(KV));
+        Slot* oldslots(_slots);
+        _slots = (Slot*)calloc(_size *= 2,sizeof(Slot));
         for(uintptr_t i(0); i<oldsize; i++)
-          if(oldslots[i].key())
-            memcpy(find(oldslots[i].key()),oldslots+i,sizeof(KV));
+          if(!oldslots[i].empty())
+            memcpy(find(oldslots[i].hash()),oldslots+i,sizeof(Slot));
         free(oldslots);
-      } else _slots = (KV*)calloc(_size = 4,sizeof(KV));
+      } else _slots = (Slot*)calloc(_size = 4,sizeof(Slot));
     }
     class Iterator{
     private:
-      KV* _kv;
+      Slot* _slot;
     public:
-      inline Iterator(KV* kv) : _kv(kv){}
-      inline Iterator& operator++(){ while(!(++_kv)->key()); return *this; }
-      inline bool operator!=(const Iterator& other) const{ return _kv != other._kv; }
-      inline KV* operator->() const{ return _kv; }
-      inline KV& operator*() const{ return *(operator->()); }
+      inline Iterator(Slot* slot) : _slot(slot){}
+      inline Iterator& operator++(){ while(!(++_slot)->hash()); return *this; }
+      inline bool operator!=(const Iterator& other) const { return _slot != other._slot; }
+      inline Slot* operator->() const{ return _slot; }
+      inline Slot& operator*() const{ return *(operator->()); }
     };
   public:
     inline Table() : _slots(nullptr),_size(0),_count(0){}
-    Table(const Table& other) : _slots((KV*)calloc(other._size,sizeof(KV))),_size(other._size),_count(other._count){
+    Table(const Table& other) : _slots((Slot*)calloc(other._size,sizeof(Slot))),_size(other._size),_count(other._count){
       for(uintptr_t i(0); i<_size; i++)
-        if(other._slots[i].key())
-          new(_slots+i)KV(other._slots[i]);
+        if(!other._slots[i].empty())
+          new(_slots+i)Slot(other._slots[i]);
     }
     inline Table& operator=(const Table& other){
       this->~Table();
@@ -48,8 +71,8 @@ namespace L {
       if(_slots){
         if(_count)
           for(uintptr_t i(0); i<_size; i++)
-            if(_slots[i].key())
-              destruct(_slots[i].value());
+            if(!_slots[i].empty())
+              _slots[i].~Slot();
         free(_slots);
       }
     }
@@ -61,32 +84,32 @@ namespace L {
       if(_count*10>=_size*7)
         grow();
       uint32_t h(hash(k));
-      KV* slot(find(h));
-      if(!slot->key()){
-        construct(*slot,hash(k));
+      Slot* slot(find(h));
+      if(slot->empty()){
+        new(slot)Slot(h,k);
         _count++;
       }
       return slot->value();
     }
-    KV* find(uint32_t h){
+    Slot* find(uint32_t h){
       do{
         const uintptr_t i(h*((float)_size/UINT32_MAX));
         for(uintptr_t j(0); j<_size; j++){
           const uintptr_t k((i+j)%_size);
-          if(!_slots[k].key() || _slots[k].key()==h)
+          if(_slots[k].empty() || _slots[k].hash()==h)
             return _slots+k;
         }
         grow();
       } while(true);
     }
-    KV* find(const K& key) const{
+    Slot* find(const K& key) const {
       const uint32_t h(hash(key));
       const uintptr_t i(h*((float)_size/UINT32_MAX));
       for(uintptr_t j(0); j<_size; j++){
         const uintptr_t k((i+j)%_size);
-        if(_slots[k].key()==h)
+        if(_slots[k].hash()==h)
           return _slots+k;
-        else if(!_slots[k].key())
+        else if(_slots[k].empty())
           return nullptr;
       }
       return nullptr;
