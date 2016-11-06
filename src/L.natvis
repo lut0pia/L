@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+  <Type Name="L::Array&lt;*&gt;">
+    <DisplayString>{{ size={_size}, capacity={_capacity} }}</DisplayString>
+    <Expand>
+      <ArrayItems>
+        <Size>_size</Size>
+        <ValuePointer>_data</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="L::KeyValue&lt;*,*&gt;">
+    <DisplayString>{_key}={_value}</DisplayString>
+    <Expand>
+      <ExpandedItem>_value</ExpandedItem>
+    </Expand>
+  </Type>
+
+  <Type Name="L::Pool&lt;*&gt;">
+    <DisplayString Condition="_root==0">Empty pool</DisplayString>
+    <Expand>
+      <LinkedListItems>
+        <HeadPointer>_root</HeadPointer>
+        <NextPointer>_next</NextPointer>
+        <ValueNode>this</ValueNode>
+      </LinkedListItems>
+    </Expand>
+  </Type>
+
+  <Type Name="L::Pool&lt;*&gt;::Block">
+    <DisplayString>{{_start={_start} _head={_head} _tail={_tail}}}</DisplayString>
+    <Expand>
+      <ArrayItems>
+        <Size>size</Size>
+        <ValuePointer>($T1*)_data</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="L::Ref&lt;*&gt;">
+    <DisplayString Condition="_p == 0">null</DisplayString>
+    <DisplayString>{*_p} ({*((int*)_p-1)})</DisplayString>
+    <Expand>
+      <ExpandedItem>_p</ExpandedItem>
+    </Expand>
+  </Type>
+
+  <Type Name="L::StaticStack&lt;*,*&gt;">
+    <DisplayString>{{size={_current+1-(const $T2*)_array}}}</DisplayString>
+    <Expand>
+      <ArrayItems>
+        <Size>_current+1-(const $T2*)_array</Size>
+        <ValuePointer>($T2*)_array</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="L::String">
+    <DisplayString>{_data,[_size-1]s8}</DisplayString>
+  </Type>
+
+  <Type Name="L::Symbol">
+    <DisplayString>({_string,s8})</DisplayString>
+  </Type>
+
+  <Type Name="L::Table&lt;*,*&gt;">
+    <DisplayString>{{count={_count} size={_size}}}</DisplayString>
+    <Expand>
+      <ArrayItems>
+        <Size>_size</Size>
+        <ValuePointer>_slots</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="L::Table&lt;*,*&gt;::Slot">
+    <DisplayString>{*(Layout*)&amp;_data}</DisplayString>
+    <Expand>
+      <ExpandedItem>*(Layout*)&amp;_data</ExpandedItem>
+    </Expand>
+  </Type>
+
+  <Type Name="L::Table&lt;*,*&gt;::Slot::Layout">
+    <DisplayString Condition="_hash!=0">{_key}: {_value}</DisplayString>
+    <DisplayString Condition="_hash==0">Empty slot</DisplayString>
+  </Type>
+
+  <Type Name="L::Time">
+    <DisplayString Condition="usec&lt;1000">{usec} µs</DisplayString>
+    <DisplayString Condition="usec&lt;1000000">{usec/1000} ms {usec%1000} µs</DisplayString>
+    <DisplayString Condition="usec&lt;60*1000000LL">{(usec/(1000*1000))%60}s {(usec/1000)%1000}ms</DisplayString>
+    <DisplayString Condition="usec&lt;60*60*1000000LL">{(usec/(60*1000000))%60}m {(usec/(1000000))%60}s</DisplayString>
+    <DisplayString Condition="usec&lt;24*60*60*1000000LL">{(usec/(60*60*1000000LL))%24}h {(usec/(60*1000000))%60}m</DisplayString>
+  </Type>
+
+  <Type Name="L::Variable">
+    <DisplayString Condition="_td == &amp;L::Type&lt;int&gt;::td">{*(int*)_data}</DisplayString>
+    <DisplayString Condition="_td == &amp;L::Type&lt;float&gt;::td">{*(float*)_data}</DisplayString>
+    <DisplayString Condition="_td == &amp;L::Type&lt;L::Symbol&gt;::td">{*(L::Symbol*)&amp;_data}</DisplayString>
+    <DisplayString Condition="_td == &amp;L::Type&lt;L::String&gt;::td">{*(L::String*)&amp;_data}</DisplayString>
+    <DisplayString>Unknown</DisplayString>
+    <Expand>
+      <ExpandedItem Condition="_td == &amp;L::Type&lt;int&gt;::td">*(int*)_data</ExpandedItem>
+      <ExpandedItem Condition="_td == &amp;L::Type&lt;L::Symbol&gt;::td">*(L::Symbol*)&amp;_data</ExpandedItem>
+      <ExpandedItem Condition="_td == &amp;L::Type&lt;L::String&gt;::td">*(L::String*)&amp;_data</ExpandedItem>
+    </Expand>
+  </Type>
+</AutoVisualizer>

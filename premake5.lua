@@ -91,6 +91,7 @@ solution "L"
 		-- Visual Studio
 		configuration {"vs*"}
 			postbuildcommands {[[lib.exe /LTCG /NOLOGO /IGNORE:4006,4221 /LIBPATH:../../ext/lib /OUT:"$(TargetPath)" "$(TargetPath)" user32.lib opengl32.lib glew32s.lib ws2_32.lib]]}
+			files {"src/**.natvis"}
 
 		configuration {"Debug"}
 			targetdir "bin/dbg"
