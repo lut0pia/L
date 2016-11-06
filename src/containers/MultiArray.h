@@ -1,5 +1,4 @@
-#ifndef DEF_L_MultiArray
-#define DEF_L_MultiArray
+#pragma once
 
 #include "Array.h"
 #include "../math/Vector.h"
@@ -57,7 +56,3 @@ namespace L {
       inline bool empty() const {return Array<T>::empty();}
   };
 }
-
-#endif
-
-
