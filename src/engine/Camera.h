@@ -12,6 +12,11 @@ namespace L {
   protected:
     Matrix44f _view,_projection,_viewProjection,_prevViewProjection,_ray;
     Interval2f _viewport;
+    enum{
+      PERSPECTIVE,
+      ORTHO
+    } _projectionType;
+    float _fovy,_near,_far,_left,_right,_bottom,_top;
     GL::Texture _gcolor,_gnormal,_gdepth;
     GL::FrameBuffer _gbuffer;
   public:
@@ -22,11 +27,11 @@ namespace L {
     void prerender();
     void postrender();
 
-    inline void viewport(const Interval2f& i) { _viewport = i; }
-
-    void perspective(float fovy,float aspect,float near,float far); // 3D perspective
+    void viewport(const Interval2f& viewport);
+    void perspective(float fovy,float near,float far); // 3D perspective
     void ortho(float left,float right,float bottom,float top,float near = -1,float far = 1);
     void pixels(); // Maps to window's pixels (origins at top-left pixel)
+    void updateProjection();
 
     bool worldToScreen(const Vector3f&,Vector2f&) const; // Set the screen-space vector for that world space vector, returns false if behind camera
     Vector3f screenToRay(const Vector2f&) const; // Returns direction vector from normalized screen position

@@ -138,8 +138,9 @@ void ScriptComponent::init() {
   L_COMPONENT_METHOD(RigidBody,"add-relative-torque",1,addRelativeTorque(stack[0]->get<Vector3f>()));
   // Camera ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(Camera,"camera");
-  L_COMPONENT_METHOD(Camera,"perspective",4,perspective(stack[0]->get<float>(),stack[1]->get<float>(),stack[2]->get<float>(),stack[3]->get<float>()));
+  L_COMPONENT_METHOD(Camera,"perspective",3,perspective(stack[0]->get<float>(),stack[1]->get<float>(),stack[2]->get<float>()));
   L_COMPONENT_METHOD(Camera,"ortho",4,ortho(stack[0]->get<float>(),stack[1]->get<float>(),stack[2]->get<float>(),stack[3]->get<float>()));
+  L_COMPONENT_METHOD(Camera,"viewport",4,viewport(Interval2f(Vector2f(stack[0]->get<float>(),stack[1]->get<float>()),Vector2f(stack[2]->get<float>(),stack[3]->get<float>()))));
   // Script ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(ScriptComponent,"script");
   L_COMPONENT_METHOD(ScriptComponent,"load",1,load(stack[0]->get<String>()));

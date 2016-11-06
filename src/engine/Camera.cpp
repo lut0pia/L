@@ -34,8 +34,7 @@ void Camera::prerender() {
   _prevViewProjection = _viewProjection;
   _viewProjection = _projection*_view;
   _ray = orientation*_projection.inverse();
-  glViewport(_viewport.min().x()*Window::width(),_viewport.min().y()*Window::height(),
-             _viewport.size().x()*Window::width(),_viewport.size().y()*Window::height());
+  glViewport(0,0,_gcolor.width(),_gcolor.height());
   Engine::sharedUniform().subData(L_SHAREDUNIFORM_VIEW,sizeof(Matrix44f),_view.array());
   Engine::sharedUniform().subData(L_SHAREDUNIFORM_INVVIEW,sizeof(Matrix44f),_view.inverse().array());
   Engine::sharedUniform().subData(L_SHAREDUNIFORM_VIEWPROJ,sizeof(Matrix44f),_viewProjection.array());
@@ -76,31 +75,61 @@ void Camera::postrender(){
   deferredProgram.uniform("colorBuffer",_gcolor,GL_TEXTURE0);
   deferredProgram.uniform("normalBuffer",_gnormal,GL_TEXTURE1);
   deferredProgram.uniform("depthBuffer",_gdepth,GL_TEXTURE2);
+  glViewport(_viewport.min().x()*Window::width(),_viewport.min().y()*Window::height(),
+             _viewport.size().x()*Window::width(),_viewport.size().y()*Window::height());
   GL::quad().draw();
   Window::swapBuffers();
 }
 
-void Camera::perspective(float fovy,float aspect,float near,float far) {
-  _projection = Matrix44f(1.f);
-  float top(near*tan(fovy*(PI<float>()/360.f))),right(top*aspect);
-  _projection(0,0) = near/right;
-  _projection(1,1) = near/top;
-  _projection(2,2) = (-far+near)/(far-near);
-  _projection(2,3) = (-2.f*far*near)/(far-near);
-  _projection(3,2) = -1.f;
-  _projection(3,3) = 0.f;
+void Camera::viewport(const Interval2f& i) {
+  _viewport = i;
+  const size_t viewPortWidth(Window::width()*_viewport.size().x()),viewPortHeight(Window::height()*_viewport.size().y());
+  _gcolor.image2D(0,GL_RGBA,viewPortWidth,viewPortHeight,0,GL_RGBA,GL_UNSIGNED_BYTE);
+  _gnormal.image2D(0,GL_RGB16F,viewPortWidth,viewPortHeight,0,GL_RGB,GL_FLOAT);
+  _gdepth.image2D(0,GL_DEPTH_COMPONENT24,viewPortWidth,viewPortHeight,0,GL_DEPTH_COMPONENT,GL_FLOAT);
+  updateProjection();
+}
+void Camera::perspective(float fovy,float near,float far) {
+  _projectionType = PERSPECTIVE;
+  _fovy = fovy; _near = near; _far = far;
+  updateProjection();
 }
 void Camera::ortho(float left,float right,float bottom,float top,float near,float far) {
-  _projection = Matrix44f(1.f);
-  _projection(0,0) = 2.f/(right-left);
-  _projection(1,1) = 2.f/(top-bottom);
-  _projection(2,2) = -2.f/(far-near);
-  _projection(0,3) = -(right+left)/(right-left);
-  _projection(1,3) = -(top+bottom)/(top-bottom);
-  _projection(2,3) = -(far+near)/(far-near);
+  _projectionType = ORTHO;
+  _left = left; _right = right; _bottom = bottom; _top = top; _near = near; _far = far;
+  updateProjection();
 }
 void Camera::pixels() {
   ortho(0.f,(float)Window::width(),(float)Window::height(),0.f);
+}
+void Camera::updateProjection(){
+  switch(_projectionType){
+    case L::Camera::PERSPECTIVE:
+    {
+      _projection = Matrix44f(1.f);
+      const float aspect((_viewport.size().x()*Window::width())/(_viewport.size().y()*Window::height())),
+        top(_near*tan(_fovy*(PI<float>()/360.f))),
+        right(top*aspect);
+      _projection(0,0) = _near/right;
+      _projection(1,1) = _near/top;
+      _projection(2,2) = (-_far+_near)/(_far-_near);
+      _projection(2,3) = (-2.f*_far*_near)/(_far-_near);
+      _projection(3,2) = -1.f;
+      _projection(3,3) = 0.f;
+    }
+    break;
+    case L::Camera::ORTHO:
+    {
+      _projection = Matrix44f(1.f);
+      _projection(0,0) = 2.f/(_right-_left);
+      _projection(1,1) = 2.f/(_top-_bottom);
+      _projection(2,2) = -2.f/(_far-_near);
+      _projection(0,3) = -(_right+_left)/(_right-_left);
+      _projection(1,3) = -(_top+_bottom)/(_top-_bottom);
+      _projection(2,3) = -(_far+_near)/(_far-_near);
+    }
+    break;
+  }
 }
 
 bool Camera::worldToScreen(const Vector3f& p,Vector2f& wtr) const {
