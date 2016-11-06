@@ -152,7 +152,7 @@ Context::Context(){
   });
   _globals[Symbol("not")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
     L_ASSERT(params==1);
-    return stack[0].value().get<bool>();
+    return !stack[0].value().get<bool>();
   });
   _globals[Symbol("non-null")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
     L_ASSERT(params==1);
