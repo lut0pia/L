@@ -1,5 +1,4 @@
-#ifndef DEF_L_System
-#define DEF_L_System
+#pragma once
 
 #include "../macros.h"
 #include "../String.h"
@@ -42,5 +41,3 @@ namespace L {
     }
   }
 }
-
-#endif

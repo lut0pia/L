@@ -1,5 +1,4 @@
-#ifndef DEF_L_GUI_TextInput
-#define DEF_L_GUI_TextInput
+#pragma once
 
 #include <cstdlib>
 #include "Text.h"
@@ -30,8 +29,3 @@ namespace L {
     };
   }
 }
-
-#endif
-
-
-

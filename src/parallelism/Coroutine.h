@@ -1,5 +1,4 @@
-#ifndef DEF_L_Coroutine
-#define DEF_L_Coroutine
+#pragma once
 
 #include "Fiber.h"
 #include "../containers/StaticStack.h"
@@ -32,7 +31,3 @@ namespace L {
       inline static void convert() {_mainFiber = Fiber::convert();}
   };
 }
-
-#endif
-
-

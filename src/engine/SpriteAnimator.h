@@ -1,5 +1,4 @@
-#ifndef DEF_L_SpriteAnimator
-#define DEF_L_SpriteAnimator
+#pragma once
 
 #include "Sprite.h"
 
@@ -40,7 +39,3 @@ namespace L {
       }
   };
 }
-
-
-#endif
-

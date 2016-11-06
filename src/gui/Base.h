@@ -1,5 +1,4 @@
-#ifndef DEF_L_GUI_Base
-#define DEF_L_GUI_Base
+#pragma once
 
 #include <cstdlib>
 #include "../gl/Program.h"
@@ -38,6 +37,3 @@ namespace L {
     };
   }
 }
-
-#endif
-

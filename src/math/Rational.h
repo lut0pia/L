@@ -1,5 +1,4 @@
-#ifndef DEF_L_Rational
-#define DEF_L_Rational
+#pragma once
 
 #include <cmath>
 
@@ -58,9 +57,3 @@ namespace L {
     return s << v.toShortString();
   }
 }
-
-#endif
-
-
-
-

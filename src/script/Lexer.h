@@ -1,5 +1,4 @@
-#ifndef DEF_L_Script_Lexer
-#define DEF_L_Script_Lexer
+#pragma once
 
 #include "../streams/Stream.h"
 
@@ -23,6 +22,3 @@ namespace L {
     };
   }
 }
-
-#endif
-

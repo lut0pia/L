@@ -1,5 +1,4 @@
-#ifndef DEF_L_Audio_Midi
-#define DEF_L_Audio_Midi
+#pragma once
 
 /*  Windows libraries :
 **      - midiio
@@ -36,7 +35,3 @@ namespace L {
     };
   }
 }
-
-#endif
-
-

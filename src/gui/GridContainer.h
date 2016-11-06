@@ -1,5 +1,4 @@
-#ifndef DEF_L_GUI_GridContainer
-#define DEF_L_GUI_GridContainer
+#pragma once
 
 #include <cstdlib>
 #include "Base.h"
@@ -18,8 +17,3 @@ namespace L {
     };
   }
 }
-
-#endif
-
-
-

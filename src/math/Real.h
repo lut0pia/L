@@ -1,5 +1,4 @@
-#ifndef DEF_L_Real
-#define DEF_L_Real
+#pragma once
 
 #include "Rational.h"
 
@@ -11,9 +10,3 @@ namespace L{
             Real(const Rational&);
     };
 }
-
-#endif
-
-
-
-

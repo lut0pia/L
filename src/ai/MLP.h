@@ -1,5 +1,4 @@
-#ifndef DEF_L_AI_MLP
-#define DEF_L_AI_MLP
+#pragma once
 
 #include "../math/Vector.h"
 
@@ -98,7 +97,3 @@ namespace L {
     return s;
   }
 }
-
-#endif
-
-

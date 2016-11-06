@@ -1,5 +1,4 @@
-#ifndef DEF_L_GUI_Text
-#define DEF_L_GUI_Text
+#pragma once
 
 #include <cstdlib>
 #include "Image.h"
@@ -22,8 +21,3 @@ namespace L {
     };
   }
 }
-
-#endif
-
-
-

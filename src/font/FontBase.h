@@ -1,5 +1,4 @@
-#ifndef DEF_L_Font_Base
-#define DEF_L_Font_Base
+#pragma once
 
 #include "../containers/Map.h"
 #include "../image/Bitmap.h"
@@ -26,6 +25,3 @@ namespace L {
     };
   }
 }
-
-#endif
-

@@ -1,5 +1,4 @@
-#ifndef DEF_L_MTF
-#define DEF_L_MTF
+#pragma once
 
 #include "../macros.h"
 #include "../types.h"
@@ -12,11 +11,3 @@ namespace L{
             static Array<byte> decode(const Array<byte>&);
     };
 }
-
-#endif
-
-
-
-
-
-

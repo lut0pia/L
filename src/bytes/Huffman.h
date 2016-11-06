@@ -1,5 +1,4 @@
-#ifndef DEF_L_Huffman
-#define DEF_L_Huffman
+#pragma once
 
 #include "../containers/Ref.h"
 #include "../macros.h"
@@ -29,11 +28,3 @@ namespace L {
       static Array<byte> decode(const Array<byte>&, const Tree&, size_t max = -1);
   };
 }
-
-#endif
-
-
-
-
-
-

@@ -1,5 +1,4 @@
-#ifndef DEF_L_FileStream
-#define DEF_L_FileStream
+#pragma once
 
 #include <cstdio>
 #include "Stream.h"
@@ -28,6 +27,3 @@ namespace L {
   };
   static FileStream tmpfile, in(stdin), out(stdout), err(stderr);
 }
-
-#endif
-

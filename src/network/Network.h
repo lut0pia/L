@@ -1,5 +1,4 @@
-#ifndef DEF_L_Network
-#define DEF_L_Network
+#pragma once
 
 /*  Windows libraries :
 **      - ws2_32
@@ -39,10 +38,3 @@ namespace L {
     String error();
   }
 }
-
-#endif
-
-
-
-
-

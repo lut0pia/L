@@ -1,5 +1,4 @@
-#ifndef DEF_L_Assembly
-#define DEF_L_Assembly
+#pragma once
 
 #include "../containers/Array.h"
 #include "../streams/Stream.h"
@@ -97,5 +96,3 @@ namespace L {
   };
   Stream& operator<<(Stream&, const Assembly&);
 }
-
-#endif

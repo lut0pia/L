@@ -1,5 +1,4 @@
-#ifndef DEF_L_Semaphore
-#define DEF_L_Semaphore
+#pragma once
 
 #include <mutex>
 #include <condition_variable>
@@ -28,8 +27,3 @@ namespace L {
       inline void wait(int n) {while(n--)wait();}
   };
 }
-#endif
-
-
-
-

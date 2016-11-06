@@ -1,5 +1,4 @@
-#ifndef DEF_L_GUI_Sizable
-#define DEF_L_GUI_Sizable
+#pragma once
 
 #include "Solid.h"
 
@@ -18,7 +17,3 @@ namespace L{
         };
     }
 }
-
-#endif
-
-

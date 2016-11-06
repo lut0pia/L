@@ -1,5 +1,4 @@
-#ifndef DEF_L_AI_Perceptron
-#define DEF_L_AI_Perceptron
+#pragma once
 
 #include "../containers/Array.h"
 
@@ -18,7 +17,3 @@ namespace L {
     };
   }
 }
-
-#endif
-
-

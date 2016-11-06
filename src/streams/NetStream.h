@@ -1,5 +1,4 @@
-#ifndef DEF_L_NetStream
-#define DEF_L_NetStream
+#pragma once
 
 #include "Stream.h"
 
@@ -14,6 +13,3 @@ namespace L {
       inline void unget(char c) {}
   };
 }
-
-#endif
-

@@ -1,5 +1,4 @@
-#ifndef DEF_L_GUI_Slider
-#define DEF_L_GUI_Slider
+#pragma once
 
 #include <cstdlib>
 #include "Sizable.h"
@@ -32,9 +31,3 @@ namespace L {
     };
   }
 }
-
-
-#endif
-
-
-

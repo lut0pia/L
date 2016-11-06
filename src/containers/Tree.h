@@ -1,5 +1,4 @@
-#ifndef DEF_L_Tree
-#define DEF_L_Tree
+#pragma once
 
 #include "../math/Vector.h"
 #include "Pool.h"
@@ -187,8 +186,3 @@ namespace L {
   template <class K,class V> class QuadTree : public Tree<2,K,V> {};
   template <class K,class V> class Octree : public Tree<3,K,V> {};
 }
-
-#endif
-
-
-

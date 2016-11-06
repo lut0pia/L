@@ -1,5 +1,4 @@
-#ifndef DEF_L_Rand
-#define DEF_L_Rand
+#pragma once
 
 #include "../types.h"
 
@@ -33,6 +32,3 @@ namespace L {
       inline static void sState(const uint64_t& s) {last = s;}
   };
 }
-
-#endif
-

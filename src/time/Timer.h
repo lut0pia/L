@@ -1,5 +1,4 @@
-#ifndef DEF_L_Timer
-#define DEF_L_Timer
+#pragma once
 
 #include "Time.h"
 
@@ -23,11 +22,3 @@ namespace L {
       void togglePause();
   };
 }
-
-#endif
-
-
-
-
-
-

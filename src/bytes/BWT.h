@@ -1,5 +1,4 @@
-#ifndef DEF_L_BWT
-#define DEF_L_BWT
+#pragma once
 
 #include "../types.h"
 #include "../containers/Array.h"
@@ -11,11 +10,3 @@ namespace L {
       static Array<byte> decode(const Array<byte>&, size_t index);
   };
 }
-
-#endif
-
-
-
-
-
-

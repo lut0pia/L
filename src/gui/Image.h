@@ -1,5 +1,4 @@
-#ifndef DEF_L_GUI_Image
-#define DEF_L_GUI_Image
+#pragma once
 
 #include <cstdlib>
 #include "Solid.h"
@@ -22,8 +21,3 @@ namespace L {
     };
   }
 }
-
-#endif
-
-
-

@@ -1,5 +1,4 @@
-#ifndef DEF_L_System_File
-#define DEF_L_System_File
+#pragma once
 
 #include "../String.h"
 
@@ -20,8 +19,3 @@ namespace L {
       void make() const;
   };
 }
-
-#endif
-
-
-

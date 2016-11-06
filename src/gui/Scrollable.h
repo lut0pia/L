@@ -1,5 +1,4 @@
-#ifndef DEF_L_GUI_Scrollable
-#define DEF_L_GUI_Scrollable
+#pragma once
 
 #include <cstdlib>
 #include "Sizable.h"
@@ -26,8 +25,3 @@ namespace L {
     };
   }
 }
-
-#endif
-
-
-

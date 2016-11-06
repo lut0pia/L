@@ -1,5 +1,4 @@
-#ifndef DEF_L_XML
-#define DEF_L_XML
+#pragma once
 
 #include "../containers/Map.h"
 #include "../String.h"
@@ -21,8 +20,3 @@ namespace L {
       void read(Stream&);
   };
 }
-
-#endif
-
-
-

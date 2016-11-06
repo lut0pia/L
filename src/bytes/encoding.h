@@ -1,5 +1,4 @@
-#ifndef DEF_L_encoding
-#define DEF_L_encoding
+#pragma once
 
 #include "../types.h"
 #include "../String.h"
@@ -11,4 +10,3 @@ namespace L {
   Array<uint32_t> UTF8toUTF32(const char* str);
   String ANSItoUTF8(String); // Convert ANSI characters to UTF-8
 }
-#endif

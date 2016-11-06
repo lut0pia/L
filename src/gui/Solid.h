@@ -1,5 +1,4 @@
-#ifndef DEF_L_GUI_Solid
-#define DEF_L_GUI_Solid
+#pragma once
 
 #include <cstdlib>
 #include "Base.h"
@@ -20,6 +19,3 @@ namespace L{
         };
     }
 }
-
-#endif
-

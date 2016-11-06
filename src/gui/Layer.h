@@ -1,5 +1,4 @@
-#ifndef DEF_L_GUI_Layer
-#define DEF_L_GUI_Layer
+#pragma once
 
 #include <cstdlib>
 #include "Base.h"
@@ -25,9 +24,3 @@ namespace L {
     };
   }
 }
-
-#endif
-
-
-
-

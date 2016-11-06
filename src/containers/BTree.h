@@ -1,5 +1,4 @@
-#ifndef DEF_L_BTree
-#define DEF_L_BTree
+#pragma once
 
 namespace L {
   template <size_t d,class T>
@@ -25,8 +24,3 @@ namespace L {
 
   };
 }
-
-#endif
-
-
-

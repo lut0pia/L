@@ -1,5 +1,4 @@
-#ifndef DEF_L_GUI_RelativeContainer
-#define DEF_L_GUI_RelativeContainer
+#pragma once
 
 #include <cstdlib>
 #include "Sizable.h"
@@ -34,9 +33,3 @@ namespace L {
     };
   }
 }
-
-#endif
-
-
-
-

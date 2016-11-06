@@ -1,5 +1,4 @@
-#ifndef DEF_L_GUI
-#define DEF_L_GUI
+#pragma once
 
 #include "Base.h"
 #include "../containers/XML.h"
@@ -12,9 +11,3 @@ namespace L {
     Vector2i point(const String&);
   }
 }
-
-
-#endif
-
-
-

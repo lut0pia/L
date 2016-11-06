@@ -1,5 +1,4 @@
-#ifndef DEF_L_Mutex
-#define DEF_L_Mutex
+#pragma once
 
 #if defined L_WINDOWS
 #include <windows.h>
@@ -25,9 +24,3 @@ namespace L {
       void unlock();
   };
 }
-
-#endif
-
-
-
-

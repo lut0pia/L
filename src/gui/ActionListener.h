@@ -1,5 +1,4 @@
-#ifndef DEF_L_GUI_ActionListener
-#define DEF_L_GUI_ActionListener
+#pragma once
 
 #include <functional>
 #include "Layer.h"
@@ -37,8 +36,3 @@ namespace L {
     };
   }
 }
-
-#endif
-
-
-

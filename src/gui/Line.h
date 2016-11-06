@@ -1,5 +1,4 @@
-#ifndef DEF_L_GUI_Line
-#define DEF_L_GUI_Line
+#pragma once
 
 #include <cstdlib>
 #include "Sizable.h"
@@ -20,8 +19,3 @@ namespace L{
         };
     }
 }
-
-#endif
-
-
-

@@ -1,5 +1,4 @@
-#ifndef DEF_L_GUI_Rectangle
-#define DEF_L_GUI_Rectangle
+#pragma once
 
 #include <cstdlib>
 #include "Sizable.h"
@@ -18,8 +17,3 @@ namespace L {
     };
   }
 }
-
-#endif
-
-
-

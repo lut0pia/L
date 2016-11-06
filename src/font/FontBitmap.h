@@ -1,5 +1,4 @@
-#ifndef DEF_L_Font_Bitmap
-#define DEF_L_Font_Bitmap
+#pragma once
 
 #include "FontBase.h"
 
@@ -17,6 +16,3 @@ namespace L {
     };
   }
 }
-
-#endif
-

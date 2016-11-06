@@ -1,5 +1,4 @@
-#ifndef DEF_L_GUI_ListContainer
-#define DEF_L_GUI_ListContainer
+#pragma once
 
 #include <cstdlib>
 #include "Solid.h"
@@ -33,8 +32,3 @@ namespace L {
     };
   }
 }
-
-#endif
-
-
-

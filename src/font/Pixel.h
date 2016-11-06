@@ -1,5 +1,4 @@
-#ifndef DEF_L_Font_Pixel
-#define DEF_L_Font_Pixel
+#pragma once
 
 #include "FontBase.h"
 
@@ -14,6 +13,3 @@ namespace L {
     };
   }
 }
-
-#endif
-

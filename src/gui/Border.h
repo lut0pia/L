@@ -1,5 +1,4 @@
-#ifndef DEF_L_GUI_Border
-#define DEF_L_GUI_Border
+#pragma once
 
 #include <cstdlib>
 #include "Layer.h"
@@ -24,8 +23,3 @@ namespace L {
     };
   }
 }
-
-#endif
-
-
-
