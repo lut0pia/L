@@ -119,6 +119,7 @@ void ScriptComponent::init() {
       auto wtr(ref<Table<Var,Var>>());
       float t;
       (*wtr)[Symbol("collider")] = Collider::raycast(stack[0]->as<Vector3f>(),stack[1]->as<Vector3f>(),t);
+      (*wtr)[Symbol("t")] = t;
       (*wtr)[Symbol("position")] = stack[0]->as<Vector3f>()+stack[1]->as<Vector3f>()*t;
       return wtr;
     }
