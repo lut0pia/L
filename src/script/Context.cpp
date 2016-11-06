@@ -223,6 +223,20 @@ Context::Context(){
   CMP(">=",<);
   CMP("<=",>);
 #undef CMP
+#define SETOP(op)\
+  _globals[Symbol(#op)] = (Native)([](Context& c,const Array<Var>& a)->Var {\
+    L_ASSERT(a.size()>1);\
+    Var* target(c.reference(a[1]));\
+    for(int i(2);i<a.size();i++)\
+      *target op c.execute(a[i]);\
+    return 0;\
+  })
+  SETOP(+= );
+  SETOP(-= );
+  SETOP(*= );
+  SETOP(/= );
+  SETOP(%= );
+#undef SETOP
   _globals[Symbol("+")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
     L_ASSERT(params>=1);
     Var wtr(stack[0].value());
