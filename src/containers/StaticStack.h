@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../macros.h"
-#include "../objects.h"
 #include "../types.h"
 
 namespace L {
@@ -17,11 +16,11 @@ namespace L {
     inline void push(Args&&... args) {
       _current++;
       L_ASSERT(_current<(T*)_array+n);
-      construct(*_current,args...);
+      new(_current)T(args...);
     }
     inline void pop() {
       L_ASSERT(_current>=(T*)_array);
-      destruct(*_current);
+      _current->~T();
       _current--;
     }
     inline T& top() { return *_current; }
