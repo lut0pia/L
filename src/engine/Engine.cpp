@@ -5,6 +5,7 @@
 #include "../gl/Buffer.h"
 #include "../gl/GL.h"
 #include "../gl/Program.h"
+#include "../script/Context.h"
 #include "../system/Window.h"
 #include "SharedUniform.h"
 
@@ -25,6 +26,7 @@ void Engine::update() {
   _fps = 1.f/_deltaTime.fSeconds();
   _deltaTime = min(_deltaTime*_timescale,Time(0,100)); // Cap delta time to avoid weird behaviour
   _deltaSeconds = _deltaTime.fSeconds();
+  Script::Context::global("delta") = _deltaSeconds;
   Engine::sharedUniform().subData(L_SHAREDUNIFORM_FRAME,sizeof(uint32_t),&_frame);
 
   {

@@ -28,7 +28,6 @@ void ScriptComponent::load(const char* filename) {
 }
 void ScriptComponent::update() {
   static Var updateCall(Array<Var>{Symbol("update")});
-  _context.variable("delta") = Engine::deltaSeconds();
   _context.execute(updateCall);
 }
 void ScriptComponent::event(const Window::Event& e){
