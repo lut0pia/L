@@ -19,7 +19,7 @@ namespace L {
       ~Texture();
       void load(const Bitmap&,bool mipmaps = false);
       void load(GLsizei width,GLsizei height,const void* data = nullptr,bool mipmaps = false);
-      void image2D(GLint level,GLint internalformat,GLsizei width,GLsizei height,GLint border,GLenum format,GLenum type,const void *pixels);
+      void image2D(GLint level,GLint internalformat,GLsizei width,GLsizei height,GLint border,GLenum format,GLenum type,const void *pixels = nullptr);
       void bind() const;
       void unbind() const;
       void parameter(GLenum name,GLint);
