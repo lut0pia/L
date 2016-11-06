@@ -143,6 +143,13 @@ void ScriptComponent::init() {
   // Script ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(ScriptComponent,"script");
   L_COMPONENT_METHOD(ScriptComponent,"load",1,load(stack[0]->get<String>()));
+  L_COMPONENT_FUNCTION(ScriptComponent,"call",1,{
+    L_ASSERT(stack[0]->is<Symbol>());
+    Array<Var> code;
+    for(int i(0); i<params; i++)
+      code.push(stack[i].value());
+    src.as<ScriptComponent*>()->_context.execute(code);
+  });
   // Sprite ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(Sprite,"sprite");
   L_COMPONENT_METHOD(Sprite,"load",1,texture(stack[0]->get<String>()));
