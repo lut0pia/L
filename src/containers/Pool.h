@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../objects.h"
+#include "../types.h"
 
 namespace L {
   template <class T>
@@ -73,7 +73,7 @@ namespace L {
     inline Pool() : _root(nullptr) {}
     ~Pool() {
       for(auto&& e : *this)
-        L::destruct(e);
+        e.~T();
       delete _root;
     }
     void clear(){
@@ -82,13 +82,11 @@ namespace L {
     }
 
     template <typename... Args>
-    T* construct(Args&&... args) {
-      T* wtr(allocate());
-      L::construct(*wtr,args...);
-      return wtr;
+    inline T* construct(Args&&... args) {
+      return new(allocate())T(args...);
     }
-    void destruct(T* o) {
-      L::destruct(*o);
+    inline void destruct(T* o) {
+      o->~T();
       deallocate(o);
     }
     T* allocate() {
