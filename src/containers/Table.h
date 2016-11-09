@@ -57,7 +57,7 @@ namespace L {
     };
   public:
     inline Table() : _slots(nullptr),_size(0),_count(0){}
-    Table(const Table& other) : _slots((Slot*)calloc(other._size,sizeof(Slot))),_size(other._size),_count(other._count){
+    Table(const Table& other) : _slots((Slot*)(other._slots?calloc(other._size,sizeof(Slot)):nullptr)),_size(other._size),_count(other._count){
       for(uintptr_t i(0); i<_size; i++)
         if(!other._slots[i].empty())
           new(_slots+i)Slot(other._slots[i]);
