@@ -206,8 +206,10 @@ namespace L {
       Node *aParent(a->_parent),*bParent(b->_parent);
       aParent->replace(a,b);
       bParent->replace(b,a);
-      refit(a);
-      refit(b);
+      a->refit();
+      b->refit();
+      aParent->refit();
+      bParent->refit();
     }
     inline void print(){ if(_root) print(_root); }
     static void print(Node* node){
