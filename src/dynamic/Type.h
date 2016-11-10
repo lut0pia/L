@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../containers/Map.h"
+#include "../containers/Table.h"
 #include "../streams/Stream.h"
 #include "../types.h"
 #include "../hash.h"
@@ -31,7 +31,7 @@ namespace L {
     int(*cmp)(const void*,const void*);
 
     // Casts
-    Map<intptr_t,Cast> casts;
+    Table<intptr_t,Cast> casts;
     Cast cast(const TypeDescription* target) const; // Return Cast for target type if available or nullptr otherwise
   };
 

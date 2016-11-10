@@ -9,7 +9,7 @@
 using namespace L;
 
 Cast TypeDescription::cast(const TypeDescription* target) const{
-  const KeyValue<intptr_t,Cast>* it(casts.find((intptr_t)target));
+  const Table<intptr_t,Cast>::Slot* it(casts.find((intptr_t)target));
   return (it) ? it->value() : nullptr;
 }
 
