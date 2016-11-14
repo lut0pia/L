@@ -2,6 +2,7 @@
 
 #include "../containers/Table.h"
 #include "../streams/Stream.h"
+#include "../text/Symbol.h"
 #include "../types.h"
 #include "../hash.h"
 
@@ -10,7 +11,7 @@ namespace L {
   // Structure to keep basic functions for a type
   struct TypeDescription{
     // Mandatory
-    char name[256];
+    Symbol name;
     int size;
 
     void* (*cpy)(void*);
@@ -52,11 +53,13 @@ namespace L {
       int end = strlen(funcsig)-17;
       if(funcsig[end-1]==' ') end--;
       funcsig[end] = '\0';
-      strcpy(wtr.name,funcsig+start);
+      wtr.name = funcsig+start;
 #else
       // "static L::TypeDescription L::Type<T>::makeDesc() [with T = XXX]"
-      strcpy(wtr.name,__PRETTY_FUNCTION__+59);
-      wtr.name[strlen(wtr.name)-1] = '\0';
+      char tmp[256];
+      strcpy(tmp,__PRETTY_FUNCTION__+59);
+      tmp[strlen(tmp)-1] = '\0';
+      wtr.name = tmp;
 #endif
       return wtr;
     }
