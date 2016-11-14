@@ -32,5 +32,6 @@ namespace L {
     }
     inline bool operator==(const Symbol& other) const { return _string==other._string; }
     inline bool operator<(const Symbol& other) const { return _string<other._string; }
+    operator const char*() const { return _string; }
   };
 }
