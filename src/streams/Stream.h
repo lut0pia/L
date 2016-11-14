@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstring>
-#include "../math/math.h"
+#include "../math/digits.h"
 
 namespace L {
   class Stream {
