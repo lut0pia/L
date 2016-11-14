@@ -136,12 +136,6 @@ namespace L {
       return wtr;
     }
     inline Vector reflect(const Vector& v) const { return ((*this*(dot(v)*T(2)))-v); }
-    Vector abs() const {
-      Vector wtr;
-      for(int i(0); i<d; i++)
-        wtr[i] = L::abs(_c[i]);
-      return wtr;
-    }
     bool increment(const Vector& min,const Vector& max,const Vector& delta = 1) {
       for(int i(0); i<d; i++) {
         _c[i] += delta[i];
