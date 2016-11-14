@@ -56,6 +56,7 @@ uint32_t Window::buttonToHash(Event::Button b){
   switch(b){
     KEYS(BTH)
   }
+  return 0;
 }
 Window::Event::Button Window::hashToButton(uint32_t h){
 #define HTB(B) case FNV1A(#B): return Event::B;

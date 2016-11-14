@@ -31,7 +31,7 @@ void Collider::subUpdateAll() {
   // Search for colliding pairs
   static Array<Interval3fTree<Collider*>::Node*> pairs;
   tree.collisions(pairs);
-  for(int i(0); i<pairs.size(); i += 2){
+  for(uintptr_t i(0); i<pairs.size(); i += 2){
     Collider *a(pairs[i]->value()),*b(pairs[i+1]->value());
     if(a->entity()!=b->entity() && a->_boundingBox.overlaps(b->_boundingBox)){
       if(a->_rigidbody) checkCollision(*a,*b); // Rigidbody is always first argument
@@ -196,7 +196,7 @@ void Collider::checkCollision(Collider& a,Collider& b) {
       bt->toAbsolute(b._center+Vector3f(b._radius.x(),b._radius.y(),b._radius.z())),
     };
     uintptr_t axis(sizeof(axes));
-    float minOverlap;
+    float minOverlap(0.f);
     for(uintptr_t i(0); i<sizeof(axes)/sizeof(Vector3f); i++) {
       if(axes[i].lengthSquared()>0.00001f) { // The axis is not a null vector (caused by a cross product)
         Interval1f axisA(project(axes[i],apoints,8)),axisB(project(axes[i],bpoints,8)),intersection(axisA,axisB); // Compute projections and intersection

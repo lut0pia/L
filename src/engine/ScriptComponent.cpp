@@ -146,7 +146,7 @@ void ScriptComponent::init() {
   L_COMPONENT_FUNCTION(ScriptComponent,"call",1,{
     L_ASSERT(stack[0]->is<Symbol>());
     Array<Var> code;
-    for(int i(0); i<params; i++)
+    for(uintptr_t i(0); i<params; i++)
       code.push(stack[i].value());
     src.as<ScriptComponent*>()->_context.execute(code);
   });
