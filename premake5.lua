@@ -106,6 +106,6 @@ solution "L"
 			flags {"Symbols","Optimize"}
 
 		configuration  {"Release"}
-			targetdir "bin/release"
+			targetdir "bin/rls"
 			objdir("obj/".._ACTION.."/rls")
 			flags {"Optimize"}
