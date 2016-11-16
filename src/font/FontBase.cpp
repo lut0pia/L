@@ -1,6 +1,6 @@
 #include "FontBase.h"
 
-#include "../bytes/encoding.h"
+#include "../text/encoding.h"
 
 using namespace L;
 using namespace Font;

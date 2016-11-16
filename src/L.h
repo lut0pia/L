@@ -17,12 +17,6 @@
 // Audio I/O, Wave & Midi
 #include "audio/Midi.h"
 
-// Byte to byte functions, encoding
-#include "bytes/BWT.h"
-#include "bytes/encoding.h"
-#include "bytes/Huffman.h"
-#include "bytes/MTF.h"
-
 // Objects that hold other objects
 #include "containers/Array.h"
 #include "containers/BTree.h"
@@ -124,6 +118,7 @@
 #include "system/Window.h"
 
 // Text
+#include "text/encoding.h"
 #include "text/Symbol.h"
 
 // Timey-wimey wibbly-wobbly stuff

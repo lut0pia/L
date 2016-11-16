@@ -1,7 +1,7 @@
 #include "Window.h"
 
 #include "../gl/GL.h"
-#include "../bytes/encoding.h"
+#include "../text/encoding.h"
 #include <windows.h>
 #include <GL/wglew.h>
 
