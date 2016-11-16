@@ -94,5 +94,4 @@ namespace L {
 
       friend Stream& operator<<(Stream&, const Assembly&);
   };
-  Stream& operator<<(Stream&, const Assembly&);
 }
