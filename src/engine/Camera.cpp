@@ -70,7 +70,7 @@ void Camera::postrender(){
       "fragcolor = vec4(color,1.f) * (1.f+dot(normal,normalize(vec3(1,-2,3))))*.5f;"
       "}",GL_FRAGMENT_SHADER));
   _gbuffer.unbind();
-  glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+  glDisable(GL_DEPTH_TEST);
   deferredProgram.use();
   deferredProgram.uniform("colorBuffer",_gcolor,GL_TEXTURE0);
   deferredProgram.uniform("normalBuffer",_gnormal,GL_TEXTURE1);
@@ -78,7 +78,7 @@ void Camera::postrender(){
   glViewport(_viewport.min().x()*Window::width(),_viewport.min().y()*Window::height(),
              _viewport.size().x()*Window::width(),_viewport.size().y()*Window::height());
   GL::quad().draw();
-  Window::swapBuffers();
+  glEnable(GL_DEPTH_TEST);
 }
 
 void Camera::viewport(const Interval2f& i) {

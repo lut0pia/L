@@ -55,6 +55,7 @@ void Engine::update() {
       render(camera);
     camera.postrender();
   }
+  Window::swapBuffers();
   _frame++;
 }
 void Engine::clear() {
