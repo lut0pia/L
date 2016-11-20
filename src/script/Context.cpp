@@ -176,6 +176,28 @@ Context::Context(){
       wtr = c.execute(a[2]);
     return wtr;
   });
+  _globals[Symbol("foreach")] = (Native)([](Context& c,const Array<Var>& a)->Var {
+    L_ASSERT(a.size()>=4);
+    Var *key(nullptr),*value;
+    const Var* exec;
+    Var tableVar;
+    if(a.size()==4){ // Value only
+      value = &c.local(a[1].as<Symbol>());
+      tableVar = c.execute(a[2]);
+      exec = &a[3];
+    } else { // Key value
+      key = &c.local(a[1].as<Symbol>());
+      value = &c.local(a[2].as<Symbol>());
+      tableVar = c.execute(a[3]);
+      exec = &a[4];
+    }
+    for(auto&& slot : *tableVar.as<Ref<Table<Var,Var>>>()){
+      if(key) *key = slot.key();
+      *value = slot.value();
+      c.execute(*exec);
+    }
+    return Var();
+  });
   _globals[Symbol("if")] = (Native)([](Context& c,const Array<Var>& a)->Var {
     for(uintptr_t i(1); i<a.size()-1; i += 2)
       if(c.execute(a[i]).get<bool>())
