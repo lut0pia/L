@@ -148,7 +148,7 @@ void ScriptComponent::init() {
     Array<Var> code;
     for(uintptr_t i(0); i<params; i++)
       code.push(stack[i].value());
-    src.as<ScriptComponent*>()->_context.execute(code);
+    return src.as<ScriptComponent*>()->_context.execute(code);
   });
   // Sprite ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(Sprite,"sprite");
