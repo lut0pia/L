@@ -158,6 +158,12 @@ Context::Context(){
     L_ASSERT(params==1);
     return stack[0].value().as<void*>()!=nullptr;
   });
+  _globals[Symbol("count")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
+    L_ASSERT(params==1);
+    if(stack[0]->is<Ref<Table<Var,Var>>>())
+      return stack[0]->as<Ref<Table<Var,Var>>>()->count();
+    return 0;
+  });
   _globals[Symbol("or")] = (Native)([](Context& c,const Array<Var>& a)->Var {
     for(uintptr_t i(1); i<a.size(); i++)
       if(c.execute(a[i]).get<bool>())
