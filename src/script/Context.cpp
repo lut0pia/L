@@ -190,9 +190,8 @@ Context::Context(){
     return 0;
   });
   _globals[Symbol("set")] = (Native)([](Context& c,const Array<Var>& a)->Var {
-    Var* target;
-    if(a.size()==3 && (target = c.reference(a[1])))
-      *target = c.execute(a[2]);
+    if(a.size()==3)
+      return *c.reference(a[1]) = c.execute(a[2]);
     return 0;
   });
   _globals[Symbol("fun")] = (Native)([](Context& c,const Array<Var>& a)->Var {
