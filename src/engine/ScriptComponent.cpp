@@ -94,7 +94,7 @@ void ScriptComponent::init() {
   });
   Context::global(Symbol("entity-destroy")) = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
     if(params && stack[0]->is<Entity*>())
-      delete stack[0]->as<Entity*>();
+      Entity::destroy(stack[0]->as<Entity*>());
     return 0;
   });
   // Transform ///////////////////////////////////////////////////////////////////

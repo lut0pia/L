@@ -4,6 +4,8 @@
 
 using namespace L;
 
+Array<Entity*> Entity::_destroyQueue;
+
 Entity::Entity(const Entity* other) {
   for(auto p : other->_components){
     p.value() = p.value()->clone();
@@ -29,4 +31,11 @@ void Entity::remove(Component* c){
       break;
     }
   updateComponents();
+}
+
+void Entity::flushDestroyQueue() {
+  while(!_destroyQueue.empty()){
+    delete _destroyQueue.back();
+    _destroyQueue.pop();
+  }
 }

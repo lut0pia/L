@@ -49,6 +49,9 @@ void Engine::update() {
       subDelta = min(timer.since()*4.f,_deltaTime);
     }
   }
+
+  Entity::flushDestroyQueue();
+
   for(auto&& camera : Pool<Camera>::global){
     camera.prerender();
     for(auto&& render : _renders)

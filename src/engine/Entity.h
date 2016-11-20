@@ -9,6 +9,7 @@ namespace L {
   class Entity {
   private:
     Array<KeyValue<const TypeDescription*,Component*> > _components;
+    static Array<Entity*> _destroyQueue;
 
   public:
     inline Entity() {}
@@ -47,5 +48,8 @@ namespace L {
     }
     void updateComponents();
     void remove(Component*);
+
+    static inline void destroy(Entity* e) { _destroyQueue.push(e); }
+    static void flushDestroyQueue();
   };
 }
