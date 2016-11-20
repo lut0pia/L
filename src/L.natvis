@@ -99,11 +99,12 @@
     <DisplayString Condition="_td == &amp;L::Type&lt;float&gt;::td">{*(float*)_data}</DisplayString>
     <DisplayString Condition="_td == &amp;L::Type&lt;L::Symbol&gt;::td">{*(L::Symbol*)&amp;_data}</DisplayString>
     <DisplayString Condition="_td == &amp;L::Type&lt;L::String&gt;::td">{*(L::String*)&amp;_data}</DisplayString>
-    <DisplayString>Unknown</DisplayString>
+    <DisplayString Condition="_td == &amp;L::Type&lt;L::Ref&lt;L::Table&lt;L::Variable,L::Variable&gt; &gt; &gt;::td">{*(L::Ref&lt;L::Table&lt;L::Variable,L::Variable&gt; &gt;*)&amp;_data}</DisplayString>
+    <DisplayString>Unknown {_td->name._string,s8}</DisplayString>
     <Expand>
-      <ExpandedItem Condition="_td == &amp;L::Type&lt;int&gt;::td">*(int*)_data</ExpandedItem>
       <ExpandedItem Condition="_td == &amp;L::Type&lt;L::Symbol&gt;::td">*(L::Symbol*)&amp;_data</ExpandedItem>
       <ExpandedItem Condition="_td == &amp;L::Type&lt;L::String&gt;::td">*(L::String*)&amp;_data</ExpandedItem>
+      <ExpandedItem Condition="_td == &amp;L::Type&lt;L::Ref&lt;L::Table&lt;L::Variable,L::Variable&gt; &gt; &gt;::td">*(L::Ref&lt;L::Table&lt;L::Variable,L::Variable&gt; &gt;*)&amp;_data</ExpandedItem>
     </Expand>
   </Type>
 </AutoVisualizer>
