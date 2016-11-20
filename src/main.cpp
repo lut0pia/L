@@ -9,20 +9,22 @@ int main(int argc,const char* argv[]) {
   new OBJ();
   TypeInit();
   Window::openFullscreen("Sample",Window::nocursor|Window::loopcursor);
+  Device::init();
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_CULL_FACE);
+  Engine::addWindowEvent<ScriptComponent>();
+  Engine::addDeviceEvent<ScriptComponent>();
+  Engine::addUpdate<RigidBody>();
   Engine::addUpdate<SpriteAnimator>();
   Engine::addUpdate<ScriptComponent>();
-  Engine::addUpdate<RigidBody>();
-  Engine::addSubUpdate<RigidBody>();
-  Engine::addSubUpdate<Collider>();
   Engine::addRender<Primitive>();
   Engine::addRender<Sprite>();
   Engine::addRender<StaticMesh>();
-  Engine::addEvent<ScriptComponent>();
 #ifdef L_DEBUG
   Engine::addRender<Collider>();
 #endif
+  Engine::addSubUpdate<RigidBody>();
+  Engine::addSubUpdate<Collider>();
   {
     ScriptComponent::init();
     FileStream file("startup.ls","rb");

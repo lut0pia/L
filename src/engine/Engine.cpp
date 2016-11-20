@@ -6,6 +6,7 @@
 #include "../gl/GL.h"
 #include "../gl/Program.h"
 #include "../script/Context.h"
+#include "../system/Device.h"
 #include "../system/Window.h"
 #include "SharedUniform.h"
 
@@ -13,7 +14,8 @@ using namespace L;
 
 Array<void(*)()> Engine::_updates,Engine::_subUpdates;
 Array<void(*)(const Camera&)> Engine::_renders;
-Array<void(*)(const Window::Event&)> Engine::_events;
+Array<void(*)(const Window::Event&)> Engine::_windowEvents;
+Array<void(*)(const Device::Event&)> Engine::_deviceEvents;
 Map<uint32_t,Ref<GL::Texture> > Engine::_textures;
 Map<uint32_t,Ref<GL::Mesh> > Engine::_meshes;
 Timer Engine::_timer;
@@ -32,7 +34,14 @@ void Engine::update() {
   {
     Window::Event e;
     while(Window::newEvent(e))
-      for(auto&& event : _events)
+      for(auto&& event : _windowEvents)
+        event(e);
+  }
+  {
+    Device::Event e;
+    Device::update();
+    while(Device::newEvent(e))
+      for(auto&& event : _deviceEvents)
         event(e);
   }
   for(auto&& update : _updates)

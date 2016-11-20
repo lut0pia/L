@@ -2,6 +2,7 @@
 
 #include "../gl/GL.h"
 #include "../text/encoding.h"
+#include "Device.h"
 #include <windows.h>
 #include <GL/wglew.h>
 
@@ -110,6 +111,17 @@ LRESULT CALLBACK MainWndProc(HWND hwnd,uint32_t uMsg,WPARAM wParam,LPARAM lParam
     case WM_SETCURSOR:
       SetCursor((*flags & Window::nocursor) ? nullptr : LoadCursor(nullptr,IDC_ARROW));
       break;
+    case WM_INPUT:
+    {
+      BYTE buffer[1024];
+      UINT dwSize(sizeof(buffer));
+      if(GetRawInputData((HRAWINPUT)lParam,RID_INPUT,buffer,&dwSize,sizeof(RAWINPUTHEADER))>1024)
+        L_ERROR("RawInput buffer too small, panic!");
+      const RAWINPUT* raw((RAWINPUT*)buffer);
+      Device::processReport(raw->header.hDevice,raw->data.hid.bRawData,raw->data.hid.dwSizeHid);
+      return DefWindowProc(hwnd,uMsg,wParam,lParam);
+      break;
+    }
     default:
       return DefWindowProc(hwnd,uMsg,wParam,lParam);
       break;

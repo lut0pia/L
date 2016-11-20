@@ -30,6 +30,22 @@ void ScriptComponent::update() {
   static Var updateCall(Array<Var>{Symbol("update")});
   _context.execute(updateCall);
 }
+void ScriptComponent::event(const Device::Event& e){
+  auto table(ref<Table<Var,Var>>());
+  (*table)[Symbol("device")] = e._device;
+  (*table)[Symbol("index")] = (int)e._index;
+  switch(e._type){
+    case Device::Event::Button:
+      (*table)[Symbol("type")] = Symbol("BUTTON");
+      (*table)[Symbol("pressed")] = e._pressed;
+      break;
+    case Device::Event::Axis:
+      (*table)[Symbol("type")] = Symbol("AXIS");
+      (*table)[Symbol("value")] = e._value;
+      break;
+  }
+  event(table);
+}
 void ScriptComponent::event(const Window::Event& e){
   auto table(ref<Table<Var,Var>>());
   Var& typeSlot((*table)[Symbol("type")]);
@@ -97,6 +113,15 @@ void ScriptComponent::init() {
       Entity::destroy(stack[0]->as<Entity*>());
     return 0;
   });
+  // Devices ///////////////////////////////////////////////////////////////////
+  L_FUNCTION("get-devices",{
+    auto wtr(ref<Table<Var,Var>>());
+    for(auto&& device : Device::devices())
+      (*wtr)[&device] = true;
+    return wtr;
+  });
+  L_COMPONENT_RETURN_METHOD(const Device,"get-axis",1,axis(stack[0]->get<int>()));
+  L_COMPONENT_RETURN_METHOD(const Device,"get-button",1,button(stack[0]->get<int>()));
   // Transform ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(Transform,"transform");
   L_COMPONENT_RETURN_METHOD(Transform,"get-position",0,absolutePosition());

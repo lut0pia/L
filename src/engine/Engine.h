@@ -6,6 +6,7 @@
 #include "../gl/Texture.h"
 #include "../gl/Mesh.h"
 #include "../time/Timer.h"
+#include "../system/Device.h"
 #include "../system/Window.h"
 
 namespace L {
@@ -14,7 +15,8 @@ namespace L {
   private:
     static Array<void(*)()> _updates,_subUpdates;
     static Array<void(*)(const Camera&)> _renders;
-    static Array<void(*)(const Window::Event&)> _events;
+    static Array<void(*)(const Window::Event&)> _windowEvents;
+    static Array<void(*)(const Device::Event&)> _deviceEvents;
     static Map<uint32_t,Ref<GL::Texture> > _textures;
     static Map<uint32_t,Ref<GL::Mesh> > _meshes;
     static Timer _timer;
@@ -34,7 +36,8 @@ namespace L {
     template <class T> inline static void addUpdate() { _updates.push(updateAllComponents<T>); }
     template <class T> inline static void addSubUpdate() { _subUpdates.push(subUpdateAllComponents<T>); }
     template <class T> inline static void addRender() { _renders.push(renderAllComponents<T>); }
-    template <class T> inline static void addEvent() { _events.push(eventAllComponents<T>); }
+    template <class T> inline static void addWindowEvent() { _windowEvents.push(windowEventAllComponents<T>); }
+    template <class T> inline static void addDeviceEvent() { _deviceEvents.push(deviceEventAllComponents<T>); }
 
     // Rendering
     static GL::Buffer& sharedUniform();
@@ -48,5 +51,6 @@ namespace L {
   template <class T> static void updateAllComponents() { for(auto&& c : Pool<T>::global) c.update(); }
   template <class T> static void subUpdateAllComponents() { for(auto&& c : Pool<T>::global) c.subUpdate(); }
   template <class T> static void renderAllComponents(const Camera& cam) { for(auto&& c : Pool<T>::global) c.render(cam); }
-  template <class T> static void eventAllComponents(const Window::Event& e) { for(auto&& c : Pool<T>::global) c.event(e); }
+  template <class T> static void windowEventAllComponents(const Window::Event& e) { for(auto&& c : Pool<T>::global) c.event(e); }
+  template <class T> static void deviceEventAllComponents(const Device::Event& e) { for(auto&& c : Pool<T>::global) c.event(e); }
 }
