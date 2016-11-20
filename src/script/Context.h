@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Lexer.h"
+#include "../containers/Array.h"
+#include "../containers/KeyValue.h"
 #include "../containers/StaticStack.h"
 #include "../dynamic/Variable.h"
 #include "../containers/Ref.h"
