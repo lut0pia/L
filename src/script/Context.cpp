@@ -227,6 +227,22 @@ Context::Context(){
   CMP(">=",<);
   CMP("<=",>);
 #undef CMP
+  _globals[Symbol("max")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
+    L_ASSERT(params>=1);
+    Var wtr(stack[0].value());
+    for(uintptr_t i(1); i<params; i++)
+      if(stack[i].value()>wtr)
+        wtr = stack[i].value();
+    return wtr;
+  });
+  _globals[Symbol("min")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
+    L_ASSERT(params>=1);
+    Var wtr(stack[0].value());
+    for(uintptr_t i(1); i<params; i++)
+      if(stack[i].value()<wtr)
+        wtr = stack[i].value();
+    return wtr;
+  });
 #define SETOP(op)\
   _globals[Symbol(#op)] = (Native)([](Context& c,const Array<Var>& a)->Var {\
     L_ASSERT(a.size()>1);\
