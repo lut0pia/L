@@ -44,7 +44,7 @@ void Device::update(){
     for(UINT i(0); i<nDevices; i++){
       UINT preparsedDataSize(2048);
       DeviceSystem* deviceSystem = new DeviceSystem;
-      deviceSystem->_preparsed = (PHIDP_PREPARSED_DATA)malloc(2048);
+      deviceSystem->_preparsed = (PHIDP_PREPARSED_DATA)malloc(preparsedDataSize);
 
       if(GetRawInputDeviceInfo(pRawInputDeviceList[i].hDevice,RIDI_PREPARSEDDATA,deviceSystem->_preparsed,&preparsedDataSize)==(UINT)-1)
         L_ERROR("Preparsed data for raw input device was too big.");
