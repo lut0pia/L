@@ -42,12 +42,14 @@ void Device::update(){
       L_ERROR("More than 32 HIDs connected.");
 
     for(UINT i(0); i<nDevices; i++){
-      UINT preparsedDataSize(2048);
       DeviceSystem* deviceSystem = new DeviceSystem;
+
+      UINT preparsedDataSize;
+      GetRawInputDeviceInfo(pRawInputDeviceList[i].hDevice,RIDI_PREPARSEDDATA,NULL,&preparsedDataSize);
       deviceSystem->_preparsed = (PHIDP_PREPARSED_DATA)malloc(preparsedDataSize);
 
       if(GetRawInputDeviceInfo(pRawInputDeviceList[i].hDevice,RIDI_PREPARSEDDATA,deviceSystem->_preparsed,&preparsedDataSize)==(UINT)-1)
-        L_ERROR("Preparsed data for raw input device was too big.");
+        L_ERROR("GetRawInputDeviceInfo failed");
       if(!HidP_GetCaps(deviceSystem->_preparsed,&deviceSystem->_caps))
         L_ERROR("Couldn't get caps");
       if(deviceSystem->_caps.Usage!=5 || deviceSystem->_caps.UsagePage!=1){ // Not a gamepad
