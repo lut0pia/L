@@ -16,6 +16,7 @@ Entity::Entity(const Entity* other) {
 }
 Entity::~Entity() {
   // Components remove themselves from entity on destruction
+  _destroyed = true;
   while(!_components.empty())
     _components[0].key()->del(_components[0].value());
 }
@@ -30,7 +31,8 @@ void Entity::remove(Component* c){
       _components.erase(i);
       break;
     }
-  updateComponents();
+  if(!_destroyed)
+    updateComponents();
 }
 
 void Entity::destroy(Entity* e){

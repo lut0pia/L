@@ -9,10 +9,11 @@ namespace L {
   class Entity {
   private:
     Array<KeyValue<const TypeDescription*,Component*> > _components;
+    bool _destroyed;
     static Array<Entity*> _destroyQueue;
 
   public:
-    inline Entity() {}
+    inline Entity() : _destroyed(false) {}
     Entity(const Entity* other);
     ~Entity();
     const auto& components() const{ return _components; }
