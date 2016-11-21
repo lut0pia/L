@@ -33,6 +33,12 @@ void Entity::remove(Component* c){
   updateComponents();
 }
 
+void Entity::destroy(Entity* e){
+  for(auto&& entity : _destroyQueue)
+    if(entity==e)
+      return;
+  _destroyQueue.push(e);
+}
 void Entity::flushDestroyQueue() {
   while(!_destroyQueue.empty()){
     delete _destroyQueue.back();

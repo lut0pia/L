@@ -49,7 +49,7 @@ namespace L {
     void updateComponents();
     void remove(Component*);
 
-    static inline void destroy(Entity* e) { _destroyQueue.push(e); }
+    static void destroy(Entity* e);
     static void flushDestroyQueue();
   };
 }
