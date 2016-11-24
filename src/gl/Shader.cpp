@@ -13,7 +13,7 @@ void Shader::load(const char* src) {
   if(compile_status != GL_TRUE) {
     GLchar buffer[2048];
     GLsizei count;
-    glGetShaderInfoLog(_id,2048,&count,buffer);
+    glGetShaderInfoLog(_id,sizeof(buffer),&count,buffer);
     glDeleteShader(_id);
     L_ERROR("Couldn't compile shader: %.*s",count,buffer);
   }
