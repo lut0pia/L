@@ -24,10 +24,10 @@ SOCKET Network::connectTo(short port, const char* ip) {
   sin.sin_port = htons(port);
   if((sd = socket(AF_INET,SOCK_STREAM,0)) < 0) {
     closesocket(sd);
-    L_ERROR("Couldn't create socket to %s:%s - %s",ip,port,(const char*)error());
+    L_ERROR("Couldn't create socket to %s:%s - %s",ip,ntos(port),(const char*)error());
   } else if(connect(sd,(SOCKADDR*)&sin,sizeof(sin)) < 0) {
     closesocket(sd);
-    L_ERROR("Couldn't connect to %s:%s - %s",ip,port,(const char*)error());
+    L_ERROR("Couldn't connect to %s:%s - %s",ip,ntos(port),(const char*)error());
   }
   return sd;
 }
