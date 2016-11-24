@@ -133,7 +133,7 @@ namespace L {
       shift(i+1,-1); // Move right part
       _size--; // Decrease size
     }
-    void erase(size_t i,int count) {
+    void erase(size_t i,size_t count) {
       for(uintptr_t j(0); j<count; j++)
         (_data+i+j)->~T(); // Destruct values
       shift(i+count,-count); // Move right part
