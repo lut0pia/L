@@ -2,7 +2,7 @@
 
 #include "../containers/StaticRing.h"
 #include "../math/Vector.h"
-#include "../String.h"
+#include "../text/String.h"
 #include "../image/Bitmap.h"
 #include "../text/Symbol.h"
 

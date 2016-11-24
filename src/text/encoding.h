@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../types.h"
-#include "../String.h"
+#include "String.h"
 #include "../containers/Array.h"
 
 namespace L {

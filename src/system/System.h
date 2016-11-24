@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../macros.h"
-#include "../String.h"
+#include "../text/String.h"
 #include "../time/Time.h"
 #include "../math/Vector.h"
 

@@ -1,8 +1,8 @@
 #pragma once
 
 #include <cstring>
-#include "containers/Array.h"
-#include "streams/FileStream.h"
+#include "../containers/Array.h"
+#include "../streams/FileStream.h"
 
 namespace L {
   class String: private Array<char> {

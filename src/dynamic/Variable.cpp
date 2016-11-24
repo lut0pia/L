@@ -1,7 +1,7 @@
 #include "Variable.h"
 
 #include "../macros.h"
-#include "../String.h"
+#include "../text/String.h"
 
 using namespace L;
 

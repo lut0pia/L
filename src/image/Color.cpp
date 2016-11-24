@@ -1,6 +1,7 @@
 #include "Color.h"
 
 #include "../macros.h"
+#include "../text/String.h"
 
 using namespace L;
 
@@ -15,7 +16,8 @@ const Color Color::red(255,0,0);
 const Color Color::white(255,255,255);
 const Color Color::yellow(255,255,0);
 
-Color::Color(String str) {
+Color::Color(const char* s) {
+  String str(s);
   str.toLower();
   if(str.empty()) {}
   else if(str[0]=='#') { // Hexa color

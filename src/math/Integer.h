@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../containers/Array.h"
-#include "../String.h"
+#include "../text/String.h"
 
 namespace L {
   class Integer {

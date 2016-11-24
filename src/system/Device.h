@@ -2,7 +2,7 @@
 
 #include "../containers/Array.h"
 #include "../containers/StaticRing.h"
-#include "../String.h"
+#include "../text/String.h"
 
 namespace L{
   class Device {

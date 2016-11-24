@@ -7,7 +7,7 @@
 #endif
 
 #include "Timer.h"
-#include "../String.h"
+#include "../text/String.h"
 
 using namespace L;
 

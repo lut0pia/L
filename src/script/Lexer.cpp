@@ -1,7 +1,7 @@
 #include "Lexer.h"
 
 #include <cstring>
-#include "../String.h"
+#include "../text/String.h"
 #include "../macros.h"
 
 using namespace L;

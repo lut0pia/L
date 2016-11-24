@@ -1,7 +1,7 @@
 #include "Type.h"
 
 #include "../macros.h"
-#include "../String.h"
+#include "../text/String.h"
 #include "../math/Vector.h"
 #include "../text/Symbol.h"
 #include "../time/Time.h"

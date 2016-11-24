@@ -8,7 +8,6 @@
 
 // General classes
 #include "Interface.h"      // Helping to go from a format to another
-#include "String.h"         // Mandatory string class
 
 // Artifical Intelligence
 #include "ai/MLP.h"
@@ -120,6 +119,7 @@
 
 // Text
 #include "text/encoding.h"
+#include "text/String.h"
 #include "text/Symbol.h"
 
 // Timey-wimey wibbly-wobbly stuff

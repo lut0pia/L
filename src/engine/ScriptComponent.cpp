@@ -7,7 +7,7 @@
 #include "Transform.h"
 #include "StaticMesh.h"
 #include "Primitive.h"
-#include "../String.h"
+#include "../text/String.h"
 
 using namespace L;
 using namespace Script;

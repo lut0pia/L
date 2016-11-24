@@ -5,7 +5,7 @@
 */
 
 #include "../containers/Set.h"
-#include "../String.h"
+#include "../text/String.h"
 
 #include "../macros.h"
 #if defined L_WINDOWS

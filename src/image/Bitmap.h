@@ -2,6 +2,7 @@
 
 #include "Color.h"
 #include "../containers/MultiArray.h"
+#include "../text/String.h"
 
 // Don't forget it's supposed to look like this
 // 0-----------x

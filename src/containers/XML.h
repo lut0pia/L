@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../containers/Map.h"
-#include "../String.h"
+#include "../text/String.h"
 #include "../containers/Array.h"
 
 namespace L {

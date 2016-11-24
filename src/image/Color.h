@@ -2,7 +2,6 @@
 
 #include "../math/math.h"
 #include "../math/Vector.h"
-#include "../String.h"
 
 namespace L {
   class Color : public Vector4b {
@@ -11,7 +10,7 @@ namespace L {
     inline Color(const Vector4b& v) : Vector4b(v) {}
     inline Color(byte gs) : Vector4b(gs,gs,gs,0xff) {}
     inline Color(byte r,byte g,byte b,byte a = 0xFF) : Vector4b(b,g,r,a) {}
-    Color(String);
+    Color(const char*);
 
     inline byte r() const { return _c[2]; }
     inline byte g() const { return _c[1]; }
