@@ -8,7 +8,7 @@ Array<Entity*> Entity::_destroyQueue;
 
 Entity::Entity(const Entity* other) {
   for(auto p : other->_components){
-    p.value() = p.value()->clone();
+    p.value() = (Component*)p.key()->cpy(p.value());
     p.value()->entity(this);
     _components.push(p);
     p.value()->updateComponents();

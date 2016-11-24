@@ -16,13 +16,11 @@ namespace L {
     inline Entity* entity() const { return _entity; }
     virtual void updateComponents() {}
 
-    virtual Component* clone() = 0;
-
     friend class Entity;
   };
 }
 
 #define L_COMPONENT(name)\
   public:\
-  Component* clone() { return Pool<name>::global.construct(*this); }\
+  inline void* operator new(size_t) { return Pool<name>::global.allocate(); }\
   inline void operator delete(void* p) { Pool<name>::global.deallocate(p); }
