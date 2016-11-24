@@ -64,7 +64,7 @@ namespace L {
       return wtr;
     }
     static void* cpy(void* p) { return new T(*(T*)p); }
-    static void cpyto(void* dst,const void* src) { new((T*)dst) T(*(const T*)src); }
+    static void cpyto(void* dst,const void* src) { ::new((T*)dst) T(*(const T*)src); }
     static void assign(void* dst,const void* src) { *(T*)dst = *(const T*)src; }
     static void dtr(void* p) { ((T*)p)->~T(); }
     static void del(void* p) { delete(T*)p; }

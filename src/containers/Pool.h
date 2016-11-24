@@ -83,7 +83,7 @@ namespace L {
 
     template <typename... Args>
     inline T* construct(Args&&... args) {
-      return new(allocate())T(args...);
+      return ::new(allocate())T(args...);
     }
     inline void destruct(T* o) {
       o->~T();
