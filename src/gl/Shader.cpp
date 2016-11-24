@@ -15,7 +15,7 @@ void Shader::load(const char* src) {
     GLsizei count;
     glGetShaderInfoLog(_id,2048,&count,buffer);
     glDeleteShader(_id);
-    L_ERROR("Couldn't compile shader: "+String(buffer,count));
+    L_ERROR("Couldn't compile shader: %.*s",count,buffer);
   }
 }
 Shader::Shader(File file,GLenum type) : _id(glCreateShader(type)) {
