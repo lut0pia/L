@@ -5,29 +5,6 @@
 #include "math/math.h"
 
 namespace L {
-  template <class T, typename... Args>
-  inline void construct(T& v, Args&&... args) {
-    new(&v) T(args...);
-  }
-  template <class T, typename... Args>
-  inline void construct(T* p, size_t count, Args&&... args) {
-    while(count--)
-      new(p++) T(args...);
-  }
-  template <class T>
-  inline void destruct(T& v) {
-    v.~T();
-  }
-  template <class T>
-  inline void destruct(T* p, size_t count) {
-    while(count--)
-      (p++)->~T();
-  }
-  template <class T, typename... Args>
-  inline void reconstruct(T& v, Args&&... args) {
-    destruct(v);
-    construct(v,args...);
-  }
   template <class T, bool pod = false>
   inline void copy(T* dst, const T* src, size_t count) {
     while(count--)

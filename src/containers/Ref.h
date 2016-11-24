@@ -24,31 +24,31 @@ namespace L {
     }
     inline ~Ref() {
       if(_p && --counter()==0){
-        destruct(**this);
+        _p->~T();
         free((byte*)_p-offset);
       }
     }
     inline Ref& operator=(const Ref& other) {
       if(_p != other._p) {
-        destruct(*this);
-        construct(*this,other);
+        this->~Ref();
+        new(this)Ref(other);
       }
       return *this;
     }
     template <class R>
     inline Ref& operator=(const Ref<R>& other) {
       if(_p != _p) {
-        destruct(*this);
-        construct(*this,other);
+        this->~Ref();
+        new(this)Ref(other);
       }
       return *this;
     }
     template <typename... Args>
     void make(Args&&... args){
-      destruct(*this);
+      this->~Ref();
       _p = (T*)((byte*)malloc(sizeof(T)+offset)+offset);
       counter() = 1;
-      construct(**this,args...);
+      new(_p)T(args...);
     }
     template <class R> inline bool operator==(const Ref<R>& other) { return _p==other._p; }
     inline const T& operator*() const { return *_p; }

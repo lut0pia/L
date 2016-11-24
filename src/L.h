@@ -3,7 +3,7 @@
 // General definitions
 #include "constants.h"      // Constant values
 #include "macros.h"         // Useful macros
-#include "objects.h"        // Construct/destruct/copy/move/swap objects
+#include "objects.h"        // Copy/swap objects
 #include "types.h"          // Useful typedefs
 
 // General classes

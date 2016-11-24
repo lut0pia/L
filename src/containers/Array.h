@@ -44,7 +44,8 @@ namespace L {
     }
     inline ~Array() {
       if(_data){
-        destruct((T*)_data,_size);
+        for(uintptr_t i(0); i<_size; i++)
+          (_data+i)->~T();
         free(_data);
       }
     }
@@ -56,7 +57,7 @@ namespace L {
       return *this;
     }
     inline Array& operator=(Array&& other){
-      destruct(*this);
+      this->~Array();
       _data = other._data;
       _size = other._size;
       _capacity = other._capacity;
@@ -87,8 +88,12 @@ namespace L {
     template <typename... Args>
     void size(size_t n,Args&&... args) {
       if(_capacity<n) growTo(n);
-      if(_size<n) construct(_data+_size,n-_size,args...);
-      else destruct(_data+n,_size-n);
+      if(_size<n)
+        for(uintptr_t i(_size); i<n; i++)
+          new(_data+i)T(args...);
+      else
+        for(uintptr_t i(n); i<_size; i++)
+          (_data+i)->~T();
       _size = n;
     }
     void capacity(size_t n) {
@@ -111,7 +116,7 @@ namespace L {
     void insert(size_t i,Args&&... args) {
       growTo(_size+1); // Check capacity
       shift(i,1); // Move right part
-      construct(operator[](i),args...); // Place new value
+      new(_data+i)T(args...); // Place new value
       _size++; // Increase size
     }
     inline void insertArray(size_t i,const Array& a,int alen = -1,size_t ai = 0) { replaceArray(i,0,a,alen,ai); }
@@ -124,12 +129,13 @@ namespace L {
       _size += alen-len;
     }
     void erase(size_t i) {
-      destruct(_data[i]); // Destruct value
+      _data[i].~T(); // Destruct value
       shift(i+1,-1); // Move right part
       _size--; // Decrease size
     }
     void erase(size_t i,int count) {
-      destruct(_data+i,count); // Destruct values
+      for(uintptr_t j(0); j<count; j++)
+        (_data+i+j)->~T(); // Destruct values
       shift(i+count,-count); // Move right part
       _size -= count; // Decrease size
     }
