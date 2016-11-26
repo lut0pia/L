@@ -47,7 +47,7 @@ namespace L {
     inline Stream& operator>>(float& v) { v = ston<10,float>(word()); return *this; }
     inline Stream& operator>>(double& v) { v = ston<10,double>(word()); return *this; }
 
-    void nospace() { char tmp; while(isspace(tmp = get())); unget(tmp); }
+    void nospace() { char c; do c = get(); while(isspace(c)); unget(c); }
     static inline bool isspace(char c) { return c==' '||c=='\t'||c=='\n'||c=='\v'||c=='\f'||c=='\r'; }
   };
 }
