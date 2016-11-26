@@ -1,59 +1,52 @@
 #pragma once
 
-#include <cmath>
-
 #include "Integer.h"
-#include "../macros.h"
 
 namespace L {
   class Rational {
-    private:
-      Integer a, b; // a/b
+  private:
+    Integer _a,_b; // a/b
 
-      void simplification();
+    void simplify();
 
-    public:
-      Rational(const long&);
-      Rational(const Integer& = 0, const Integer& = 1);
-      Rational(const String&, long base = 10);
+  public:
+    inline Rational(long a) : _a(a),_b(1) {}
+    inline Rational(const Integer& a = 0,const Integer& b = 1) : _a(a),_b(b) { simplify(); }
+    Rational(const String&,uint32_t base = 10);
 
-      Rational operator+(const Rational&) const;
-      Rational operator-(const Rational&) const;
-      Rational operator+() const;
-      Rational operator-() const;
-      Rational operator*(const Rational&) const;
-      Rational operator/(const Rational&) const;
-      Rational operator%(const Rational&) const;
+    inline Rational Rational::operator+(const Rational& o) const { return Rational((_a*o._b)+(o._a*_b),_b*o._b); }
+    inline Rational Rational::operator-(const Rational& o) const { return Rational((_a*o._b)-(o._a*_b),_b*o._b); }
+    inline Rational operator+() const { return *this; }
+    inline Rational operator-() const{ return Rational(-_a,_b); }
+    inline Rational Rational::operator*(const Rational& o) const { return Rational(*this) *= o; }
+    inline Rational Rational::operator/(const Rational& o) const { return Rational(*this) /= o; }
+    inline Rational Rational::operator%(const Rational& o) const { return *this-(Rational((*this/o).intval())*o); }
 
-      Rational& operator ++();
-      Rational operator ++(int);
-      Rational& operator --();
-      Rational operator --(int);
+    inline Rational& operator ++(){ _a += _b; return *this; }
+    inline Rational operator ++(int) { Rational wtr(*this); operator++(); return wtr; }
+    inline Rational& operator --(){ _a -= _b; return *this; }
+    inline Rational operator --(int) { Rational wtr(*this); operator--(); return wtr; }
 
-      bool operator==(const Rational&) const;
-      bool operator!=(const Rational&) const;
-      bool operator>(const Rational&) const;
-      bool operator<(const Rational&) const;
-      bool operator>=(const Rational&) const;
-      bool operator<=(const Rational&) const;
+    inline bool operator==(const Rational& o) const { return (_a*o._b==_b*o._a); }
+    inline bool operator!=(const Rational& o) const { return !operator==(o); }
+    inline bool operator>(const Rational& o) const { return (_a*o._b)>(o._a*_b); }
+    inline bool operator<(const Rational& o) const { return (_a*o._b)<(o._a*_b); }
+    inline bool operator>=(const Rational& o) const { return !operator<(o); }
+    inline bool operator<=(const Rational& o) const { return !operator>(o); }
 
-      Rational& operator +=(const Rational&);
-      Rational& operator -=(const Rational&);
-      Rational& operator *=(const Rational&);
-      Rational& operator /=(const Rational&);
-      Rational& operator %=(const Rational&);
+    inline Rational& operator +=(const Rational& o) { return *this = *this+o; }
+    inline Rational& operator -=(const Rational& o) { return *this = *this-o; }
+    inline Rational& operator *=(const Rational& o) { _a *= o._a; _b *= o._b; return *this; }
+    inline Rational& operator /=(const Rational& o) { _a *= o._b; _b *= o._a; return *this; }
+    inline Rational& operator %=(const Rational& o) { return *this = *this%o; }
 
-      const Integer& gA() const;
-      const Integer& gB() const;
-      Integer intval() const;
-      Rational abs() const;
-      bool negative() const;
+    inline Integer intval() const { return _a/_b; }
+    inline Rational abs() const { return Rational(_a.abs(),_b.abs()); }
+    inline bool negative() const { return _a._negative!=_b._negative; }
 
-      String toShortString() const;
-      String toString(long base = 10) const;
+    String toShortString() const;
+    String toString(uint32_t base = 10) const;
   };
 
-  inline Stream& operator<<(Stream &s, const Rational& v) {
-    return s << v.toShortString();
-  }
+  inline Stream& operator<<(Stream &s,const Rational& v) { return s << v.toShortString(); }
 }
