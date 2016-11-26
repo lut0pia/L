@@ -82,7 +82,7 @@ void Network::HTTPDownload(const char* url, const char* name) {
 }
 String Network::error() {
 #if defined L_WINDOWS
-  return String::from(WSAGetLastError());
+  return ntos(WSAGetLastError());
 #elif defined L_UNIX
   return strerror(errno);
 #endif

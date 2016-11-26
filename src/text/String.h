@@ -64,26 +64,6 @@ namespace L {
       inline char& operator[](int i) {return Array<char>::operator[](i);}
       using Array<char>::begin;
       using Array<char>::end;
-
-      template <class T>
-      static String from(const T& t) {
-        tmpfile.rewind();
-        tmpfile << t;
-        String wtr;
-        wtr.size(tmpfile.tell());
-        tmpfile.rewind();
-        tmpfile.read(&wtr[0],wtr.size());
-        return wtr;
-      }
-      template <class T>
-      static T to(const String& str) {
-        T wtr;
-        tmpfile.rewind();
-        tmpfile << str << '\0';
-        tmpfile.rewind();
-        tmpfile >> wtr;
-        return wtr;
-      }
   };
   inline String operator+(const char* a, const String& b) {return String(a)+b;}
   inline Stream& operator<<(Stream &s,const String& v) { s.write(&v[0],v.size()); return s; }
