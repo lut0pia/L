@@ -7,19 +7,35 @@
 using namespace L;
 using namespace Script;
 
+char Lexer::get(){
+  char c(_stream.get());
+  if(c=='\n') _line++;
+  return c;
+}
+void Lexer::nospace() {
+  char c;
+  do c = get();
+  while(Stream::isspace(c));
+  _stream.unget(c);
+}
+void Lexer::comment() {
+  char c;
+  do c = get();
+  while(c!='\n');
+  nospace();
+}
 bool Lexer::nextToken() {
-  _stream.nospace();
-  while(!_stream.end() && _stream.peek()==';') { // Comment
-    _stream.line(); // Ignore until end of line
-    _stream.nospace();
-  }
-  if(_stream.end())
+  nospace();
+  while(!_stream.end() && _stream.peek()==';')
+    comment();
+  if(_stream.end()){
+    _eos = true;
     return false;
-  else {
+  } else {
     char* w(_buffer);
     _literal = false;
     do {
-      char c(_stream.get());
+      char c(get());
       if(_literal) { // Literal expression
         if(*(w-1)=='\\')
           switch(c) {
@@ -43,7 +59,7 @@ bool Lexer::nextToken() {
       } else { // Non-literal token
         if(Stream::isspace(c)) break;  // End of word
         else if(c==';'){ // Comment
-          _stream.line();
+          comment();
           break;
         } else if(c=='(' || c==')' || c=='\'' || c=='"' || c=='!' || c=='|') { // Special char
           if(w>_buffer) { // Word already started
@@ -63,10 +79,6 @@ bool Lexer::nextToken() {
     return true;
   }
 }
-
-bool Lexer::isToken(const char* str) {
-  return !strcmp(str,token());
-}
 bool Lexer::acceptToken(const char* str) {
   if(isToken(str)) {
     nextToken();
@@ -76,5 +88,5 @@ bool Lexer::acceptToken(const char* str) {
 }
 void Lexer::expectToken(const char* str) {
   if(!acceptToken(str))
-    L_ERROR("Script: Expected "+String(str)+" but got "+String(token())+" instead.");
+    L_ERROR("Script: Expected token %s but got %s instead on line %d.",str,_buffer,_line);
 }
