@@ -116,14 +116,14 @@ namespace L {
     }
   };
   template <class K,class V> inline Stream& operator<<(Stream& s,const Table<K,V>& v) {
-    s << '[';
+    s << '{';
     bool first(true);
     for(auto&& e : v){
       if(first) first = false;
       else s << ',';
-      s << e;
+      s << e.key() << ':' << e.value();
     }
-    s << ']';
+    s << '}';
     return s;
   }
 }
