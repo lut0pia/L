@@ -23,6 +23,8 @@ void Context::read(Stream& stream) {
   }
 }
 void Context::read(Var& v,Lexer& lexer) {
+  if(lexer.eos())
+    L_ERROR("Unexpected end of stream while parsing script");
   if(lexer.acceptToken("(")) { // It's a list of expressions
     v.make<Array<Var> >();
     int i(0);
@@ -35,6 +37,8 @@ void Context::read(Var& v,Lexer& lexer) {
   } else if(lexer.acceptToken("!")) {
     read(v,lexer);
     v = execute(v);
+  } else if(lexer.isToken(")")){
+    L_ERROR("Unexpected ) at line %d",lexer.line());
   } else {
     const char* token(lexer.token());
     if(lexer.literal()) v = token; // Character string
