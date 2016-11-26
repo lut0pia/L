@@ -107,6 +107,7 @@
 #include "script/Lexer.h"
 
 // C-Stream wrapper and friends
+#include "streams/BufferStream.h"
 #include "streams/FileStream.h"
 #include "streams/NetStream.h"
 #include "streams/Stream.h"
