@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../types.h"
+
 namespace L {
   class String;
   class Stream;
