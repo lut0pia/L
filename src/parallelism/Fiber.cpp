@@ -1,8 +1,8 @@
 #include "Fiber.h"
 
 #include <windows.h>
+#include "../containers/Pool.h"
 #include "../macros.h"
-#include "../streams/Stream.h"
 
 using namespace L;
 
@@ -27,8 +27,8 @@ void Fiber::schedule() {
 #endif
 }
 void Fiber::yield() {
-  Fiber* next(0);
-  for(auto&& fiber : _pool)
+  Fiber* next(nullptr);
+  for(auto&& fiber : Pool<Fiber>::global)
     if(!fiber._over)
       next = &fiber;
   if(next) next->schedule();
@@ -41,10 +41,10 @@ void Fiber::remove() {
 }
 
 Fiber* Fiber::create(Func f,void* p) {
-  return _pool.construct(f,p);
+  return Pool<Fiber>::global.construct(f,p);
 }
 Fiber* Fiber::convert() {
-  Fiber* fiber(_pool.allocate());
+  Fiber* fiber(Pool<Fiber>::global.allocate());
   fiber->_over = false;
 #ifdef L_WINDOWS
   fiber->_handle = ConvertThreadToFiber(0);

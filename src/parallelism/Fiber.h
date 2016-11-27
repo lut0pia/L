@@ -1,14 +1,11 @@
 #pragma once
 
-#include "../containers/Pool.h"
 
 namespace L {
   class Fiber {
   public:
     typedef void(*Func)(Fiber*);
   private:
-    static Pool<Fiber> _pool;
-
     Func _func;
     void* _param;
     bool _over;
