@@ -49,8 +49,10 @@ namespace L {
       // "struct L::TypeDescription __cdecl L::Type<int>::makeDesc(void)"
       // "struct L::TypeDescription __cdecl L::Type<class L::String>::makeDesc(void)"
       char funcsig[] = __FUNCSIG__;
-      int start = (!memcmp(funcsig+42,"class ",6)) ? 48 : 42;
-      int end = strlen(funcsig)-17;
+      uintptr_t start(42);
+      if(!memcmp(funcsig+start,"class ",6)) start += 6;
+      else if(!memcmp(funcsig+start,"struct ",7)) start += 7;
+      uintptr_t end = strlen(funcsig)-17;
       if(funcsig[end-1]==' ') end--;
       funcsig[end] = '\0';
       wtr.name = funcsig+start;
