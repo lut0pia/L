@@ -13,6 +13,14 @@ using namespace Script;
 Table<Symbol,Var> Context::_globals;
 Table<const TypeDescription*,Var> Context::_typeTables;
 
+static Var object(const Var&,SymbolVar* stack,size_t params) {
+  Ref<Table<Var,Var> > wtr(ref<Table<Var,Var>>());
+  Table<Var,Var>& table(*wtr);
+  for(uintptr_t i(1); i<params; i += 2)
+    table[stack[i-1].value()] = stack[i].value();
+  return wtr;
+}
+
 void Context::read(Stream& stream) {
   Script::Lexer lexer(stream);
   Var v;
@@ -24,7 +32,7 @@ void Context::read(Stream& stream) {
 }
 void Context::read(Var& v,Lexer& lexer) {
   if(lexer.eos())
-    L_ERROR("Unexpected end of stream while parsing script");
+    L_ERROR("Unexpected end of stream while parsing script: there are uneven () or {}.");
   if(lexer.acceptToken("(")) { // It's a list of expressions
     v.make<Array<Var> >();
     int i(0);
@@ -32,13 +40,19 @@ void Context::read(Var& v,Lexer& lexer) {
       if(lexer.acceptToken("|"))
         v = Array<Var>{v},i = 1;
       else read(v[i++],lexer);
+  } else if(lexer.acceptToken("{")) { // It's an object
+    v.make<Array<Var> >();
+    v[0] = (Function)object;
+    int i(1);
+    while(!lexer.acceptToken("}"))
+      read(v[i++],lexer);
   } else if(lexer.acceptToken("'")) {
     read(v.make<Quote>().var,lexer);
   } else if(lexer.acceptToken("!")) {
     read(v,lexer);
     v = execute(v);
-  } else if(lexer.isToken(")")){
-    L_ERROR("Unexpected ) at line %d",lexer.line());
+  } else if(lexer.isToken(")") || lexer.isToken("}")){
+    L_ERROR("Unexpected token %s at line %d",lexer.token(),lexer.line());
   } else {
     const char* token(lexer.token());
     if(lexer.literal()) v = token; // Character string
@@ -324,13 +338,7 @@ Context::Context(){
   _globals[Symbol("typename")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
     return stack[0]->type()->name;
   });
-  _globals[Symbol("object")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
-    Ref<Table<Var,Var> > wtr(ref<Table<Var,Var>>());
-    Table<Var,Var>& table(*wtr);
-    for(uintptr_t i(1); i<params; i += 2)
-      table[stack[i-1].value()] = stack[i].value();
-    return wtr;
-  });
+  _globals[Symbol("object")] = (Function)object;
   _globals[Symbol("now")] = (Native)([](Context& c,const Array<Var>&)->Var {
     return Time::now();
   });
