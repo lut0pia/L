@@ -95,6 +95,7 @@
   </Type>
 
   <Type Name="L::Variable">
+    <DisplayString Condition="_td == &amp;L::Type&lt;bool&gt;::td">{*(bool*)_data}</DisplayString>
     <DisplayString Condition="_td == &amp;L::Type&lt;int&gt;::td">{*(int*)_data}</DisplayString>
     <DisplayString Condition="_td == &amp;L::Type&lt;float&gt;::td">{*(float*)_data}</DisplayString>
     <DisplayString Condition="_td == &amp;L::Type&lt;L::Symbol&gt;::td">{*(L::Symbol*)&amp;_data}</DisplayString>
