@@ -5,14 +5,14 @@
 using namespace L;
 
 void Rational::simplify() {
-  const Integer gcd(Integer::gcd(_a.abs(),_b.abs()));
+  const Integer gcd(gcd(_a.abs(),_b.abs()));
   _a /= gcd;
   _b /= gcd;
 }
 
 Rational::Rational(const String& str,uint32_t base) : _a(str) {
   const int point(str.findFirst('.'));
-  _b = (point>=0) ? Integer::pow(base,str.size()-point-1) : 1;
+  _b = (point>=0) ? pow<Integer>(base,str.size()-point-1) : 1;
   simplify();
 }
 

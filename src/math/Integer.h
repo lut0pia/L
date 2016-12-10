@@ -62,9 +62,6 @@ namespace L {
     inline bool negative() const { return _negative; }
 
   public:
-    static Integer lcd(const Integer& a,const Integer& b);
-    static Integer gcd(Integer a,Integer b);
-    static Integer pow(const Integer& a,Integer b);
     friend class Rational;
     friend Stream& operator<<(Stream&,const Integer&);
   };

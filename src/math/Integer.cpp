@@ -266,34 +266,6 @@ void Integer::trim() {
     _part.pop();
 }
 
-Integer Integer::lcd(const Integer& a,const Integer& b) {
-  Integer c = a,d = b;
-  while(c!=d) {
-    if(c<d)
-      c += a;
-    else
-      d += b;
-  }
-  return c;
-}
-Integer Integer::gcd(Integer a,Integer b) {
-  if(a<b) swap(a,b);
-  if(b!=0) {
-    Integer c;
-    while((b!=1)&&(a%b!=0)) {
-      c = a%b;
-      a = b;
-      b = c;
-    }
-    return b;
-  } else return a;
-}
-Integer Integer::pow(const Integer& a,Integer b) {
-  Integer wtr(1);
-  while(--b>=0) wtr *= a;
-  return wtr;
-}
-
 Stream& L::operator<<(Stream &stream,const Integer& v) {
   if(v.size()) {
     if(v._negative)

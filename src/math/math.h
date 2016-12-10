@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cmath>
 #include "../types.h"
 
 namespace L {
@@ -23,6 +24,34 @@ namespace L {
     int wtr(x%m);
     return (wtr<0) ? wtr+m : wtr;
   }
+
+  template <class T> T lcd(const T& a,const T& b) {
+    T c(a),d(b);
+    while(c!=d) {
+      if(c<d) c += a;
+      else d += b;
+    }
+    return c;
+  }
+  template <class T> T gcd(T a,T b) {
+    if(a<b) swap(a,b);
+    if(b!=0) {
+      T c;
+      while((b!=1)&&(a%b!=0)) {
+        c = a%b;
+        a = b;
+        b = c;
+      }
+      return b;
+    } else return a;
+  }
+  template <class T> T pow(const T& a,T b) {
+    T wtr(1);
+    while(--b>=0) wtr *= a;
+    return wtr;
+  }
+  template <> inline float pow(const float& a,float b) { return ::pow(a,b); }
+  template <> inline double pow(const double& a,double b) { return ::pow(a,b); }
 
   template <typename T>
   constexpr T orright(T v,int i){

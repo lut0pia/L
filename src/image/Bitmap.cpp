@@ -172,7 +172,7 @@ void Bitmap::blur(int factor) {
         for(int j = y-factor; j<=y+factor; j++)
           if(i>=0 && i<(int)width()
              && j>=0 && j<(int)height()) {
-            m = (float)factor-sqrt(pow((float)(x-i),2)+pow((float)(y-j),2));
+            m = (float)factor-sqrt(pow<float>(x-i,2.f)+pow<float>(y-j,2.f));
             if(m>=1) {
               pixelCount += m;
               c = copy(i,j);
