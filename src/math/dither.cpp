@@ -5,7 +5,7 @@
 using namespace L;
 
 float* L::bayerMatrix(const uint32_t width,const uint32_t height,float* out){
-  L_ASSERT(width==height,"Only square bayer matrices are supported.");
+  L_ASSERT_MSG(width==height,"Only square bayer matrices are supported.");
   const float size(width*height);
   for(uint32_t i(0); i<size; i++){
     uint32_t x(0),y(0),level(1),offset(width/2);

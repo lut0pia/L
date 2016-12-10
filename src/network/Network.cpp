@@ -24,10 +24,10 @@ SOCKET Network::connectTo(short port, const char* ip) {
   sin.sin_port = htons(port);
   if((sd = socket(AF_INET,SOCK_STREAM,0)) < 0) {
     closesocket(sd);
-    L_ERROR("Couldn't create socket to %s:%s - %s",ip,ntos(port),(const char*)error());
+    L_ERRORF("Couldn't create socket to %s:%s - %s",ip,ntos(port),(const char*)error());
   } else if(connect(sd,(SOCKADDR*)&sin,sizeof(sin)) < 0) {
     closesocket(sd);
-    L_ERROR("Couldn't connect to %s:%s - %s",ip,ntos(port),(const char*)error());
+    L_ERRORF("Couldn't connect to %s:%s - %s",ip,ntos(port),(const char*)error());
   }
   return sd;
 }
@@ -73,7 +73,7 @@ String Network::HTTPRequest(const String& url) {
     while((tmp = ::recv(sd,buffer,1024,0)))
       wtr += String(buffer,tmp);
     return wtr;
-  } else L_ERROR("Could not find ip for %s",(const char*)host);
+  } else L_ERRORF("Could not find ip for %s",(const char*)host);
 }
 void Network::HTTPDownload(const char* url, const char* name) {
   String answer(HTTPRequest(url));

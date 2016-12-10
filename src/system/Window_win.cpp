@@ -232,7 +232,7 @@ void Window::open(const char* title,int width,int height,int flags) {
   SetCursorPos(width/2,height/2);
 
   hDC = GetDC(hWND);
-#define L_CHECK_EXTENSION(ext) if(!ext) L_ERROR("OpenGL extension %s is unavailable yet necessary, make sure you're running on your dedicated graphics card.",#ext)
+#define L_CHECK_EXTENSION(ext) if(!ext) L_ERRORF("OpenGL extension %s is unavailable yet necessary, make sure you're running on your dedicated graphics card.",#ext)
   L_CHECK_EXTENSION(WGLEW_ARB_create_context);
   L_CHECK_EXTENSION(WGLEW_ARB_pixel_format);
   L_CHECK_EXTENSION(GLEW_ARB_direct_state_access);

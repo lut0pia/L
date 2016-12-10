@@ -41,8 +41,10 @@
 # define L_BREAKPOINT raise(SIGTRAP)
 #endif
 
-#define L_ERROR(msg,...) do{fprintf(stderr,"Error in %s:%d:\n" msg "\n",__FILE__,__LINE__,__VA_ARGS__);L_BREAKPOINT;exit(-1);}while(false)
-#define L_ASSERT(exp) L_DEBUGONLY(if(!(exp))L_ERROR("%s is false",#exp))
+#define L_ERROR(msg) do{fprintf(stderr,"Error in %s:%d:\n" msg "\n",__FILE__,__LINE__);L_BREAKPOINT;exit(-1);}while(false)
+#define L_ERRORF(msg,...) do{fprintf(stderr,"Error in %s:%d:\n" msg "\n",__FILE__,__LINE__,__VA_ARGS__);L_BREAKPOINT;exit(-1);}while(false)
+#define L_ASSERT(exp) L_DEBUGONLY(if(!(exp))L_ERRORF("%s is false",#exp))
+#define L_ASSERT_MSG(exp,msg) L_DEBUGONLY(if(!(exp))L_ERRORF(msg,#exp))
 
 #define L_ONCE do{static bool DONE_ONCE(false);if(DONE_ONCE) return;DONE_ONCE = true;}while(false)
 #define L_DO_ONCE static bool DONE_ONCE(false);if(!DONE_ONCE && (DONE_ONCE = true))

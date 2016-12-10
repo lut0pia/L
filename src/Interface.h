@@ -63,7 +63,7 @@ namespace L {
 
       static Interface& in(const char* format) {
         if(instance.has(fnv1a(format))) return *instance[fnv1a(format)];
-        else L_ERROR("Unhandled format %s",format);
+        else L_ERRORF("Unhandled format %s",format);
       }
       static void fromFile(T& v, const String& path) {
         in(path.explode('.').back().toLower()).from(v,File(path));

@@ -43,7 +43,7 @@ Color::Color(const char* s) {
   TMP(white)
   TMP(yellow)
 #undef TMP
-  L_ERROR("Unknown color: %s",(const char*)str);
+  L_ERRORF("Unknown color: %s",(const char*)str);
 }
 
 Color Color::from(float r, float g, float b, float a) {

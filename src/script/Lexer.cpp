@@ -88,5 +88,5 @@ bool Lexer::acceptToken(const char* str) {
 }
 void Lexer::expectToken(const char* str) {
   if(!acceptToken(str))
-    L_ERROR("Script: Expected token %s but got %s instead on line %d.",str,_buffer,_line);
+    L_ERRORF("Script: Expected token %s but got %s instead on line %d.",str,_buffer,_line);
 }

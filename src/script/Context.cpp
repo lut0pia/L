@@ -52,7 +52,7 @@ void Context::read(Var& v,Lexer& lexer) {
     read(v,lexer);
     v = execute(v);
   } else if(lexer.isToken(")") || lexer.isToken("}")){
-    L_ERROR("Unexpected token %s at line %d",lexer.token(),lexer.line());
+    L_ERRORF("Unexpected token %s at line %d",lexer.token(),lexer.line());
   } else {
     const char* token(lexer.token());
     if(lexer.literal()) v = token; // Character string
