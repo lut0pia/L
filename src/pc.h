@@ -17,7 +17,9 @@
 
 // OpenGL
 #include <GL/glew.h>
-#include <GL/wglew.h>
+#if defined L_WINDOWS
+# include <GL/wglew.h>
+#endif
 
 // Platform
 #if defined L_WINDOWS
