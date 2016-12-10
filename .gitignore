@@ -4,3 +4,6 @@ bin/
 obj/
 # Projects folder
 prj/
+# Premake
+pmk/
+premake5

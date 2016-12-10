@@ -1,5 +1,0 @@
-#!/bin/sh
-
-./premake5 gmake
-configuration=${1:-debug}
-(cd prj/gmake && make -j 6 config=$configuration) && (cd test && ../bin/$configuration/Test)
