@@ -2,3 +2,6 @@
 *.cpp text
 *.lua text
 *.ls text
+*.sh text
+*.bat text
+
