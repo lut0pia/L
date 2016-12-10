@@ -24,9 +24,13 @@ namespace L {
       _current--;
     }
     inline T& top() { return *_current; }
+    inline const T& top() const { return *_current; }
     inline T& top(int i){ return *(_current-i); }
+    inline const T& top(int i) const { return *(_current-i); }
     inline T& bottom() { return *(T*)_array; }
+    inline const T& bottom() const { return *(T*)_array; }
     inline T& bottom(int i){ return *((T*)_array+i); }
+    inline const T& bottom(int i) const { return *((T*)_array+i); }
     inline T& operator[](int i) { return *(_current-i); }
     inline size_t size() const{ return _current+1-(const T*)_array; }
     inline void size(size_t s){
