@@ -92,9 +92,7 @@ void Device::processReport(void* id,const byte* data,size_t size){
 
         for(uint8_t i(0); i<32; i++)
           if((device._buttons & (1<<i)) != (newButtons & (1<<i))){
-            Event e{&device,Event::Button,i};
-            e._pressed = (newButtons & (1<<i)) != 0;
-            _events.push(e);
+            _events.push(Event{&device,i,(newButtons & (1<<i)) != 0});
             //out << "Button " << i << ((newButtons & (1<<i)) ? " pressed" : " released") << '\n';
           }
         device._buttons = newButtons;

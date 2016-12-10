@@ -9,15 +9,7 @@ namespace L{
   public:
     struct Event{
       const Device* _device;
-      enum : uint8_t{
-        Button,
-        Axis
-      } _type : 2;
-      uint8_t _index : 6;
-      union{
-        bool _pressed;
-        float _value;
-      };
+      uint8_t _index : 7,_pressed : 1;
     };
     void* _id;
     String _name;

@@ -34,16 +34,7 @@ void ScriptComponent::event(const Device::Event& e){
   auto table(ref<Table<Var,Var>>());
   (*table)[Symbol("device")] = e._device;
   (*table)[Symbol("index")] = (int)e._index;
-  switch(e._type){
-    case Device::Event::Button:
-      (*table)[Symbol("type")] = Symbol("BUTTON");
-      (*table)[Symbol("pressed")] = e._pressed;
-      break;
-    case Device::Event::Axis:
-      (*table)[Symbol("type")] = Symbol("AXIS");
-      (*table)[Symbol("value")] = e._value;
-      break;
-  }
+  (*table)[Symbol("pressed")] = (bool)e._pressed;
   event(table);
 }
 void ScriptComponent::event(const Window::Event& e){
