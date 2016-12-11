@@ -16,7 +16,7 @@ namespace L {
     inline Entity() : _destroyed(false) {}
     Entity(const Entity* other);
     ~Entity();
-    const auto& components() const{ return _components; }
+    const Array<KeyValue<const TypeDescription*,Component*> >& components() const{ return _components; }
     inline void* operator new(size_t size) { return Pool<Entity>::global.allocate(); }
     inline void operator delete(void* p) { Pool<Entity>::global.deallocate((Entity*)p); }
 
