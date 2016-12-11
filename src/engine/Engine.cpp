@@ -14,12 +14,12 @@ using namespace L;
 
 Array<void(*)()> Engine::_updates,Engine::_subUpdates;
 Array<void(*)(const Camera&)> Engine::_renders;
-Array<void(*)(const Window::Event&)> Engine::_windowEvents;
+Array<void(*)(const L::Window::Event&)> Engine::_windowEvents;
 Array<void(*)(const Device::Event&)> Engine::_deviceEvents;
 Map<uint32_t,Ref<GL::Texture> > Engine::_textures;
 Map<uint32_t,Ref<GL::Mesh> > Engine::_meshes;
 Timer Engine::_timer;
-Time Engine::_deltaTime;
+L::Time Engine::_deltaTime;
 float Engine::_deltaSeconds,Engine::_subDeltaSeconds,Engine::_fps,Engine::_timescale(1.f);
 uint32_t Engine::_frame(0);
 
