@@ -28,7 +28,7 @@ namespace L {
     inline Quaternion inverse() const { return Quaternion(-this->x(),-this->y(),-this->z(),this->w()); }
     inline Vector<3,T> rotate(const Vector<3,T>& v) const {
       const Vector<3,T> xyz(*this),t(xyz.cross(v)*2);
-      return v + w()*t + xyz.cross(t);
+      return v + this->w()*t + xyz.cross(t);
     }
     inline operator Vector<3,T>() const { return Vector<3,T>(this->x(),this->y(),this->z()); }
   };
