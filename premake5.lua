@@ -49,14 +49,15 @@ solution "L"
 			kind "ConsoleApp"
 			objdir("obj/".._ACTION.."/smp/dbg")
 			defines {"L_DEBUG"}
-			flags {"Symbols"}
+			symbols "On"
 
 		configuration {"Development"}
 			targetname "Ldev"
 			kind "ConsoleApp"
 			objdir("obj/".._ACTION.."/smp/dev")
 			defines {"L_DEBUG"}
-			flags {"Symbols","Optimize"}
+			symbols "On"
+			flags {"Optimize"}
 
 		configuration {"Release"}
 			targetname "L"
@@ -97,13 +98,14 @@ solution "L"
 			targetdir "bin/dbg"
 			objdir("obj/".._ACTION.."/dbg")
 			defines {"L_DEBUG"}
-			flags {"Symbols"}
+			symbols "On"
 
 		configuration {"Development"}
 			targetdir "bin/dev"
 			objdir("obj/".._ACTION.."/dev")
 			defines {"L_DEBUG"}
-			flags {"Symbols","Optimize"}
+			symbols "On"
+			flags {"Optimize"}
 
 		configuration  {"Release"}
 			targetdir "bin/rls"
