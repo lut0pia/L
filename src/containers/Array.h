@@ -1,10 +1,10 @@
 #pragma once
 
-#include <cstdlib>
 #include <cstring>
 #include <initializer_list>
 #include "../objects.h"
 #include "../streams/Stream.h"
+#include "../system/Memory.h"
 
 namespace L {
   template <class T>
@@ -35,7 +35,7 @@ namespace L {
     }
     inline Array(const Array& other) : _size(other._size),_capacity(other._capacity) {
       if(!other.empty()){
-        _data = (T*)malloc(_capacity*sizeof(T));
+        _data = (T*)Memory::alloc(_capacity*sizeof(T));
         copy(_data,other._data,_size);
       } else _data = nullptr;
     }
@@ -46,7 +46,7 @@ namespace L {
       if(_data){
         for(uintptr_t i(0); i<_size; i++)
           (_data+i)->~T();
-        free(_data);
+        Memory::free(_data,_capacity*sizeof(T));
       }
     }
     inline Array& operator=(const Array& other) {
@@ -99,7 +99,7 @@ namespace L {
     void capacity(size_t n) {
       if(n!=capacity()) {
         if(n<_size) size(n); // Have to resize because capacity cannot be below size
-        _data = (T*)realloc(_data,n*sizeof(T));
+        _data = (T*)Memory::realloc(_data,_capacity*sizeof(T),n*sizeof(T));
         _capacity = n;
       }
     }

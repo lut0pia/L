@@ -38,12 +38,12 @@ namespace L {
       if(_slots){
         size_t oldsize(_size);
         Slot* oldslots(_slots);
-        _slots = (Slot*)calloc(_size *= 2,sizeof(Slot));
+        _slots = (Slot*)Memory::allocZero((_size *= 2)*sizeof(Slot));
         for(uintptr_t i(0); i<oldsize; i++)
           if(!oldslots[i].empty())
             memcpy(find(oldslots[i].hash()),oldslots+i,sizeof(Slot));
-        free(oldslots);
-      } else _slots = (Slot*)calloc(_size = 4,sizeof(Slot));
+        Memory::free(oldslots,oldsize*sizeof(Slot));
+      } else _slots = (Slot*)Memory::allocZero((_size = 4)*sizeof(Slot));
     }
     class Iterator{
     private:
@@ -57,7 +57,7 @@ namespace L {
     };
   public:
     inline Table() : _slots(nullptr),_size(0),_count(0){}
-    Table(const Table& other) : _slots((Slot*)(other._slots?calloc(other._size,sizeof(Slot)):nullptr)),_size(other._size),_count(other._count){
+    Table(const Table& other) : _slots((Slot*)(other._slots?Memory::allocZero(other._size*sizeof(Slot)):nullptr)),_size(other._size),_count(other._count){
       for(uintptr_t i(0); i<_size; i++)
         if(!other._slots[i].empty())
           new(_slots+i)Slot(other._slots[i]);
@@ -73,7 +73,7 @@ namespace L {
           for(uintptr_t i(0); i<_size; i++)
             if(!_slots[i].empty())
               _slots[i].~Slot();
-        free(_slots);
+        Memory::free(_slots,_size*sizeof(Slot));
       }
     }
     inline size_t size() const{ return _size; }

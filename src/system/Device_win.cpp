@@ -46,7 +46,7 @@ void Device::update(){
 
       UINT preparsedDataSize;
       GetRawInputDeviceInfo(pRawInputDeviceList[i].hDevice,RIDI_PREPARSEDDATA,NULL,&preparsedDataSize);
-      deviceSystem->_preparsed = (PHIDP_PREPARSED_DATA)malloc(preparsedDataSize);
+      deviceSystem->_preparsed = (PHIDP_PREPARSED_DATA)Memory::alloc(preparsedDataSize);
 
       if(GetRawInputDeviceInfo(pRawInputDeviceList[i].hDevice,RIDI_PREPARSEDDATA,deviceSystem->_preparsed,&preparsedDataSize)==(UINT)-1)
         L_ERROR("GetRawInputDeviceInfo failed");

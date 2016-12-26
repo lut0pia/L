@@ -2,6 +2,7 @@
 
 #include <type_traits>
 #include "../streams/Stream.h"
+#include "../system/Memory.h"
 
 namespace L {
   template<class T>
@@ -25,7 +26,7 @@ namespace L {
     inline ~Ref() {
       if(_p && --counter()==0){
         _p->~T();
-        free((byte*)_p-offset);
+        Memory::free((byte*)_p-offset,sizeof(T)+offset);
       }
     }
     inline Ref& operator=(const Ref& other) {
@@ -46,7 +47,7 @@ namespace L {
     template <typename... Args>
     void make(Args&&... args){
       this->~Ref();
-      _p = (T*)((byte*)malloc(sizeof(T)+offset)+offset);
+      _p = (T*)((byte*)Memory::alloc(sizeof(T)+offset)+offset);
       counter() = 1;
       new(_p)T(args...);
     }
