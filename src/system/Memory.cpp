@@ -11,9 +11,11 @@ using namespace L;
 #endif
 
 #if !L_USE_MALLOC
+const size_t allocStep = 1024*1024u;
 void* _freelist[32] = {};
 byte* _next;
 size_t _bytesLeft(0);
+size_t _allocated(0), _unused(0);
 
 inline uint32_t freelistIndex(size_t size) {
   // Cannot allocate less than a pointer's size
@@ -26,18 +28,20 @@ void* Memory::alloc(size_t size) {
   return malloc(size);
 #else
   const uint32_t index(freelistIndex(size));
+  const size_t trueSize(1<<index);
   void*& freelist(_freelist[index]);
   void* wtr(freelist);
   if(wtr) {
     freelist = *((void**)freelist);
+    _unused -= trueSize;
   } else {
-    const size_t trueSize(1<<index);
     if(_bytesLeft<trueSize)
-      _next = (byte*)virtualAlloc(_bytesLeft = max(trueSize, 1024*1024u));
+      _next = (byte*)virtualAlloc(_bytesLeft = max(trueSize, allocStep));
     wtr = _next;
     _next += trueSize;
     _bytesLeft -= trueSize;
   }
+  _allocated += trueSize;
   return wtr;
 #endif
 }
@@ -68,8 +72,16 @@ void Memory::free(void* ptr, size_t size) {
 #if L_USE_MALLOC
   ::free(ptr);
 #else
-  void*& freelist(_freelist[freelistIndex(size)]);
-  *((void**)ptr) = freelist;
-  freelist = ptr;
+  const uint32_t index(freelistIndex(size));
+  const size_t trueSize(1<<index);
+  if(trueSize<allocStep) { // Small allocations go to freelists
+    void*& freelist(_freelist[index]);
+    *((void**)ptr) = freelist;
+    freelist = ptr;
+    _unused += trueSize;
+  } else { // Bigger allocations are actually freed
+    virtualFree(ptr, size);
+  }
+  _allocated -= trueSize;
 #endif
 }
