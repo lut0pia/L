@@ -43,7 +43,7 @@ void* Memory::alloc(size_t size) {
 }
 void* Memory::allocZero(size_t size) {
 #if L_USE_MALLOC
-  return ::calloc(size);
+  return ::calloc(size, 1);
 #else
   void* wtr(alloc(size));
   memset(wtr, 0, size);
