@@ -268,7 +268,7 @@ void Window::open(const char* title,int width,int height,int flags) {
   wglMakeCurrent(hDC,hRC);
 }
 void Window::close() {
-  if(!opened()) return;
+  L_ASSERT(opened());
   DestroyWindow(hWND);
   hWND = 0;
 }
@@ -294,11 +294,11 @@ bool Window::loop() {
   return opened();
 }
 void Window::swapBuffers() {
-  if(!opened()) return;
+  L_ASSERT(opened());
   SwapBuffers(hDC);
 }
 void Window::draw(const Bitmap& bmp) {
-  if(!opened()) return;
+  L_ASSERT(opened());
   HBITMAP hbmp = CreateBitmap(bmp.width(),bmp.height(),1,32,&bmp(0,0)),htmp;
   HDC hMemDC = CreateCompatibleDC(hDC);
   htmp = (HBITMAP)SelectObject(hMemDC,hbmp);
@@ -309,11 +309,11 @@ void Window::draw(const Bitmap& bmp) {
 }
 
 void Window::title(const char* str) {
-  if(!opened()) return;
+  L_ASSERT(opened());
   SetWindowText(hWND,str);
 }
 void Window::resize(int width,int height) {
-  if(!opened()) return;
+  L_ASSERT(opened());
   _width = width;
   _height = height;
   SetWindowPos(hWND,HWND_NOTOPMOST,0,0,width,height,SWP_NOMOVE|SWP_NOZORDER);
