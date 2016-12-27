@@ -11,5 +11,6 @@ namespace L {
     static void free(void*, size_t);
 
     static void* virtualAlloc(size_t);
+    static void virtualFree(void*,size_t);
   };
 }
