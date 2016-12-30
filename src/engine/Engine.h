@@ -11,6 +11,13 @@
 
 namespace L {
   class Camera;
+
+  template <class T> static void updateAllComponents() { for(auto&& c : Pool<T>::global) c.update(); }
+  template <class T> static void subUpdateAllComponents() { for(auto&& c : Pool<T>::global) c.subUpdate(); }
+  template <class T> static void renderAllComponents(const Camera& cam) { for(auto&& c : Pool<T>::global) c.render(cam); }
+  template <class T> static void windowEventAllComponents(const Window::Event& e) { for(auto&& c : Pool<T>::global) c.event(e); }
+  template <class T> static void deviceEventAllComponents(const Device::Event& e) { for(auto&& c : Pool<T>::global) c.event(e); }
+
   class Engine {
   private:
     static Array<void(*)()> _updates,_subUpdates;
@@ -47,10 +54,4 @@ namespace L {
     static const Ref<GL::Texture>& texture(const char* filepath);
     static const Ref<GL::Mesh>& mesh(const char* filepath);
   };
-
-  template <class T> static void updateAllComponents() { for(auto&& c : Pool<T>::global) c.update(); }
-  template <class T> static void subUpdateAllComponents() { for(auto&& c : Pool<T>::global) c.subUpdate(); }
-  template <class T> static void renderAllComponents(const Camera& cam) { for(auto&& c : Pool<T>::global) c.render(cam); }
-  template <class T> static void windowEventAllComponents(const Window::Event& e) { for(auto&& c : Pool<T>::global) c.event(e); }
-  template <class T> static void deviceEventAllComponents(const Device::Event& e) { for(auto&& c : Pool<T>::global) c.event(e); }
 }
