@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../hash.h"
+#include "../system/Memory.h"
 #include "../streams/Stream.h"
 
 namespace L {
