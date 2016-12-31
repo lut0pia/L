@@ -78,7 +78,7 @@ namespace L {
     static inline const char* name() { return td.name; }
 
     // Casts
-    static inline void addcast(const TypeDescription* td,Cast cast){ Type::td.casts[(intptr_t)td] = cast; }
+    static inline void addcast(const TypeDescription* otd,Cast cast){ td.casts[(intptr_t)otd] = cast; }
     template <class R> static inline void addcast(Cast cast){ addcast(Type<R>::description(),cast); }
     template <class R> static inline void addcast(){ addcast<R>([](void* dst,const void* src){new(dst)R(*(T*)src); }); }
 
