@@ -8,11 +8,13 @@
 #endif
 
 namespace L {
-#if _MSC_VER
   inline uint32_t bsr(uint32_t v) {
+#if _MSC_VER
     DWORD wtr;
     _BitScanReverse(&wtr,v);
     return wtr;
-  }
+#elif __GNUC__
+    return sizeof(v)*8-__builtin_clz(v);
 #endif
+  }
 }
