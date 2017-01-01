@@ -30,6 +30,10 @@ void ScriptComponent::update() {
   static Var updateCall(Array<Var>{Symbol("update")});
   _context.execute(updateCall);
 }
+void ScriptComponent::lateUpdate() {
+  static Var updateCall(Array<Var>{Symbol("late-update")});
+  _context.execute(updateCall);
+}
 void ScriptComponent::event(const Device::Event& e){
   auto table(ref<Table<Var,Var>>());
   (*table)[Symbol("device")] = e._device;

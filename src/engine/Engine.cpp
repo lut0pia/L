@@ -12,7 +12,7 @@
 
 using namespace L;
 
-Array<void(*)()> Engine::_updates,Engine::_subUpdates;
+Array<void(*)()> Engine::_updates,Engine::_subUpdates,Engine::_lateUpdates;
 Array<void(*)(const Camera&)> Engine::_renders;
 Array<void(*)(const L::Window::Event&)> Engine::_windowEvents;
 Array<void(*)(const Device::Event&)> Engine::_deviceEvents;
@@ -58,6 +58,8 @@ void Engine::update() {
       subDelta = min(timer.since()*4.f,_deltaTime);
     }
   }
+  for(auto&& lateUpdate : _lateUpdates)
+    lateUpdate();
 
   Entity::flushDestroyQueue();
 
