@@ -25,6 +25,7 @@ int main(int argc,const char* argv[]) {
 #endif
   Engine::addSubUpdate<RigidBody>();
   Engine::addSubUpdate<Collider>();
+  Engine::addLateUpdate<ScriptComponent>();
   {
     ScriptComponent::init();
     FileStream file("startup.ls","rb");
