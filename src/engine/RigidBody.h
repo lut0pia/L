@@ -18,6 +18,8 @@ namespace L {
     void update();
     void subUpdate();
 
+    inline const Vector3f& velocity() const { return _velocity; }
+    inline Vector3f relativeVelocity() const { return _transform->absoluteRotation().inverse().rotate(_velocity); }
     inline float mass() const{ return 1.f/_invMass; }
     void mass(float m);
     inline float restitution() const{ return _restitution; }
