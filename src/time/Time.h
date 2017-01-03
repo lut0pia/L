@@ -39,7 +39,7 @@ namespace L {
     inline long long milliseconds() const { return usec/1000LL; }
     inline long long microseconds() const { return usec; }
 
-    float fSeconds() const;
+    inline float fSeconds() const { return float(seconds())+(float(microseconds()%1000000LL)/1000000.f); }
 
     static Time now();
   };

@@ -11,10 +11,6 @@
 
 using namespace L;
 
-float Time::fSeconds() const {
-  return ((float)seconds())+((float)(microseconds()%1000000LL)/1000000.f);
-}
-
 Time Time::now() {
 #if defined L_WINDOWS
   int64_t counter,freq;
