@@ -1,11 +1,12 @@
 #include "StaticMesh.h"
 
+#include "../gl/GL.h"
 #include "../gl/Program.h"
 #include "SharedUniform.h"
 
 using namespace L;
 
-void StaticMesh::render(const Camera& c){
+void StaticMesh::render(const Camera& c) {
   static GL::Program program(GL::Shader(
     "#version 330 core\n"
     L_SHAREDUNIFORM
@@ -19,7 +20,7 @@ void StaticMesh::render(const Camera& c){
     "ftexcoords = vtexcoords;"
     "fnormal = vnormal;"
     "gl_Position = viewProj * model * vec4(vposition,1.0);"
-    "}",GL_VERTEX_SHADER),
+    "}", GL_VERTEX_SHADER),
     GL::Shader(
       "#version 330 core\n"
       L_SHAREDUNIFORM
@@ -33,9 +34,9 @@ void StaticMesh::render(const Camera& c){
       "if(alpha(color.a)) discard;"
       "ocolor = color.rgb;"
       "onormal.xy = encodeNormal(fnormal);"
-      "}",GL_FRAGMENT_SHADER));
+      "}", GL_FRAGMENT_SHADER));
   program.use();
-  program.uniform("tex",*_texture);
-  program.uniform("model",_transform->matrix());
+  program.uniform("tex", _texture.null() ? GL::whiteTexture() : *_texture);
+  program.uniform("model", _transform->matrix());
   _mesh->draw();
 }
