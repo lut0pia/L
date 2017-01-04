@@ -58,14 +58,14 @@ void* Memory::realloc(void* ptr, size_t oldsize, size_t newsize) {
 #if L_USE_MALLOC
   return ::realloc(ptr, newsize);
 #else
-  if(freelistIndex(oldsize)!=freelistIndex(newsize)) {
-    void* wtr(alloc(newsize));
-    if(ptr) {
-      memcpy(wtr, ptr, oldsize);
-      free(ptr, oldsize);
-    }
-    return wtr;
-  } else return ptr;
+  if(oldsize && freelistIndex(oldsize)==freelistIndex(newsize)) // Already allocated an equivalent block
+    return ptr;
+  void* wtr(alloc(newsize));
+  if(ptr) {
+    memcpy(wtr, ptr, oldsize);
+    free(ptr, oldsize);
+  }
+  return wtr;
 #endif
 }
 void Memory::free(void* ptr, size_t size) {
