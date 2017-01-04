@@ -51,8 +51,8 @@ namespace L {
       Slot* _slot;
     public:
       inline Iterator(Slot* slot) : _slot(slot){}
-      inline Iterator& operator++(){ while(!(++_slot)->hash()); return *this; }
-      inline bool operator!=(const Iterator& other) const { return _slot != other._slot; }
+      inline Iterator& operator++() { if(_slot->hash()) _slot++; return *this; }
+      inline bool operator!=(const Iterator& other) { while(_slot < other._slot && !_slot->hash()) _slot++; return _slot != other._slot; }
       inline Slot* operator->() const{ return _slot; }
       inline Slot& operator*() const{ return *(operator->()); }
     };
