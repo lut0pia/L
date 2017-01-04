@@ -37,7 +37,7 @@ namespace L {
     size_t _size,_count;
     void grow(){
       if(_slots){
-        size_t oldsize(_size);
+        const size_t oldsize(_size);
         Slot* oldslots(_slots);
         _slots = (Slot*)Memory::allocZero((_size *= 2)*sizeof(Slot));
         for(uintptr_t i(0); i<oldsize; i++)
