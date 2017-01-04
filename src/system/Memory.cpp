@@ -18,8 +18,8 @@ size_t _bytesLeft(0);
 size_t _allocated(0), _unused(0);
 
 inline uint32_t freelistIndex(size_t size) {
-  // Cannot allocate less than a pointer's size
-  return clog2(max(size, sizeof(void*)));
+  // Cannot allocate less than 16 bytes for alignment purposes
+  return clog2(max(size, 16u));
 }
 #endif
 
