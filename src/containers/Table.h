@@ -82,7 +82,7 @@ namespace L {
     inline Iterator begin() const{ return (_count) ? ++Iterator(_slots-1) : Iterator(nullptr); }
     inline Iterator end() const{ return (_count) ? _slots+_size : Iterator(nullptr); }
     V& operator[](const K& k){
-      if(_count*10>=_size*7)
+      if(_count*10>=_size*8)
         grow();
       uint32_t h(hash(k));
       Slot* slot(find(h));
