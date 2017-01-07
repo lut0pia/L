@@ -82,14 +82,14 @@ Var& Context::local(Symbol sym){
 Var Context::execute(const Var& code,Var* src) {
   if(code.is<Array<Var> >()) {
     const Array<Var>& array(code.as<Array<Var> >()); // Get reference of array value
-    Var source(false);
+    Var source(_source);
     const Var& handle(execute(array[0],&source)); // Execute first child of array to get function handle
     if(handle.is<Native>())
       return handle.as<Native>()(*this,array);
     else if(handle.is<Function>() || handle.is<Ref<CodeFunction> >()) {
       Var wtr;
       size_t frame(_stack.size()); // Save local frame
-      if(!source.is<bool>() && handle.is<Ref<CodeFunction> >())
+      if(handle.is<Ref<CodeFunction> >())
         _stack.push(Symbol("self"),source);
       SymbolVar* stack(&_stack.top()+1);
       for(uint32_t i(1); i<array.size(); i++) { // For all parameters
@@ -128,11 +128,14 @@ Var* Context::reference(const Var& code,Var* src) {
       if(src) *src = first;
       if(first.is<Ref<Table<Var,Var>>>()){ // First is a regular table
         table = first.as<Ref<Table<Var,Var>>>();
-      } else if(!first.is<Ref<CodeFunction>>() // First is not any kind of function
+      } else if(!first.is<Ref<CodeFunction>>() // First is not any kind of function or void
                 && !first.is<Native>()
-                && !first.is<Function>()){
+                && !first.is<Function>()
+                && !first.is<void>()){
         table = typeTable(first.type());
-      } else return nullptr;
+      } else if(first.is<void>())
+        L_ERRORF("Trying to index from void");
+      else return nullptr;
       return &(*table)[execute(array[1])]; // Compute index and return pointer to field
     }
   }
@@ -146,7 +149,7 @@ Ref<Table<Var,Var>> Context::typeTable(const TypeDescription* td){
   return tt.as<Ref<Table<Var,Var>>>();
 }
 
-Context::Context(){
+Context::Context() : _source(ref<Table<Var,Var>>()) {
   L_ONCE;
   // Local allows to define local variables without overriding more global variables
   _globals[Symbol("local")] = (Native)([](Context& c,const Array<Var>& a)->Var {

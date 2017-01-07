@@ -22,6 +22,7 @@ namespace L {
       static Table<Symbol,Var> _globals;
       static Table<const TypeDescription*,Var> _typeTables;
       StaticStack<128,SymbolVar> _stack;
+      Var _source;
 
     public:
       Context();
