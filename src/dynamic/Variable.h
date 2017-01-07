@@ -15,7 +15,7 @@ namespace L {
     inline const void* value() const{ return (local()) ? (void*)&_data : _p; }
 
   public:
-    inline Variable() : _td(Type<int>::description()) {}
+    inline Variable() : _td(Type<void>::description()) {}
     template <class T> Variable(const T& v) : _td(Type<T>::description()) {
       if(local())  // Value is to be contained locally
         new(&_data) T(v);
