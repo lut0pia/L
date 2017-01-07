@@ -106,6 +106,20 @@ namespace L {
       });
     }
   };
+  template <>
+  TypeDescription Type<void>::makeDesc() {
+    TypeDescription wtr = {
+      "void",0,
+      [](void*) -> void* { return nullptr; },
+      [](void*, const void*) {},
+      [](void*, const void*) {},
+      [](void*) {},
+      [](void*) {},
+      [](Stream&, const void*) {},
+      [](const void*) -> uint32_t { return 0; }
+    };
+    return wtr;
+  }
 
   // Instantiate structures
   template <class T> TypeDescription Type<T>::td(Type<T>::makeDesc());
