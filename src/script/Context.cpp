@@ -338,6 +338,10 @@ Context::Context() : _source(ref<Table<Var,Var>>()) {
       out << stack[i].value();
     return 0;
   });
+  _globals[Symbol("break")] = (Function)([](const Var&, SymbolVar* stack, size_t params)->Var {
+    L_BREAKPOINT;
+    return 0;
+  });
   _globals[Symbol("typename")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
     return stack[0]->type()->name;
   });
