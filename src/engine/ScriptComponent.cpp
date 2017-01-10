@@ -12,26 +12,23 @@
 using namespace L;
 using namespace Script;
 
-ScriptComponent::ScriptComponent(){
-  _context.local(Symbol("entity")) = nullptr;
-}
 void ScriptComponent::updateComponents(){
   static Var updateComponentsCall(Array<Var>{Symbol("update-components")});
-  _context.variable(Symbol("entity")) = entity();
+  _context.selfTable()[Symbol("entity")] = entity();
   _context.execute(updateComponentsCall);
 }
 void ScriptComponent::load(const char* filename) {
-  static Var startCall(Array<Var>{Symbol("start")});
+  static Var startCall(Array<Var>(1, Var(Array<Var>{Symbol("self"), Script::Quote{Symbol("start")}})));
   FileStream stream(filename,"rb");
   _context.read(stream);
   _context.execute(startCall);
 }
 void ScriptComponent::update() {
-  static Var updateCall(Array<Var>{Symbol("update")});
+  static Var updateCall(Array<Var>(1, Var(Array<Var>{Symbol("self"), Script::Quote{Symbol("update")}})));
   _context.execute(updateCall);
 }
 void ScriptComponent::lateUpdate() {
-  static Var updateCall(Array<Var>{Symbol("late-update")});
+  static Var updateCall(Array<Var>(1,Var(Array<Var>{Symbol("self"), Script::Quote{Symbol("late-update")}})));
   _context.execute(updateCall);
 }
 void ScriptComponent::event(const Device::Event& e){
@@ -167,8 +164,8 @@ void ScriptComponent::init() {
   L_COMPONENT_METHOD(ScriptComponent,"load",1,load(stack[0]->get<String>()));
   L_COMPONENT_FUNCTION(ScriptComponent,"call",1,{
     L_ASSERT(stack[0]->is<Symbol>());
-    Array<Var> code;
-    for(uintptr_t i(0); i<params; i++)
+    Array<Var> code(Array<Var>(1, Var(Array<Var>{Symbol("self"), Script::Quote{stack[0]->as<Symbol>()}})));
+    for(uintptr_t i(1); i<params; i++)
       code.push(stack[i].value());
     return src.as<ScriptComponent*>()->_context.execute(code);
   });

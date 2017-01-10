@@ -79,18 +79,17 @@ Var& Context::local(Symbol sym){
   _stack.push(SymbolVar(sym));
   return _stack.top().value();
 }
-Var Context::execute(const Var& code,Var* src) {
+Var Context::execute(const Var& code,Var* selfOut) {
+  static const Symbol selfSymbol("self");
   if(code.is<Array<Var> >()) {
     const Array<Var>& array(code.as<Array<Var> >()); // Get reference of array value
-    Var source(_source);
-    const Var& handle(execute(array[0],&source)); // Execute first child of array to get function handle
+    Var selfIn;
+    const Var& handle(execute(array[0],&selfIn)); // Execute first child of array to get function handle
     if(handle.is<Native>())
       return handle.as<Native>()(*this,array);
     else if(handle.is<Function>() || handle.is<Ref<CodeFunction> >()) {
       Var wtr;
       size_t frame(_stack.size()); // Save local frame
-      if(handle.is<Ref<CodeFunction> >())
-        _stack.push(Symbol("self"),source);
       SymbolVar* stack(&_stack.top()+1);
       for(uint32_t i(1); i<array.size(); i++) { // For all parameters
         Symbol sym;
@@ -98,28 +97,32 @@ Var Context::execute(const Var& code,Var* src) {
           sym = handle.as<Ref<CodeFunction> >()->parameters[i-1];
         _stack.push(sym,execute(array[i])); // Compute parameter values
       }
+      if(!selfIn.is<void>()) _selves.push(selfIn);
       if(handle.is<Ref<CodeFunction> >())
         wtr = execute(handle.as<Ref<CodeFunction> >()->code);
       else if(handle.is<Function>()) // It's a function pointer
-        wtr = handle.as<Function>()(source,stack,array.size()-1); // Call function
+        wtr = handle.as<Function>()(selfIn,stack,array.size()-1); // Call function
       _stack.size(frame); // Resize to the previous frame
+      if(!selfIn.is<void>()) _selves.pop();
       return wtr;
     } else if(array.size()>1){
       Ref<Table<Var,Var>> table;
-      if(src) *src = handle;
+      if(selfOut) *selfOut = handle;
       if(handle.is<Ref<Table<Var,Var>>>())
         table = handle.as<Ref<Table<Var,Var>>>();
       else
         table = typeTable(handle.type());
       return (*table)[execute(array[1])];
     }
-  } else if(code.is<Symbol>()) return variable(code.as<Symbol>()); // It's a simple variable
+  } else if(code.is<Symbol>()) // It's a simple variable or self
+    return (code.as<Symbol>()==selfSymbol)?currentSelf():variable(code.as<Symbol>());
   else if(code.is<Quote>()) return code.as<Quote>().var; // Return raw data
   return code;
 }
 Var* Context::reference(const Var& code,Var* src) {
+  static const Symbol selfSymbol("self");
   if(code.is<Symbol>()) // It's a symbol so it's a simple reference to a variable
-    return &variable(code.as<Symbol>());
+    return (code.as<Symbol>()==selfSymbol) ? &currentSelf() : &variable(code.as<Symbol>());
   else if(code.is<Array<Var> >()){ // It's an array so it may be a reference to an object field or a
     const Array<Var>& array(code.as<Array<Var> >());
     if(array.size()==2){ // It's a pair
@@ -149,7 +152,7 @@ Ref<Table<Var,Var>> Context::typeTable(const TypeDescription* td){
   return tt.as<Ref<Table<Var,Var>>>();
 }
 
-Context::Context() : _source(ref<Table<Var,Var>>()) {
+Context::Context() : _self(ref<Table<Var,Var>>()) {
   L_ONCE;
   // Local allows to define local variables without overriding more global variables
   _globals[Symbol("local")] = (Native)([](Context& c,const Array<Var>& a)->Var {
