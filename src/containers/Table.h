@@ -18,10 +18,9 @@ namespace L {
       byte _data[sizeof(Layout)];
       inline Layout& layout() { return *(Layout*)&_data; }
       inline const Layout& layout() const { return *(Layout*)&_data; }
-      inline uint32_t& hash() { return layout()._hash; }
     public:
       inline Slot(uint32_t h,const K& key) {
-        hash() = h;
+        new(&layout()._hash)uint32_t(h);
         new(&layout()._key)K(key);
         new(&layout()._value)V();
       }
