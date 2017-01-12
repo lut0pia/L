@@ -18,7 +18,7 @@ namespace L {
     }
 
   public:
-    inline Array() : _data(nullptr),_size(0),_capacity(0) {}
+    constexpr Array() : _data(nullptr),_size(0),_capacity(0) {}
     inline Array(const std::initializer_list<T>& il) : _data(nullptr),_size(0),_capacity(0){
       growTo(il.size());
       for(auto && e : il)

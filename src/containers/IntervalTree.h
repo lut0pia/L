@@ -54,7 +54,7 @@ namespace L {
   private:
     Node* _root;
   public:
-    inline IntervalTree() : _root(nullptr) {}
+    constexpr IntervalTree() : _root(nullptr) {}
     inline ~IntervalTree() { delete _root; }
     inline const Node* root() const{ return _root; }
     Node* insert(const Key& key,const V& value) {

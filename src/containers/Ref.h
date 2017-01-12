@@ -13,7 +13,7 @@ namespace L {
     inline int& counter(){ return *((int*)_p-1); }
 
   public:
-    inline Ref() : _p(nullptr) {}
+    constexpr Ref() : _p(nullptr) {}
     inline Ref(const Ref& other) {
       _p = other._p;
       if(_p) counter()++;

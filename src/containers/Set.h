@@ -6,7 +6,7 @@ namespace L {
   template <class T>
   class Set : protected SortedArray<T> {
     public:
-      inline Set() {}
+      constexpr Set() {}
       inline Set(const std::initializer_list<T>& il){
         Array<T>::growTo(il.size());
         for(auto&& e : il)

@@ -57,7 +57,7 @@ namespace L {
       inline Slot& operator*() const{ return *(operator->()); }
     };
   public:
-    inline Table() : _slots(nullptr),_size(0),_count(0){}
+    constexpr Table() : _slots(nullptr),_size(0),_count(0){}
     Table(const Table& other) : _slots((Slot*)(other._slots?Memory::allocZero(other._size*sizeof(Slot)):nullptr)),_size(other._size),_count(other._count){
       for(uintptr_t i(0); i<_size; i++)
         if(!other._slots[i].empty())

@@ -150,7 +150,7 @@ namespace L {
       Node* _root;
 
     public:
-      Tree() : _root(nullptr) {}
+      constexpr Tree() : _root(nullptr) {}
       ~Tree() {delete _root;}
       inline void insert(const Key& key, const V& value) {
         Node::insert(_root,key,value);

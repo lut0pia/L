@@ -30,7 +30,7 @@ namespace L {
     Node *_first,*_last;
     size_t _size;
   public:
-    List() : _first(0),_last(0),_size(0) {}
+    constexpr List() : _first(0),_last(0),_size(0) {}
 
     inline const T& front() const { return _first->value(); }
     inline T& front() { return _first->value(); }

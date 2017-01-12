@@ -9,7 +9,7 @@ namespace L {
   class Map : public Set<KeyValue<K,V> > {
       typedef KeyValue<K,V> KV;
     public:
-      inline Map() {}
+      constexpr Map() {}
       inline Map(const std::initializer_list<KV>& il){
         Array<KV>::growTo(il.size());
         for(auto&& e : il)

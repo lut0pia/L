@@ -70,7 +70,7 @@ namespace L {
     Block* _root;
 
   public:
-    inline Pool() : _root(nullptr) {}
+    constexpr Pool() : _root(nullptr) {}
     ~Pool() {
       for(auto&& e : *this)
         e.~T();
