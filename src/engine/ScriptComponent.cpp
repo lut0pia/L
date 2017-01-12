@@ -124,7 +124,6 @@ void ScriptComponent::init() {
   L_COMPONENT_METHOD(Transform,"set-translation",1,translation(stack[0]->get<Vector3f>()));
   L_COMPONENT_METHOD(Transform,"move",1,move(stack[0]->get<Vector3f>()));
   L_COMPONENT_METHOD(Transform,"rotate",2,rotate(stack[0]->get<Vector3f>(),stack[1]->get<float>()));
-  L_COMPONENT_METHOD(Transform,"scale",1,scale(stack[0]->get<float>()));
   // Collider ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(Collider,"collider");
   L_COMPONENT_METHOD(Collider,"center",1,center(stack[0]->get<Vector3f>()));
