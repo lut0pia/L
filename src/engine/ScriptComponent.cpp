@@ -175,6 +175,7 @@ void ScriptComponent::init() {
   L_COMPONENT_BIND(StaticMesh,"staticmesh");
   L_COMPONENT_METHOD(StaticMesh,"mesh",1,mesh((const char*)stack[0]->get<String>()));
   L_COMPONENT_METHOD(StaticMesh,"texture",1,texture((const char*)stack[0]->get<String>()));
+  L_COMPONENT_METHOD(StaticMesh, "scale", 1, scale(stack[0]->get<float>()));
   // Primitive ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(Primitive,"primitive");
   L_COMPONENT_METHOD(Primitive,"center",1,center(stack[0]->get<Vector3f>()));

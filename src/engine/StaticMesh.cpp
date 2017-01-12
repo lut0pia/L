@@ -37,6 +37,6 @@ void StaticMesh::render(const Camera& c) {
       "}", GL_FRAGMENT_SHADER));
   program.use();
   program.uniform("tex", _texture.null() ? GL::whiteTexture() : *_texture);
-  program.uniform("model", _transform->matrix());
+  program.uniform("model", SQTToMat(_transform->absoluteRotation(), _transform->absolutePosition(), _scale));
   _mesh->draw();
 }
