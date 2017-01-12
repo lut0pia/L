@@ -36,6 +36,7 @@ namespace L {
     Cast cast(const TypeDescription* target) const; // Return Cast for target type if available or nullptr otherwise
   };
 
+  extern Table<Symbol, const TypeDescription*> types;
   template <class T>
   class Type {
   private:
@@ -63,6 +64,7 @@ namespace L {
       tmp[strlen(tmp)-1] = '\0';
       wtr.name = tmp;
 #endif
+      types[wtr.name] = &td;
       return wtr;
     }
     static void* cpy(void* p) { return new T(*(T*)p); }
