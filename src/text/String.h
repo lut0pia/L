@@ -33,6 +33,7 @@ namespace L {
       int findFirst(const String&) const;
       inline int findLast(char c) const {return strrchr(*this,c)-operator const char*();}
       inline String substr(size_t pos, size_t length = -1) const {return String(*this,pos,length);}
+      int count(char) const;
 
       Array<String> explode(char c, size_t limit = 0) const; // Splits and returns an array of each part (limit is the max number of parts)
       size_t endOf(size_t start, bool dquotesEscape = true) const; // Returns end of bracket position

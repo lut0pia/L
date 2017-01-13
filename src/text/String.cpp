@@ -31,6 +31,13 @@ int String::findFirst(const String& str) const {
       return i;
   return -1;
 }
+int String::count(char search) const {
+  int wtr(0);
+  for(char c : *this)
+    if(c==search)
+      wtr++;
+  return wtr;
+}
 
 Array<String> String::explode(char c, size_t limit) const {
   Array<String> wtr; // Will contain parts
