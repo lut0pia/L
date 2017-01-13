@@ -18,7 +18,7 @@ void StaticMesh::render(const Camera& c) {
     "out vec3 fnormal;"
     "void main(){"
     "ftexcoords = vtexcoords;"
-    "fnormal = vnormal;"
+    "fnormal = normalize(mat3(model) * vnormal);"
     "gl_Position = viewProj * model * vec4(vposition,1.0);"
     "}", GL_VERTEX_SHADER),
     GL::Shader(
