@@ -12,7 +12,7 @@ namespace L {
       size_t _vertexCount;
 
     public:
-      inline MeshBuilder() : _vertexCount(0){}
+      constexpr MeshBuilder() : _vertexCount(0) {}
       void reset();
       void addVertex(const void* vertex,size_t size);
       inline const void* vertices()const{ return &_vertices[0]; }
