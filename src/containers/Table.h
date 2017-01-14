@@ -69,10 +69,7 @@ namespace L {
     }
     ~Table(){
       if(_slots){
-        if(_count)
-          for(uintptr_t i(0); i<_size; i++)
-            if(!_slots[i].empty())
-              _slots[i].~Slot();
+        clear();
         Memory::free(_slots,_size*sizeof(Slot));
       }
     }
@@ -113,6 +110,13 @@ namespace L {
           return nullptr;
       }
       return nullptr;
+    }
+    void clear() {
+      if(_count)
+        for(uintptr_t i(0); i<_size; i++)
+          if(!_slots[i].empty())
+            _slots[i].~Slot();
+      _count = 0;
     }
   };
   template <class K,class V> inline Stream& operator<<(Stream& s,const Table<K,V>& v) {
