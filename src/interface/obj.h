@@ -17,7 +17,6 @@ namespace L {
     OBJ() : Interface("obj") {}
 
     bool from(GL::Mesh& mesh, Stream& stream) {
-      bool hasNormals(false);
       _mb.reset();
       _vertices.clear();
       _normals.clear();
@@ -35,8 +34,8 @@ namespace L {
 
             switch(indices.size()) {
               case 3: vertex._normal = _normals[atoi(indices[2])-1];
-                hasNormals = true;
-              case 2: vertex._uv = _uvs[atoi(indices[1])-1];
+              case 2: if(!_uvs.empty())vertex._uv = _uvs[atoi(indices[1])-1];
+                      else vertex._normal = _normals[atoi(indices[1])-1];
               case 1: vertex._vertex = _vertices[atoi(indices[0])-1];
             }
 
@@ -50,7 +49,7 @@ namespace L {
           }
         }
       }
-      if(!hasNormals)
+      if(_normals.empty())
         _mb.computeNormals(0, sizeof(Vector2f)+sizeof(Vector3f), sizeof(Vertex));
       mesh.load(_mb, GL_TRIANGLES, {
         {0,3,GL_FLOAT,GL_FALSE,sizeof(Vertex),0},
