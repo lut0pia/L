@@ -12,17 +12,18 @@
 namespace L {
   namespace Script {
     class Context;
-    typedef KeyValue<Symbol, Var> SymbolVar;
-    typedef Var(*Function)(const Var& src, SymbolVar* stack, size_t n);
+    typedef Var(*Function)(Context&);
     typedef Var(*Native)(Context&, const Array<Var>&);
+    typedef struct { uint32_t i; } Local;
     typedef struct { Var var; } Quote;
-    typedef struct { Array<Symbol> parameters; Var code; } CodeFunction;
+    typedef struct { Var code; uint32_t localCount; } CodeFunction;
     class Context {
     private:
       static Table<Symbol, Var> _globals;
       static Table<const TypeDescription*, Var> _typeTables;
-      StaticStack<128, SymbolVar> _stack;
+      StaticStack<128, Var> _stack;
       StaticStack<16, Var> _selves;
+      StaticStack<16, uint32_t> _frames;
       Var _self;
 
     public:
@@ -30,11 +31,11 @@ namespace L {
       void read(Stream&);
       void read(Var& v, Lexer& lexer);
 
-      Var& variable(Symbol);
-      inline Var& variable(const char* str) { return variable(Symbol(str)); }
       inline Var& currentSelf() { return (_selves.empty()) ? _self : _selves.top(); }
       inline Table<Var, Var>& selfTable() { return *_self.as<Ref<Table<Var, Var>>>(); }
-      Var& local(Symbol);
+      inline uint32_t currentFrame() const { return _frames.empty() ? 0 : _frames.top(); }
+      inline uint32_t localCount() const { return _stack.size()-currentFrame(); }
+      inline Var& local(uint32_t i) { return _stack.bottom(i+currentFrame()); }
       Var execute(const Var& code, Var* selfOut = nullptr);
       Var* reference(const Var& code, Var* selfOut = nullptr);
 

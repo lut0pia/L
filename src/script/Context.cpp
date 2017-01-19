@@ -10,27 +10,58 @@
 using namespace L;
 using namespace Script;
 
-Table<Symbol,Var> Context::_globals;
-Table<const TypeDescription*,Var> Context::_typeTables;
+Table<Symbol, Var> Context::_globals;
+Table<const TypeDescription*, Var> Context::_typeTables;
 
-static Var object(const Var&,SymbolVar* stack,size_t params) {
-  Ref<Table<Var,Var> > wtr(ref<Table<Var,Var>>());
-  Table<Var,Var>& table(*wtr);
-  for(uintptr_t i(1); i<params; i += 2)
-    table[stack[i-1].value()] = stack[i].value();
+static Var object(Context& c) {
+  Ref<Table<Var, Var> > wtr(ref<Table<Var, Var>>());
+  Table<Var, Var>& table(*wtr);
+  const uint32_t params(c.localCount());
+  for(uint32_t i(1); i<params; i += 2)
+    table[c.local(i-1)] = c.local(i);
   return wtr;
+}
+static void applyScope(Var& v, Table<Symbol, uint32_t>& localTable, uint32_t& localIndex) {
+  static Symbol localSymbol("local"), funSymbol("fun"), foreachSymbol("foreach");
+  if(v.is<Array<Var>>()) {
+    Array<Var>& array(v.as<Array<Var>>());
+    if(array[0].is<Symbol>()) {
+      const Symbol& sym(array[0].as<Symbol>());
+      if(array[1].is<Symbol>() && sym==localSymbol) {
+        array[0] = Symbol("set");
+        localTable[array[1].as<Symbol>()] = localIndex++;
+      } else if(sym==foreachSymbol) {
+        if(array.size()>=4) // Value only
+          localTable[array[1].as<Symbol>()] = localIndex++;
+        if(array.size()>=5) // Key value
+          localTable[array[2].as<Symbol>()] = localIndex++;
+      } else if(sym==funSymbol) // Don't go inside functions
+        return;
+    }
+    for(auto&& e : array)
+      applyScope(e, localTable, localIndex);
+  } else if(v.is<Symbol>()) {
+    const Symbol& sym(v.as<Symbol>());
+    auto* it(localTable.find(sym));
+    if(it) v = Local{it->value()};
+  }
 }
 
 void Context::read(Stream& stream) {
   Script::Lexer lexer(stream);
-  Var v;
+  Table<Symbol, uint32_t> localTable;
+  uint32_t localIndex(0);
   lexer.nextToken();
   while(!stream.end()) {
-    read(v,lexer);
+    Var v;
+    read(v, lexer);
+    applyScope(v, localTable, localIndex);
+    _stack.size(localIndex);
     execute(v);
   }
+  _stack.size(0);
 }
-void Context::read(Var& v,Lexer& lexer) {
+void Context::read(Var& v, Lexer& lexer) {
   if(lexer.eos())
     L_ERROR("Unexpected end of stream while parsing script: there are uneven () or {}.");
   if(lexer.acceptToken("(")) { // It's a list of expressions
@@ -38,27 +69,27 @@ void Context::read(Var& v,Lexer& lexer) {
     int i(0);
     while(!lexer.acceptToken(")"))
       if(lexer.acceptToken("|"))
-        v = Array<Var>{v},i = 1;
-      else read(v[i++],lexer);
+        v = Array<Var>{v}, i = 1;
+      else read(v[i++], lexer);
   } else if(lexer.acceptToken("{")) { // It's an object
     v.make<Array<Var> >();
     v[0] = (Function)object;
     int i(1);
     while(!lexer.acceptToken("}"))
-      read(v[i++],lexer);
+      read(v[i++], lexer);
   } else if(lexer.acceptToken("'")) {
-    read(v.make<Quote>().var,lexer);
+    read(v.make<Quote>().var, lexer);
   } else if(lexer.acceptToken("!")) {
-    read(v,lexer);
+    read(v, lexer);
     v = execute(v);
-  } else if(lexer.isToken(")") || lexer.isToken("}")){
-    L_ERRORF("Unexpected token %s at line %d",lexer.token(),lexer.line());
+  } else if(lexer.isToken(")") || lexer.isToken("}")) {
+    L_ERRORF("Unexpected token %s at line %d", lexer.token(), lexer.line());
   } else {
     const char* token(lexer.token());
     if(lexer.literal()) v = token; // Character string
-    else if(strpbrk(token,"0123456789")){ // Has digits
-      if(token[strspn(token,"-0123456789")]=='\0') v = atoi(token); // Integer
-      else if(token[strspn(token,"-0123456789.")]=='\0') v = (float)atof(token); // Float
+    else if(strpbrk(token, "0123456789")) { // Has digits
+      if(token[strspn(token, "-0123456789")]=='\0') v = atoi(token); // Integer
+      else if(token[strspn(token, "-0123456789.")]=='\0') v = (float)atof(token); // Float
       else v = Symbol(token);
     } else if(lexer.isToken("true")) v = true;
     else if(lexer.isToken("false")) v = false;
@@ -67,74 +98,65 @@ void Context::read(Var& v,Lexer& lexer) {
   }
 }
 
-Var& Context::variable(Symbol sym) {
-  // Search symbol in locals and sub-locals
-  for(uintptr_t i(0); i<_stack.size(); i++)
-    if(_stack[i].key()==sym)
-      return _stack[i].value();
-  // Search symbol in globals
-  return _globals[sym];
-}
-Var& Context::local(Symbol sym){
-  _stack.push(SymbolVar(sym));
-  return _stack.top().value();
-}
-Var Context::execute(const Var& code,Var* selfOut) {
+Var Context::execute(const Var& code, Var* selfOut) {
   static const Symbol selfSymbol("self");
   if(code.is<Array<Var> >()) {
     const Array<Var>& array(code.as<Array<Var> >()); // Get reference of array value
     Var selfIn;
-    const Var& handle(execute(array[0],&selfIn)); // Execute first child of array to get function handle
+    const Var& handle(execute(array[0], &selfIn)); // Execute first child of array to get function handle
     if(handle.is<Native>())
-      return handle.as<Native>()(*this,array);
+      return handle.as<Native>()(*this, array);
     else if(handle.is<Function>() || handle.is<Ref<CodeFunction> >()) {
       Var wtr;
-      size_t frame(_stack.size()); // Save local frame
-      SymbolVar* stack(&_stack.top()+1);
-      for(uint32_t i(1); i<array.size(); i++) { // For all parameters
-        Symbol sym;
-        if(handle.is<Ref<CodeFunction> >() && handle.as<Ref<CodeFunction> >()->parameters.size()>=i)
-          sym = handle.as<Ref<CodeFunction> >()->parameters[i-1];
-        _stack.push(sym,execute(array[i])); // Compute parameter values
-      }
+      uint32_t frame(_stack.size());
+      for(uint32_t i(1); i<array.size(); i++) // For all parameters
+        _stack.push(execute(array[i])); // Compute parameter values
+      _frames.push(frame); // Save local frame
       if(!selfIn.is<void>()) _selves.push(selfIn);
-      if(handle.is<Ref<CodeFunction> >())
-        wtr = execute(handle.as<Ref<CodeFunction> >()->code);
-      else if(handle.is<Function>()) // It's a function pointer
-        wtr = handle.as<Function>()(selfIn,stack,array.size()-1); // Call function
-      _stack.size(frame); // Resize to the previous frame
+      if(handle.is<Ref<CodeFunction> >()) {
+        const Ref<CodeFunction>& function(handle.as<Ref<CodeFunction> >());
+        _stack.size(currentFrame()+function->localCount);
+        wtr = execute(function->code);
+      } else if(handle.is<Function>()) // It's a function pointer
+        wtr = handle.as<Function>()(*this); // Call function
+      _stack.size(_frames.top()); // Resize to the previous frame
+      _frames.pop();
       if(!selfIn.is<void>()) _selves.pop();
       return wtr;
-    } else if(array.size()>1){
-      Ref<Table<Var,Var>> table;
+    } else if(array.size()>1) {
+      Ref<Table<Var, Var>> table;
       if(selfOut) *selfOut = handle;
-      if(handle.is<Ref<Table<Var,Var>>>())
-        table = handle.as<Ref<Table<Var,Var>>>();
+      if(handle.is<Ref<Table<Var, Var>>>())
+        table = handle.as<Ref<Table<Var, Var>>>();
       else
         table = typeTable(handle.type());
       return (*table)[execute(array[1])];
     }
-  } else if(code.is<Symbol>()) // It's a simple variable or self
-    return (code.as<Symbol>()==selfSymbol)?currentSelf():variable(code.as<Symbol>());
+  } else if(code.is<Local>())
+    return local(code.as<Local>().i);
+  else if(code.is<Symbol>()) // It's a global variable or self
+    return (code.as<Symbol>()==selfSymbol) ? currentSelf() : global(code.as<Symbol>());
   else if(code.is<Quote>()) return code.as<Quote>().var; // Return raw data
   return code;
 }
-Var* Context::reference(const Var& code,Var* src) {
+Var* Context::reference(const Var& code, Var* src) {
   static const Symbol selfSymbol("self");
-  if(code.is<Symbol>()) // It's a symbol so it's a simple reference to a variable
-    return (code.as<Symbol>()==selfSymbol) ? &currentSelf() : &variable(code.as<Symbol>());
-  else if(code.is<Array<Var> >()){ // It's an array so it may be a reference to an object field or a
+  if(code.is<Local>()) // It's a reference to a local variable
+    return &local(code.as<Local>().i);
+  if(code.is<Symbol>()) // It's a symbol so it's a reference to a global variable or self
+    return (code.as<Symbol>()==selfSymbol) ? &currentSelf() : &global(code.as<Symbol>());
+  else if(code.is<Array<Var> >()) { // It's an array so it may be a reference to an object field or a
     const Array<Var>& array(code.as<Array<Var> >());
-    if(array.size()==2){ // It's a pair
+    if(array.size()==2) { // It's a pair
       Var first(execute(array[0]));
-      Ref<Table<Var,Var>> table;
+      Ref<Table<Var, Var>> table;
       if(src) *src = first;
-      if(first.is<Ref<Table<Var,Var>>>()){ // First is a regular table
-        table = first.as<Ref<Table<Var,Var>>>();
+      if(first.is<Ref<Table<Var, Var>>>()) { // First is a regular table
+        table = first.as<Ref<Table<Var, Var>>>();
       } else if(!first.is<Ref<CodeFunction>>() // First is not any kind of function or void
                 && !first.is<Native>()
                 && !first.is<Function>()
-                && !first.is<void>()){
+                && !first.is<void>()) {
         table = typeTable(first.type());
       } else if(first.is<void>())
         L_ERRORF("Trying to index from void");
@@ -145,84 +167,97 @@ Var* Context::reference(const Var& code,Var* src) {
   return nullptr;
 }
 
-Ref<Table<Var,Var>> Context::typeTable(const TypeDescription* td){
+Ref<Table<Var, Var>> Context::typeTable(const TypeDescription* td) {
   Var& tt(_typeTables[td]);
-  if(!tt.is<Ref<Table<Var,Var>>>())
-    tt = ref<Table<Var,Var>>();
-  return tt.as<Ref<Table<Var,Var>>>();
+  if(!tt.is<Ref<Table<Var, Var>>>())
+    tt = ref<Table<Var, Var>>();
+  return tt.as<Ref<Table<Var, Var>>>();
 }
 
-Context::Context() : _self(ref<Table<Var,Var>>()) {
+Context::Context() : _self(ref<Table<Var, Var>>()) {
   L_ONCE;
-  // Local allows to define local variables without overriding more global variables
-  _globals[Symbol("local")] = (Native)([](Context& c,const Array<Var>& a)->Var {
-    if(a.size()>1 && a[1].is<Symbol>()){
-      if(a.size()>2)
-        c.local(a[1].as<Symbol>()) = c.execute(a[2]);
-      else c.local(a[1].as<Symbol>());
+  _globals[Symbol("fun")] = (Native)([](Context& c, const Array<Var>& a)->Var {
+    if(a.size()>1) {
+      Ref<CodeFunction> wtr;
+      Table<Symbol, uint32_t> localTable;
+      uint32_t localIndex(0);
+      wtr.make();
+      if(a.size()>2 && a[1].is<Array<Var> >()) // There's a list of parameter symbols
+        for(auto&& sym : a[1].as<Array<Var> >()) {
+          L_ASSERT(sym.is<Symbol>());
+          localTable[sym.as<Symbol>()] = localIndex++;
+        }
+      wtr->code = a.back();
+      applyScope(wtr->code, localTable, localIndex); // The last part is always the code
+      wtr->localCount = localIndex;
+      return wtr;
     }
     return 0;
   });
-  _globals[Symbol("do")] = (Native)([](Context& c,const Array<Var>& a)->Var {
+  _globals[Symbol("local")] = (Native)([](Context& c, const Array<Var>& a)->Var {
+    L_BREAKPOINT;
+    return 0;
+  });
+  _globals[Symbol("do")] = (Native)([](Context& c, const Array<Var>& a)->Var {
     for(uintptr_t i(1); i<a.size()-1; i++)
       c.execute(a[i]);
     return c.execute(a.back());
   });
-  _globals[Symbol("and")] = (Native)([](Context& c,const Array<Var>& a)->Var {
+  _globals[Symbol("and")] = (Native)([](Context& c, const Array<Var>& a)->Var {
     for(uintptr_t i(1); i<a.size(); i++)
       if(!c.execute(a[i]).get<bool>())
         return false;
     return true;
   });
-  _globals[Symbol("not")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
-    L_ASSERT(params==1);
-    return !stack[0].value().get<bool>();
+  _globals[Symbol("not")] = (Function)([](Context& c)->Var {
+    L_ASSERT(c.localCount()==1);
+    return !c.local(0).get<bool>();
   });
-  _globals[Symbol("non-null")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
-    L_ASSERT(params==1);
-    return stack[0].value().as<void*>()!=nullptr;
+  _globals[Symbol("non-null")] = (Function)([](Context& c)->Var {
+    L_ASSERT(c.localCount()==1);
+    return c.local(0).as<void*>()!=nullptr;
   });
-  _globals[Symbol("count")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
-    L_ASSERT(params==1);
-    if(stack[0]->is<Ref<Table<Var,Var>>>())
-      return (int)stack[0]->as<Ref<Table<Var,Var>>>()->count();
+  _globals[Symbol("count")] = (Function)([](Context& c)->Var {
+    L_ASSERT(c.localCount()==1);
+    if(c.local(0).is<Ref<Table<Var, Var>>>())
+      return (int)c.local(0).as<Ref<Table<Var, Var>>>()->count();
     return 0;
   });
-  _globals[Symbol("or")] = (Native)([](Context& c,const Array<Var>& a)->Var {
+  _globals[Symbol("or")] = (Native)([](Context& c, const Array<Var>& a)->Var {
     for(uintptr_t i(1); i<a.size(); i++)
       if(c.execute(a[i]).get<bool>())
         return true;
     return false;
   });
-  _globals[Symbol("while")] = (Native)([](Context& c,const Array<Var>& a)->Var {
+  _globals[Symbol("while")] = (Native)([](Context& c, const Array<Var>& a)->Var {
     Var wtr;
     while(c.execute(a[1]).get<bool>())
       wtr = c.execute(a[2]);
     return wtr;
   });
-  _globals[Symbol("foreach")] = (Native)([](Context& c,const Array<Var>& a)->Var {
+  _globals[Symbol("foreach")] = (Native)([](Context& c, const Array<Var>& a)->Var {
     L_ASSERT(a.size()>=4);
-    Var *key(nullptr),*value;
+    Var *key(nullptr), *value;
     const Var* exec;
     Var tableVar;
-    if(a.size()==4){ // Value only
-      value = &c.local(a[1].as<Symbol>());
+    if(a.size()==4) { // Value only
+      value = &c.local(a[1].as<Local>().i);
       tableVar = c.execute(a[2]);
       exec = &a[3];
     } else { // Key value
-      key = &c.local(a[1].as<Symbol>());
-      value = &c.local(a[2].as<Symbol>());
+      key = &c.local(a[1].as<Local>().i);
+      value = &c.local(a[2].as<Local>().i);
       tableVar = c.execute(a[3]);
       exec = &a[4];
     }
-    for(auto&& slot : *tableVar.as<Ref<Table<Var,Var>>>()){
+    for(auto&& slot : *tableVar.as<Ref<Table<Var, Var>>>()) {
       if(key) *key = slot.key();
       *value = slot.value();
       c.execute(*exec);
     }
     return Var();
   });
-  _globals[Symbol("if")] = (Native)([](Context& c,const Array<Var>& a)->Var {
+  _globals[Symbol("if")] = (Native)([](Context& c, const Array<Var>& a)->Var {
     for(uintptr_t i(1); i<a.size()-1; i += 2)
       if(c.execute(a[i]).get<bool>())
         return c.execute(a[i+1]);
@@ -230,8 +265,8 @@ Context::Context() : _self(ref<Table<Var,Var>>()) {
       return c.execute(a.back());
     else return 0;
   });
-  _globals[Symbol("switch")] = (Native)([](Context& c,const Array<Var>& a)->Var {
-    if(a.size()>1){
+  _globals[Symbol("switch")] = (Native)([](Context& c, const Array<Var>& a)->Var {
+    if(a.size()>1) {
       const Var v(c.execute(a[1]));
       for(uintptr_t i(2); i<a.size()-1; i += 2)
         if(c.execute(a[i])==v)
@@ -241,52 +276,40 @@ Context::Context() : _self(ref<Table<Var,Var>>()) {
     }
     return 0;
   });
-  _globals[Symbol("set")] = (Native)([](Context& c,const Array<Var>& a)->Var {
-    L_ASSERT(a.size()==3);
-    return *c.reference(a[1]) = c.execute(a[2]);
-  });
-  _globals[Symbol("fun")] = (Native)([](Context& c,const Array<Var>& a)->Var {
-    if(a.size()>1){
-      Ref<CodeFunction> wtr;
-      wtr.make();
-      if(a.size()>2 && a[1].is<Array<Var> >()) // There's a list of parameter symbols
-        for(auto&& sym : a[1].as<Array<Var> >())
-          if(sym.is<Symbol>())
-            wtr->parameters.push(sym.as<Symbol>());
-      wtr->code = a.back(); // The last part is always the code
-      return wtr;
-    }
-    return 0;
+  _globals[Symbol("set")] = (Native)([](Context& c, const Array<Var>& a)->Var {
+    if(a.size()==3)
+      return *c.reference(a[1]) = c.execute(a[2]);
+    else return 0;
   });
 #define CMP(name,cop)\
-  _globals[Symbol(name)] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {\
-    L_ASSERT(params>=2);\
-    for(uintptr_t i(0); i<params-1; i++)\
-      if(stack[i].value() cop stack[i+1].value())\
+  _globals[Symbol(name)] = (Function)([](Context& c)->Var {\
+    L_ASSERT(c.localCount()>=2);\
+    for(uintptr_t i(1); i<c.localCount(); i++)\
+      if(c.local(i-1) cop c.local(i))\
         return false;\
     return true;\
   })
-  CMP("=",!=);
-  CMP("<>",==);
-  CMP(">",<=);
-  CMP("<",>=);
-  CMP(">=",<);
-  CMP("<=",>);
+  CMP("=", !=);
+  CMP("<>", ==);
+  CMP(">", <=);
+  CMP("<", >=);
+  CMP(">=", <);
+  CMP("<=", >);
 #undef CMP
-  _globals[Symbol("max")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
-    L_ASSERT(params>=1);
-    Var wtr(stack[0].value());
-    for(uintptr_t i(1); i<params; i++)
-      if(stack[i].value()>wtr)
-        wtr = stack[i].value();
+  _globals[Symbol("max")] = (Function)([](Context& c)->Var {
+    L_ASSERT(c.localCount()>=1);
+    Var wtr(c.local(0));
+    for(uintptr_t i(1); i<c.localCount(); i++)
+      if(c.local(i)>wtr)
+        wtr = c.local(i);
     return wtr;
   });
-  _globals[Symbol("min")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
-    L_ASSERT(params>=1);
-    Var wtr(stack[0].value());
-    for(uintptr_t i(1); i<params; i++)
-      if(stack[i].value()<wtr)
-        wtr = stack[i].value();
+  _globals[Symbol("min")] = (Function)([](Context& c)->Var {
+    L_ASSERT(c.localCount()>=1);
+    Var wtr(c.local(0));
+    for(uintptr_t i(1); i<c.localCount(); i++)
+      if(c.local(i)<wtr)
+        wtr = c.local(i);
     return wtr;
   });
 #define SETOP(op)\
@@ -303,78 +326,78 @@ Context::Context() : _self(ref<Table<Var,Var>>()) {
   SETOP(/= );
   SETOP(%= );
 #undef SETOP
-  _globals[Symbol("+")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
-    L_ASSERT(params>=1);
-    Var wtr(stack[0].value());
-    for(uintptr_t i(1); i<params; i++)
-      wtr += stack[i].value();
+  _globals[Symbol("+")] = (Function)([](Context& c)->Var {
+    L_ASSERT(c.localCount()>=1);
+    Var wtr(c.local(0));
+    for(uintptr_t i(1); i<c.localCount(); i++)
+      wtr += c.local(i);
     return wtr;
   });
-  _globals[Symbol("*")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
-    L_ASSERT(params>=1);
-    Var wtr(stack[0].value());
-    for(uintptr_t i(1); i<params; i++)
-      wtr *= stack[i].value();
+  _globals[Symbol("*")] = (Function)([](Context& c)->Var {
+    L_ASSERT(c.localCount()>=1);
+    Var wtr(c.local(0));
+    for(uintptr_t i(1); i<c.localCount(); i++)
+      wtr *= c.local(i);
     return wtr;
   });
-  _globals[Symbol("-")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
-    L_ASSERT(params>=1);
-    if(params==1)
-      return Var(0) - stack[0].value(); // TODO: replace with actual neg dynamic operator
-    else{
-      Var wtr(stack[0].value());
-      for(uintptr_t i(1); i<params; i++)
-        wtr -= stack[i].value();
+  _globals[Symbol("-")] = (Function)([](Context& c)->Var {
+    L_ASSERT(c.localCount()>=1);
+    if(c.localCount()==1)
+      return Var(0) - c.local(0); // TODO: replace with actual neg dynamic operator
+    else {
+      Var wtr(c.local(0));
+      for(uintptr_t i(1); i<c.localCount(); i++)
+        wtr -= c.local(i);
       return wtr;
     }
   });
-  _globals[Symbol("/")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
-    L_ASSERT(params==2);
-    return stack[0].value()/stack[1].value();
+  _globals[Symbol("/")] = (Function)([](Context& c)->Var {
+    L_ASSERT(c.localCount()==2);
+    return c.local(0)/c.local(1);
   });
-  _globals[Symbol("%")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
-    L_ASSERT(params==2);
-    return stack[0].value()%stack[1].value();
+  _globals[Symbol("%")] = (Function)([](Context& c)->Var {
+    L_ASSERT(c.localCount()==2);
+    return c.local(0)%c.local(1);
   });
-  _globals[Symbol("print")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
-    for(uintptr_t i(0); i<params; i++)
-      out << stack[i].value();
+  _globals[Symbol("print")] = (Function)([](Context& c)->Var {
+    for(uintptr_t i(0); i<c.localCount(); i++)
+      out << c.local(i);
     return 0;
   });
-  _globals[Symbol("break")] = (Function)([](const Var&, SymbolVar* stack, size_t params)->Var {
+  _globals[Symbol("break")] = (Function)([](Context& c)->Var {
     L_BREAKPOINT;
     return 0;
   });
-  _globals[Symbol("typename")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
-    return stack[0]->type()->name;
+  _globals[Symbol("typename")] = (Function)([](Context& c)->Var {
+    return c.local(0).type()->name;
   });
   _globals[Symbol("object")] = (Function)object;
-  _globals[Symbol("now")] = (Native)([](Context& c,const Array<Var>&)->Var {
+  _globals[Symbol("now")] = (Function)([](Context& c)->Var {
     return Time::now();
   });
-  _globals[Symbol("rand")] = (Native)([](Context& c,const Array<Var>&)->Var {
+  _globals["rand"] = (Function)([](Context& c)->Var {
     return Rand::nextFloat();
   });
-  _globals[Symbol("button-pressed")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
-    if(params){
-      if(stack[0]->is<Symbol>())
-        return Window::isPressed(Window::symbolToButton(stack[0]->as<Symbol>()));
-      else if(stack[0]->is<int>())
-        return Window::isPressed((Window::Event::Button)(stack[0]->as<int>()+'0'));
+  _globals[Symbol("button-pressed")] = (Function)([](Context& c)->Var {
+    if(c.localCount()) {
+      if(c.local(0).is<Symbol>())
+        return Window::isPressed(Window::symbolToButton(c.local(0).as<Symbol>()));
+      else if(c.local(0).is<int>())
+        return Window::isPressed((Window::Event::Button)(c.local(0).as<int>()+'0'));
     }
     return false;
   });
-  _globals[Symbol("vec")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
-    if(params==3)
-      return Vector3f(stack[0]->get<float>(),stack[1]->get<float>(),stack[2]->get<float>());
+  _globals[Symbol("vec")] = (Function)([](Context& c)->Var {
+    if(c.localCount()==3)
+      return Vector3f(c.local(0).get<float>(), c.local(1).get<float>(), c.local(2).get<float>());
     return Vector3f();
   });
-  _globals[Symbol("color")] = (Function)([](const Var&,SymbolVar* stack,size_t params)->Var {
+  _globals[Symbol("color")] = (Function)([](Context& c)->Var {
     Color wtr(Color::white);
-    params = min(params,4u);
-    for(size_t i(0); i<params; i++){
-      byte b((stack[i]->is<float>()) ? (stack[i]->as<float>()*255) : stack[i]->get<int>());
-      switch(i){
+    uint32_t params(min(c.localCount(), 4u));
+    for(size_t i(0); i<params; i++) {
+      byte b((c.local(i).is<float>()) ? (c.local(i).as<float>()*255) : c.local(i).get<int>());
+      switch(i) {
         case 0: wtr.r() = b; break;
         case 1: wtr.g() = b; break;
         case 2: wtr.b() = b; break;
