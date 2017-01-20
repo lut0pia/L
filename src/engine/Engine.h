@@ -3,6 +3,7 @@
 #include "../containers/Pool.h"
 #include "../containers/Ref.h"
 #include "../containers/Table.h"
+#include "../dynamic/Variable.h"
 #include "../gl/Texture.h"
 #include "../gl/Mesh.h"
 #include "../time/Timer.h"
@@ -21,15 +22,15 @@ namespace L {
 
   class Engine {
   private:
-    static Array<void(*)()> _updates,_subUpdates,_lateUpdates;
+    static Array<void(*)()> _updates, _subUpdates, _lateUpdates;
     static Array<void(*)(const Camera&)> _renders;
     static Array<void(*)(const Window::Event&)> _windowEvents;
     static Array<void(*)(const Device::Event&)> _deviceEvents;
-    static Table<uint32_t,Ref<GL::Texture> > _textures;
-    static Table<uint32_t,Ref<GL::Mesh> > _meshes;
+    static Table<uint32_t, Ref<GL::Texture> > _textures;
+    static Table<uint32_t, Ref<GL::Mesh> > _meshes;
     static Timer _timer;
     static Time _deltaTime;
-    static float _deltaSeconds,_subDeltaSeconds,_fps,_timescale;
+    static float _deltaSeconds, _subDeltaSeconds, _fps, _timescale;
     static uint32_t _frame;
   public:
     static inline float deltaSeconds() { return _deltaSeconds; }
@@ -50,7 +51,7 @@ namespace L {
 
     // Rendering
     static GL::Buffer& sharedUniform();
-    static void ditherMatrix(const float* data,size_t width,size_t height);
+    static void ditherMatrix(const float* data, size_t width, size_t height);
 
     // Resources
     static const Ref<GL::Texture>& texture(const char* filepath);

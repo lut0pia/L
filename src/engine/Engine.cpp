@@ -12,24 +12,24 @@
 
 using namespace L;
 
-Array<void(*)()> Engine::_updates,Engine::_subUpdates,Engine::_lateUpdates;
+Array<void(*)()> Engine::_updates, Engine::_subUpdates, Engine::_lateUpdates;
 Array<void(*)(const Camera&)> Engine::_renders;
 Array<void(*)(const L::Window::Event&)> Engine::_windowEvents;
 Array<void(*)(const Device::Event&)> Engine::_deviceEvents;
-Table<uint32_t,Ref<GL::Texture> > Engine::_textures;
-Table<uint32_t,Ref<GL::Mesh> > Engine::_meshes;
+Table<uint32_t, Ref<GL::Texture> > Engine::_textures;
+Table<uint32_t, Ref<GL::Mesh> > Engine::_meshes;
 Timer Engine::_timer;
 L::Time Engine::_deltaTime;
-float Engine::_deltaSeconds,Engine::_subDeltaSeconds,Engine::_fps,Engine::_timescale(1.f);
+float Engine::_deltaSeconds, Engine::_subDeltaSeconds, Engine::_fps, Engine::_timescale(1.f);
 uint32_t Engine::_frame(0);
 
 void Engine::update() {
   _deltaTime = _timer.frame();
   _fps = 1.f/_deltaTime.fSeconds();
-  _deltaTime = min(_deltaTime*_timescale,Time(0,100)); // Cap delta time to avoid weird behaviour
+  _deltaTime = min(_deltaTime*_timescale, Time(0, 100)); // Cap delta time to avoid weird behaviour
   _deltaSeconds = _deltaTime.fSeconds();
   Script::Context::global("delta") = _deltaSeconds;
-  Engine::sharedUniform().subData(L_SHAREDUNIFORM_FRAME,sizeof(uint32_t),&_frame);
+  Engine::sharedUniform().subData(L_SHAREDUNIFORM_FRAME, sizeof(uint32_t), &_frame);
 
   {
     Window::Event e;
@@ -47,15 +47,15 @@ void Engine::update() {
   for(auto&& update : _updates)
     update();
   {
-    static Time subDelta(0,10);
+    static Time subDelta(0, 10);
     Time deltaCountDown(_deltaTime);
-    while(deltaCountDown>Time(500)){
+    while(deltaCountDown>Time(500)) {
       Timer timer;
-      _subDeltaSeconds = min(deltaCountDown,subDelta).fSeconds();
+      _subDeltaSeconds = min(deltaCountDown, subDelta).fSeconds();
       for(auto&& subUpdate : _subUpdates)
         subUpdate();
       deltaCountDown -= subDelta;
-      subDelta = min(timer.since()*4.f,_deltaTime);
+      subDelta = min(timer.since()*4.f, _deltaTime);
     }
   }
   for(auto&& lateUpdate : _lateUpdates)
@@ -63,7 +63,7 @@ void Engine::update() {
 
   Entity::flushDestroyQueue();
 
-  for(auto&& camera : Pool<Camera>::global){
+  for(auto&& camera : Pool<Camera>::global) {
     camera.prerender();
     for(auto&& render : _renders)
       render(camera);
@@ -76,14 +76,14 @@ void Engine::clear() {
   Pool<Entity>::global.clear();
 }
 
-GL::Buffer& Engine::sharedUniform(){
-  static GL::Buffer u(GL_UNIFORM_BUFFER,L_SHAREDUNIFORM_SIZE,nullptr,GL_DYNAMIC_DRAW,0);
+GL::Buffer& Engine::sharedUniform() {
+  static GL::Buffer u(GL_UNIFORM_BUFFER, L_SHAREDUNIFORM_SIZE, nullptr, GL_DYNAMIC_DRAW, 0);
   return u;
 }
-void Engine::ditherMatrix(const float* data,size_t width,size_t height){
-  sharedUniform().subData(L_SHAREDUNIFORM_DITHERMATRIXSIZE,4,&width);
-  sharedUniform().subData(L_SHAREDUNIFORM_DITHERMATRIXSIZE+4,4,&height);
-  sharedUniform().subData(L_SHAREDUNIFORM_DITHERMATRIX,width*height*4,data);
+void Engine::ditherMatrix(const float* data, size_t width, size_t height) {
+  sharedUniform().subData(L_SHAREDUNIFORM_DITHERMATRIXSIZE, 4, &width);
+  sharedUniform().subData(L_SHAREDUNIFORM_DITHERMATRIXSIZE+4, 4, &height);
+  sharedUniform().subData(L_SHAREDUNIFORM_DITHERMATRIX, width*height*4, data);
 }
 
 const Ref<GL::Texture>& Engine::texture(const char* fp) {
