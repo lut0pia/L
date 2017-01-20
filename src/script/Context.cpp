@@ -123,7 +123,7 @@ Var Context::execute(const Var& code, Var* selfOut) {
       _frames.pop();
       if(!selfIn.is<void>()) _selves.pop();
       return wtr;
-    } else if(array.size()>1) {
+    } else if(array.size()>1 && !handle.is<void>()) {
       Ref<Table<Var, Var>> table;
       if(selfOut) *selfOut = handle;
       if(handle.is<Ref<Table<Var, Var>>>())
@@ -132,6 +132,7 @@ Var Context::execute(const Var& code, Var* selfOut) {
         table = typeTable(handle.type());
       return (*table)[execute(array[1])];
     }
+    err << "Unable to execute command " << array << "\n";
   } else if(code.is<Local>())
     return local(code.as<Local>().i);
   else if(code.is<Symbol>()) // It's a global variable or self
