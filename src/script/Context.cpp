@@ -166,6 +166,21 @@ Var* Context::reference(const Var& code, Var* src) {
   }
   return nullptr;
 }
+bool Context::tryExecuteMethod(const Symbol& sym, std::initializer_list<Var> parameters) {
+  static Var methodCall(Array<Var>(1, Var(Array<Var>{Symbol("self"), Script::Quote{Symbol()}})));
+  static Array<Var>& callArray(methodCall.as<Array<Var>>());
+  static Symbol& callSym(callArray[0].as<Array<Var>>()[1].as<Script::Quote>().var.as<Symbol>());
+  auto it(_self.as<Ref<Table<Var, Var>>>()->find(sym));
+  if(it) {
+    callSym = sym;
+    callArray.size(1);
+    for(auto&& p : parameters)
+      callArray.push(p);
+    execute(methodCall);
+    return true;
+  }
+  return false;
+}
 
 Ref<Table<Var, Var>> Context::typeTable(const TypeDescription* td) {
   Var& tt(_typeTables[td]);

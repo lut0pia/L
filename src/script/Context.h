@@ -38,6 +38,7 @@ namespace L {
       inline Var& local(uint32_t i) { return _stack.bottom(i+currentFrame()); }
       Var execute(const Var& code, Var* selfOut = nullptr);
       Var* reference(const Var& code, Var* selfOut = nullptr);
+      bool tryExecuteMethod(const Symbol&, std::initializer_list<Var> = {});
 
       static inline Var& global(Symbol s) { return _globals[s]; }
       static Ref<Table<Var, Var>> typeTable(const TypeDescription*);

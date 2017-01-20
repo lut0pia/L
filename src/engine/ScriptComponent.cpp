@@ -13,23 +13,23 @@ using namespace L;
 using namespace Script;
 
 void ScriptComponent::updateComponents() {
-  static Var updateComponentsCall(Array<Var>{Symbol("update-components")});
+  static const Symbol updateComponentsSymbol("update-components");
   _context.selfTable()[Symbol("entity")] = entity();
-  _context.execute(updateComponentsCall);
+  _context.tryExecuteMethod(updateComponentsSymbol);
 }
 void ScriptComponent::load(const char* filename) {
-  static Var startCall(Array<Var>(1, Var(Array<Var>{Symbol("self"), Script::Quote{Symbol("start")}})));
+  static const Symbol startSymbol("start");
   FileStream stream(filename, "rb");
   _context.read(stream);
-  _context.execute(startCall);
+  _context.tryExecuteMethod(startSymbol);
 }
 void ScriptComponent::update() {
-  static Var updateCall(Array<Var>(1, Var(Array<Var>{Symbol("self"), Script::Quote{Symbol("update")}})));
-  _context.execute(updateCall);
+  static const Symbol updateSymbol("update");
+  _context.tryExecuteMethod(updateSymbol);
 }
 void ScriptComponent::lateUpdate() {
-  static Var updateCall(Array<Var>(1, Var(Array<Var>{Symbol("self"), Script::Quote{Symbol("late-update")}})));
-  _context.execute(updateCall);
+  static const Symbol lateUpdateSymbol("late-update");
+  _context.tryExecuteMethod(lateUpdateSymbol);
 }
 void ScriptComponent::event(const Device::Event& e) {
   auto table(ref<Table<Var, Var>>());
@@ -58,8 +58,8 @@ void ScriptComponent::event(const Window::Event& e) {
   event(table);
 }
 void ScriptComponent::event(const Ref<Table<Var, Var>>&e) {
-  Var eventCall(Array<Var>{Array<Var>{Symbol("self"), Script::Quote{Symbol("event")}},e});
-  _context.execute(eventCall);
+  static const Symbol eventSymbol("event");
+  _context.tryExecuteMethod(eventSymbol, {e});
 }
 
 void ScriptComponent::init() {
