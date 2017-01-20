@@ -16,8 +16,8 @@ Array<void(*)()> Engine::_updates,Engine::_subUpdates,Engine::_lateUpdates;
 Array<void(*)(const Camera&)> Engine::_renders;
 Array<void(*)(const L::Window::Event&)> Engine::_windowEvents;
 Array<void(*)(const Device::Event&)> Engine::_deviceEvents;
-Map<uint32_t,Ref<GL::Texture> > Engine::_textures;
-Map<uint32_t,Ref<GL::Mesh> > Engine::_meshes;
+Table<uint32_t,Ref<GL::Texture> > Engine::_textures;
+Table<uint32_t,Ref<GL::Mesh> > Engine::_meshes;
 Timer Engine::_timer;
 L::Time Engine::_deltaTime;
 float Engine::_deltaSeconds,Engine::_subDeltaSeconds,Engine::_fps,Engine::_timescale(1.f);
@@ -87,14 +87,14 @@ void Engine::ditherMatrix(const float* data,size_t width,size_t height){
 }
 
 const Ref<GL::Texture>& Engine::texture(const char* fp) {
-  String filepath(fp);
-  if(_textures.has(fnv1a(filepath)))
-    return _textures[fnv1a(filepath)];
-  else return _textures[fnv1a(filepath)] = ref<GL::Texture>(Bitmap(filepath));
+  const uint32_t h(hash(fp));
+  auto it(_textures.find(h));
+  if(it && !it->empty()) return it->value();
+  else return _textures[h] = ref<GL::Texture>(Bitmap(fp));
 }
 const Ref<GL::Mesh>& Engine::mesh(const char* fp) {
-  String filepath(fp);
-  if(_meshes.has(fnv1a(filepath)))
-    return _meshes[fnv1a(filepath)];
-  else return _meshes[fnv1a(filepath)] = ref<GL::Mesh>(filepath);
+  const uint32_t h(hash(fp));
+  auto it(_meshes.find(h));
+  if(it && !it->empty()) return it->value();
+  else return _meshes[h] = ref<GL::Mesh>(fp);
 }

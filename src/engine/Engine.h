@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../containers/Map.h"
 #include "../containers/Pool.h"
 #include "../containers/Ref.h"
+#include "../containers/Table.h"
 #include "../gl/Texture.h"
 #include "../gl/Mesh.h"
 #include "../time/Timer.h"
@@ -25,8 +25,8 @@ namespace L {
     static Array<void(*)(const Camera&)> _renders;
     static Array<void(*)(const Window::Event&)> _windowEvents;
     static Array<void(*)(const Device::Event&)> _deviceEvents;
-    static Map<uint32_t,Ref<GL::Texture> > _textures;
-    static Map<uint32_t,Ref<GL::Mesh> > _meshes;
+    static Table<uint32_t,Ref<GL::Texture> > _textures;
+    static Table<uint32_t,Ref<GL::Mesh> > _meshes;
     static Timer _timer;
     static Time _deltaTime;
     static float _deltaSeconds,_subDeltaSeconds,_fps,_timescale;
