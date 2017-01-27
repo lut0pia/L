@@ -15,7 +15,7 @@ namespace L {
     typedef Var(*Function)(Context&);
     typedef Var(*Native)(Context&, const Array<Var>&);
     typedef struct { uint32_t i; } Local;
-    typedef struct { Var var; } Quote;
+    typedef struct { Symbol sym; } RawSymbol;
     typedef struct { Var code; uint32_t localCount; } CodeFunction;
     class Context {
     private:
@@ -45,7 +45,7 @@ namespace L {
       static inline Var& typeValue(const TypeDescription* td, const Var& k) { return (*typeTable(td))[k]; }
     };
   }
-  inline Stream& operator<<(Stream& s, const Script::Quote& v) { return s << '\'' << v.var; }
+  inline Stream& operator<<(Stream& s, const Script::RawSymbol& v) { return s << '\'' << v.sym; }
 }
 
 

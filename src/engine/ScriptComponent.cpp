@@ -163,7 +163,7 @@ void ScriptComponent::init() {
   L_COMPONENT_METHOD(ScriptComponent, "load", 1, load(c.local(0).get<String>()));
   L_COMPONENT_FUNCTION(ScriptComponent, "call", 1, {
     L_ASSERT(c.local(0).is<Symbol>());
-    Array<Var> code(Array<Var>(1, Var(Array<Var>{Symbol("self"), Script::Quote{c.local(0).as<Symbol>()}})));
+    Array<Var> code(Array<Var>(1, Var(Array<Var>{Symbol("self"), Script::RawSymbol{c.local(0).as<Symbol>()}})));
     for(uint32_t i(1); i<c.localCount(); i++)
       code.push(c.local(i));
     return c.currentSelf().as<ScriptComponent*>()->_context.execute(code);

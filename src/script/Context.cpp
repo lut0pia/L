@@ -78,7 +78,10 @@ void Context::read(Var& v, Lexer& lexer) {
     while(!lexer.acceptToken("}"))
       read(v[i++], lexer);
   } else if(lexer.acceptToken("'")) {
-    read(v.make<Quote>().var, lexer);
+    read(v, lexer);
+    L_ASSERT(v.is<Symbol>());
+    const Symbol sym(v.as<Symbol>());
+    v.make<RawSymbol>().sym = sym;
   } else if(lexer.acceptToken("!")) {
     read(v, lexer);
     v = execute(v);
@@ -137,7 +140,7 @@ Var Context::execute(const Var& code, Var* selfOut) {
     return local(code.as<Local>().i);
   else if(code.is<Symbol>()) // It's a global variable or self
     return (code.as<Symbol>()==selfSymbol) ? currentSelf() : global(code.as<Symbol>());
-  else if(code.is<Quote>()) return code.as<Quote>().var; // Return raw data
+  else if(code.is<RawSymbol>()) return code.as<RawSymbol>().sym; // Return raw symbol
   return code;
 }
 Var* Context::reference(const Var& code, Var* src) {
@@ -168,9 +171,9 @@ Var* Context::reference(const Var& code, Var* src) {
   return nullptr;
 }
 bool Context::tryExecuteMethod(const Symbol& sym, std::initializer_list<Var> parameters) {
-  static Var methodCall(Array<Var>(1, Var(Array<Var>{Symbol("self"), Script::Quote{Symbol()}})));
+  static Var methodCall(Array<Var>(1, Var(Array<Var>{Symbol("self"), Script::RawSymbol()})));
   static Array<Var>& callArray(methodCall.as<Array<Var>>());
-  static Symbol& callSym(callArray[0].as<Array<Var>>()[1].as<Script::Quote>().var.as<Symbol>());
+  static Symbol& callSym(callArray[0].as<Array<Var>>()[1].as<Script::RawSymbol>().sym);
   auto it(_self.as<Ref<Table<Var, Var>>>()->find(sym));
   if(it) {
     callSym = sym;
