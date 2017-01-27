@@ -12,7 +12,7 @@ Variable::Variable(const char* s) : _td(Type<String>::description()) {
 }
 Variable::Variable(const Variable& other) : _td(other._td) {
   if(local()) // Value is to be contained locally
-    _td->cpyto(value(),other.value());
+    _td->cpyto(_data,other._data);
   else _p = _td->cpy(other._p);
 }
 Variable::Variable(Variable&& other) : _td(other._td) {
