@@ -43,7 +43,7 @@ namespace L {
     static TypeDescription td;
     static TypeDescription makeDesc() {
       TypeDescription wtr = {
-        "",sizeof(T),
+        Symbol(),sizeof(T),
         cpy,cpyto,assign,dtr,del,out,Type<T>::hash,0
       };
 #if defined _MSC_VER
