@@ -12,7 +12,7 @@ namespace L {
     static char *_blobNext,*_blobEnd;
     const char* _string;
   public:
-    inline Symbol() : _string(nullptr){}
+    constexpr Symbol() : _string(nullptr){}
     Symbol(const char* str){
       const Table<const char*,const char*>::Slot* slot(_symbols.find(str));
       if(slot){
