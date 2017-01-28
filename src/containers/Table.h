@@ -24,6 +24,10 @@ namespace L {
         new(&layout()._key)K(key);
         new(&layout()._value)V();
       }
+      inline ~Slot() {
+        if(!empty())
+          layout().~Layout();
+      }
       inline bool empty() const { return !hash(); }
       inline uint32_t hash() const { return layout()._hash; }
       inline const K& key() const { return layout()._key; }
