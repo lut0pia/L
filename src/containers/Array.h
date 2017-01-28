@@ -41,6 +41,7 @@ namespace L {
     }
     inline Array(Array&& other) : _data(other._data),_size(other._size),_capacity(other._capacity){
       other._data = nullptr;
+      other._size = other._capacity = 0;
     }
     inline ~Array() {
       if(_data){
