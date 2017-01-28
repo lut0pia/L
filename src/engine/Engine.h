@@ -3,10 +3,10 @@
 #include "../containers/Pool.h"
 #include "../containers/Ref.h"
 #include "../containers/Table.h"
-#include "../dynamic/Variable.h"
 #include "../gl/Texture.h"
 #include "../gl/Mesh.h"
 #include "../time/Timer.h"
+#include "../script/Context.h"
 #include "../system/Device.h"
 #include "../system/Window.h"
 
@@ -28,6 +28,7 @@ namespace L {
     static Array<void(*)(const Device::Event&)> _deviceEvents;
     static Table<uint32_t, Ref<GL::Texture> > _textures;
     static Table<uint32_t, Ref<GL::Mesh> > _meshes;
+    static Table<uint32_t, Ref<Script::CodeFunction>> _scripts;
     static Timer _timer;
     static Time _deltaTime;
     static float _deltaSeconds, _subDeltaSeconds, _fps, _timescale;
@@ -56,5 +57,6 @@ namespace L {
     // Resources
     static const Ref<GL::Texture>& texture(const char* filepath);
     static const Ref<GL::Mesh>& mesh(const char* filepath);
+    static const Ref<Script::CodeFunction>& script(const char* filepath);
   };
 }

@@ -18,6 +18,7 @@ Array<void(*)(const L::Window::Event&)> Engine::_windowEvents;
 Array<void(*)(const Device::Event&)> Engine::_deviceEvents;
 Table<uint32_t, Ref<GL::Texture> > Engine::_textures;
 Table<uint32_t, Ref<GL::Mesh> > Engine::_meshes;
+Table<uint32_t, Ref<Script::CodeFunction>> Engine::_scripts;
 Timer Engine::_timer;
 L::Time Engine::_deltaTime;
 float Engine::_deltaSeconds, Engine::_subDeltaSeconds, Engine::_fps, Engine::_timescale(1.f);
@@ -97,4 +98,13 @@ const Ref<GL::Mesh>& Engine::mesh(const char* fp) {
   auto it(_meshes.find(h));
   if(it && !it->empty()) return it->value();
   else return _meshes[h] = ref<GL::Mesh>(fp);
+}
+const Ref<Script::CodeFunction>& Engine::script(const char* fp) {
+  const uint32_t h(hash(fp));
+  auto it(_scripts.find(h));
+  if(it && !it->empty()) return it->value();
+  else {
+    FileStream stream(fp, "rb");
+    return _scripts[h] = ref<Script::CodeFunction>(Script::Context::read(stream));
+  }
 }

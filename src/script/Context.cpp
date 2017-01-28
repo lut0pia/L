@@ -22,13 +22,13 @@ static Var object(Context& c) {
   return wtr;
 }
 static void applyScope(Var& v, Table<Symbol, uint32_t>& localTable, uint32_t& localIndex) {
-  static Symbol localSymbol("local"), funSymbol("fun"), foreachSymbol("foreach");
+  static Symbol localSymbol("local"), funSymbol("fun"), foreachSymbol("foreach"), setSymbol("set");
   if(v.is<Array<Var>>()) {
     Array<Var>& array(v.as<Array<Var>>());
     if(array[0].is<Symbol>()) {
       const Symbol& sym(array[0].as<Symbol>());
       if(array[1].is<Symbol>() && sym==localSymbol) {
-        array[0] = Symbol("set");
+        array[0] = setSymbol;
         localTable[array[1].as<Symbol>()] = localIndex++;
       } else if(sym==foreachSymbol) {
         if(array.size()>=4) // Value only
@@ -41,25 +41,25 @@ static void applyScope(Var& v, Table<Symbol, uint32_t>& localTable, uint32_t& lo
     for(auto&& e : array)
       applyScope(e, localTable, localIndex);
   } else if(v.is<Symbol>()) {
-    const Symbol& sym(v.as<Symbol>());
-    auto* it(localTable.find(sym));
-    if(it) v = Local{it->value()};
+    if(auto* it = localTable.find(v.as<Symbol>()))
+      v = Local{it->value()};
   }
 }
 
-void Context::read(Stream& stream) {
+CodeFunction Context::read(Stream& stream) {
+  CodeFunction wtr{Array<Var>{Symbol("do")}};
+  Array<Var>& array(wtr.code.as<Array<Var>>());
   Script::Lexer lexer(stream);
-  Table<Symbol, uint32_t> localTable;
-  uint32_t localIndex(0);
   lexer.nextToken();
   while(!stream.end()) {
-    Var v;
-    read(v, lexer);
-    applyScope(v, localTable, localIndex);
-    _stack.size(localIndex);
-    execute(v);
+    array.push();
+    read(array.back(), lexer);
   }
-  _stack.size(0);
+  Table<Symbol, uint32_t> localTable;
+  uint32_t localIndex(0);
+  applyScope(wtr.code, localTable, localIndex);
+  wtr.localCount = localIndex;
+  return wtr;
 }
 void Context::read(Var& v, Lexer& lexer) {
   if(lexer.eos())
@@ -84,7 +84,6 @@ void Context::read(Var& v, Lexer& lexer) {
     v.make<RawSymbol>().sym = sym;
   } else if(lexer.acceptToken("!")) {
     read(v, lexer);
-    v = execute(v);
   } else if(lexer.isToken(")") || lexer.isToken("}")) {
     L_ERRORF("Unexpected token %s at line %d", lexer.token(), lexer.line());
   } else {
@@ -111,7 +110,7 @@ Var Context::execute(const Var& code, Var* selfOut) {
       return handle.as<Native>()(*this, array);
     else if(handle.is<Function>() || handle.is<Ref<CodeFunction> >()) {
       Var wtr;
-      uint32_t frame(_stack.size());
+      const uint32_t frame(_stack.size());
       for(uint32_t i(1); i<array.size(); i++) // For all parameters
         _stack.push(execute(array[i])); // Compute parameter values
       _frames.push(frame); // Save local frame

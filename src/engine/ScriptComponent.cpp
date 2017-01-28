@@ -19,8 +19,7 @@ void ScriptComponent::updateComponents() {
 }
 void ScriptComponent::load(const char* filename) {
   static const Symbol startSymbol("start");
-  FileStream stream(filename, "rb");
-  _context.read(stream);
+  _context.execute(Array<Var>{Engine::script(filename)});
   _context.tryExecuteMethod(startSymbol);
 }
 void ScriptComponent::update() {

@@ -28,11 +28,8 @@ int main(int argc,const char* argv[]) {
   Engine::addLateUpdate<ScriptComponent>();
   {
     ScriptComponent::init();
-    FileStream file("startup.ls","rb");
-    if(file){
-      Script::Context startupContext;
-      startupContext.read(file);
-    } else out << "Couldn't open file startup.ls\n";
+    Script::Context startupContext;
+    startupContext.execute(Array<Var>{Engine::script("startup.ls")});
   }
   const uint32_t bs(32);
   float bayer[bs*bs];

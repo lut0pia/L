@@ -28,8 +28,8 @@ namespace L {
 
     public:
       Context();
-      void read(Stream&);
-      void read(Var& v, Lexer& lexer);
+      static CodeFunction read(Stream&);
+      static void read(Var& v, Lexer& lexer);
 
       inline Var& currentSelf() { return (_selves.empty()) ? _self : _selves.top(); }
       inline Table<Var, Var>& selfTable() { return *_self.as<Ref<Table<Var, Var>>>(); }
