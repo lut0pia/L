@@ -47,10 +47,10 @@
   </Type>
 
   <Type Name="L::StaticStack&lt;*,*&gt;">
-    <DisplayString>{{size={_current+1-(const $T2*)_array}}}</DisplayString>
+    <DisplayString>{{size={_size}}}</DisplayString>
     <Expand>
       <ArrayItems>
-        <Size>_current+1-(const $T2*)_array</Size>
+        <Size>_size</Size>
         <ValuePointer>($T2*)_array</ValuePointer>
       </ArrayItems>
     </Expand>
