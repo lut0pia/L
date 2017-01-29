@@ -35,5 +35,6 @@ namespace L {
       while(s>size()) push();
     }
     inline bool empty() const { return size()==0; }
+    inline void clear() { size(0); }
   };
 }
