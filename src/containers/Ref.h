@@ -45,11 +45,12 @@ namespace L {
       return *this;
     }
     template <typename... Args>
-    void make(Args&&... args){
+    T& make(Args&&... args){
       this->~Ref();
       _p = (T*)((byte*)Memory::alloc(sizeof(T)+offset)+offset);
       counter() = 1;
       new(_p)T(args...);
+      return **this;
     }
     template <class R> inline bool operator==(const Ref<R>& other) { return _p==other._p; }
     inline const T& operator*() const { return *_p; }
