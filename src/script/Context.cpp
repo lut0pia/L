@@ -13,16 +13,14 @@ using namespace Script;
 Table<Symbol, Var> Context::_globals;
 Table<const TypeDescription*, Var> Context::_typeTables;
 
-static Var object(Context& c) {
-  Ref<Table<Var, Var> > wtr(ref<Table<Var, Var>>());
-  Table<Var, Var>& table(*wtr);
+static void object(Context& c) {
+  Table<Var, Var>& table(c.returnValue().make<Ref<Table<Var, Var>>>().make());
   const uint32_t params(c.localCount());
   for(uint32_t i(1); i<params; i += 2)
     table[c.local(i-1)] = c.local(i);
-  return wtr;
 }
 static void applyScope(Var& v, Table<Symbol, uint32_t>& localTable, uint32_t& localIndex) {
-  static Symbol localSymbol("local"), funSymbol("fun"), foreachSymbol("foreach"), setSymbol("set");
+  static const Symbol localSymbol("local"), funSymbol("fun"), foreachSymbol("foreach"), setSymbol("set");
   if(v.is<Array<Var>>()) {
     Array<Var>& array(v.as<Array<Var>>());
     if(array[0].is<Symbol>()) {
@@ -47,7 +45,8 @@ static void applyScope(Var& v, Table<Symbol, uint32_t>& localTable, uint32_t& lo
 }
 
 CodeFunction Context::read(Stream& stream) {
-  CodeFunction wtr{Array<Var>{Symbol("do")}};
+  static const Symbol doSymbol("do");
+  CodeFunction wtr{Array<Var>{doSymbol}};
   Array<Var>& array(wtr.code.as<Array<Var>>());
   Script::Lexer lexer(stream);
   lexer.nextToken();
@@ -100,31 +99,51 @@ void Context::read(Var& v, Lexer& lexer) {
   }
 }
 
-Var Context::execute(const Var& code, Var* selfOut) {
+Var Context::executeReturn(const Var& code) {
+  const Var wtr(executeRef(code));
+  _stack.pop();
+  return wtr;
+}
+Var& Context::executeRef(const Var& code) {
+  const size_t stackSize(_stack.size());
+  execute(code);
+  L_ASSERT(stackSize+1);
+  return _stack.top();
+}
+void Context::discardExecute(const Var& code) {
+  _stack.pop();
+  execute(code);
+}
+void Context::executeDiscard(const Var& code) {
+  const size_t stackSize(_stack.size());
+  execute(code);
+  L_ASSERT(stackSize+1);
+  _stack.pop();
+}
+void Context::execute(const Var& code, Var* selfOut) {
   static const Symbol selfSymbol("self");
   if(code.is<Array<Var> >()) {
-    const Array<Var>& array(code.as<Array<Var> >()); // Get reference of array value
+    const Array<Var>& array(code.as<Array<Var>>()); // Get reference of array value
     Var selfIn;
-    const Var& handle(execute(array[0], &selfIn)); // Execute first child of array to get function handle
+    execute(array[0], &selfIn); // Execute first child of array to get function handle
+    const Var& handle(_stack.top());
     if(handle.is<Native>())
-      return handle.as<Native>()(*this, array);
-    else if(handle.is<Function>() || handle.is<Ref<CodeFunction> >()) {
-      Var wtr;
-      const uint32_t frame(_stack.size());
+      handle.as<Native>()(*this, array);
+    else if(handle.is<Function>() || handle.is<Ref<CodeFunction>>()) {
       for(uint32_t i(1); i<array.size(); i++) // For all parameters
-        _stack.push(execute(array[i])); // Compute parameter values
-      _frames.push(frame); // Save local frame
+        execute(array[i]); // Compute parameter values
+      _frames.push(_stack.size()-array.size()+1); // Save local frame
       if(!selfIn.is<void>()) _selves.push(selfIn);
-      if(handle.is<Ref<CodeFunction> >()) {
-        const Ref<CodeFunction>& function(handle.as<Ref<CodeFunction> >());
+      if(handle.is<Ref<CodeFunction>>()) {
+        const Ref<CodeFunction>& function(handle.as<Ref<CodeFunction>>());
         _stack.size(currentFrame()+function->localCount);
-        wtr = execute(function->code);
+        execute(function->code);
+        returnValue() = _stack.top();
       } else if(handle.is<Function>()) // It's a function pointer
-        wtr = handle.as<Function>()(*this); // Call function
+        handle.as<Function>()(*this); // Call function
       _stack.size(_frames.top()); // Resize to the previous frame
       _frames.pop();
       if(!selfIn.is<void>()) _selves.pop();
-      return wtr;
     } else if(array.size()>1 && !handle.is<void>()) {
       Ref<Table<Var, Var>> table;
       if(selfOut) *selfOut = handle;
@@ -132,15 +151,16 @@ Var Context::execute(const Var& code, Var* selfOut) {
         table = handle.as<Ref<Table<Var, Var>>>();
       else
         table = typeTable(handle.type());
-      return (*table)[execute(array[1])];
-    }
-    err << "Unable to execute command " << array << "\n";
+      _stack.pop(); // Pop handle
+      execute(array[1]); // Push index
+      _stack.top() = (*table)[_stack.top()]; // Fetch value in table (replace index)
+    } else err << "Unable to execute command " << array << "\n";
   } else if(code.is<Local>())
-    return local(code.as<Local>().i);
+    _stack.push(local(code.as<Local>().i));
   else if(code.is<Symbol>()) // It's a global variable or self
-    return (code.as<Symbol>()==selfSymbol) ? currentSelf() : global(code.as<Symbol>());
-  else if(code.is<RawSymbol>()) return code.as<RawSymbol>().sym; // Return raw symbol
-  return code;
+    _stack.push(code.as<Symbol>()==selfSymbol ? currentSelf() : global(code.as<Symbol>()));
+  else if(code.is<RawSymbol>()) _stack.push(code.as<RawSymbol>().sym); // Return raw symbol
+  else _stack.push(code); // Return raw value
 }
 Var* Context::reference(const Var& code, Var* src) {
   static const Symbol selfSymbol("self");
@@ -151,20 +171,24 @@ Var* Context::reference(const Var& code, Var* src) {
   else if(code.is<Array<Var> >()) { // It's an array so it may be a reference to an object field or a
     const Array<Var>& array(code.as<Array<Var> >());
     if(array.size()==2) { // It's a pair
-      Var first(execute(array[0]));
+      Var& handle(executeRef(array[0])); // Compute handle
       Ref<Table<Var, Var>> table;
-      if(src) *src = first;
-      if(first.is<Ref<Table<Var, Var>>>()) { // First is a regular table
-        table = first.as<Ref<Table<Var, Var>>>();
-      } else if(!first.is<Ref<CodeFunction>>() // First is not any kind of function or void
-                && !first.is<Native>()
-                && !first.is<Function>()
-                && !first.is<void>()) {
-        table = typeTable(first.type());
-      } else if(first.is<void>())
+      if(src) *src = handle;
+      if(handle.is<Ref<Table<Var, Var>>>()) { // First is a regular table
+        table = handle.as<Ref<Table<Var, Var>>>();
+      } else if(!handle.is<Ref<CodeFunction>>() // First is not any kind of function or void
+                && !handle.is<Native>()
+                && !handle.is<Function>()
+                && !handle.is<void>()) {
+        table = typeTable(handle.type());
+      } else if(handle.is<void>())
         L_ERRORF("Trying to index from void");
       else return nullptr;
-      return &(*table)[execute(array[1])]; // Compute index and return pointer to field
+      execute(array[1]); // Compute index
+      Var* wtr(&(*table)[_stack.top()]); // Get pointer to field
+      _stack.pop(); // Clean up index
+      _stack.pop(); // Clean up handle
+      return wtr;
     }
   }
   return nullptr;
@@ -179,7 +203,7 @@ bool Context::tryExecuteMethod(const Symbol& sym, std::initializer_list<Var> par
     callArray.size(1);
     for(auto&& p : parameters)
       callArray.push(p);
-    execute(methodCall);
+    executeDiscard(methodCall);
     return true;
   }
   return false;
@@ -194,118 +218,130 @@ Ref<Table<Var, Var>> Context::typeTable(const TypeDescription* td) {
 
 Context::Context() : _self(ref<Table<Var, Var>>()) {
   L_ONCE;
-  _globals[Symbol("fun")] = (Native)([](Context& c, const Array<Var>& a)->Var {
+  _globals[Symbol("fun")] = (Native)([](Context& c, const Array<Var>& a) {
     if(a.size()>1) {
-      Ref<CodeFunction> wtr;
+      Ref<CodeFunction>& fun(c._stack.top().make<Ref<CodeFunction>>());
       Table<Symbol, uint32_t> localTable;
       uint32_t localIndex(0);
-      wtr.make();
+      fun.make();
       if(a.size()>2 && a[1].is<Array<Var> >()) // There's a list of parameter symbols
         for(auto&& sym : a[1].as<Array<Var> >()) {
           L_ASSERT(sym.is<Symbol>());
           localTable[sym.as<Symbol>()] = localIndex++;
         }
-      wtr->code = a.back();
-      applyScope(wtr->code, localTable, localIndex); // The last part is always the code
-      wtr->localCount = localIndex;
-      return wtr;
+      fun->code = a.back();
+      applyScope(fun->code, localTable, localIndex); // The last part is always the code
+      fun->localCount = localIndex;
     }
-    return 0;
   });
-  _globals[Symbol("local")] = (Native)([](Context& c, const Array<Var>& a)->Var {
+  _globals[Symbol("local")] = (Native)([](Context& c, const Array<Var>& a) {
     L_BREAKPOINT;
-    return 0;
   });
-  _globals[Symbol("do")] = (Native)([](Context& c, const Array<Var>& a)->Var {
-    for(uintptr_t i(1); i<a.size()-1; i++)
-      c.execute(a[i]);
-    return c.execute(a.back());
-  });
-  _globals[Symbol("and")] = (Native)([](Context& c, const Array<Var>& a)->Var {
+  _globals[Symbol("do")] = (Native)([](Context& c, const Array<Var>& a) {
     for(uintptr_t i(1); i<a.size(); i++)
-      if(!c.execute(a[i]).get<bool>())
-        return false;
-    return true;
+      c.discardExecute(a[i]);
   });
-  _globals[Symbol("not")] = (Function)([](Context& c)->Var {
+  _globals[Symbol("and")] = (Native)([](Context& c, const Array<Var>& a) {
+    for(uintptr_t i(1); i<a.size(); i++) {
+      c.discardExecute(a[i]);
+      if(!c._stack.top().get<bool>())
+        return;
+    }
+  });
+  _globals[Symbol("not")] = (Function)([](Context& c) {
     L_ASSERT(c.localCount()==1);
-    return !c.local(0).get<bool>();
+    c.returnValue() = !c.local(0).get<bool>();
   });
-  _globals[Symbol("non-null")] = (Function)([](Context& c)->Var {
+  _globals[Symbol("non-null")] = (Function)([](Context& c) {
     L_ASSERT(c.localCount()==1);
-    return c.local(0).as<void*>()!=nullptr;
+    c.returnValue() = c.local(0).as<void*>()!=nullptr;
   });
-  _globals[Symbol("count")] = (Function)([](Context& c)->Var {
+  _globals[Symbol("count")] = (Function)([](Context& c) {
     L_ASSERT(c.localCount()==1);
     if(c.local(0).is<Ref<Table<Var, Var>>>())
-      return (int)c.local(0).as<Ref<Table<Var, Var>>>()->count();
-    return 0;
+      c.returnValue() = (int)c.local(0).as<Ref<Table<Var, Var>>>()->count();
+    else c.returnValue() = 0;
   });
-  _globals[Symbol("or")] = (Native)([](Context& c, const Array<Var>& a)->Var {
-    for(uintptr_t i(1); i<a.size(); i++)
-      if(c.execute(a[i]).get<bool>())
-        return true;
-    return false;
+  _globals[Symbol("or")] = (Native)([](Context& c, const Array<Var>& a) {
+    for(uintptr_t i(1); i<a.size(); i++) {
+      c.discardExecute(a[i]);
+      if(c._stack.top().get<bool>())
+        return;
+    }
   });
-  _globals[Symbol("while")] = (Native)([](Context& c, const Array<Var>& a)->Var {
-    Var wtr;
-    while(c.execute(a[1]).get<bool>())
-      wtr = c.execute(a[2]);
-    return wtr;
+  _globals[Symbol("while")] = (Native)([](Context& c, const Array<Var>& a) {
+    L_ASSERT(a.size()==3);
+    while(true) {
+      c.discardExecute(a[1]);
+      if(c._stack.top().get<bool>())
+        c.discardExecute(a[2]);
+      else return;
+    }
   });
-  _globals[Symbol("foreach")] = (Native)([](Context& c, const Array<Var>& a)->Var {
+  _globals[Symbol("foreach")] = (Native)([](Context& c, const Array<Var>& a) {
     L_ASSERT(a.size()>=4);
     Var *key(nullptr), *value;
     const Var* exec;
-    Var tableVar;
+    Var* tableVar;
     if(a.size()==4) { // Value only
       value = &c.local(a[1].as<Local>().i);
-      tableVar = c.execute(a[2]);
+      tableVar = &c.executeRef(a[2]);
       exec = &a[3];
     } else { // Key value
       key = &c.local(a[1].as<Local>().i);
       value = &c.local(a[2].as<Local>().i);
-      tableVar = c.execute(a[3]);
+      tableVar = &c.executeRef(a[3]);
       exec = &a[4];
     }
-    for(auto&& slot : *tableVar.as<Ref<Table<Var, Var>>>()) {
+    for(auto&& slot : *tableVar->as<Ref<Table<Var, Var>>>()) {
       if(key) *key = slot.key();
       *value = slot.value();
-      c.execute(*exec);
+      c.discardExecute(*exec);
     }
-    return Var();
   });
-  _globals[Symbol("if")] = (Native)([](Context& c, const Array<Var>& a)->Var {
-    for(uintptr_t i(1); i<a.size()-1; i += 2)
-      if(c.execute(a[i]).get<bool>())
-        return c.execute(a[i+1]);
+  _globals[Symbol("if")] = (Native)([](Context& c, const Array<Var>& a) {
+    for(uintptr_t i(1); i<a.size()-1; i += 2) {
+      c.discardExecute(a[i]);
+      if(c._stack.top().get<bool>()) {
+        c.discardExecute(a[i+1]);
+        return;
+      }
+    }
     if(!(a.size()&1))
-      return c.execute(a.back());
-    else return 0;
+      c.discardExecute(a.back());
   });
-  _globals[Symbol("switch")] = (Native)([](Context& c, const Array<Var>& a)->Var {
+  _globals[Symbol("switch")] = (Native)([](Context& c, const Array<Var>& a) {
     if(a.size()>1) {
-      const Var v(c.execute(a[1]));
-      for(uintptr_t i(2); i<a.size()-1; i += 2)
-        if(c.execute(a[i])==v)
-          return c.execute(a[i+1]);
+      const Var& testValue(c.executeRef(a[1])); // Compute test value
+      for(uintptr_t i(2); i<a.size()-1; i += 2) {
+        const Var& caseValue(c.executeRef(a[i]));
+        if(caseValue==testValue) {
+          c._stack.pop(); // Pop case value
+          c._stack.pop(); // Pop test value
+          c.discardExecute(a[i+1]);
+          return;
+        }
+      }
+      c._stack.pop(); // Pop test value
       if(a.size()&1)
-        return c.execute(a.back());
+        c.discardExecute(a.back());
     }
-    return 0;
   });
-  _globals[Symbol("set")] = (Native)([](Context& c, const Array<Var>& a)->Var {
-    if(a.size()==3)
-      return *c.reference(a[1]) = c.execute(a[2]);
-    else return 0;
+  _globals[Symbol("set")] = (Native)([](Context& c, const Array<Var>& a) {
+    if(a.size()==3) {
+      c.discardExecute(a[2]);
+      *c.reference(a[1]) = c._stack.top();
+    }
   });
 #define CMP(name,cop)\
-  _globals[Symbol(name)] = (Function)([](Context& c)->Var {\
+  _globals[Symbol(name)] = (Function)([](Context& c) {\
     L_ASSERT(c.localCount()>=2);\
     for(uintptr_t i(1); i<c.localCount(); i++)\
-      if(c.local(i-1) cop c.local(i))\
-        return false;\
-    return true;\
+      if(c.local(i-1) cop c.local(i)){\
+        c.returnValue() = false;\
+        return;\
+      }\
+    c.returnValue() = true;\
   })
   CMP("=", !=);
   CMP("<>", ==);
@@ -314,29 +350,28 @@ Context::Context() : _self(ref<Table<Var, Var>>()) {
   CMP(">=", <);
   CMP("<=", >);
 #undef CMP
-  _globals[Symbol("max")] = (Function)([](Context& c)->Var {
+  _globals[Symbol("max")] = (Function)([](Context& c) {
     L_ASSERT(c.localCount()>=1);
-    Var wtr(c.local(0));
+    c.returnValue() = c.local(0);
     for(uintptr_t i(1); i<c.localCount(); i++)
-      if(c.local(i)>wtr)
-        wtr = c.local(i);
-    return wtr;
+      if(c.local(i)>c.returnValue())
+        c.returnValue() = c.local(i);
   });
-  _globals[Symbol("min")] = (Function)([](Context& c)->Var {
+  _globals[Symbol("min")] = (Function)([](Context& c) {
     L_ASSERT(c.localCount()>=1);
-    Var wtr(c.local(0));
+    c.returnValue() = c.local(0);
     for(uintptr_t i(1); i<c.localCount(); i++)
-      if(c.local(i)<wtr)
-        wtr = c.local(i);
-    return wtr;
+      if(c.local(i)<c.returnValue())
+        c.returnValue() = c.local(i);
   });
 #define SETOP(op)\
-  _globals[Symbol(#op)] = (Native)([](Context& c,const Array<Var>& a)->Var {\
+  _globals[Symbol(#op)] = (Native)([](Context& c,const Array<Var>& a) {\
     L_ASSERT(a.size()>1);\
     Var* target(c.reference(a[1]));\
-    for(uintptr_t i(2);i<a.size();i++)\
-      *target op c.execute(a[i]);\
-    return 0;\
+    for(uintptr_t i(2);i<a.size();i++){\
+      *target op c.executeRef(a[i]);\
+      c._stack.pop();\
+    }\
   })
   SETOP(+= );
   SETOP(-= );
@@ -344,75 +379,68 @@ Context::Context() : _self(ref<Table<Var, Var>>()) {
   SETOP(/= );
   SETOP(%= );
 #undef SETOP
-  _globals[Symbol("+")] = (Function)([](Context& c)->Var {
+  _globals[Symbol("+")] = (Function)([](Context& c) {
     L_ASSERT(c.localCount()>=1);
-    Var wtr(c.local(0));
+    c.returnValue() = c.local(0);
     for(uintptr_t i(1); i<c.localCount(); i++)
-      wtr += c.local(i);
-    return wtr;
+      c.returnValue() += c.local(i);
   });
-  _globals[Symbol("*")] = (Function)([](Context& c)->Var {
+  _globals[Symbol("*")] = (Function)([](Context& c) {
     L_ASSERT(c.localCount()>=1);
-    Var wtr(c.local(0));
+    c.returnValue() = c.local(0);
     for(uintptr_t i(1); i<c.localCount(); i++)
-      wtr *= c.local(i);
-    return wtr;
+      c.returnValue() *= c.local(i);
   });
-  _globals[Symbol("-")] = (Function)([](Context& c)->Var {
+  _globals[Symbol("-")] = (Function)([](Context& c) {
     L_ASSERT(c.localCount()>=1);
     if(c.localCount()==1)
-      return Var(0) - c.local(0); // TODO: replace with actual neg dynamic operator
+      c.returnValue() = Var(0) - c.local(0); // TODO: replace with actual neg dynamic operator
     else {
-      Var wtr(c.local(0));
+      c.returnValue() = c.local(0);
       for(uintptr_t i(1); i<c.localCount(); i++)
-        wtr -= c.local(i);
-      return wtr;
+        c.returnValue() -= c.local(i);
     }
   });
-  _globals[Symbol("/")] = (Function)([](Context& c)->Var {
+  _globals[Symbol("/")] = (Function)([](Context& c) {
     L_ASSERT(c.localCount()==2);
-    return c.local(0)/c.local(1);
+    c.returnValue() = c.local(0)/c.local(1);
   });
-  _globals[Symbol("%")] = (Function)([](Context& c)->Var {
+  _globals[Symbol("%")] = (Function)([](Context& c) {
     L_ASSERT(c.localCount()==2);
-    return c.local(0)%c.local(1);
+    c.returnValue() = c.local(0)%c.local(1);
   });
-  _globals[Symbol("print")] = (Function)([](Context& c)->Var {
+  _globals[Symbol("print")] = (Function)([](Context& c) {
     for(uintptr_t i(0); i<c.localCount(); i++)
       out << c.local(i);
-    return 0;
   });
-  _globals[Symbol("break")] = (Function)([](Context& c)->Var {
+  _globals[Symbol("break")] = (Function)([](Context& c) {
     L_BREAKPOINT;
-    return 0;
   });
-  _globals[Symbol("typename")] = (Function)([](Context& c)->Var {
-    return c.local(0).type()->name;
+  _globals[Symbol("typename")] = (Function)([](Context& c) {
+    c.returnValue() = c.local(0).type()->name;
   });
   _globals[Symbol("object")] = (Function)object;
-  _globals[Symbol("now")] = (Function)([](Context& c)->Var {
-    return Time::now();
+  _globals[Symbol("now")] = (Function)([](Context& c) {
+    c.returnValue() = Time::now();
   });
-  _globals["rand"] = (Function)([](Context& c)->Var {
-    return Rand::nextFloat();
+  _globals["rand"] = (Function)([](Context& c) {
+    c.returnValue() = Rand::nextFloat();
   });
-  _globals[Symbol("button-pressed")] = (Function)([](Context& c)->Var {
+  _globals[Symbol("button-pressed")] = (Function)([](Context& c) {
     if(c.localCount()) {
       if(c.local(0).is<Symbol>())
-        return Window::isPressed(Window::symbolToButton(c.local(0).as<Symbol>()));
+        c.returnValue() = Window::isPressed(Window::symbolToButton(c.local(0).as<Symbol>()));
       else if(c.local(0).is<int>())
-        return Window::isPressed((Window::Event::Button)(c.local(0).as<int>()+'0'));
-    }
-    return false;
+        c.returnValue() = Window::isPressed((Window::Event::Button)(c.local(0).as<int>()+'0'));
+    } else c.returnValue() = false;
   });
-  _globals[Symbol("vec")] = (Function)([](Context& c)->Var {
+  _globals[Symbol("vec")] = (Function)([](Context& c) {
     if(c.localCount()==3)
-      return Vector3f(c.local(0).get<float>(), c.local(1).get<float>(), c.local(2).get<float>());
-    return Vector3f();
+      c.returnValue() = Vector3f(c.local(0).get<float>(), c.local(1).get<float>(), c.local(2).get<float>());
   });
-  _globals[Symbol("color")] = (Function)([](Context& c)->Var {
+  _globals[Symbol("color")] = (Function)([](Context& c) {
     Color wtr(Color::white);
-    uint32_t params(min(c.localCount(), 4u));
+    const uint32_t params(min(c.localCount(), 4u));
     for(size_t i(0); i<params; i++) {
       byte b((c.local(i).is<float>()) ? (c.local(i).as<float>()*255) : c.local(i).get<int>());
       switch(i) {
@@ -422,6 +450,6 @@ Context::Context() : _self(ref<Table<Var, Var>>()) {
         case 3: wtr.a() = b; break;
       }
     }
-    return wtr;
+    c.returnValue() = wtr;
   });
 }

@@ -63,13 +63,13 @@ void ScriptComponent::event(const Ref<Table<Var, Var>>&e) {
 
 void ScriptComponent::init() {
   L_ONCE;
-#define L_FUNCTION(name,...) Context::global(Symbol(name)) = (Function)([](Context& c)->Var {__VA_ARGS__ return 0;})
-#define L_COMPONENT_FUNCTION(cname,fname,n,...) Context::typeValue(Type<cname*>::description(),Symbol(fname)) = (Function)([](Context& c)->Var {L_ASSERT(c.localCount()>=n && c.currentSelf().is<cname*>());__VA_ARGS__ return 0;})
+#define L_FUNCTION(name,...) Context::global(Symbol(name)) = (Function)([](Context& c) {__VA_ARGS__})
+#define L_COMPONENT_FUNCTION(cname,fname,n,...) Context::typeValue(Type<cname*>::description(),Symbol(fname)) = (Function)([](Context& c) {L_ASSERT(c.localCount()>=n && c.currentSelf().is<cname*>());__VA_ARGS__})
 #define L_COMPONENT_METHOD(cname,fname,n,...) L_COMPONENT_FUNCTION(cname,fname,n,c.currentSelf().as<cname*>()->__VA_ARGS__;)
-#define L_COMPONENT_RETURN_METHOD(cname,fname,n,...) L_COMPONENT_FUNCTION(cname,fname,n,return c.currentSelf().as<cname*>()->__VA_ARGS__;)
-#define L_COMPONENT_ADD(cname,fname) L_COMPONENT_FUNCTION(Entity,fname,0,return c.currentSelf().as<Entity*>()->add<cname>();)
-#define L_COMPONENT_GET(cname,fname) L_COMPONENT_FUNCTION(Entity,fname,0,return c.currentSelf().as<Entity*>()->component<cname>();)
-#define L_COMPONENT_REQUIRE(cname,fname) L_COMPONENT_FUNCTION(Entity,fname,0,return c.currentSelf().as<Entity*>()->requireComponent<cname>();)
+#define L_COMPONENT_RETURN_METHOD(cname,fname,n,...) L_COMPONENT_FUNCTION(cname,fname,n,c.returnValue() = c.currentSelf().as<cname*>()->__VA_ARGS__;)
+#define L_COMPONENT_ADD(cname,fname) L_COMPONENT_FUNCTION(Entity,fname,0,c.returnValue() = c.currentSelf().as<Entity*>()->add<cname>();)
+#define L_COMPONENT_GET(cname,fname) L_COMPONENT_FUNCTION(Entity,fname,0,c.returnValue() = c.currentSelf().as<Entity*>()->component<cname>();)
+#define L_COMPONENT_REQUIRE(cname,fname) L_COMPONENT_FUNCTION(Entity,fname,0,c.returnValue() = c.currentSelf().as<Entity*>()->requireComponent<cname>();)
 #define L_COMPONENT_COPY(cname) L_COMPONENT_FUNCTION(cname,"copy",1,if(c.local(0).is<cname*>())*(c.currentSelf().as<cname*>()) = *(c.local(0).as<cname*>());)
 #define L_COMPONENT_ENTITY(cname) L_COMPONENT_RETURN_METHOD(cname,"entity",0,entity())
 #define L_COMPONENT_BIND(cname,name)\
@@ -83,33 +83,31 @@ void ScriptComponent::init() {
   L_FUNCTION("engine-timescale", {
     if(c.localCount()>0)
       Engine::timescale(c.local(0).get<float>());
-    return Engine::timescale();
+    c.returnValue() = Engine::timescale();
   });
-  Context::global(Symbol("engine-gravity")) = (Function)([](Context& c)->Var {
+  Context::global(Symbol("engine-gravity")) = (Function)([](Context& c) {
     if(c.localCount()>0)
       RigidBody::gravity(c.local(0).get<Vector3f>());
-    return RigidBody::gravity();
+    c.returnValue() = RigidBody::gravity();
   });
   // Entity ///////////////////////////////////////////////////////////////////
-  Context::global(Symbol("entity-make")) = (Function)([](Context& c)->Var {
-    return new Entity();
+  Context::global(Symbol("entity-make")) = (Function)([](Context& c) {
+    c.returnValue() = new Entity();
   });
-  Context::global(Symbol("entity-copy")) = (Function)([](Context& c)->Var {
+  Context::global(Symbol("entity-copy")) = (Function)([](Context& c) {
     if(c.localCount() && c.local(0).is<Entity*>())
-      return new Entity(c.local(0).as<Entity*>());
-    return 0;
+      c.returnValue() = new Entity(c.local(0).as<Entity*>());
   });
-  Context::global(Symbol("entity-destroy")) = (Function)([](Context& c)->Var {
+  Context::global(Symbol("entity-destroy")) = (Function)([](Context& c) {
     if(c.localCount() && c.local(0).is<Entity*>())
       Entity::destroy(c.local(0).as<Entity*>());
-    return 0;
   });
   // Devices ///////////////////////////////////////////////////////////////////
   L_FUNCTION("get-devices", {
     auto wtr(ref<Table<Var,Var>>());
     for(auto&& device : Device::devices())
       (*wtr)[&device] = true;
-    return wtr;
+    c.returnValue() = wtr;
   });
   L_COMPONENT_RETURN_METHOD(const Device, "get-axis", 1, axis(c.local(0).get<int>()));
   L_COMPONENT_RETURN_METHOD(const Device, "get-button", 1, button(c.local(0).get<int>()));
@@ -128,16 +126,15 @@ void ScriptComponent::init() {
   L_COMPONENT_METHOD(Collider, "center", 1, center(c.local(0).get<Vector3f>()));
   L_COMPONENT_METHOD(Collider, "box", 1, box(c.local(0).get<Vector3f>()));
   L_COMPONENT_METHOD(Collider, "sphere", 1, sphere(c.local(0).get<float>()));
-  Context::global(Symbol("raycast")) = (Function)([](Context& c)->Var {
+  Context::global(Symbol("raycast")) = (Function)([](Context& c) {
     if(c.localCount()==2 && c.local(0).is<Vector3f>() && c.local(1).is<Vector3f>()) {
       auto wtr(ref<Table<Var, Var>>());
       float t;
       (*wtr)[Symbol("collider")] = Collider::raycast(c.local(0).as<Vector3f>(), c.local(1).as<Vector3f>(), t);
       (*wtr)[Symbol("t")] = t;
       (*wtr)[Symbol("position")] = c.local(0).as<Vector3f>()+c.local(1).as<Vector3f>()*t;
-      return wtr;
+      c.returnValue() = wtr;
     }
-    return nullptr;
   });
   // RigidBody ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(RigidBody, "rigidbody");
@@ -165,7 +162,7 @@ void ScriptComponent::init() {
     Array<Var> code(Array<Var>(1, Var(Array<Var>{Symbol("self"), Script::RawSymbol{c.local(0).as<Symbol>()}})));
     for(uint32_t i(1); i<c.localCount(); i++)
       code.push(c.local(i));
-    return c.currentSelf().as<ScriptComponent*>()->_context.execute(code);
+    c.returnValue() = c.currentSelf().as<ScriptComponent*>()->_context.executeReturn(code);
   });
   // Sprite ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(Sprite, "sprite");

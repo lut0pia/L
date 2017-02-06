@@ -12,8 +12,8 @@
 namespace L {
   namespace Script {
     class Context;
-    typedef Var(*Function)(Context&);
-    typedef Var(*Native)(Context&, const Array<Var>&);
+    typedef void(*Function)(Context&);
+    typedef void(*Native)(Context&, const Array<Var>&);
     typedef struct { uint32_t i; } Local;
     typedef struct { Symbol sym; } RawSymbol;
     typedef struct { Var code; uint32_t localCount; } CodeFunction;
@@ -36,7 +36,12 @@ namespace L {
       inline uint32_t currentFrame() const { return _frames.empty() ? 0 : _frames.top(); }
       inline uint32_t localCount() const { return _stack.size()-currentFrame(); }
       inline Var& local(uint32_t i) { return _stack.bottom(i+currentFrame()); }
-      Var execute(const Var& code, Var* selfOut = nullptr);
+      inline Var& returnValue() { return local(-1); }
+      Var executeReturn(const Var& code); // Copies and return result of execution
+      Var& executeRef(const Var& code); // Pushes result of exection on stack then returns ref to it
+      void discardExecute(const Var& code); // Replaces top of the stack with result of execution
+      void executeDiscard(const Var& code); // Discards result of execution
+      void execute(const Var& code, Var* selfOut = nullptr); // Pushes result of execution on stack
       Var* reference(const Var& code, Var* selfOut = nullptr);
       bool tryExecuteMethod(const Symbol&, std::initializer_list<Var> = {});
 
