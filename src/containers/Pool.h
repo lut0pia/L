@@ -68,9 +68,10 @@ namespace L {
       inline T& operator*() const{ return *(operator->()); }
     };
     Block* _root;
+    size_t _size;
 
   public:
-    constexpr Pool() : _root(nullptr) {}
+    constexpr Pool() : _root(nullptr), _size(0){}
     ~Pool() {
       for(auto&& e : *this)
         e.~T();
@@ -80,6 +81,7 @@ namespace L {
       for(auto&& e : *this)
         destruct(&e);
     }
+    inline size_t size() const { return _size; }
 
     template <typename... Args>
     inline T* construct(Args&&... args) {
@@ -90,6 +92,7 @@ namespace L {
       deallocate(o);
     }
     T* allocate() {
+      _size++;
       if(!_root) _root = new Block();
       for(Block* block(_root);; block = block->_next){
         if(!block->full()) return block->allocate();
@@ -98,7 +101,10 @@ namespace L {
     }
     void deallocate(void* p) {
       for(Block* block(_root); block; block = block->_next) // Stop when the block doesn't exist
-        if(block->hasAddress(p)) return block->deallocate(p);
+        if(block->hasAddress(p)) {
+          _size--;
+          return block->deallocate(p);
+        }
     }
     inline Iterator begin() const{ return Iterator(_root); }
     inline Iterator end() const{ return Iterator(); }
