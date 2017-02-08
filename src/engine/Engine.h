@@ -30,7 +30,8 @@ namespace L {
     static Table<uint32_t, Ref<GL::Mesh> > _meshes;
     static Table<uint32_t, Ref<Script::CodeFunction>> _scripts;
     static Timer _timer;
-    static Time _deltaTime;
+    static Time _deltaTime, _accumulator;
+    static const Time _subDelta;
     static float _deltaSeconds, _subDeltaSeconds, _fps, _timescale;
     static uint32_t _frame;
   public:

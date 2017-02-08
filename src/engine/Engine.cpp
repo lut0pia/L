@@ -20,8 +20,9 @@ Table<uint32_t, Ref<GL::Texture> > Engine::_textures;
 Table<uint32_t, Ref<GL::Mesh> > Engine::_meshes;
 Table<uint32_t, Ref<Script::CodeFunction>> Engine::_scripts;
 Timer Engine::_timer;
-L::Time Engine::_deltaTime;
-float Engine::_deltaSeconds, Engine::_subDeltaSeconds, Engine::_fps, Engine::_timescale(1.f);
+const Time Engine::_subDelta(0, 10);
+L::Time Engine::_deltaTime, Engine::_accumulator(0);
+float Engine::_deltaSeconds, Engine::_subDeltaSeconds(Engine::_subDelta.fSeconds()), Engine::_fps, Engine::_timescale(1.f);
 uint32_t Engine::_frame(0);
 
 void Engine::update() {
@@ -48,15 +49,12 @@ void Engine::update() {
   for(auto&& update : _updates)
     update();
   {
-    static Time subDelta(0, 10);
-    Time deltaCountDown(_deltaTime);
-    while(deltaCountDown>Time(500)) {
-      Timer timer;
-      _subDeltaSeconds = min(deltaCountDown, subDelta).fSeconds();
+    _accumulator += _deltaTime;
+    _subDeltaSeconds = _subDelta.fSeconds();
+    while(_subDelta < _accumulator) {
       for(auto&& subUpdate : _subUpdates)
         subUpdate();
-      deltaCountDown -= subDelta;
-      subDelta = min(timer.since()*4.f, _deltaTime);
+      _accumulator -= _subDelta;
     }
   }
   for(auto&& lateUpdate : _lateUpdates)
