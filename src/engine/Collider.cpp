@@ -266,15 +266,17 @@ void Collider::checkCollision(Collider& a,Collider& b) {
     } else a._transform->moveAbsolute(normal*overlap);
   }
   // Send collision events to scripts
-  auto e(ref<Table<Var,Var>>());
-  (*e)[Symbol("type")] = Symbol("COLLISION");
-  if(a._script){
-    (*e)[Symbol("other")] = &b;
-    a._script->event(e);
-  }
-  if(b._script){
-    (*e)[Symbol("other")] = &a;
-    b._script->event(e);
+  if(a._script || b._script) {
+    auto e(ref<Table<Var, Var>>());
+    (*e)[Symbol("type")] = Symbol("COLLISION");
+    if(a._script) {
+      (*e)[Symbol("other")] = &b;
+      a._script->event(e);
+    }
+    if(b._script) {
+      (*e)[Symbol("other")] = &a;
+      b._script->event(e);
+    }
   }
   // Physically resolve collision
   RigidBody::collision(a._rigidbody,b._rigidbody,impactPoint,normal);
