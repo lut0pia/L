@@ -28,6 +28,7 @@ namespace L {
     inline byte& a() { return _c[3]; }
 
     static Color from(float r,float g,float b,float a = 1);
+    static Color fromHSV(float h, float s, float v);
     static Color lerp(Color,Color,float w);
     static const Color black,blue,cyan,green,grey,lightgrey,magenta,red,white,yellow;
   };
