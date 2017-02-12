@@ -13,7 +13,6 @@ namespace L {
       Node *_parent,*_left,*_right;
       Key _key;
       V _value;
-      bool _crossed; // Used to avoid doubles in collisions
     public:
       inline Node(const Key& key,const V& value) : _parent(nullptr),_left(nullptr),_key(key),_value(value) {}
       inline Node(Node* parent,Node* oldNode,Node* newNode) : _parent(parent),_left(oldNode),_right(newNode){
@@ -107,7 +106,6 @@ namespace L {
     void collisions(Array<Node*>& pairs){
       pairs.clear();
       if(_root && _root->branch()){
-        uncross(_root);
         collisions(_root->_left,_root->_right,pairs);
       }
     }
@@ -134,20 +132,11 @@ namespace L {
           }
         }
       }
-      if(a->branch() && !a->_crossed){
-        a->_crossed = true;
-        collisions(a->_left,a->_right,pairs);
-      }
-      if(b->branch() && !b->_crossed){
-        b->_crossed = true;
-        collisions(b->_left,b->_right,pairs);
-      }
-    }
-    static void uncross(Node* node){
-      node->_crossed = false;
-      if(node->branch()){
-        uncross(node->_left);
-        uncross(node->_right);
+      if(a->sibling()==b) {
+        if(a->branch())
+          collisions(a->_left, a->_right, pairs);
+        if(b->branch())
+          collisions(b->_left, b->_right, pairs);
       }
     }
     static void sync(Node* node){
