@@ -105,38 +105,43 @@ namespace L {
     }
     void collisions(Array<Node*>& pairs){
       pairs.clear();
-      if(_root && _root->branch()){
-        collisions(_root->_left,_root->_right,pairs);
-      }
-    }
-    static void collisions(Node* a,Node* b,Array<Node*>& pairs){
-      const bool colliding(a->_key.overlaps(b->_key));
-      if(colliding){
-        if(a->leaf()){
-          if(b->leaf()){
-            pairs.push(a);
-            pairs.push(b);
-          } else {
-            collisions(a,b->_left,pairs);
-            collisions(a,b->_right,pairs);
+      if(_root && _root->branch()) {
+        struct Pair { Node *a, *b; };
+        StaticStack<1024, Pair> candidatePairs;
+        candidatePairs.push(_root->_left,_root->_right);
+        while(!candidatePairs.empty()) {
+          Node* a(candidatePairs.top().a);
+          Node* b(candidatePairs.top().b);
+          candidatePairs.pop();
+          const bool colliding(a->_key.overlaps(b->_key));
+          if(colliding) {
+            if(a->leaf()) {
+              if(b->leaf()) {
+                pairs.push(a);
+                pairs.push(b);
+              } else {
+                candidatePairs.push(a,b->_left);
+                candidatePairs.push(a,b->_right);
+              }
+            } else {
+              if(b->leaf()) {
+                candidatePairs.push(a->_left,b);
+                candidatePairs.push(a->_right,b);
+              } else {
+                candidatePairs.push(a->_left,b->_left);
+                candidatePairs.push(a->_left,b->_right);
+                candidatePairs.push(a->_right,b->_left);
+                candidatePairs.push(a->_right,b->_right);
+              }
+            }
           }
-        } else {
-          if(b->leaf()){
-            collisions(a->_left,b,pairs);
-            collisions(a->_right,b,pairs);
-          } else {
-            collisions(a->_left,b->_left,pairs);
-            collisions(a->_left,b->_right,pairs);
-            collisions(a->_right,b->_left,pairs);
-            collisions(a->_right,b->_right,pairs);
+          if(a->sibling()==b) {
+            if(a->branch())
+              candidatePairs.push(a->_left, a->_right);
+            if(b->branch())
+              candidatePairs.push(b->_left, b->_right);
           }
         }
-      }
-      if(a->sibling()==b) {
-        if(a->branch())
-          collisions(a->_left, a->_right, pairs);
-        if(b->branch())
-          collisions(b->_left, b->_right, pairs);
       }
     }
     static void sync(Node* node){
