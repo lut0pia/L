@@ -17,7 +17,7 @@ namespace L {
     inline void push(Args&&... args) {
       L_ASSERT(_size<n);
       _size++;
-      ::new(&top())T(args...);
+      ::new(&top())T{args...};
     }
     inline void pop() {
       L_ASSERT(_size>0);
