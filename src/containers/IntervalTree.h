@@ -12,11 +12,10 @@ namespace L {
     private:
       Node *_parent,*_left,*_right;
       Key _key;
-      int _height; // Used for balancing
       V _value;
       bool _crossed; // Used to avoid doubles in collisions
     public:
-      inline Node(const Key& key,const V& value) : _parent(nullptr),_left(nullptr),_key(key),_height(0),_value(value) {}
+      inline Node(const Key& key,const V& value) : _parent(nullptr),_left(nullptr),_key(key),_value(value) {}
       inline Node(Node* parent,Node* oldNode,Node* newNode) : _parent(parent),_left(oldNode),_right(newNode){
         if(parent)
           parent->replace(oldNode,this);
@@ -41,10 +40,8 @@ namespace L {
         newNode->_parent = this;
       }
       inline void refit(){
-        if(branch()){
-          _height = 1+max(_left->_height,_right->_height);
+        if(branch())
           _key = _left->_key+_right->_key;
-        }
       }
 
       inline void* operator new(size_t size) { return Pool<Node>::global.allocate(); }
@@ -169,7 +166,7 @@ namespace L {
       return abs(a.extent()-b.extent())+(a*b).extent();
     }
     static void balance(Node* node){
-      while(node && node->_height<2)
+      while(node && (!node->_left || !node->_right))
         node = node->_parent;
       while(node){
         /*
