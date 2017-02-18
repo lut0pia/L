@@ -80,12 +80,12 @@ void RigidBody::collision(RigidBody* a,RigidBody* b,const Vector3f& impact,const
     bv(b ? b->velocityAt(brel) : 0.f);
 
   const float contactVelocity((av-bv).dot(normal));
-  const float restitution(b ? min(a->_restitution,b->_restitution) : a->_restitution);
-  const float desiredDeltaVelocity(-contactVelocity*(1.f+restitution));
-  float deltaVelocity(a->deltaVelocity(arel,normal));
-  if(b) deltaVelocity += b->deltaVelocity(brel,normal);
-  const Vector3f impulse(normal*(desiredDeltaVelocity/deltaVelocity));
   if(contactVelocity<0.f){
+    const float restitution(b ? min(a->_restitution, b->_restitution) : a->_restitution);
+    const float desiredDeltaVelocity(-contactVelocity*(1.f+restitution));
+    float deltaVelocity(a->deltaVelocity(arel, normal));
+    if(b) deltaVelocity += b->deltaVelocity(brel, normal);
+    const Vector3f impulse(normal*(desiredDeltaVelocity/deltaVelocity));
     a->applyImpulse(impulse,arel);
     if(b) b->applyImpulse(-impulse,brel);
   }
