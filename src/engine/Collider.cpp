@@ -95,10 +95,13 @@ Matrix33f Collider::inertiaTensor() const{
   Matrix33f wtr(0.f);
   switch(_type){
     case Box:
-      wtr(0,0) = (sqr(_radius.y())+sqr(_radius.z()))*(1.f/12.f);
-      wtr(1,1) = (sqr(_radius.x())+sqr(_radius.z()))*(1.f/12.f);
-      wtr(2,2) = (sqr(_radius.x())+sqr(_radius.y()))*(1.f/12.f);
+    {
+      const Vector3f diameter(_radius*2.f);
+      wtr(0, 0) = (sqr(diameter.y())+sqr(diameter.z()))*(1.f/12.f);
+      wtr(1, 1) = (sqr(diameter.x())+sqr(diameter.z()))*(1.f/12.f);
+      wtr(2, 2) = (sqr(diameter.x())+sqr(diameter.y()))*(1.f/12.f);
       break;
+    }
     case Sphere:
       wtr(0,0) = wtr(1,1) = wtr(2,2) = sqr(_radius.x())*(2.f/5.f);
       break;
