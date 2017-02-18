@@ -43,7 +43,7 @@ void RigidBody::subUpdate(){
   const float delta(Engine::subDeltaSeconds());
   // Compute world inertia tensor
   const Matrix33f orientation(quatToMat(_transform->absoluteRotation()));
-  _invInertiaTensorWorld = orientation.transpose()*_invInertiaTensor*orientation;
+  _invInertiaTensorWorld = orientation*_invInertiaTensor*orientation.transpose();
 
   // Integrate
   const Vector3f oldVelocity(_velocity),oldRotation(_rotation);
