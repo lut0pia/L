@@ -22,7 +22,7 @@ void RigidBody::updateInertiaTensor(){
       inertiaTensor += ((Collider*)c.value())->inertiaTensor();
       count++;
     }
-  inertiaTensor *= (1.f/_invMass)/count;
+  inertiaTensor *= mass()/count;
   _invInertiaTensor = inertiaTensor.inverse();
 }
 void RigidBody::update() {
@@ -75,13 +75,13 @@ void RigidBody::applyImpulse(const Vector3f& impulse,const Vector3f& offset){
 void RigidBody::collision(RigidBody* a,RigidBody* b,const Vector3f& impact,const Vector3f& normal) {
   const Vector3f
     arel(impact-a->center()),
-    brel((b) ? impact-b->center() : 0),
+    brel(b ? impact-b->center() : 0.f),
     av(a->velocityAt(arel)),
-    bv((b) ? b->velocityAt(brel) : 0);
+    bv(b ? b->velocityAt(brel) : 0.f);
 
-  float contactVelocity((av-bv).dot(normal));
-  float restitution((b) ? min(a->_restitution,b->_restitution) : a->_restitution);
-  float desiredDeltaVelocity(-contactVelocity*(1.f+restitution));
+  const float contactVelocity((av-bv).dot(normal));
+  const float restitution(b ? min(a->_restitution,b->_restitution) : a->_restitution);
+  const float desiredDeltaVelocity(-contactVelocity*(1.f+restitution));
   float deltaVelocity(a->deltaVelocity(arel,normal));
   if(b) deltaVelocity += b->deltaVelocity(brel,normal);
   const Vector3f impulse(normal*(desiredDeltaVelocity/deltaVelocity));
