@@ -23,7 +23,7 @@ void RigidBody::updateInertiaTensor(){
       count++;
     }
   inertiaTensor *= (1.f/_invMass)/count;
-  //_invInertiaTensor = inertiaTensor.inverse();
+  _invInertiaTensor = inertiaTensor.inverse();
 }
 void RigidBody::update() {
   _force = _torque = 0.f; // Reset force and torque
