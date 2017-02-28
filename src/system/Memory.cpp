@@ -19,7 +19,7 @@ const size_t allocStep = 1024*1024u;
 void* _freelist[32] = {};
 byte* _next;
 size_t _bytesLeft(0);
-size_t _allocated(0), _unused(0);
+size_t _allocated(0), _unused(0), _wasted(0);
 
 inline uint32_t freelistIndex(size_t size) {
   // Cannot allocate less than 16 bytes for alignment purposes
@@ -45,6 +45,7 @@ void* Memory::alloc(size_t size) {
     _next += trueSize;
     _bytesLeft -= trueSize;
   }
+  _wasted += trueSize-size;
   _allocated += trueSize;
   return wtr;
 #endif
@@ -86,6 +87,7 @@ void Memory::free(void* ptr, size_t size) {
   } else { // Bigger allocations are actually freed
     virtualFree(ptr, size);
   }
+  _wasted -= trueSize-size;
   _allocated -= trueSize;
 #endif
 }
