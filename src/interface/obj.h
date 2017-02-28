@@ -4,6 +4,7 @@
 
 namespace L {
   class OBJ : public Interface<GL::Mesh> {
+    static OBJ instance;
   private:
     typedef struct {
       Vector3f _vertex;
@@ -59,4 +60,5 @@ namespace L {
       return true;
     }
   };
+  OBJ OBJ::instance;
 }

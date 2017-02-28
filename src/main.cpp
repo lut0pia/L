@@ -5,8 +5,6 @@
 using namespace L;
 
 int main(int argc,const char* argv[]) {
-  new STB();
-  new OBJ();
   TypeInit();
   Window::openFullscreen("Sample",Window::nocursor|Window::loopcursor);
   Device::init();

@@ -5865,49 +5865,46 @@ STBIDEF int stbi_info_from_callbacks(stbi_io_callbacks const *c, void *user, int
 */
 
 
-#ifndef DEF_L_Interface_stb
-#define DEF_L_Interface_stb
+#pragma once
 
 #include <L/src/L.h>
 
 namespace L {
   class STB : public Interface<Bitmap> {
-    public:
-      STB() : Interface("png") {
-        subscribe("bmp");
-        subscribe("jpeg");
-        subscribe("jpg");
-      }
-      bool to(const Bitmap& bmp, const File& file) {
+    static STB instance;
+  public:
+    STB() : Interface("png") {
+      subscribe("bmp");
+      subscribe("jpeg");
+      subscribe("jpg");
+    }
+    bool to(const Bitmap& bmp, const File& file) {
+      return false;
+    }
+    bool from(Bitmap& bmp, const File& file) {
+      int width, height, comp;
+      byte* img(stbi_load(file.path(), &width, &height, &comp, 4));
+      if(img) {
+        bmp.resizeFast(width, height);
+        size_t s(width*height);
+        byte* a(img);
+        byte* b((byte*)&bmp[0]);
+
+        while(s--) {
+          b[2] = a[0];
+          b[1] = a[1];
+          b[0] = a[2];
+          b[3] = a[3];
+          a += 4;
+          b += 4;
+        }
+        stbi_image_free(img);
+        return true;
+      } else {
+        out << stbi_failure_reason() << '\n';
         return false;
       }
-      bool from(Bitmap& bmp, const File& file) {
-        int width, height, comp;
-        byte* img(stbi_load(file.path(),&width,&height,&comp,4));
-        if(img) {
-          bmp.resizeFast(width,height);
-          size_t s(width*height);
-          byte* a(img);
-          byte* b((byte*)&bmp[0]);
-
-          while(s--) {
-            b[2] = a[0];
-            b[1] = a[1];
-            b[0] = a[2];
-            b[3] = a[3];
-            a += 4;
-            b += 4;
-          }
-          stbi_image_free(img);
-          return true;
-        } else {
-          out << stbi_failure_reason() << '\n';
-          return false;
-        }
-      }
+    }
   };
+  STB STB::instance;
 }
-
-#endif
-
-
