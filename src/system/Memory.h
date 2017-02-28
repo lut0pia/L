@@ -1,6 +1,13 @@
 #pragma once
 
+#include "../macros.h"
 #include "../types.h"
+
+#define L_ALLOCABLE(...) public: \
+inline void* operator new(size_t size) { L_ASSERT(size==sizeof(__VA_ARGS__)); return L::Memory::alloc(sizeof(__VA_ARGS__));} \
+inline void operator delete(void* p) { L::Memory::free(p,sizeof(__VA_ARGS__)); }
+
+void* operator new(size_t size);
 
 namespace L {
   class Memory {

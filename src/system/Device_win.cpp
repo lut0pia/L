@@ -8,6 +8,8 @@
 using namespace L;
 
 struct DeviceSystem{
+  L_ALLOCABLE(DeviceSystem)
+public:
   PHIDP_PREPARSED_DATA _preparsed;
   uint32_t _minButtonUsage;
   HIDP_CAPS _caps;

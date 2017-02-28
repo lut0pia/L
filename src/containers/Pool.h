@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../system/Memory.h"
 #include "../types.h"
 
 namespace L {
@@ -9,6 +10,7 @@ namespace L {
     static const uint32_t intBits = sizeof(uint32_t)*8;
   private:
     class Block {
+      L_ALLOCABLE(Block)
     public:
       static const uint32_t size = tableSize*intBits;
       byte _data[size*sizeof(T)];
