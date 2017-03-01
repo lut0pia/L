@@ -21,9 +21,9 @@ namespace L {
     private:
       static Table<Symbol, Var> _globals;
       static Table<const TypeDescription*, Var> _typeTables;
-      StaticStack<128, Var> _stack;
+      static StaticStack<128, Var> _stack;
+      static StaticStack<16, uint32_t> _frames;
       StaticStack<16, Var> _selves;
-      StaticStack<16, uint32_t> _frames;
       Var _self;
 
     public:

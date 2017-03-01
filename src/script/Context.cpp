@@ -12,6 +12,8 @@ using namespace Script;
 
 Table<Symbol, Var> Context::_globals;
 Table<const TypeDescription*, Var> Context::_typeTables;
+StaticStack<128, Var> Context::_stack;
+StaticStack<16, uint32_t> Context::_frames;
 
 static void object(Context& c) {
   Table<Var, Var>& table(c.returnValue().make<Ref<Table<Var, Var>>>().make());
