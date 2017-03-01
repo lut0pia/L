@@ -16,14 +16,24 @@ void* operator new(size_t size) {
 
 #if !L_USE_MALLOC
 const size_t allocStep = 1024*1024u;
-void* _freelist[32] = {};
+void* _freelist[128] = {};
 byte* _next;
 size_t _bytesLeft(0);
 size_t _allocated(0), _unused(0), _wasted(0);
 
+// Cannot allocate less than 8 bytes for alignment purposes
 inline uint32_t freelistIndex(size_t size) {
-  // Cannot allocate less than 16 bytes for alignment purposes
-  return clog2(max(size, 16u));
+  return (size<=512) ? (((size+7)/8)-1) : (clog2(size)+55);
+}
+inline void freelistIndexSize(size_t size, uint32_t& index, uint32_t& trueSize) {
+  if(size<=512) {
+    index = ((size+7)/8)-1;
+    trueSize = (index+1)*8;
+  } else {
+    index = clog2(size);
+    trueSize = 1<<index;
+    index += 55;
+  }
 }
 #endif
 
@@ -31,8 +41,12 @@ void* Memory::alloc(size_t size) {
 #if L_USE_MALLOC
   return malloc(size);
 #else
-  const uint32_t index(freelistIndex(size));
-  const size_t trueSize(1<<index);
+  if(size>allocStep) { // Big allocations go directly to the system
+    _allocated += size;
+    return virtualAlloc(size);
+  }
+  uint32_t index, trueSize;
+  freelistIndexSize(size, index, trueSize);
   void*& freelist(_freelist[index]);
   void* wtr(freelist);
   if(wtr) {
@@ -40,7 +54,7 @@ void* Memory::alloc(size_t size) {
     _unused -= trueSize;
   } else {
     if(_bytesLeft<trueSize)
-      _next = (byte*)virtualAlloc(_bytesLeft = max(trueSize, allocStep));
+      _next = (byte*)virtualAlloc(_bytesLeft = allocStep);
     wtr = _next;
     _next += trueSize;
     _bytesLeft -= trueSize;
@@ -63,13 +77,12 @@ void* Memory::realloc(void* ptr, size_t oldsize, size_t newsize) {
 #if L_USE_MALLOC
   return ::realloc(ptr, newsize);
 #else
-  if(oldsize && freelistIndex(oldsize)==freelistIndex(newsize)) // Already allocated an equivalent block
-    return ptr;
+  L_ASSERT(!oldsize || freelistIndex(oldsize)!=freelistIndex(newsize));
   void* wtr(alloc(newsize));
   if(ptr) {
     memcpy(wtr, ptr, oldsize);
     free(ptr, oldsize);
-  }
+}
   return wtr;
 #endif
 }
@@ -77,16 +90,17 @@ void Memory::free(void* ptr, size_t size) {
 #if L_USE_MALLOC
   ::free(ptr);
 #else
-  const uint32_t index(freelistIndex(size));
-  const size_t trueSize(1<<index);
-  if(trueSize<allocStep) { // Small allocations go to freelists
-    void*& freelist(_freelist[index]);
-    *((void**)ptr) = freelist;
-    freelist = ptr;
-    _unused += trueSize;
-  } else { // Bigger allocations are actually freed
+  if(size>allocStep) { // Big allocations go directly to the system
     virtualFree(ptr, size);
+    _allocated -= size;
+    return;
   }
+  uint32_t index, trueSize;
+  freelistIndexSize(size, index, trueSize);
+  void*& freelist(_freelist[index]);
+  *((void**)ptr) = freelist;
+  freelist = ptr;
+  _unused += trueSize;
   _wasted -= trueSize-size;
   _allocated -= trueSize;
 #endif
