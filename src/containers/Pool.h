@@ -6,13 +6,16 @@
 namespace L {
   template <class T>
   class Pool {
-    static const uint32_t tableSize = 16;
-    static const uint32_t intBits = sizeof(uint32_t)*8;
+    static const size_t idealByteSize = 4*1024u;
   private:
     class Block {
+      static const uint32_t intBits = sizeof(uint32_t)*8;
+      static const size_t constByteSize = sizeof(Block*)+3*sizeof(uint32_t);
+      static const size_t idealDynamicByteSize = idealByteSize-constByteSize;
+      static const size_t size = (idealDynamicByteSize*8)/(sizeof(T)*8+1);
+      static const uint32_t tableSize = (size+31)/intBits;
       L_ALLOCABLE(Block)
     public:
-      static const uint32_t size = tableSize*intBits;
       byte _data[size*sizeof(T)];
       uint32_t _table[tableSize]; // Every bit of this array represents a object slot in _data
       Block* _next; // Pool works like a linked list, in case no more space is available
@@ -39,6 +42,7 @@ namespace L {
       inline void deallocate(void* p){ deallocate(((uintptr_t)p-(uintptr_t)_data)/sizeof(T)); }
       inline bool hasAddress(void *p) const{ return _data<=p && p<_data+sizeof(_data); }
     };
+    static_assert(sizeof(Block)<=idealByteSize, "Pool block size too big");
     class Iterator{
     private:
       Block* _block;
