@@ -32,7 +32,7 @@ namespace L {
     }
     bool operator&&(const Interval& other) const {
       for(int i(0); i<d; i++)
-        if(L::max(_min[i],other._min[i]) > L::min(_max[i],other._max[i]))
+        if(L::max(_min[i],other._min[i]) >= L::min(_max[i],other._max[i]))
           return false;
       return true;
     }
