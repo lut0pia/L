@@ -92,12 +92,12 @@ namespace L {
       node->_key = key;
       sync(node);
     }
-    void query(const Key& zone, Array<Node*>& nodes) {
+    inline void query(const Key& zone, Array<Node*>& nodes) {
       nodes.clear();
       if(_root && zone.overlaps(_root->_key))
         query(_root, zone, nodes);
     }
-    void query(Node* node, const Key& zone, Array<Node*>& nodes) {
+    static void query(Node* node, const Key& zone, Array<Node*>& nodes) {
       if(node->branch()) { // Branch
         if(zone.overlaps(node->_left->_key)) query(node->_left, zone, nodes);
         if(zone.overlaps(node->_right->_key)) query(node->_right, zone, nodes);
