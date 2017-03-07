@@ -103,6 +103,15 @@ namespace L {
         if(zone.overlaps(node->_right->_key)) query(node->_right, zone, nodes);
       } else nodes.push(node); // Leaf
     }
+    inline bool overlaps(const Key& zone) const {
+      return _root && _root->_key.overlaps(zone) && overlaps(_root, zone);
+    }
+    static bool overlaps(Node* node, const Key& zone) {
+      if(node->branch()) { // Branch
+        return (node->_left->_key.overlaps(zone) && overlaps(node->_left, zone))
+          || (node->_right->_key.overlaps(zone) && overlaps(node->_right, zone));
+      } else return node->_key.overlaps(zone); // Leaf
+    }
     void collisions(Array<Node*>& pairs) {
       pairs.clear();
       if(_root && _root->branch()) {
