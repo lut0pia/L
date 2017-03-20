@@ -60,6 +60,7 @@
 #include "font/Pixel.h"
 
 // Everything related to OpenGL
+#include "gl/Atlas.h"
 #include "gl/Buffer.h"
 #include "gl/FrameBuffer.h"
 #include "gl/GL.h"
