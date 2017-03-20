@@ -39,6 +39,9 @@ void Collider::subUpdateAll() {
     }
   }
 }
+void Collider::renderAll(const Camera& cam) {
+  tree.draw();
+}
 void Collider::center(const Vector3f& center){
   _center = center;
   if(_rigidbody)

@@ -24,6 +24,7 @@ namespace L {
     ~Collider();
     void updateComponents();
     static void subUpdateAll();
+    static void renderAll(const Camera&);
     void center(const Vector3f& center);
     void box(const Vector3f& radius);
     void sphere(float radius);
@@ -34,5 +35,6 @@ namespace L {
     static void checkCollision(Collider& a,Collider& b);
     static Collider* raycast(const Vector3f& origin,Vector3f direction,float& t);
   };
-  template <> inline void subUpdateAllComponents<Collider>(){ Collider::subUpdateAll(); }
+  template <> inline void subUpdateAllComponents<Collider>() { Collider::subUpdateAll(); }
+  template <> inline void renderAllComponents<Collider>(const Camera& cam) { Collider::renderAll(cam); }
 }
