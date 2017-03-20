@@ -116,7 +116,7 @@ namespace L {
       pairs.clear();
       if(_root && _root->branch()) {
         struct Pair { Node *a, *b; };
-        StaticStack<1024, Pair> candidatePairs;
+        StaticStack<4096, Pair> candidatePairs;
         candidatePairs.push(_root->_left, _root->_right);
         while(!candidatePairs.empty()) {
           Node* a(candidatePairs.top().a);
