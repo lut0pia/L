@@ -24,6 +24,13 @@ namespace L {
         for(int j(0); j<l; j++)
           _m[i][j] = (i==j) ? s : 0;
     }
+    Matrix(const std::initializer_list<T>& il) {
+      int i(0);
+      for(const T& s : il) {
+        _m[i%c][i/l] = s;
+        i++;
+      }
+    }
 
     inline T& operator()(int line,int column) { return _m[column][line]; }
     inline const T& operator()(int line,int column) const { return _m[column][line]; }
