@@ -83,6 +83,8 @@ namespace L {
     inline const T* begin() const{ return _data; }
     inline const T* end() const{ return _data+_size; }
     template <typename... Args> inline void push(Args&&... args) { insert(_size,args...); }
+    template <typename T, typename... Args> inline void pushMultiple(const T& v, Args&&... args) { push(v); pushMultiple(args...); }
+    inline void pushMultiple() {}
     template <typename... Args> inline void pushFront(Args&&... args) { insert(0,args...); }
     inline void pop() { erase(_size-1); }
 
