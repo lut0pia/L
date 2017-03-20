@@ -32,6 +32,7 @@ void Engine::update() {
   _deltaSeconds = _deltaTime.fSeconds();
   Script::Context::global("delta") = _deltaSeconds;
   Engine::sharedUniform().subData(L_SHAREDUNIFORM_FRAME, _frame);
+  Engine::sharedUniform().subData(L_SHAREDUNIFORM_SCREEN, Vector4f(float(Window::width()), float(Window::height())));
 
   {
     Window::Event e;
