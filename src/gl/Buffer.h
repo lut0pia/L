@@ -18,6 +18,7 @@ namespace L {
       void unbind();
       void data(GLsizeiptr size,const void* data,GLuint usage);
       void subData(GLintptr offset,GLsizeiptr size,const void* data);
+      template<class T> void subData(GLintptr offset, const T& value) { subData(offset, sizeof(T), &value); }
       void bindBase(GLuint index);
     };
   }
