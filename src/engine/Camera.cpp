@@ -35,12 +35,12 @@ void Camera::prerender() {
   _viewProjection = _projection*_view;
   _ray = orientation*_projection.inverse();
   glViewport(0,0,_gcolor.width(),_gcolor.height());
-  Engine::sharedUniform().subData(L_SHAREDUNIFORM_VIEW,sizeof(Matrix44f),_view.array());
-  Engine::sharedUniform().subData(L_SHAREDUNIFORM_INVVIEW,sizeof(Matrix44f),_view.inverse().array());
-  Engine::sharedUniform().subData(L_SHAREDUNIFORM_VIEWPROJ,sizeof(Matrix44f),_viewProjection.array());
-  Engine::sharedUniform().subData(L_SHAREDUNIFORM_INVVIEWPROJ,sizeof(Matrix44f),_viewProjection.inverse().array());
-  Engine::sharedUniform().subData(L_SHAREDUNIFORM_PREVVIEWPROJ,sizeof(Matrix44f),_prevViewProjection.array());
-  Engine::sharedUniform().subData(L_SHAREDUNIFORM_EYE,sizeof(Vector3f),_transform->absolutePosition().array());
+  Engine::sharedUniform().subData(L_SHAREDUNIFORM_VIEW,_view);
+  Engine::sharedUniform().subData(L_SHAREDUNIFORM_INVVIEW,_view.inverse());
+  Engine::sharedUniform().subData(L_SHAREDUNIFORM_VIEWPROJ,_viewProjection);
+  Engine::sharedUniform().subData(L_SHAREDUNIFORM_INVVIEWPROJ,_viewProjection.inverse());
+  Engine::sharedUniform().subData(L_SHAREDUNIFORM_PREVVIEWPROJ,_prevViewProjection);
+  Engine::sharedUniform().subData(L_SHAREDUNIFORM_EYE,_transform->absolutePosition());
   _gbuffer.bind();
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }

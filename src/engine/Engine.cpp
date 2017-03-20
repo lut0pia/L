@@ -31,7 +31,7 @@ void Engine::update() {
   _deltaTime = min(_deltaTime*_timescale, Time(0, 100)); // Cap delta time to avoid weird behaviour
   _deltaSeconds = _deltaTime.fSeconds();
   Script::Context::global("delta") = _deltaSeconds;
-  Engine::sharedUniform().subData(L_SHAREDUNIFORM_FRAME, sizeof(uint32_t), &_frame);
+  Engine::sharedUniform().subData(L_SHAREDUNIFORM_FRAME, _frame);
 
   {
     Window::Event e;
