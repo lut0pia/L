@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../gl/GL.h"
 #include "../math/Interval.h"
 #include "Pool.h"
 
