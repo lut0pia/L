@@ -41,8 +41,8 @@ static void applyScope(Var& v, Table<Symbol, uint32_t>& localTable, uint32_t& lo
     for(auto&& e : array)
       applyScope(e, localTable, localIndex);
   } else if(v.is<Symbol>()) {
-    if(auto* it = localTable.find(v.as<Symbol>()))
-      v = Local{it->value()};
+    if(auto found = localTable.find(v.as<Symbol>()))
+      v = Local{*found};
   }
 }
 

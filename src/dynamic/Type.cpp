@@ -11,8 +11,8 @@ using namespace L;
 Table<Symbol, const TypeDescription*> L::types;
 
 Cast TypeDescription::cast(const TypeDescription* target) const{
-  const Table<intptr_t,Cast>::Slot* it(casts.find((intptr_t)target));
-  return (it) ? it->value() : nullptr;
+  auto found = casts.find((intptr_t)target);
+  return found ? *found : nullptr;
 }
 
 void L::TypeInit(){

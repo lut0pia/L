@@ -60,8 +60,7 @@ namespace L {
     }
 
     static Interface& in(const char* format) {
-      const auto& slot(instance.find(format));
-      if(slot) return *slot->value();
+      if(auto found = instance.find(format)) return **found;
       else L_ERRORF("Unhandled format %s",format);
     }
     static void fromFile(T& v,const String& path) {

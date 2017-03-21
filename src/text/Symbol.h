@@ -14,11 +14,9 @@ namespace L {
   public:
     constexpr Symbol() : _string(nullptr){}
     Symbol(const char* str){
-      const Table<const char*,const char*>::Slot* slot(_symbols.find(str));
-      if(slot){
-        L_ASSERT(strcmp(str,slot->value())==0);
-        _string = slot->value();
-      } else {
+      if(const char** found = _symbols.find(str))
+        _string = *found;
+      else {
         const size_t length(strlen(str));
         if(((size_t)_blobEnd-(size_t)_blobNext)<=length){
           _blobNext = (char*)Memory::virtualAlloc(blobSize);
