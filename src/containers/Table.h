@@ -92,20 +92,21 @@ namespace L {
       }
       return slot->value();
     }
+    inline uintptr_t indexFor(uint32_t h) const { return h*(float(_size)/UINT32_MAX); }
     Slot* findSlot(uint32_t h){
-      do{
-        const uintptr_t i(h*((float)_size/UINT32_MAX));
+      while(true) {
+        const uintptr_t i(indexFor(h));
         for(uintptr_t j(0); j<_size; j++){
           const uintptr_t k((i+j)%_size);
           if(_slots[k].empty() || _slots[k].hash()==h)
             return _slots+k;
         }
         grow();
-      } while(true);
+      }
     }
     Slot* findSlot(const K& key) const {
       const uint32_t h(hash(key));
-      const uintptr_t i(h*((float)_size/UINT32_MAX));
+      const uintptr_t i(indexFor(h));
       for(uintptr_t j(0); j<_size; j++){
         const uintptr_t k((i+j)%_size);
         if(_slots[k].hash()==h)
