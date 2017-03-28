@@ -67,6 +67,9 @@ void Program::uniformBlockBinding(const char* name,GLuint binding){
 void Program::uniform(const char* name,float v) {
   glUniform1f(uniformLocation(name),v);
 }
+void Program::uniform(const char* name, float x, float y) {
+  glUniform2f(uniformLocation(name), x, y);
+}
 void Program::uniform(const char* name,float x,float y,float z) {
   glUniform3f(uniformLocation(name),x,y,z);
 }

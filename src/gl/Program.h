@@ -27,8 +27,10 @@ namespace L {
       GLuint uniformBlockIndex(const char* name);
       void uniformBlockBinding(const char* name,GLuint binding);
       void uniform(const char* name,float);
+      void uniform(const char* name, float, float);
       void uniform(const char* name,float,float,float);
       void uniform(const char* name,float,float,float,float);
+      inline void uniform(const char* name, const Vector2f& v) { uniform(name, v.x(), v.y()); }
       inline void uniform(const char* name,const Vector3f& v) { uniform(name,v.x(),v.y(),v.z()); }
       inline void uniform(const char* name,const Vector4f& v) { uniform(name,v.x(),v.y(),v.z(),v.w()); }
       inline void uniform(const char* name,const Color& c) { uniform(name,c.rf(),c.gf(),c.bf(),c.af()); }
