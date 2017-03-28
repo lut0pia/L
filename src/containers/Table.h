@@ -120,6 +120,23 @@ namespace L {
       Slot* slot(findSlot(key));
       return slot && !slot->empty() ? &slot->value() : nullptr;
     }
+    void remove(const K& key) {
+      Slot* slot(((const Table<K, V>*)this)->findSlot(key)); // Call the const version of this method
+      if(slot && !slot->empty()) {
+        slot->~Slot();
+        while(true) {
+          uintptr_t slotIndex(slot-_slots);
+          uintptr_t nextSlotIndex((slotIndex+1)%_size);
+          Slot* nextSlot(_slots+nextSlotIndex);
+          if(!nextSlot->empty() && indexFor(nextSlot->hash())!=nextSlotIndex) {
+            memcpy(slot, nextSlot, sizeof(*slot));
+            slot = nextSlot;
+          } else break;
+        }
+        memset(slot, 0, sizeof(*slot));
+        _count--;
+      }
+    }
     void clear() {
       if(_count)
         for(uintptr_t i(0); i<_size; i++)
