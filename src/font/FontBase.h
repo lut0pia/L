@@ -1,27 +1,43 @@
 #pragma once
 
-#include "../containers/Map.h"
+#include "../containers/Table.h"
 #include "../image/Bitmap.h"
+#include "../gl/Atlas.h"
 #include "../math/Vector.h"
+#include "../time/Time.h"
 
 namespace L {
   namespace Font {
-    typedef struct {
+    struct Glyph {
       L::Bitmap bmp;
       Vector2i origin;
       int advance;
-    } Glyph;
+      Interval2f atlasCoords;
+    };
+    struct TextMesh {
+      String str;
+      GL::Mesh mesh;
+      Vector2i dimensions = {0,0};
+      Time lastUsed;
+    };
     class Base {
-      protected:
-        Glyph _ascii[128];
-        Map<uint32_t,Glyph> _glyphs;
-        int _lineheight;
-      public:
-        virtual ~Base() {}
-        const Glyph& glyph(uint32_t utf32);
-        virtual Bitmap render(const char*);
-        virtual Vector2i guessSize(const char*);
-        virtual Glyph loadGlyph(uint32_t utf32) = 0;
+    protected:
+      GL::Atlas _atlas;
+      Glyph _ascii[128];
+      Table<uint32_t, Glyph> _glyphs;
+      Table<uint32_t, TextMesh> _textMeshes;
+      int _lineheight;
+
+    public:
+      virtual ~Base() {}
+      const Glyph& glyph(uint32_t utf32);
+      virtual TextMesh& textMesh(const char*);
+      virtual void draw(int x, int y, const char*);
+      virtual Glyph loadGlyph(uint32_t utf32) = 0;
+
+      inline int lineHeight() const { return _lineheight; }
+
+      void updateTextMeshes();
     };
   }
 }

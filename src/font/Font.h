@@ -7,5 +7,6 @@ namespace L {
   namespace Font {
     Base& get(const char* = "");
     void set(const Ref<Base>&, const char* = "");
+    void update();
   }
 }
