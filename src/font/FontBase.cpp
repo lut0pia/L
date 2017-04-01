@@ -50,12 +50,14 @@ TextMesh& Base::textMesh(const char* str) {
     wtr.str = str;
     Array<Vector4f> buffer;
     buffer.growTo(strlen(str)*6);
+    wtr.dimensions.y() = _lineheight;
     int x(0), y(0);
     while(*str) {
       const uint32_t utf32(ReadUTF8(str));
       if(utf32=='\n') { // End line
         x = 0;
         y += _lineheight;
+        wtr.dimensions.y() = max(wtr.dimensions.y(), y+_lineheight);
       } else { // Character
         const Glyph& g(glyph(utf32));
         const Vector4f tl(x+g.origin.x(), y+g.origin.y(), g.atlasCoords.min().x(), g.atlasCoords.min().y());
