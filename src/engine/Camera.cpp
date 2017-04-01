@@ -75,8 +75,9 @@ void Camera::postrender(){
   deferredProgram.uniform("colorBuffer",_gcolor,GL_TEXTURE0);
   deferredProgram.uniform("normalBuffer",_gnormal,GL_TEXTURE1);
   deferredProgram.uniform("depthBuffer",_gdepth,GL_TEXTURE2);
-  glViewport(_viewport.min().x()*Window::width(),_viewport.min().y()*Window::height(),
-             _viewport.size().x()*Window::width(),_viewport.size().y()*Window::height());
+  const Interval2i viewportPixel(viewportPixel());
+  const Vector2i viewportPixelSize(viewportPixel.size());
+  glViewport(viewportPixel.min().x(), viewportPixel.min().y(), viewportPixelSize.x(), viewportPixelSize.y());
   GL::quad().draw();
   glEnable(GL_DEPTH_TEST);
 }
@@ -107,7 +108,8 @@ void Camera::updateProjection(){
     case L::Camera::PERSPECTIVE:
     {
       _projection = Matrix44f(1.f);
-      const float aspect((_viewport.size().x()*Window::width())/(_viewport.size().y()*Window::height())),
+      const Vector2f viewportSize(_viewport.size());
+      const float aspect((viewportSize.x()*Window::width())/(viewportSize.y()*Window::height())),
         top(_near*tan(_fovy*(PI<float>()/360.f))),
         right(top*aspect);
       _projection(0,0) = _near/right;
