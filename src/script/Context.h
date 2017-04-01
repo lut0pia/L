@@ -36,7 +36,7 @@ namespace L {
       inline uint32_t currentFrame() const { return _frames.empty() ? 0 : _frames.top(); }
       inline uint32_t localCount() const { return _stack.size()-currentFrame(); }
       inline Var& local(uint32_t i) { return _stack.bottom(i+currentFrame()); }
-      inline Var& returnValue() { return local(-1); }
+      inline Var& returnValue() { return local(uint32_t(-1)); }
       Var executeReturn(const Var& code); // Copies and return result of execution
       Var& executeRef(const Var& code); // Pushes result of exection on stack then returns ref to it
       void discardExecute(const Var& code); // Replaces top of the stack with result of execution
