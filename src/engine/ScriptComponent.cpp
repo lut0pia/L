@@ -3,6 +3,7 @@
 #include "../streams/FileStream.h"
 #include "Camera.h"
 #include "Collider.h"
+#include "../font/Font.h"
 #include "Sprite.h"
 #include "Transform.h"
 #include "StaticMesh.h"
@@ -60,6 +61,10 @@ void ScriptComponent::event(const Ref<Table<Var, Var>>&e) {
   static const Symbol eventSymbol("event");
   _context.tryExecuteMethod(eventSymbol, {e});
 }
+void ScriptComponent::gui(const Camera& c) {
+  static const Symbol guiSymbol("gui");
+  _context.tryExecuteMethod(guiSymbol);
+}
 
 void ScriptComponent::init() {
   L_ONCE;
@@ -89,6 +94,10 @@ void ScriptComponent::init() {
     if(c.localCount()>0)
       RigidBody::gravity(c.local(0).get<Vector3f>());
     c.returnValue() = RigidBody::gravity();
+  });
+  // Gui ///////////////////////////////////////////////////////////////////
+  L_FUNCTION("draw-text", {
+    Font::get().draw(c.local(0).get<int>(),c.local(1).get<int>(),c.local(2).get<String>());
   });
   // Entity ///////////////////////////////////////////////////////////////////
   Context::global(Symbol("entity-make")) = (Function)([](Context& c) {

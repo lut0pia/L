@@ -17,6 +17,7 @@ namespace L {
     void event(const Device::Event&);
     void event(const Window::Event&);
     void event(const Ref<Table<Var, Var>>&);
+    void gui(const Camera&);
     static void init();
   };
 }

@@ -9,11 +9,12 @@
 #include "../system/Device.h"
 #include "../system/Window.h"
 #include "SharedUniform.h"
+#include "../font/Font.h"
 
 using namespace L;
 
 Array<void(*)()> Engine::_updates, Engine::_subUpdates, Engine::_lateUpdates;
-Array<void(*)(const Camera&)> Engine::_renders;
+Array<void(*)(const Camera&)> Engine::_renders, Engine::_guis;
 Array<void(*)(const L::Window::Event&)> Engine::_windowEvents;
 Array<void(*)(const Device::Event&)> Engine::_deviceEvents;
 Table<uint32_t, Ref<GL::Texture> > Engine::_textures;
@@ -62,13 +63,17 @@ void Engine::update() {
     lateUpdate();
 
   Entity::flushDestroyQueue();
+  Font::update();
 
   for(auto&& camera : Pool<Camera>::global) {
     camera.prerender();
     for(auto&& render : _renders)
       render(camera);
     camera.postrender();
+    for(auto&& gui : _guis)
+      gui(camera);
   }
+
   Window::swapBuffers();
   _frame++;
 }
