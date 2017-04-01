@@ -35,6 +35,7 @@ namespace L {
 
     bool worldToScreen(const Vector3f&,Vector2f&) const; // Set the screen-space vector for that world space vector, returns false if behind camera
     Vector3f screenToRay(const Vector2f&) const; // Returns direction vector from normalized screen position
+    Interval2i viewportPixel() const;
     bool sees(const Interval3f&) const; // Checks if an interval can currently be seen by camera
 
     inline const Matrix44f& view() const { return _view; }

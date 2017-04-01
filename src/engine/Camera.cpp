@@ -144,6 +144,10 @@ bool Camera::worldToScreen(const Vector3f& p,Vector2f& wtr) const {
 Vector3f Camera::screenToRay(const Vector2f& p) const {
   return Vector3f(_ray * Vector4f(p.x(),p.y(),0,1));
 }
+Interval2i Camera::viewportPixel() const {
+  const Vector2i windowSize(Window::width(), Window::height());
+  return Interval2i(_viewport.min()*windowSize, _viewport.max()*windowSize);
+}
 bool Camera::sees(const Interval3f& i) const {
   static const Interval3f ndc(Vector3f(-1,-1,-1),Vector3f(1,1,1));
   Interval3f projected;
