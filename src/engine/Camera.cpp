@@ -85,7 +85,8 @@ void Camera::postrender(){
 
 void Camera::viewport(const Interval2f& i) {
   _viewport = i;
-  const size_t viewPortWidth(Window::width()*_viewport.size().x()),viewPortHeight(Window::height()*_viewport.size().y());
+  const Vector2f viewportSize(_viewport.size());
+  const size_t viewPortWidth(Window::width()*viewportSize.x()),viewPortHeight(Window::height()*viewportSize.y());
   _gcolor.image2D(0,GL_RGBA,viewPortWidth,viewPortHeight,0,GL_RGBA,GL_UNSIGNED_BYTE);
   _gnormal.image2D(0,GL_RGB16F,viewPortWidth,viewPortHeight,0,GL_RGB,GL_FLOAT);
   _gdepth.image2D(0,GL_DEPTH_COMPONENT24,viewPortWidth,viewPortHeight,0,GL_DEPTH_COMPONENT,GL_FLOAT);
