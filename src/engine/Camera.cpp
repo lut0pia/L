@@ -144,6 +144,10 @@ bool Camera::worldToScreen(const Vector3f& p,Vector2f& wtr) const {
 Vector3f Camera::screenToRay(const Vector2f& p) const {
   return Vector3f(_ray * Vector4f(p.x(),p.y(),0,1));
 }
+Vector2f Camera::screenToPixel(const Vector2f& v) const {
+  const Vector2f viewportSize(_viewport.size());
+  return (v*Vector2f(.5f, -.5f)+.5f)*Vector2f(viewportSize.x()*Window::width(), viewportSize.y()*Window::height());
+}
 Interval2i Camera::viewportPixel() const {
   const Vector2i windowSize(Window::width(), Window::height());
   return Interval2i(_viewport.min()*windowSize, _viewport.max()*windowSize);

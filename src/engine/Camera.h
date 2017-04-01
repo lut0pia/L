@@ -33,8 +33,9 @@ namespace L {
     void pixels(); // Maps to window's pixels (origins at top-left pixel)
     void updateProjection();
 
-    bool worldToScreen(const Vector3f&,Vector2f&) const; // Set the screen-space vector for that world space vector, returns false if behind camera
+    bool worldToScreen(const Vector3f&,Vector2f&) const; // Finds the normalized screen position for that world space vector, returns false if behind camera
     Vector3f screenToRay(const Vector2f&) const; // Returns direction vector from normalized screen position
+    Vector2f screenToPixel(const Vector2f&) const; // Returns pixel position from NDC
     Interval2i viewportPixel() const;
     bool sees(const Interval3f&) const; // Checks if an interval can currently be seen by camera
 
