@@ -4,8 +4,8 @@
 #include "../types.h"
 
 #define L_ALLOCABLE(...) public: \
-inline void* operator new(size_t size) { L_ASSERT(size==sizeof(__VA_ARGS__)); return L::Memory::alloc(sizeof(__VA_ARGS__));} \
-inline void operator delete(void* p) { L::Memory::free(p,sizeof(__VA_ARGS__)); }
+inline void* operator new(size_t SIZE) { L_ASSERT(SIZE==sizeof(__VA_ARGS__)); return L::Memory::alloc(sizeof(__VA_ARGS__));} \
+inline void operator delete(void* P) { L::Memory::free(P,sizeof(__VA_ARGS__)); }
 
 void* operator new(size_t size);
 
