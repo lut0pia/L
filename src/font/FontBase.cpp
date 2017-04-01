@@ -66,6 +66,7 @@ TextMesh& Base::textMesh(const char* str) {
         const Vector4f br(tr.x(), bl.y(), tr.z(), bl.w());
         buffer.pushMultiple(tl, bl, br, tl, br, tr);
         x += g.advance;
+        wtr.dimensions.x() = max(wtr.dimensions.x(), x);
       }
     }
     wtr.mesh.load(GL_TRIANGLES, buffer.size(), &buffer[0], sizeof(Vector4f)*buffer.size(), {
@@ -75,13 +76,14 @@ TextMesh& Base::textMesh(const char* str) {
     return wtr;
   }
 }
-void Base::draw(int x, int y, const char* str) {
+void Base::draw(int x, int y, const char* str, Vector2f anchor) {
   GL::Program& p(glyphProgram());
+  TextMesh& textMesh(textMesh(str));
+ 
   p.use();
   p.uniform("atlas", _atlas.texture());
-  p.uniform("position", Vector2f(x, y));
+  p.uniform("position", Vector2f(x-anchor.x()*textMesh.dimensions.x(), y-anchor.y()*textMesh.dimensions.y()));
 
-  TextMesh& textMesh(textMesh(str));
   textMesh.mesh.draw();
   textMesh.lastUsed = Time::now();
 }

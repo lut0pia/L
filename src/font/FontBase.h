@@ -32,7 +32,7 @@ namespace L {
       virtual ~Base() {}
       const Glyph& glyph(uint32_t utf32);
       virtual TextMesh& textMesh(const char*);
-      virtual void draw(int x, int y, const char*);
+      virtual void draw(int x, int y, const char*, Vector2f anchor = Vector2f(0.f,0.f));
       virtual Glyph loadGlyph(uint32_t utf32) = 0;
 
       inline int lineHeight() const { return _lineheight; }
