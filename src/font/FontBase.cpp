@@ -26,7 +26,7 @@ GL::Program& glyphProgram() {
     "out vec2 ftexcoords;"
     "void main(){"
     "ftexcoords = texcoords;"
-    "gl_Position = vec4(((position+vertex)/screen.xy)*vec2(2.f,-2.f)-vec2(1.f,-1.f),0.f,1.f);"
+    "gl_Position = vec4(((position+vertex)/screen.xy)*vec2(2.f/(viewport.z-viewport.x),-2.f/(viewport.w-viewport.y))-vec2(1.f,-1.f),0.f,1.f);"
     "}", GL_VERTEX_SHADER),
     GL::Shader(
       "#version 330 core\n"
