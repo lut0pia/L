@@ -44,6 +44,7 @@ void Camera::prerender() {
   Engine::sharedUniform().subData(L_SHAREDUNIFORM_VIEWPORT, Vector4f(_viewport.min().x(),_viewport.min().y(),_viewport.max().x(),_viewport.max().y()));
   _gbuffer.bind();
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glEnable(GL_DEPTH_TEST);
 }
 void Camera::postrender(){
   static GL::Program deferredProgram(GL::Shader(
@@ -80,7 +81,6 @@ void Camera::postrender(){
   const Vector2i viewportPixelSize(viewportPixel.size());
   glViewport(viewportPixel.min().x(), viewportPixel.min().y(), viewportPixelSize.x(), viewportPixelSize.y());
   GL::quad().draw();
-  glEnable(GL_DEPTH_TEST);
 }
 
 void Camera::viewport(const Interval2f& i) {
