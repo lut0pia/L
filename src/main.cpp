@@ -24,6 +24,7 @@ int main(int argc,const char* argv[]) {
   Engine::addSubUpdate<RigidBody>();
   Engine::addSubUpdate<Collider>();
   Engine::addLateUpdate<ScriptComponent>();
+  Engine::addGui<ScriptComponent>();
   {
     ScriptComponent::init();
     Script::Context startupContext;
