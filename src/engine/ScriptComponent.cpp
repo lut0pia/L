@@ -63,7 +63,7 @@ void ScriptComponent::event(const Ref<Table<Var, Var>>&e) {
 }
 void ScriptComponent::gui(const Camera& c) {
   static const Symbol guiSymbol("gui");
-  _context.tryExecuteMethod(guiSymbol);
+  _context.tryExecuteMethod(guiSymbol, {(Camera*)&c});
 }
 
 void ScriptComponent::init() {
