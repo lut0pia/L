@@ -27,9 +27,6 @@ namespace L {
     static Array<void(*)(const Camera&)> _renders, _guis;
     static Array<void(*)(const Window::Event&)> _windowEvents;
     static Array<void(*)(const Device::Event&)> _deviceEvents;
-    static Table<uint32_t, Ref<GL::Texture> > _textures;
-    static Table<uint32_t, Ref<GL::Mesh> > _meshes;
-    static Table<uint32_t, Ref<Script::CodeFunction>> _scripts;
     static Timer _timer;
     static Time _deltaTime, _accumulator;
     static const Time _subDelta;
@@ -56,10 +53,5 @@ namespace L {
     // Rendering
     static GL::Buffer& sharedUniform();
     static void ditherMatrix(const float* data, size_t width, size_t height);
-
-    // Resources
-    static const Ref<GL::Texture>& texture(const char* filepath);
-    static const Ref<GL::Mesh>& mesh(const char* filepath);
-    static const Ref<Script::CodeFunction>& script(const char* filepath);
   };
 }

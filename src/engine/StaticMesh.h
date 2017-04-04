@@ -2,6 +2,7 @@
 
 #include "Component.h"
 #include "Transform.h"
+#include "Resource.h"
 #include "../gl/Mesh.h"
 
 namespace L {
@@ -15,8 +16,8 @@ namespace L {
   public:
     inline StaticMesh() : _scale(1.f) {}
     inline void updateComponents() { _transform = entity()->requireComponent<Transform>(); }
-    inline void mesh(const char* filename) { _mesh = Engine::mesh(filename); }
-    inline void texture(const char* filename) { _texture = Engine::texture(filename); }
+    inline void mesh(const char* filename) { _mesh = Resource::mesh(filename); }
+    inline void texture(const char* filename) { _texture = Resource::texture(filename); }
     inline void scale(float scale) { _scale = scale; }
     void render(const Camera&);
   };

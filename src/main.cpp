@@ -28,7 +28,7 @@ int main(int argc,const char* argv[]) {
   {
     ScriptComponent::init();
     Script::Context startupContext;
-    startupContext.executeDiscard(Array<Var>{Engine::script("startup.ls")});
+    startupContext.executeDiscard(Array<Var>{Resource::script("startup.ls")});
   }
   const uint32_t bs(32);
   float bayer[bs*bs];

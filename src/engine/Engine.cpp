@@ -17,9 +17,6 @@ Array<void(*)()> Engine::_updates, Engine::_subUpdates, Engine::_lateUpdates;
 Array<void(*)(const Camera&)> Engine::_renders, Engine::_guis;
 Array<void(*)(const L::Window::Event&)> Engine::_windowEvents;
 Array<void(*)(const Device::Event&)> Engine::_deviceEvents;
-Table<uint32_t, Ref<GL::Texture> > Engine::_textures;
-Table<uint32_t, Ref<GL::Mesh> > Engine::_meshes;
-Table<uint32_t, Ref<Script::CodeFunction>> Engine::_scripts;
 Timer Engine::_timer;
 const Time Engine::_subDelta(0, 10);
 L::Time Engine::_deltaTime, Engine::_accumulator(0);
@@ -89,23 +86,4 @@ void Engine::ditherMatrix(const float* data, size_t width, size_t height) {
   sharedUniform().subData(L_SHAREDUNIFORM_DITHERMATRIXSIZE, 4, &width);
   sharedUniform().subData(L_SHAREDUNIFORM_DITHERMATRIXSIZE+4, 4, &height);
   sharedUniform().subData(L_SHAREDUNIFORM_DITHERMATRIX, width*height*4, data);
-}
-
-const Ref<GL::Texture>& Engine::texture(const char* fp) {
-  const uint32_t h(hash(fp));
-  if(auto found = _textures.find(h)) return *found;
-  else return _textures[h] = ref<GL::Texture>(Bitmap(fp));
-}
-const Ref<GL::Mesh>& Engine::mesh(const char* fp) {
-  const uint32_t h(hash(fp));
-  if(auto found = _meshes.find(h)) return *found;
-  else return _meshes[h] = ref<GL::Mesh>(fp);
-}
-const Ref<Script::CodeFunction>& Engine::script(const char* fp) {
-  const uint32_t h(hash(fp));
-  if(auto found = _scripts.find(h)) return *found;
-  else {
-    FileStream stream(fp, "rb");
-    return _scripts[h] = ref<Script::CodeFunction>(Script::Context::read(stream));
-  }
 }

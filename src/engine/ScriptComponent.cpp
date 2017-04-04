@@ -20,7 +20,7 @@ void ScriptComponent::updateComponents() {
 }
 void ScriptComponent::load(const char* filename) {
   static const Symbol startSymbol("start");
-  _context.execute(Array<Var>{Engine::script(filename)});
+  _context.execute(Array<Var>{Resource::script(filename)});
   _context.tryExecuteMethod(startSymbol);
 }
 void ScriptComponent::update() {
