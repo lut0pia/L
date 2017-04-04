@@ -5,12 +5,17 @@
 #include "../system/Memory.h"
 
 namespace L {
+  struct RefMeta {
+    uint32_t counter, size;
+  };
   template<class T>
   class Ref {
   private:
-    static const size_t offset = 8;
+    static const size_t offset = sizeof(RefMeta);
     T* _p;
-    inline int& counter(){ return *((int*)_p-1); }
+    inline RefMeta& meta() { return *((RefMeta*)_p-1); }
+    inline uint32_t& counter(){ return meta().counter; }
+    inline uint32_t& size() { return meta().size; }
 
   public:
     constexpr Ref() : _p(nullptr) {}
@@ -26,7 +31,7 @@ namespace L {
     inline ~Ref() {
       if(_p && --counter()==0){
         _p->~T();
-        Memory::free((byte*)_p-offset,sizeof(T)+offset);
+        Memory::free((byte*)_p-offset,size()+offset);
       }
     }
     inline Ref& operator=(const Ref& other) {
@@ -49,6 +54,7 @@ namespace L {
       this->~Ref();
       _p = (T*)((byte*)Memory::alloc(sizeof(T)+offset)+offset);
       counter() = 1;
+      size() = sizeof(T);
       new(_p)T(args...);
       return **this;
     }
