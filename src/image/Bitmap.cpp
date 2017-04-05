@@ -10,17 +10,6 @@ Bitmap::Bitmap(int width,int height,const Color& c) : MultiArray<2,Color>(width,
     for(int y(0); y<height; y++)
       (*this)(x,y) = c;
 }
-Bitmap::Bitmap(const String& filePath) : MultiArray<2,Color>() {
-  Interface<Bitmap>::fromFile(*this,filePath);
-}
-Bitmap& Bitmap::load(const String& filePath) {
-  Interface<Bitmap>::fromFile(*this,filePath);
-  return *this;
-}
-Bitmap& Bitmap::save(const String& filePath) {
-  Interface<Bitmap>::toFile(*this,filePath);
-  return *this;
-}
 
 Color Bitmap::linear(float x,float y) const {
   x -= .5f;

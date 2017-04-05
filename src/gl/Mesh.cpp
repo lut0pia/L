@@ -8,13 +8,13 @@
 using namespace L;
 using namespace GL;
 
-
 Mesh::Mesh(GLenum mode,GLsizei count,const void* data,GLsizeiptr size,const std::initializer_list<Attribute>& attributes,const GLushort* iarray,GLsizei icount)
   : Mesh(){
   load(mode,count,data,size,attributes,iarray,icount);
 }
-Mesh::Mesh(const char* filename) : Mesh(){
-  Interface<Mesh>::fromFile(*this,filename);
+Mesh::Mesh(const MeshBuilder& mb, GLenum mode, const std::initializer_list<Attribute>& attributes)
+  : Mesh() {
+  load(mb, mode, attributes);
 }
 Mesh::~Mesh(){
   if(_vao) glDeleteVertexArrays(1,&_vao);

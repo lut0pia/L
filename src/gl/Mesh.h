@@ -25,7 +25,7 @@ namespace L {
       };
       inline Mesh() : _vao(0),_vbo(0),_eab(0){}
       Mesh(GLenum mode,GLsizei count,const void* data,GLsizeiptr size,const std::initializer_list<Attribute>&,const GLushort* indices = nullptr,GLsizei icount = 0);
-      Mesh(const char* filename);
+      Mesh(const MeshBuilder&, GLenum mode, const std::initializer_list<Attribute>&);
       ~Mesh();
       void indices(const GLushort* data,GLsizei count);
       void load(GLenum mode,GLsizei count,const void* data,GLsizeiptr size,const std::initializer_list<Attribute>& attributes,const GLushort* indices = nullptr,GLsizei icount = 0);

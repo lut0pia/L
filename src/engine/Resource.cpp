@@ -17,14 +17,17 @@ void Resource::update() {
     font.value()->updateTextMeshes();
 }
 const Ref<GL::Texture>& Resource::texture(const char* fp) {
+  static Ref<GL::Texture> missing(ref<GL::Texture>(1,1,&Color::magenta));
   const uint32_t h(hash(fp));
   if(auto found = _textures.find(h)) return *found;
-  else return _textures[h] = ref<GL::Texture>(Bitmap(fp));
+  else if(auto bmp = Interface<Bitmap>::fromFile(fp))
+    return _textures[h] = ref<GL::Texture>(*bmp);
+  else return missing;
 }
 const Ref<GL::Mesh>& Resource::mesh(const char* fp) {
   const uint32_t h(hash(fp));
   if(auto found = _meshes.find(h)) return *found;
-  else return _meshes[h] = ref<GL::Mesh>(fp);
+  else return _meshes[h] = Interface<GL::Mesh>::fromFile(fp);
 }
 const Ref<Script::CodeFunction>& Resource::script(const char* fp) {
   const uint32_t h(hash(fp));
@@ -40,10 +43,5 @@ const Ref<Font::Base>& Resource::font(const char* fp) {
   const uint32_t h(hash(fp));
   if(h==defaultHash) return pixel;
   else if(auto found = _fonts.find(h)) return *found;
-  else {
-    Ref<Font::Base> font;
-    Interface<Ref<Font::Base>>::fromFile(font, fp);
-    L_ASSERT(!font.null());
-    return _fonts[h] = font;
-  }
+  else return _fonts[h] = Interface<Font::Base>::fromFile(fp);
 }

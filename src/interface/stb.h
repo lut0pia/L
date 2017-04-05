@@ -5878,14 +5878,12 @@ namespace L {
       subscribe("jpeg");
       subscribe("jpg");
     }
-    bool to(const Bitmap& bmp, const File& file) {
-      return false;
-    }
-    bool from(Bitmap& bmp, const File& file) {
+    Ref<Bitmap> from(const File& file) override {
       int width, height, comp;
       byte* img(stbi_load(file.path(), &width, &height, &comp, 4));
       if(img) {
-        bmp.resizeFast(width, height);
+        auto wtr = ref<Bitmap>(width, height);
+        Bitmap& bmp = *wtr;
         size_t s(width*height);
         byte* a(img);
         byte* b((byte*)&bmp[0]);
@@ -5899,10 +5897,10 @@ namespace L {
           b += 4;
         }
         stbi_image_free(img);
-        return true;
+        return wtr;
       } else {
         out << stbi_failure_reason() << '\n';
-        return false;
+        return nullptr;
       }
     }
   };

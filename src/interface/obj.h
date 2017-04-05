@@ -17,7 +17,7 @@ namespace L {
   public:
     OBJ() : Interface("obj") {}
 
-    bool from(GL::Mesh& mesh, Stream& stream) {
+    Ref<GL::Mesh> from(Stream& stream) override {
       _mb.reset();
       _vertices.clear();
       _normals.clear();
@@ -52,12 +52,13 @@ namespace L {
       }
       if(_normals.empty())
         _mb.computeNormals(0, sizeof(Vector2f)+sizeof(Vector3f), sizeof(Vertex));
-      mesh.load(_mb, GL_TRIANGLES, {
+
+      static const std::initializer_list<GL::Mesh::Attribute> attributes = {
         {0,3,GL_FLOAT,GL_FALSE,sizeof(Vertex),0},
         {1,2,GL_FLOAT,GL_FALSE,sizeof(Vertex),sizeof(float)*3},
         {2,3,GL_FLOAT,GL_FALSE,sizeof(Vertex),sizeof(float)*5},
-      });
-      return true;
+      };
+      return ref<GL::Mesh>(_mb, GL_TRIANGLES, attributes);
     }
   };
   OBJ OBJ::instance;

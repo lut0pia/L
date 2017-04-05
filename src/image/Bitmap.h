@@ -23,9 +23,6 @@ namespace L {
     inline Bitmap(int width,int height) : MultiArray<2,Color>(width,height) {}
     Bitmap(int width,int height,const Color&);
     inline Bitmap(const Color* a,int width,int height) : MultiArray<2,Color>(a,width,height) {}
-    Bitmap(const String& filePath);
-    Bitmap& load(const String& filePath);
-    Bitmap& save(const String& filePath);
     inline int width() const { return size(0); }
     inline int height() const { return size(1); }
     inline const Color& at(int x,int y) const{ return operator()(clamp(x,0,width()-1),clamp(y,0,height()-1)); }
