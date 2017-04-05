@@ -5,11 +5,11 @@
 #include "../gl/Buffer.h"
 #include "../gl/GL.h"
 #include "../gl/Program.h"
+#include "Resource.h"
 #include "../script/Context.h"
 #include "../system/Device.h"
 #include "../system/Window.h"
 #include "SharedUniform.h"
-#include "../font/Font.h"
 
 using namespace L;
 
@@ -60,7 +60,7 @@ void Engine::update() {
     lateUpdate();
 
   Entity::flushDestroyQueue();
-  Font::update();
+  Resource::update();
 
   for(auto&& camera : Pool<Camera>::global) {
     camera.prerender();

@@ -3,7 +3,6 @@
 #include "../streams/FileStream.h"
 #include "Camera.h"
 #include "Collider.h"
-#include "../font/Font.h"
 #include "Sprite.h"
 #include "Transform.h"
 #include "StaticMesh.h"
@@ -97,7 +96,7 @@ void ScriptComponent::init() {
   });
   // Gui ///////////////////////////////////////////////////////////////////
   L_FUNCTION("draw-text", {
-    Font::get().draw(c.local(0).get<int>(),c.local(1).get<int>(),c.local(2).get<String>());
+    Resource::font()->draw(c.local(0).get<int>(),c.local(1).get<int>(),c.local(2).get<String>());
   });
   // Entity ///////////////////////////////////////////////////////////////////
   Context::global(Symbol("entity-make")) = (Function)([](Context& c) {

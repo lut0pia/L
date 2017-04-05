@@ -54,7 +54,6 @@
 #include "engine/Transform.h"
 
 // Font handling
-#include "font/Font.h"
 #include "font/FontBase.h"
 #include "font/FontBitmap.h"
 #include "font/Pixel.h"
