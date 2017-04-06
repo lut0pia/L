@@ -54,9 +54,8 @@
 #include "engine/Transform.h"
 
 // Font handling
-#include "font/FontBase.h"
-#include "font/FontBitmap.h"
-#include "font/Pixel.h"
+#include "font/Font.h"
+#include "font/PixelFont.h"
 
 // Everything related to OpenGL
 #include "gl/Atlas.h"

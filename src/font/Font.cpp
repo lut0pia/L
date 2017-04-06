@@ -1,12 +1,11 @@
-#include "FontBase.h"
+#include "Font.h"
 
 #include "../text/encoding.h"
 #include "../engine/SharedUniform.h"
 
 using namespace L;
-using namespace Font;
 
-const Glyph& Base::glyph(uint32_t utf32) {
+const Font::Glyph& Font::glyph(uint32_t utf32) {
   Glyph* glyph;
   if(utf32<128) glyph = _ascii + utf32;
   else glyph = &_glyphs[utf32];
@@ -41,7 +40,7 @@ GL::Program& glyphProgram() {
       "}", GL_FRAGMENT_SHADER));
   return program;
 }
-TextMesh& Base::textMesh(const char* str) {
+Font::TextMesh& Font::textMesh(const char* str) {
   const uint32_t h(hash(str));
   if(auto found = _textMeshes.find(h))
     return *found;
@@ -76,10 +75,10 @@ TextMesh& Base::textMesh(const char* str) {
     return wtr;
   }
 }
-void Base::draw(int x, int y, const char* str, Vector2f anchor) {
+void Font::draw(int x, int y, const char* str, Vector2f anchor) {
   GL::Program& p(glyphProgram());
   TextMesh& textMesh(textMesh(str));
- 
+
   p.use();
   p.uniform("atlas", _atlas.texture());
   p.uniform("position", Vector2f(x-anchor.x()*textMesh.dimensions.x(), y-anchor.y()*textMesh.dimensions.y()));
@@ -88,7 +87,7 @@ void Base::draw(int x, int y, const char* str, Vector2f anchor) {
   textMesh.lastUsed = Time::now();
 }
 
-void Base::updateTextMeshes() {
+void Font::updateTextMeshes() {
   static Array<uint32_t> obsoleteTextMeshes;
   obsoleteTextMeshes.clear();
   for(auto& textMesh : _textMeshes)
