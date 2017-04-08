@@ -8,8 +8,8 @@ int main(int argc,const char* argv[]) {
   TypeInit();
   Window::openFullscreen("Sample",Window::nocursor|Window::loopcursor);
   Device::init();
-  glEnable(GL_DEPTH_TEST);
   glEnable(GL_CULL_FACE);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   Engine::addWindowEvent<ScriptComponent>();
   Engine::addDeviceEvent<ScriptComponent>();
   Engine::addUpdate<RigidBody>();

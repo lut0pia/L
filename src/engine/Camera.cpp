@@ -45,6 +45,7 @@ void Camera::prerender() {
   _gbuffer.bind();
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glEnable(GL_DEPTH_TEST);
+  glDisable(GL_BLEND);
 }
 void Camera::postrender(){
   static GL::Program deferredProgram(GL::Shader(
@@ -81,6 +82,7 @@ void Camera::postrender(){
   const Vector2i viewportPixelSize(viewportPixel.size());
   glViewport(viewportPixel.min().x(), viewportPixel.min().y(), viewportPixelSize.x(), viewportPixelSize.y());
   GL::quad().draw();
+  glEnable(GL_BLEND);
 }
 
 void Camera::viewport(const Interval2f& i) {

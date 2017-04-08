@@ -35,7 +35,6 @@ GL::Program& glyphProgram() {
       "uniform sampler2D atlas;"
       "void main(){"
       "vec4 color = texture(atlas,ftexcoords);"
-      "if(color.a<.5f) discard;"
       "fragcolor = color;"
       "}", GL_FRAGMENT_SHADER));
   return program;
