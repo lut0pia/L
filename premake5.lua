@@ -5,7 +5,7 @@ solution "L"
 	-- General options
 	location("prj/".._ACTION)
 	defines {"GLEW_STATIC"}
-	flags {"StaticRuntime","C++11"}
+	flags {"StaticRuntime","C++11","FloatFast"}
 	exceptionhandling "Off"
 	rtti "Off"
 
