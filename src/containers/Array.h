@@ -101,7 +101,7 @@ namespace L {
     }
     void capacity(size_t n) {
       if(n!=capacity()) {
-        if(n<_size) size(n); // Have to resize because capacity cannot be below size
+        L_ASSERT_MSG(n>=_size, "Cannot have capacity of array inferior to its size");
         _data = (T*)Memory::realloc(_data,_capacity*sizeof(T),n*sizeof(T));
         _capacity = n;
       }
