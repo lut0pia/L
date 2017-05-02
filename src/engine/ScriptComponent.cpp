@@ -19,7 +19,7 @@ void ScriptComponent::updateComponents() {
 }
 void ScriptComponent::load(const char* filename) {
   static const Symbol startSymbol("start");
-  _context.execute(Array<Var>{Resource::script(filename)});
+  _context.executeInside(Array<Var>{Resource::script(filename)});
   _context.tryExecuteMethod(startSymbol);
 }
 void ScriptComponent::update() {
@@ -170,7 +170,7 @@ void ScriptComponent::init() {
     Array<Var> code(Array<Var>(1, Var(Array<Var>{Symbol("self"), Script::RawSymbol{c.local(0).as<Symbol>()}})));
     for(uint32_t i(1); i<c.localCount(); i++)
       code.push(c.local(i));
-    c.returnValue() = c.currentSelf().as<ScriptComponent*>()->_context.executeReturn(code);
+    c.returnValue() = c.currentSelf().as<ScriptComponent*>()->_context.executeInside(code);
   });
   // Sprite ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(Sprite, "sprite");

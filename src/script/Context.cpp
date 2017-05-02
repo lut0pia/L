@@ -14,6 +14,7 @@ Table<Symbol, Var> Context::_globals;
 Table<const TypeDescription*, Var> Context::_typeTables;
 StaticStack<128, Var> Context::_stack;
 StaticStack<16, uint32_t> Context::_frames;
+StaticStack<16, Var> Context::_selves;
 
 static void object(Context& c) {
   Table<Var, Var>& table(c.returnValue().make<Ref<Table<Var, Var>>>().make());
@@ -205,10 +206,20 @@ bool Context::tryExecuteMethod(const Symbol& sym, std::initializer_list<Var> par
     callArray.size(1);
     for(auto&& p : parameters)
       callArray.push(p);
+    _selves.push(_self);
     executeDiscard(methodCall);
+    _selves.pop();
     return true;
   }
   return false;
+}
+Var Context::executeInside(const Var& code) {
+  _selves.push(_self);
+  execute(code);
+  const Var wtr(_stack.top());
+  _stack.pop();
+  _selves.pop();
+  return wtr;
 }
 
 Ref<Table<Var, Var>> Context::typeTable(const TypeDescription* td) {
