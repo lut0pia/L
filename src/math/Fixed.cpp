@@ -6,9 +6,9 @@ using namespace L;
 
 Fixed::Fixed(double f) {
   double g;
-  f = modf(f,&g);
-  _raw = ((int)g<<halfbits);
-  if(f!=0) _raw |= (int)(f*0xffff+1);
+  f = modf(f, &g);
+  _raw = (int32_t(g)<<halfbits);
+  if(f!=0) _raw |= int32_t(f*0xffff+1);
 }
 Stream& L::operator<<(Stream& s, const Fixed& v) {
   int r(v.raw());
@@ -22,7 +22,7 @@ Stream& L::operator<<(Stream& s, const Fixed& v) {
     s << '.';
     for(int i(0); i<6&&r; i++) {
       r *= 10;
-      s << (char)('0'+(r>>Fixed::halfbits));
+      s << char('0'+(r>>Fixed::halfbits));
       r &= 0xffff;
     }
   }

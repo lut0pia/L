@@ -6,9 +6,9 @@
 namespace L {
   class Fixed {
   private:
-    int _raw;
+    int32_t _raw;
   public:
-    static const int bits = sizeof(int)*8;
+    static const int bits = sizeof(int32_t)*8;
     static const int halfbits = bits/2;
     static const int mul = 1<<halfbits;
 
@@ -27,35 +27,11 @@ namespace L {
     inline Fixed& operator+=(const Fixed& other) { _raw += other._raw; return *this; }
     inline Fixed& operator-=(const Fixed& other) { _raw -= other._raw; return *this; }
     inline Fixed& operator*=(const Fixed& other) {
-      /*_asm {
-        mov ebx, this
-        mov edx, other
-        mov eax, dword ptr [ebx] // Get this value
-        imul dword ptr [edx] // Multiply eax with other value
-        mov ax,dx
-        rol eax,16 // Swap words
-        mov dword ptr [ebx], eax
-      }*/
-      _raw = ((int64_t)_raw*(int64_t)other._raw)>>halfbits;
+      _raw = (int64_t(_raw)*int64_t(other._raw))>>halfbits;
       return *this;
     }
     inline Fixed& operator/=(const Fixed& other) {
-#ifdef _MSC_VER
-      _asm {
-        mov ebx,this
-        mov eax,dword ptr[ebx] // Get this value
-        mov ecx,other
-        mov ecx,dword ptr[ecx] // Get other value
-        cdq // Extend eax to edx:eax
-        idiv ecx // Divide edx:eax by ecx
-        mov word ptr[ebx+2],ax // Move integral part
-        xor eax,eax // Clear eax for next idiv
-        rol edx,16 // Swap words
-        movsx edx,dx // Extend to dword
-        idiv ecx // Divide remainder
-        add dword ptr[ebx],eax // Move fractional part
-      }
-#endif
+      _raw = (int64_t(_raw)<<halfbits)/int64_t(other._raw);
       return *this;
     }
     inline Fixed& operator%=(const Fixed& other) { _raw %= other._raw; return *this; }
@@ -66,9 +42,9 @@ namespace L {
 
     inline int raw() const { return _raw; }
 
-    inline operator int(){ return _raw>>16; }
-    inline operator float(){ return (float)_raw/mul; }
-    inline operator double(){ return (double)_raw/mul; }
+    inline operator int() { return _raw>>halfbits; }
+    inline operator float() { return (float)_raw/mul; }
+    inline operator double() { return (double)_raw/mul; }
   };
-  Stream& operator<<(Stream&,const Fixed&);
+  Stream& operator<<(Stream&, const Fixed&);
 }
