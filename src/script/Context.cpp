@@ -135,7 +135,7 @@ void Context::execute(const Var& code, Var* selfOut) {
     else if(handle.is<Function>() || handle.is<Ref<CodeFunction>>()) {
       for(uint32_t i(1); i<array.size(); i++) // For all parameters
         execute(array[i]); // Compute parameter values
-      _frames.push(_stack.size()-array.size()+1); // Save local frame
+      _frames.push(uint32_t(_stack.size()-array.size()+1)); // Save local frame
       if(!selfIn.is<void>()) _selves.push(selfIn);
       if(handle.is<Ref<CodeFunction>>()) {
         const Ref<CodeFunction>& function(handle.as<Ref<CodeFunction>>());
