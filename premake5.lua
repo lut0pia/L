@@ -1,6 +1,7 @@
 #!lua
 solution "L"
 	configurations {"Debug", "Development", "Release"}
+	architecture "x64"
 
 	-- General options
 	location("prj/".._ACTION)
