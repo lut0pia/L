@@ -3,7 +3,7 @@
 #include "macros.h"
 #include "containers/Table.h"
 #include "containers/Ref.h"
-#include "String.h"
+#include "text/String.h"
 #include "system/File.h"
 #include "streams/FileStream.h"
 
