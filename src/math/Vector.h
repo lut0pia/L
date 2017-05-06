@@ -3,6 +3,7 @@
 #include <cmath>
 #include <limits>
 #include "../types.h"
+#include "../math/math.h"
 #include "../math/Rand.h"
 #include "../streams/Stream.h"
 
