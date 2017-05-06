@@ -78,9 +78,9 @@ void Camera::postrender(){
   deferredProgram.uniform("colorBuffer",_gcolor,GL_TEXTURE0);
   deferredProgram.uniform("normalBuffer",_gnormal,GL_TEXTURE1);
   deferredProgram.uniform("depthBuffer",_gdepth,GL_TEXTURE2);
-  const Interval2i viewportPixel(viewportPixel());
-  const Vector2i viewportPixelSize(viewportPixel.size());
-  glViewport(viewportPixel.min().x(), viewportPixel.min().y(), viewportPixelSize.x(), viewportPixelSize.y());
+  const Interval2i vp(viewportPixel());
+  const Vector2i vpSize(vp.size());
+  glViewport(vp.min().x(), vp.min().y(), vpSize.x(), vpSize.y());
   GL::quad().draw();
   glEnable(GL_BLEND);
 }
