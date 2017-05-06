@@ -76,14 +76,14 @@ Font::TextMesh& Font::textMesh(const char* str) {
 }
 void Font::draw(int x, int y, const char* str, Vector2f anchor) {
   GL::Program& p(glyphProgram());
-  TextMesh& textMesh(textMesh(str));
+  TextMesh& tm(textMesh(str));
 
   p.use();
   p.uniform("atlas", _atlas.texture());
-  p.uniform("position", Vector2f(x-anchor.x()*textMesh.dimensions.x(), y-anchor.y()*textMesh.dimensions.y()));
+  p.uniform("position", Vector2f(x-anchor.x()*tm.dimensions.x(), y-anchor.y()*tm.dimensions.y()));
 
-  textMesh.mesh.draw();
-  textMesh.lastUsed = Time::now();
+  tm.mesh.draw();
+  tm.lastUsed = Time::now();
 }
 
 void Font::updateTextMeshes() {
