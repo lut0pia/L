@@ -96,10 +96,9 @@
 #include "network/Network.h"
 
 // Threads, coroutines, fibers and synchronization
-#include "parallelism/Coroutine.h"
-#include "parallelism/Fiber.h"
 #include "parallelism/Mutex.h"
 #include "parallelism/Semaphore.h"
+#include "parallelism/TaskSystem.h"
 #include "parallelism/Thread.h"
 
 // Scripting language

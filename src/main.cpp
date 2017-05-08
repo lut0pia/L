@@ -4,7 +4,7 @@
 
 using namespace L;
 
-int main(int argc,const char* argv[]) {
+void mainjob(void*) {
   TypeInit();
   Window::openFullscreen("Sample",Window::nocursor|Window::loopcursor);
   Device::init();
@@ -36,5 +36,9 @@ int main(int argc,const char* argv[]) {
   while(Window::loop())
     Engine::update();
   Engine::clear();
+}
+int main(int argc, const char* argv[]) {
+  TaskSystem::push(mainjob, nullptr, TaskSystem::MainThread);
+  TaskSystem::init();
   return 0;
 }
