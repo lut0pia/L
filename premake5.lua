@@ -1,7 +1,6 @@
 #!lua
 solution "L"
 	configurations {"Debug", "Development", "Release"}
-	architecture "x64"
 
 	-- General options
 	location("prj/".._ACTION)
@@ -11,6 +10,7 @@ solution "L"
 
 	-- Platform
 	configuration {"windows"}
+		architecture "x64"
 		defines {"L_WINDOWS","WIN32_LEAN_AND_MEAN","NOMINMAX","NOCRYPT"}
 	configuration {"linux"}
 		defines {"L_UNIX"}
