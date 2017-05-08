@@ -19,6 +19,11 @@ namespace L {
     enum {
       Box,Sphere
     } _type;
+    struct Collision {
+      bool colliding;
+      Vector3f point, normal;
+      float overlap;
+    };
   public:
     Collider();
     ~Collider();
@@ -32,7 +37,7 @@ namespace L {
     bool raycastSingle(const Vector3f& origin,const Vector3f& direction,float& t) const;
     Matrix33f inertiaTensor() const;
     void render(const Camera& camera);
-    static void checkCollision(Collider& a,Collider& b);
+    static bool checkCollision(const Collider& a,const Collider& b, Collision&);
     static Collider* raycast(const Vector3f& origin,Vector3f direction,float& t);
   };
   template <> inline void subUpdateAllComponents<Collider>() { Collider::subUpdateAll(); }

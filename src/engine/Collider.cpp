@@ -3,6 +3,7 @@
 #include "../gl/GL.h"
 #include "../gl/Program.h"
 #include "../math/geometry.h"
+#include "../parallelism/TaskSystem.h"
 
 using namespace L;
 
@@ -31,12 +32,55 @@ void Collider::subUpdateAll() {
   // Search for colliding pairs
   static Array<Interval3fTree<Collider*>::Node*> pairs;
   tree.collisions(pairs);
-  for(uintptr_t i(0); i<pairs.size(); i += 2){
-    Collider *a(pairs[i]->value()),*b(pairs[i+1]->value());
-    if(a->entity()!=b->entity() && a->_boundingBox.overlaps(b->_boundingBox)){
-      if(a->_rigidbody) checkCollision(*a,*b); // Rigidbody is always first argument
-      else if(b->_rigidbody) checkCollision(*b,*a);
+
+  // Compute all collisions
+  static const uintptr_t taskCount = 4;
+  static Array<Collision> collisions;
+  collisions.size(pairs.size()/2);
+  for(uintptr_t t(0); t<taskCount; t++)
+    TaskSystem::push([](void* p) {
+    const uintptr_t t((uint32_t)p);
+    const uintptr_t count(max(uintptr_t(1),collisions.size()/taskCount));
+    const uintptr_t start(count*t);
+    const uintptr_t end(t==taskCount-1 ? collisions.size() : min(collisions.size(),start+count));
+    for(uintptr_t i(start); i<end; i++) {
+      auto &a(pairs[i*2]), &b(pairs[i*2+1]);
+      if(!a->value()->_rigidbody)
+        swap(a, b); // Rigidbody is always first argument
+      checkCollision(*a->value(), *b->value(), collisions[i]);
     }
+  }, (void*)t);
+  TaskSystem::join();
+
+  // Apply all collisions
+  for(uintptr_t i(0); i<collisions.size(); i++) {
+    const Collision& collision(collisions[i]);
+    if(!collision.colliding)
+      continue;
+    Collider *a(pairs[i*2]->value()), *b(pairs[i*2+1]->value());
+
+    // Resolve interpenetration
+    if(b->_rigidbody) {
+      a->_transform->moveAbsolute(collision.normal*(collision.overlap*.5f));
+      b->_transform->moveAbsolute(collision.normal*(collision.overlap*-.5f));
+    } else a->_transform->moveAbsolute(collision.normal*collision.overlap);
+
+    // Send collision events to scripts
+    if(a->_script || b->_script) {
+      auto e(ref<Table<Var, Var>>());
+      (*e)[Symbol("type")] = Symbol("COLLISION");
+      if(a->_script) {
+        (*e)[Symbol("other")] = b;
+        a->_script->event(e);
+      }
+      if(b->_script) {
+        (*e)[Symbol("other")] = a;
+        b->_script->event(e);
+      }
+    }
+
+    // Physically resolve collision
+    RigidBody::collision(a->_rigidbody, b->_rigidbody, collision.point, collision.normal);
   }
 }
 void Collider::renderAll(const Camera& cam) {
@@ -148,23 +192,20 @@ Vector3f leastToAxis(const Vector3f& axis,const Vector3f* points,size_t count) {
   }
   return Vector3f();
 }
-void Collider::checkCollision(Collider& a,Collider& b) {
-  Vector3f impactPoint,normal;
+bool Collider::checkCollision(const Collider& a,const Collider& b, Collision& collision) {
+  if(a.entity()==b.entity() || !a._boundingBox.overlaps(b._boundingBox) || !a._rigidbody)
+    return collision.colliding = false;
+
   if(a._type==Sphere && b._type==Sphere){
     const Vector3f apos(a._transform->toAbsolute(a._center)),
       bpos(b._transform->toAbsolute(b._center)),
       btoa(apos-bpos);
-    const float distance(btoa.length()),
-      overlap((a._radius.x()+b._radius.x())-distance);
-    if(overlap>.0f){
-      normal = btoa.normalized();
-      impactPoint = bpos+normal*b._radius.x();
-      // Resolve interpenetration
-      if(b._rigidbody){
-        a._transform->moveAbsolute(normal*overlap*.5f);
-        b._transform->moveAbsolute(normal*overlap*-.5f);
-      } else a._transform->moveAbsolute(normal*overlap);
-    } else return;
+    const float distance(btoa.length());
+    collision.overlap = (a._radius.x()+b._radius.x())-distance;
+    if(collision.overlap>.0f){
+      collision.normal = btoa.normalized();
+      collision.point = bpos+collision.normal*b._radius.x();
+    } else return collision.colliding = false;
   } else if(a._type==Box && b._type==Box) {
     const Transform *at(a._transform),*bt(b._transform);
     const Vector3f ar(at->right()),af(at->forward()),au(at->up()),
@@ -202,37 +243,32 @@ void Collider::checkCollision(Collider& a,Collider& b) {
       bt->toAbsolute(b._center+Vector3f(b._radius.x(),b._radius.y(),b._radius.z())),
     };
     uintptr_t axis(sizeof(axes));
-    float minOverlap(0.f);
+    collision.overlap = 0.f;
     for(uintptr_t i(0); i<sizeof(axes)/sizeof(Vector3f); i++) {
       if(axes[i].lengthSquared()>0.00001f) { // The axis is not a null vector (caused by a cross product)
         Interval1f axisA(project(axes[i],apoints,8)),axisB(project(axes[i],bpoints,8)),intersection(axisA,axisB); // Compute projections and intersection
-        float overlap(intersection.size().x());
+        const float overlap(intersection.size().x());
         if(overlap>0.f) {
-          if(axis==sizeof(axes) || overlap<minOverlap) { // First or smallest overlap yet
-            normal = (axisA.center().x()<axisB.center().x()) ? -axes[i] : axes[i];
-            minOverlap = overlap;
+          if(axis==sizeof(axes) || overlap<collision.overlap) { // First or smallest overlap yet
+            collision.normal = (axisA.center().x()<axisB.center().x()) ? -axes[i] : axes[i];
+            collision.overlap = overlap;
             axis = i;
           }
-        } else return; // No overlap means no collision
+        } else return collision.colliding = false; // No overlap means no collision
       }
     }
-    // Resolve interpenetration
-    if(b._rigidbody){
-      a._transform->moveAbsolute(normal*minOverlap*.5f);
-      b._transform->moveAbsolute(normal*minOverlap*-.5f);
-    } else a._transform->moveAbsolute(normal*minOverlap);
     // Compute impact point
     if(axis<6)
-      impactPoint = (axis<3) ? leastToAxis(-normal,bpoints,8) : leastToAxis(normal,apoints,8);
+      collision.point = (axis<3) ? leastToAxis(-collision.normal,bpoints,8) : leastToAxis(collision.normal,apoints,8);
     else{
-      Vector3f avertex(leastToAxis(normal,apoints,8)),bvertex(leastToAxis(-normal,bpoints,8));
+      Vector3f avertex(leastToAxis(collision.normal,apoints,8)),bvertex(leastToAxis(-collision.normal,bpoints,8));
       const Vector3f& aaxis(axes[(axis-6)/3]),baxis(axes[((axis-6)%3)+3]); // Find axes used in cross product
       if(!lineLineIntersect(avertex,avertex+aaxis,bvertex,bvertex+baxis,&avertex,&bvertex))
-        return; // Unable to compute intersection
-      impactPoint = (avertex+bvertex)/2.f;
+        return collision.colliding = false; // Unable to compute intersection
+      collision.point = (avertex+bvertex)/2.f;
     }
   } else{ // Box-Sphere
-    Collider *box,*sphere;
+    const Collider *box,*sphere;
     if(a._type==Box){
       box = &a;
       sphere = &b;
@@ -243,49 +279,29 @@ void Collider::checkCollision(Collider& a,Collider& b) {
     const Vector3f sphereCenter(sphere->_transform->toAbsolute(sphere->_center));
     const Vector3f relCenter(box->_transform->fromAbsolute(sphereCenter));
     const Vector3f closest(clamp(relCenter,-box->_radius,box->_radius));
-    float overlap;
     if(relCenter == closest){ // The sphere's center is in the box
       const Vector3f dist(abs(box->_radius-relCenter)); // Distance to box border
       if(dist.x() < dist.y() && dist.x() < dist.z()){
-        normal = (box==&a) ? Vector3f(1.f,0,0) : Vector3f(-1.f,0,0);
-        overlap = dist.x();
+        collision.normal = (box==&a) ? Vector3f(1.f,0,0) : Vector3f(-1.f,0,0);
+        collision.overlap = dist.x();
       } else if(dist.y() < dist.x() && dist.y() < dist.z()){
-        normal = (box==&a) ? Vector3f(0,1.f,0) : Vector3f(0,-1.f,0);
-        overlap = dist.y();
+        collision.normal = (box==&a) ? Vector3f(0,1.f,0) : Vector3f(0,-1.f,0);
+        collision.overlap = dist.y();
       } else {
-        normal = (box==&a) ? Vector3f(0,0,1.f) : Vector3f(0,0,-1.f);
-        overlap = dist.z();
+        collision.normal = (box==&a) ? Vector3f(0,0,1.f) : Vector3f(0,0,-1.f);
+        collision.overlap = dist.z();
       }
-      normal = box->_transform->toAbsolute(normal);
+      collision.normal = box->_transform->toAbsolute(collision.normal);
     } else {
-      impactPoint = box->_transform->toAbsolute(closest);
-      overlap = sphere->_radius.x()-impactPoint.dist(sphereCenter);
-      if(overlap>.0f){
-        normal = (box==&a) ? impactPoint-sphereCenter : sphereCenter-impactPoint;
-        normal.normalize();
-      } else return; // No collision
-    }
-    // Resolve interpenetration
-    if(b._rigidbody){
-      a._transform->moveAbsolute(normal*overlap*.5f);
-      b._transform->moveAbsolute(normal*overlap*-.5f);
-    } else a._transform->moveAbsolute(normal*overlap);
-  }
-  // Send collision events to scripts
-  if(a._script || b._script) {
-    auto e(ref<Table<Var, Var>>());
-    (*e)[Symbol("type")] = Symbol("COLLISION");
-    if(a._script) {
-      (*e)[Symbol("other")] = &b;
-      a._script->event(e);
-    }
-    if(b._script) {
-      (*e)[Symbol("other")] = &a;
-      b._script->event(e);
+      collision.point = box->_transform->toAbsolute(closest);
+      collision.overlap = sphere->_radius.x()-collision.point.dist(sphereCenter);
+      if(collision.overlap>.0f){
+        collision.normal = (box==&a) ? collision.point-sphereCenter : sphereCenter-collision.point;
+        collision.normal.normalize();
+      } else return collision.colliding = false; // No collision
     }
   }
-  // Physically resolve collision
-  RigidBody::collision(a._rigidbody,b._rigidbody,impactPoint,normal);
+  return collision.colliding = true;
 }
 Collider* Collider::raycast(const Vector3f& origin,Vector3f direction,float& t){
   typedef Interval3fTree<Collider*>::Node Node;
