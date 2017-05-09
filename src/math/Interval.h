@@ -30,14 +30,11 @@ namespace L {
       }
       return wtr;
     }
-    bool operator&&(const Interval& other) const {
+    inline bool overlaps(const Interval& other) const {
       for(int i(0); i<d; i++)
-        if(L::max(_min[i],other._min[i]) >= L::min(_max[i],other._max[i]))
+        if(L::max(_min[i], other._min[i]) >= L::min(_max[i], other._max[i]))
           return false;
       return true;
-    }
-    inline bool overlaps(const Interval& other) const {
-      return (*this) && other;
     }
 
     void add(const Vector<d,T>& p) {
