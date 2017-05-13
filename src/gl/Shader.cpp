@@ -1,6 +1,6 @@
 #include "Shader.h"
 
-#include "../streams/FileStream.h"
+#include "../streams/CFileStream.h"
 
 using namespace L;
 using namespace GL;
@@ -19,7 +19,7 @@ void Shader::load(const char* src) {
   }
 }
 Shader::Shader(File file,GLenum type) : _id(glCreateShader(type)) {
-  FileStream fs(file.path(),"rb");
+  CFileStream fs(file.path(),"rb");
   String src;
   while(!fs.end()) {
     char c(fs.get());

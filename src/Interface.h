@@ -5,7 +5,7 @@
 #include "containers/Ref.h"
 #include "text/String.h"
 #include "system/File.h"
-#include "streams/FileStream.h"
+#include "streams/CFileStream.h"
 
 namespace L {
   template <class T>
@@ -23,7 +23,7 @@ namespace L {
 
   public:
     virtual Ref<T> from(const File& file) {
-      FileStream fs(file.path(), "rb");
+      CFileStream fs(file.path(), "rb");
       return from(fs);
     }
     virtual Ref<T> from(const char* str) {
@@ -40,7 +40,7 @@ namespace L {
     }
 
     virtual bool to(const T& v, const File& file) {
-      FileStream stream(file.path(), "wb");
+      CFileStream stream(file.path(), "wb");
       return to(v, stream);
     }
     virtual bool to(const T& v, String& str) {

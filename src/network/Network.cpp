@@ -5,6 +5,7 @@ using namespace Network;
 
 #include <cstring>
 #include "../streams/NetStream.h"
+#include "../streams/CFileStream.h"
 #include "../system/File.h"
 
 #if defined L_WINDOWS
@@ -77,7 +78,7 @@ String Network::HTTPRequest(const String& url) {
 }
 void Network::HTTPDownload(const char* url, const char* name) {
   String answer(HTTPRequest(url));
-  FileStream file(name,"wb");
+  CFileStream file(name,"wb");
   file << String(answer,answer.findFirst("\r\n\r\n")+4);
 }
 String Network::error() {

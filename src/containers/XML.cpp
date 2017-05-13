@@ -1,13 +1,13 @@
 #include "XML.h"
 
 #include "../types.h"
-#include "../streams/FileStream.h"
+#include "../streams/CFileStream.h"
 
 using namespace L;
 
 XML::XML() {}
 XML::XML(const char* filepath) {
-  FileStream fs(filepath,"rb");
+  CFileStream fs(filepath,"rb");
   read(fs);
 }
 XML::XML(Stream& s) {

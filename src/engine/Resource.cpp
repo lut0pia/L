@@ -33,7 +33,7 @@ const Ref<Script::CodeFunction>& Resource::script(const char* fp) {
   const uint32_t h(hash(fp));
   if(auto found = _scripts.find(h)) return *found;
   else {
-    FileStream stream(fp, "rb");
+    CFileStream stream(fp, "rb");
     return _scripts[h] = ref<Script::CodeFunction>(Script::Context::read(stream));
   }
 }
