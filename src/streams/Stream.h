@@ -37,6 +37,7 @@ namespace L {
     inline Stream& operator<<(int v) { return *this << ntos(v); }
     inline Stream& operator<<(unsigned int v) { return *this << ntos(v); }
     inline Stream& operator<<(long long v) { return *this << ntos(v); }
+    inline Stream& operator<<(unsigned long long v) { return *this << ntos(v); }
     inline Stream& operator<<(float v) { return *this << ntos(v); }
     inline Stream& operator<<(double v) { return *this << ntos(v); }
 
