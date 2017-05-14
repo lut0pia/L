@@ -12,6 +12,7 @@ void* operator new(size_t size);
 namespace L {
   class Memory {
   public:
+    template<typename T> static T* allocType(size_t count = 1) { return (T*)alloc(sizeof(T)*count); }
     static void* alloc(size_t);
     static void* allocZero(size_t); // Allocates and zero-fill block
     static void* realloc(void*, size_t oldsize, size_t newsize);
