@@ -1,21 +1,21 @@
 #pragma once
 
 #include "../text/String.h"
+#include "System.h"
 
 namespace L {
   class File {
-    protected:
-      String _path;
-    public:
-      File(const char* path);
+  protected:
+    String _path;
+  public:
+    inline File(const char* path) : _path(System::formatPath(path)) {}
+    inline bool operator<(const File& other) const { return _path < other._path; }
 
-      bool operator<(const File&) const;
+    inline String name() const { return System::pathFile(_path); }
+    inline String dir() const { return System::pathDirectory(_path); }
+    inline const String& path() const { return _path; }
 
-      String name() const;
-      String dir() const;
-      inline const String& path() const {return _path;}
-
-      bool exists() const;
-      void make() const;
+    bool exists() const;
+    void make() const;
   };
 }
