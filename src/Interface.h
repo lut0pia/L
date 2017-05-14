@@ -35,7 +35,7 @@ namespace L {
     virtual Ref<T> from(Stream& is) {
       return nullptr;
     }
-    virtual Ref<T> from(const Array<byte>& bytes) {
+    virtual Ref<T> from(const byte* data, size_t size) {
       return nullptr;
     }
 
@@ -49,15 +49,8 @@ namespace L {
     virtual bool to(const T& v, Stream& os) {
       return false;
     }
-    virtual bool to(const T& v, Array<byte>& bytes) {
-      tmpfile.rewind();
-      if(!to(v, tmpfile)) // Write in stream
-        return false;
-      bytes.size(tmpfile.tell());
-      tmpfile.rewind();
-      tmpfile.read(&bytes[0], bytes.size());
-      tmpfile.rewind();
-      return true;
+    virtual bool to(const T& v, byte* data, size_t size) {
+      return false;
     }
 
     static Interface& in(const char* format) {
