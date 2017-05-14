@@ -24,7 +24,14 @@ namespace L {
   public:
     virtual Ref<T> from(const File& file) {
       CFileStream fs(file.path(), "rb");
-      return from(fs);
+      if(auto wtr = from(fs))
+        return wtr;
+      else {
+        const size_t fileSize(fs.size());
+        byte* buffer(Memory::allocType<byte>(fileSize));
+        fs.read(buffer, fileSize);
+        return from(buffer, fileSize);
+      }
     }
     virtual Ref<T> from(const char* str) {
       tmpfile.rewind();
