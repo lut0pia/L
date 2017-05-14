@@ -65,10 +65,12 @@ namespace L {
       else L_ERRORF("Unhandled format %s", format);
     }
     static Ref<T> fromFile(const String& path) {
-      return in(path.explode('.').back().toLower()).from(File(path));
+      File file(path);
+      return in(file.ext().toLower()).from(file);
     }
     static void toFile(const T& v, const String& path) {
-      in(path.explode('.').back().toLower()).to(v, File(path));
+      File file(path);
+      in(file.ext().toLower()).to(v, file);
     }
   };
   template <class T> Table<const char*, Interface<T>*> Interface<T>::_instances;
