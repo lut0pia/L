@@ -13,6 +13,7 @@ namespace L {
 
     inline String name() const { return System::pathFile(_path); }
     inline String dir() const { return System::pathDirectory(_path); }
+    inline String ext() const { return &_path[_path.findLast('.')+1]; }
     inline const String& path() const { return _path; }
 
     bool exists() const;
