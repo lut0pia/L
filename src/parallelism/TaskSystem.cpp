@@ -77,7 +77,7 @@ void TaskSystem::init() {
   mainThread = initialized = true;
   // Create threads
   for(uint32_t i(1); i<threadCount; i++)
-    new Thread(threadFunc);
+    new(Memory::allocType<Thread>()) Thread(threadFunc);
   threadFunc(nullptr);
 }
 void TaskSystem::push(Func f, void* d, Flags flags) {
