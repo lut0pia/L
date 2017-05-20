@@ -148,6 +148,13 @@ namespace L {
       shift(i+count,-count); // Move right part
       _size -= count; // Decrease size
     }
+
+    uintptr_t find(const T& e){
+      for(uintptr_t i(0); i<_size; i++)
+        if(_data[i]==e)
+          return i;
+      return -1;
+    }
   };
 
   template <class T>
