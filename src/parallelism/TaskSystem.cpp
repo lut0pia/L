@@ -7,9 +7,8 @@
 
 using namespace L;
 
-const size_t cacheLineSize = 64;
 const uint32_t threadCount = 4;
-const uint32_t fiberCount = 32;
+const uint32_t fiberCount = 16;
 
 #ifdef L_WINDOWS
 typedef LPVOID FiberHandle;
@@ -28,11 +27,11 @@ struct Task {
 };
 
 bool initialized(false);
-TSQueue<1024, Task> tasks;
+TSQueue<128, Task> tasks;
+TSQueue<16, Task> threadTasks[threadCount];
 std::atomic<uint32_t> taskCount(0);
 thread_local FiberSlot fibers[fiberCount];
-thread_local uint32_t currentFiber;
-thread_local bool mainThread(false);
+thread_local uint32_t threadIndex, currentFiber;
 
 #ifdef L_WINDOWS
 VOID __stdcall fiberFunc(LPVOID p) {
@@ -41,17 +40,11 @@ void fiberFunc(void*) {
 #endif
   Task task;
   while(taskCount>0) {
-    if(currentFiber==0)
-      System::sleep(1);
-    if(tasks.pop(task)) {
-      if(task.flags&TaskSystem::Flags::MainThread && !mainThread)
-        tasks.push(task); // Put task back in the queue
-      else {
-        task.func(task.data); // Execute task
-        if(task.parent) task.parent->counter--; // Notify task done
-        TaskSystem::join(); // Wait for child tasks
-        taskCount--; // Notify task over
-      }
+    if(threadTasks[threadIndex].pop(task) || tasks.pop(task)) {
+      task.func(task.data); // Execute task
+      if(task.parent) task.parent->counter--; // Notify task done
+      TaskSystem::join(); // Wait for child tasks
+      taskCount--; // Notify task over
     } else TaskSystem::yield();
   }
   if(currentFiber!=0) // Need to stop on thread converted fiber to exit correctly
@@ -60,6 +53,7 @@ void fiberFunc(void*) {
 
 Var threadFunc(Thread* thread) {
   memset(fibers, 0, sizeof(fibers));
+  threadIndex = thread ? thread->arg().as<uint32_t>() : 0;
   currentFiber = 0;
   // Create non-thread fibers
   for(uint32_t i(1); i<fiberCount; i++)
@@ -74,7 +68,7 @@ Var threadFunc(Thread* thread) {
 }
 
 void TaskSystem::init() {
-  mainThread = initialized = true;
+  initialized = true;
   // Create threads
   for(uint32_t i(1); i<threadCount; i++)
     new(Memory::allocType<Thread>()) Thread(threadFunc);
@@ -87,7 +81,9 @@ void TaskSystem::push(Func f, void* d, Flags flags) {
     parent->counter++;
   } else parent = nullptr;
   taskCount++;
-  tasks.push(Task{f,d,flags,parent});
+  if(flags&MainThread)
+    threadTasks[0].push(Task{f,d,flags,parent});
+  else tasks.push(Task{f,d,flags,parent});
 }
 void TaskSystem::yield() {
   currentFiber = (currentFiber+1)%fiberCount;
