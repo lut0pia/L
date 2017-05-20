@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <cstring>
 #include "../math/math.h"
+#include "../parallelism/TaskSystem.h"
 
 using namespace L;
 
@@ -20,6 +21,7 @@ void* _freelist[128] = {};
 byte* _next;
 size_t _bytesLeft(0);
 size_t _allocated(0), _unused(0), _wasted(0);
+uint32_t _lock(0);
 
 // Cannot allocate less than 8 bytes for alignment purposes
 inline uint32_t freelistIndex(size_t size) {
@@ -41,8 +43,10 @@ void* Memory::alloc(size_t size) {
 #if L_USE_MALLOC
   return malloc(size);
 #else
+  while(cas(&_lock, 0, 1)) TaskSystem::yield(); // Get lock
   if(size>allocStep) { // Big allocations go directly to the system
     _allocated += size;
+    _lock = 0; // Release lock
     return virtualAlloc(size);
   }
   uint32_t index, trueSize;
@@ -61,6 +65,7 @@ void* Memory::alloc(size_t size) {
   }
   _wasted += trueSize-size;
   _allocated += trueSize;
+  _lock = 0; // Release lock
   return wtr;
 #endif
 }
@@ -90,9 +95,11 @@ void Memory::free(void* ptr, size_t size) {
 #if L_USE_MALLOC
   ::free(ptr);
 #else
+  while(cas(&_lock, 0, 1)) TaskSystem::yield(); // Get lock
   if(size>allocStep) { // Big allocations go directly to the system
     virtualFree(ptr, size);
     _allocated -= size;
+    _lock = 0; // Release lock
     return;
   }
   uint32_t index, trueSize;
@@ -103,5 +110,6 @@ void Memory::free(void* ptr, size_t size) {
   _unused += trueSize;
   _wasted -= trueSize-size;
   _allocated -= trueSize;
+  _lock = 0; // Release lock
 #endif
 }
