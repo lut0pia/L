@@ -30,7 +30,9 @@ namespace L {
         const size_t fileSize(fs.size());
         byte* buffer(Memory::allocType<byte>(fileSize));
         fs.read(buffer, fileSize);
-        return from(buffer, fileSize);
+        auto r(from(buffer, fileSize));
+        Memory::free(buffer, fileSize);
+        return r;
       }
     }
     virtual Ref<T> from(const char* str) {
