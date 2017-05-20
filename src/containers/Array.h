@@ -136,6 +136,12 @@ namespace L {
       shift(i+1,-1); // Move right part
       _size--; // Decrease size
     }
+    inline void erase_fast(uintptr_t i) {
+      _data[i].~T(); // Destruct value
+      if(i<_size-1)
+        memcpy(_data+i, _data+_size-1, sizeof(T)); // Swap with last element
+      _size--; // Decrease size
+    }
     void erase(size_t i,size_t count) {
       for(uintptr_t j(0); j<count; j++)
         (_data+i+j)->~T(); // Destruct values
