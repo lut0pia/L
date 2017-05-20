@@ -22,13 +22,14 @@ void Collider::updateComponents(){
     _node = tree.insert(_boundingBox,this);
 }
 void Collider::subUpdateAll() {
-  // Update all AABB nodes
-  for(auto&& c : Pool<Collider>::global){
+  // Update tree nodes
+  ComponentPool<Collider>::iterate([](Collider& c){
     c.updateBoundingBox();
     const Interval3f& bb(c._boundingBox);
     if(!c._node->key().contains(bb))
       tree.update(c._node,bb.extended(c._radius.x()));
-  }
+  });
+
   // Search for colliding pairs
   static Array<Interval3fTree<Collider*>::Node*> pairs;
   tree.collisions(pairs);

@@ -62,14 +62,14 @@ void Engine::update() {
   Entity::flushDestroyQueue();
   Resource::update();
 
-  for(auto&& camera : Pool<Camera>::global) {
+  ComponentPool<Camera>::iterate([](Camera& camera) {
     camera.prerender();
     for(auto&& render : _renders)
       render(camera);
     camera.postrender();
     for(auto&& gui : _guis)
       gui(camera);
-  }
+  });
 
   Window::swapBuffers();
   _frame++;

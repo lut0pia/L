@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ComponentPool.h"
 #include "Entity.h"
 
 namespace L {
@@ -22,5 +23,5 @@ namespace L {
 
 #define L_COMPONENT(name)\
   public:\
-  inline void* operator new(size_t) { return Pool<name>::global.allocate(); }\
-  inline void operator delete(void* p) { Pool<name>::global.deallocate(p); }
+  inline void* operator new(size_t) { return ComponentPool<name>::allocate(); }\
+  inline void operator delete(void* p) { ComponentPool<name>::deallocate((name*)p); }

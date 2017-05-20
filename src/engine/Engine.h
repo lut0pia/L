@@ -13,13 +13,13 @@
 namespace L {
   class Camera;
 
-  template <class T> static void updateAllComponents() { for(auto&& c : Pool<T>::global) c.update(); }
-  template <class T> static void subUpdateAllComponents() { for(auto&& c : Pool<T>::global) c.subUpdate(); }
-  template <class T> static void lateUpdateAllComponents() { for(auto&& c : Pool<T>::global) c.lateUpdate(); }
-  template <class T> static void renderAllComponents(const Camera& cam) { for(auto&& c : Pool<T>::global) c.render(cam); }
-  template <class T> static void guiAllComponents(const Camera& cam) { for(auto&& c : Pool<T>::global) c.gui(cam); }
-  template <class T> static void windowEventAllComponents(const Window::Event& e) { for(auto&& c : Pool<T>::global) c.event(e); }
-  template <class T> static void deviceEventAllComponents(const Device::Event& e) { for(auto&& c : Pool<T>::global) c.event(e); }
+  template <class T> static void updateAllComponents() { ComponentPool<T>::iterate([](T& c) { c.update(); }); }
+  template <class T> static void subUpdateAllComponents() { ComponentPool<T>::iterate([](T& c) { c.subUpdate(); }); }
+  template <class T> static void lateUpdateAllComponents() { ComponentPool<T>::iterate([](T& c) { c.lateUpdate(); }); }
+  template <class T> static void renderAllComponents(const Camera& cam) { ComponentPool<T>::iterate([&](T& c) { c.render(cam); }); }
+  template <class T> static void guiAllComponents(const Camera& cam) { ComponentPool<T>::iterate([&](T& c) { c.gui(cam); }); }
+  template <class T> static void windowEventAllComponents(const Window::Event& e) { ComponentPool<T>::iterate([&](T& c) { c.event(e); }); }
+  template <class T> static void deviceEventAllComponents(const Device::Event& e) { ComponentPool<T>::iterate([&](T& c) { c.event(e); }); }
 
   class Engine {
   private:

@@ -41,7 +41,7 @@ namespace L {
     }
     template <class CompType>
     CompType* add() {
-      CompType* component(Pool<CompType>::global.construct());
+      CompType* component(new CompType());
       component->entity(this);
       _components.push(keyValue(Type<CompType>::description(),(Component*)component)); // Link the entity to the component
       updateComponents();
