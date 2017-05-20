@@ -1,26 +1,26 @@
 #pragma once
 
-#if defined L_WINDOWS
-#include <windows.h>
-#elif defined L_UNIX
-#include <pthread.h>
-#endif
-
+#include "../containers/Raw.h"
 #include "../macros.h"
 
 namespace L {
   class Mutex {
-    private:
-#if defined L_WINDOWS
-      HANDLE mutex;
-#elif defined L_UNIX
-      pthread_mutex_t mutex;
-#endif
-    public:
-      Mutex();
-      L_NOCOPY(Mutex)
-      ~Mutex();
-      void lock();
-      void unlock();
+    L_NOCOPY(Mutex)
+  protected:
+    Raw<40> _data;
+  public:
+    Mutex();
+    ~Mutex();
+    bool try_lock();
+    void lock();
+    void unlock();
+  };
+
+  class ScopedMutex {
+  protected:
+    Mutex& _mutex;
+  public:
+    inline ScopedMutex(Mutex& mutex) :_mutex(mutex) { _mutex.lock(); }
+    inline ~ScopedMutex() { _mutex.unlock(); }
   };
 }
