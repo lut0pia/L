@@ -88,7 +88,7 @@ void Device::processReport(void* id,const byte* data,size_t size){
       { // Handle buttons
         const USAGE buttonUsagePage(9);
         USAGE usage[32];
-        ULONG usageLength(sizeof(usage)/sizeof(USAGE));
+        ULONG usageLength(ULONG(sizeof(usage)/sizeof(USAGE)));
         if(HidP_GetUsages(HidP_Input,buttonUsagePage,0,usage,&usageLength,deviceSystem->_preparsed,(PCHAR)data,size) != HIDP_STATUS_SUCCESS)
           L_ERROR("Could not get controller usages.");
 
@@ -109,7 +109,7 @@ void Device::processReport(void* id,const byte* data,size_t size){
         for(uint8_t i(0); i<deviceSystem->_caps.NumberInputValueCaps; i++){
           const HIDP_VALUE_CAPS& valueCap(deviceSystem->_valueCaps[i]);
           int usageValue;
-          if(HidP_GetUsageValue(HidP_Input,valueCap.UsagePage,0,valueCap.NotRange.Usage,(ULONG*)&usageValue,deviceSystem->_preparsed,(PCHAR)data,size) != HIDP_STATUS_SUCCESS)
+          if(HidP_GetUsageValue(HidP_Input,valueCap.UsagePage,0,valueCap.NotRange.Usage,(ULONG*)&usageValue,deviceSystem->_preparsed,PCHAR(data),ULONG(size)) != HIDP_STATUS_SUCCESS)
             L_ERROR("Could not get controller value usage.");
           float value(usageValue);
           switch(valueCap.BitSize){
