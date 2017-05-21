@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../containers/Array.h"
+#include "../parallelism/TaskSystem.h"
 
 namespace L {
   template<class T>
