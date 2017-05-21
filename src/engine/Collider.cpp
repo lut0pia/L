@@ -22,67 +22,74 @@ void Collider::updateComponents(){
     _node = tree.insert(_boundingBox,this);
 }
 void Collider::subUpdateAll() {
+  static const uintptr_t task_count = 4;
   // Update tree nodes
-  ComponentPool<Collider>::iterate([](Collider& c){
+  ComponentPool<Collider>::iterate([](Collider& c) {
     c.updateBoundingBox();
     const Interval3f& bb(c._boundingBox);
     if(!c._node->key().contains(bb))
-      tree.update(c._node,bb.extended(c._radius.x()));
+      tree.update(c._node, bb.extended(c._radius.x()));
   });
 
-  // Search for colliding pairs
-  static Array<Interval3fTree<Collider*>::Node*> pairs;
-  tree.collisions(pairs);
+  // Collision: broad phase
+  static Array<Interval3fTree<Collider*>::Node*> pairs[task_count];
+  static Array<Interval3fTree<Collider*>::Node*> tmp[task_count];
+  for(uintptr_t t(0); t<task_count; t++)
+    pairs[t].clear();
+  ComponentPool<Collider>::async_iterate([](Collider& c, uint32_t t) {
+    tree.query(c._boundingBox, tmp[t]);
+    for(auto e : tmp[t])
+      if(e!=c._node && e < c._node)
+        pairs[t].pushMultiple(c._node, e);
+  }, task_count);
 
-  // Compute all collisions
-  static const uintptr_t taskCount = 4;
-  static Array<Collision> collisions;
-  collisions.size(pairs.size()/2);
-  for(uintptr_t t(0); t<taskCount; t++)
+  // Collision: narrow phase
+  static Array<Collision> collisions[task_count];
+  for(uintptr_t i(0); i<task_count; i++)
+    collisions[i].size(pairs[i].size()/2);
+  for(uintptr_t t(0); t<task_count; t++)
     TaskSystem::push([](void* p) {
     const uintptr_t t((uint32_t)p);
-    const uintptr_t count(max(uintptr_t(1),collisions.size()/taskCount));
-    const uintptr_t start(count*t);
-    const uintptr_t end(t==taskCount-1 ? collisions.size() : min(collisions.size(),start+count));
-    for(uintptr_t i(start); i<end; i++) {
-      auto &a(pairs[i*2]), &b(pairs[i*2+1]);
+    for(uintptr_t i(0), j(0); i<collisions[t].size(); i++, j += 2) {
+      auto &a(pairs[t][j]), &b(pairs[t][j+1]);
       if(!a->value()->_rigidbody)
         swap(a, b); // Rigidbody is always first argument
-      checkCollision(*a->value(), *b->value(), collisions[i]);
+      checkCollision(*a->value(), *b->value(), collisions[t][i]);
     }
   }, (void*)t);
   TaskSystem::join();
 
   // Apply all collisions
-  for(uintptr_t i(0); i<collisions.size(); i++) {
-    const Collision& collision(collisions[i]);
-    if(!collision.colliding)
-      continue;
-    Collider *a(pairs[i*2]->value()), *b(pairs[i*2+1]->value());
+  for(uintptr_t t(0); t<task_count; t++)
+    for(uintptr_t i(0); i<collisions[t].size(); i++) {
+      const Collision& collision(collisions[t][i]);
+      if(!collision.colliding)
+        continue;
+      Collider *a(pairs[t][i*2]->value()), *b(pairs[t][i*2+1]->value());
 
-    // Resolve interpenetration
-    if(b->_rigidbody) {
-      a->_transform->moveAbsolute(collision.normal*(collision.overlap*.5f));
-      b->_transform->moveAbsolute(collision.normal*(collision.overlap*-.5f));
-    } else a->_transform->moveAbsolute(collision.normal*collision.overlap);
+      // Resolve interpenetration
+      if(b->_rigidbody) {
+        a->_transform->moveAbsolute(collision.normal*(collision.overlap*.5f));
+        b->_transform->moveAbsolute(collision.normal*(collision.overlap*-.5f));
+      } else a->_transform->moveAbsolute(collision.normal*collision.overlap);
 
-    // Send collision events to scripts
-    if(a->_script || b->_script) {
-      auto e(ref<Table<Var, Var>>());
-      (*e)[Symbol("type")] = Symbol("COLLISION");
-      if(a->_script) {
-        (*e)[Symbol("other")] = b;
-        a->_script->event(e);
+      // Send collision events to scripts
+      if(a->_script || b->_script) {
+        auto e(ref<Table<Var, Var>>());
+        (*e)[Symbol("type")] = Symbol("COLLISION");
+        if(a->_script) {
+          (*e)[Symbol("other")] = b;
+          a->_script->event(e);
+        }
+        if(b->_script) {
+          (*e)[Symbol("other")] = a;
+          b->_script->event(e);
+        }
       }
-      if(b->_script) {
-        (*e)[Symbol("other")] = a;
-        b->_script->event(e);
-      }
+
+      // Physically resolve collision
+      RigidBody::collision(a->_rigidbody, b->_rigidbody, collision.point, collision.normal);
     }
-
-    // Physically resolve collision
-    RigidBody::collision(a->_rigidbody, b->_rigidbody, collision.point, collision.normal);
-  }
 }
 void Collider::renderAll(const Camera& cam) {
   tree.draw();
