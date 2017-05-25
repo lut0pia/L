@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../containers/Array.h"
-#include "../containers/StaticRing.h"
+#include "../containers/Queue.h"
 #include "../text/String.h"
 
 namespace L {
@@ -17,7 +17,7 @@ namespace L {
     float _axes[8];
   private:
     static Array<Device> _devices;
-    static StaticRing<64, Event> _events;
+    static Queue<64, Event> _events;
     void* _systemData;
   public:
     inline Device() : _buttons(0), _axes{} {}

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../containers/StaticRing.h"
+#include "../containers/Queue.h"
 #include "../math/Vector.h"
 #include "../text/String.h"
 #include "../image/Bitmap.h"
@@ -41,7 +41,7 @@ namespace L {
     };
   private:
     static bool _buttonstate[Event::LAST];
-    static StaticRing<512,Event> _events;
+    static Queue<512,Event> _events;
     static Vector2i _mousePos;
     static int _width,_height,_flags;
 

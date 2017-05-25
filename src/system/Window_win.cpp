@@ -9,7 +9,7 @@
 using namespace L;
 
 bool* buttonstate;
-StaticRing<512,Window::Event>* events;
+Queue<512,Window::Event>* events;
 Vector2i* mousePos;
 int* flags;
 

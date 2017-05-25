@@ -5,13 +5,13 @@
 
 namespace L {
   template <int n, class T>
-  class StaticRing {
+  class Queue {
     private:
       T _array[n];
       int _w, _r;
 
     public:
-      inline StaticRing() : _w(0), _r(0) {}
+      inline Queue() : _w(0), _r(0) {}
       inline int index(int i) const {return pmod(i,n);}
       inline bool full() const {return _w==index(_r-1);}
       inline bool empty() const {return _w==_r;}
