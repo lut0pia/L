@@ -6,7 +6,15 @@ using namespace L;
 
 void mainjob(void*) {
   TypeInit();
-  Window::openFullscreen("Sample",Window::nocursor|Window::loopcursor);
+  Settings::load_file("settings.ini");
+
+  const char* window_name(Settings::get_symbol("window_name", "L Engine"));
+
+  if(Settings::get_int("fullscreen", 1))
+    Window::openFullscreen(window_name, Window::nocursor|Window::loopcursor);
+  else
+    Window::open(window_name, Settings::get_int("resolution_x", 1024), Settings::get_int("resolution_y", 768), Window::nocursor|Window::loopcursor);
+
   Device::init();
   glEnable(GL_CULL_FACE);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -18,9 +26,8 @@ void mainjob(void*) {
   Engine::addRender<Primitive>();
   Engine::addRender<Sprite>();
   Engine::addRender<StaticMesh>();
-#ifdef L_DEBUG
-  Engine::addRender<Collider>();
-#endif
+  if(Settings::get_int("render_collider", 0))
+    Engine::addRender<Collider>();
   Engine::addSubUpdate<RigidBody>();
   Engine::addSubUpdate<Collider>();
   Engine::addLateUpdate<ScriptComponent>();
@@ -32,7 +39,7 @@ void mainjob(void*) {
   }
   const uint32_t bs(32);
   float bayer[bs*bs];
-  Engine::ditherMatrix(bayerMatrix(bs,bs,bayer),bs,bs);
+  Engine::ditherMatrix(bayerMatrix(bs, bs, bayer), bs, bs);
   while(Window::loop())
     Engine::update();
   Engine::clear();
