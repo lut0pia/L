@@ -17,6 +17,7 @@ namespace L {
     inline void ignore(int n = 1) { while(n--)get(); }
 
     const char* line(); // Reads a line until \n
+    void line(char* buffer, size_t size); // Reads a line into buffer until \n or full
     const char* word(); // Reads a word until a space
     const char* bufferize(size_t*); // Reads as many chars as possible
 
