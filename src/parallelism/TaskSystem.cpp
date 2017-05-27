@@ -3,7 +3,6 @@
 #include "../containers/TSQueue.h"
 #include "../macros.h"
 #include "../system/System.h"
-#include "Thread.h"
 
 using namespace L;
 
@@ -51,9 +50,9 @@ void fiberFunc(void*) {
     TaskSystem::yield();
 }
 
-Var threadFunc(Thread* thread) {
+void threadFunc(void* arg) {
   memset(fibers, 0, sizeof(fibers));
-  threadIndex = thread ? thread->arg().as<uint32_t>() : 0;
+  threadIndex = uint32_t(arg);
   currentFiber = 0;
   // Create non-thread fibers
   for(uint32_t i(1); i<fiberCount; i++)
@@ -64,14 +63,15 @@ Var threadFunc(Thread* thread) {
   fibers[0].handle = ConvertThreadToFiber(0);
 #endif
   fiberFunc(nullptr);
-  return nullptr;
 }
 
 void TaskSystem::init() {
   initialized = true;
   // Create threads
   for(uint32_t i(1); i<threadCount; i++)
-    new(Memory::allocType<Thread>()) Thread(threadFunc);
+#ifdef L_WINDOWS
+    CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)threadFunc, (LPVOID)i, 0, NULL);
+#endif
   threadFunc(nullptr);
 }
 void TaskSystem::push(Func f, void* d, Flags flags) {

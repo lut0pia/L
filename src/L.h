@@ -98,9 +98,7 @@
 
 // Threads, coroutines, fibers and synchronization
 #include "parallelism/Mutex.h"
-#include "parallelism/Semaphore.h"
 #include "parallelism/TaskSystem.h"
-#include "parallelism/Thread.h"
 
 // Scripting language
 #include "script/Context.h"
