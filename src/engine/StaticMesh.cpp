@@ -24,6 +24,7 @@ void StaticMesh::render(const Camera& c) {
     GL::Shader(
       "#version 330 core\n"
       L_SHAREDUNIFORM
+      L_SHADER_LIB
       "layout(location = 0) out vec3 ocolor;"
       "layout(location = 1) out vec3 onormal;"
       "uniform sampler2D tex;"

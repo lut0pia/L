@@ -29,6 +29,7 @@ Program& GL::baseProgram() {
   static Program program(Shader(L_VERTEX_SHADER,GL_VERTEX_SHADER),Shader(
     "#version 330 core\n"
     L_SHAREDUNIFORM
+    L_SHADER_LIB_NORMAL
     "layout(location = 0) out vec3 ocolor;"
     "layout(location = 1) out vec3 onormal;"
     "smooth in vec4 position;"
@@ -44,6 +45,7 @@ Program& GL::baseColorProgram() {
   static Program program(Shader(L_VERTEX_SHADER,GL_VERTEX_SHADER),Shader(
     "#version 330 core\n"
     L_SHAREDUNIFORM
+    L_SHADER_LIB
     "layout(location = 0) out vec3 ocolor;"
     "layout(location = 1) out vec3 onormal;"
     "uniform vec4 color;"

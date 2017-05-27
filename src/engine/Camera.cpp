@@ -59,6 +59,7 @@ void Camera::postrender(){
     GL::Shader(
       "#version 330 core\n"
       L_SHAREDUNIFORM
+      L_SHADER_LIB
       "in vec2 ftexcoords;"
       "out vec4 fragcolor;"
       "uniform sampler2D colorBuffer;"
