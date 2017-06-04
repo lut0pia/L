@@ -97,6 +97,7 @@
 #include "network/Network.h"
 
 // Threads, coroutines, fibers and synchronization
+#include "parallelism/Lock.h"
 #include "parallelism/Mutex.h"
 #include "parallelism/TaskSystem.h"
 
