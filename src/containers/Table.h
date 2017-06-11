@@ -1,5 +1,6 @@
 #pragma once
 
+#include <new>
 #include "../hash.h"
 #include "../system/Memory.h"
 #include "../streams/Stream.h"

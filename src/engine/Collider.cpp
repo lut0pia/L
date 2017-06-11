@@ -49,7 +49,7 @@ void Collider::subUpdateAll() {
     collisions[i].size(pairs[i].size()/2);
   for(uintptr_t t(0); t<task_count; t++)
     TaskSystem::push([](void* p) {
-    const uintptr_t t((uint32_t)p);
+    const uintptr_t t((uintptr_t)p);
     for(uintptr_t i(0), j(0); i<collisions[t].size(); i++, j += 2) {
       auto &a(pairs[t][j]), &b(pairs[t][j+1]);
       if(!a->value()->_rigidbody)

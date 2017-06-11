@@ -3,10 +3,12 @@
 #include "../containers/KeyValue.h"
 #include "../dynamic/Type.h"
 #include "Engine.h"
+#include "../system/Memory.h"
 
 namespace L {
   class Component;
   class Entity {
+    L_ALLOCABLE(Entity);
   private:
     Array<KeyValue<const TypeDescription*,Component*> > _components;
     bool _destroyed;
@@ -17,8 +19,6 @@ namespace L {
     Entity(const Entity* other);
     ~Entity();
     const Array<KeyValue<const TypeDescription*,Component*> >& components() const{ return _components; }
-    inline void* operator new(size_t size) { return Pool<Entity>::global.allocate(); }
-    inline void operator delete(void* p) { Pool<Entity>::global.deallocate((Entity*)p); }
 
     template <class CompType>
     CompType* component() const {

@@ -37,18 +37,18 @@ void Settings::load_file(const char* path) {
     }
   }
 }
-int Settings::get_int(const Symbol& name, int default) {
+int Settings::get_int(const Symbol& name, int default_value) {
   if(auto found = settings.find(name))
     return found->_int;
-  else return default;
+  else return default_value;
 }
-float Settings::get_float(const Symbol& name, float default) {
+float Settings::get_float(const Symbol& name, float default_value) {
   if(auto found = settings.find(name))
     return found->_float;
-  else return default;
+  else return default_value;
 }
-const Symbol& Settings::get_symbol(const Symbol& name, const Symbol& default) {
+const Symbol& Settings::get_symbol(const Symbol& name, const Symbol& default_value) {
   if(auto found = settings.find(name))
     return found->_symbol;
-  else return default;
+  else return default_value;
 }
