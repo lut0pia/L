@@ -1,6 +1,5 @@
 #include "FrameBuffer.h"
 
-#include "RenderBuffer.h"
 #include "Texture.h"
 
 using namespace L;
@@ -25,9 +24,6 @@ void FrameBuffer::bind() {
 }
 void FrameBuffer::unbind(){
   glBindFramebuffer(_target,0);
-}
-void FrameBuffer::attach(GLenum attachment,const RenderBuffer& renderBuffer) {
-  glNamedFramebufferRenderbuffer(_id,attachment,GL_RENDERBUFFER,renderBuffer.id());
 }
 void FrameBuffer::attach(GLenum attachment,const Texture& texture) {
   glNamedFramebufferTexture(_id,attachment,texture.id(),0);

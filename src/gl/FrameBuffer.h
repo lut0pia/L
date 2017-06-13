@@ -5,7 +5,6 @@
 
 namespace L {
   namespace GL {
-    class RenderBuffer;
     class Texture;
     class FrameBuffer {
       L_NOCOPY(FrameBuffer)
@@ -17,7 +16,6 @@ namespace L {
       ~FrameBuffer();
       void bind();
       void unbind();
-      void attach(GLenum attachment,const RenderBuffer&);
       void attach(GLenum attachment,const Texture&);
     };
   }

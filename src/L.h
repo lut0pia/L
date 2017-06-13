@@ -66,9 +66,7 @@
 #include "gl/GL.h"
 #include "gl/Mesh.h"
 #include "gl/MeshBuilder.h"
-#include "gl/PostProcess.h"
 #include "gl/Program.h"
-#include "gl/RenderBuffer.h"
 #include "gl/Shader.h"
 #include "gl/Texture.h"
 
