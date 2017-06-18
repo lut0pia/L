@@ -25,6 +25,10 @@ bool Window::newEvent(Event& e) {
   else {
     e = _events.top();
     _events.pop();
+    if(e.type == Event::RESIZE) {
+      _width = e.x;
+      _height = e.y;
+    }
     return true;
   }
 }

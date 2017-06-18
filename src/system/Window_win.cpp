@@ -314,8 +314,6 @@ void Window::title(const char* str) {
 }
 void Window::resize(int width,int height) {
   L_ASSERT(opened());
-  _width = width;
-  _height = height;
   SetWindowPos(hWND,HWND_NOTOPMOST,0,0,width,height,SWP_NOMOVE|SWP_NOZORDER);
 }
 void Window::mousePosition(const Vector2i& p){
