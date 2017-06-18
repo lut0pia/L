@@ -23,6 +23,7 @@ namespace L {
     Camera();
     inline Camera(const Camera&) : Camera(){ L_ERROR("Camera component should not be copied."); }
     inline Camera& operator=(const Camera& other){ L_ERROR("Camera component should not be copied."); }
+    void event(const Window::Event&);
     void updateComponents();
     void prerender();
     void postrender();

@@ -18,6 +18,7 @@ void mainjob(void*) {
   Device::init();
   glEnable(GL_CULL_FACE);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  Engine::addWindowEvent<Camera>();
   Engine::addWindowEvent<ScriptComponent>();
   Engine::addDeviceEvent<ScriptComponent>();
   Engine::addUpdate<RigidBody>();

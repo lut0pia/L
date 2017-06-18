@@ -24,6 +24,13 @@ Camera::Camera() :
   _gdepth.parameter(GL_TEXTURE_MIN_FILTER,GL_NEAREST);
   _gdepth.parameter(GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 }
+void Camera::event(const Window::Event& e) {
+  if(e.type == Window::Event::RESIZE) {
+    this->~Camera();
+    ::new(this)Camera();
+    updateProjection();
+  }
+}
 void Camera::updateComponents() {
   _transform = entity()->requireComponent<Transform>();
 }
