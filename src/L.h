@@ -113,6 +113,7 @@
 // Threads, coroutines, fibers and synchronization
 #include "parallelism/Lock.h"
 #include "parallelism/Mutex.h"
+#include "parallelism/Semaphore.h"
 #include "parallelism/TaskSystem.h"
 
 // Scripting language
