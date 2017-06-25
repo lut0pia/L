@@ -48,3 +48,5 @@
 
 #define L_ONCE do{static bool DONE_ONCE(false);if(DONE_ONCE) return;DONE_ONCE = true;}while(false)
 #define L_DO_ONCE static bool DONE_ONCE(false);if(!DONE_ONCE && (DONE_ONCE = true))
+
+#define L_COUNT_OF(a) (sizeof(a)/sizeof(*a))
