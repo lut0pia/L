@@ -7,6 +7,7 @@ namespace L {
   class Integer {
   private:
     typedef uint32_t type;
+    typedef uint64_t extype;
     static const size_t typebytes = sizeof(type);
     static const size_t typebits = typebytes*8;
     Array<type> _part; // Big-Endian

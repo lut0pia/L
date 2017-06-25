@@ -121,20 +121,25 @@ Integer& Integer::operator-=(const Integer& other) {
   return *this;
 }
 Integer& Integer::operator*=(const Integer& other) {
-  Integer x(abs()),y(other.abs());
-  bool resNeg(negative()!=other.negative());
-  reset(); // Make this zero
-  while(y>0) {
-    if(y.part(0)&1) {
-      (*this) += x;
-      y--;
-    } else {
-      y >>= 1;
-      x <<= 1;
-    }
+  Integer result;
+  {
+    const size_t result_size(size()+other.size());
+    result._part.growTo(result_size); // Allocate space for result
+    while(result.size()<result_size)
+      result._part.push(0);
   }
-  _negative = resNeg;
-  trim();
+  for(int i(0); i<size(); i++) {
+    type carry(0);
+    for(int j(0); j<other.size(); j++) {
+      const extype product = extype(_part[i])*extype(other._part[j])+extype(carry);
+      result._part[i+j] = type(product);
+      carry = type(product>>typebits);
+    }
+    result._part[i+other.size()] = carry;
+  }
+  result._negative = _negative!=other._negative;
+  result.trim();
+  swap(*this, result);
   return *this;
 }
 Integer& Integer::operator/=(const Integer& other) {
