@@ -28,7 +28,8 @@ namespace L {
     static Array<void(*)(const Window::Event&)> _windowEvents;
     static Array<void(*)(const Device::Event&)> _deviceEvents;
     static Timer _timer;
-    static Time _deltaTime, _accumulator;
+    static Time _deltaTime, _accumulator, _average_frame_work_duration;
+    static Time _frame_work_durations[64];
     static const Time _subDelta;
     static float _deltaSeconds, _subDeltaSeconds, _fps, _timescale;
     static uint32_t _frame;

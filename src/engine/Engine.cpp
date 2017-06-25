@@ -10,6 +10,7 @@
 #include "../system/Device.h"
 #include "../system/Window.h"
 #include "SharedUniform.h"
+#include "../streams/CFileStream.h"
 
 using namespace L;
 
@@ -19,8 +20,9 @@ Array<void(*)(const L::Window::Event&)> Engine::_windowEvents;
 Array<void(*)(const Device::Event&)> Engine::_deviceEvents;
 Timer Engine::_timer;
 const Time Engine::_subDelta(0, 10);
-L::Time Engine::_deltaTime, Engine::_accumulator(0);
 float Engine::_deltaSeconds, Engine::_subDeltaSeconds(Engine::_subDelta.fSeconds()), Engine::_fps, Engine::_timescale(1.f);
+L::Time Engine::_deltaTime, Engine::_accumulator(0), Engine::_average_frame_work_duration;
+L::Time Engine::_frame_work_durations[64];
 uint32_t Engine::_frame(0);
 
 void Engine::update() {
@@ -70,6 +72,13 @@ void Engine::update() {
     for(auto&& gui : _guis)
       gui(camera);
   });
+
+  // Compute work duration
+  _frame_work_durations[_frame%L_COUNT_OF(_frame_work_durations)] = _timer.since();
+  _average_frame_work_duration = 0;
+  for(const Time& duration : _frame_work_durations)
+    _average_frame_work_duration += duration;
+  _average_frame_work_duration /= L_COUNT_OF(_frame_work_durations);
 
   Window::swapBuffers();
   _frame++;
