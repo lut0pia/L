@@ -44,4 +44,6 @@ namespace L {
     static void gravity(const Vector3f& g){ _gravity = g; }
     static const Vector3f& gravity(){ return _gravity; }
   };
+  template <> inline void updateAllComponents<RigidBody>() { ComponentPool<RigidBody>::async_iterate([](RigidBody& c, uint32_t) { c.update(); }, 4); }
+  template <> inline void subUpdateAllComponents<RigidBody>() { ComponentPool<RigidBody>::async_iterate([](RigidBody& c, uint32_t) { c.subUpdate(); }, 4); }
 }
