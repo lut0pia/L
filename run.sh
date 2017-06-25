@@ -1,13 +1,13 @@
 #!/bin/sh
 
+mode=${1:-build}
+configuration=${2:-development} #Configuration is development by default
+
 if (uname -s | grep -iqE "mingw|cygwin") ; then
   ./premake5.exe vs2015
   start ./prj/vs2015/L.sln
   exit 0
 fi
-
-configuration=${1:-development} #Configuration is development by default
-mode=${2:-build}
 
 # Premake
 (git clone --depth 1 https://github.com/premake/premake-core pmk) || # Attempt to clone

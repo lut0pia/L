@@ -17,7 +17,7 @@ cache:
   directories:
     - pmk # Avoid rebuilding premake everytime
 
-script: ./run.sh dbg build
+script: ./run.sh build dbg
 
 os:
   - linux
