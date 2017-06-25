@@ -118,6 +118,7 @@
 #include "script/Lexer.h"
 
 // Streams, IO
+#include "stream/AsyncFileStream.h"
 #include "stream/BufferStream.h"
 #include "stream/CFileStream.h"
 #include "stream/DirectStream.h"
