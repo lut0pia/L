@@ -29,6 +29,17 @@ You can either run the [premake](https://github.com/premake/premake-core/wiki/Us
 - 2-spaces indentation
 - X is right, Y is forward, Z is up
 - Matrices and Vectors are column-major
+``` C++
+class ClassName {
+protected:
+    float _attribute_name;
+public:
+    void method_name(int p1, float p2) {
+      int var_name(4);
+      return function_name(p2, var_name, p1);
+    }
+}
+```
 
 ## Interfaces included
 Interfaces are small binding files (found in src/interface) that register in/out functions to the engine for it to be able to read/write files.
