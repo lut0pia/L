@@ -20,14 +20,13 @@ Array<void(*)(const L::Window::Event&)> Engine::_windowEvents;
 Array<void(*)(const Device::Event&)> Engine::_deviceEvents;
 Timer Engine::_timer;
 const Time Engine::_subDelta(0, 10);
-float Engine::_deltaSeconds, Engine::_subDeltaSeconds(Engine::_subDelta.fSeconds()), Engine::_fps, Engine::_timescale(1.f);
 L::Time Engine::_deltaTime, Engine::_accumulator(0), Engine::_average_frame_work_duration;
 L::Time Engine::_frame_work_durations[64];
+float Engine::_deltaSeconds, Engine::_subDeltaSeconds(Engine::_subDelta.fSeconds()), Engine::_timescale(1.f);
 uint32_t Engine::_frame(0);
 
 void Engine::update() {
   _deltaTime = _timer.frame();
-  _fps = 1.f/_deltaTime.fSeconds();
   _deltaTime = min(_deltaTime*_timescale, Time(0, 100)); // Cap delta time to avoid weird behaviour
   _deltaSeconds = _deltaTime.fSeconds();
   Script::Context::global("delta") = _deltaSeconds;

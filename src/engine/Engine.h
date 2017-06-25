@@ -31,12 +31,11 @@ namespace L {
     static Time _deltaTime, _accumulator, _average_frame_work_duration;
     static Time _frame_work_durations[64];
     static const Time _subDelta;
-    static float _deltaSeconds, _subDeltaSeconds, _fps, _timescale;
+    static float _deltaSeconds, _subDeltaSeconds, _timescale;
     static uint32_t _frame;
   public:
     static inline float deltaSeconds() { return _deltaSeconds; }
     static inline float subDeltaSeconds() { return _subDeltaSeconds; }
-    static inline float fps() { return _fps; }
     static inline float timescale() { return _timescale; }
     static inline void timescale(float ts) { _timescale = ts; }
     static inline uint32_t frame() { return _frame; }
