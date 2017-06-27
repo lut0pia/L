@@ -30,14 +30,16 @@ You can either run the [premake](https://github.com/premake/premake-core/wiki/Us
 - X is right, Y is forward, Z is up
 - Matrices and Vectors are column-major
 ``` C++
-class ClassName {
-protected:
+namespace L {
+  class ClassName {
+  protected:
     float _attribute_name;
-public:
+  public:
     void method_name(int p1, float p2) {
       int var_name(4);
       return function_name(p2, var_name, p1);
     }
+  }
 }
 ```
 
