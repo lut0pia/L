@@ -30,11 +30,20 @@ typedef struct sockaddr SOCKADDR;
 
 namespace L {
   namespace Network {
+    // System-specific
     void init();
-    SOCKET connectTo(short port, const char* ip);
-    Set<String> DNSLookup(const char* host);
+    int error();
+    bool would_block();
+    void make_non_blocking(SOCKET);
+  
+    // Generic
+    SOCKET connect_to(const char* ip, short port);
+    int recv(SOCKET, char* buffer, size_t size);
+    bool send(SOCKET, const char* buffer, size_t size);
+    Set<String> dns_lookup(const char* host);
+
+    // HTTP
     String HTTPRequest(const String& url);
     void HTTPDownload(const char* url, const char* name);
-    String error();
   }
 }

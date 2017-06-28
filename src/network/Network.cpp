@@ -3,36 +3,43 @@
 using namespace L;
 using namespace Network;
 
-#include <cstring>
 #include "../streams/NetStream.h"
 #include "../streams/CFileStream.h"
-#include "../system/File.h"
 
-#if defined L_WINDOWS
-WSADATA WSAData;
-#endif
-
-void Network::init() {
-#if defined L_WINDOWS
-  WSAStartup(MAKEWORD(2,0), &WSAData);
-#endif
-}
-SOCKET Network::connectTo(short port, const char* ip) {
+SOCKET Network::connect_to(const char* ip, short port) {
   SOCKET sd(0);
-  SOCKADDR_IN sin;
-  sin.sin_addr.s_addr = inet_addr(ip);
-  sin.sin_family = AF_INET;
-  sin.sin_port = htons(port);
-  if((sd = socket(AF_INET,SOCK_STREAM,0)) < 0) {
-    closesocket(sd);
-    L_ERRORF("Couldn't create socket to %s:%s - %s",ip,ntos(port),(const char*)error());
-  } else if(connect(sd,(SOCKADDR*)&sin,sizeof(sin)) < 0) {
-    closesocket(sd);
-    L_ERRORF("Couldn't connect to %s:%s - %s",ip,ntos(port),(const char*)error());
+  if((sd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+    L_ERRORF("Couldn't create socket to %s:%hd - %d", ip, port, error());
+
+  {
+    SOCKADDR_IN sin;
+    sin.sin_addr.s_addr = inet_addr(ip);
+    sin.sin_family = AF_INET;
+    sin.sin_port = htons(port);
+
+    if(connect(sd, (SOCKADDR*)&sin, sizeof(sin)) < 0)
+      L_ERRORF("Couldn't connect to %s:%hd - %d", ip, port, error());
   }
+  make_non_blocking(sd);
   return sd;
 }
-Set<String> Network::DNSLookup(const char* host) {
+int Network::recv(SOCKET sd, char* buffer, size_t size) {
+  const int result(::recv(sd, buffer, size, 0));
+  if(result<0 && would_block()) // Nothing to read
+    return 0;
+  else if(result==0) // Connection closed
+    return -1;
+  else return result;
+}
+bool Network::send(SOCKET sd, const char* buffer, size_t size) {
+  int result;
+  while(size && (result = ::send(sd, buffer, size, 0))) {
+    buffer += result;
+    size -= result;
+  }
+  return result != 0;
+}
+Set<String> Network::dns_lookup(const char* host) {
   struct addrinfo hints, *res, *p;
   Set<String> wtr;
   memset(&hints, 0, sizeof hints);
@@ -65,26 +72,19 @@ String Network::HTTPRequest(const String& url) {
   SOCKET sd;
   // Find out what's the host and what's the request
   int slash(url.findFirst('/'));
-  String host((slash>=0)?url.substr(0,slash):url), request((slash>=0)?url.substr(slash):"/");
+  String host((slash>=0) ? url.substr(0, slash) : url), request((slash>=0) ? url.substr(slash) : "/");
   // Connect to the server
-  Set<String> ips(DNSLookup(host));
+  Set<String> ips(dns_lookup(host));
   if(!ips.empty()) {
-    NetStream test(sd = connectTo(80,ips[0]));
+    NetStream test(sd = connect_to(ips[0], 80));
     test << "GET " << request << " HTTP/1.1\r\nHost: " << host << "\r\nConnection: close\r\n\r\n";
-    while((tmp = ::recv(sd,buffer,1024,0)))
-      wtr += String(buffer,tmp);
+    while((tmp = ::recv(sd, buffer, 1024, 0)))
+      wtr += String(buffer, tmp);
     return wtr;
-  } else L_ERRORF("Could not find ip for %s",(const char*)host);
+  } else L_ERRORF("Could not find ip for %s", (const char*)host);
 }
 void Network::HTTPDownload(const char* url, const char* name) {
   String answer(HTTPRequest(url));
-  CFileStream file(name,"wb");
-  file << String(answer,answer.findFirst("\r\n\r\n")+4);
-}
-String Network::error() {
-#if defined L_WINDOWS
-  return ntos(WSAGetLastError());
-#elif defined L_UNIX
-  return strerror(errno);
-#endif
+  CFileStream file(name, "wb");
+  file << String(answer, answer.findFirst("\r\n\r\n")+4);
 }
