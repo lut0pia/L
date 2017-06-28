@@ -93,6 +93,7 @@
 
 // Network tools
 #include "network/Network.h"
+#include "network/Server.h"
 
 // Threads, coroutines, fibers and synchronization
 #include "parallelism/Lock.h"
