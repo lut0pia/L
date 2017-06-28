@@ -9,11 +9,13 @@ void mainjob(void*) {
   Settings::load_file("settings.ini");
 
   const char* window_name(Settings::get_symbol("window_name", "L Engine"));
+  int window_flags((Settings::get_int("no_cursor", 0) ? Window::nocursor : 0)
+                   | (Settings::get_int("loop_cursor", 0) ? Window::loopcursor : 0));
 
   if(Settings::get_int("fullscreen", 1))
-    Window::openFullscreen(window_name, Window::nocursor|Window::loopcursor);
+    Window::openFullscreen(window_name, window_flags);
   else
-    Window::open(window_name, Settings::get_int("resolution_x", 1024), Settings::get_int("resolution_y", 768), Window::nocursor|Window::loopcursor);
+    Window::open(window_name, Settings::get_int("resolution_x", 1024), Settings::get_int("resolution_y", 768), window_flags);
 
   Device::init();
   glEnable(GL_CULL_FACE);
