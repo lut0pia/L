@@ -471,17 +471,16 @@ Context::Context() : _self(ref<Table<Var, Var>>()) {
     else vector = 0.f;
   });
   _globals[Symbol("color")] = (Function)([](Context& c) {
-    Color wtr(Color::white);
+    Color& color(c.returnValue().make<Color>() = Color::white);
     const uint32_t params(min(c.localCount(), 4u));
     for(size_t i(0); i<params; i++) {
-      byte b((c.local(i).is<float>()) ? (c.local(i).as<float>()*255) : c.local(i).get<int>());
+      const byte b(c.local(i).is<float>() ? (c.local(i).as<float>()*255) : c.local(i).get<int>());
       switch(i) {
-        case 0: wtr.r() = b; break;
-        case 1: wtr.g() = b; break;
-        case 2: wtr.b() = b; break;
-        case 3: wtr.a() = b; break;
+        case 0: color.r() = b; break;
+        case 1: color.g() = b; break;
+        case 2: color.b() = b; break;
+        case 3: color.a() = b; break;
       }
     }
-    c.returnValue() = wtr;
   });
 }
