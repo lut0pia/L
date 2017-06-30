@@ -13,6 +13,9 @@ namespace L {
   inline uint32_t clog2(uint32_t x) { return bsr((x << 1) - 1); }
   inline uint64_t clog2(uint64_t x) { return bsr((x << 1) - 1); }
 
+  inline uint32_t upperpow2(uint32_t v) { return 2 << clog2(v); }
+  inline uint64_t upperpow2(uint64_t v) { return 2 << clog2(v); }
+
   template <class T> inline constexpr const T& max(const T& a, const T& b) { return (a>b) ? a : b; }
   template <class T> inline constexpr const T& min(const T& a, const T& b) { return (a<b) ? a : b; }
   template <class T> inline constexpr const T& clamp(const T& v, const T& min, const T& max) { return (v<min) ? min : ((v>max) ? max : v); }
@@ -57,13 +60,4 @@ namespace L {
   }
   template <> inline float pow(const float& a, float b) { return ::pow(a, b); }
   template <> inline double pow(const double& a, double b) { return ::pow(a, b); }
-
-  template <typename T>
-  constexpr T orright(T v, int i) {
-    return (i) ? (v|orright(v>>1, i-1)) : 0;
-  }
-  template <typename T>
-  constexpr T upperpow2(T v) { // Returns next upper power of 2
-    return orright(v-1, sizeof(T)*8)+1;
-  }
 }
