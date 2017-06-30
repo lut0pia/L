@@ -53,13 +53,13 @@ CodeFunction Context::read(Stream& stream) {
   Array<Var>& array(wtr.code.as<Array<Var>>());
   Script::Lexer lexer(stream);
   lexer.nextToken();
-  while(!stream.end()) {
+  do {
     array.push();
     if(!read(array.back(), lexer)) { // Read failed
       array.size(1); // Return do nothing function
       return wtr;
     }
-  }
+  } while(!stream.end());
   Table<Symbol, uint32_t> localTable;
   uint32_t localIndex(0);
   applyScope(wtr.code, localTable, localIndex);
