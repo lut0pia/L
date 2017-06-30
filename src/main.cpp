@@ -18,6 +18,7 @@ void mainjob(void*) {
     Window::open(window_name, Settings::get_int("resolution_x", 1024), Settings::get_int("resolution_y", 768), window_flags);
 
   Device::init();
+  Network::init();
   glEnable(GL_CULL_FACE);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   Engine::addWindowEvent<Camera>();
