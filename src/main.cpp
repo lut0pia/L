@@ -41,11 +41,20 @@ void mainjob(void*) {
     Script::Context startupContext;
     startupContext.executeInside(Array<Var>{Resource::script("startup.ls")});
   }
+
+#ifdef L_DEBUG
+  ScriptServer server(short(Settings::get_int("server_port", 1993)));
+#endif
+
   const uint32_t bs(32);
   float bayer[bs*bs];
   Engine::ditherMatrix(bayerMatrix(bs, bs, bayer), bs, bs);
-  while(Window::loop())
+  while(Window::loop()) {
+#ifdef L_DEBUG
+    server.update();
+#endif
     Engine::update();
+  }
   Engine::clear();
 }
 int main(int argc, const char* argv[]) {
