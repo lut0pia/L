@@ -29,5 +29,7 @@ namespace L {
     inline void put(char c) override { if(_cur<_end) *_cur++ = c; }
     inline void unget(char c) override { if(_cur>_start) *--_cur = c; }
     inline bool end() const override { return _cur>=_end; }
+
+    inline size_t pos() const { return _cur-_start; }
   };
 }
