@@ -41,7 +41,6 @@ void ScriptServer::update() {
             char buffer[2<<10];
             BufferStream buffer_stream(buffer, sizeof(buffer));
             buffer_stream << result << '\n';
-            out.write(buffer, buffer_stream.pos());
             send(socket, buffer, buffer_stream.pos());
           }
 
