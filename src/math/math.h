@@ -9,7 +9,9 @@ namespace L {
   template <class T> T log2(const T& x) {}
   template <class T> inline constexpr T log(const T& x, const T& base) { return log2(x)/log2(base); }
   inline uint32_t log2(uint32_t x) { return bsr(x); }
+  inline uint64_t log2(uint64_t x) { return bsr(x); }
   inline uint32_t clog2(uint32_t x) { return bsr((x << 1) - 1); }
+  inline uint64_t clog2(uint64_t x) { return bsr((x << 1) - 1); }
 
   template <class T> inline constexpr const T& max(const T& a, const T& b) { return (a>b) ? a : b; }
   template <class T> inline constexpr const T& min(const T& a, const T& b) { return (a<b) ? a : b; }
