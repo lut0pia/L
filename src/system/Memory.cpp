@@ -43,13 +43,13 @@ void* Memory::alloc(size_t size) {
 #if L_USE_MALLOC
   return malloc(size);
 #else
-  L_SCOPED_LOCK(_lock);
   if(size>allocStep) { // Big allocations go directly to the system
     _allocated += size;
     return virtualAlloc(size);
   }
   uint32_t index, trueSize;
   freelistIndexSize(size, index, trueSize);
+  L_SCOPED_LOCK(_lock);
   void*& freelist(_freelist[index]);
   void* wtr(freelist);
   if(wtr) {
@@ -93,7 +93,6 @@ void Memory::free(void* ptr, size_t size) {
 #if L_USE_MALLOC
   ::free(ptr);
 #else
-  L_SCOPED_LOCK(_lock);
   if(size>allocStep) { // Big allocations go directly to the system
     virtualFree(ptr, size);
     _allocated -= size;
@@ -101,6 +100,7 @@ void Memory::free(void* ptr, size_t size) {
   }
   uint32_t index, trueSize;
   freelistIndexSize(size, index, trueSize);
+  L_SCOPED_LOCK(_lock);
   void*& freelist(_freelist[index]);
   *((void**)ptr) = freelist;
   freelist = ptr;
