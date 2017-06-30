@@ -34,6 +34,11 @@
 #include "containers/Tree.h"
 #include "containers/XML.h"
 
+// Dev tools
+#ifdef L_DEBUG
+#include "dev/ScriptServer.h"
+#endif
+
 // Dynamic typing/casting/compiling
 #include "dynamic/Assembly.h"
 #include "dynamic/Type.h"
