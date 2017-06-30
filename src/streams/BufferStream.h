@@ -27,7 +27,7 @@ namespace L {
     }
     inline char get() override { return (_cur<_end) ? *_cur++ : EOF; }
     inline void put(char c) override { if(_cur<_end) *_cur++ = c; }
-    inline void unget(char c) override { if(_cur>_start) *_cur-- = c; }
+    inline void unget(char c) override { if(_cur>_start) *--_cur = c; }
     inline bool end() const override { return _cur>=_end; }
   };
 }
