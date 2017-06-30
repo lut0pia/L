@@ -13,16 +13,10 @@
 #define L_X86_32
 #endif
 
-/*
-#define L_NoCopy(class) \
-  class(const class&) = delete; \
-  class& operator=(const class&) = delete;
-*/
-
 // Forbids class from being copied
 #define L_NOCOPY(class) \
-  class(const class&); \
-  class& operator=(const class&);
+  class(const class&) = delete; \
+  class& operator=(const class&) = delete;
 
 // Allows true stringify
 #define L_STRINGIFY(n) L_STRINGIFY_(n)
