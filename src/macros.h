@@ -7,12 +7,6 @@
 # include <signal.h>
 #endif
 
-#if defined(__x86_64__) || defined(_M_X64)
-#define L_X86_64
-#elif defined(__i386) || defined(_M_IX86)
-#define L_X86_32
-#endif
-
 // Forbids class from being copied
 #define L_NOCOPY(class) \
   class(const class&) = delete; \
