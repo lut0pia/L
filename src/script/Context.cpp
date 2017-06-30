@@ -55,7 +55,10 @@ CodeFunction Context::read(Stream& stream) {
   lexer.nextToken();
   while(!stream.end()) {
     array.push();
-    read(array.back(), lexer);
+    if(!read(array.back(), lexer)) { // Read failed
+      array.size(1); // Return do nothing function
+      return wtr;
+    }
   }
   Table<Symbol, uint32_t> localTable;
   uint32_t localIndex(0);
@@ -63,31 +66,41 @@ CodeFunction Context::read(Stream& stream) {
   wtr.localCount = localIndex;
   return wtr;
 }
-void Context::read(Var& v, Lexer& lexer) {
-  if(lexer.eos())
-    L_ERROR("Unexpected end of stream while parsing script: there are uneven () or {}.");
+bool Context::read(Var& v, Lexer& lexer) {
+  if(lexer.eos()) {
+    L_WARNING("Unexpected end of stream while parsing script: there are uneven () or {}.");
+    return false;
+  }
   if(lexer.acceptToken("(")) { // It's a list of expressions
     v.make<Array<Var> >();
     int i(0);
     while(!lexer.acceptToken(")"))
       if(lexer.acceptToken("|"))
         v = Array<Var>{v}, i = 1;
-      else read(v[i++], lexer);
+      else if(!read(v[i++], lexer))
+        return false;
   } else if(lexer.acceptToken("{")) { // It's an object
     v.make<Array<Var> >();
     v[0] = (Function)object;
     int i(1);
     while(!lexer.acceptToken("}"))
-      read(v[i++], lexer);
+      if(!read(v[i++], lexer))
+        return false;
   } else if(lexer.acceptToken("'")) {
-    read(v, lexer);
-    L_ASSERT(v.is<Symbol>());
+    if(!read(v, lexer))
+      return false;
+    if(!v.is<Symbol>()) {
+      L_WARNINGF("Expected symbol after ', got %s at line %d", v.type()->name, lexer.line());
+      return false;
+    }
     const Symbol sym(v.as<Symbol>());
     v.make<RawSymbol>().sym = sym;
   } else if(lexer.acceptToken("!")) {
-    read(v, lexer);
+    if(!read(v, lexer))
+      return false;
   } else if(lexer.isToken(")") || lexer.isToken("}")) {
-    L_ERRORF("Unexpected token %s at line %d", lexer.token(), lexer.line());
+    L_WARNINGF("Unexpected token %s at line %d", lexer.token(), lexer.line());
+    return false;
   } else {
     const char* token(lexer.token());
     if(lexer.literal()) v = token; // Character string
@@ -100,6 +113,7 @@ void Context::read(Var& v, Lexer& lexer) {
     else v = Symbol(token);
     lexer.nextToken();
   }
+  return true;
 }
 
 Var Context::executeReturn(const Var& code) {
@@ -157,7 +171,8 @@ void Context::execute(const Var& code, Var* selfOut) {
       _stack.pop(); // Pop handle
       execute(array[1]); // Push index
       _stack.top() = (*table)[_stack.top()]; // Fetch value in table (replace index)
-    } else err << "Unable to execute command " << array << "\n";
+    } else
+      err << "Unable to execute command " << array << "\n";
   } else if(code.is<Local>())
     _stack.push(local(code.as<Local>().i));
   else if(code.is<Symbol>()) // It's a global variable or self

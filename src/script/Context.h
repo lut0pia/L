@@ -29,7 +29,7 @@ namespace L {
     public:
       Context();
       static CodeFunction read(Stream&);
-      static void read(Var& v, Lexer& lexer);
+      static bool read(Var& v, Lexer& lexer);
 
       inline Var& currentSelf() { L_ASSERT(!_selves.empty()); return _selves.top(); }
       inline Table<Var, Var>& selfTable() { return *_self.as<Ref<Table<Var, Var>>>(); }
