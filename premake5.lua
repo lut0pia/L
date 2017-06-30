@@ -111,4 +111,5 @@ solution "L"
 		configuration  {"Release"}
 			targetdir "bin/rls"
 			objdir("obj/".._ACTION.."/rls")
+			excludes {"src/dev/**"}
 			flags {"Optimize"}
