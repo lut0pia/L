@@ -17,6 +17,16 @@ namespace L {
     return sizeof(v)*8-__builtin_clz(v);
 #endif
   }
+
+  inline uint32_t bsr(uint64_t v){
+#if _MSC_VER
+    DWORD wtr;
+    _BitScanReverse64(&wtr, v);
+    return wtr;
+#elif __GNUC__
+    return sizeof(v)*8-__builtin_clzll(v);
+#endif
+  }
   
   inline uint32_t cas(volatile uint32_t* dst, uint32_t cmp, uint32_t exc) {
 #if _MSC_VER
