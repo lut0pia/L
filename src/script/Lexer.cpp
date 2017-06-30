@@ -13,10 +13,12 @@ char Lexer::get(){
   return c;
 }
 void Lexer::nospace() {
-  char c;
-  do c = get();
-  while(Stream::isspace(c));
-  _stream.unget(c);
+  if(!_stream.end()) {
+    char c;
+    do c = get();
+    while(Stream::isspace(c));
+    _stream.unget(c);
+  }
 }
 void Lexer::comment() {
   char c;
