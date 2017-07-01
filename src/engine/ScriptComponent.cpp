@@ -1,6 +1,6 @@
 #include "ScriptComponent.h"
 
-#include "../streams/FileStream.h"
+#include "../stream/FileStream.h"
 #include "Camera.h"
 #include "Collider.h"
 #include "Sprite.h"

@@ -5,7 +5,7 @@
 #include "containers/Ref.h"
 #include "text/String.h"
 #include "system/File.h"
-#include "streams/CFileStream.h"
+#include "stream/CFileStream.h"
 
 namespace L {
   template <class T>

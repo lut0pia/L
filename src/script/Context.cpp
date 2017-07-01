@@ -2,7 +2,7 @@
 
 #include "../containers/Ref.h"
 #include "../math/Rand.h"
-#include "../streams/CFileStream.h"
+#include "../stream/CFileStream.h"
 #include "../math/Vector.h"
 #include "../system/Window.h"
 #include "../time/Time.h"

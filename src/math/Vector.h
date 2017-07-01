@@ -5,7 +5,7 @@
 #include "../types.h"
 #include "../math/math.h"
 #include "../math/Rand.h"
-#include "../streams/Stream.h"
+#include "../stream/Stream.h"
 
 namespace L {
   template <int d,class T>

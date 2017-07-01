@@ -3,8 +3,8 @@
 using namespace L;
 using namespace Network;
 
-#include "../streams/NetStream.h"
-#include "../streams/CFileStream.h"
+#include "../stream/NetStream.h"
+#include "../stream/CFileStream.h"
 
 SOCKET Network::connect_to(const char* ip, short port) {
   SOCKET sd(0);

@@ -109,12 +109,12 @@
 #include "script/Context.h"
 #include "script/Lexer.h"
 
-// C-Stream wrapper and friends
-#include "streams/BufferStream.h"
-#include "streams/CFileStream.h"
-#include "streams/FileStream.h"
-#include "streams/NetStream.h"
-#include "streams/Stream.h"
+// Streams, IO
+#include "stream/BufferStream.h"
+#include "stream/CFileStream.h"
+#include "stream/FileStream.h"
+#include "stream/NetStream.h"
+#include "stream/Stream.h"
 
 // Filesystem, Window
 #include "system/Device.h"

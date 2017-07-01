@@ -3,7 +3,7 @@
 #include <new>
 #include "../hash.h"
 #include "../system/Memory.h"
-#include "../streams/Stream.h"
+#include "../stream/Stream.h"
 
 namespace L {
   template <class K,class V>

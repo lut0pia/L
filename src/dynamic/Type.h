@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../containers/Table.h"
-#include "../streams/Stream.h"
+#include "../stream/Stream.h"
 #include "../text/Symbol.h"
 #include "../types.h"
 #include "../hash.h"

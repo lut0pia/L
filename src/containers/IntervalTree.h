@@ -4,7 +4,7 @@
 #include "../gl/GL.h"
 #include "../math/Interval.h"
 #include "Pool.h"
-#include "../streams/CFileStream.h"
+#include "../stream/CFileStream.h"
 
 namespace L {
   template <int d, class K, class V>

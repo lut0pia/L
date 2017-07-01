@@ -10,7 +10,7 @@
 #include "../system/Device.h"
 #include "../system/Window.h"
 #include "SharedUniform.h"
-#include "../streams/CFileStream.h"
+#include "../stream/CFileStream.h"
 
 using namespace L;
 

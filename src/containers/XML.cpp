@@ -1,7 +1,7 @@
 #include "XML.h"
 
 #include "../types.h"
-#include "../streams/CFileStream.h"
+#include "../stream/CFileStream.h"
 
 using namespace L;
 

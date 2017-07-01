@@ -1,7 +1,7 @@
 #pragma once
 
 #include <type_traits>
-#include "../streams/Stream.h"
+#include "../stream/Stream.h"
 #include "../system/Memory.h"
 
 namespace L {

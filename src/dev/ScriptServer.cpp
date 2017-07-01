@@ -1,7 +1,7 @@
 #include "ScriptServer.h"
 
-#include "../streams/CFileStream.h"
-#include "../streams/BufferStream.h"
+#include "../stream/CFileStream.h"
+#include "../stream/BufferStream.h"
 
 using namespace L;
 using namespace Network;

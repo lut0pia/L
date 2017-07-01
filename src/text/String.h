@@ -2,7 +2,7 @@
 
 #include <cstring>
 #include "../containers/Array.h"
-#include "../streams/FileStream.h"
+#include "../stream/FileStream.h"
 
 namespace L {
   class String: private Array<char> {

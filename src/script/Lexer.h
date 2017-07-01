@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../streams/Stream.h"
+#include "../stream/Stream.h"
 
 namespace L {
   namespace Script {
