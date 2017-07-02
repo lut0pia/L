@@ -5,6 +5,7 @@
 #include "Sprite.h"
 #include "Transform.h"
 #include "StaticMesh.h"
+#include "NameComponent.h"
 #include "Primitive.h"
 #include "../text/String.h"
 
@@ -109,6 +110,13 @@ void ScriptComponent::init() {
     if(c.localCount() && c.local(0).is<Entity*>())
       Entity::destroy(c.local(0).as<Entity*>());
   });
+  Context::global(Symbol("entity-get")) = (Function)([](Context& c) {
+    if(c.localCount()) {
+      if(NameComponent* name_component = NameComponent::find(c.local(0).get<Symbol>()))
+        c.returnValue() = name_component->entity();
+      else c.returnValue() = nullptr;
+    } else c.returnValue() = nullptr;
+  });
   // Devices ///////////////////////////////////////////////////////////////////
   L_FUNCTION("get-devices", {
     auto wtr(ref<Table<Var,Var>>());
@@ -185,4 +193,8 @@ void ScriptComponent::init() {
   L_COMPONENT_METHOD(Primitive, "box", 1, box(c.local(0).get<Vector3f>()));
   L_COMPONENT_METHOD(Primitive, "sphere", 1, sphere(c.local(0).get<float>()));
   L_COMPONENT_METHOD(Primitive, "color", 1, color(c.local(0).get<Color>()));
+  // Name ///////////////////////////////////////////////////////////////////
+  L_COMPONENT_BIND(NameComponent, "name");
+  L_COMPONENT_METHOD(NameComponent, "set", 1, name(c.local(0).get<Symbol>()));
+  L_COMPONENT_METHOD(NameComponent, "get", 0, name());
 }
