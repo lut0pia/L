@@ -28,12 +28,13 @@ namespace L {
     static Array<void(*)(const Window::Event&)> _windowEvents;
     static Array<void(*)(const Device::Event&)> _deviceEvents;
     static Timer _timer;
-    static Time _deltaTime, _accumulator, _average_frame_work_duration;
+    static Time _real_delta_time, _deltaTime, _accumulator, _average_frame_work_duration;
     static Time _frame_work_durations[64];
     static const Time _subDelta;
-    static float _deltaSeconds, _subDeltaSeconds, _timescale;
+    static float _real_delta_seconds, _deltaSeconds, _subDeltaSeconds, _timescale;
     static uint32_t _frame;
   public:
+    static inline float real_delta_seconds() { return _real_delta_seconds; }
     static inline float deltaSeconds() { return _deltaSeconds; }
     static inline float subDeltaSeconds() { return _subDeltaSeconds; }
     static inline float timescale() { return _timescale; }
