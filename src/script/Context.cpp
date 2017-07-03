@@ -392,6 +392,10 @@ Context::Context() : _self(ref<Table<Var, Var>>()) {
       if(c.local(i)<c.returnValue())
         c.returnValue() = c.local(i);
   });
+  _globals[Symbol("clamp")] = (Function)([](Context& c) {
+    L_ASSERT(c.localCount()==3);
+    c.returnValue() = clamp(c.local(0), c.local(1), c.local(2));
+  });
 #define SETOP(op)\
   _globals[Symbol(#op)] = (Native)([](Context& c,const Array<Var>& a) {\
     L_ASSERT(a.size()>1);\
