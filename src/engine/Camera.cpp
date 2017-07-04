@@ -24,10 +24,14 @@ Camera::Camera() :
   _gdepth.parameter(GL_TEXTURE_MIN_FILTER,GL_NEAREST);
   _gdepth.parameter(GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 }
+void Camera::resize_buffers() {
+  _gcolor.image2D(0, GL_RGBA, Window::width(), Window::height(), 0, GL_RGBA, GL_UNSIGNED_BYTE);
+  _gnormal.image2D(0, GL_RGB16F, Window::width(), Window::height(), 0, GL_RGB, GL_FLOAT);
+  _gdepth.image2D(0, GL_DEPTH_COMPONENT24, Window::width(), Window::height(), 0, GL_DEPTH_COMPONENT, GL_FLOAT);
+}
 void Camera::event(const Window::Event& e) {
   if(e.type == Window::Event::RESIZE) {
-    this->~Camera();
-    ::new(this)Camera();
+    resize_buffers();
     updateProjection();
   }
 }
