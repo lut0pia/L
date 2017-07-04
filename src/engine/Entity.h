@@ -10,9 +10,9 @@ namespace L {
   class Entity {
     L_ALLOCABLE(Entity);
   private:
+    static Array<Entity*> _destroy_queue;
     Array<KeyValue<const TypeDescription*,Component*> > _components;
     bool _destroyed;
-    static Array<Entity*> _destroyQueue;
 
   public:
     inline Entity() : _destroyed(false) {}
@@ -51,6 +51,6 @@ namespace L {
     void remove(Component*);
 
     static void destroy(Entity* e);
-    static void flushDestroyQueue();
+    static void flush_destroy_queue();
   };
 }

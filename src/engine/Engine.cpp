@@ -62,7 +62,7 @@ void Engine::update() {
   for(auto&& lateUpdate : _lateUpdates)
     lateUpdate();
 
-  Entity::flushDestroyQueue();
+  Entity::flush_destroy_queue();
   Resource::update();
 
   ComponentPool<Camera>::iterate([](Camera& camera) {

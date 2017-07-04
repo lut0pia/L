@@ -4,7 +4,7 @@
 
 using namespace L;
 
-Array<Entity*> Entity::_destroyQueue;
+Array<Entity*> Entity::_destroy_queue;
 
 Entity::Entity(const Entity* other) {
   for(auto p : other->_components){
@@ -35,15 +35,12 @@ void Entity::remove(Component* c){
     updateComponents();
 }
 
-void Entity::destroy(Entity* e){
-  for(auto&& entity : _destroyQueue)
-    if(entity==e)
-      return;
-  _destroyQueue.push(e);
+void Entity::destroy(Entity* e) {
+  if(_destroy_queue.find(e)==-1)
+    _destroy_queue.push(e);
 }
-void Entity::flushDestroyQueue() {
-  while(!_destroyQueue.empty()){
-    delete _destroyQueue.back();
-    _destroyQueue.pop();
-  }
+void Entity::flush_destroy_queue() {
+  for(Entity* entity : _destroy_queue)
+    delete entity;
+  _destroy_queue.clear();
 }
