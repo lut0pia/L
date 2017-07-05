@@ -85,7 +85,7 @@ void Engine::update() {
   _frame++;
 }
 void Engine::clear() {
-  Pool<Entity>::global.clear();
+  //Pool<Entity>::global.clear();
 }
 
 GL::Buffer& Engine::sharedUniform() {
