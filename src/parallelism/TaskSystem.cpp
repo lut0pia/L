@@ -6,12 +6,17 @@
 
 using namespace L;
 
-const uint32_t threadCount = 4;
-const uint32_t fiberCount = 16;
+const uint32_t thread_count = 4;
+const uint32_t fiber_count = 16;
 
-#ifdef L_WINDOWS
-typedef LPVOID FiberHandle;
-#endif
+typedef void* FiberHandle;
+
+namespace L {
+  FiberHandle convert_to_fiber();
+  FiberHandle create_fiber(void(*)(void*), void*);
+  void switch_to_fiber(FiberHandle);
+  void create_thread(void(*)(void*), void*);
+}
 
 struct FiberSlot {
   FiberHandle handle;
@@ -27,71 +32,57 @@ struct Task {
 
 bool initialized(false);
 TSQueue<128, Task> tasks;
-TSQueue<16, Task> threadTasks[threadCount];
-std::atomic<uint32_t> taskCount(0);
-thread_local FiberSlot fibers[fiberCount];
-thread_local uint32_t threadIndex, currentFiber;
+TSQueue<16, Task> thread_tasks[thread_count];
+FiberHandle original_thread_fibers[thread_count];
+std::atomic<uint32_t> task_count(0);
+thread_local FiberSlot fibers[fiber_count];
+thread_local uint32_t thread_index, current_fiber;
 
-#ifdef L_WINDOWS
-VOID __stdcall fiberFunc(LPVOID p) {
-#else
-void fiberFunc(void*) {
-#endif
+void fiber_func(void*) {
   Task task;
-  while(taskCount>0) {
-    if(threadTasks[threadIndex].pop(task) || tasks.pop(task)) {
+  while(task_count>0) {
+    if(thread_tasks[thread_index].pop(task) || tasks.pop(task)) {
       task.func(task.data); // Execute task
       if(task.parent) task.parent->counter--; // Notify task done
       TaskSystem::join(); // Wait for child tasks
-      taskCount--; // Notify task over
+      task_count--; // Notify task over
     } else TaskSystem::yield();
   }
-  if(currentFiber!=0) // Need to stop on thread converted fiber to exit correctly
-    TaskSystem::yield();
+  switch_to_fiber(original_thread_fibers[thread_index]); // Go back to original context
 }
 
-void threadFunc(void* arg) {
+void thread_func(void* arg) {
   memset(fibers, 0, sizeof(fibers));
-  threadIndex = uint32_t(arg);
-  currentFiber = 0;
-  // Create non-thread fibers
-  for(uint32_t i(1); i<fiberCount; i++)
-#ifdef L_WINDOWS
-    fibers[i].handle = CreateFiber(0, fiberFunc, nullptr);
-#endif
-#ifdef L_WINDOWS
-  fibers[0].handle = ConvertThreadToFiber(0);
-#endif
-  fiberFunc(nullptr);
+  thread_index = uint32_t(arg);
+  current_fiber = 0;
+  for(uint32_t i(0); i<fiber_count; i++)
+    fibers[i].handle = create_fiber(fiber_func, nullptr);
+  original_thread_fibers[thread_index] = convert_to_fiber();
+  switch_to_fiber(fibers[0].handle);
 }
 
 void TaskSystem::init() {
   initialized = true;
-  // Create threads
-  for(uint32_t i(1); i<threadCount; i++)
-#ifdef L_WINDOWS
-    CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)threadFunc, (LPVOID)i, 0, NULL);
-#endif
-  threadFunc(nullptr);
+  for(uint32_t i(1); i<thread_count; i++)
+    create_thread(thread_func, (void*)i);
+  thread_func(nullptr);
 }
 void TaskSystem::push(Func f, void* d, Flags flags) {
   FiberSlot* parent;
   if(initialized && !(flags&NoParent)) {
-    parent = fibers+currentFiber;
+    parent = fibers+current_fiber;
     parent->counter++;
   } else parent = nullptr;
-  taskCount++;
+  task_count++;
   if(flags&MainThread)
-    threadTasks[0].push(Task{f,d,flags,parent});
+    thread_tasks[0].push(Task{f,d,flags,parent});
   else tasks.push(Task{f,d,flags,parent});
 }
 void TaskSystem::yield() {
-  currentFiber = (currentFiber+1)%fiberCount;
-#ifdef L_WINDOWS
-  SwitchToFiber(fibers[currentFiber].handle);
-#endif
+  current_fiber = (current_fiber+1)%fiber_count;
+  switch_to_fiber(fibers[current_fiber].handle);
 }
 void TaskSystem::join() {
-  while(fibers[currentFiber].counter)
+  while(fibers[current_fiber].counter)
     yield();
 }
