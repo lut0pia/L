@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../containers/KeyValue.h"
+#include "../containers/IterablePool.h"
 #include "../dynamic/Type.h"
 #include "Engine.h"
 #include "../system/Memory.h"
@@ -8,8 +9,8 @@
 namespace L {
   class Component;
   class Entity {
-    L_ALLOCABLE(Entity);
   private:
+    static IterablePool<Entity> _pool;
     static Array<Entity*> _destroy_queue;
     Array<KeyValue<const TypeDescription*,Component*> > _components;
     bool _destroyed;
@@ -19,6 +20,9 @@ namespace L {
     Entity(const Entity* other);
     ~Entity();
     const Array<KeyValue<const TypeDescription*,Component*> >& components() const{ return _components; }
+
+    inline void* operator new(size_t) { return _pool.allocate(); }
+    inline void operator delete(void* p) { _pool.deallocate((Entity*)p); }
 
     template <class CompType>
     CompType* component() const {
@@ -52,5 +56,6 @@ namespace L {
 
     static void destroy(Entity* e);
     static void flush_destroy_queue();
+    static void clear();
   };
 }

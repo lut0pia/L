@@ -4,6 +4,7 @@
 
 using namespace L;
 
+IterablePool<Entity> Entity::_pool;
 Array<Entity*> Entity::_destroy_queue;
 
 Entity::Entity(const Entity* other) {
@@ -43,4 +44,9 @@ void Entity::flush_destroy_queue() {
   for(Entity* entity : _destroy_queue)
     delete entity;
   _destroy_queue.clear();
+}
+void Entity::clear() {
+  Array<Entity*> entities(_pool.objects());
+  for(Entity* entity : entities)
+    delete entity;
 }
