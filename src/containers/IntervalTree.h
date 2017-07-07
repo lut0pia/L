@@ -23,12 +23,6 @@ namespace L {
           parent->replace(oldNode, this);
         _left->_parent = _right->_parent = this;
       }
-      inline ~Node() {
-        if(branch()) {
-          delete _left;
-          delete _right;
-        }
-      }
       inline const Key& key() const { return _key; }
       inline const V& value() const { return _value; }
       inline const Node* left() const { return _left; }
@@ -46,18 +40,17 @@ namespace L {
           _key = _left->_key+_right->_key;
       }
 
-      inline void* operator new(size_t size) { return Pool<Node>::global.allocate(); }
-      inline void operator delete(void* p) { Pool<Node>::global.deallocate(p); }
       friend IntervalTree;
     };
   private:
+    Pool<Node> _pool;
     Node* _root;
   public:
     constexpr IntervalTree() : _root(nullptr) {}
-    inline ~IntervalTree() { delete _root; }
+    inline ~IntervalTree() { clear(); }
     inline const Node* root() const { return _root; }
     Node* insert(const Key& key, const V& value) {
-      Node* node(new Node(key, value));
+      Node* node(_pool.construct(key, value));
       if(_root) {
         Node** cur(&_root);
         while((*cur)->branch()) {
@@ -68,7 +61,7 @@ namespace L {
             extentDiffRight(newRight.extent()-rightKey.extent());
           cur = (extentDiffLeft<extentDiffRight) ? (&(*cur)->_left) : (&(*cur)->_right);
         }
-        *cur = new Node((*cur)->_parent, *cur, node);
+        *cur = _pool.construct((*cur)->_parent, *cur, node);
         sync(*cur);
       } else _root = node;
       return node;
@@ -86,10 +79,10 @@ namespace L {
         } else // Has grand-parent
           parent->_parent->replace(parent, sibling);
         parent->_left = parent->_right = nullptr;
-        delete parent;
+        _pool.destruct(parent);
         sync(sibling);
       }
-      delete node;
+      _pool.destruct(node);
     }
     void update(Node* node, const Key& key) {
       node->_key = key;
@@ -213,6 +206,16 @@ namespace L {
       b->refit();
       aParent->refit();
       bParent->refit();
+    }
+    inline void clear() { clear(_root); }
+    void clear(Node* node){
+      if(node){
+        if(node->branch()) {
+          clear(node->_left);
+          clear(node->_right);
+        }
+        _pool.destruct(node);
+      }
     }
     inline void print() { if(_root) print(_root); }
     static void print(Node* node) {
