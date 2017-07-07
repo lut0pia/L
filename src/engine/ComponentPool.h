@@ -1,29 +1,20 @@
 #pragma once
 
-#include "../containers/Array.h"
+#include "../containers/IterablePool.h"
 #include "../parallelism/TaskSystem.h"
 
 namespace L {
   template<class T>
   class ComponentPool {
   protected:
-    static Array<T*> _components;
+    static IterablePool<T> _pool;
 
   public:
-    static T* allocate() {
-      T* component((T*)Memory::alloc(sizeof(T)));
-      _components.push(component);
-      return component;
-    }
-    static void deallocate(T* p) {
-      Memory::free(p, sizeof(T));
-      uintptr_t i(_components.find(p));
-      if(i!=-1)
-        _components.erase_fast(i);
-    }
+    static T* allocate() { return _pool.allocate(); }
+    static void deallocate(T* p) { _pool.deallocate(p); }
     template <typename Callback>
     static void iterate(Callback f) {
-      for(auto e : _components)
+      for(auto e : _pool.objects())
         f(*e);
     }
     static void async_iterate(void(*f)(T&, uint32_t), uint32_t task_count) {
@@ -37,11 +28,11 @@ namespace L {
         TaskSystem::push([](void* p) {
           TaskData task_data = *(TaskData*)p;
           const uintptr_t t(task_data.t);
-          const uintptr_t count(max(uintptr_t(1), _components.size()/task_data.count));
+          const uintptr_t count(max(uintptr_t(1), _pool.objects().size()/task_data.count));
           const uintptr_t start(count*t);
-          const uintptr_t end(t==task_data.count-1 ? _components.size() : min(_components.size(), start+count));
+          const uintptr_t end(t==task_data.count-1 ? _pool.objects().size() : min(_pool.objects().size(), start+count));
           for(uintptr_t i(start); i<end; i++) {
-            task_data.f(*_components[i], t);
+            task_data.f(*_pool.objects()[i], t);
           }
         }, &task_data[t]);
       }
@@ -50,5 +41,5 @@ namespace L {
     }
   };
 
-  template<class T> Array<T*> ComponentPool<T>::_components;
+  template<class T> IterablePool<T> ComponentPool<T>::_pool;
 }
