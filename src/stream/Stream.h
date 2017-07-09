@@ -23,9 +23,6 @@ namespace L {
 
     // Default operators
     template<class T> inline Stream& operator<<(const T& v) { write("N/A",3); return *this; }
-    template<class T> inline Stream& operator>>(T& v) { return *this; }
-    template<class T> inline Stream& operator<(const T& v) { write(&v,sizeof(v)); return *this; }
-    template<class T> inline Stream& operator>(T& v) { read(&v,sizeof(v)); return *this; }
 
     template<class T> inline Stream& operator<<(T* v) { return *this << ntos<16>((uintptr_t)v,sizeof(v)*2); }
 
@@ -41,13 +38,6 @@ namespace L {
     inline Stream& operator<<(unsigned long long v) { return *this << ntos(v); }
     inline Stream& operator<<(float v) { return *this << ntos(v); }
     inline Stream& operator<<(double v) { return *this << ntos(v); }
-
-    inline Stream& operator>>(char& v) { v = get(); return *this; }
-    inline Stream& operator>>(char* v) { strcpy(v,word()); return *this; }
-    inline Stream& operator>>(int& v) { v = ston<10,int>(word()); return *this; }
-    inline Stream& operator>>(unsigned int& v) { v = ston<10,unsigned int>(word()); return *this; }
-    inline Stream& operator>>(float& v) { v = ston<10,float>(word()); return *this; }
-    inline Stream& operator>>(double& v) { v = ston<10,double>(word()); return *this; }
 
     void nospace() { char c; do c = get(); while(isspace(c)); unget(c); }
     static inline bool isspace(char c) { return c==' '||c=='\t'||c=='\n'||c=='\v'||c=='\f'||c=='\r'; }
