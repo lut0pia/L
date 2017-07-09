@@ -169,4 +169,6 @@ namespace L {
     s << ']';
     return s;
   }
+  template <class T> Stream& operator<(Stream& s, const Array<T>& v) { s < v.size(); for(const auto& e : v) s < e; return s; }
+  template <class T> Stream& operator>(Stream& s, Array<T>& v) { size_t size; s > size; v.size(size); for(auto& e : v) s > e; return s; }
 }

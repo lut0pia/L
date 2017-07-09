@@ -157,4 +157,21 @@ namespace L {
     s << '}';
     return s;
   }
+  template <class K, class V> Stream& operator<(Stream& s, const Table<K, V>& v) {
+    s < v.count();
+    for(const auto& e : v)
+      s < e.key() < e.value();
+    return s;
+  }
+  template <class K, class V> Stream& operator>(Stream& s, Table<K, V>& v) {
+    size_t count;
+    s > count;
+    for(size_t i(0); i<count; i++) {
+      K key;
+      V value;
+      s > key > value;
+      v[key] = value;
+    }
+    return s;
+  }
 }

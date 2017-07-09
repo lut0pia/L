@@ -5,7 +5,7 @@
 #include "../types.h"
 #include "../math/math.h"
 #include "../math/Rand.h"
-#include "../stream/Stream.h"
+#include "../stream/serial.h"
 
 namespace L {
   template <int d,class T>
@@ -193,6 +193,8 @@ namespace L {
     s << ')';
     return s;
   }
+  template <int d, class T> Stream& operator<(Stream& s, const Vector<d, T>& v) { for(int i(0); i<d; i++) s < v[i]; return s; }
+  template <int d, class T> Stream& operator>(Stream &s, Vector<d, T>& v) { for(int i(0); i<d; i++) s > v[i]; return s; }
   template <int d,class T>
   Vector<d,T> clamp(const Vector<d,T>& v,const Vector<d,T>& min,const Vector<d,T>& max) {
     Vector<d,T> wtr;

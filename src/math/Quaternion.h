@@ -41,5 +41,10 @@ namespace L {
     }
     inline operator Vector<3,T>() const { return Vector<3,T>(this->x(),this->y(),this->z()); }
   };
+
+  template <class T> Stream& operator<<(Stream& s, const Quaternion<T>& v) { return s << (const Vector<4, T>&)v; }
+  template <class T> Stream& operator<(Stream& s, const Quaternion<T>& v) { return s < (const Vector<4, T>&)v; }
+  template <class T> Stream& operator>(Stream& s, Quaternion<T>& v) { return s > (Vector<4, T>&)v; }
+
   typedef Quaternion<float> Quatf;
 }
