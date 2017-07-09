@@ -19,7 +19,7 @@ namespace L {
     void(*assign)(void*,const void*);
     void(*dtr)(void*);
     void(*del)(void*);
-    void(*out)(Stream&,const void*);
+    void(*print)(Stream&, const void*);
     uint32_t(*hash)(const void*);
 
     // Optional
@@ -44,7 +44,7 @@ namespace L {
     static TypeDescription makeDesc() {
       TypeDescription wtr = {
         Symbol(),sizeof(T),
-        cpy,cpyto,assign,dtr,del,out,Type<T>::hash,0
+        cpy,cpyto,assign,dtr,del,print,Type<T>::hash,0
       };
 #if defined _MSC_VER
       // "struct L::TypeDescription __cdecl L::Type<int>::makeDesc(void)"
@@ -72,7 +72,7 @@ namespace L {
     static void assign(void* dst,const void* src) { *(T*)dst = *(const T*)src; }
     static void dtr(void* p) { ((T*)p)->~T(); }
     static void del(void* p) { delete(T*)p; }
-    static void out(Stream& s,const void* p) { s << (*(const T*)p); }
+    static void print(Stream& s,const void* p) { s << (*(const T*)p); }
     static uint32_t hash(const void* p) { return L::hash(*(const T*)p); }
 
   public:

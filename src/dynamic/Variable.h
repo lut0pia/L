@@ -94,7 +94,7 @@ namespace L {
     template<class T> inline operator T() { return get<T>(); }
 
     friend inline Stream& operator<<(Stream& s,const Variable& v) {
-      v.type()->out(s,v.value());
+      v.type()->print(s,v.value());
       return s;
     }
     friend inline uint32_t hash(const Variable& v){ return v.type()->hash(v.value()); }
