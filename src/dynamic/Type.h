@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../containers/Table.h"
-#include "../stream/Stream.h"
+#include "../stream/serial.h"
 #include "../text/Symbol.h"
 #include "../types.h"
 #include "../hash.h"
@@ -14,12 +14,16 @@ namespace L {
     Symbol name;
     int size;
 
+    void(*ctr)(void*);
+    void* (*ctrnew)();
     void* (*cpy)(void*);
     void(*cpyto)(void*,const void*);
     void(*assign)(void*,const void*);
     void(*dtr)(void*);
     void(*del)(void*);
     void(*print)(Stream&, const void*);
+    void(*out)(Stream&, const void*);
+    void(*in)(Stream&, void*);
     uint32_t(*hash)(const void*);
 
     // Optional
@@ -44,7 +48,7 @@ namespace L {
     static TypeDescription makeDesc() {
       TypeDescription wtr = {
         Symbol(),sizeof(T),
-        cpy,cpyto,assign,dtr,del,print,Type<T>::hash,0
+        ctr,ctrnew,cpy,cpyto,assign,dtr,del,print,out,in,Type<T>::hash,0
       };
 #if defined _MSC_VER
       // "struct L::TypeDescription __cdecl L::Type<int>::makeDesc(void)"
@@ -67,12 +71,16 @@ namespace L {
       types[wtr.name] = &td;
       return wtr;
     }
+    static void ctr(void* p) { ::new(p)T(); }
+    static void* ctrnew() { return new T; }
     static void* cpy(void* p) { return new T(*(T*)p); }
     static void cpyto(void* dst,const void* src) { ::new((T*)dst) T(*(const T*)src); }
     static void assign(void* dst,const void* src) { *(T*)dst = *(const T*)src; }
     static void dtr(void* p) { ((T*)p)->~T(); }
     static void del(void* p) { delete(T*)p; }
     static void print(Stream& s,const void* p) { s << (*(const T*)p); }
+    static void out(Stream& s, const void* p) { s < (*(const T*)p); }
+    static void in(Stream& s, void* p) { s > (*(T*)p); }
     static uint32_t hash(const void* p) { return L::hash(*(const T*)p); }
 
   public:
@@ -112,12 +120,16 @@ namespace L {
   TypeDescription Type<void>::makeDesc() {
     TypeDescription wtr = {
       "void",0,
+      [](void*) {},
+      []() -> void* { return nullptr; },
       [](void*) -> void* { return nullptr; },
       [](void*, const void*) {},
       [](void*, const void*) {},
       [](void*) {},
       [](void*) {},
       [](Stream&, const void*) {},
+      [](Stream&, const void*) {},
+      [](Stream&, void*) {},
       [](const void*) -> uint32_t { return 0; }
     };
     return wtr;

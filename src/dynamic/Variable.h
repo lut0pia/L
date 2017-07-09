@@ -38,6 +38,7 @@ namespace L {
     inline bool canbe(TypeDescription* td) const { return (_td->cast(td) != nullptr); }
     template <class T> inline bool canbe() const { return canbe(Type<T>::description()); }
 
+    void make(const TypeDescription*);
     void cast(const TypeDescription* td,Cast cast);
 
     template <class T> T& make(){
@@ -97,6 +98,12 @@ namespace L {
       v.type()->print(s,v.value());
       return s;
     }
+    friend Stream& operator<(Stream& s, const Variable& v) {
+      s < v.type()->name;
+      v.type()->out(s, v.value());
+      return s;
+    }
+    friend Stream& operator>(Stream& s, Variable& v);
     friend inline uint32_t hash(const Variable& v){ return v.type()->hash(v.value()); }
   };
   typedef Variable Var;

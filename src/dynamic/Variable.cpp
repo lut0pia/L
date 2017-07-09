@@ -44,6 +44,15 @@ Variable::~Variable() {
   else _td->del(_p); // Value has been dynamically allocated
 }
 
+void Variable::make(const TypeDescription* td) {
+  if(_td==td) return; // It's already the right type
+  this->~Variable();
+  _td = td;
+  if(local())
+    _td->ctr(_data);
+  else
+    _p = _td->ctrnew();
+}
 void Variable::cast(const TypeDescription* td,Cast cast){
   if(_td==td) return; // It's already the right type
   byte tmp[256];
@@ -90,4 +99,13 @@ Variable& Variable::operator[](size_t i) {
   if(!is<Array<Variable> >()) *this = Array<Variable>();
   if(as<Array<Variable> >().size()<=i) as<Array<Variable> >().size(i+1);
   return as<Array<Variable> >()[i];
+}
+
+Stream& L::operator>(Stream& s, Variable& v) {
+  Symbol type_name;
+  s > type_name;
+  const TypeDescription* new_type(types[type_name]);
+  v.make(new_type);
+  v.type()->in(s, v.value());
+  return s;
 }
