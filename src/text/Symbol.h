@@ -32,5 +32,7 @@ namespace L {
     inline bool operator<(const Symbol& other) const { return _string<other._string; }
     inline operator const char*() const { return _string; }
     friend inline Stream& operator<<(Stream& s,const Symbol& sym){ return s << sym._string; }
+    friend Stream& operator<(Stream& s, const Symbol& sym);
+    friend Stream& operator>(Stream &s, Symbol& sym);
   };
 }
