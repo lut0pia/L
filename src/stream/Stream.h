@@ -39,7 +39,6 @@ namespace L {
     inline Stream& operator<<(float v) { return *this << ntos(v); }
     inline Stream& operator<<(double v) { return *this << ntos(v); }
 
-    void nospace() { char c; do c = get(); while(isspace(c)); unget(c); }
     static inline bool isspace(char c) { return c==' '||c=='\t'||c=='\n'||c=='\v'||c=='\f'||c=='\r'; }
   };
 }

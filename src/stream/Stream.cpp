@@ -12,17 +12,23 @@ const char* Stream::line() {
 void Stream::line(char* buffer, size_t size){
   char* w(buffer);
   char* buffer_end(buffer+size);
-  nospace();
-  while((*w = get())!='\n' && *w!='\r' && !end()) // Not end of line or file
-    if(++w == buffer_end)
-      L_ERROR("Buffer was too small");
+  while((*w = get())!='\n' && *w!='\r' && !end()) { // Not end of line or file
+    if(w>buffer || !isspace(*w))
+      if(++w == buffer_end)
+        L_ERROR("Buffer was too small");
+  }
   *w = '\0'; // Null-end string
 }
 const char* Stream::word() {
   static char buffer[1024];
   char* w(buffer);
-  nospace();
-  while(!isspace(*w = get()) && !end()) w++; // End of line or file
+  while(!end()) {
+    *w = get();
+    if(isspace(*w)) {
+      if(w>buffer) // Already have characters in buffer
+        break; // Word is over
+    } else w++;
+  }
   *w = '\0'; // Null-end string
   return buffer;
 }
