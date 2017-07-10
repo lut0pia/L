@@ -32,7 +32,6 @@
 #include "containers/StaticStack.h"
 #include "containers/Table.h"
 #include "containers/Tree.h"
-#include "containers/XML.h"
 
 // Dev tools
 #ifdef L_DEBUG
