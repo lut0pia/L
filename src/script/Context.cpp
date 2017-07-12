@@ -52,7 +52,7 @@ CodeFunction Context::read(Stream& stream) {
   CodeFunction wtr{Array<Var>{doSymbol}};
   Array<Var>& array(wtr.code.as<Array<Var>>());
   Script::Lexer lexer(stream);
-  lexer.nextToken();
+  lexer.next_token();
   do {
     array.push();
     if(!read(array.back(), lexer)) { // Read failed
@@ -71,22 +71,22 @@ bool Context::read(Var& v, Lexer& lexer) {
     L_WARNING("Unexpected end of stream while parsing script: there are uneven () or {}.");
     return false;
   }
-  if(lexer.acceptToken("(")) { // It's a list of expressions
+  if(lexer.accept_token("(")) { // It's a list of expressions
     v.make<Array<Var> >();
     int i(0);
-    while(!lexer.acceptToken(")"))
-      if(lexer.acceptToken("|"))
+    while(!lexer.accept_token(")"))
+      if(lexer.accept_token("|"))
         v = Array<Var>{v}, i = 1;
       else if(!read(v[i++], lexer))
         return false;
-  } else if(lexer.acceptToken("{")) { // It's an object
+  } else if(lexer.accept_token("{")) { // It's an object
     v.make<Array<Var> >();
     v[0] = (Function)object;
     int i(1);
-    while(!lexer.acceptToken("}"))
+    while(!lexer.accept_token("}"))
       if(!read(v[i++], lexer))
         return false;
-  } else if(lexer.acceptToken("'")) {
+  } else if(lexer.accept_token("'")) {
     if(!read(v, lexer))
       return false;
     if(!v.is<Symbol>()) {
@@ -95,10 +95,10 @@ bool Context::read(Var& v, Lexer& lexer) {
     }
     const Symbol sym(v.as<Symbol>());
     v.make<RawSymbol>().sym = sym;
-  } else if(lexer.acceptToken("!")) {
+  } else if(lexer.accept_token("!")) {
     if(!read(v, lexer))
       return false;
-  } else if(lexer.isToken(")") || lexer.isToken("}")) {
+  } else if(lexer.is_token(")") || lexer.is_token("}")) {
     L_WARNINGF("Unexpected token %s at line %d", lexer.token(), lexer.line());
     return false;
   } else {
@@ -108,10 +108,10 @@ bool Context::read(Var& v, Lexer& lexer) {
       if(token[strspn(token, "-0123456789")]=='\0') v = atoi(token); // Integer
       else if(token[strspn(token, "-0123456789.")]=='\0') v = (float)atof(token); // Float
       else v = Symbol(token);
-    } else if(lexer.isToken("true")) v = true;
-    else if(lexer.isToken("false")) v = false;
+    } else if(lexer.is_token("true")) v = true;
+    else if(lexer.is_token("false")) v = false;
     else v = Symbol(token);
-    lexer.nextToken();
+    lexer.next_token();
   }
   return true;
 }

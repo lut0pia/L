@@ -1,94 +1,94 @@
 #include "Lexer.h"
 
 #include <cstring>
-#include "../text/String.h"
-#include "../macros.h"
 
 using namespace L;
 using namespace Script;
 
-char Lexer::get(){
-  char c(_stream.get());
-  if(c=='\n') _line++;
+char Lexer::get() {
+  char c(_peek);
+  if(c=='\0')
+    c = _stream.get();
+  else
+    _peek = '\0';
+  if(c=='\n')
+    _line++;
   return c;
 }
-void Lexer::nospace() {
-  if(!_stream.end()) {
-    char c;
-    do c = get();
-    while(Stream::isspace(c));
-    _stream.unget(c);
-  }
+char Lexer::peek() {
+  if(_peek=='\0')
+    _peek = _stream.get();
+  return _peek;
 }
-void Lexer::comment() {
-  char c;
-  do c = get();
-  while(c!='\n');
-  nospace();
+bool Lexer::special_char(char c) {
+  return (c=='(' || c==')' || c=='{' || c=='}' || c=='\'' || c=='"' || c=='!' || c=='|' || c==';');
 }
-bool Lexer::nextToken() {
-  nospace();
-  while(!_stream.end() && _stream.peek()==';')
-    comment();
-  if(_stream.end()){
-    _eos = true;
-    return false;
-  } else {
-    char* w(_buffer);
-    _literal = false;
-    do {
+bool Lexer::next_token() {
+  char* w(_buffer);
+  _literal = false;
+
+  while(true) {
+    if(w==_buffer) { // Before anything relevant
       char c(get());
-      if(_literal) { // Literal expression
-        if(*(w-1)=='\\')
-          switch(c) {
-            case 't':
-              *(w-1) = '\t';
-              break;
-            case 'n':
-              *(w-1) = '\n';
-              break;
-            case 'r':
-              *(w-1) = '\r';
-              break;
-            case '"':
-              *(w-1) = '"';
-              break;
-            default:
-              *w++ = c;
-              break;
-          } else if(c=='"') break; // End of string
-          else *w++ = c; // Character inside string
-      } else { // Non-literal token
-        if(Stream::isspace(c)) break;  // End of word
-        else if(c==';'){ // Comment
-          comment();
-          break;
-        } else if(c=='(' || c==')' || c=='{' || c=='}' || c=='\'' || c=='"' || c=='!' || c=='|') { // Special char
-          if(w>_buffer) { // Word already started
-            _stream.unget(c);
-            break;
-          } else {
-            if(c=='"') _literal = true; // Start of a string
-            else { // Single special char
-              *w++ = c;
-              break;
-            }
-          }
-        } else *w++ = c; // Regular character
+      if(_stream.end()) { // End of stream
+        _eos = true;
+        return false;
+      } else if(c==';') { // Comment
+        do c = get();
+        while(!_stream.end() && c!='\n');
+      } else if(c=='"') { // Start of literal
+        _literal = true;
+      } else if(special_char(c)) { // One char token
+        _buffer[0] = c;
+        _buffer[1] = '\0';
+        return true;
+      } else if(!Stream::isspace(c)) { // Start of token
+        *w++ = c;
       }
-    } while(!_stream.end()); // Reached end of stream
-    *w = '\0'; // Null-ended
-    return true;
+    } else if(_literal) { // Literal string
+      char c(get());
+      if(w>_buffer && *(w-1)=='\\') { // Escaped character
+        switch(c) {
+          case '\\':
+            *(w-1) = '\\';
+            break;
+          case 't':
+            *(w-1) = '\t';
+            break;
+          case 'n':
+            *(w-1) = '\n';
+            break;
+          case 'r':
+            *(w-1) = '\r';
+            break;
+          case '"':
+            *(w-1) = '"';
+            break;
+          default:
+            *w++ = c;
+            break;
+        }
+      } else if(c=='"') { // End of literal string
+        *w = '\0';
+        return true;
+      } else { // Simple character in string
+        *w++ = c;
+      }
+    } else { // Regular token
+      char c(peek());
+      if(special_char(c) || Stream::isspace(c)) { // End of token
+        *w = '\0';
+        return true;
+      } else {
+        *w++ = get();
+      }
+    }
   }
 }
-bool Lexer::acceptToken(const char* str) {
-  if(isToken(str)) {
-    nextToken();
+bool Lexer::accept_token(const char* str) {
+  if(is_token(str)) {
+    next_token();
     return true;
   }
   return false;
-}
-void Lexer::expectToken(const char* str) {
-  if(!acceptToken(str))
-    L_ERRORF("Script: Expected token %s but got %s instead on line %d.",str,_buffer,_line);
 }
