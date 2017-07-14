@@ -155,20 +155,19 @@ namespace L {
           return i;
       return -1;
     }
-  };
 
-  template <class T>
-  Stream& operator<<(Stream& s,const Array<T>& v) {
-    s << '[';
-    bool first(true);
-    for(auto&& e : v){
-      if(first) first = false;
-      else s << ',';
-      s << e;
+    friend Stream& operator<<(Stream& s, const Array& v) {
+      s << '[';
+      bool first(true);
+      for(auto&& e : v) {
+        if(first) first = false;
+        else s << ',';
+        s << e;
+      }
+      s << ']';
+      return s;
     }
-    s << ']';
-    return s;
-  }
-  template <class T> Stream& operator<(Stream& s, const Array<T>& v) { s < v.size(); for(const auto& e : v) s < e; return s; }
-  template <class T> Stream& operator>(Stream& s, Array<T>& v) { size_t size; s > size; v.size(size); for(auto& e : v) s > e; return s; }
+    friend Stream& operator<(Stream& s, const Array& v) { for(const auto& e : v) { s << "-\n"; s < e; } return s << ".\n"; }
+    friend Stream& operator>(Stream& s, Array& v) { T e; while(true) { if(strcmp(s.word(), "-")) break; s > e; v.push(e); } return s; }
+  };
 }

@@ -11,7 +11,7 @@
   </Type>
 
   <Type Name="L::KeyValue&lt;*,*&gt;">
-    <DisplayString>{_key}={_value}</DisplayString>
+    <DisplayString>{_key}: {_value}</DisplayString>
     <Expand>
       <ExpandedItem>_value</ExpandedItem>
     </Expand>
