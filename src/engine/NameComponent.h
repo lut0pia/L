@@ -12,6 +12,10 @@ namespace L {
   public:
     inline NameComponent() { name(ntos<16>(Rand::next(), sizeof(uint64_t)*2)); }
     inline ~NameComponent() { _components.remove(_name); }
+
+    virtual Map<Symbol, Var> pack() const override;
+    virtual void unpack(const Map<Symbol, Var>&) override;
+
     inline void name(const Symbol& name) {
       _components.remove(_name);
       if(_components.find(name)) {

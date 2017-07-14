@@ -14,7 +14,11 @@ namespace L {
     } _type;
   public:
     inline Primitive() : _center(0.f),_radius(1.f),_color(Color::white),_type(Box){}
-    void updateComponents();
+
+    virtual void updateComponents() override;
+    virtual Map<Symbol, Var> pack() const override;
+    virtual void unpack(const Map<Symbol, Var>&) override;
+
     inline void center(const Vector3f& c){ _center = c; }
     inline void box(const Vector3f& radius){ _type = Box; _radius = radius; }
     inline void sphere(float radius){ _type = Sphere; _radius = radius; }

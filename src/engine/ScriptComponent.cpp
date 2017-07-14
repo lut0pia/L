@@ -13,14 +13,32 @@ using namespace L;
 using namespace Script;
 
 void ScriptComponent::updateComponents() {
-  static const Symbol updateComponentsSymbol("update-components");
   _context.selfTable()[Symbol("entity")] = entity();
+ 
+  if(!_started && !_script_path.empty())
+    start();
+
+  static const Symbol updateComponentsSymbol("update-components");
   _context.tryExecuteMethod(updateComponentsSymbol);
 }
+Map<Symbol, Var> ScriptComponent::pack() const {
+  Map<Symbol, Var> data;
+  data["script_path"] = _script_path;
+  return data;
+}
+void ScriptComponent::unpack(const Map<Symbol, Var>& data) {
+  unpack_item(data, "script_path", _script_path);
+}
+
 void ScriptComponent::load(const char* filename) {
-  static const Symbol startSymbol("start");
-  _context.executeInside(Array<Var>{Resource::script(filename)});
-  _context.tryExecuteMethod(startSymbol);
+  _script_path = filename;
+  start();
+}
+void ScriptComponent::start() {
+  _started = true;
+  static const Symbol start_symbol("start");
+  _context.executeInside(Array<Var>{Resource::script(_script_path)});
+  _context.tryExecuteMethod(start_symbol);
 }
 void ScriptComponent::update() {
   static const Symbol updateSymbol("update");

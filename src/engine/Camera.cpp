@@ -24,6 +24,34 @@ Camera::Camera() :
   _gdepth.parameter(GL_TEXTURE_MIN_FILTER,GL_NEAREST);
   _gdepth.parameter(GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 }
+
+void Camera::updateComponents() {
+  _transform = entity()->requireComponent<Transform>();
+}
+Map<Symbol, Var> Camera::pack() const {
+  Map<Symbol, Var> data;
+  data["fovy"] = _fovy;
+  data["near"] = _near;
+  data["far"] = _far;
+  data["left"] = _left;
+  data["right"] = _right;
+  data["bottom"] = _bottom;
+  data["top"] = _top;
+  return data;
+}
+void Camera::unpack(const Map<Symbol, Var>& data) {
+  _projectionType = PERSPECTIVE;
+  unpack_item(data, "fovy", _fovy);
+  unpack_item(data, "near", _near);
+  unpack_item(data, "far", _far);
+  unpack_item(data, "left", _left);
+  unpack_item(data, "right", _right);
+  unpack_item(data, "bottom", _bottom);
+  unpack_item(data, "top", _top);
+  resize_buffers();
+  updateProjection();
+}
+
 void Camera::resize_buffers() {
   _gcolor.image2D(0, GL_RGBA, Window::width(), Window::height(), 0, GL_RGBA, GL_UNSIGNED_BYTE);
   _gnormal.image2D(0, GL_RGB16F, Window::width(), Window::height(), 0, GL_RGB, GL_FLOAT);
@@ -34,9 +62,6 @@ void Camera::event(const Window::Event& e) {
     resize_buffers();
     updateProjection();
   }
-}
-void Camera::updateComponents() {
-  _transform = entity()->requireComponent<Transform>();
 }
 void Camera::prerender() {
   static Matrix44f camOrient(Matrix44f::orientation(Vector3f(1,0,0),Vector3f(0,0,1),Vector3f(0,-1,0)).inverse());

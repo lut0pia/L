@@ -10,10 +10,26 @@ RigidBody::RigidBody() :
   _invInertiaTensor(1.f),_invInertiaTensorWorld(1.f),
   _velocity(0.f),_rotation(0.f),_force(0.f),_torque(0.f),
   _invMass(1.f),_restitution(.5f),_drag(0.f),_angDrag(0.f){}
-void RigidBody::updateComponents(){
+
+void RigidBody::updateComponents() {
   _transform = entity()->requireComponent<Transform>();
   updateInertiaTensor();
 }
+Map<Symbol, Var> RigidBody::pack() const {
+  Map<Symbol, Var> data;
+  data["inv_mass"] = _invMass;
+  data["restitution"] = _restitution;
+  data["drag"] = _drag;
+  data["ang_drag"] = _angDrag;
+  return data;
+}
+void RigidBody::unpack(const Map<Symbol, Var>& data) {
+  unpack_item(data, "inv_mass", _invMass);
+  unpack_item(data, "restitution", _restitution);
+  unpack_item(data, "drag", _drag);
+  unpack_item(data, "ang_drag", _angDrag);
+}
+
 void RigidBody::updateInertiaTensor(){
   Matrix33f inertiaTensor(0.f);
   int count(0);

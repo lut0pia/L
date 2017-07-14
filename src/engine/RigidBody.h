@@ -13,7 +13,11 @@ namespace L {
     float _invMass,_restitution,_drag,_angDrag;
   public:
     RigidBody();
-    void updateComponents();
+
+    virtual void updateComponents() override;
+    virtual Map<Symbol, Var> pack() const override;
+    virtual void unpack(const Map<Symbol, Var>&) override;
+
     void updateInertiaTensor();
     void update();
     void subUpdate();

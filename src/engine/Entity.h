@@ -13,10 +13,12 @@ namespace L {
     static IterablePool<Entity> _pool;
     static Array<Entity*> _destroy_queue;
     Array<KeyValue<const TypeDescription*,Component*> > _components;
-    bool _destroyed;
+    bool _destroyed : 1, _persistent : 1;
+
+    void set_component_entity(Component*);
 
   public:
-    inline Entity() : _destroyed(false) {}
+    inline Entity() : _destroyed(false), _persistent(true) {}
     Entity(const Entity* other);
     ~Entity();
     const Array<KeyValue<const TypeDescription*,Component*> >& components() const{ return _components; }
@@ -54,8 +56,13 @@ namespace L {
     void updateComponents();
     void remove(Component*);
 
+    static void save(const char* path);
+    static void load(const char* path);
     static void destroy(Entity* e);
     static void flush_destroy_queue();
     static void clear();
+
+    friend Stream& operator<(Stream&, const Entity&);
+    friend Stream& operator>(Stream&, Entity&);
   };
 }

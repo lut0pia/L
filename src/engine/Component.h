@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ComponentPool.h"
+#include "../containers/Map.h"
 #include "Entity.h"
 
 namespace L {
@@ -15,7 +16,27 @@ namespace L {
     inline Component& operator=(const Component&) { return *this; }
     inline ~Component() { entity()->remove(this); }
     inline Entity* entity() const { return _entity; }
+
     virtual void updateComponents() {}
+    virtual Map<Symbol, Var> pack() const { return Map<Symbol, Var>(); }
+    virtual void unpack(const Map<Symbol, Var>&) { }
+
+    template <class T>
+    void unpack_item(const Map<Symbol, Var>& data, const Symbol& symbol, T& value) {
+      if(const Var* found = data.find(symbol))
+        if(found->is<T>())
+          value = found->as<T>();
+    }
+
+    friend inline Stream& operator<(Stream& s, const Component& c) {
+      return s < c.pack();
+    }
+    friend inline Stream& operator>(Stream& s, Component& c) {
+      Map<Symbol, Var> data;
+      s > data;
+      c.unpack(data);
+      return s;
+    }
 
     friend class Entity;
   };

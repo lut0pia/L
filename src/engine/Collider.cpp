@@ -14,6 +14,7 @@ Collider::~Collider(){
   if(_node)
     tree.remove(_node);
 }
+
 void Collider::updateComponents(){
   _transform = entity()->requireComponent<Transform>();
   _rigidbody = entity()->component<RigidBody>();
@@ -21,6 +22,26 @@ void Collider::updateComponents(){
   if(!_node)
     _node = tree.insert(_boundingBox,this);
 }
+Map<Symbol, Var> Collider::pack() const {
+  Map<Symbol, Var> data;
+  data["type"] = Symbol(_type==Box ? "box" : "sphere");
+  data["center"] = _center;
+  data["radius"] = _radius;
+  return data;
+}
+void Collider::unpack(const Map<Symbol, Var>& data) {
+  {
+    Symbol type;
+    unpack_item(data, "type", type);
+    if(type==Symbol("sphere"))
+      _type = Sphere;
+    else if(type==Symbol("box"))
+      _type = Box;
+  }
+  unpack_item(data, "center", _center);
+  unpack_item(data, "radius", _radius);
+}
+
 void Collider::subUpdateAll() {
   static const uintptr_t task_count = 4;
   // Update tree nodes

@@ -9,9 +9,16 @@ namespace L {
     L_COMPONENT(ScriptComponent)
   protected:
     Script::Context _context;
+    String _script_path;
+    bool _started : 1;
   public:
-    void updateComponents();
+    ScriptComponent() : _started(false) {}
+    virtual void updateComponents() override;
+    virtual Map<Symbol, Var> pack() const override;
+    virtual void unpack(const Map<Symbol, Var>&) override;
+
     void load(const char* filename);
+    void start();
     void update();
     void lateUpdate();
     void event(const Device::Event&);

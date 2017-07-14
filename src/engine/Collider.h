@@ -27,7 +27,11 @@ namespace L {
   public:
     Collider();
     ~Collider();
-    void updateComponents();
+
+    virtual void updateComponents() override;
+    virtual Map<Symbol, Var> pack() const override;
+    virtual void unpack(const Map<Symbol, Var>&) override;
+
     static void subUpdateAll();
     static void renderAll(const Camera&);
     void center(const Vector3f& center);

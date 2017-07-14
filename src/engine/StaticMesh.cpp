@@ -6,6 +6,22 @@
 
 using namespace L;
 
+Map<Symbol, Var> StaticMesh::pack() const {
+  Map<Symbol, Var> data;
+  data["mesh_path"] = _mesh_path;
+  data["texture_path"] = _texture_path;
+  data["scale"] = _scale;
+  return data;
+}
+void StaticMesh::unpack(const Map<Symbol, Var>& data) {
+  String tmp;
+  unpack_item(data, "mesh_path", tmp);
+  if(!tmp.empty()) mesh(tmp);
+  unpack_item(data, "texture_path", tmp);
+  if(!tmp.empty()) texture(tmp);
+  unpack_item(data, "scale", _scale);
+}
+
 void StaticMesh::render(const Camera& c) {
   static GL::Program program(GL::Shader(
     "#version 330 core\n"
