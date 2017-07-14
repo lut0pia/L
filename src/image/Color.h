@@ -31,14 +31,11 @@ namespace L {
     static Color fromHSV(float h, float s, float v);
     static Color lerp(Color,Color,float w);
     static const Color black,blue,cyan,green,grey,lightgrey,magenta,red,transparent,white,yellow;
+
+    friend inline Stream& operator<<(Stream& s, const Color& v) { return s << '#' << ntos<16>(v.rgba(), 8); }
+    friend inline Stream& operator<(Stream& s, const Color& v) { return s << '#' << ntos<16>(v.rgba(), 8) << '\n'; }
+    friend inline Stream& operator>(Stream& s, Color& v) { v = s.word(); return s; }
   };
-  inline Stream& operator>>(Stream &s,Color& v) {
-    v = Color(s.word());
-    return s;
-  }
-  inline Stream& operator<<(Stream &s,const Color& v) {
-    return s << '#' << ntos<16>(v.rgba(),8);
-  }
 }
 
 
