@@ -26,6 +26,7 @@ namespace L {
       GLuint uniformLocation(const char* name);
       GLuint uniformBlockIndex(const char* name);
       void uniformBlockBinding(const char* name,GLuint binding);
+      void uniform(const char* name, unsigned int);
       void uniform(const char* name,float);
       void uniform(const char* name, float, float);
       void uniform(const char* name,float,float,float);
