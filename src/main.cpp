@@ -27,6 +27,7 @@ void mainjob(void*) {
   Engine::addUpdate<RigidBody>();
   Engine::addUpdate<SpriteAnimator>();
   Engine::addUpdate<ScriptComponent>();
+  Engine::addLateUpdate<LightComponent>();
   Engine::addRender<Primitive>();
   Engine::addRender<Sprite>();
   Engine::addRender<StaticMesh>();

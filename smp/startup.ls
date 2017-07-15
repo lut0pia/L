@@ -24,8 +24,8 @@
 	)
 	(local color (rand-color))
 	(entity'require-primitive || 'color | color)
-	(entity'require-light || 'spot | color (vec 0 1 0) 0.1 0.44 0.9)
-	;(entity'require-light || 'point | color 0.1 0.44)
+	;(entity'require-light || 'spot | color (vec 0 1 0) 0.1 0.44 0.9)
+	(entity'require-light || 'point | color 0.1 0.44)
 )))
 
 (set make-terrain (fun (do

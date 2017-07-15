@@ -17,8 +17,9 @@ namespace L {
       ORTHO
     } _projectionType;
     float _fovy,_near,_far,_left,_right,_bottom,_top;
-    GL::Texture _gcolor,_gnormal,_gdepth;
-    GL::FrameBuffer _gbuffer;
+    GL::Texture _gcolor, _gnormal, _gdepth, _pp_color[2];
+    GL::FrameBuffer _gbuffer, _pp_buffer[2];
+    uint32_t _pp_index : 1;
   public:
     Camera();
     inline Camera(const Camera&) : Camera(){ L_ERROR("Camera component should not be copied."); }

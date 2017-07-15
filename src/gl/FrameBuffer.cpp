@@ -1,6 +1,7 @@
 #include "FrameBuffer.h"
 
 #include "Texture.h"
+#include "../stream/CFileStream.h"
 
 using namespace L;
 using namespace GL;
@@ -12,9 +13,9 @@ FrameBuffer::FrameBuffer(GLuint target,const std::initializer_list<Texture*>& co
   GLuint colorAttachment(GL_COLOR_ATTACHMENT0);
   for(auto&& color : colors)
     attach(colorAttachment++,*color);
-  attach(GL_DEPTH_ATTACHMENT,*depth);
+  if(depth)
+    attach(GL_DEPTH_ATTACHMENT,*depth);
   glNamedFramebufferDrawBuffers(_id,attachmentCount,attachments);
-  L_ASSERT(glCheckNamedFramebufferStatus(_id,GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
 }
 FrameBuffer::~FrameBuffer() {
   glDeleteFramebuffers(1,&_id);
@@ -27,4 +28,8 @@ void FrameBuffer::unbind(){
 }
 void FrameBuffer::attach(GLenum attachment,const Texture& texture) {
   glNamedFramebufferTexture(_id,attachment,texture.id(),0);
+}
+bool FrameBuffer::check(){
+  L_ASSERT(glCheckNamedFramebufferStatus(_id, GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
+  return true;
 }

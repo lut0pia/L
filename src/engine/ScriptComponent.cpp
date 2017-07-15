@@ -2,6 +2,7 @@
 
 #include "Camera.h"
 #include "Collider.h"
+#include "LightComponent.h"
 #include "Sprite.h"
 #include "Transform.h"
 #include "StaticMesh.h"
@@ -219,4 +220,9 @@ void ScriptComponent::init() {
   L_COMPONENT_BIND(NameComponent, "name");
   L_COMPONENT_METHOD(NameComponent, "set", 1, name(c.local(0).get<Symbol>()));
   L_COMPONENT_METHOD(NameComponent, "get", 0, name());
+  // Light ///////////////////////////////////////////////////////////////////
+  L_COMPONENT_BIND(LightComponent, "light");
+  L_COMPONENT_METHOD(LightComponent, "directional", 2, directional(c.local(0).get<Color>(), c.local(1).get<Vector3f>()));
+  L_COMPONENT_METHOD(LightComponent, "point", 3, point(c.local(0).get<Color>(), c.local(1).get<float>(), c.local(2).get<float>()));
+  L_COMPONENT_METHOD(LightComponent, "spot", 5, spot(c.local(0).get<Color>(), c.local(1).get<Vector3f>(), c.local(2).get<float>(), c.local(3).get<float>(), c.local(4).get<float>()));
 }

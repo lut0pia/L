@@ -4,25 +4,37 @@
 #include "../gl/Buffer.h"
 #include "../gl/GL.h"
 #include "../gl/Program.h"
+#include "LightComponent.h"
 #include "../system/Window.h"
 #include "SharedUniform.h"
 
 using namespace L;
 
-static const GLuint attachments[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
+static const GLuint gbuffer_attachments[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
+static const GLuint pp_buffer_attachments[] = {GL_COLOR_ATTACHMENT0};
 
 Camera::Camera() :
   _viewport(Vector2f(0,0),Vector2f(1,1)),
-  _gcolor(0,GL_RGBA,Window::width(),Window::height(),0,GL_RGBA,GL_UNSIGNED_BYTE),
-  _gnormal(0,GL_RGB16F,Window::width(),Window::height(),0,GL_RGB,GL_FLOAT),
-  _gdepth(0,GL_DEPTH_COMPONENT24,Window::width(),Window::height(),0,GL_DEPTH_COMPONENT,GL_FLOAT),
-  _gbuffer(GL_FRAMEBUFFER,{&_gcolor,&_gnormal},&_gdepth,attachments,2){
+  _gbuffer(GL_FRAMEBUFFER, {&_gcolor,&_gnormal}, &_gdepth, gbuffer_attachments, 2),
+  _pp_buffer{
+    {GL_FRAMEBUFFER, {&_pp_color[0]}, nullptr, pp_buffer_attachments, 1},
+    {GL_FRAMEBUFFER, {&_pp_color[1]}, nullptr, pp_buffer_attachments, 1}} {
+  resize_buffers();
   _gcolor.parameter(GL_TEXTURE_MIN_FILTER,GL_NEAREST);
   _gcolor.parameter(GL_TEXTURE_MAG_FILTER,GL_NEAREST);
   _gnormal.parameter(GL_TEXTURE_MIN_FILTER,GL_NEAREST);
   _gnormal.parameter(GL_TEXTURE_MAG_FILTER,GL_NEAREST);
   _gdepth.parameter(GL_TEXTURE_MIN_FILTER,GL_NEAREST);
   _gdepth.parameter(GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+  _pp_color[0].parameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  _pp_color[0].parameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  _pp_color[1].parameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  _pp_color[1].parameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+  // Check framebuffer states
+  _gbuffer.check();
+  _pp_buffer[0].check();
+  _pp_buffer[1].check();
 }
 
 void Camera::updateComponents() {
@@ -60,6 +72,8 @@ void Camera::resize_buffers() {
   _gcolor.image2D(0, GL_RGBA, Window::width(), Window::height(), 0, GL_RGBA, GL_UNSIGNED_BYTE);
   _gnormal.image2D(0, GL_RGB16F, Window::width(), Window::height(), 0, GL_RGB, GL_FLOAT);
   _gdepth.image2D(0, GL_DEPTH_COMPONENT24, Window::width(), Window::height(), 0, GL_DEPTH_COMPONENT, GL_FLOAT);
+  _pp_color[0].image2D(0, GL_RGB16F, Window::width(), Window::height(), 0, GL_RGB, GL_FLOAT);
+  _pp_color[1].image2D(0, GL_RGB16F, Window::width(), Window::height(), 0, GL_RGB, GL_FLOAT);
 }
 void Camera::event(const Window::Event& e) {
   if(e.type == Window::Event::RESIZE) {
@@ -88,42 +102,53 @@ void Camera::prerender() {
   glDisable(GL_BLEND);
 }
 void Camera::postrender(){
-  static GL::Program deferredProgram(GL::Shader(
+  _gbuffer.unbind();
+  _pp_buffer[0].bind();
+  const Interval2i vp(viewportPixel());
+  const Vector2i vpSize(vp.size());
+  glViewport(vp.min().x(), vp.min().y(), vpSize.x(), vpSize.y());
+  glClear(GL_COLOR_BUFFER_BIT);
+  glDisable(GL_DEPTH_TEST);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_ONE, GL_ONE); // Additive blending
+
+  GL::Program& light_program(LightComponent::program());
+  light_program.use();
+  light_program.uniform("color_buffer", _gcolor, GL_TEXTURE0);
+  light_program.uniform("normal_buffer", _gnormal, GL_TEXTURE1);
+  light_program.uniform("depth_buffer", _gdepth, GL_TEXTURE2);
+
+  ComponentPool<LightComponent>::iterate([](LightComponent& light) {
+    light.render();
+  });
+
+  _pp_buffer[0].unbind();
+  glClear(GL_COLOR_BUFFER_BIT);
+  static GL::Program final_shader(GL::Shader(
     "#version 330 core\n"
     "layout (location = 0) in vec3 vertex;"
     "out vec2 ftexcoords;"
     "void main(){"
     "ftexcoords = (vertex.xy+1.f)*.5f;"
     "gl_Position = vec4(vertex,1.f);"
-    "}",GL_VERTEX_SHADER),
+    "}", GL_VERTEX_SHADER),
     GL::Shader(
       "#version 330 core\n"
       L_SHAREDUNIFORM
       L_SHADER_LIB
       "in vec2 ftexcoords;"
       "out vec4 fragcolor;"
-      "uniform sampler2D colorBuffer;"
-      "uniform sampler2D normalBuffer;"
-      "uniform sampler2D depthBuffer;"
+      "uniform sampler2D color_buffer;"
       "void main(){"
-      "vec3 color = texture(colorBuffer,ftexcoords).rgb;"
-      "vec3 normal = decodeNormal(texture(normalBuffer,ftexcoords).xy);"
-      "float depth = texture(depthBuffer,ftexcoords).r;"
-      "vec4 position = invViewProj * vec4(ftexcoords*2.f-1.f,depth*2.f-1.f,1.f);"
-      "position = vec4(position.xyz/position.w,1.f);"
-      "fragcolor = vec4(color,1.f) * (1.f+dot(normal,normalize(vec3(1,-2,3))))*.5f;"
-      "}",GL_FRAGMENT_SHADER));
-  _gbuffer.unbind();
-  glDisable(GL_DEPTH_TEST);
-  deferredProgram.use();
-  deferredProgram.uniform("colorBuffer",_gcolor,GL_TEXTURE0);
-  deferredProgram.uniform("normalBuffer",_gnormal,GL_TEXTURE1);
-  deferredProgram.uniform("depthBuffer",_gdepth,GL_TEXTURE2);
-  const Interval2i vp(viewportPixel());
-  const Vector2i vpSize(vp.size());
-  glViewport(vp.min().x(), vp.min().y(), vpSize.x(), vpSize.y());
+      "vec3 color = texture(color_buffer,ftexcoords).rgb;"
+      "fragcolor = vec4(color,1.f);"
+      "}", GL_FRAGMENT_SHADER));
+
+  final_shader.use();
+  final_shader.uniform("color_buffer", _pp_color[0]);
   GL::quad().draw();
-  glEnable(GL_BLEND);
+
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // For GUI alpha
 }
 
 void Camera::viewport(const Interval2f& i) {

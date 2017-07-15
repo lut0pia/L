@@ -17,6 +17,7 @@ namespace L {
       void bind();
       void unbind();
       void attach(GLenum attachment,const Texture&);
+      bool check();
     };
   }
 }
