@@ -27,6 +27,7 @@ namespace L {
     inline byte& b() { return _c[0]; }
     inline byte& a() { return _c[3]; }
 
+    static Vector4f to_float_vector(const Color&);
     static Color from(float r,float g,float b,float a = 1);
     static Color fromHSV(float h, float s, float v);
     static Color lerp(Color,Color,float w);

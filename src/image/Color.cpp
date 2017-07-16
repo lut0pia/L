@@ -47,6 +47,9 @@ Color::Color(const char* s) {
   L_ERRORF("Unknown color: %s",(const char*)str);
 }
 
+Vector4f Color::to_float_vector(const Color& color) {
+  return Vector4f(color.r()/255.f, color.g()/255.f, color.b()/255.f, color.a()/255.f);
+}
 Color Color::from(float r, float g, float b, float a) {
   return Color(byte(r*255.f), byte(g*255.f), byte(b*255.f), byte(a*255.f));
 }
