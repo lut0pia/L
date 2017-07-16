@@ -64,6 +64,9 @@ GLuint Program::uniformBlockIndex(const char* name){
 void Program::uniformBlockBinding(const char* name,GLuint binding){
   glUniformBlockBinding(_id,uniformBlockIndex(name),binding);
 }
+void Program::uniform(const char* name, int v) {
+  glUniform1i(uniformLocation(name), v);
+}
 void Program::uniform(const char* name, unsigned int v) {
   glUniform1ui(uniformLocation(name), v);
 }
