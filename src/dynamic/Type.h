@@ -55,19 +55,26 @@ namespace L {
       // "struct L::TypeDescription __cdecl L::Type<class L::String>::makeDesc(void)"
       char funcsig[] = __FUNCSIG__;
       uintptr_t start(42);
-      if(!memcmp(funcsig+start,"class ",6)) start += 6;
-      else if(!memcmp(funcsig+start,"struct ",7)) start += 7;
       uintptr_t end = strlen(funcsig)-17;
-      if(funcsig[end-1]==' ') end--;
       funcsig[end] = '\0';
-      wtr.name = funcsig+start;
+      char* name = funcsig+start;
 #else
       // "static L::TypeDescription L::Type<T>::makeDesc() [with T = XXX]"
       char tmp[256];
-      strcpy(tmp,__PRETTY_FUNCTION__+59);
+      strcpy(tmp, __PRETTY_FUNCTION__+59);
       tmp[strlen(tmp)-1] = '\0';
-      wtr.name = tmp;
+      char* name = tmp;
 #endif
+      auto remove_sub = [](char* name, const char* sub) {
+        while(char* found = strstr(name, sub)) {
+          size_t sub_len(strlen(sub));
+          memmove(found, found+sub_len, strlen(name)-(found-name)+sub_len+1);
+        }
+      };
+      remove_sub(name, "class ");
+      remove_sub(name, "struct ");
+      remove_sub(name, " ");
+      wtr.name = name;
       types[wtr.name] = &td;
       return wtr;
     }

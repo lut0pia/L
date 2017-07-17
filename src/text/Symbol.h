@@ -17,6 +17,7 @@ namespace L {
       if(const char** found = _symbols.find(str))
         _string = *found;
       else {
+        L_ASSERT(strchr(str, ' ')==nullptr);
         const size_t length(strlen(str));
         if(((size_t)_blobEnd-(size_t)_blobNext)<=length){
           _blobNext = (char*)Memory::virtualAlloc(blobSize);
@@ -32,7 +33,7 @@ namespace L {
     inline bool operator<(const Symbol& other) const { return _string<other._string; }
     inline operator const char*() const { return _string; }
     friend inline Stream& operator<<(Stream& s,const Symbol& sym){ return s << sym._string; }
-    friend Stream& operator<(Stream& s, const Symbol& sym);
-    friend Stream& operator>(Stream &s, Symbol& sym);
+    friend inline Stream& operator<(Stream& s, const Symbol& sym) { return s << sym._string << '\n'; }
+    friend inline Stream& operator>(Stream& s, Symbol& sym) { sym = s.word(); return s; }
   };
 }

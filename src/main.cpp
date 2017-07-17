@@ -8,7 +8,7 @@ void mainjob(void*) {
   TypeInit();
   Settings::load_file("settings.ini");
 
-  const char* window_name(Settings::get_symbol("window_name", "L Engine"));
+  const char* window_name(Settings::get_symbol("window_name", "L_Engine")); // TODO: string settings should not be symbols?
   int window_flags((Settings::get_int("no_cursor", 0) ? Window::nocursor : 0)
                    | (Settings::get_int("loop_cursor", 0) ? Window::loopcursor : 0));
 
