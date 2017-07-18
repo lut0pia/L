@@ -20,8 +20,8 @@ namespace L {
     inline float gf() const { return (float)g()/255.f; }
     inline float bf() const { return (float)b()/255.f; }
     inline float af() const { return (float)a()/255.f; }
-    inline uint32_t rgb() const { return r()|g()<<8|b()<<16; }
-    inline uint32_t rgba() const { return r()<<8|g()<<16|b()<<24|a(); }
+    inline uint32_t rgb() const { return r()<<16|g()<<8|b(); }
+    inline uint32_t rgba() const { return r()<<24|g()<<16|b()<<8|a(); }
     inline byte& r() { return _c[2]; }
     inline byte& g() { return _c[1]; }
     inline byte& b() { return _c[0]; }
