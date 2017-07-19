@@ -28,8 +28,10 @@ Camera::Camera() :
 void Camera::updateComponents() {
   _transform = entity()->requireComponent<Transform>();
 }
+static const Symbol perspective_symbol("perspective"), ortho_symbol("ortho");
 Map<Symbol, Var> Camera::pack() const {
   Map<Symbol, Var> data;
+  data["projection"] = (_projectionType==PERSPECTIVE) ? perspective_symbol : ortho_symbol;
   data["fovy"] = _fovy;
   data["near"] = _near;
   data["far"] = _far;
@@ -40,7 +42,9 @@ Map<Symbol, Var> Camera::pack() const {
   return data;
 }
 void Camera::unpack(const Map<Symbol, Var>& data) {
-  _projectionType = PERSPECTIVE;
+  Symbol projection;
+  unpack_item(data, "projection", projection);
+  _projectionType = (projection==perspective_symbol) ? PERSPECTIVE : ORTHO;
   unpack_item(data, "fovy", _fovy);
   unpack_item(data, "near", _near);
   unpack_item(data, "far", _far);
