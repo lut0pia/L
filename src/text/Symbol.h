@@ -17,7 +17,7 @@ namespace L {
       if(const char** found = _symbols.find(str))
         _string = *found;
       else {
-        L_ASSERT(strchr(str, ' ')==nullptr);
+        L_ASSERT(strcspn(str, " \t\n\v\f\r")==strlen(str));
         const size_t length(strlen(str));
         if(((size_t)_blobEnd-(size_t)_blobNext)<=length){
           _blobNext = (char*)Memory::virtualAlloc(blobSize);
