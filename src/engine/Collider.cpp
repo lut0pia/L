@@ -98,12 +98,16 @@ void Collider::subUpdateAll() {
       if(a->_script || b->_script) {
         auto e(ref<Table<Var, Var>>());
         (*e)[Symbol("type")] = Symbol("COLLISION");
+        (*e)[Symbol("point")] = collision.point;
+        (*e)[Symbol("overlap")] = collision.overlap;
         if(a->_script) {
           (*e)[Symbol("other")] = b;
+          (*e)[Symbol("normal")] = collision.normal;
           a->_script->event(e);
         }
         if(b->_script) {
           (*e)[Symbol("other")] = a;
+          (*e)[Symbol("normal")] = -collision.normal;
           b->_script->event(e);
         }
       }
