@@ -474,6 +474,22 @@ Context::Context() : _self(ref<Table<Var, Var>>()) {
         vector[i] = c.local(min(local_count-1, i));
     else vector = 0.f;
   });
+  _globals[Symbol("normalize")] = (Function)([](Context& c) {
+    L_ASSERT(c.localCount()==1);
+    c.returnValue() = c.local(0).get<Vector3f>().normalized();
+  });
+  _globals[Symbol("cross")] = (Function)([](Context& c) {
+    L_ASSERT(c.localCount()==2);
+    c.returnValue() = c.local(0).get<Vector3f>().cross(c.local(1).get<Vector3f>());
+  });
+  _globals[Symbol("distance")] = (Function)([](Context& c) {
+    L_ASSERT(c.localCount()==2);
+    c.returnValue() = c.local(0).get<Vector3f>().dist(c.local(1).get<Vector3f>());
+  });
+  _globals[Symbol("dot")] = (Function)([](Context& c) {
+    L_ASSERT(c.localCount()==2);
+    c.returnValue() = c.local(0).get<Vector3f>().dot(c.local(1).get<Vector3f>());
+  });
   _globals[Symbol("color")] = (Function)([](Context& c) {
     Color& color(c.returnValue().make<Color>() = Color::white);
     const uint32_t params(min(c.localCount(), 4u));
