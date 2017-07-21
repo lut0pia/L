@@ -171,6 +171,7 @@ void ScriptComponent::init() {
   });
   // RigidBody ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(RigidBody, "rigidbody");
+  L_COMPONENT_METHOD(RigidBody, "kinematic", 1, kinematic(c.local(0).get<bool>()));
   L_COMPONENT_METHOD(RigidBody, "mass", 1, mass(c.local(0).get<float>()));
   L_COMPONENT_METHOD(RigidBody, "restitution", 1, restitution(c.local(0).get<float>()));
   L_COMPONENT_METHOD(RigidBody, "drag", 1, drag(c.local(0).get<float>()));
