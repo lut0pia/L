@@ -51,7 +51,6 @@ void RigidBody::update() {
     _velocity = (_transform->absolutePosition()-_last_position)*inv_delta;
     Quatf delta_quat(_transform->absoluteRotation()*_last_rotation.inverse());
     _rotation = delta_quat.to_scaled_vector()*inv_delta;
-    out << _rotation << '\n';
     _last_position = _transform->absolutePosition();
     _last_rotation = _transform->absoluteRotation();
   } else {
