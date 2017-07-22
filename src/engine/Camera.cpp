@@ -170,7 +170,7 @@ void Camera::updateProjection(){
       _projection = Matrix44f(1.f);
       _projection(0,0) = 2.f/(_right-_left);
       _projection(1,1) = 2.f/(_top-_bottom);
-      _projection(2,2) = -2.f/(_far-_near);
+      _projection(2,2) = 2.f/(_far-_near);
       _projection(0,3) = -(_right+_left)/(_right-_left);
       _projection(1,3) = -(_top+_bottom)/(_top-_bottom);
       _projection(2,3) = -(_far+_near)/(_far-_near);
