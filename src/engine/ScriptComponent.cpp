@@ -200,7 +200,11 @@ void ScriptComponent::init() {
   });
   // Sprite ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(Sprite, "sprite");
-  L_COMPONENT_METHOD(Sprite, "load", 1, texture(c.local(0).get<String>()));
+  L_COMPONENT_METHOD(Sprite, "texture", 1, texture(c.local(0).get<String>()));
+  L_COMPONENT_METHOD(Sprite, "vertex", 4, vertex(Interval2f(Vector2f(c.local(0).get<float>(), c.local(1).get<float>()), 
+                                                            Vector2f(c.local(2).get<float>(), c.local(3).get<float>()))));
+  L_COMPONENT_METHOD(Sprite, "uv", 4, uv(Interval2f(Vector2f(c.local(0).get<float>(), c.local(1).get<float>()),
+                                                    Vector2f(c.local(2).get<float>(), c.local(3).get<float>()))));
   // StaticMesh ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(StaticMesh, "staticmesh");
   L_COMPONENT_METHOD(StaticMesh, "mesh", 1, mesh((const char*)c.local(0).get<String>()));
