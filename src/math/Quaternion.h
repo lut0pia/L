@@ -39,6 +39,25 @@ namespace L {
       t.x() += u.x(); t.y() += u.y(); t.z() += u.z();
       return t;
     }
+    void to_axis_angle(Vector<3, T>& axis, T& angle) const {
+      angle = 2 * acos(w());
+      if(isnormal(angle)) {
+        const T t(1/sqrt(1-sqr(w())));
+        axis.x() = x() * t;
+        axis.y() = y() * t;
+        axis.z() = z() * t;
+      } else {
+        axis.x() = 1;
+        angle = axis.y() = axis.z() = 0;
+      }
+    }
+    Vector<3, T> to_scaled_vector() const {
+      Vector<3, T> v;
+      float a;
+      to_axis_angle(v, a);
+      v.length(a);
+      return v;
+    }
     inline operator Vector<3,T>() const { return Vector<3,T>(this->x(),this->y(),this->z()); }
   };
 
