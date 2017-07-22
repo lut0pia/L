@@ -91,15 +91,14 @@ namespace L {
 
     inline const Vector<d,T>& min() const { return _min; }
     inline const Vector<d,T>& max() const { return _max; }
+
+    friend Stream& operator<<(Stream& s, const Interval& v) { return s << '(' << v.min() << ',' << v.max() << ')'; }
+    friend Stream& operator<(Stream& s, const Interval& v) { return s < v.min() < v.max(); }
+    friend Stream& operator>(Stream& s, Interval& v) { return s > v._min > v._max; }
   };
   typedef Interval<1,float> Interval1f;
   typedef Interval<2,int> Interval2i;
   typedef Interval<3,int> Interval3i;
   typedef Interval<2,float> Interval2f;
   typedef Interval<3,float> Interval3f;
-
-  template <int d,class T>
-  Stream& operator<<(Stream &s,const Interval<d,T>& v) {
-    return s << '(' << v.min() << ',' << v.max() << ')';
-  }
 }
