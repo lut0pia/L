@@ -33,7 +33,7 @@
 #define L_ERRORF(msg,...) do{fprintf(stderr,"Error in %s:%d:\n" msg "\n",__FILE__,__LINE__,__VA_ARGS__);L_BREAKPOINT;exit(0xA55E2737);}while(false)
 #define L_WARNING(msg) do{fprintf(stderr,"Warning in %s:%d:\n" msg "\n",__FILE__,__LINE__);}while(false)
 #define L_WARNINGF(msg,...) do{fprintf(stderr,"Warning in %s:%d:\n" msg "\n",__FILE__,__LINE__,__VA_ARGS__);}while(false)
-#define L_ASSERT(exp) L_DEBUGONLY(if(!(exp))L_ERRORF("%s is false",#exp))
+#define L_ASSERT(exp) L_DEBUGONLY(if(!(exp))L_ERRORF("Assertion failure: %s",#exp))
 #define L_ASSERT_MSG(exp,msg) L_DEBUGONLY(if(!(exp))L_ERROR(msg))
 
 #define L_ONCE do{static bool DONE_ONCE(false);if(DONE_ONCE) return;DONE_ONCE = true;}while(false)
