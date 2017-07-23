@@ -10,11 +10,7 @@ namespace L {
     virtual size_t read(void* data,size_t size) = 0;
     virtual char get() { char c; read(&c,1); return c; };
     virtual void put(char c) { write(&c,1); }
-    virtual void unget(char c) = 0;
-    virtual bool end() const { return false; }
-
-    inline char peek() { char c(get()); unget(c); return c; }
-    inline void ignore(int n = 1) { while(n--)get(); }
+    virtual bool end() { return false; }
 
     const char* line(); // Reads a line until \n
     void line(char* buffer, size_t size); // Reads a line into buffer until \n or full

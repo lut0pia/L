@@ -1,10 +1,10 @@
 #pragma once
 
 #include <cstdio>
-#include "FileStream.h"
+#include "DirectStream.h"
 
 namespace L {
-  class CFileStream : public FileStream {
+  class CFileStream : public DirectStream {
   protected:
     FILE* _fd;
   public:
@@ -16,12 +16,12 @@ namespace L {
     inline size_t read(void* data, size_t size) override { return fread(data, 1, size, _fd); }
     inline char get() override { return fgetc(_fd); }
     inline void put(char c) override { fputc(c, _fd); }
-    inline void unget(char c) override { ungetc(c, _fd); }
-    inline bool end() const override { return feof(_fd)!=0; }
+    inline bool end() override { return feof(_fd)!=0; }
 
+    inline char peek() override { char c(fgetc(_fd)); ungetc(c, _fd); return c; }
     inline void rewind() override { ::rewind(_fd); }
-    inline int tell() const override { return ::ftell(_fd); }
-    inline void seek(int i) override { ::fseek(_fd, i, SEEK_SET); }
+    inline uintptr_t tell() override { return ::ftell(_fd); }
+    inline void seek(uintptr_t i) override { ::fseek(_fd, i, SEEK_SET); }
     inline size_t size() override {
       int o(tell());
       ::fseek(_fd, 0, SEEK_END);

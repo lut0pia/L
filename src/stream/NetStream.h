@@ -10,6 +10,5 @@ namespace L {
       NetStream(int sd) : _sd(sd) {}
       size_t write(const void* data, size_t size);
       size_t read(void* data, size_t size);
-      inline void unget(char c) {}
   };
 }
