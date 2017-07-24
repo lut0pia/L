@@ -163,7 +163,7 @@ bool Collider::raycastSingle(const Vector3f& origin,const Vector3f& direction,fl
       return rayBoxIntersect(
         Interval3f(_center-_radius,_center+_radius),
         _transform->fromAbsolute(origin),
-        _transform->absoluteRotation().inverse().rotate(direction),t);
+        _transform->rotation().inverse().rotate(direction),t);
       break;
     case Sphere:
       return raySphereIntersect(_transform->toAbsolute(_center),_radius.x(),origin,direction,t);

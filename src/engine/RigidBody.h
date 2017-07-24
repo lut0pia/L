@@ -26,7 +26,7 @@ namespace L {
 
     inline void kinematic(bool k) { _kinematic = k; }
     inline const Vector3f& velocity() const { return _velocity; }
-    inline Vector3f relativeVelocity() const { return _transform->absoluteRotation().inverse().rotate(_velocity); }
+    inline Vector3f relativeVelocity() const { return _transform->rotation().inverse().rotate(_velocity); }
     inline float mass() const { return 1.f/_invMass; }
     void mass(float m);
     inline float restitution() const { return _restitution; }
@@ -36,12 +36,12 @@ namespace L {
     inline float angularDrag() const { return _angDrag; }
     inline void angularDrag(float d) { _angDrag = d; }
 
-    inline Vector3f center() const { return _transform->absolutePosition(); }
+    inline Vector3f center() const { return _transform->position(); }
     inline void addSpeed(const Vector3f& v) { _velocity += v; }
     inline void addForce(const Vector3f& f) { _force += f; }
-    inline void addRelativeForce(const Vector3f& f) { addForce(_transform->absoluteRotation().rotate(f)); }
+    inline void addRelativeForce(const Vector3f& f) { addForce(_transform->rotation().rotate(f)); }
     inline void addTorque(const Vector3f& t) { _torque += t; }
-    inline void addRelativeTorque(const Vector3f& t) { addTorque(_transform->absoluteRotation().rotate(t)); }
+    inline void addRelativeTorque(const Vector3f& t) { addTorque(_transform->rotation().rotate(t)); }
     inline Vector3f velocityAt(const Vector3f& offset) const { return _rotation.cross(offset)+_velocity; }
 
     float deltaVelocity(const Vector3f& impact, const Vector3f& normal) const;

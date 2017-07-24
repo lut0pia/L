@@ -55,7 +55,7 @@ void StaticMesh::render(const Camera& c) {
   if(_mesh) {
     program.use();
     program.uniform("tex", _texture.null() ? GL::whiteTexture() : *_texture);
-    program.uniform("model", SQTToMat(_transform->absoluteRotation(), _transform->absolutePosition(), _scale));
+    program.uniform("model", SQTToMat(_transform->rotation(), _transform->position(), _scale));
     _mesh->draw();
   }
 }

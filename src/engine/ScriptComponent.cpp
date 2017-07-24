@@ -146,12 +146,11 @@ void ScriptComponent::init() {
   L_COMPONENT_RETURN_METHOD(const Device, "get-button", 1, button(c.local(0).get<int>()));
   // Transform ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(Transform, "transform");
-  L_COMPONENT_RETURN_METHOD(Transform, "get-position", 0, absolutePosition());
-  L_COMPONENT_RETURN_METHOD(Transform, "get-translation", 0, translation());
+  L_COMPONENT_RETURN_METHOD(Transform, "get-position", 0, position());
   L_COMPONENT_RETURN_METHOD(Transform, "right", 0, right());
   L_COMPONENT_RETURN_METHOD(Transform, "forward", 0, forward());
   L_COMPONENT_RETURN_METHOD(Transform, "up", 0, up());
-  L_COMPONENT_METHOD(Transform, "set-translation", 1, translation(c.local(0).get<Vector3f>()));
+  L_COMPONENT_METHOD(Transform, "set-position", 1, position(c.local(0).get<Vector3f>()));
   L_COMPONENT_METHOD(Transform, "move", 1, move(c.local(0).get<Vector3f>()));
   L_COMPONENT_METHOD(Transform, "rotate", 2, rotate(c.local(0).get<Vector3f>(), c.local(1).get<float>()));
   // Collider ///////////////////////////////////////////////////////////////////

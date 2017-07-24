@@ -14,7 +14,7 @@ RigidBody::RigidBody() :
 
 void RigidBody::updateComponents() {
   _transform = entity()->requireComponent<Transform>();
-  _last_position = _transform->absolutePosition();
+  _last_position = _transform->position();
   updateInertiaTensor();
 }
 Map<Symbol, Var> RigidBody::pack() const {
@@ -48,11 +48,11 @@ void RigidBody::updateInertiaTensor() {
 void RigidBody::update() {
   if(_kinematic) {
     float inv_delta(1.f/Engine::deltaSeconds());
-    _velocity = (_transform->absolutePosition()-_last_position)*inv_delta;
-    Quatf delta_quat(_transform->absoluteRotation()*_last_rotation.inverse());
+    _velocity = (_transform->position()-_last_position)*inv_delta;
+    Quatf delta_quat(_transform->rotation()*_last_rotation.inverse());
     _rotation = delta_quat.to_scaled_vector()*inv_delta;
-    _last_position = _transform->absolutePosition();
-    _last_rotation = _transform->absoluteRotation();
+    _last_position = _transform->position();
+    _last_rotation = _transform->rotation();
   } else {
     _force = _torque = 0.f; // Reset force and torque
     addForce(_gravity/_invMass); // Apply gravity
@@ -72,7 +72,7 @@ void RigidBody::subUpdate() {
   if(!_kinematic) {
     const float delta(Engine::subDeltaSeconds());
     // Compute world inertia tensor
-    const Matrix33f orientation(quatToMat(_transform->absoluteRotation()));
+    const Matrix33f orientation(quatToMat(_transform->rotation()));
     _invInertiaTensorWorld = orientation*_invInertiaTensor*orientation.transpose();
 
     // Integrate
@@ -83,7 +83,7 @@ void RigidBody::subUpdate() {
     const Vector3f rotationAvg((_rotation+oldRotation)*.5f);
     const float rotLength(rotationAvg.length());
     if(rotLength>.0f)
-      _transform->rotateAbsolute(rotationAvg*(1.f/rotLength), rotLength*delta);
+      _transform->rotate(rotationAvg*(1.f/rotLength), rotLength*delta);
   }
 }
 
