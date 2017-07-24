@@ -494,6 +494,26 @@ Context::Context() : _self(ref<Table<Var, Var>>()) {
     L_ASSERT(c.localCount()==2);
     c.returnValue() = c.local(0).get<Vector3f>().dot(c.local(1).get<Vector3f>());
   });
+  _globals[Symbol("sqrt")] = (Function)([](Context& c) {
+    L_ASSERT(c.localCount()==1);
+    c.returnValue() = sqrt(c.local(0).get<float>());
+  });
+  _globals[Symbol("pow")] = (Function)([](Context& c) {
+    L_ASSERT(c.localCount()==2);
+    c.returnValue() = powf(c.local(0).get<float>(), c.local(1).get<float>());
+  });
+  _globals[Symbol("sin")] = (Function)([](Context& c) {
+    L_ASSERT(c.localCount()==1);
+    c.returnValue() = sinf(c.local(0).get<float>());
+  });
+  _globals[Symbol("cos")] = (Function)([](Context& c) {
+    L_ASSERT(c.localCount()==1);
+    c.returnValue() = cosf(c.local(0).get<float>());
+  });
+  _globals[Symbol("tan")] = (Function)([](Context& c) {
+    L_ASSERT(c.localCount()==1);
+    c.returnValue() = tanf(c.local(0).get<float>());
+  });
   _globals[Symbol("color")] = (Function)([](Context& c) {
     Color& color(c.returnValue().make<Color>() = Color::white);
     const uint32_t params(min(c.localCount(), 4u));
