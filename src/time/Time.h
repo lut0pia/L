@@ -42,8 +42,9 @@ namespace L {
     inline float fSeconds() const { return float(seconds())+(float(microseconds()%1000000LL)/1000000.f); }
 
     static Time now();
+
+    friend Stream& operator<<(Stream &s, const Time& v);
   };
-  Stream& operator<<(Stream &s,const Time& v);
 }
 
 
