@@ -455,6 +455,10 @@ Context::Context() : _self(ref<Table<Var, Var>>()) {
   _globals[Symbol("now")] = (Function)([](Context& c) {
     c.returnValue() = Time::now();
   });
+  _globals[Symbol("time")] = (Function)([](Context& c) {
+    L_ASSERT(c.localCount()==1);
+    c.returnValue() = Time(c.local(0).get<float>()*1000000.f);
+  });
   _globals["rand"] = (Function)([](Context& c) {
     c.returnValue() = Rand::nextFloat();
   });
