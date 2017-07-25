@@ -4,6 +4,11 @@ bin/
 obj/
 # Projects folder
 prj/
+# Sample folder
+smp/*.exe
+smp/*.pdb
+smp/*.ilk
+smp/*.manifest
 # Premake
 pmk/
 premake5
