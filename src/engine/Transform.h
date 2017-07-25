@@ -20,8 +20,10 @@ namespace L {
 
     inline Vector3f toAbsolute(const Vector3f& v) const { return position()+_rotation.rotate(v); }
     inline Vector3f fromAbsolute(const Vector3f& v) const { return _rotation.inverse().rotate(v-position()); }
-    inline void rotate(const Quatf& q) { _rotation = q * _rotation; }
+    inline void rotate(const Quatf& q) { _rotation = _rotation * q; }
     inline void rotate(const Vector3f& v, float d) { rotate(Quatf(v, d)); }
+    inline void rotate_absolute(const Quatf& q) { _rotation = q * _rotation; }
+    inline void rotate_absolute(const Vector3f& v, float d) { rotate_absolute(Quatf(v, d)); }
     inline void phiLook(float d) { rotate(Vector3f(1, 0, 0), d); }
     inline void thetaLook(float d) { rotate(Vector3f(0, 0, 1), d); }
     inline void move(const Vector3f& d) { _position += _rotation.rotate(d); }
