@@ -241,6 +241,11 @@ void Window::open(const char* title, int width, int height, int flags) {
   wglDeleteContext(hRCFake);
 
   out << "GL_VERSION: " << (const char*)glGetString(GL_VERSION) << '\n';
+
+#ifdef L_DEBUG
+  glDebugMessageCallback(GL::debug_callback, NULL);
+  glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+#endif
 }
 void Window::close() {
   L_ASSERT(opened());

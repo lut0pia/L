@@ -3,6 +3,7 @@
 #include "../constants.h"
 #include "MeshBuilder.h"
 #include "Shader.h"
+#include "../stream/CFileStream.h"
 #include "../image/Color.h"
 #include "../engine/SharedUniform.h"
 
@@ -10,6 +11,11 @@ using namespace L;
 using namespace GL;
 
 MeshBuilder meshBuilder;
+
+void APIENTRY GL::debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *user_param) {
+  if(type != GL_DEBUG_TYPE_PERFORMANCE && type != GL_DEBUG_TYPE_OTHER)
+    err << "OpenGL debug: " << message << '\n';
+}
 
 const Texture& GL::whiteTexture() {
   static Texture tex(1,1,&Color::white);
