@@ -24,8 +24,8 @@
 	)
 	(local color (rand-color))
 	(entity'require-primitive || 'color | color)
-	;(entity'require-light || 'spot | color (vec 0 1 0) 0.1 0.44 0.9)
-	(entity'require-light || 'point | color 0.1 0.44)
+	;(entity'require-light || 'spot | color (vec 0 1 0) 1 16 0.9)
+	(entity'require-light || 'point | color 1 16)
 )))
 
 (set make-terrain (fun (do
@@ -61,7 +61,7 @@
 	;(engine-timescale 0.1)
 	(entity-make | 'add-script || 'load | "camera.ls")
 	(entity-make | 'add-script || 'load | "sink.ls")
-	(entity-make | 'add-light || 'directional | (color) (vec 1 -2 3))
+	(entity-make | 'add-light || 'directional | (color) (vec 1 -2 3) 1)
 	(make-terrain)
 
 	(make-mesh "smartphone.obj" "smartphone.png" (vec -16 -20 5))

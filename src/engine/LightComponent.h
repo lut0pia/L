@@ -11,10 +11,10 @@ namespace L {
   protected:
     Transform* _transform;
     Vector3f _position, _color, _direction, _relative_dir;
-    float _linear_attenuation, _quadratic_attenuation, _inner_angle, _outer_angle;
+    float _intensity, _radius, _inner_angle, _outer_angle;
     int _type;
   public:
-    inline LightComponent() { point(Color::white, .7f, 1.8f); }
+    inline LightComponent() { point(Color::white); }
 
     virtual void updateComponents() override { _transform = entity()->requireComponent<Transform>(); }
     virtual Map<Symbol, Var> pack() const override;
@@ -22,9 +22,9 @@ namespace L {
 
     void lateUpdate();
 
-    void directional(const Color& color, const Vector3f& direction);
-    void point(const Color& color, float linear_attenuation, float quadratic_attenuation);
-    void spot(const Color& color, const Vector3f& direction, float linear_attenuation, float quadratic_attenuation, float inner_angle, float outer_angle = 0.f);
+    void directional(const Color& color, const Vector3f& direction, float intensity = 1.f);
+    void point(const Color& color, float intensity = 1.f, float radius = 1.f);
+    void spot(const Color& color, const Vector3f& direction, float intensity = 1.f, float radius = 1.f, float inner_angle = .5f, float outer_angle = 0.f);
 
     void render();
     static GL::Program& program();
