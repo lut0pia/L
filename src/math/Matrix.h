@@ -157,18 +157,17 @@ namespace L {
     }
 
     inline operator Vector<l,T>() { return *(const Vector<l,T>*)this; }
+
+    friend Stream& operator<<(Stream &s, const Matrix& m) {
+      for(int li(0); li<l; li++) {
+        for(int ci(0); ci<c; ci++)
+          s << '[' << m(li, ci) << "]\t";
+        s << '\n';
+      }
+      return s;
+    }
   };
 
   typedef Matrix<3,3,float> Matrix33f;
   typedef Matrix<4,4,float> Matrix44f;
-
-  template <int l,int c,class T>
-  Stream& operator<<(Stream &s,const Matrix<l,c,T>& m) {
-    for(int li(0); li<l; li++) {
-      for(int ci(0); ci<c; ci++)
-        s << '[' << m(li,ci) << "]\t";
-      s << '\n';
-    }
-    return s;
-  }
 }
