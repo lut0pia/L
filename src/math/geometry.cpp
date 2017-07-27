@@ -94,3 +94,53 @@ bool L::rayBoxIntersect(const Interval3f& b, const Vector3f& o, const Vector3f& 
   t = max(0.f, tmin);
   return (tmin<tmax && tmax>0.f);
 }
+
+Matrix44f L::rotation_matrix(const Vector3f& axis, float angle) {
+  Matrix44f wtr(1.f);
+  if(abs(angle) < 0.000001f)
+    return wtr;
+  float cosi(cos(angle));
+  float sinu(sin(angle));
+  const float& x(axis.x());
+  const float& y(axis.y());
+  const float& z(axis.z());
+  const float x2(x*x);
+  const float y2(y*y);
+  const float z2(z*z);
+  wtr(0, 0) = x2+(cosi*(1-x2));
+  wtr(0, 1) = (x*y*(1-cosi))-(z*sinu);
+  wtr(0, 2) = (x*z*(1-cosi))+(y*sinu);
+  wtr(1, 0) = (x*y*(1-cosi))+(z*sinu);
+  wtr(1, 1) = y2+(cosi*(1-y2));
+  wtr(1, 2) = (y*z*(1-cosi))-(x*sinu);
+  wtr(2, 0) = (x*z*(1-cosi))-(y*sinu);
+  wtr(2, 1) = (y*z*(1-cosi))+(x*sinu);
+  wtr(2, 2) = z2+(cosi*(1-z2));
+  return wtr;
+}
+Matrix44f L::translation_matrix(const Vector3f& vector) {
+  Matrix44f wtr(1.f);
+  wtr(0, 3) = vector.x();
+  wtr(1, 3) = vector.y();
+  wtr(2, 3) = vector.z();
+  return wtr;
+}
+Matrix44f L::orientation_matrix(const Vector3f& newx, const Vector3f& newy, const Vector3f& newz) {
+  Matrix44f wtr(1.f);
+  wtr(0, 0) = newx.x();
+  wtr(1, 0) = newx.y();
+  wtr(2, 0) = newx.z();
+  wtr(0, 1) = newy.x();
+  wtr(1, 1) = newy.y();
+  wtr(2, 1) = newy.z();
+  wtr(0, 2) = newz.x();
+  wtr(1, 2) = newz.y();
+  wtr(2, 2) = newz.z();
+  return wtr;
+}
+Matrix44f L::scale_matrix(const Vector3f& axes) {
+  Matrix44f wtr(1.f);
+  for(int i(0); i<3; i++)
+    wtr(i, i) = axes[i];
+  return wtr;
+}

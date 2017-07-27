@@ -236,7 +236,7 @@ namespace L {
       static int level(0);
       GL::baseColorProgram().use();
       GL::baseColorProgram().uniform("color", Color::fromHSV(pmod(level*15.f, 360.f), .5f, 1.f));
-      GL::baseColorProgram().uniform("model", Matrix44f::translation(node->_key.center())*Matrix44f::scale(node->_key.size()*.5f));
+      GL::baseColorProgram().uniform("model", translation_matrix(node->_key.center())*scale_matrix(node->_key.size()*.5f));
       GL::wireCube().draw();
       if(node->branch()) {
         level++;

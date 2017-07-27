@@ -190,7 +190,7 @@ Matrix33f Collider::inertiaTensor() const{
 }
 void Collider::render(const Camera& camera) {
   GL::baseProgram().use();
-  GL::baseProgram().uniform("model",_transform->matrix()*Matrix44f::scale(_radius));
+  GL::baseProgram().uniform("model",_transform->matrix()*scale_matrix(_radius));
   switch(_type){
     case Box:
       GL::wireCube().draw();

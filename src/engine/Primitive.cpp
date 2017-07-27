@@ -31,7 +31,7 @@ void Primitive::unpack(const Map<Symbol, Var>& data) {
 
 void Primitive::render(const Camera& camera){
   GL::baseColorProgram().use();
-  GL::baseColorProgram().uniform("model",_transform->matrix()*Matrix44f::scale(_radius));
+  GL::baseColorProgram().uniform("model",_transform->matrix()*scale_matrix(_radius));
   GL::baseColorProgram().uniform("color",_color);
   switch(_type){
     case Box:

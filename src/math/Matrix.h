@@ -106,56 +106,6 @@ namespace L {
     }
     inline Matrix inverse() const { return adjugate().transpose()/det(); }
 
-    static Matrix<4,4,T> rotation(const Vector<3,T>& axis,T angle) {
-      Matrix<4,4,T> wtr(1);
-      if(abs(angle) < 0.000001)
-        return wtr;
-      T cosi(cos(angle));
-      T sinu(sin(angle));
-      const T& x(axis.x());
-      const T& y(axis.y());
-      const T& z(axis.z());
-      T x2(x*x);
-      T y2(y*y);
-      T z2(z*z);
-      wtr(0,0) = x2+(cosi*(1-x2));
-      wtr(0,1) = (x*y*(1-cosi))-(z*sinu);
-      wtr(0,2) = (x*z*(1-cosi))+(y*sinu);
-      wtr(1,0) = (x*y*(1-cosi))+(z*sinu);
-      wtr(1,1) = y2+(cosi*(1-y2));
-      wtr(1,2) = (y*z*(1-cosi))-(x*sinu);
-      wtr(2,0) = (x*z*(1-cosi))-(y*sinu);
-      wtr(2,1) = (y*z*(1-cosi))+(x*sinu);
-      wtr(2,2) = z2+(cosi*(1-z2));
-      return wtr;
-    }
-    static Matrix<4,4,T> translation(const Vector<3,T>& vector) {
-      Matrix<4,4,T> wtr(1);
-      wtr(0,3) = vector.x();
-      wtr(1,3) = vector.y();
-      wtr(2,3) = vector.z();
-      return wtr;
-    }
-    static Matrix<4,4,T> orientation(const Vector<3,T>& newx,const Vector<3,T>& newy,const Vector<3,T>& newz) {
-      Matrix<4,4,T> wtr(1);
-      wtr(0,0) = newx.x();
-      wtr(1,0) = newx.y();
-      wtr(2,0) = newx.z();
-      wtr(0,1) = newy.x();
-      wtr(1,1) = newy.y();
-      wtr(2,1) = newy.z();
-      wtr(0,2) = newz.x();
-      wtr(1,2) = newz.y();
-      wtr(2,2) = newz.z();
-      return wtr;
-    }
-    static Matrix<4,4,T> scale(const Vector<3,T>& axes){
-      Matrix<4,4,T> wtr(1);
-      for(int i(0); i<3; i++)
-        wtr(i,i) = axes[i];
-      return wtr;
-    }
-
     inline operator Vector<l,T>() { return *(const Vector<l,T>*)this; }
 
     friend Stream& operator<<(Stream &s, const Matrix& m) {

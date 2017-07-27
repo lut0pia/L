@@ -16,4 +16,9 @@ namespace L{
   inline bool rayBoxIntersect(const Interval3f& box,const Vector3f& origin,const Vector3f& direction,float& t){
     return rayBoxIntersect(box,origin,direction,t,Vector3f(1.f/direction.x(),1.f/direction.y(),1.f/direction.z()));
   }
+
+  Matrix44f rotation_matrix(const Vector3f& axis, float angle);
+  Matrix44f translation_matrix(const Vector3f& vector);
+  Matrix44f orientation_matrix(const Vector3f& newx, const Vector3f& newy, const Vector3f& newz);
+  Matrix44f scale_matrix(const Vector3f& axes);
 }
