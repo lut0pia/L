@@ -1,4 +1,4 @@
-# L-script reference
+# Script reference
 
 ## Syntax
 L-script's syntax is inspired from Lisp. Everything looks like `(command parameter...)`. Occasionally it looks like `(object'method | parameter...)`. The `|` symbol is really just syntactic sugar to mean "put everything before in parentheses", so the previous example actually extends to `((object'method) parameter...)`. The `'` symbol means that the next word should be returned as a token, not a value.
