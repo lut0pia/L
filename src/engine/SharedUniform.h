@@ -29,6 +29,14 @@
 "float ditherThreshold = ditherMatrix[ditherSlot/4][ditherSlot%4];" \
 "return a<ditherThreshold;" \
 "}"
+#define L_SHADER_LIB_DEBAND \
+"vec3 deband(vec3 v){" \
+"ivec2 frame_offset = ivec2(frame*37,frame*31);" \
+"ivec2 dither_pos = ivec2(mod(gl_FragCoord.xy+frame_offset,ditherMatrixSize.xy));" \
+"int dither_slot = dither_pos.x+dither_pos.y*ditherMatrixSize.x;" \
+"float deband_offset = ditherMatrix[dither_slot/4][dither_slot%4]/200.f;" \
+"return v+deband_offset;" \
+"}"
 #define L_SHADER_LIB_NORMAL \
 "vec2 encodeNormal(vec3 n){" \
 "n = normalize((view*vec4(n,0.f)).xyz);" \
@@ -40,4 +48,4 @@
 "float g = sqrt(1.f-l/4.f);" \
 "return normalize((invView*vec4(e*g,1.f-l/2.f,0.f)).xyz);" \
 "}"
-#define L_SHADER_LIB L_SHADER_LIB_ALPHA L_SHADER_LIB_NORMAL
+#define L_SHADER_LIB L_SHADER_LIB_ALPHA L_SHADER_LIB_DEBAND L_SHADER_LIB_NORMAL

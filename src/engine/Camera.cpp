@@ -141,7 +141,7 @@ void Camera::postrender(){
       "uniform sampler2D color_buffer;"
       "void main(){"
       "vec3 color = texture(color_buffer,ftexcoords).rgb;"
-      "fragcolor = vec4(color,1.f);"
+      "fragcolor = vec4(deband(color),1.f);"
       "}", GL_FRAGMENT_SHADER));
 
   final_shader.use();
