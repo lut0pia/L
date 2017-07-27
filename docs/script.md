@@ -23,9 +23,9 @@ In this example, if the first line were omitted, the value `42` would have been 
 * `do` can be used to make sequential instructions into one instruction.
 ```clojure
 (do
-  (print "I\n")
-  (print "am\n")
-  (print "leg\n")
+	(print "I\n")
+	(print "am\n")
+	(print "leg\n")
 )
 ```
 
@@ -35,9 +35,9 @@ When the first part of a list is not a command but an object (as in `(object som
 * `object` can be used to create an object. Each pair of parameters is a key and a value. There also exists syntactic sugar for object creation in the form of `{}`
 ```clojure
 (do
-  (local o (object 1 "truc" 3 "machin"))
-  (print (o 3)) ; Prints machin
-  (local o2 {"lel" 32}) ; Alternative syntax
+	(local o (object 1 "truc" 3 "machin"))
+	(print (o 3)) ; Prints machin
+	(local o2 {"lel" 32}) ; Alternative syntax
 )
 ```
 
@@ -53,17 +53,17 @@ When the first part of a list is not a command but an object (as in `(object som
 * `if` can be used to execute different instructions depending on conditions. You can have as many pairs of condition-instruction as you want, they'll be tested in order and the if instruction will return at the first validated condition. If no condition is validated and there's a sole instruction after the pairs, then that instruction is executed.
 ```clojure
 (if
-  condition (do-thing) ; if condition then do-thing
-  other-condition (do-other-thing) ; else if other-condition then do-other-thing
-  (do-whatever) ; else do-whatever
+	condition (do-thing) ; if condition then do-thing
+	other-condition (do-other-thing) ; else if other-condition then do-other-thing
+	(do-whatever) ; else do-whatever
 )
 ```
 * `switch` can be used to execute different instructions depending on a value. You can have as many pairs of match-instruction as you want, they'll be tested in order and the switch instruction will return at the first validated match. If no match is validated and there's a sole instruction after the pairs, then that instruction is executed.
 ```clojure
 (switch value
-  3 (do-thing) ; if value=3 then do-thing
-  "foo" (do-other-thing) ; if value="foo" then do-other-thing
-  (do-whatever) ; else do-whatever
+	3 (do-thing) ; if value=3 then do-thing
+	"foo" (do-other-thing) ; if value="foo" then do-other-thing
+	(do-whatever) ; else do-whatever
 )
 ```
 * `or` and `and` execute their parameters in order, and do not execute any more instructions as soon as their return value is known.
