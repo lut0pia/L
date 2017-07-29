@@ -90,9 +90,9 @@ void Collider::subUpdateAll() {
 
       // Resolve interpenetration
       if(b->_rigidbody) {
-        a->_transform->moveAbsolute(collision.normal*(collision.overlap*.5f));
-        b->_transform->moveAbsolute(collision.normal*(collision.overlap*-.5f));
-      } else a->_transform->moveAbsolute(collision.normal*collision.overlap);
+        a->_transform->move_absolute(collision.normal*(collision.overlap*.5f));
+        b->_transform->move_absolute(collision.normal*(collision.overlap*-.5f));
+      } else a->_transform->move_absolute(collision.normal*collision.overlap);
 
       // Send collision events to scripts
       if(a->_script || b->_script) {

@@ -27,7 +27,7 @@ namespace L {
     inline void phiLook(float d) { rotate(Vector3f(1, 0, 0), d); }
     inline void thetaLook(float d) { rotate(Vector3f(0, 0, 1), d); }
     inline void move(const Vector3f& d) { _position += _rotation.rotate(d); }
-    inline void moveAbsolute(const Vector3f& v) { _position += v; }
+    inline void move_absolute(const Vector3f& v) { _position += v; }
 
     inline void position(const Vector3f& p) { _position = p; }
     inline const Vector3f& position() const { return _position; }

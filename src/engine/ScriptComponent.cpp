@@ -153,6 +153,7 @@ void ScriptComponent::init() {
   L_COMPONENT_RETURN_METHOD(Transform, "up", 0, up());
   L_COMPONENT_METHOD(Transform, "set-position", 1, position(c.local(0).get<Vector3f>()));
   L_COMPONENT_METHOD(Transform, "move", 1, move(c.local(0).get<Vector3f>()));
+  L_COMPONENT_METHOD(Transform, "move-absolute", 1, move_absolute(c.local(0).get<Vector3f>()));
   L_COMPONENT_METHOD(Transform, "rotate", 2, rotate(c.local(0).get<Vector3f>(), c.local(1).get<float>()));
   L_COMPONENT_METHOD(Transform, "rotate-absolute", 2, rotate_absolute(c.local(0).get<Vector3f>(), c.local(1).get<float>()));
   // Collider ///////////////////////////////////////////////////////////////////
