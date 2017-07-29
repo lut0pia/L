@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../macros.h"
 #include "Stream.h"
 
 namespace L {
