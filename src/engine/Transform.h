@@ -32,6 +32,7 @@ namespace L {
     inline void position(const Vector3f& p) { _position = p; }
     inline const Vector3f& position() const { return _position; }
     inline void rotation(const Quatf& r) { _rotation = r; }
+    inline void rotation(const Vector3f& axis, float angle) { _rotation = Quatf(axis, angle); }
     inline const Quatf& rotation() const { return _rotation; }
     inline Vector3f right() const { return rotation().rotate(Vector3f(1, 0, 0)); }
     inline Vector3f forward() const { return rotation().rotate(Vector3f(0, 1, 0)); }
