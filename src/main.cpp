@@ -48,10 +48,6 @@ void mainjob(void*) {
     startupContext.executeInside(Array<Var>{Resource::script("startup.ls")});
   }
 
-  Entity::save("../test.level");
-  Entity::clear();
-  Entity::load("../test.level");
-
 #ifdef L_DEBUG
   ScriptServer server(short(Settings::get_int("server_port", 1993)));
 #endif
