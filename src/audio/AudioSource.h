@@ -14,6 +14,7 @@ namespace L {
       ~Source();
       void buffer(const Buffer&);
       void play();
+      void stop();
       void position(const Vector3f&);
       void gain(float);
       void rolloff(float);

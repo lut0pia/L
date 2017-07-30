@@ -23,6 +23,9 @@ void Source::play() {
   alSourceRewind(_sid);
   alSourcePlay(_sid);
 }
+void Source::stop() {
+  alSourceStop(_sid);
+}
 void Source::position(const Vector3f& pos) {
   alSource3f(_sid, AL_POSITION, pos.x(), pos.y(), pos.z());
 }
