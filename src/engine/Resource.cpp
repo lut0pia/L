@@ -11,6 +11,7 @@ Table<uint32_t, Ref<GL::Texture> > _textures;
 Table<uint32_t, Ref<GL::Mesh> > _meshes;
 Table<uint32_t, Ref<Script::CodeFunction>> _scripts;
 Table<uint32_t, Ref<Font>> _fonts;
+Table<uint32_t, Ref<Audio::Buffer>> _sounds;
 
 void Resource::update() {
   for(auto&& font : _fonts)
@@ -44,4 +45,9 @@ const Ref<Font>& Resource::font(const char* fp) {
   if(h==defaultHash) return pixel;
   else if(auto found = _fonts.find(h)) return *found;
   else return _fonts[h] = Interface<Font>::fromFile(fp);
+}
+const Ref<Audio::Buffer>& Resource::sound(const char* fp) {
+  const uint32_t h(hash(fp));
+  if(auto found = _sounds.find(h)) return *found;
+  else return _sounds[h] = Interface<Audio::Buffer>::fromFile(fp);
 }

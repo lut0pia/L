@@ -14,6 +14,9 @@
 #include "ai/Perceptron.h"
 
 // Audio I/O, Wave & Midi
+#include "audio/Audio.h"
+#include "audio/AudioBuffer.h"
+#include "audio/AudioSource.h"
 #include "audio/Midi.h"
 
 // Objects that hold other objects
@@ -44,6 +47,8 @@
 #include "dynamic/Variable.h"
 
 // Entity and components
+#include "engine/AudioListenerComponent.h"
+#include "engine/AudioSourceComponent.h"
 #include "engine/Camera.h"
 #include "engine/Collider.h"
 #include "engine/Component.h"

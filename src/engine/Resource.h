@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../audio/AudioBuffer.h"
 #include "../containers/Ref.h"
 #include "../font/Font.h"
 #include "../gl/Texture.h"
@@ -13,5 +14,6 @@ namespace L {
     const Ref<GL::Mesh>& mesh(const char* filepath);
     const Ref<Script::CodeFunction>& script(const char* filepath);
     const Ref<Font>& font(const char* filepath = "default");
+    const Ref<Audio::Buffer>& sound(const char* filepath);
   };
 }

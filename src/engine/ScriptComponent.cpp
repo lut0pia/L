@@ -1,5 +1,7 @@
 #include "ScriptComponent.h"
 
+#include "AudioListenerComponent.h"
+#include "AudioSourceComponent.h"
 #include "Camera.h"
 #include "Collider.h"
 #include "LightComponent.h"
@@ -227,4 +229,13 @@ void ScriptComponent::init() {
   L_COMPONENT_METHOD(LightComponent, "directional", 3, directional(c.local(0).get<Color>(), c.local(1).get<Vector3f>(), c.local(2).get<float>()));
   L_COMPONENT_METHOD(LightComponent, "point", 3, point(c.local(0).get<Color>(), c.local(1).get<float>(), c.local(2).get<float>()));
   L_COMPONENT_METHOD(LightComponent, "spot", 5, spot(c.local(0).get<Color>(), c.local(1).get<Vector3f>(), c.local(2).get<float>(), c.local(3).get<float>(), c.local(4).get<float>()));
+  // AudioSource ///////////////////////////////////////////////////////////////////
+  L_COMPONENT_BIND(AudioSourceComponent, "audio-source");
+  L_COMPONENT_METHOD(AudioSourceComponent, "sound", 1, sound(c.local(0).get<String>()));
+  L_COMPONENT_METHOD(AudioSourceComponent, "looping", 1, looping(c.local(0).get<bool>()));
+  L_COMPONENT_METHOD(AudioSourceComponent, "gain", 1, gain(c.local(0).get<float>()));
+  L_COMPONENT_METHOD(AudioSourceComponent, "rolloff", 1, rolloff(c.local(0).get<float>()));
+  L_COMPONENT_METHOD(AudioSourceComponent, "play", 0, play());
+  // AudioListener ///////////////////////////////////////////////////////////////////
+  L_COMPONENT_BIND(AudioListenerComponent, "audio-listener");
 }

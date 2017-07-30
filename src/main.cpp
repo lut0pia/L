@@ -19,6 +19,7 @@ void mainjob(void*) {
 
   Device::init();
   Network::init();
+  Audio::init();
   glEnable(GL_CULL_FACE);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   Engine::addWindowEvent<Camera>();
@@ -27,6 +28,8 @@ void mainjob(void*) {
   Engine::addUpdate<RigidBody>();
   Engine::addUpdate<SpriteAnimator>();
   Engine::addUpdate<ScriptComponent>();
+  Engine::addUpdate<AudioSourceComponent>();
+  Engine::addUpdate<AudioListenerComponent>();
   Engine::addLateUpdate<LightComponent>();
   Engine::addRender<Primitive>();
   Engine::addRender<Sprite>();
