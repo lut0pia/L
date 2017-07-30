@@ -54,6 +54,7 @@
 #include "engine/Component.h"
 #include "engine/Engine.h"
 #include "engine/Entity.h"
+#include "engine/HierarchyComponent.h"
 #include "engine/LightComponent.h"
 #include "engine/NameComponent.h"
 #include "engine/Primitive.h"

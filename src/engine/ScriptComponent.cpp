@@ -4,6 +4,7 @@
 #include "AudioSourceComponent.h"
 #include "Camera.h"
 #include "Collider.h"
+#include "HierarchyComponent.h"
 #include "LightComponent.h"
 #include "Sprite.h"
 #include "Transform.h"
@@ -159,6 +160,13 @@ void ScriptComponent::init() {
   L_COMPONENT_METHOD(Transform, "move-absolute", 1, move_absolute(c.local(0).get<Vector3f>()));
   L_COMPONENT_METHOD(Transform, "rotate", 2, rotate(c.local(0).get<Vector3f>(), c.local(1).get<float>()));
   L_COMPONENT_METHOD(Transform, "rotate-absolute", 2, rotate_absolute(c.local(0).get<Vector3f>(), c.local(1).get<float>()));
+  // Hierarchy ///////////////////////////////////////////////////////////////////
+  L_COMPONENT_BIND(HierarchyComponent, "hierarchy");
+  L_COMPONENT_METHOD(HierarchyComponent, "parent", 1, parent(c.local(0).get<Transform*>()));
+  L_COMPONENT_METHOD(HierarchyComponent, "translation", 1, translation(c.local(0).get<Vector3f>()));
+  L_COMPONENT_METHOD(HierarchyComponent, "rotation", 2, rotation(c.local(0).get<Vector3f>(), c.local(1).get<float>()));
+  L_COMPONENT_METHOD(HierarchyComponent, "rotate", 2, rotate(c.local(0).get<Vector3f>(), c.local(1).get<float>()));
+  L_COMPONENT_METHOD(HierarchyComponent, "rotate-absolute", 2, rotate_absolute(c.local(0).get<Vector3f>(), c.local(1).get<float>()));
   // Collider ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(Collider, "collider");
   L_COMPONENT_METHOD(Collider, "center", 1, center(c.local(0).get<Vector3f>()));

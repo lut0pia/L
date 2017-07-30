@@ -32,6 +32,7 @@ void mainjob(void*) {
   Engine::addUpdate<AudioSourceComponent>();
   Engine::addUpdate<AudioListenerComponent>();
   Engine::addLateUpdate<LightComponent>();
+  Engine::addLateUpdate<HierarchyComponent>();
   Engine::addRender<Primitive>();
   Engine::addRender<Sprite>();
   Engine::addRender<StaticMesh>();
