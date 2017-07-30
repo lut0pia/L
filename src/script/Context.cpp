@@ -486,6 +486,10 @@ Context::Context() : _self(ref<Table<Var, Var>>()) {
     L_ASSERT(c.localCount()==2);
     c.returnValue() = c.local(0).get<Vector3f>().cross(c.local(1).get<Vector3f>());
   });
+  _globals[Symbol("length")] = (Function)([](Context& c) {
+    L_ASSERT(c.localCount()==1);
+    c.returnValue() = c.local(0).get<Vector3f>().length();
+  });
   _globals[Symbol("distance")] = (Function)([](Context& c) {
     L_ASSERT(c.localCount()==2);
     c.returnValue() = c.local(0).get<Vector3f>().dist(c.local(1).get<Vector3f>());
