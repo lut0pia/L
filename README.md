@@ -16,6 +16,7 @@ You can either run the [premake](https://github.com/premake/premake-core/wiki/Us
 ## Dependencies
 - Premake (binaries supplied)
 - OpenGL 3.3
+- OpenAL 1.1
 - GLEW (Windows binaries supplied)
 
 ### Windows
@@ -50,3 +51,4 @@ They are not part of the engine building process as they are not needed by the e
 - JSON
 - Wavefront OBJ
 - FreeType 2
+- WAVE
