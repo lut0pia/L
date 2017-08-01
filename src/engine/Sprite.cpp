@@ -71,7 +71,7 @@ void Sprite::render(const Camera&) {
       "vec4 color = texture(tex,ftexcoords);"
       "if(alpha(color.a)) discard;"
       "ocolor = color.rgb;"
-      "onormal.xy = encodeNormal(mat3(model)*vec3(0,0,1));"
+      "onormal.xy = encodeNormal(mat3(model)*vec3(0,-1,0));"
       "}", GL_FRAGMENT_SHADER));
   if(_texture) {
     program.use();
