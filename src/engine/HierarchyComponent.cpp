@@ -4,7 +4,7 @@ using namespace L;
 
 void HierarchyComponent::lateUpdate() {
   if(_parent) {
-    _transform->position(_parent->position() + _translation);
+    _transform->position(_parent->position() + _parent->rotation().rotate(_translation));
     _transform->rotation(_parent->rotation() * _rotation);
   }
 }
