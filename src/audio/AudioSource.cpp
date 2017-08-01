@@ -1,7 +1,7 @@
 #include "AudioSource.h"
 
 #include "../macros.h"
-#include "al.h"
+#include "AL/al.h"
 
 using namespace L;
 using namespace Audio;
