@@ -21,23 +21,20 @@
 "vec4 screen, viewport;" \
 "int frame;" \
 "};"
-#define L_SHADER_LIB_ALPHA \
-"bool alpha(float a){" \
-"ivec2 frameOffset = ivec2(frame*31,frame*37);" \
-"ivec2 ditherPos = ivec2(mod(gl_FragCoord.xy+frameOffset,ditherMatrixSize.xy));" \
-"int ditherSlot = ditherPos.x+ditherPos.y*ditherMatrixSize.x;" \
-"float ditherThreshold = ditherMatrix[ditherSlot/4][ditherSlot%4];" \
-"return a<ditherThreshold;" \
-"}"
-#define L_SHADER_LIB_DEBAND \
-"vec3 deband(vec3 v){" \
-"ivec2 frame_offset = ivec2(frame*37,frame*31);" \
+#define L_SHADER_LIB \
+"float frag_noise(){" \
+"int sub_frame = frame%4;" \
+"ivec2 frame_offset = ivec2(sub_frame/2,sub_frame%2);" \
 "ivec2 dither_pos = ivec2(mod(gl_FragCoord.xy+frame_offset,ditherMatrixSize.xy));" \
 "int dither_slot = dither_pos.x+dither_pos.y*ditherMatrixSize.x;" \
-"float deband_offset = ditherMatrix[dither_slot/4][dither_slot%4]/200.f;" \
-"return v+deband_offset;" \
-"}"
-#define L_SHADER_LIB_NORMAL \
+"return ditherMatrix[dither_slot/4][dither_slot%4];" \
+"}" \
+"bool alpha(float a){" \
+"return a<frag_noise();" \
+"}" \
+"vec3 deband(vec3 v){" \
+"return v+frag_noise()*0.005f;" \
+"}" \
 "vec2 encodeNormal(vec3 n){" \
 "n = normalize((view*vec4(n,0.f)).xyz);" \
 "return (n.xy/sqrt(n.z*8.f+8.f))+.5f;" \
@@ -48,4 +45,3 @@
 "float g = sqrt(1.f-l/4.f);" \
 "return normalize((invView*vec4(e*g,1.f-l/2.f,0.f)).xyz);" \
 "}"
-#define L_SHADER_LIB L_SHADER_LIB_ALPHA L_SHADER_LIB_DEBAND L_SHADER_LIB_NORMAL
