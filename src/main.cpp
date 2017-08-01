@@ -49,7 +49,9 @@ void mainjob(void*) {
   }
 
 #ifdef L_DEBUG
-  ScriptServer server(short(Settings::get_int("server_port", 1993)));
+  ScriptServer* server(nullptr);
+  if(Settings::get_int("script_server",0))
+    server = new(Memory::allocType<ScriptServer>())ScriptServer(short(Settings::get_int("server_port", 1993)));
 #endif
 
   const uint32_t bs(32);
@@ -57,7 +59,8 @@ void mainjob(void*) {
   Engine::ditherMatrix(bayerMatrix(bs, bs, bayer), bs, bs);
   while(Window::loop()) {
 #ifdef L_DEBUG
-    server.update();
+    if(server)
+      server->update();
 #endif
     Engine::update();
   }
