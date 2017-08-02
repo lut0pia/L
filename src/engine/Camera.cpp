@@ -123,7 +123,7 @@ void Camera::postrender(){
   });
 
   _pp_buffer[0].unbind();
-  glClear(GL_COLOR_BUFFER_BIT);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // For GUI alpha
   static GL::Program final_shader(GL::Shader(
     "#version 330 core\n"
     "layout (location = 0) in vec3 vertex;"
@@ -147,8 +147,6 @@ void Camera::postrender(){
   final_shader.use();
   final_shader.uniform("color_buffer", _pp_color[0]);
   GL::quad().draw();
-
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // For GUI alpha
 }
 
 void Camera::viewport(const Interval2f& i) {
