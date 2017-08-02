@@ -10,15 +10,18 @@ PixelFont::PixelFont(int height) : _ratio(height/7.f) {
 #define MAKE_GLYPH(w,h,...)\
   {\
     Color tmp[] = {__VA_ARGS__};\
-    Bitmap bmp(tmp,w,h);\
+    out_bmp.resizeFast(w,h);\
+    for(uintptr_t i(0);i<L_COUNT_OF(tmp);i++)\
+      out_bmp[i] = tmp[i];\
     if(_ratio>1.f)\
-      bmp.scale((int)(w*_ratio),(int)(h*_ratio),Bitmap::InterpolationType::NEAREST);\
-    Glyph tmp2 = {bmp,Vector2i(0,(int)_ratio),(int)((w+1)*_ratio)};\
-    return tmp2;\
+      out_bmp.scale(int(w*_ratio),int(h*_ratio),Bitmap::InterpolationType::NEAREST);\
+    out_glyph.origin = {0,int(_ratio)};\
+    out_glyph.advance = int((w+1)*_ratio);\
+    return;\
   }
 #define MAKE_UPPER_GLYPH(...) MAKE_GLYPH(5,7,__VA_ARGS__)
 #define MAKE_LOWER_GLYPH(...) MAKE_GLYPH(3,9,__VA_ARGS__)
-Font::Glyph PixelFont::loadGlyph(uint32_t utf32) {
+void PixelFont::load_glyph(uint32_t utf32, Glyph& out_glyph, Bitmap& out_bmp) {
   switch(utf32) {
     case 'A':
       MAKE_UPPER_GLYPH(_,O,O,O,_,

@@ -9,9 +9,12 @@ const Font::Glyph& Font::glyph(uint32_t utf32) {
   Glyph* glyph;
   if(utf32<128) glyph = _ascii + utf32;
   else glyph = &_glyphs[utf32];
-  if(glyph->bmp.empty()) {
-    *glyph = loadGlyph(utf32);
-    glyph->atlasCoords = _atlas.add(glyph->bmp);
+  if(!glyph->init){
+    load_glyph(utf32, *glyph, _bmp);
+    glyph->atlasCoords = _atlas.add(_bmp);
+    glyph->size.x() = _bmp.width();
+    glyph->size.y() = _bmp.height();
+    glyph->init = true;
   }
   return *glyph;
 }
@@ -59,8 +62,8 @@ Font::TextMesh& Font::textMesh(const char* str) {
       } else { // Character
         const Glyph& g(glyph(utf32));
         const Vector4f tl(x+g.origin.x(), y+g.origin.y(), g.atlasCoords.min().x(), g.atlasCoords.min().y());
-        const Vector4f tr(tl.x()+g.bmp.width(), tl.y(), g.atlasCoords.max().x(), tl.w());
-        const Vector4f bl(tl.x(), tl.y()+g.bmp.height(), tl.z(), g.atlasCoords.max().y());
+        const Vector4f tr(tl.x()+g.size.x(), tl.y(), g.atlasCoords.max().x(), tl.w());
+        const Vector4f bl(tl.x(), tl.y()+g.size.y(), tl.z(), g.atlasCoords.max().y());
         const Vector4f br(tr.x(), bl.y(), tr.z(), bl.w());
         buffer.pushMultiple(tl, bl, br, tl, br, tr);
         x += g.advance;

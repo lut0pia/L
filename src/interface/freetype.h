@@ -32,18 +32,16 @@ namespace L {
         ftbmp = &slot->bitmap;
         _lineheight = face->size->metrics.height >> 6;
       }
-      Glyph loadGlyph(uint32_t utf32) override {
-        Glyph wtr;
+      void load_glyph(uint32_t utf32, Glyph& out_glyph, Bitmap& out_bmp) override {
         if(FT_Load_Char(face, utf32, FT_LOAD_RENDER))
           L_ERROR("Couldn't load char with freetype.");
-        wtr.advance = slot->advance.x >> 6;
-        wtr.origin.x() = slot->bitmap_left;
-        wtr.origin.y() = -slot->bitmap_top;
-        wtr.bmp.resize(ftbmp->width, ftbmp->rows);
+        out_glyph.advance = slot->advance.x >> 6;
+        out_glyph.origin.x() = slot->bitmap_left;
+        out_glyph.origin.y() = -slot->bitmap_top;
+        out_bmp.resizeFast(ftbmp->width, ftbmp->rows);
         for(int x(0); x<ftbmp->width; x++)
           for(int y(0); y<ftbmp->rows; y++)
-            wtr.bmp(x, y) = L::Color(255, 255, 255, *(ftbmp->buffer+x+(ftbmp->width*y)));
-        return wtr;
+            out_bmp(x, y) = L::Color(255, 255, 255, *(ftbmp->buffer+x+(ftbmp->width*y)));
       }
     };
   public:

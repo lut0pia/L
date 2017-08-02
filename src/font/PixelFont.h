@@ -8,6 +8,6 @@ namespace L {
     float _ratio;
   public:
     PixelFont(int = 14);
-    Glyph loadGlyph(uint32_t utf32) override;
+    void load_glyph(uint32_t utf32, Glyph& out_glyph, Bitmap& out_bmp) override;
   };
 }

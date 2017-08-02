@@ -8,12 +8,14 @@
 
 namespace L {
   class Font {
+  private:
+    Bitmap _bmp;
   protected:
     struct Glyph {
-      L::Bitmap bmp;
-      Vector2i origin;
+      Vector2i origin, size;
       int advance;
       Interval2f atlasCoords;
+      bool init = false;
     };
     struct TextMesh {
       String str;
@@ -32,7 +34,7 @@ namespace L {
     const Glyph& glyph(uint32_t utf32);
     virtual TextMesh& textMesh(const char*);
     virtual void draw(int x, int y, const char*, Vector2f anchor = Vector2f(0.f, 0.f));
-    virtual Glyph loadGlyph(uint32_t utf32) = 0;
+    virtual void load_glyph(uint32_t utf32, Glyph& out_glyph, Bitmap& out_bmp) = 0;
 
     inline int lineHeight() const { return _lineheight; }
 
