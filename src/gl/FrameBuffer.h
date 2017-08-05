@@ -9,14 +9,14 @@ namespace L {
     class FrameBuffer {
       L_NOCOPY(FrameBuffer)
     private:
-      GLuint _id,_target;
+      GLuint _id, _target;
     public:
       FrameBuffer(GLuint target);
-      FrameBuffer(GLuint target,const std::initializer_list<Texture*>& colors,Texture* depth,const GLenum* attachments,GLsizei attachmentCount);
+      FrameBuffer(GLuint target, const std::initializer_list<Texture*>& colors, Texture* depth = nullptr);
       ~FrameBuffer();
       void bind();
       void unbind();
-      void attach(GLenum attachment,const Texture&);
+      void attach(GLenum attachment, const Texture&);
       bool check();
     };
   }
