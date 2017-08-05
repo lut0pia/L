@@ -62,6 +62,7 @@
 #include "engine/RigidBody.h"
 #include "engine/ScriptComponent.h"
 #include "engine/Settings.h"
+#include "engine/SharedUniform.h"
 #include "engine/Sprite.h"
 #include "engine/SpriteAnimator.h"
 #include "engine/StaticMesh.h"
