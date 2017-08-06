@@ -54,9 +54,12 @@ void mainjob(void*) {
     server = new(Memory::allocType<ScriptServer>())ScriptServer(short(Settings::get_int("server_port", 1993)));
 #endif
 
-  const uint32_t bs(32);
-  float bayer[bs*bs];
-  Engine::ditherMatrix(bayerMatrix(bs, bs, bayer), bs, bs);
+  { // Generate and upload dither matrix
+    const uint32_t matrix_size(32);
+    float matrix[matrix_size*matrix_size];
+    Engine::ditherMatrix(void_and_cluster(matrix_size, matrix_size, matrix), matrix_size, matrix_size);
+  }
+
   while(Window::loop()) {
 #ifdef L_DEBUG
     if(server)
