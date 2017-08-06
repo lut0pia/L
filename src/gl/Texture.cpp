@@ -29,6 +29,8 @@ void Texture::load(GLsizei width,GLsizei height,const void* data,bool mipmaps) {
   parameter(GL_TEXTURE_MAG_FILTER,GL_LINEAR);
   parameter(GL_TEXTURE_MIN_FILTER,(mipmaps) ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
   image2D(0,GL_RGBA8,width,height,0,GL_BGRA,GL_UNSIGNED_BYTE,data);
+  if(mipmaps)
+    glGenerateTextureMipmap(_id);
 }
 void Texture::image2D(GLint level,GLint internalformat,GLsizei width,GLsizei height,GLint border,GLenum format,GLenum type,const void *pixels){
   _width = width;
