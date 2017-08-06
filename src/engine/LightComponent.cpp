@@ -105,7 +105,7 @@ GL::Program& LightComponent::program() {
       "vec4 position_p = invViewProj * vec4(ftexcoords*2.f-1.f,depth*2.f-1.f,1.f);"
       "vec3 position = position_p.xyz/position_p.w;"
       "vec3 frag_to_light = (l_pos-position);"
-      "vec3 to_light_dir = (l_type==0) ? l_dir : normalize(frag_to_light);"
+      "vec3 to_light_dir = (l_type==0) ? -l_dir : normalize(frag_to_light);"
       "vec3 reflect_dir = reflect(-to_light_dir, normal);"
       "vec3 view_dir = normalize(eye.xyz - position);"
       "float dist = length(frag_to_light);"
