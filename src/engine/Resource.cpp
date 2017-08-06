@@ -22,7 +22,7 @@ const Ref<GL::Texture>& Resource::texture(const char* fp) {
   const uint32_t h(hash(fp));
   if(auto found = _textures.find(h)) return *found;
   else if(auto bmp = Interface<Bitmap>::fromFile(fp))
-    return _textures[h] = ref<GL::Texture>(*bmp);
+    return _textures[h] = ref<GL::Texture>(*bmp, true);
   else return missing;
 }
 const Ref<GL::Mesh>& Resource::mesh(const char* fp) {
