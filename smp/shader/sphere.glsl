@@ -32,14 +32,17 @@ void main() {
 }
 
 #stage fragment
-layout(location = 0) out vec3 ocolor;
-layout(location = 1) out vec3 onormal;
+layout(location = 0) out vec4 ocolor;
+layout(location = 1) out vec4 onormal;
 uniform vec4 color;
 in vec3 fnormal;
 
 void main() {
   if(alpha(color.a))
     discard;
-  ocolor = color.rgb;
+  ocolor.rgb = linearize(color.rgb);
+  ocolor.a = 0.f; /* Metalness */
   onormal.xy = encodeNormal(fnormal);
+  onormal.z = 0.8f; /* Roughness */
+  onormal.w = 0.f; /* Emission */
 }

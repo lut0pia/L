@@ -1,6 +1,0 @@
-{
-  'program "staticmesh.glsl"
-  'textures {
-    "tex" "smartphone.png"
-  }
-}

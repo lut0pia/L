@@ -137,14 +137,17 @@ Program& GL::baseProgram() {
   static Program program(Shader(L_VERTEX_SHADER,GL_VERTEX_SHADER),Shader(
     "#version 330 core\n"
     L_SHAREDUNIFORM
-    "layout(location = 0) out vec3 ocolor;"
-    "layout(location = 1) out vec3 onormal;"
+    "layout(location = 0) out vec4 ocolor;"
+    "layout(location = 1) out vec4 onormal;"
     "smooth in vec4 position;"
     "void main(){"
     "vec3 normal = cross(dFdx(position.xyz),dFdy(position.xyz)).xyz;"
     "if(isnan(normal.x) || length(normal)<=0.f) normal = eye.xyz-position.xyz;"
+    "ocolor.rgb = vec3(1,1,1);"
+    "ocolor.a = 0.f; /* Metalness */"
     "onormal.xy = encodeNormal(normal);"
-    "ocolor = vec3(1,1,1);"
+    "onormal.z = 0.5f; /* Roughness */"
+    "onormal.w = 0.f; /* Emission */"
     "}",GL_FRAGMENT_SHADER));
   return program;
 }
@@ -153,16 +156,19 @@ Program& GL::baseColorProgram() {
     "#version 330 core\n"
     L_SHAREDUNIFORM
     L_SHADER_LIB
-    "layout(location = 0) out vec3 ocolor;"
-    "layout(location = 1) out vec3 onormal;"
+    "layout(location = 0) out vec4 ocolor;"
+    "layout(location = 1) out vec4 onormal;"
     "uniform vec4 color;"
     "smooth in vec4 position;"
     "void main(){"
     "if(alpha(color.a)) discard;"
     "vec3 normal = cross(dFdx(position.xyz),dFdy(position.xyz)).xyz;"
     "if(isnan(normal.x) || length(normal)<=0.f) normal = eye.xyz-position.xyz;"
+    "ocolor.rgb = linearize(color.rgb);"
+    "ocolor.a = 0.f; /* Metalness */"
     "onormal.xy = encodeNormal(normal);"
-    "ocolor = color.rgb;"
+    "onormal.z = 0.8f; /* Roughness */"
+    "onormal.w = 0.f; /* Emission */"
     "}",GL_FRAGMENT_SHADER));
   return program;
 }

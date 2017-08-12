@@ -47,16 +47,19 @@ void Sprite::render(const Camera&) {
       "#version 330 core\n"
       L_SHAREDUNIFORM
       L_SHADER_LIB
-      "layout(location = 0) out vec3 ocolor;"
-      "layout(location = 1) out vec3 onormal;"
+      "layout(location = 0) out vec4 ocolor;"
+      "layout(location = 1) out vec4 onormal;"
       "uniform sampler2D tex;"
       "in vec2 ftexcoords;"
       "in vec3 fnormal;"
       "void main(){"
       "vec4 color = texture(tex,ftexcoords);"
       "if(alpha(color.a)) discard;"
-      "ocolor = color.rgb;"
+      "ocolor.rgb = linearize(color.rgb);"
+      "ocolor.a = 0.f;" /* Metalness */
       "onormal.xy = encodeNormal(fnormal);"
+      "onormal.z = 1.f;" /* Roughness */
+      "onormal.w = 0.f;" /* Emission */
       "}", GL_FRAGMENT_SHADER));
   if(_texture) {
     program.use();

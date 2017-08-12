@@ -1,0 +1,7 @@
+{
+  'program "shader/staticmesh.glsl"
+  'textures {
+    "tex" "texture/bush.png"
+    "mat_tex" "texture/default_mat.png"
+  }
+}

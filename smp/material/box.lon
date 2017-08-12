@@ -1,5 +1,5 @@
 {
-  'program "box.glsl"
+  'program "shader/box.glsl"
   'vertex_count 36
   'primitive_mode 'triangles
   'vectors {

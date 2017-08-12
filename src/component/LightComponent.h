@@ -11,6 +11,7 @@ namespace L {
     L_COMPONENT(LightComponent)
       L_COMPONENT_HAS_LATE_UPDATE(LightComponent)
   protected:
+    static Resource<GL::Program> _program;
     Transform* _transform;
     Vector3f _position, _color, _direction, _relative_dir;
     float _intensity, _radius, _inner_angle, _outer_angle;
@@ -30,6 +31,7 @@ namespace L {
     void spot(const Color& color, const Vector3f& direction, float intensity = 1.f, float radius = 1.f, float inner_angle = .5f, float outer_angle = 0.f);
 
     void render();
-    static GL::Program& program();
+    inline static void program(const char* path) { _program = Resource<GL::Program>::get(path); }
+    inline static Resource<GL::Program>& program() { return _program; }
   };
 }

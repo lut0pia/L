@@ -1,6 +1,6 @@
 (local vertex_count (* 8 3 4))
 {
-  'program "sphere.glsl"
+  'program "shader/sphere.glsl"
   'vertex_count vertex_count
   'primitive_mode 'triangles
   'vectors {

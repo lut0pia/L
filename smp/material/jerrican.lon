@@ -1,0 +1,7 @@
+{
+  'program "shader/staticmesh.glsl"
+  'textures {
+    "tex" "texture/jerrican.png"
+    "mat_tex" "texture/jerrican_mat.png"
+  }
+}

@@ -75,7 +75,7 @@ void Camera::script_registration() {
 void Camera::resize_buffers() {
   const Vector2f viewport_size(_viewport.size());
   const GLsizei viewport_width(Window::width()*viewport_size.x()), viewport_height(Window::height()*viewport_size.y());
-  _gcolor.image2D(0, GL_RGBA, viewport_width, viewport_height, 0, GL_RGBA, GL_UNSIGNED_BYTE);
+  _gcolor.image2D(0, GL_RGBA16F, viewport_width, viewport_height, 0, GL_RGBA, GL_FLOAT);
   _gnormal.image2D(0, GL_RGBA16F, viewport_width, viewport_height, 0, GL_RGBA, GL_FLOAT);
   _gdepth.image2D(0, GL_DEPTH_COMPONENT24, viewport_width, viewport_height, 0, GL_DEPTH_COMPONENT, GL_FLOAT);
   _lcolor.image2D(0, GL_RGB16F, viewport_width, viewport_height, 0, GL_RGB, GL_FLOAT);
@@ -117,15 +117,17 @@ void Camera::postrender(){
   glEnable(GL_BLEND);
   glBlendFunc(GL_ONE, GL_ONE); // Additive blending
 
-  GL::Program& light_program(LightComponent::program());
-  light_program.use();
-  light_program.uniform("color_buffer", _gcolor, GL_TEXTURE0);
-  light_program.uniform("normal_buffer", _gnormal, GL_TEXTURE1);
-  light_program.uniform("depth_buffer", _gdepth, GL_TEXTURE2);
+  Resource<GL::Program>& light_program(LightComponent::program());
+  if(light_program) {
+    light_program->use();
+    light_program->uniform("color_buffer", _gcolor, GL_TEXTURE0);
+    light_program->uniform("normal_buffer", _gnormal, GL_TEXTURE1);
+    light_program->uniform("depth_buffer", _gdepth, GL_TEXTURE2);
 
-  ComponentPool<LightComponent>::iterate([](LightComponent& light) {
-    light.render();
-  });
+    ComponentPool<LightComponent>::iterate([](LightComponent& light) {
+      light.render();
+    });
+  }
 
   _lbuffer.unbind();
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // For GUI alpha
@@ -147,6 +149,7 @@ void Camera::postrender(){
       "uniform sampler2D color_buffer;"
       "void main(){"
       "vec3 color = texture(color_buffer,ftexcoords).rgb;"
+      "color = pow(color, vec3(1.f/2.2f));" // Gamma correction
       "fragcolor = vec4(deband(color),1.f);"
       "}", GL_FRAGMENT_SHADER));
 

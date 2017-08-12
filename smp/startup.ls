@@ -14,18 +14,18 @@
 	; Add collider
 	(if (< (rand) 0.0)
 		(do
-			(entity'require-primitive || 'material || 'parent | "sphere.lon")
+			(entity'require-primitive || 'material || 'parent | "material/sphere.lon")
 			(entity'require-collider || 'sphere | 0.5)
 		)
 		(do
-			(entity'require-primitive || 'material || 'parent | "box.lon")
+			(entity'require-primitive || 'material || 'parent | "material/box.lon")
 			(entity'require-collider || 'box | !(vec 0.5 0.5 0.5))
 		)
 	)
 	(entity'require-primitive || 'scale | !(vec 0.5 0.5 0.5))
 	(local color (rand-color))
 	(entity'require-primitive || 'material ||  'color | 'color color)
-	(entity'require-light || 'point | color 1 16)
+	(entity'require-light || 'point | color 5 16)
 )))
 
 (set make-terrain (fun (do
@@ -44,7 +44,7 @@
 	(entity'require-transform || 'move | position)
 	(entity'require-collider || 'box | size)
 	(entity'require-primitive || 'scale | size)
-	(entity'require-primitive || 'material || 'parent | "box.lon")
+	(entity'require-primitive || 'material || 'parent | "material/box.lon")
 )))
 (set make-mesh (fun (mesh mat pos) (do
 	(local entity (entity-make))
@@ -54,20 +54,22 @@
 	(transform'move | pos)
 	(staticmesh'mesh | mesh)
 	(staticmesh'material | mat)
+	entity
 )))
 
 (set scene-default (fun (do
 	(engine-gravity (vec 0 0 -9.8))
+	(light-program "shader/light.glsl")
 	;(engine-gravity (vec 0 0 0))
 	;(engine-timescale 0.1)
 	(entity-make | 'add-script || 'load | "camera.ls")
 	(entity-make | 'add-script || 'load | "sink.ls")
-	(entity-make | 'add-light || 'directional | (color) (vec -1 2 -3) 1)
+	(entity-make | 'add-light || 'directional | (color) (vec -1 2 -3) 2)
 	(make-terrain)
 
-	(make-mesh "smartphone.obj" "smartphone.lon" (vec -16 -20 5))
-	(make-mesh "jerrican.obj" "jerrican.lon" (vec 4 -16 5))
-	(make-mesh "bush.obj" "bush.lon" (vec -16 -28 0))
+	(make-mesh "mesh/smartphone.obj" "material/smartphone.lon" (vec -16 -20 5))
+	(make-mesh "mesh/jerrican.obj" "material/jerrican.lon" (vec 10 -16 5))
+	(make-mesh "mesh/bush.obj" "material/bush.lon" (vec -16 -28 0))
 	(set truc (entity-copy truc))
 	(truc'require-transform || 'move | (vec 30 0 0))
 
@@ -77,7 +79,7 @@
 	(local sprite (entity-make))
 	(sprite'require-transform || 'move | (vec -9.4 0 5))
 	(sprite'require-transform || 'rotate | (vec 0 0 1) 1.57)
-	(sprite'require-sprite || 'texture | "bush.png")
+	(sprite'require-sprite || 'texture | "texture/bush.png")
 	(sprite'require-sprite || 'uv | 0 0 1 1)
 	(sprite'require-sprite || 'vertex | -5 -5 5 5)
 
