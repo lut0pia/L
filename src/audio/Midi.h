@@ -1,37 +1,38 @@
 #pragma once
 
-/*  Windows libraries :
-**      - midiio
-**      - winmm
-*/
-
 #include "../types.h"
-
-#if defined L_WINDOWS
-# include <windows.h>
-# include <mmsystem.h>
-#endif
-
-#define L_ToMidiNote(n) ((n)+24) // Shift the note to the right midi equivalent
 
 namespace L {
   namespace Audio {
-    class Midi {
-      private:
-#if defined L_WINDOWS
-        static HMIDIOUT device;
-#elif defined L_UNIX
-        static int fd;
-#endif
-
-        static void send(byte msgData[4]);
-
-      public:
-        static void sInstrument(byte channel, byte instrument);
-        static void playNote(byte channel, byte noteNumber, byte velocity=127);
-        static void stopNote(byte channel, byte noteNumber);
-        static void stopAll(byte channel);
-        static void stopAll();
+    union MidiEvent {
+      enum : uint8_t {
+        NoteOff = 0x8,
+        NoteOn = 0x9,
+        ControllerChange = 0xb,
+        ProgramChange = 0xc,
+      };
+      uint32_t message;
+      uint8_t array[4];
+      struct {
+        uint8_t channel : 4;
+        uint8_t type : 4;
+        union {
+          uint8_t note;
+          uint8_t instrument;
+        };
+        union {
+          uint8_t velocity;
+          uint8_t value;
+        };
+      };
+    };
+    namespace Midi {
+      void send(const MidiEvent&);
+      void set_instrument(uint8_t channel, uint8_t instrument);
+      void play_note(uint8_t channel, uint8_t note, uint8_t velocity = 127);
+      void stop_note(uint8_t channel, uint8_t note);
+      void stop_all(uint8_t channel);
+      void stop_all();
     };
   }
 }

@@ -60,4 +60,5 @@ They are not part of the engine building process as they are not needed by the e
 - JSON
 - Wavefront OBJ
 - FreeType 2
+- Midi
 - WAVE

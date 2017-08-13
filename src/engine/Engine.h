@@ -35,6 +35,7 @@ namespace L {
     static uint32_t _frame;
   public:
     static inline float real_delta_seconds() { return _real_delta_seconds; }
+    static inline const Time& delta_time() { return _deltaTime; }
     static inline float deltaSeconds() { return _deltaSeconds; }
     static inline float subDeltaSeconds() { return _subDeltaSeconds; }
     static inline float timescale() { return _timescale; }

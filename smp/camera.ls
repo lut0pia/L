@@ -42,6 +42,11 @@
 			(transform'rotate | (vec 0 0 1) (* (e'x) -0.005))
 			(transform'rotate | (vec 1 0 0) (* (e'y) -0.005))
 		)
+		'ButtonDown (switch (e'button)
+			'Space (if (music-entity'require-midi-source || 'is-playing |)
+				(music-entity'require-midi-source || 'stop |)
+				(music-entity'require-midi-source || 'play |))
+		)
 	)
 )))
 (set (self'shoot) (fun (do

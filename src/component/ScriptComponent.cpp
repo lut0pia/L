@@ -9,6 +9,7 @@
 #include "Sprite.h"
 #include "Transform.h"
 #include "StaticMesh.h"
+#include "MidiSourceComponent.h"
 #include "NameComponent.h"
 #include "Primitive.h"
 #include "../text/String.h"
@@ -240,4 +241,11 @@ void ScriptComponent::init() {
   L_COMPONENT_METHOD(AudioSourceComponent, "play", 0, play());
   // AudioListener ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(AudioListenerComponent, "audio-listener");
+  // MidiSource ///////////////////////////////////////////////////////////////////
+  L_COMPONENT_BIND(MidiSourceComponent, "midi-source");
+  L_COMPONENT_METHOD(MidiSourceComponent, "sequence", 1, sequence(c.local(0).get<String>()));
+  L_COMPONENT_METHOD(MidiSourceComponent, "looping", 1, looping(c.local(0).get<bool>()));
+  L_COMPONENT_METHOD(MidiSourceComponent, "play", 0, play());
+  L_COMPONENT_METHOD(MidiSourceComponent, "stop", 0, stop());
+  L_COMPONENT_RETURN_METHOD(MidiSourceComponent, "is-playing", 0, playing());
 }

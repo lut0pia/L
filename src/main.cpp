@@ -2,6 +2,7 @@
 #include <L/src/interface/glsl.h>
 #include <L/src/interface/ls.h>
 #include <L/src/interface/lon.h>
+#include <L/src/interface/midi.h>
 #include <L/src/interface/stb_image.h>
 #include <L/src/interface/stb_truetype.h>
 #include <L/src/interface/obj.h>
@@ -29,6 +30,7 @@ void mainjob(void*) {
   Engine::addUpdate<ScriptComponent>();
   Engine::addUpdate<AudioSourceComponent>();
   Engine::addUpdate<AudioListenerComponent>();
+  Engine::addUpdate<MidiSourceComponent>();
   Engine::addLateUpdate<LightComponent>();
   Engine::addLateUpdate<HierarchyComponent>();
   Engine::addRender<Primitive>();

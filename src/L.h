@@ -15,6 +15,7 @@
 #include "audio/AudioBuffer.h"
 #include "audio/AudioSource.h"
 #include "audio/Midi.h"
+#include "audio/MidiSequence.h"
 
 // Components
 #include "component/AudioListenerComponent.h"
@@ -25,6 +26,7 @@
 #include "component/Entity.h"
 #include "component/HierarchyComponent.h"
 #include "component/LightComponent.h"
+#include "component/MidiSourceComponent.h"
 #include "component/NameComponent.h"
 #include "component/Primitive.h"
 #include "component/RigidBody.h"
