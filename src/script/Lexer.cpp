@@ -28,7 +28,7 @@ bool Lexer::next_token() {
   _literal = false;
 
   while(true) {
-    if(w==_buffer) { // Before anything relevant
+    if(w==_buffer && !_literal) { // Before anything relevant
       char c(get());
       if(_stream.end()) { // End of stream
         _eos = true;
