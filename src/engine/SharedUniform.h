@@ -22,6 +22,7 @@
 "int frame;" \
 "};"
 #define L_SHADER_LIB \
+"const float PI = 3.14159265359f;" \
 "float frag_noise(){" \
 "int sub_frame = frame%4;" \
 "ivec2 frame_offset = ivec2(sub_frame/2,sub_frame%2);" \
