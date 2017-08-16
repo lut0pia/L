@@ -56,7 +56,7 @@ namespace L {
       _p = (T*)((byte*)Memory::alloc(sizeof(T)+offset)+offset);
       counter() = 1;
       size() = sizeof(T);
-      new(_p)T(args...);
+      ::new(_p)T(args...);
       return **this;
     }
     template <class R> inline bool operator==(const Ref<R>& other) { return _p==other._p; }
