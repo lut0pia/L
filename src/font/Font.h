@@ -1,8 +1,6 @@
 #pragma once
 
-#include "../containers/Ref.h"
 #include "../containers/Table.h"
-#include "FontLoader.h"
 #include "../image/Bitmap.h"
 #include "../gl/Atlas.h"
 #include "../math/Vector.h"
@@ -13,6 +11,12 @@ namespace L {
   private:
     Bitmap _bmp;
   protected:
+    struct Glyph {
+      Vector2i origin, size;
+      int advance;
+      Interval2f atlasCoords;
+      bool init = false;
+    };
     struct TextMesh {
       String str;
       GL::Mesh mesh;
@@ -23,14 +27,16 @@ namespace L {
     Glyph _ascii[128];
     Table<uint32_t, Glyph> _glyphs;
     Table<uint32_t, TextMesh> _textMeshes;
-    Ref<FontLoader> _loader;
-    int _line_height;
+    int _lineheight;
 
   public:
-    Font(const Ref<FontLoader>&);
+    virtual ~Font() {}
     const Glyph& glyph(uint32_t utf32);
-    TextMesh& textMesh(const char*);
-    void draw(int x, int y, const char*, Vector2f anchor = Vector2f(0.f, 0.f));
+    virtual TextMesh& textMesh(const char*);
+    virtual void draw(int x, int y, const char*, Vector2f anchor = Vector2f(0.f, 0.f));
+    virtual void load_glyph(uint32_t utf32, Glyph& out_glyph, Bitmap& out_bmp) = 0;
+
+    inline int lineHeight() const { return _lineheight; }
 
     void updateTextMeshes();
   };

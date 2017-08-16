@@ -5,16 +5,12 @@
 
 using namespace L;
 
-Font::Font(const Ref<FontLoader>& loader) : _loader(loader) {
-  L_ASSERT(_loader);
-  _line_height = loader->line_height();
-}
-const Glyph& Font::glyph(uint32_t utf32) {
+const Font::Glyph& Font::glyph(uint32_t utf32) {
   Glyph* glyph;
   if(utf32<128) glyph = _ascii + utf32;
   else glyph = &_glyphs[utf32];
-  if(!glyph->init) {
-    _loader->load_glyph(utf32, *glyph, _bmp);
+  if(!glyph->init){
+    load_glyph(utf32, *glyph, _bmp);
     glyph->atlasCoords = _atlas.add(_bmp);
     glyph->size.x() = _bmp.width();
     glyph->size.y() = _bmp.height();
@@ -55,14 +51,14 @@ Font::TextMesh& Font::textMesh(const char* str) {
     wtr.str = str;
     Array<Vector4f> buffer;
     buffer.growTo(strlen(str)*6);
-    wtr.dimensions.y() = _line_height;
+    wtr.dimensions.y() = _lineheight;
     int x(0), y(0);
     while(*str) {
       const uint32_t utf32(ReadUTF8(str));
       if(utf32=='\n') { // End line
         x = 0;
-        y += _line_height;
-        wtr.dimensions.y() = max(wtr.dimensions.y(), y+_line_height);
+        y += _lineheight;
+        wtr.dimensions.y() = max(wtr.dimensions.y(), y+_lineheight);
       } else { // Character
         const Glyph& g(glyph(utf32));
         const Vector4f tl(x+g.origin.x(), y+g.origin.y(), g.atlasCoords.min().x(), g.atlasCoords.min().y());

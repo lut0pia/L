@@ -3,7 +3,7 @@
 using namespace L;
 
 PixelFont::PixelFont(int height) : _ratio(height/7.f) {
-  _line_height = (height*11)/7;
+  _lineheight = (height*11)/7;
 }
 #define O Color::white
 #define _ Color::transparent

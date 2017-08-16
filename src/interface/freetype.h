@@ -15,12 +15,11 @@ namespace L {
   private:
     FT_Library library;
 
-    class FTFont : public FontLoader {
+    class FTFont : public Font {
     private:
       FT_Face face;
       FT_GlyphSlot slot;
       FT_Bitmap* ftbmp;
-      int _line_height;
     public:
       FTFont(FT_Library library, const char* filePath, uint32_t pixels) {
         if(FT_New_Face(library, filePath, 0, &face))
@@ -31,7 +30,7 @@ namespace L {
           L_ERROR("Couldn't find the unicode charmap with FreeType.");
         slot = face->glyph;
         ftbmp = &slot->bitmap;
-        _line_height = face->size->metrics.height >> 6;
+        _lineheight = face->size->metrics.height >> 6;
       }
       void load_glyph(uint32_t utf32, Glyph& out_glyph, Bitmap& out_bmp) override {
         if(FT_Load_Char(face, utf32, FT_LOAD_RENDER))
@@ -44,7 +43,6 @@ namespace L {
           for(int y(0); y<ftbmp->rows; y++)
             out_bmp(x, y) = L::Color(255, 255, 255, *(ftbmp->buffer+x+(ftbmp->width*y)));
       }
-      int line_height() override { return _line_height; }
     };
   public:
     FreeType() : Interface<Font>("ttf") {
@@ -53,7 +51,7 @@ namespace L {
         L_ERROR("Couldn't initialize FreeType.");
     }
     Ref<Font> from(const File& file) override {
-      return ref<Font>(ref<FTFont>(library, file.path(), 16));
+      return ref<FTFont>(library, file.path(), 16);
     }
   };
   FreeType FreeType::instance;
