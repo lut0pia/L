@@ -4,6 +4,7 @@
 #include "Transform.h"
 #include "Resource.h"
 #include "../gl/Mesh.h"
+#include "../gl/Program.h"
 
 namespace L {
   class LightComponent : public Component {

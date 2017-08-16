@@ -63,7 +63,6 @@ void Engine::update() {
     lateUpdate();
 
   Entity::flush_destroy_queue();
-  Resource::update();
 
   ComponentPool<Camera>::iterate([](Camera& camera) {
     camera.prerender();

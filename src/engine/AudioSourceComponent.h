@@ -11,7 +11,7 @@ namespace L {
   protected:
     Audio::Source _source;
     Transform* _transform;
-    String _sound_path;
+    Resource<Audio::Buffer> _sound;
   public:
     void update();
 
@@ -19,7 +19,7 @@ namespace L {
     virtual Map<Symbol, Var> pack() const override;
     virtual void unpack(const Map<Symbol, Var>&) override;
 
-    inline void sound(const char* filepath) { _sound_path = filepath; _source.stop(); _source.buffer(*Resource::sound(filepath)); }
+    inline void sound(const char* filepath) { _sound = Resource<Audio::Buffer>::get(filepath); _source.stop(); _source.buffer(*_sound); }
     inline void looping(bool should_loop) { _source.looping(should_loop); }
     inline void gain(float g) { _source.gain(g); }
     inline void rolloff(float r) { _source.rolloff(r); }

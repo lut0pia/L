@@ -11,8 +11,7 @@ namespace L {
     L_COMPONENT(Sprite)
   private:
     Transform* _transform;
-    Ref<GL::Texture> _texture;
-    String _texture_path;
+    Resource<GL::Texture> _texture;
     GL::Mesh _mesh;
     Interval2f _vertex, _uv;
   public:
@@ -26,7 +25,7 @@ namespace L {
     virtual Map<Symbol, Var> pack() const override;
     virtual void unpack(const Map<Symbol, Var>&) override;
 
-    inline void texture(const char* filename) { _texture_path = filename; _texture = Resource::texture(filename); }
+    inline void texture(const char* filename) { _texture = Resource<GL::Texture>::get(filename); }
     void vertex(const Interval2f& v);
     void uv(const Interval2f& u);
     void update_mesh();

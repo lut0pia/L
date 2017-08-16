@@ -8,15 +8,13 @@ using namespace L;
 
 Map<Symbol, Var> Sprite::pack() const {
   Map<Symbol, Var> data;
-  data["texture_path"] = _texture_path;
+  data["texture"] = _texture;
   data["vertex"] = _vertex;
   data["uv"] = _uv;
   return data;
 }
 void Sprite::unpack(const Map<Symbol, Var>& data) {
-  String tmp;
-  unpack_item(data, "texture_path", tmp);
-  if(!tmp.empty()) texture(tmp);
+  unpack_item(data, "texture", _texture);
   unpack_item(data, "vertex", _vertex);
   unpack_item(data, "uv", _uv);
   update_mesh();

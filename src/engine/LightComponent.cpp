@@ -1,5 +1,6 @@
 #include "LightComponent.h"
 
+#include "../gl/GL.h"
 #include "SharedUniform.h"
 
 using namespace L;

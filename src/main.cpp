@@ -45,7 +45,7 @@ void mainjob(void*) {
   {
     ScriptComponent::init();
     Script::Context startupContext;
-    startupContext.executeInside(Array<Var>{Resource::script("startup.ls")});
+    startupContext.executeInside(Array<Var>{Resource<Script::CodeFunction>::get("startup.ls").ref()});
   }
 
 #ifdef L_DEBUG

@@ -12,6 +12,7 @@
 #include "NameComponent.h"
 #include "Primitive.h"
 #include "../text/String.h"
+#include "../font/Font.h"
 
 using namespace L;
 using namespace Script;
@@ -41,7 +42,7 @@ void ScriptComponent::load(const char* filename) {
 void ScriptComponent::start() {
   _started = true;
   static const Symbol start_symbol("start");
-  _context.executeInside(Array<Var>{Resource::script(_script_path)});
+  _context.executeInside(Array<Var>{Resource<Script::CodeFunction>::get(_script_path).ref()});
   _context.tryExecuteMethod(start_symbol);
 }
 void ScriptComponent::update() {
@@ -118,7 +119,7 @@ void ScriptComponent::init() {
   });
   // Gui ///////////////////////////////////////////////////////////////////
   L_FUNCTION("draw-text", {
-    Resource::font()->draw(c.local(0).get<int>(),c.local(1).get<int>(),c.local(2).get<String>());
+    Resource<Font>::get("")->draw(c.local(0).get<int>(),c.local(1).get<int>(),c.local(2).get<String>());
   });
   // Entity ///////////////////////////////////////////////////////////////////
   Context::global(Symbol("entity-make")) = (Function)([](Context& c) {

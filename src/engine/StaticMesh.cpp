@@ -8,17 +8,14 @@ using namespace L;
 
 Map<Symbol, Var> StaticMesh::pack() const {
   Map<Symbol, Var> data;
-  data["mesh_path"] = _mesh_path;
-  data["texture_path"] = _texture_path;
+  data["mesh"] = _mesh;
+  data["texture"] = _texture;
   data["scale"] = _scale;
   return data;
 }
 void StaticMesh::unpack(const Map<Symbol, Var>& data) {
-  String tmp;
-  unpack_item(data, "mesh_path", tmp);
-  if(!tmp.empty()) mesh(tmp);
-  unpack_item(data, "texture_path", tmp);
-  if(!tmp.empty()) texture(tmp);
+  unpack_item(data, "mesh", _mesh);
+  unpack_item(data, "texture", _texture);
   unpack_item(data, "scale", _scale);
 }
 
@@ -54,7 +51,7 @@ void StaticMesh::render(const Camera& c) {
       "}", GL_FRAGMENT_SHADER));
   if(_mesh) {
     program.use();
-    program.uniform("tex", _texture.null() ? GL::whiteTexture() : *_texture);
+    program.uniform("tex", _texture ? *_texture : GL::whiteTexture());
     program.uniform("model", SQTToMat(_transform->rotation(), _transform->position(), _scale));
     _mesh->draw();
   }
