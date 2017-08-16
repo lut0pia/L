@@ -40,7 +40,7 @@ const Ref<Script::CodeFunction>& Resource::script(const char* fp) {
 }
 const Ref<Font>& Resource::font(const char* fp) {
   static const uint32_t defaultHash(hash("default"));
-  static Ref<Font> pixel(ref<PixelFont>());
+  static Ref<Font> pixel(ref<Font>(ref<PixelFont>()));
   const uint32_t h(hash(fp));
   if(h==defaultHash) return pixel;
   else if(auto found = _fonts.find(h)) return *found;
