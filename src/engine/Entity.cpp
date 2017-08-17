@@ -13,7 +13,7 @@ void Entity::set_component_entity(Component* c) {
   c->_entity = this;
 }
 
-Entity::Entity(const Entity* other) {
+Entity::Entity(const Entity* other) : Entity() {
   for(auto p : other->_components){
     p.value() = (Component*)p.key()->cpy(p.value());
     p.value()->entity(this);
