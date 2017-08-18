@@ -5,10 +5,10 @@
 #include <stb/stb_image.h>
 
 namespace L {
-  class STB : public Interface<Bitmap> {
-    static STB instance;
+  class STB_image : public Interface<Bitmap> {
+    static STB_image instance;
   public:
-    STB() : Interface("png") {
+    STB_image() : Interface("png") {
       subscribe("bmp");
       subscribe("jpeg");
       subscribe("jpg");
@@ -39,5 +39,5 @@ namespace L {
       }
     }
   };
-  STB STB::instance;
+  STB_image STB_image::instance;
 }

@@ -1,5 +1,5 @@
 #include <L/src/L.h>
-#include <L/src/interface/stb.h>
+#include <L/src/interface/stb_image.h>
 #include <L/src/interface/obj.h>
 #include <L/src/interface/wav.h>
 
