@@ -18,4 +18,10 @@ namespace L {
     inline size_t read(void* data, size_t size) override { return 0; }
     const String& string() const { return _string; }
   };
+  template <class T>
+  String to_string(const T& v) {
+    StringStream ss;
+    ss << v;
+    return ss.string();
+  }
 }
