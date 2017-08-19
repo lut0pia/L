@@ -124,6 +124,7 @@
 #include "stream/NetStream.h"
 #include "stream/serial.h"
 #include "stream/Stream.h"
+#include "stream/StringStream.h"
 
 // Filesystem, Window
 #include "system/Device.h"
