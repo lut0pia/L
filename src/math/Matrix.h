@@ -83,7 +83,7 @@ namespace L {
       return wtr;
     }
     Matrix<l-1,c-1,T> sub(int x,int y) const { // Returns matrix without column x and line y
-      Matrix <l-1,c-1,T> wtr;
+      Matrix<l-1,c-1,T> wtr;
       int a,b,i,j;
       for(j = b = 0; j<l; j++)
         if(j!=y) {

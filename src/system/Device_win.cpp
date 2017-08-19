@@ -89,7 +89,7 @@ void Device::processReport(void* id,const byte* data,size_t size){
         const USAGE buttonUsagePage(9);
         USAGE usage[32];
         ULONG usageLength(ULONG(sizeof(usage)/sizeof(USAGE)));
-        if(HidP_GetUsages(HidP_Input,buttonUsagePage,0,usage,&usageLength,deviceSystem->_preparsed,(PCHAR)data,size) != HIDP_STATUS_SUCCESS)
+        if(HidP_GetUsages(HidP_Input,buttonUsagePage,0,usage,&usageLength,deviceSystem->_preparsed,PCHAR(data),ULONG(size)) != HIDP_STATUS_SUCCESS)
           L_ERROR("Could not get controller usages.");
 
         uint32_t newButtons(0);

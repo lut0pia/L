@@ -90,7 +90,7 @@ bool Context::read(Var& v, Lexer& lexer) {
     if(!read(v, lexer))
       return false;
     if(!v.is<Symbol>()) {
-      L_WARNINGF("Expected symbol after ', got %s at line %d", v.type()->name, lexer.line());
+      L_WARNINGF("Expected symbol after ', got %s at line %d", (const char*)v.type()->name, lexer.line());
       return false;
     }
     const Symbol sym(v.as<Symbol>());
@@ -521,7 +521,7 @@ Context::Context() : _self(ref<Table<Var, Var>>()) {
   _globals[Symbol("color")] = (Function)([](Context& c) {
     Color& color(c.returnValue().make<Color>() = Color::white);
     const uint32_t params(min(c.localCount(), 4u));
-    for(size_t i(0); i<params; i++) {
+    for(uint32_t i(0); i<params; i++) {
       const byte b(c.local(i).is<float>() ? (c.local(i).as<float>()*255) : c.local(i).get<int>());
       switch(i) {
         case 0: color.r() = b; break;

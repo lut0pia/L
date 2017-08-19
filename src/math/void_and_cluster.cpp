@@ -25,7 +25,7 @@ float* gaussian_kernel() {
       kernel[i][j] = lin*pow(E<float>(), -(sqr(i-k_width_h)+sqr(j-k_height_h))/o2);
   return &kernel[0][0];
 }
-void void_or_cluster(Cell* matrix, uint32_t width, uint32_t height, bool target, uint32_t& rx, uint32_t& ry) {
+void void_or_cluster(Cell* matrix, uint32_t width, uint32_t height, uint32_t target, uint32_t& rx, uint32_t& ry) {
   static float* kernel(gaussian_kernel());
   float max_value(0.f);
   int32_t xo(Rand::next(0, width-1)), yo(Rand::next(0, height-1)); // Offset start of search

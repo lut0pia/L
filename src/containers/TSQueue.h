@@ -15,7 +15,7 @@ namespace L {
     inline T* at(uint32_t i) { return (T*)_array+(i%n); }
 
   public:
-    constexpr TSQueue() : _writeHead(0), _writeTail(0), _readHead(0), _readTail(0), _array{} {}
+    inline TSQueue() : _writeHead(0), _writeTail(0), _readHead(0), _readTail(0), _array{} {}
     void push(const T& e) {
       // Assume queue cannot be full
       const uint32_t writeIndex(_writeHead.fetch_add(1));

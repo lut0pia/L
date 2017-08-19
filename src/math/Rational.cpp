@@ -11,8 +11,8 @@ void Rational::simplify() {
 }
 
 Rational::Rational(const String& str,uint32_t base) : _a(str) {
-  const int point(str.findFirst('.'));
-  _b = (point>=0) ? pow<Integer>(base,str.size()-point-1) : 1;
+  const intptr_t point(str.findFirst('.'));
+  _b = (point>=0) ? pow<Integer>(base,str.size()-point-uintptr_t(1)) : 1;
   simplify();
 }
 
@@ -21,7 +21,7 @@ String Rational::toShortString() const {
     return _a.toShortString();
   else if(_a.size()==_b.size()) {
     char buffer[64];
-    int ratio;
+    size_t ratio;
     if(!_a._part.size()) return "0";
     sprintf(buffer,"%1.*f",10,(double)_a._part.back()/(double)_b._part.back());
     switch(ratio = (_a._part.size()-1)-(_b._part.size()-1)) {

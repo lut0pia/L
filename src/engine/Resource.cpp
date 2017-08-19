@@ -11,7 +11,9 @@ template <> Ref<GL::Texture> L::load_resource(const char* fp) {
   return nullptr;
 }
 template <> Ref<Script::CodeFunction> L::load_resource(const char* fp) {
-  return ref<Script::CodeFunction>(Script::Context::read(CFileStream(fp, "r")));
+  CFileStream fs(fp, "r");
+  if(fs) return ref<Script::CodeFunction>(Script::Context::read(fs));
+  else return nullptr;
 }
 template <> Ref<Font> L::load_resource(const char* fp) {
   if(*fp) return Interface<Font>::fromFile(fp);

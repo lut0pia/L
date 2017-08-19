@@ -67,7 +67,7 @@ void Camera::unpack(const Map<Symbol, Var>& data) {
 
 void Camera::resize_buffers() {
   const Vector2f viewport_size(_viewport.size());
-  const size_t viewport_width(Window::width()*viewport_size.x()), viewport_height(Window::height()*viewport_size.y());
+  const GLsizei viewport_width(Window::width()*viewport_size.x()), viewport_height(Window::height()*viewport_size.y());
   _gcolor.image2D(0, GL_RGBA, viewport_width, viewport_height, 0, GL_RGBA, GL_UNSIGNED_BYTE);
   _gnormal.image2D(0, GL_RGBA16F, viewport_width, viewport_height, 0, GL_RGBA, GL_FLOAT);
   _gdepth.image2D(0, GL_DEPTH_COMPONENT24, viewport_width, viewport_height, 0, GL_DEPTH_COMPONENT, GL_FLOAT);

@@ -13,7 +13,7 @@ namespace L {
     T* _data;
     size_t _size,_capacity;
 
-    inline void shift(size_t i,int offset) {
+    inline void shift(uintptr_t i,intptr_t offset) {
       memmove(_data+i+offset,_data+i,(_size-i)*sizeof(T));
     }
 
@@ -72,8 +72,8 @@ namespace L {
     inline size_t capacity() const { return _capacity; }
     inline bool empty() const { return size()==0; }
     inline void clear() { size(0); }
-    inline T& operator[](size_t i) { return _data[i]; }
-    inline const T& operator[](size_t i) const { return _data[i]; }
+    inline T& operator[](uintptr_t i) { return _data[i]; }
+    inline const T& operator[](uintptr_t i) const { return _data[i]; }
     inline T& front() { return operator[](0); }
     inline const T& front() const { return operator[](0); }
     inline T& back() { return operator[](_size-1); }
@@ -122,10 +122,10 @@ namespace L {
       new(_data+i)T(args...); // Place new value
       _size++; // Increase size
     }
-    inline void insertArray(size_t i,const Array& a,int alen = -1,size_t ai = 0) { replaceArray(i,0,a,alen,ai); }
+    inline void insertArray(size_t i,const Array& a,size_t alen = size_t(-1),size_t ai = 0) { replaceArray(i,0,a,alen,ai); }
     template <typename... Args> inline void replace(size_t i,Args&&... args) { reconstruct(operator[](i),args...); }
-    void replaceArray(size_t i,int len,const Array& a,int alen = -1,size_t ai = 0) {
-      if(alen==-1) alen = a.size();
+    void replaceArray(size_t i, size_t len, const Array& a, size_t alen = size_t(-1), size_t ai = 0) {
+      if(alen==size_t(-1)) alen = a.size();
       growTo(_size+(alen-len)); // Check capacity
       shift(i+len,alen-len);
       copy(&operator[](i),&a[ai],alen);
@@ -153,7 +153,7 @@ namespace L {
       for(uintptr_t i(0); i<_size; i++)
         if(_data[i]==e)
           return i;
-      return -1;
+      return uintptr_t(-1);
     }
 
     friend Stream& operator<<(Stream& s, const Array& v) {

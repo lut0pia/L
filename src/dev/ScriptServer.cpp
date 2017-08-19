@@ -33,7 +33,8 @@ void ScriptServer::update() {
         client._pos += byte_count;
         if(char* end_line = (char*)memchr(read_start, '\n', byte_count)) { // There was a line ending
           // Execute command
-          Ref<CodeFunction> code_function(ref<CodeFunction>(Context::read(BufferStream(client._buffer, end_line))));
+          BufferStream bs(client._buffer, end_line);
+          Ref<CodeFunction> code_function(ref<CodeFunction>(Context::read(bs)));
           Var result(_script_context.executeInside(Array<Var>{code_function}));
 
           // Send back result

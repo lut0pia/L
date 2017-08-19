@@ -9,10 +9,10 @@
 
 using namespace L;
 
-bool* buttonstate;
-Queue<512,Window::Event>* events;
-Vector2i* mousePos;
-int* flags;
+bool* buttonstate_p;
+Queue<512,Window::Event>* events_p;
+Vector2i* mousePos_p;
+int* flags_p;
 
 HWND hWND;
 HDC hDC;
@@ -90,9 +90,9 @@ LRESULT CALLBACK MainWndProc(HWND hwnd,uint32_t uMsg,WPARAM wParam,LPARAM lParam
       }
       e.x = GET_X_LPARAM(lParam);
       e.y = GET_Y_LPARAM(lParam);
-      e.x -= mousePos->x();
-      e.y -= mousePos->y();
-      *mousePos += Vector2i(e.x,e.y);
+      e.x -= mousePos_p->x();
+      e.y -= mousePos_p->y();
+      *mousePos_p += Vector2i(e.x,e.y);
       break;
     case WM_MOUSEWHEEL:
       e.type = Window::Event::MOUSEWHEEL;
@@ -110,7 +110,7 @@ LRESULT CALLBACK MainWndProc(HWND hwnd,uint32_t uMsg,WPARAM wParam,LPARAM lParam
       } else return 0;
       break;
     case WM_SETCURSOR:
-      SetCursor((*flags & Window::nocursor) ? nullptr : LoadCursor(nullptr,IDC_ARROW));
+      SetCursor((*flags_p & Window::nocursor) ? nullptr : LoadCursor(nullptr,IDC_ARROW));
       break;
     case WM_INPUT:
     {
@@ -129,10 +129,10 @@ LRESULT CALLBACK MainWndProc(HWND hwnd,uint32_t uMsg,WPARAM wParam,LPARAM lParam
   }
   if(e.type!=Window::Event::NONE){
     if(e.type==Window::Event::BUTTONDOWN)
-      buttonstate[e.button] = true;
+      buttonstate_p[e.button] = true;
     else if(e.type==Window::Event::BUTTONUP)
-      buttonstate[e.button] = false;
-    events->push(e);
+      buttonstate_p[e.button] = false;
+    events_p->push(e);
   }
   return 0;
 }
@@ -146,7 +146,7 @@ void registerClass(){
   wc.cbWndExtra = 0;
   wc.hInstance = GetModuleHandle(nullptr);
   wc.hIcon = LoadIcon(nullptr,IDI_APPLICATION);
-  wc.hCursor = (*flags & Window::nocursor) ? nullptr : LoadCursor(nullptr,IDC_ARROW);
+  wc.hCursor = (*flags_p & Window::nocursor) ? nullptr : LoadCursor(nullptr,IDC_ARROW);
   wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
   wc.lpszMenuName = nullptr;
   wc.lpszClassName = "LWC";
@@ -171,10 +171,10 @@ PIXELFORMATDESCRIPTOR* initPFD(){
 }
 
 void Window::open(const char* title, int width, int height, int flags) {
-  buttonstate = _buttonstate;
-  events = &_events;
-  mousePos = &_mousePos;
-  ::flags = &_flags;
+  buttonstate_p = _buttonstate;
+  events_p = &_events;
+  mousePos_p = &_mousePos;
+  flags_p = &_flags;
   if(opened()) return;
   _width = width;
   _height = height;

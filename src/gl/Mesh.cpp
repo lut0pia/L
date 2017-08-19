@@ -48,8 +48,8 @@ void Mesh::load(GLenum mode,GLsizei count,const void* data,GLsizeiptr size,const
   glBindVertexArray(0);
   if(iarray) indices(iarray,icount);
 }
-void Mesh::load(const MeshBuilder& mb,GLenum mode,const std::initializer_list<Attribute>& attributes){
-  load(mode,mb.vertexCount(),mb.vertices(),mb.verticesSize(),attributes,mb.indices(),mb.indexCount());
+void Mesh::load(const MeshBuilder& mb, GLenum mode, const std::initializer_list<Attribute>& attributes) {
+  load(mode, GLsizei(mb.vertexCount()), mb.vertices(), mb.verticesSize(), attributes, mb.indices(), GLsizei(mb.indexCount()));
 }
 void Mesh::draw() const{
   if(_vao){

@@ -24,7 +24,7 @@ SOCKET Network::connect_to(const char* ip, short port) {
   return sd;
 }
 int Network::recv(SOCKET sd, char* buffer, size_t size) {
-  const int result(::recv(sd, buffer, size, 0));
+  const int result(::recv(sd, buffer, int(size), 0));
   if(result<0 && would_block()) // Nothing to read
     return 0;
   else if(result==0) // Connection closed
@@ -32,8 +32,8 @@ int Network::recv(SOCKET sd, char* buffer, size_t size) {
   else return result;
 }
 bool Network::send(SOCKET sd, const char* buffer, size_t size) {
-  int result;
-  while(size && (result = ::send(sd, buffer, size, 0))) {
+  int result(0);
+  while(size && (result = ::send(sd, buffer, int(size), 0))) {
     buffer += result;
     size -= result;
   }

@@ -53,7 +53,7 @@ void fiber_func(void*) {
 
 void thread_func(void* arg) {
   memset(fibers, 0, sizeof(fibers));
-  thread_index = uint32_t(arg);
+  thread_index = uint32_t(uintptr_t(arg));
   current_fiber = 0;
   for(uint32_t i(0); i<fiber_count; i++)
     fibers[i].handle = create_fiber(fiber_func, nullptr);
@@ -63,7 +63,7 @@ void thread_func(void* arg) {
 
 void TaskSystem::init() {
   initialized = true;
-  for(uint32_t i(1); i<thread_count; i++)
+  for(uintptr_t i(1); i<thread_count; i++)
     create_thread(thread_func, (void*)i);
   thread_func(nullptr);
 }

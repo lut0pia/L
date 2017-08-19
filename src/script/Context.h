@@ -34,7 +34,7 @@ namespace L {
       inline Var& currentSelf() { L_ASSERT(!_selves.empty()); return _selves.top(); }
       inline Table<Var, Var>& selfTable() { return *_self.as<Ref<Table<Var, Var>>>(); }
       inline uint32_t currentFrame() const { L_ASSERT(!_frames.empty()); return _frames.top(); }
-      inline uint32_t localCount() const { return _stack.size()-currentFrame(); }
+      inline uint32_t localCount() const { return uint32_t(_stack.size())-currentFrame(); }
       inline Var& local(uint32_t i) { return _stack.bottom(i+currentFrame()); }
       inline Var& returnValue() { return local(uint32_t(-1)); }
       bool tryExecuteMethod(const Symbol&, std::initializer_list<Var> = {});

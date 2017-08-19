@@ -29,7 +29,7 @@ namespace L {
         else if(line[0]=="vt") _uvs.push(atof(line[1]), 1.f-atof(line[2])); // OpenGL has y going bottom up
         else if(line[0]=="vn") _normals.push(atof(line[1]), atof(line[2]), atof(line[3]));
         else if(line[0]=="f") {
-          Vertex vertex, firstVertex, lastVertex;
+          Vertex vertex{}, firstVertex{}, lastVertex{};
           for(uintptr_t i(1); i<line.size(); i++) {
             const Array<String> indices(line[i].explode('/'));
 

@@ -15,7 +15,7 @@ namespace L {
     }
     Ref<Bitmap> from(const byte* data, size_t size) override {
       int width, height, comp;
-      byte* img(stbi_load_from_memory(data, size, &width, &height, &comp, 4));
+      byte* img(stbi_load_from_memory(data, int(size), &width, &height, &comp, 4));
       if(img) {
         auto wtr = ref<Bitmap>(width, height);
         Bitmap& bmp = *wtr;

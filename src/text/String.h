@@ -29,14 +29,13 @@ namespace L {
       inline bool operator>(const String& other) const {return strcmp(*this,other)>0;}
 
       // Search methods
-      inline int findFirst(char c) const {return strchr(*this,c)-operator const char*();}
+      inline intptr_t findFirst(char c) const {return strchr(*this,c)-operator const char*();}
       int findFirst(const String&) const;
       inline int findLast(char c) const {return strrchr(*this,c)-operator const char*();}
       inline String substr(size_t pos, size_t length = -1) const {return String(*this,pos,length);}
       int count(char) const;
 
       Array<String> explode(char c, size_t limit = 0) const; // Splits and returns an array of each part (limit is the max number of parts)
-      size_t endOf(size_t start, bool dquotesEscape = true) const; // Returns end of bracket position
 
       // Self modifiers
       String& replaceAll(const String& search, const String& replace); // Replaces search by replace
@@ -53,7 +52,7 @@ namespace L {
       inline void push(char c) {insert(size(),c);}
       inline void insert(size_t i,char c) {Array<char>::insert(i,c);}
       inline void insert(size_t i,const String& str) {Array<char>::insertArray(i,str,str.size());}
-      inline void replace(size_t i, int len, const String& str) {Array<char>::replaceArray(i,len,str,str.size());}
+      inline void replace(uintptr_t i, size_t len, const String& str) {Array<char>::replaceArray(i,len,str,str.size());}
       inline void erase(size_t i,size_t count=1) {Array<char>::erase(i,count);}
       inline void clear() {Array<char>::size(1); Array<char>::operator[](0)='\0';}
       inline void size(size_t s) {Array<char>::size(s+1); Array<char>::back()='\0';} // Add one because of '\0'
@@ -61,8 +60,8 @@ namespace L {
       inline bool empty() const {return Array<char>::size()<=1;} // Always has trailing '\0'
       inline operator const char*() const {return &Array<char>::operator[](0);}
       inline operator char*() {return &Array<char>::operator[](0);}
-      inline const char& operator[](int i) const {return Array<char>::operator[](i);}
-      inline char& operator[](int i) {return Array<char>::operator[](i);}
+      inline const char& operator[](uintptr_t i) const {return Array<char>::operator[](i);}
+      inline char& operator[](uintptr_t i) {return Array<char>::operator[](i);}
       using Array<char>::begin;
       using Array<char>::end;
   };

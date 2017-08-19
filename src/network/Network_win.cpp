@@ -13,5 +13,5 @@ void Network::make_non_blocking(SOCKET sd) {
   static u_long mode(1);
   int error;
   if((error = ioctlsocket(sd, FIONBIO, &mode)) != NO_ERROR)
-    L_ERROR("ioctlsocket error: %d", error);
+    L_ERRORF("ioctlsocket error: %d", error);
 }

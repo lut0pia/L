@@ -13,10 +13,10 @@ namespace L {
         insert(e);
     }
     template <class R>
-    int index(const R& e) const {
-      int l(0), r(size());
+    uintptr_t index(const R& e) const {
+      uintptr_t l(0), r(size());
       while(l<r) {
-        int m((l+r)/2);
+        uintptr_t m((l+r)/2);
         if(Array<T>::operator[](m)<e)
           l = m+1;
         else if(Array<T>::operator[](m)>e)

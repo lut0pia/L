@@ -52,56 +52,9 @@ Array<String> String::explode(char c, size_t limit) const {
       wtr.push(substr(delimiters[i],delimiters[i+1]-delimiters[i]-1));
   return wtr;
 }
-size_t String::endOf(size_t i, bool dquotesEscape) const {
-  char startChar = operator[](i), endChar('\0');
-  size_t level(0), move(1);
-  bool inQuotes(false);
-  switch(startChar) {
-    case '{':
-      endChar = '}';
-      break;
-    case '}':
-      endChar = '{';
-      move = -1;
-      break;
-    case '(':
-      endChar = ')';
-      break;
-    case ')':
-      endChar = '(';
-      move = -1;
-      break;
-    case '[':
-      endChar = ']';
-      break;
-    case ']':
-      endChar = '[';
-      move = -1;
-      break;
-    default:
-      L_ERROR("Unhandled startChar in EndOf");
-      break;
-  }
-  while((i+=move) < size() && i!=(size_t)~0) {
-    if(!inQuotes) {
-      if(dquotesEscape && (*this)[i]=='"' && (!i || (*this)[i-1]!='\\'))
-        inQuotes = true;
-      else if((*this)[i]==startChar)
-        level++;
-      else if((*this)[i]==endChar) {
-        if(level)
-          level--;
-        else
-          return i;
-      }
-    } else if((*this)[i]=='"' && (!i || (*this)[i-1]!='\\'))
-      inQuotes = false;
-  }
-  return 0;
-}
 
 String& String::replaceAll(const String& search, const String& replace) {
-  for(uint32_t i(0); i<size(); i++)
+  for(uintptr_t i(0); i<size(); i++)
     if(strncmp(&operator[](i),search,search.size())==0) {
       this->replace(i,search.size(),replace);
       i += replace.size()-1;

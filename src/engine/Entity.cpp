@@ -98,8 +98,9 @@ Stream& L::operator>(Stream& s, Entity& e) {
       e._components.push(*component_type, component);
       s > *component;
     } else {
-      L_ERRORF("Unknown component type name %s", component_type_name);
+      L_ERRORF("Unknown component type name %s", (const char*)component_type_name);
     }
   }
   e.updateComponents();
+  return s;
 }

@@ -17,7 +17,7 @@ namespace L {
 
       void load(void*);
       inline void clear() {_assembly.clear();}
-      inline uint32_t label() const {return _assembly.size();}
+      inline uint32_t label() const { return uint32_t(_assembly.size()); }
 
       template <typename... Args> inline void emit(byte b,Args&&... args) {_assembly.push(b); emit(args...);}
       inline void emit() {}
@@ -73,10 +73,10 @@ namespace L {
       // Jumps
       inline void jmp(uint32_t i) {
         emit(0xe9);
-        imm(i-(_assembly.size()+4));
+        imm(i-(uint32_t(_assembly.size())+4));
       }
       inline void jcc(byte opcode,uint32_t i) {
-        int rel(i-_assembly.size());
+        int rel(i-int(_assembly.size()));
         if(rel>=-128&&rel<=127)
           emit(opcode,rel-2);
         else {

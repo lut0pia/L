@@ -16,7 +16,7 @@ FrameBuffer::FrameBuffer(GLuint target, const std::initializer_list<Texture*>& c
     attach(colorAttachment++, *color);
   if(depth)
     attach(GL_DEPTH_ATTACHMENT, *depth);
-  glNamedFramebufferDrawBuffers(_id, colors.size(), attachments);
+  glNamedFramebufferDrawBuffers(_id, GLsizei(colors.size()), attachments);
 }
 FrameBuffer::~FrameBuffer() {
   glDeleteFramebuffers(1, &_id);

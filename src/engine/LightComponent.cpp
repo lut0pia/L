@@ -66,11 +66,7 @@ void LightComponent::render() {
   light_program.uniform("l_in_ang", _inner_angle);
   light_program.uniform("l_out_ang", _outer_angle);
   light_program.uniform("l_type", _type);
-  switch(_type) {
-    default:
-      GL::quad().draw();
-      break;
-  }
+  GL::quad().draw(); // TODO: Draw spatialized shape from light type and position
 }
 
 GL::Program& LightComponent::program() {
