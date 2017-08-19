@@ -9,9 +9,9 @@ const Font::Glyph& Font::glyph(uint32_t utf32) {
   Glyph* glyph;
   if(utf32<128) glyph = _ascii + utf32;
   else glyph = &_glyphs[utf32];
-  if(!glyph->init){
+  if(!glyph->init) {
     load_glyph(utf32, *glyph, _bmp);
-    glyph->atlasCoords = _atlas.add(_bmp);
+    glyph->atlas_coords = _atlas.add(_bmp);
     glyph->size.x() = _bmp.width();
     glyph->size.y() = _bmp.height();
     glyph->init = true;
@@ -42,12 +42,13 @@ GL::Program& glyphProgram() {
       "}", GL_FRAGMENT_SHADER));
   return program;
 }
-Font::TextMesh& Font::textMesh(const char* str) {
+Font::TextMesh& Font::text_mesh(const char* str) {
   const uint32_t h(hash(str));
-  if(auto found = _textMeshes.find(h))
+  if(auto found = _text_meshes.find(h))
     return *found;
   else {
-    TextMesh& wtr(_textMeshes[h]);
+    update();
+    TextMesh& wtr(_text_meshes[h]);
     wtr.str = str;
     Array<Vector4f> buffer;
     buffer.growTo(strlen(str)*6);
@@ -61,9 +62,9 @@ Font::TextMesh& Font::textMesh(const char* str) {
         wtr.dimensions.y() = max(wtr.dimensions.y(), y+_lineheight);
       } else { // Character
         const Glyph& g(glyph(utf32));
-        const Vector4f tl(x+g.origin.x(), y+g.origin.y(), g.atlasCoords.min().x(), g.atlasCoords.min().y());
-        const Vector4f tr(tl.x()+g.size.x(), tl.y(), g.atlasCoords.max().x(), tl.w());
-        const Vector4f bl(tl.x(), tl.y()+g.size.y(), tl.z(), g.atlasCoords.max().y());
+        const Vector4f tl(x+g.origin.x(), y+g.origin.y(), g.atlas_coords.min().x(), g.atlas_coords.min().y());
+        const Vector4f tr(tl.x()+g.size.x(), tl.y(), g.atlas_coords.max().x(), tl.w());
+        const Vector4f bl(tl.x(), tl.y()+g.size.y(), tl.z(), g.atlas_coords.max().y());
         const Vector4f br(tr.x(), bl.y(), tr.z(), bl.w());
         buffer.pushMultiple(tl, bl, br, tl, br, tr);
         x += g.advance;
@@ -79,22 +80,28 @@ Font::TextMesh& Font::textMesh(const char* str) {
 }
 void Font::draw(int x, int y, const char* str, Vector2f anchor) {
   GL::Program& p(glyphProgram());
-  TextMesh& tm(textMesh(str));
+  TextMesh& tm(text_mesh(str));
 
   p.use();
   p.uniform("atlas", _atlas.texture());
   p.uniform("position", Vector2f(x-anchor.x()*tm.dimensions.x(), y-anchor.y()*tm.dimensions.y()));
 
   tm.mesh.draw();
-  tm.lastUsed = Time::now();
+  tm.last_used = Time::now();
 }
 
-void Font::updateTextMeshes() {
+void Font::update() {
+  static const Time second(0, 0, 1);
+  const Time now(Time::now());
+  if(now-_last_update>second) {
+    _last_update = now;
+  } else return;
+
   static Array<uint32_t> obsoleteTextMeshes;
   obsoleteTextMeshes.clear();
-  for(auto& textMesh : _textMeshes)
-    if(textMesh.value().lastUsed<Time::now()-Time(0, 0, 1)) // Not used for a second
+  for(auto& textMesh : _text_meshes)
+    if(now-textMesh.value().last_used>second) // Not used for a second
       obsoleteTextMeshes.push(textMesh.key());
   for(uint32_t obsoleteTextMesh : obsoleteTextMeshes)
-    _textMeshes.remove(obsoleteTextMesh);
+    _text_meshes.remove(obsoleteTextMesh);
 }
