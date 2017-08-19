@@ -3,6 +3,7 @@
 #include "../macros.h"
 #include "../text/String.h"
 #include "../math/Vector.h"
+#include "../stream/StringStream.h"
 #include "../text/Symbol.h"
 #include "../time/Time.h"
 
@@ -46,4 +47,5 @@ void L::TypeInit() {
   Type<float>::addcast<String>([](void* dst, const void* src) {new(dst)String(ntos(*(float*)src)); });
   Type<String>::addcast<bool>([](void* dst, const void* src) {new(dst)bool(!((String*)src)->empty()); });
   Type<String>::addcast<Symbol>([](void* dst, const void* src) {new(dst)Symbol((const char*)(*(String*)src)); });
+  Type<Time>::addcast<String>([](void* dst, const void* src) {new(dst)String(to_string(*(Time*)src)); });
 }
