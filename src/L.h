@@ -29,6 +29,7 @@
 #include "containers/MultiArray.h"
 #include "containers/Pool.h"
 #include "containers/Queue.h"
+#include "containers/Raw.h"
 #include "containers/Ref.h"
 #include "containers/Set.h"
 #include "containers/SortedArray.h"
