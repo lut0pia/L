@@ -6,18 +6,6 @@
 using namespace L;
 
 void mainjob(void*) {
-  TypeInit();
-  Settings::load_file("settings.ini");
-
-  const char* window_name(Settings::get_symbol("window_name", "L_Engine")); // TODO: string settings should not be symbols?
-  int window_flags((Settings::get_int("no_cursor", 0) ? Window::nocursor : 0)
-                   | (Settings::get_int("loop_cursor", 0) ? Window::loopcursor : 0));
-
-  if(Settings::get_int("fullscreen", 1))
-    Window::openFullscreen(window_name, window_flags);
-  else
-    Window::open(window_name, Settings::get_int("resolution_x", 1024), Settings::get_int("resolution_y", 768), window_flags);
-
   Device::init();
   Network::init();
   Audio::init();
@@ -42,6 +30,7 @@ void mainjob(void*) {
   Engine::addSubUpdate<Collider>();
   Engine::addLateUpdate<ScriptComponent>();
   Engine::addGui<ScriptComponent>();
+
   {
     ScriptComponent::init();
     Script::Context startupContext;
@@ -70,6 +59,18 @@ void mainjob(void*) {
   Engine::clear();
 }
 int main(int argc, const char* argv[]) {
+  TypeInit();
+  Settings::load_file("settings.ini");
+
+  const char* window_name(Settings::get_symbol("window_name", "L_Engine")); // TODO: string settings should not be symbols?
+  int window_flags((Settings::get_int("no_cursor", 0) ? Window::nocursor : 0)
+                   | (Settings::get_int("loop_cursor", 0) ? Window::loopcursor : 0));
+
+  if(Settings::get_int("fullscreen", 1))
+    Window::openFullscreen(window_name, window_flags);
+  else
+    Window::open(window_name, Settings::get_int("resolution_x", 1024), Settings::get_int("resolution_y", 768), window_flags);
+
   TaskSystem::push(mainjob, nullptr, TaskSystem::MainThread);
   TaskSystem::init();
   return 0;
