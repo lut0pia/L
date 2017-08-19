@@ -3,6 +3,7 @@
 #include "../containers/Array.h"
 #include "../containers/Ref.h"
 #include "../containers/Table.h"
+#include "../font/Font.h"
 #include "../gl/Texture.h"
 #include "../Interface.h"
 #include "../text/Symbol.h"
@@ -61,6 +62,7 @@ namespace L {
   template <class T> Ref<T> load_resource(const char* fp) { return Interface<T>::fromFile(fp); }
   template <> Ref<GL::Texture> load_resource(const char* fp);
   template <> Ref<Script::CodeFunction> load_resource(const char* fp);
+  template <> Ref<Font> load_resource(const char* fp);
 
   template <class T> Array<typename Resource<T>::Slot> Resource<T>::_array;
   template <class T> Table<Symbol, intptr_t> Resource<T>::_table;
