@@ -10,8 +10,8 @@ namespace L {
     int64_t usec;
   public:
     inline Time() = default;
-    inline Time(int64_t us) : usec(us) {}
-    inline Time(long us,long ms,long s = 0,long m = 0,long h = 0,long d = 0)
+    constexpr Time(int64_t us) : usec(us) {}
+    constexpr Time(long us,long ms,long s = 0,long m = 0,long h = 0,long d = 0)
       : usec(us+ms*1000LL+s*1000000LL+m*60000000LL+h*3600000000LL+d*86400000000LL) {}
 
     inline Time operator+(const Time& other) const{ return Time(usec+other.usec); }
