@@ -56,3 +56,9 @@
 		(e'require-rigidbody || 'add-speed | (* (vec 16 16 16) (self'transform | 'forward|)))
 	))
 )))
+(set (self'gui) (fun (do
+	(draw-text 10 10
+		(+ "FPS: " (/ 1.0 delta) "\n"
+			 "Frame: " avg-frame-work-duration "\n"
+		))
+)))
