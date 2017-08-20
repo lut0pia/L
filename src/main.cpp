@@ -1,4 +1,5 @@
 #include <L/src/L.h>
+#include <L/src/interface/glsl.h>
 #include <L/src/interface/stb_image.h>
 #include <L/src/interface/stb_truetype.h>
 #include <L/src/interface/obj.h>
@@ -14,6 +15,7 @@ void mainjob(void*) {
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   Engine::add_resource<Font>();
   Engine::add_resource<GL::Mesh>();
+  Engine::add_resource<GL::Program>();
   Engine::add_resource<GL::Texture>();
   Engine::add_resource<Script::CodeFunction>();
   Engine::addWindowEvent<Camera>();
