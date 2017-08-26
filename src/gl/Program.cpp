@@ -2,6 +2,7 @@
 
 #include "GL.h"
 #include "../hash.h"
+#include "../stream/CFileStream.h"
 
 using namespace L;
 using namespace GL;
@@ -34,17 +35,21 @@ void Program::link(const GLuint* shaders, uint32_t count) {
     glAttachShader(_id, shaders[i]);
 
   glLinkProgram(_id);
-  GLint p;
-  glGetProgramiv(_id, GL_LINK_STATUS, &p);
-  if(p != GL_TRUE) {
+  
+  for(uintptr_t i(0); i<count; i++)
+    glDetachShader(_id, shaders[i]);
+}
+bool Program::check() const {
+  GLint link_status;
+  glGetProgramiv(_id, GL_LINK_STATUS, &link_status);
+  if(link_status != GL_TRUE) {
     GLchar buffer[2048];
     GLsizei count;
     glGetProgramInfoLog(_id, sizeof(buffer), &count, buffer);
-    L_ERRORF("Couldn't link program:\n%.*s", count, buffer);
+    err << "Couldn't link program:\n";
+    err.write(buffer, count);
   }
-
-  for(uintptr_t i(0); i<count; i++)
-    glDetachShader(_id, shaders[i]);
+  return link_status == GL_TRUE;
 }
 void Program::use() const {
   glUseProgram(_id);

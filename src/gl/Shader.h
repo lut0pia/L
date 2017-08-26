@@ -17,6 +17,7 @@ namespace L {
       Shader(const char** src, uint32_t count, GLenum type);
       Shader(const char** src, GLint* lengths, uint32_t count, GLenum type);
       ~Shader();
+      bool check() const;
       inline GLuint id() const { return _id; }
     };
   }

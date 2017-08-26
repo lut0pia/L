@@ -21,6 +21,7 @@ namespace L {
       Program(const Shader&, const Shader&, const Shader&);
       ~Program();
       void link(const GLuint*, uint32_t count);
+      bool check() const;
       void use() const;
       GLuint uniformLocation(const char* name);
       GLuint uniformBlockIndex(const char* name);
