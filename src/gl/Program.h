@@ -3,7 +3,7 @@
 #include <GL/glew.h>
 #include "Shader.h"
 #include "Texture.h"
-#include "../container/Map.h"
+#include "../container/Table.h"
 #include "../image/Color.h"
 #include "../math/Matrix.h"
 
@@ -13,7 +13,7 @@ namespace L {
       L_NOCOPY(Program)
     private:
       GLuint _id;
-      Map<uint32_t, GLuint> _uniformLocation;
+      Table<uint32_t, GLint> _uniform_location;
     public:
       Program(const Shader*, uint32_t);
       Program(const Shader&);
@@ -23,9 +23,9 @@ namespace L {
       void link(const GLuint*, uint32_t count);
       bool check() const;
       void use() const;
-      GLuint uniformLocation(const char* name);
-      GLuint uniformBlockIndex(const char* name);
-      void uniformBlockBinding(const char* name, GLuint binding);
+      GLint uniform_location(const char* name);
+      GLuint uniform_block_index(const char* name);
+      void uniform_block_binding(const char* name, GLuint binding);
       void uniform(const char* name, int);
       void uniform(const char* name, unsigned int);
       void uniform(const char* name, float);
@@ -37,9 +37,11 @@ namespace L {
       inline void uniform(const char* name, const Vector4f& v) { uniform(name, v.x(), v.y(), v.z(), v.w()); }
       inline void uniform(const char* name, const Color& c) { uniform(name, c.rf(), c.gf(), c.bf(), c.af()); }
       void uniform(const char* name, const Matrix44f&);
-      void uniform(const char* name, const Texture&, GLenum unit = GL_TEXTURE0);
+      inline void uniform(const char* name, const Texture& texture, GLenum unit = GL_TEXTURE0) {
+        uniform(uniform_location(name), texture, unit);
+      }
 
-      static void unuse();
+      void uniform(GLint location, const Texture&, GLenum unit = GL_TEXTURE0);
     };
   }
 }

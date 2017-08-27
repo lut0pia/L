@@ -35,7 +35,7 @@ void Program::link(const GLuint* shaders, uint32_t count) {
     glAttachShader(_id, shaders[i]);
 
   glLinkProgram(_id);
-  
+
   for(uintptr_t i(0); i<count; i++)
     glDetachShader(_id, shaders[i]);
 }
@@ -54,50 +54,43 @@ bool Program::check() const {
 void Program::use() const {
   glUseProgram(_id);
 }
-GLuint Program::uniformLocation(const char* name) {
-  KeyValue<uint32_t, GLuint>* it(_uniformLocation.find(fnv1a(name)));
-  if(it) return it->value();
-  else {
-    GLuint location(glGetUniformLocation(_id, name));
-    L_ASSERT(location>=0);
-    return _uniformLocation[fnv1a(name)] = location;
-  }
+GLint Program::uniform_location(const char* name) {
+  uint32_t hash(fnv1a(name));
+  if(auto* found = _uniform_location.find(hash)) return *found;
+  else return _uniform_location[hash] = glGetUniformLocation(_id, name);
 }
-GLuint Program::uniformBlockIndex(const char* name) {
+GLuint Program::uniform_block_index(const char* name) {
   GLuint wtr(glGetUniformBlockIndex(_id, name));
   L_ASSERT(wtr != GL_INVALID_INDEX);
   return wtr;
 }
-void Program::uniformBlockBinding(const char* name, GLuint binding) {
-  glUniformBlockBinding(_id, uniformBlockIndex(name), binding);
+void Program::uniform_block_binding(const char* name, GLuint binding) {
+  glUniformBlockBinding(_id, uniform_block_index(name), binding);
 }
 void Program::uniform(const char* name, int v) {
-  glUniform1i(uniformLocation(name), v);
+  glUniform1i(uniform_location(name), v);
 }
 void Program::uniform(const char* name, unsigned int v) {
-  glUniform1ui(uniformLocation(name), v);
+  glUniform1ui(uniform_location(name), v);
 }
 void Program::uniform(const char* name, float v) {
-  glUniform1f(uniformLocation(name), v);
+  glUniform1f(uniform_location(name), v);
 }
 void Program::uniform(const char* name, float x, float y) {
-  glUniform2f(uniformLocation(name), x, y);
+  glUniform2f(uniform_location(name), x, y);
 }
 void Program::uniform(const char* name, float x, float y, float z) {
-  glUniform3f(uniformLocation(name), x, y, z);
+  glUniform3f(uniform_location(name), x, y, z);
 }
 void Program::uniform(const char* name, float x, float y, float z, float w) {
-  glUniform4f(uniformLocation(name), x, y, z, w);
+  glUniform4f(uniform_location(name), x, y, z, w);
 }
 void Program::uniform(const char* name, const Matrix44f& m) {
-  glUniformMatrix4fv(uniformLocation(name), 1, GL_FALSE, m.array());
-}
-void Program::uniform(const char* name, const Texture& texture, GLenum unit) {
-  glUniform1i(uniformLocation(name), unit-GL_TEXTURE0);
-  glActiveTexture(unit);
-  texture.bind();
+  glUniformMatrix4fv(uniform_location(name), 1, GL_FALSE, m.array());
 }
 
-void Program::unuse() {
-  glUseProgram(0);
+void Program::uniform(GLint location, const Texture& texture, GLenum unit) {
+  glUniform1i(location, unit-GL_TEXTURE0);
+  glActiveTexture(unit);
+  texture.bind();
 }
