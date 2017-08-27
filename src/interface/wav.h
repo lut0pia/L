@@ -6,7 +6,7 @@ namespace L {
   class WAV : public Interface<Audio::Buffer> {
     static WAV instance;
   public:
-    WAV() : Interface("wav") { subscribe("wave"); }
+    WAV() : Interface{"wav","wave"} {}
 
     Ref<Audio::Buffer> from(const byte* data, size_t size) override {
       if(size<44 || memcmp(data, "RIFF", 4) || memcmp(data+8, "WAVE", 4)

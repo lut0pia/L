@@ -37,7 +37,7 @@ namespace L {
       }
     };
   public:
-    STB_truetype() : Interface("ttf") {}
+    STB_truetype() : Interface{"ttf"} {}
     Ref<Font> from(const byte* data, size_t size) override {
       return ref<STBFont>(data, 16);
     }

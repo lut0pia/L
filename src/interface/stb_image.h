@@ -8,11 +8,7 @@ namespace L {
   class STB_image : public Interface<Bitmap> {
     static STB_image instance;
   public:
-    STB_image() : Interface("png") {
-      subscribe("bmp");
-      subscribe("jpeg");
-      subscribe("jpg");
-    }
+    inline STB_image() : Interface{"png","bmp","jpeg","jpg"} {}
     Ref<Bitmap> from(const byte* data, size_t size) override {
       int width, height, comp;
       byte* img(stbi_load_from_memory(data, int(size), &width, &height, &comp, 4));

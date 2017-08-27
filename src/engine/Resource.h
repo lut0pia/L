@@ -59,7 +59,7 @@ namespace L {
     }
   };
 
-  template <class T> Ref<T> load_resource(const char* fp) { return Interface<T>::fromFile(fp); }
+  template <class T> Ref<T> load_resource(const char* fp) { return Interface<T>::from_file(fp); }
   template <> Ref<GL::Texture> load_resource(const char* fp);
   template <> Ref<Script::CodeFunction> load_resource(const char* fp);
   template <> Ref<Font> load_resource(const char* fp);

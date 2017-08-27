@@ -11,17 +11,14 @@ namespace L {
   template <class T>
   class Interface {
   private:
-    static Table<const char*, Interface*> _instances;
-
-  protected:
-    Interface(const char* format) {
-      subscribe(format);
-    }
-    void subscribe(const char* format) {
-      _instances[format] = this;
-    }
+    static Table<const char*, Array<Interface*>> _instances;
 
   public:
+    inline Interface(std::initializer_list<const char*> formats) {
+      for(auto format : formats)
+        _instances[format].push(this);
+    }
+
     virtual Ref<T> from(const File& file) {
       CFileStream fs(file.path(), "rb");
       if(auto wtr = from(fs))
@@ -35,12 +32,6 @@ namespace L {
         return r;
       }
     }
-    virtual Ref<T> from(const char* str) {
-      tmpfile.rewind();
-      tmpfile << str;
-      tmpfile.rewind();
-      return from(tmpfile);
-    }
     virtual Ref<T> from(Stream& is) {
       return nullptr;
     }
@@ -52,9 +43,6 @@ namespace L {
       CFileStream stream(file.path(), "wb");
       return to(v, stream);
     }
-    virtual bool to(const T& v, String& str) {
-      return false;
-    }
     virtual bool to(const T& v, Stream& os) {
       return false;
     }
@@ -62,18 +50,23 @@ namespace L {
       return false;
     }
 
-    static Interface& in(const char* format) {
-      if(auto found = _instances.find(format)) return **found;
-      else L_ERRORF("Unhandled format %s", format);
+    static Ref<T> from_file(const char* path) {
+      if(auto interfaces = _instances.find(file_ext(path)))
+        for(auto interface : *interfaces)
+          if(Ref<T> object = interface->from(File(path)))
+            return object;
+      return nullptr;
     }
-    static Ref<T> fromFile(const String& path) {
-      File file(path);
-      return in(file.ext().toLower()).from(file);
+    static void to_file(const T& v, const char* path) {
+      if(auto interfaces = _instances.find(file_ext(path)))
+        for(auto interface : *interfaces)
+          if(interface->to(File(path)))
+            return
     }
-    static void toFile(const T& v, const String& path) {
-      File file(path);
-      in(file.ext().toLower()).to(v, file);
+    static const char* file_ext(const char* path) {
+      const char* ext(strrchr(path, '.'));
+      return ext ? ext+1 : path;
     }
   };
-  template <class T> Table<const char*, Interface<T>*> Interface<T>::_instances;
+  template <class T> Table<const char*, Array<Interface<T>*>> Interface<T>::_instances;
 }

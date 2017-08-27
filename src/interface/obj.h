@@ -15,7 +15,7 @@ namespace L {
     Array<Vector2f> _uvs;
     GL::MeshBuilder _mb;
   public:
-    OBJ() : Interface("obj") {}
+    OBJ() : Interface{"obj"} {}
 
     Ref<GL::Mesh> from(Stream& stream) override {
       _mb.reset();
