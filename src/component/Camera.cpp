@@ -6,7 +6,7 @@
 #include "../gl/Program.h"
 #include "LightComponent.h"
 #include "../system/Window.h"
-#include "SharedUniform.h"
+#include "../engine/SharedUniform.h"
 
 using namespace L;
 

@@ -2,7 +2,7 @@
 
 #include "Component.h"
 #include "Transform.h"
-#include "Resource.h"
+#include "../engine/Resource.h"
 #include "../gl/Mesh.h"
 #include "../gl/Program.h"
 

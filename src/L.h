@@ -19,6 +19,24 @@
 #include "audio/AudioSource.h"
 #include "audio/Midi.h"
 
+// Components
+#include "component/AudioListenerComponent.h"
+#include "component/AudioSourceComponent.h"
+#include "component/Camera.h"
+#include "component/Collider.h"
+#include "component/Component.h"
+#include "component/Entity.h"
+#include "component/HierarchyComponent.h"
+#include "component/LightComponent.h"
+#include "component/NameComponent.h"
+#include "component/Primitive.h"
+#include "component/RigidBody.h"
+#include "component/ScriptComponent.h"
+#include "component/Sprite.h"
+#include "component/SpriteAnimator.h"
+#include "component/StaticMesh.h"
+#include "component/Transform.h"
+
 // Objects that hold other objects
 #include "containers/Array.h"
 #include "containers/BTree.h"
@@ -48,27 +66,11 @@
 #include "dynamic/Type.h"
 #include "dynamic/Variable.h"
 
-// Entity and components
-#include "engine/AudioListenerComponent.h"
-#include "engine/AudioSourceComponent.h"
-#include "engine/Camera.h"
-#include "engine/Collider.h"
-#include "engine/Component.h"
+// Core engine systems
 #include "engine/Engine.h"
-#include "engine/Entity.h"
-#include "engine/HierarchyComponent.h"
-#include "engine/LightComponent.h"
-#include "engine/NameComponent.h"
-#include "engine/Primitive.h"
 #include "engine/Resource.h"
-#include "engine/RigidBody.h"
-#include "engine/ScriptComponent.h"
 #include "engine/Settings.h"
 #include "engine/SharedUniform.h"
-#include "engine/Sprite.h"
-#include "engine/SpriteAnimator.h"
-#include "engine/StaticMesh.h"
-#include "engine/Transform.h"
 
 // Font handling
 #include "font/Font.h"

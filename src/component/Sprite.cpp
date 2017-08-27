@@ -2,7 +2,7 @@
 
 #include "../gl/Program.h"
 #include "../gl/Shader.h"
-#include "SharedUniform.h"
+#include "../engine/SharedUniform.h"
 
 using namespace L;
 

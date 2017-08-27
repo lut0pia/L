@@ -1,6 +1,6 @@
 #include "Engine.h"
 
-#include "Camera.h"
+#include "../component/Camera.h"
 #include "../hash.h"
 #include "../gl/Buffer.h"
 #include "../gl/GL.h"

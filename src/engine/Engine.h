@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ComponentPool.h"
+#include "../component/ComponentPool.h"
 #include "../containers/Ref.h"
 #include "../containers/Table.h"
 #include "../gl/Texture.h"

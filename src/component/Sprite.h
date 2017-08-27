@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Transform.h"
-#include "Resource.h"
+#include "../engine/Resource.h"
 #include "../math/Interval.h"
 #include "../gl/Texture.h"
 #include "../gl/GL.h"

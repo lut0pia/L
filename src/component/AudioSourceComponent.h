@@ -2,7 +2,7 @@
 
 #include "../audio/AudioSource.h"
 #include "Component.h"
-#include "Resource.h"
+#include "../engine/Resource.h"
 #include "Transform.h"
 
 namespace L {
