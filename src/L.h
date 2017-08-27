@@ -22,6 +22,7 @@
 // Objects that hold other objects
 #include "containers/Array.h"
 #include "containers/BTree.h"
+#include "containers/Buffer.h"
 #include "containers/IntervalTree.h"
 #include "containers/KeyValue.h"
 #include "containers/List.h"
