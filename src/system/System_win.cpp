@@ -55,9 +55,10 @@ Vector2i System::screenSize() {
   return Vector2i(GetSystemMetrics(SM_CXSCREEN),GetSystemMetrics(SM_CYSCREEN));
 }
 String System::formatPath(String path) {
-  path.replaceAll("/","\\");
+  // TODO: All paths should use / (at least in frontend) for consistency
   if(path != "\\" && (path.size()<2 || path[1]!=':'))
     path = System::pwd()+path;
+  path.replaceAll("\\", "/");
   return path;
 }
 void* System::alloc(size_t size) {
