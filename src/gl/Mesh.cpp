@@ -2,7 +2,6 @@
 
 #include "Buffer.h"
 #include "MeshBuilder.h"
-#include "../Interface.h"
 #include "GL.h"
 
 using namespace L;

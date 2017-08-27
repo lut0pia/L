@@ -1,6 +1,5 @@
 #include "Bitmap.h"
 
-#include "../Interface.h"
 #include "../math/Interpolation.h"
 
 using namespace L;
