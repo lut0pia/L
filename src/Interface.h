@@ -1,6 +1,7 @@
 #pragma once
 
 #include "macros.h"
+#include "containers/Buffer.h"
 #include "containers/Table.h"
 #include "containers/Ref.h"
 #include "text/String.h"
@@ -21,15 +22,15 @@ namespace L {
 
     virtual Ref<T> from(const File& file) {
       CFileStream fs(file.path(), "rb");
-      if(auto wtr = from(fs))
+      if(!fs)
+        return nullptr;
+      else if(auto wtr = from(fs))
         return wtr;
       else {
-        const size_t fileSize(fs.size());
-        byte* buffer(Memory::allocType<byte>(fileSize));
-        fs.read(buffer, fileSize);
-        auto r(from(buffer, fileSize));
-        Memory::free(buffer, fileSize);
-        return r;
+        const size_t file_size(fs.size());
+        Buffer buffer(file_size);
+        fs.read(buffer.data(), file_size);
+        return from((const byte*)buffer.data(), file_size);
       }
     }
     virtual Ref<T> from(Stream& is) {
