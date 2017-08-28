@@ -211,7 +211,7 @@ void ScriptComponent::init() {
   // StaticMesh ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(StaticMesh, "staticmesh");
   L_COMPONENT_METHOD(StaticMesh, "mesh", 1, mesh((const char*)c.local(0).get<String>()));
-  L_COMPONENT_METHOD(StaticMesh, "texture", 1, texture((const char*)c.local(0).get<String>()));
+  L_COMPONENT_METHOD(StaticMesh, "material", 1, material((const char*)c.local(0).get<String>()));
   L_COMPONENT_METHOD(StaticMesh, "scale", 1, scale(c.local(0).get<float>()));
   // Primitive ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(Primitive, "primitive");

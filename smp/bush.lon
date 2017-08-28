@@ -1,0 +1,6 @@
+{
+  'program "staticmesh.glsl"
+  'textures {
+    "tex" "bush.png"
+  }
+}

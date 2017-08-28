@@ -45,14 +45,14 @@
 	(entity'require-collider || 'box | size)
 	(entity'require-primitive || 'box | size)
 )))
-(set make-mesh (fun (mesh tex pos) (do
+(set make-mesh (fun (mesh mat pos) (do
 	(local entity (entity-make))
 	(set truc entity)
 	(local transform (entity'require-transform|))
 	(local staticmesh (entity'require-staticmesh|))
 	(transform'move | pos)
 	(staticmesh'mesh | mesh)
-	(staticmesh'texture | tex)
+	(staticmesh'material | mat)
 )))
 
 (set scene-default (fun (do
@@ -64,9 +64,9 @@
 	(entity-make | 'add-light || 'directional | (color) (vec -1 2 -3) 1)
 	(make-terrain)
 
-	(make-mesh "smartphone.obj" "smartphone.png" (vec -16 -20 5))
-	(make-mesh "jerrican.obj" "jerrican.png" (vec 4 -16 5))
-	(make-mesh "bush.obj" "bush.png" (vec -16 -28 0))
+	(make-mesh "smartphone.obj" "smartphone.lon" (vec -16 -20 5))
+	(make-mesh "jerrican.obj" "jerrican.lon" (vec 4 -16 5))
+	(make-mesh "bush.obj" "bush.lon" (vec -16 -28 0))
 	(set truc (entity-copy truc))
 	(truc'require-transform || 'move | (vec 30 0 0))
 
