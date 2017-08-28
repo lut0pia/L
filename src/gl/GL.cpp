@@ -229,7 +229,7 @@ void GL::makeDisc(Mesh& mesh,int slices) {
   reconstruct(mesh,meshBuilder);
   */
 }
-Map<uint64_t,int> middles;
+//Map<uint64_t,int> middles;
 int vertexBetween(MeshBuilder& mb,uint32_t a,uint32_t b) {
   /*
   if(a>b) swap(a,b);
