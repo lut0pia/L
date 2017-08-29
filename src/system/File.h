@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../text/String.h"
+#include "../time/Date.h"
 #include "System.h"
 
 namespace L {
@@ -18,5 +19,6 @@ namespace L {
 
     bool exists() const;
     void make() const;
+    bool mtime(Date&) const;
   };
 }
