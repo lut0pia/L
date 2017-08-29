@@ -141,6 +141,7 @@
 #include "text/Symbol.h"
 
 // Timey-wimey wibbly-wobbly stuff
+#include "time/Date.h"
 #include "time/ScopedTimer.h"
 #include "time/Time.h"
 #include "time/Timer.h"
