@@ -200,30 +200,25 @@ void Collider::render(const Camera& camera) {
       break;
   }
 }
-Interval1f project(const Vector3f& axis,const Vector3f* points,size_t count){
-  if(count--){
-    Interval1f wtr(Interval1f(axis.dot(points[count])));
-    while(count--)
-      wtr.add(axis.dot(points[count]));
-    return wtr;
-  }
-  return Interval1f();
+template <size_t count>
+Interval1f project(const Vector3f& axis, const Vector3f* points) {
+  Interval1f wtr(Interval1f(axis.dot(points[0])));
+  for(uintptr_t i(1); i<count; i++)
+    wtr.add(axis.dot(points[i]));
+  return wtr;
 }
-Vector3f leastToAxis(const Vector3f& axis,const Vector3f* points,size_t count) {
-  if(count--){
-    Vector3f wtr(points[count]);
-    float leastProjected(axis.dot(points[count]));
-    while(count--){
-      const Vector3f& p(points[count]);
-      float projected(axis.dot(p));
-      if(projected<leastProjected) {
-        wtr = p;
-        leastProjected = projected;
-      }
+template <size_t count>
+Vector3f least_to_axis(const Vector3f& axis, const Vector3f* points) {
+  uintptr_t least_index(0);
+  float least_projected(axis.dot(points[0]));
+  for(uintptr_t i(1); i<count; i++) {
+    const float projected(axis.dot(points[i]));
+    if(projected<least_projected) {
+      least_index = i;
+      least_projected = projected;
     }
-    return wtr;
   }
-  return Vector3f();
+  return points[least_index];
 }
 bool Collider::checkCollision(const Collider& a,const Collider& b, Collision& collision) {
   if(a.entity()==b.entity() || !a._boundingBox.overlaps(b._boundingBox) || !a._rigidbody)
@@ -279,7 +274,7 @@ bool Collider::checkCollision(const Collider& a,const Collider& b, Collision& co
     collision.overlap = 0.f;
     for(uintptr_t i(0); i<sizeof(axes)/sizeof(Vector3f); i++) {
       if(axes[i].lengthSquared()>0.00001f) { // The axis is not a null vector (caused by a cross product)
-        Interval1f axisA(project(axes[i],apoints,8)),axisB(project(axes[i],bpoints,8)),intersection(axisA,axisB); // Compute projections and intersection
+        Interval1f axisA(project<8>(axes[i], apoints)), axisB(project<8>(axes[i], bpoints)), intersection(axisA, axisB); // Compute projections and intersection
         const float overlap(intersection.size().x());
         if(overlap>0.f) {
           if(axis==sizeof(axes) || overlap<collision.overlap) { // First or smallest overlap yet
@@ -292,9 +287,9 @@ bool Collider::checkCollision(const Collider& a,const Collider& b, Collision& co
     }
     // Compute impact point
     if(axis<6)
-      collision.point = (axis<3) ? leastToAxis(-collision.normal,bpoints,8) : leastToAxis(collision.normal,apoints,8);
+      collision.point = (axis<3) ? least_to_axis<8>(-collision.normal, bpoints) : least_to_axis<8>(collision.normal, apoints);
     else{
-      Vector3f avertex(leastToAxis(collision.normal,apoints,8)),bvertex(leastToAxis(-collision.normal,bpoints,8));
+      Vector3f avertex(least_to_axis<8>(collision.normal, apoints)), bvertex(least_to_axis<8>(-collision.normal, bpoints));
       const Vector3f& aaxis(axes[(axis-6)/3]),baxis(axes[((axis-6)%3)+3]); // Find axes used in cross product
       if(!lineLineIntersect(avertex,avertex+aaxis,bvertex,bvertex+baxis,&avertex,&bvertex))
         return collision.colliding = false; // Unable to compute intersection
