@@ -39,28 +39,28 @@ void Engine::update() {
   {
     Window::Event e;
     while(Window::newEvent(e))
-      for(auto&& event : _windowEvents)
+      for(const auto& event : _windowEvents)
         event(e);
   }
   {
     Device::Event e;
     Device::update();
     while(Device::newEvent(e))
-      for(auto&& event : _deviceEvents)
+      for(const auto& event : _deviceEvents)
         event(e);
   }
-  for(auto&& update : _updates)
+  for(const auto& update : _updates)
     update();
   {
     _accumulator += _deltaTime;
     _subDeltaSeconds = _subDelta.fSeconds();
     while(_subDelta < _accumulator) {
-      for(auto&& subUpdate : _subUpdates)
+      for(const auto& subUpdate : _subUpdates)
         subUpdate();
       _accumulator -= _subDelta;
     }
   }
-  for(auto&& lateUpdate : _lateUpdates)
+  for(const auto& lateUpdate : _lateUpdates)
     lateUpdate();
 
   Entity::flush_destroy_queue();
