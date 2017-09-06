@@ -48,6 +48,7 @@ namespace L {
 Interfaces are small binding files (found in src/interface) that register in/out functions to the engine for it to be able to read/write files.
 They are not part of the engine building process as they are not needed by the engine itself and do not constitute dependencies.
 - stb_image
+- stb_truetype
 - JSON
 - Wavefront OBJ
 - FreeType 2
