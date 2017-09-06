@@ -31,10 +31,10 @@ namespace L {
       return wtr;
     }
     inline bool overlaps(const Interval& other) const {
+      bool overlap(true);
       for(int i(0); i<d; i++)
-        if(L::max(_min[i], other._min[i]) >= L::min(_max[i], other._max[i]))
-          return false;
-      return true;
+        overlap &= (L::max(_min[i], other._min[i]) < L::min(_max[i], other._max[i]));
+      return overlap;
     }
 
     void add(const Vector<d,T>& p) {
