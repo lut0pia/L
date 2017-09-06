@@ -43,6 +43,7 @@ namespace L {
 
     static void update();
     static void clear();
+    template <class T> inline static void add_resource() { _updates.push(Resource<T>::update); }
     template <class T> inline static void addUpdate() { _updates.push(updateAllComponents<T>); }
     template <class T> inline static void addSubUpdate() { _subUpdates.push(subUpdateAllComponents<T>); }
     template <class T> inline static void addLateUpdate() { _lateUpdates.push(lateUpdateAllComponents<T>); }

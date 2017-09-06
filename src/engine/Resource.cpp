@@ -5,17 +5,21 @@
 
 using namespace L;
 
-template <> Ref<GL::Texture> L::load_resource(const char* fp) {
-  if(auto bmp = Interface<Bitmap>::from_file(fp))
+template<> Ref<GL::Texture> L::load_resource(const char* path, ResourceSettings& settings) {
+  if(auto bmp = Interface<Bitmap>::from_file(path))
     return ref<GL::Texture>(*bmp, true);
   return nullptr;
 }
-template <> Ref<Script::CodeFunction> L::load_resource(const char* fp) {
-  CFileStream fs(fp, "r");
+template<> Ref<Script::CodeFunction> L::load_resource(const char* path, ResourceSettings& settings) {
+  CFileStream fs(path, "r");
   if(fs) return ref<Script::CodeFunction>(Script::Context::read(fs));
-  else return nullptr;
+  return nullptr;
 }
-template <> Ref<Font> L::load_resource(const char* fp) {
-  if(*fp) return Interface<Font>::from_file(fp);
-  else return ref<PixelFont>();
+template<> Ref<Font> L::load_resource(const char* path, ResourceSettings& settings) {
+  if(*path) return Interface<Font>::from_file(path);
+  else {
+    static Ref<PixelFont> pixel_font(ref<PixelFont>());
+    settings.persistent = true;
+    return pixel_font;
+  }
 }

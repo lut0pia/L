@@ -12,6 +12,10 @@ void mainjob(void*) {
   Audio::init();
   glEnable(GL_CULL_FACE);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  Engine::add_resource<Font>();
+  Engine::add_resource<GL::Mesh>();
+  Engine::add_resource<GL::Texture>();
+  Engine::add_resource<Script::CodeFunction>();
   Engine::addWindowEvent<Camera>();
   Engine::addWindowEvent<ScriptComponent>();
   Engine::addDeviceEvent<ScriptComponent>();
