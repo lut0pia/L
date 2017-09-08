@@ -9,6 +9,7 @@
 namespace L {
   namespace GL {
     void APIENTRY debug_callback(GLenum, GLenum, GLuint, GLenum, GLsizei, const GLchar*, const void*);
+    void draw(GLenum mode, GLsizei count);
     const Texture& whiteTexture();
     Program& baseProgram();
     Program& baseColorProgram();

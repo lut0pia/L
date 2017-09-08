@@ -17,6 +17,13 @@ void APIENTRY GL::debug_callback(GLenum source, GLenum type, GLuint id, GLenum s
     err << "OpenGL debug: " << message << '\n';
 }
 
+void GL::draw(GLenum mode, GLsizei count) {
+  static GLuint dummy_vao;
+  L_DO_ONCE
+    glCreateVertexArrays(1, &dummy_vao);
+  glBindVertexArray(dummy_vao);
+  glDrawArrays(mode, 0, count);
+}
 const Texture& GL::whiteTexture() {
   static Texture tex(1,1,&Color::white);
   return tex;
