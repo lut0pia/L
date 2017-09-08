@@ -125,11 +125,12 @@ void Camera::postrender(){
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // For GUI alpha
   static GL::Program final_shader(GL::Shader(
     "#version 330 core\n"
-    "layout (location = 0) in vec3 vertex;"
+    "const vec2 vertices[] = vec2[]("
+    "vec2(-1.f,-1.f),vec2(3.f,-1.f),vec2(-1.f,3.f));"
     "out vec2 ftexcoords;"
     "void main(){"
-    "ftexcoords = (vertex.xy+1.f)*.5f;"
-    "gl_Position = vec4(vertex,1.f);"
+    "ftexcoords = vertices[gl_VertexID]*.5f+.5f;"
+    "gl_Position = vec4(vertices[gl_VertexID],0.f,1.f);"
     "}", GL_VERTEX_SHADER),
     GL::Shader(
       "#version 330 core\n"
@@ -145,7 +146,7 @@ void Camera::postrender(){
 
   final_shader.use();
   final_shader.uniform("color_buffer", _pp_color[0]);
-  GL::quad().draw();
+  GL::draw(GL_TRIANGLES, 3);
 }
 
 void Camera::viewport(const Interval2f& i) {
