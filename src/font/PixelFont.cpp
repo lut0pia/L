@@ -14,7 +14,7 @@ PixelFont::PixelFont(int height) : _ratio(height/7.f) {
     for(uintptr_t i(0);i<L_COUNT_OF(tmp);i++)\
       out_bmp[i] = tmp[i];\
     if(_ratio>1.f)\
-      out_bmp.scale(int(w*_ratio),int(h*_ratio),Bitmap::InterpolationType::NEAREST);\
+      out_bmp.scale(int(w*_ratio),int(h*_ratio),Bitmap::InterpolationType::Nearest);\
     out_glyph.origin = {0,int(_ratio)};\
     out_glyph.advance = int((w+1)*_ratio);\
     return;\

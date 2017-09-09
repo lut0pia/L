@@ -31,25 +31,25 @@ LRESULT CALLBACK MainWndProc(HWND hwnd,uint32_t uMsg,WPARAM wParam,LPARAM lParam
       break;
     case WM_KEYDOWN:
     case WM_KEYUP: // Key pressed
-      e.type = (uMsg==WM_KEYDOWN) ? Window::Event::BUTTONDOWN : Window::Event::BUTTONUP;
+      e.type = (uMsg==WM_KEYDOWN) ? Window::Event::ButtonDown : Window::Event::ButtonUp;
       switch(wParam) {
 #define MAP(a,b) case a: e.button = Window::Event::b; break;
-        MAP(VK_BACK,BACKSPACE)
-          MAP(VK_TAB,TAB)
-          MAP(VK_RETURN,ENTER)
-          MAP(VK_SHIFT,SHIFT)
-          MAP(VK_CONTROL,CTRL)
-          MAP(VK_MENU,ALT)
-          MAP(VK_PAUSE,PAUSE)
-          MAP(VK_CAPITAL,CAPS)
-          MAP(VK_ESCAPE,ESCAPE)
-          MAP(VK_SPACE,SPACE)
-          MAP(VK_LEFT,LEFT) MAP(VK_RIGHT,RIGHT) MAP(VK_UP,UP) MAP(VK_DOWN,DOWN)
-          MAP(VK_NUMLOCK,NUMLOCK)
-          MAP(VK_NUMPAD1,NUM1) MAP(VK_NUMPAD2,NUM2) MAP(VK_NUMPAD3,NUM3)
-          MAP(VK_NUMPAD4,NUM4) MAP(VK_NUMPAD5,NUM5) MAP(VK_NUMPAD6,NUM6)
-          MAP(VK_NUMPAD7,NUM7) MAP(VK_NUMPAD8,NUM8) MAP(VK_NUMPAD9,NUM9)
-          MAP(VK_NUMPAD0,NUM0)
+        MAP(VK_BACK,Backspace)
+          MAP(VK_TAB,Tab)
+          MAP(VK_RETURN,Enter)
+          MAP(VK_SHIFT,Shift)
+          MAP(VK_CONTROL,Ctrl)
+          MAP(VK_MENU,Alt)
+          MAP(VK_PAUSE,Pause)
+          MAP(VK_CAPITAL,Caps)
+          MAP(VK_ESCAPE,Escape)
+          MAP(VK_SPACE,Space)
+          MAP(VK_LEFT,Left) MAP(VK_RIGHT,Right) MAP(VK_UP,Up) MAP(VK_DOWN,Down)
+          MAP(VK_NUMLOCK,NumLock)
+          MAP(VK_NUMPAD1,Num1) MAP(VK_NUMPAD2,Num2) MAP(VK_NUMPAD3,Num3)
+          MAP(VK_NUMPAD4,Num4) MAP(VK_NUMPAD5,Num5) MAP(VK_NUMPAD6,Num6)
+          MAP(VK_NUMPAD7,Num7) MAP(VK_NUMPAD8,Num8) MAP(VK_NUMPAD9,Num9)
+          MAP(VK_NUMPAD0,Num0)
           MAP(VK_F1,F1) MAP(VK_F2,F2) MAP(VK_F3,F3) MAP(VK_F4,F4)
           MAP(VK_F5,F5) MAP(VK_F6,F6) MAP(VK_F7,F7) MAP(VK_F8,F8)
           MAP(VK_F9,F9) MAP(VK_F10,F10) MAP(VK_F11,F11) MAP(VK_F12,F12)
@@ -68,23 +68,23 @@ LRESULT CALLBACK MainWndProc(HWND hwnd,uint32_t uMsg,WPARAM wParam,LPARAM lParam
     case WM_MBUTTONDOWN:
     case WM_MBUTTONUP:
       if(uMsg==WM_MOUSEMOVE)
-        e.type = Window::Event::MOUSEMOVE;
+        e.type = Window::Event::MouseMove;
       else {
         if(uMsg==WM_LBUTTONDOWN || uMsg==WM_RBUTTONDOWN || uMsg==WM_MBUTTONDOWN)
-          e.type = Window::Event::BUTTONDOWN;
-        else e.type = Window::Event::BUTTONUP;
+          e.type = Window::Event::ButtonDown;
+        else e.type = Window::Event::ButtonUp;
         switch(uMsg) {
           case WM_LBUTTONDOWN:
           case WM_LBUTTONUP:
-            e.button = Window::Event::LBUTTON;
+            e.button = Window::Event::LeftButton;
             break;
           case WM_RBUTTONDOWN:
           case WM_RBUTTONUP:
-            e.button = Window::Event::RBUTTON;
+            e.button = Window::Event::RightButton;
             break;
           case WM_MBUTTONDOWN:
           case WM_MBUTTONUP:
-            e.button = Window::Event::MBUTTON;
+            e.button = Window::Event::MiddleButton;
             break;
         }
       }
@@ -95,17 +95,17 @@ LRESULT CALLBACK MainWndProc(HWND hwnd,uint32_t uMsg,WPARAM wParam,LPARAM lParam
       *mousePos_p += Vector2i(e.x,e.y);
       break;
     case WM_MOUSEWHEEL:
-      e.type = Window::Event::MOUSEWHEEL;
+      e.type = Window::Event::MouseWheel;
       e.y = GET_WHEEL_DELTA_WPARAM(wParam);
       break;
     case WM_SIZE: // The size of the window has changed
-      e.type = Window::Event::RESIZE;
+      e.type = Window::Event::Resize;
       e.x = LOWORD(lParam);
       e.y = HIWORD(lParam);
       break;
     case WM_CHAR:
       if(wParam != '\b' && wParam != '\r') {
-        e.type = Window::Event::TEXT;
+        e.type = Window::Event::Text;
         strcpy(e.text,UTF16toUTF8(wParam));
       } else return 0;
       break;
@@ -127,10 +127,10 @@ LRESULT CALLBACK MainWndProc(HWND hwnd,uint32_t uMsg,WPARAM wParam,LPARAM lParam
       return DefWindowProc(hwnd,uMsg,wParam,lParam);
       break;
   }
-  if(e.type!=Window::Event::NONE){
-    if(e.type==Window::Event::BUTTONDOWN)
+  if(e.type!=Window::Event::None){
+    if(e.type==Window::Event::ButtonDown)
       buttonstate_p[e.button] = true;
-    else if(e.type==Window::Event::BUTTONUP)
+    else if(e.type==Window::Event::ButtonUp)
       buttonstate_p[e.button] = false;
     events_p->push(e);
   }

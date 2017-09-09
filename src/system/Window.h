@@ -11,25 +11,26 @@ namespace L {
   public:
     class Event {
     public:
-      typedef enum {
+      enum Button{
         // '0'-'9'
         A = 'A',B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,
-        BACKSPACE = 0xFF,TAB,ENTER,PAUSE,CAPS,ESCAPE,SPACE,
-        SHIFT,LSHIFT,RSHIFT,
-        CTRL,LCTRL,RCTRL,
-        ALT,LALT,RALT,
-        LEFT,RIGHT,UP,DOWN,
-        PAGEUP,PAGEDOWN,END,HOME,NUMLOCK,
-        NUM0,NUM1,NUM2,NUM3,NUM4,NUM5,NUM6,NUM7,NUM8,NUM9,
+        Backspace = 0xFF,Tab,Enter,Pause,Caps,Escape,Space,
+        Shift,LeftShift,RightShift,
+        Ctrl,LeftCtrl,RightCtrl,
+        Alt,LeftAlt,RightAlt,
+        Left,Right,Up,Down,
+        PageUp,PageDown,End,Home,NumLock,
+        Num0,Num1,Num2,Num3,Num4,Num5,Num6,Num7,Num8,Num9,
         F1,F2,F3,F4,F5,F6,F7,F8,F9,F10,F11,F12,
-        LBUTTON,RBUTTON,MBUTTON,
-        LAST
-      } Button;
-      enum {
-        NONE,RESIZE,TEXT,
-        BUTTONDOWN,BUTTONUP,
-        MOUSEMOVE,MOUSEWHEEL
-      } type;
+        LeftButton,RightButton,MiddleButton,
+        Last
+      };
+      enum Type{
+        None,Resize,Text,
+        ButtonDown,ButtonUp,
+        MouseMove,MouseWheel
+      };
+      Type type;
       union {
         struct {
           int x,y;
@@ -40,7 +41,7 @@ namespace L {
       Event();
     };
   private:
-    static bool _buttonstate[Event::LAST];
+    static bool _buttonstate[Event::Last];
     static Queue<512,Event> _events;
     static Vector2i _mousePos;
     static int _width,_height,_flags;
@@ -76,5 +77,6 @@ namespace L {
     static Event::Button hashToButton(uint32_t);
     static Symbol buttonToSymbol(Event::Button);
     static Event::Button symbolToButton(Symbol);
+    static Symbol event_type_to_symbol(Event::Type);
   };
 }

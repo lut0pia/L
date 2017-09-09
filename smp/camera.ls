@@ -17,13 +17,13 @@
 	(local cursor (self'cursor))
 	(local cursor-transform (self'cursor-transform))
 	(local movement (* real-delta 4))
-	(if (button-pressed 'SHIFT) (set movement (* movement 4)))
+	(if (button-pressed 'Shift) (set movement (* movement 4)))
 	(if (or (button-pressed 'Z) (button-pressed 'W)) (transform'move | (vec 0 movement 0)))
 	(if (or (button-pressed 'Q) (button-pressed 'A)) (transform'move | (vec (- movement) 0 0)))
 	(if (button-pressed 'S) (transform'move | (vec 0 (- movement) 0)))
 	(if (button-pressed 'D) (transform'move | (vec movement 0 0)))
 	; Shooting
-	(if (button-pressed 'LBUTTON) (self'shoot|))
+	(if (button-pressed 'LeftButton) (self'shoot|))
 	; Cursor placing
 	(local hit (raycast (transform'get-position|) (transform'forward|)))
 	(if (non-null (hit'collider))
@@ -37,7 +37,7 @@
 (set (self'event) (fun (e) (do
 	(local transform (self'transform))
 	(switch (e'type)
-		'MOUSEMOVE (do
+		'MouseMove (do
 			(transform'rotate | (vec 0 0 1) (* (e'x) -0.005))
 			(transform'rotate | (vec 1 0 0) (* (e'y) -0.005))
 		)

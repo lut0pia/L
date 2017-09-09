@@ -13,8 +13,8 @@ namespace L {
     Matrix44f _view,_projection,_viewProjection,_prevViewProjection,_ray;
     Interval2f _viewport;
     enum{
-      PERSPECTIVE,
-      ORTHO
+      Perspective,
+      Ortho
     } _projectionType;
     float _fovy,_near,_far,_left,_right,_bottom,_top;
     GL::Texture _gcolor, _gnormal, _gdepth, _pp_color[2];

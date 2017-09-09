@@ -40,7 +40,7 @@ void Camera::updateComponents() {
 static const Symbol perspective_symbol("perspective"), ortho_symbol("ortho");
 Map<Symbol, Var> Camera::pack() const {
   Map<Symbol, Var> data;
-  data["projection"] = (_projectionType==PERSPECTIVE) ? perspective_symbol : ortho_symbol;
+  data["projection"] = (_projectionType==Perspective) ? perspective_symbol : ortho_symbol;
   data["fovy"] = _fovy;
   data["near"] = _near;
   data["far"] = _far;
@@ -53,7 +53,7 @@ Map<Symbol, Var> Camera::pack() const {
 void Camera::unpack(const Map<Symbol, Var>& data) {
   Symbol projection;
   unpack_item(data, "projection", projection);
-  _projectionType = (projection==perspective_symbol) ? PERSPECTIVE : ORTHO;
+  _projectionType = (projection==perspective_symbol) ? Perspective : Ortho;
   unpack_item(data, "fovy", _fovy);
   unpack_item(data, "near", _near);
   unpack_item(data, "far", _far);
@@ -75,7 +75,7 @@ void Camera::resize_buffers() {
   _pp_color[1].image2D(0, GL_RGB16F, viewport_width, viewport_height, 0, GL_RGB, GL_FLOAT);
 }
 void Camera::event(const Window::Event& e) {
-  if(e.type == Window::Event::RESIZE) {
+  if(e.type == Window::Event::Resize) {
     resize_buffers();
     updateProjection();
   }
@@ -155,12 +155,12 @@ void Camera::viewport(const Interval2f& i) {
   updateProjection();
 }
 void Camera::perspective(float fovy,float near,float far) {
-  _projectionType = PERSPECTIVE;
+  _projectionType = Perspective;
   _fovy = fovy; _near = near; _far = far;
   updateProjection();
 }
 void Camera::ortho(float left,float right,float bottom,float top,float near,float far) {
-  _projectionType = ORTHO;
+  _projectionType = Ortho;
   _left = left; _right = right; _bottom = bottom; _top = top; _near = near; _far = far;
   updateProjection();
 }
@@ -169,7 +169,7 @@ void Camera::pixels() {
 }
 void Camera::updateProjection(){
   switch(_projectionType){
-    case L::Camera::PERSPECTIVE:
+    case L::Camera::Perspective:
     {
       _projection = Matrix44f(1.f);
       const Vector2f viewportSize(_viewport.size());
@@ -184,7 +184,7 @@ void Camera::updateProjection(){
       _projection(3,3) = 0.f;
     }
     break;
-    case L::Camera::ORTHO:
+    case L::Camera::Ortho:
     {
       _projection = Matrix44f(1.f);
       _projection(0,0) = 2.f/(_right-_left);

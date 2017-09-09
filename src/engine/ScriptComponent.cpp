@@ -62,18 +62,7 @@ void ScriptComponent::event(const Device::Event& e) {
 }
 void ScriptComponent::event(const Window::Event& e) {
   auto table(ref<Table<Var, Var>>());
-  Var& typeSlot((*table)[Symbol("type")]);
-  switch(e.type) { // TODO: handle other event types
-    case Window::Event::MOUSEMOVE:
-      typeSlot = Symbol("MOUSEMOVE");
-      break;
-    case Window::Event::BUTTONDOWN:
-      typeSlot = Symbol("BUTTONDOWN");
-      break;
-    case Window::Event::BUTTONUP:
-      typeSlot = Symbol("BUTTONUP");
-      break;
-  }
+  (*table)[Symbol("type")] = Window::event_type_to_symbol(e.type);
   (*table)[Symbol("button")] = Window::buttonToSymbol(e.button);
   (*table)[Symbol("x")] = e.x;
   (*table)[Symbol("y")] = e.y;

@@ -127,18 +127,18 @@ void Bitmap::scale(int newWidth,int newHeight,InterpolationType it) {
   Bitmap copy(*this);
   resizeFast(newWidth,newHeight);
   switch(it) {
-    case NEAREST:
+    case Nearest:
       for(int x(0); x<newWidth; x++)
         for(int y(0); y<newHeight; y++)
           (*this)(x,y) = copy.nearest((float)x*wf,(float)y*hf);
       break;
-    case LINEAR:
+    case Linear:
       for(int x(0); x<newWidth; x++)
         for(int y(0); y<newHeight; y++)
           (*this)(x,y) = copy.linear((float)x*wf,(float)y*hf);
       break;
     default:
-    case CUBIC:
+    case Cubic:
       for(int x(0); x<newWidth; x++)
         for(int y(0); y<newHeight; y++)
           (*this)(x,y) = copy.cubic((float)x*wf,(float)y*hf);

@@ -15,7 +15,7 @@ namespace L {
   class Bitmap : public MultiArray<2,Color> {
   public:
     typedef enum {
-      NEAREST,LINEAR,CUBIC
+      Nearest,Linear,Cubic
     } InterpolationType;
 
     inline Bitmap() : MultiArray<2,Color>() {}
@@ -36,7 +36,7 @@ namespace L {
     void filter(Color);
     Bitmap trim(Color) const;
     Bitmap trim(int left,int right,int top,int bottom) const;
-    void scale(int width,int height,InterpolationType = CUBIC);
+    void scale(int width,int height,InterpolationType = Cubic);
     void blur(int factor);
   };
 }
