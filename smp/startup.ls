@@ -73,6 +73,13 @@
 	;(entity-get "camera" | 'require-transform || 'move | (vec 0 0 10))
 	;(entity-destroy (entity-get "camera"))
 
+	(local sprite (entity-make))
+	(sprite'require-transform || 'move | (vec -9.4 0 5))
+	(sprite'require-transform || 'rotate | (vec 0 0 1) 1.57)
+	(sprite'require-sprite || 'texture | "bush.png")
+	(sprite'require-sprite || 'uv | 0 0 1 1)
+	(sprite'require-sprite || 'vertex | -5 -5 5 5)
+
 	; Create all boxes
 	(local box-count 16)
 	(while (> box-count 0) (do
@@ -84,8 +91,3 @@
 (scene-default)
 ;(local camera (entity-make))
 ;(camera'require-camera || 'ortho | -1 1 -1 1)
-
-;(local sprite (entity-make))
-(sprite'require-transform || 'move | (vec 0 0 10))
-(sprite'require-sprite || 'texture | "smartphone.png")
-(sprite'require-sprite || 'vertex | -5 -5 5 5)
