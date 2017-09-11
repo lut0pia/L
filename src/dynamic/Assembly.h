@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../containers/Array.h"
+#include "../container/Array.h"
 #include "../stream/Stream.h"
 #include "../system/System.h"
 #include "../types.h"

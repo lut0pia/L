@@ -1,12 +1,12 @@
 #pragma once
 
 #include "Lexer.h"
-#include "../containers/Array.h"
-#include "../containers/KeyValue.h"
-#include "../containers/StaticStack.h"
+#include "../container/Array.h"
+#include "../container/KeyValue.h"
+#include "../container/StaticStack.h"
 #include "../dynamic/Variable.h"
-#include "../containers/Ref.h"
-#include "../containers/Table.h"
+#include "../container/Ref.h"
+#include "../container/Table.h"
 #include "../text/Symbol.h"
 
 namespace L {

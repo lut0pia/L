@@ -1,9 +1,9 @@
 #pragma once
 
 #include "macros.h"
-#include "containers/Buffer.h"
-#include "containers/Table.h"
-#include "containers/Ref.h"
+#include "container/Buffer.h"
+#include "container/Table.h"
+#include "container/Ref.h"
 #include "text/String.h"
 #include "system/File.h"
 #include "stream/CFileStream.h"

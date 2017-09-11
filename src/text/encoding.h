@@ -2,7 +2,7 @@
 
 #include "../types.h"
 #include "String.h"
-#include "../containers/Array.h"
+#include "../container/Array.h"
 
 namespace L {
   const char* UTF16toUTF8(uint16_t); // Returns UTF-8 string from UTF-16 char

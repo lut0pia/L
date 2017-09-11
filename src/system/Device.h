@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../containers/Array.h"
-#include "../containers/Queue.h"
+#include "../container/Array.h"
+#include "../container/Queue.h"
 #include "../text/String.h"
 
 namespace L {

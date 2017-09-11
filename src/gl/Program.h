@@ -3,7 +3,7 @@
 #include <GL/glew.h>
 #include "Shader.h"
 #include "Texture.h"
-#include "../containers/Map.h"
+#include "../container/Map.h"
 #include "../image/Color.h"
 #include "../math/Matrix.h"
 

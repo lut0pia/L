@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Vector.h"
-#include "../containers/MultiArray.h"
+#include "../container/MultiArray.h"
 #include "Interpolation.h"
 
 namespace L {

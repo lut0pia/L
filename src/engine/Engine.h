@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../component/ComponentPool.h"
-#include "../containers/Ref.h"
-#include "../containers/Table.h"
+#include "../container/Ref.h"
+#include "../container/Table.h"
 #include "../gl/Texture.h"
 #include "../gl/Mesh.h"
 #include "../time/Timer.h"

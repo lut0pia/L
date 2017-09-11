@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../containers/Array.h"
+#include "../container/Array.h"
 #include <GL/glew.h>
 
 namespace L {

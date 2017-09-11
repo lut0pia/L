@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../containers/Array.h"
+#include "../container/Array.h"
 
 namespace L {
   namespace AI {

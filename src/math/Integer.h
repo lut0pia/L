@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../containers/Array.h"
+#include "../container/Array.h"
 #include "../text/String.h"
 
 namespace L {

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../containers/Array.h"
-#include "../containers/Ref.h"
-#include "../containers/Table.h"
+#include "../container/Array.h"
+#include "../container/Ref.h"
+#include "../container/Table.h"
 #include "../font/Font.h"
 #include "../gl/Texture.h"
 #include "../Interface.h"

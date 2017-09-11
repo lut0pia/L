@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstring>
-#include "../containers/Array.h"
+#include "../container/Array.h"
 #include "../stream/serial.h"
 
 namespace L {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../containers/Table.h"
+#include "../container/Table.h"
 #include "../image/Bitmap.h"
 #include "../gl/Atlas.h"
 #include "../math/Vector.h"

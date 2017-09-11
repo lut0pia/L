@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../containers/IntervalTree.h"
-#include "../containers/Set.h"
+#include "../container/IntervalTree.h"
+#include "../container/Set.h"
 #include "Texture.h"
 
 namespace L {

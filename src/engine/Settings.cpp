@@ -1,6 +1,6 @@
 #include "Settings.h"
 
-#include "../containers/Table.h"
+#include "../container/Table.h"
 #include "../stream/CFileStream.h"
 
 using namespace L;

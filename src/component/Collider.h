@@ -3,7 +3,7 @@
 #include "Transform.h"
 #include "RigidBody.h"
 #include "ScriptComponent.h"
-#include "../containers/IntervalTree.h"
+#include "../container/IntervalTree.h"
 
 namespace L {
   class Collider : public Component {
