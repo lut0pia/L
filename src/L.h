@@ -39,7 +39,6 @@
 
 // Objects that hold other objects
 #include "container/Array.h"
-#include "container/BTree.h"
 #include "container/Buffer.h"
 #include "container/IntervalTree.h"
 #include "container/KeyValue.h"
