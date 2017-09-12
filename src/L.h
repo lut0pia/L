@@ -32,6 +32,7 @@
 #include "component/Transform.h"
 
 // Objects that hold other objects
+#include "container/Archive.h"
 #include "container/Array.h"
 #include "container/Buffer.h"
 #include "container/IntervalTree.h"
