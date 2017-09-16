@@ -119,6 +119,16 @@ namespace L {
       }
       return s;
     }
+    friend Stream& operator<(Stream& s, const Matrix& m) {
+      for(uintptr_t i(0); i<l*c; i++)
+        s < m.array()[i];
+      return s;
+    }
+    friend Stream& operator>(Stream& s, Matrix& m) {
+      for(uintptr_t i(0); i<l*c; i++)
+        s > m.array()[i];
+      return s;
+    }
   };
 
   typedef Matrix<3,3,float> Matrix33f;
