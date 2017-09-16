@@ -171,6 +171,19 @@ namespace L {
       wtr.normalize();
       return wtr;
     }
+
+    friend Stream& operator<<(Stream &s, const Vector& v) {
+      s << '(';
+      for(uintptr_t i(0); i<d; i++) {
+        s << v[i];
+        if(i<d-1)
+          s << ';';
+      }
+      s << ')';
+      return s;
+    }
+    friend inline Stream& operator<(Stream& s, const Vector& v) { for(uintptr_t i(0); i<d; i++) s < v[i]; return s; }
+    friend inline Stream& operator>(Stream &s, Vector& v) { for(uintptr_t i(0); i<d; i++) s > v[i]; return s; }
   };
   template <int d,class T> inline Vector<d,T> operator*(const T& a,const Vector<d,T>& b) { return b*a; }
 
@@ -182,19 +195,6 @@ namespace L {
   typedef Vector<3,float> Vector3f;
   typedef Vector<4,float> Vector4f;
 
-  template <int d,class T>
-  Stream& operator<<(Stream &s,const Vector<d,T>& v) {
-    s << '(';
-    for(int i(0); i<d; i++) {
-      s << v[i];
-      if(i<d-1)
-        s << ';';
-    }
-    s << ')';
-    return s;
-  }
-  template <int d, class T> Stream& operator<(Stream& s, const Vector<d, T>& v) { for(int i(0); i<d; i++) s < v[i]; return s; }
-  template <int d, class T> Stream& operator>(Stream &s, Vector<d, T>& v) { for(int i(0); i<d; i++) s > v[i]; return s; }
   template <int d,class T>
   Vector<d,T> clamp(const Vector<d,T>& v,const Vector<d,T>& min,const Vector<d,T>& max) {
     Vector<d,T> wtr;
