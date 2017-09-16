@@ -6,6 +6,7 @@
 #include "../container/Ref.h"
 #include "../text/String.h"
 #include "../stream/CFileStream.h"
+#include "../stream/BufferStream.h"
 
 namespace L {
   template <class T>
@@ -21,22 +22,19 @@ namespace L {
 
     virtual Ref<T> from(const char* path) {
       CFileStream fs(path, "rb");
-      if(!fs)
-        return nullptr;
-      else if(auto wtr = from(fs))
-        return wtr;
-      else {
+      if(fs) {
         const size_t file_size(fs.size());
         Buffer buffer(file_size);
         fs.read(buffer.data(), file_size);
         return from((const byte*)buffer.data(), file_size);
-      }
+      } else return nullptr;
     }
     virtual Ref<T> from(Stream& is) {
       return nullptr;
     }
     virtual Ref<T> from(const byte* data, size_t size) {
-      return nullptr;
+      BufferStream bs((char*)data, size);
+      return from(bs);
     }
 
     virtual bool to(const T& v, const char* path) {
