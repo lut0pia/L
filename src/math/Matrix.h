@@ -32,10 +32,13 @@ namespace L {
       }
     }
 
-    inline T& operator()(int line,int column) { return _m[column][line]; }
-    inline const T& operator()(int line,int column) const { return _m[column][line]; }
+    inline T& operator()(uintptr_t line, uintptr_t column) { return _m[column][line]; }
+    inline const T& operator()(uintptr_t line, uintptr_t column) const { return _m[column][line]; }
     inline T* array() { return &_m[0][0]; }
     inline const T* array() const { return &_m[0][0]; }
+    inline Vector<l, T>& vector(uintptr_t i) { return ((Vector<l, T>*)_m)[i]; }
+    inline const Vector<l, T>& vector(uintptr_t i) const { return ((const Vector<l, T>*)_m)[i]; }
+
     inline Matrix& operator+=(const Matrix& other) {
       for(int i(0); i<l*c; i++)
         array()[i] += other.array()[i];
