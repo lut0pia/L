@@ -31,6 +31,13 @@ namespace L {
         i++;
       }
     }
+    template<int ol, int oc>
+    Matrix(const Matrix<ol, oc, T>& other) {
+      static_assert(l<ol && c<oc, "Cannot initialize matrix from smaller matrix");
+      for(int i(0); i<c; i++)
+        for(int j(0); j<l; j++)
+          _m[i][j] = other._m[i][j];
+    }
 
     inline T& operator()(uintptr_t line, uintptr_t column) { return _m[column][line]; }
     inline const T& operator()(uintptr_t line, uintptr_t column) const { return _m[column][line]; }
@@ -129,6 +136,7 @@ namespace L {
         s > m.array()[i];
       return s;
     }
+    template <int ol, int oc, class R> friend class Matrix;
   };
 
   typedef Matrix<3,3,float> Matrix33f;
