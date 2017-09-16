@@ -1,12 +1,12 @@
 #pragma once
 
-#include "macros.h"
-#include "container/Buffer.h"
-#include "container/Table.h"
-#include "container/Ref.h"
-#include "text/String.h"
-#include "system/File.h"
-#include "stream/CFileStream.h"
+#include "../macros.h"
+#include "../container/Buffer.h"
+#include "../container/Table.h"
+#include "../container/Ref.h"
+#include "../text/String.h"
+#include "../system/File.h"
+#include "../stream/CFileStream.h"
 
 namespace L {
   template <class T>

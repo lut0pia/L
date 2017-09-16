@@ -5,7 +5,7 @@
 #include "../container/Table.h"
 #include "../font/Font.h"
 #include "../gl/Texture.h"
-#include "../Interface.h"
+#include "Interface.h"
 #include "../text/Symbol.h"
 #include "../time/Date.h"
 #include "../script/Context.h"

@@ -6,9 +6,6 @@
 #include "objects.h"        // Copy/swap objects
 #include "types.h"          // Useful typedefs
 
-// General classes
-#include "Interface.h"      // Helping to go from a format to another
-
 // Artifical Intelligence
 #include "ai/MLP.h"
 #include "ai/Perceptron.h"
@@ -67,6 +64,7 @@
 
 // Core engine systems
 #include "engine/Engine.h"
+#include "engine/Interface.h"
 #include "engine/Resource.h"
 #include "engine/Settings.h"
 #include "engine/SharedUniform.h"
