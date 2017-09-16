@@ -6,7 +6,7 @@
 using namespace L;
 
 template<> Ref<GL::Texture> L::load_resource(const char* path, ResourceSettings& settings) {
-  if(auto bmp = Interface<Bitmap>::from_file(path))
+  if(auto bmp = Interface<Bitmap>::from_path(path))
     return ref<GL::Texture>(*bmp, true);
   return nullptr;
 }
@@ -16,7 +16,7 @@ template<> Ref<Script::CodeFunction> L::load_resource(const char* path, Resource
   return nullptr;
 }
 template<> Ref<Font> L::load_resource(const char* path, ResourceSettings& settings) {
-  if(*path) return Interface<Font>::from_file(path);
+  if(*path) return Interface<Font>::from_path(path);
   else {
     static Ref<PixelFont> pixel_font(ref<PixelFont>());
     settings.persistent = true;

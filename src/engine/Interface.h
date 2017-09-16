@@ -5,7 +5,6 @@
 #include "../container/Table.h"
 #include "../container/Ref.h"
 #include "../text/String.h"
-#include "../system/File.h"
 #include "../stream/CFileStream.h"
 
 namespace L {
@@ -20,8 +19,8 @@ namespace L {
         _instances[format].push(this);
     }
 
-    virtual Ref<T> from(const File& file) {
-      CFileStream fs(file.path(), "rb");
+    virtual Ref<T> from(const char* path) {
+      CFileStream fs(path, "rb");
       if(!fs)
         return nullptr;
       else if(auto wtr = from(fs))
@@ -40,8 +39,8 @@ namespace L {
       return nullptr;
     }
 
-    virtual bool to(const T& v, const File& file) {
-      CFileStream stream(file.path(), "wb");
+    virtual bool to(const T& v, const char* path) {
+      CFileStream stream(path, "wb");
       return to(v, stream);
     }
     virtual bool to(const T& v, Stream& os) {
@@ -51,17 +50,17 @@ namespace L {
       return false;
     }
 
-    static Ref<T> from_file(const char* path) {
+    static Ref<T> from_path(const char* path) {
       if(auto interfaces = _instances.find(file_ext(path)))
         for(auto interface : *interfaces)
-          if(Ref<T> object = interface->from(File(path)))
+          if(Ref<T> object = interface->from(path))
             return object;
       return nullptr;
     }
-    static void to_file(const T& v, const char* path) {
+    static void to_path(const T& v, const char* path) {
       if(auto interfaces = _instances.find(file_ext(path)))
         for(auto interface : *interfaces)
-          if(interface->to(File(path)))
+          if(interface->to(path))
             return
     }
     static const char* file_ext(const char* path) {
