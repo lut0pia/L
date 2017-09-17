@@ -4,7 +4,6 @@
 **      - ws2_32
 */
 
-#include "../container/Set.h"
 #include "../text/String.h"
 
 #include "../macros.h"
@@ -41,7 +40,7 @@ namespace L {
     SOCKET connect_to(uint32_t addr, short port);
     int recv(SOCKET, char* buffer, size_t size);
     bool send(SOCKET, const char* buffer, size_t size);
-    Set<String> dns_lookup(const char* host);
+    uint32_t dns_lookup(const char* host);
 
     // HTTP
     String HTTPRequest(const String& url);
