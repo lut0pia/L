@@ -38,6 +38,7 @@ namespace L {
   
     // Generic
     SOCKET connect_to(const char* ip, short port);
+    SOCKET connect_to(uint32_t addr, short port);
     int recv(SOCKET, char* buffer, size_t size);
     bool send(SOCKET, const char* buffer, size_t size);
     Set<String> dns_lookup(const char* host);

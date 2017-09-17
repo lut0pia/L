@@ -7,18 +7,21 @@ using namespace Network;
 #include "../stream/CFileStream.h"
 
 SOCKET Network::connect_to(const char* ip, short port) {
+  return connect_to(inet_addr(ip), port);
+}
+SOCKET Network::connect_to(uint32_t addr, short port) {
   SOCKET sd(0);
   if((sd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-    error("Couldn't create socket to %s:%hd - %d", ip, port, error_code());
+    error("Couldn't create socket to %s:%hd - %d", inet_ntoa(*((in_addr*)addr)), port, error_code());
 
   {
     SOCKADDR_IN sin;
-    sin.sin_addr.s_addr = inet_addr(ip);
+    sin.sin_addr.s_addr = addr;
     sin.sin_family = AF_INET;
     sin.sin_port = htons(port);
 
     if(connect(sd, (SOCKADDR*)&sin, sizeof(sin)) < 0)
-      error("Couldn't connect to %s:%hd - %d", ip, port, error_code());
+      error("Couldn't connect to %s:%hd - %d", inet_ntoa(*((in_addr*)addr)), port, error_code());
   }
   make_non_blocking(sd);
   return sd;
