@@ -6,6 +6,7 @@
 #include "NameComponent.h"
 #include "../text/String.h"
 #include "../font/Font.h"
+#include "../rendering/shader_lib.h"
 
 using namespace L;
 using namespace Script;
@@ -57,6 +58,38 @@ void ScriptComponent::script_registration() {
   // Gui ///////////////////////////////////////////////////////////////////
   L_FUNCTION("draw-text", {
     Resource<Font>::get("",true)->draw(c.local(0).get<int>(),c.local(1).get<int>(),c.local(2).get<String>());
+  });
+  L_FUNCTION("draw-image", {
+    if(c.localCount()==3) {
+      static Program gui_image_program(Shader(
+        L_GLSL_INTRO
+        L_SHAREDUNIFORM
+        "const vec2 vertices[] = vec2[]("
+        "vec2(0.f,0.f),vec2(0.f,1.f),vec2(1.f,0.f),"
+        "vec2(0.f,1.f),vec2(1.f,1.f),vec2(1.f,0.f));"
+        "uniform vec4 coords;"
+        "out vec2 ftexcoords;"
+        "void main(){"
+        "ftexcoords = vertices[gl_VertexID];"
+        "vec2 top_left_vert = (coords.xy+vertices[gl_VertexID]*coords.zw)/screen.xy;"
+        "gl_Position = vec4(top_left_vert*vec2(2.f,-2.f)+vec2(-1.f,1.f),0.f,1.f);"
+        "}", GL_VERTEX_SHADER),
+        Shader(
+          "#version 330 core\n"
+          "in vec2 ftexcoords;"
+          "out vec4 fragcolor;"
+          "uniform sampler2D tex;"
+          "void main(){"
+          "fragcolor = texture(tex,ftexcoords);"
+          "}", GL_FRAGMENT_SHADER));
+      if(auto tex = Resource<Texture>::get(c.local(2).get<String>())) {
+        gui_image_program.use();
+        gui_image_program.uniform("tex", *tex);
+        gui_image_program.uniform("coords", Vector4f(c.local(0).get<float>(), c.local(1).get<float>(),
+                                                     tex->width(), tex->height()));
+        GL::draw(GL_TRIANGLES, 6);
+      }
+    }
   });
   // Entity ///////////////////////////////////////////////////////////////////
   Context::global(Symbol("entity-make")) = (Function)([](Context& c) {

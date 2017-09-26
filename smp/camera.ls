@@ -65,7 +65,8 @@
 	))
 )))
 (set (self'gui) (fun (do
-	(draw-text 10 10
+	(draw-image 10 10 "logo.png")
+	(draw-text 84 10
 		(+ "FPS: " (/ 1.0 delta) "\n"
 			 "Frame: " avg-frame-work-duration "\n"
 		))
