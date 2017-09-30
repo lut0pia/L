@@ -25,6 +25,7 @@ namespace L {
       void bind() const;
       void unbind() const;
       void parameter(GLenum name,GLint);
+      void generate_mipmap();
 
       inline GLuint id() const { return _id; }
       inline int width() const { return _width; }

@@ -53,3 +53,7 @@ void Texture::unbind() const {
 void Texture::parameter(GLenum name,GLint param) {
   glTextureParameteri(_id,name,param);
 }
+void Texture::generate_mipmap(){
+  parameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+  glGenerateTextureMipmap(_id);
+}
