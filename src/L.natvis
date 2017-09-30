@@ -38,6 +38,14 @@
     </Expand>
   </Type>
 
+  <Type Name="L::Resource&lt;*&gt;">
+    <DisplayString Condition="_index &lt; 0">null</DisplayString>
+    <DisplayString>Resource: {L::Resource&lt;$T1&gt;::_slots[_index].path}</DisplayString>
+    <Expand>
+      <ExpandedItem>L::Resource&lt;$T1&gt;::_slots[_index]</ExpandedItem>
+    </Expand>
+  </Type>
+
   <Type Name="L::Ref&lt;*&gt;">
     <DisplayString Condition="_p == 0">null</DisplayString>
     <DisplayString>{*_p} ({*((int*)_p-1)})</DisplayString>
