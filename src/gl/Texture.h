@@ -14,11 +14,11 @@ namespace L {
     public:
       Texture();
       Texture(GLint level,GLint internalformat,GLsizei width,GLsizei height,GLint border,GLenum format,GLenum type,const void *pixels = nullptr);
-      Texture(const Bitmap&,bool mipmaps = false);
-      Texture(GLsizei width,GLsizei height,const void* data = nullptr,bool mipmaps = false);
+      Texture(const Bitmap&);
+      Texture(GLsizei width,GLsizei height,const void* data = nullptr);
       ~Texture();
-      void load(const Bitmap&,bool mipmaps = false);
-      void load(GLsizei width,GLsizei height,const void* data = nullptr,bool mipmaps = false);
+      void load(const Bitmap&);
+      void load(GLsizei width,GLsizei height,const void* data = nullptr);
       void image2D(GLint level,GLint internalformat,GLsizei width,GLsizei height,GLint border,GLenum format,GLenum type,const void *pixels = nullptr);
       void subload(const Bitmap& bmp, GLint x, GLint y);
       void subimage2D(GLint level, GLint x, GLint y, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void *pixels);

@@ -11,26 +11,24 @@ Texture::Texture() : _width(0),_height(0) {
 Texture::Texture(GLint level,GLint internalformat,GLsizei width,GLsizei height,GLint border,GLenum format,GLenum type,const void *pixels) : Texture(){
   image2D(level,internalformat,width,height,border,format,type,pixels);
 }
-Texture::Texture(const Bitmap& bmp,bool mipmaps) : Texture() {
-  load(bmp,mipmaps);
+Texture::Texture(const Bitmap& bmp) : Texture() {
+  load(bmp);
 }
-Texture::Texture(GLsizei width,GLsizei height,const void* data,bool mipmaps) : Texture(){
-  load(width,height,data,mipmaps);
+Texture::Texture(GLsizei width,GLsizei height,const void* data) : Texture(){
+  load(width,height,data);
 }
 Texture::~Texture() {
   glDeleteTextures(1,&_id);
 }
-void Texture::load(const Bitmap& bmp,bool mipmaps) {
-  load(bmp.width(),bmp.height(),&bmp[0],mipmaps);
+void Texture::load(const Bitmap& bmp) {
+  load(bmp.width(),bmp.height(),&bmp[0]);
 }
-void Texture::load(GLsizei width,GLsizei height,const void* data,bool mipmaps) {
+void Texture::load(GLsizei width,GLsizei height,const void* data) {
   parameter(GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
   parameter(GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
   parameter(GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-  parameter(GL_TEXTURE_MIN_FILTER,(mipmaps) ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
+  parameter(GL_TEXTURE_MIN_FILTER,GL_LINEAR);
   image2D(0,GL_RGBA8,width,height,0,GL_BGRA,GL_UNSIGNED_BYTE,data);
-  if(mipmaps)
-    glGenerateTextureMipmap(_id);
 }
 void Texture::image2D(GLint level,GLint internalformat,GLsizei width,GLsizei height,GLint border,GLenum format,GLenum type,const void *pixels){
   _width = width;
