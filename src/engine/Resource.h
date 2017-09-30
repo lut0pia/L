@@ -84,7 +84,6 @@ namespace L {
   };
 
   template <class T> Ref<T> load_resource(const char* path, ResourceSettings&) { return Interface<T>::from_path(path); }
-  template <> Ref<GL::Texture> load_resource(const char* path, ResourceSettings&);
   template <> Ref<Script::CodeFunction> load_resource(const char* path, ResourceSettings&);
   template <> Ref<Font> load_resource(const char* path, ResourceSettings&);
 

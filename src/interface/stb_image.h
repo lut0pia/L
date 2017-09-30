@@ -5,28 +5,20 @@
 #include <stb/stb_image.h>
 
 namespace L {
-  class STB_image : public Interface<Bitmap> {
+  class STB_image : public Interface<GL::Texture> {
     static STB_image instance;
   public:
     inline STB_image() : Interface{"png","bmp","jpeg","jpg"} {}
-    Ref<Bitmap> from(const byte* data, size_t size) override {
+    Ref<GL::Texture> from(const byte* data, size_t size) override {
       int width, height, comp;
       byte* img(stbi_load_from_memory(data, int(size), &width, &height, &comp, 4));
       if(img) {
-        auto wtr = ref<Bitmap>(width, height);
-        Bitmap& bmp = *wtr;
-        size_t s(width*height);
-        byte* a(img);
-        byte* b((byte*)&bmp[0]);
-
-        while(s--) {
-          b[2] = a[0];
-          b[1] = a[1];
-          b[0] = a[2];
-          b[3] = a[3];
-          a += 4;
-          b += 4;
-        }
+        auto wtr = ref<GL::Texture>(0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, img);
+        wtr->parameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        wtr->parameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        wtr->parameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        wtr->parameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        wtr->generate_mipmap();
         stbi_image_free(img);
         return wtr;
       } else {
