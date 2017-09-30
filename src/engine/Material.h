@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../container/KeyValue.h"
+#include "../gl/Program.h"
 #include "Resource.h"
 
 namespace L {
