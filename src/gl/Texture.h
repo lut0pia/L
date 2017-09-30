@@ -10,21 +10,21 @@ namespace L {
       L_NOCOPY(Texture)
     private:
       GLuint _id;
-      int _width,_height;
+      int _width, _height;
     public:
       Texture();
-      Texture(GLint level,GLint internalformat,GLsizei width,GLsizei height,GLint border,GLenum format,GLenum type,const void *pixels = nullptr);
+      Texture(GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void *pixels = nullptr);
       Texture(const Bitmap&);
-      Texture(GLsizei width,GLsizei height,const void* data = nullptr);
+      Texture(GLsizei width, GLsizei height, const void* data = nullptr);
       ~Texture();
       void load(const Bitmap&);
-      void load(GLsizei width,GLsizei height,const void* data = nullptr);
-      void image2D(GLint level,GLint internalformat,GLsizei width,GLsizei height,GLint border,GLenum format,GLenum type,const void *pixels = nullptr);
+      void load(GLsizei width, GLsizei height, const void* data = nullptr);
+      void image2D(GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void *pixels = nullptr);
       void subload(const Bitmap& bmp, GLint x, GLint y);
       void subimage2D(GLint level, GLint x, GLint y, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void *pixels);
       void bind() const;
       void unbind() const;
-      void parameter(GLenum name,GLint);
+      void parameter(GLenum name, GLint);
       void generate_mipmap();
 
       inline GLuint id() const { return _id; }
