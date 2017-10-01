@@ -13,13 +13,10 @@ namespace L {
     const Texture& whiteTexture();
     Program& baseProgram();
     Program& baseColorProgram();
-    const char* error();
     const Mesh& quad();
     const Mesh& cube();
     const Mesh& wireCube();
     const Mesh& sphere();
     const Mesh& wireSphere();
-    void makeDisc(Mesh&,int slices);
-    void makeSphere(Mesh&,int rec);
   }
 }
