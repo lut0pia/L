@@ -93,9 +93,10 @@ void TaskSystem::push(Func f, void* d, Flags flags) {
     parent->counter++;
   } else parent = nullptr;
   task_count++;
-  if(flags&MainThread)
-    thread_tasks[0].push(Task{f,d,flags,parent});
-  else tasks.push(Task{f,d,flags,parent});
+  if(flags&MainThread) {
+    if(thread_index==0 && flags&AllowExec) f(d);
+    else thread_tasks[0].push(Task{f,d,flags,parent});
+  } else tasks.push(Task{f,d,flags,parent});
 }
 void TaskSystem::yield() {
   switch_to_fiber(original_thread_fibers[thread_index]);

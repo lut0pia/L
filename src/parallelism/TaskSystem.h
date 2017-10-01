@@ -8,6 +8,7 @@ namespace L {
       None,
       MainThread = 1<<1,
       NoParent = 1<<2,
+      AllowExec = 1<<3,
     };
     typedef void(*Func)(void*);
     static const uint32_t max_thread_count = 16;
