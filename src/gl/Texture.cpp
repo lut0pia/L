@@ -28,7 +28,7 @@ void Texture::load(GLsizei width, GLsizei height, const void* data) {
   parameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
   parameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   parameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  image2D(0, GL_RGBA8, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, data);
+  image2D(0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 }
 void Texture::image2D(GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void *pixels) {
   _width = width;
@@ -36,7 +36,7 @@ void Texture::image2D(GLint level, GLint internalformat, GLsizei width, GLsizei 
   glTextureImage2DEXT(_id, GL_TEXTURE_2D, level, internalformat, width, height, border, format, type, pixels);
 }
 void Texture::subload(const Bitmap& bmp, GLint x, GLint y) {
-  subimage2D(0, x, y, bmp.width(), bmp.height(), 0, GL_BGRA, GL_UNSIGNED_BYTE, &bmp[0]);
+  subimage2D(0, x, y, bmp.width(), bmp.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, &bmp[0]);
 }
 void Texture::subimage2D(GLint level, GLint x, GLint y, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void *pixels) {
   L_ASSERT(x+width<=_width && y+height<=_height);
