@@ -121,6 +121,11 @@ namespace L {
       Slot* slot(findSlot(key));
       return slot && !slot->empty() ? &slot->value() : nullptr;
     }
+    V get(const K& key, const V& default_value) const {
+      if(const V* value = find(key))
+        return *value;
+      else return default_value;
+    }
     void remove(const K& key) {
       Slot* slot(((const Table<K, V>*)this)->findSlot(key)); // Call the const version of this method
       if(slot && !slot->empty()) {
