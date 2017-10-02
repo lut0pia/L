@@ -25,4 +25,7 @@ namespace L {
   }
   Array<uint32_t> UTF8toUTF32(const char* str);
   String ANSItoUTF8(String); // Convert ANSI characters to UTF-8
+
+  String url_encode(const String&);
+  String url_decode(const String&);
 }

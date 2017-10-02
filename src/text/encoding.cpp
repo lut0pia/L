@@ -73,3 +73,37 @@ String L::ANSItoUTF8(String str) {
 #undef ATU
   return str;
 }
+
+String L::url_encode(const String& src) {
+  String wtr;
+  for(char c : src){
+    if(strchr("%!#$&'()*+,/:;=?@[]", c)) {
+      wtr.push('%');
+      wtr += ntos<16>(c, 2);
+    } else wtr.push(c);
+  }
+  return wtr;
+}
+String L::url_decode(const String& src) {
+  String wtr;
+  int state(0);
+  char buffer[3]{};
+  for(char c : src) {
+    switch(state) {
+      case 1:
+        buffer[0] = c;
+        state = 2;
+        break;
+      case 2:
+        buffer[1] = c;
+        wtr.push(char(ston<16, uint32_t>(buffer)));
+        state = 0;
+        break;
+      default:
+        if(c=='%') state = 1;
+        else wtr.push(c);
+        break;
+    }
+  }
+  return wtr;
+}
