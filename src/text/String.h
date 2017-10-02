@@ -63,7 +63,8 @@ namespace L {
       inline const char& operator[](uintptr_t i) const {return Array<char>::operator[](i);}
       inline char& operator[](uintptr_t i) {return Array<char>::operator[](i);}
       using Array<char>::begin;
-      using Array<char>::end;
+      inline char* end() { return &operator[](size()); }
+      inline const char* end() const { return &operator[](size()); };
   };
   inline String operator+(const char* a, const String& b) {return String(a)+b;}
   inline Stream& operator<<(Stream &s,const String& v) { s.write(&v[0],v.size()); return s; }
