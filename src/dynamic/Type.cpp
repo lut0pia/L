@@ -11,11 +11,6 @@ using namespace L;
 
 Table<Symbol, const TypeDescription*> L::types;
 
-Cast TypeDescription::cast(const TypeDescription* target) const {
-  auto found = casts.find((intptr_t)target);
-  return found ? *found : nullptr;
-}
-
 void L::TypeInit() {
   // Operators
   Type<uint8_t>::canall<>();

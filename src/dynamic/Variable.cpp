@@ -68,12 +68,12 @@ void Variable::cast(const TypeDescription* td,Cast cast){
     type()->op(value(),other.value()); \
   else{ \
     Cast c; \
-    if(type()->op && (c = other.type()->cast(_td))){ /* This type has operator and other can become this type */\
+    if(type()->op && (c = other.type()->casts.get(_td, nullptr))){ /* This type has operator and other can become this type */\
       byte tmp[256]; \
       c(tmp,other.value()); /* Cast other to tmp */\
       type()->op(value(),tmp); \
       type()->dtr(tmp); /* Destruct temporary value */\
-    } else if(other.type()->op && (c = _td->cast(other.type()))){ /* Other's type has operator and this can become other's type */\
+    } else if(other.type()->op && (c = _td->casts.get(other.type(), nullptr))){ /* Other's type has operator and this can become other's type */\
       cast(other.type(),c); /* Cast this to other's type */\
       type()->op(value(),other.value()); \
     } \

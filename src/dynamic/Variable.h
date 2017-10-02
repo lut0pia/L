@@ -35,7 +35,7 @@ namespace L {
     template <class T> inline const T& as() const { return *(T*)value(); }
     template <class T> inline T& as() { return *(T*)value(); }
 
-    inline bool canbe(TypeDescription* td) const { return (_td->cast(td) != nullptr); }
+    inline bool canbe(TypeDescription* td) const { return _td->casts.find(td) != nullptr; }
     template <class T> inline bool canbe() const { return canbe(Type<T>::description()); }
 
     void make(const TypeDescription*);
@@ -60,7 +60,7 @@ namespace L {
     }
     template <class T> T get() const {
       if(is<T>()) return as<T>(); // It's already the right type: return as-is
-      else if(Cast cast = _td->cast(Type<T>::description())) { // Try to find cast
+      else if(Cast cast = _td->casts.get(Type<T>::description(), nullptr)) { // Try to find cast
         byte tmp[sizeof(T)]; // Temporary buffer
         cast(tmp,value()); // Cast current value to temporary buffer
         T wtr(static_cast<T&&>(*(T*)tmp)); // Move casted value to return object

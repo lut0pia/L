@@ -35,9 +35,7 @@ namespace L {
 
     int(*cmp)(const void*,const void*);
 
-    // Casts
-    Table<intptr_t,Cast> casts;
-    Cast cast(const TypeDescription* target) const; // Return Cast for target type if available or nullptr otherwise
+    Table<const TypeDescription*, Cast> casts;
   };
 
   extern Table<Symbol, const TypeDescription*> types;
@@ -95,7 +93,7 @@ namespace L {
     static inline const char* name() { return td.name; }
 
     // Casts
-    static inline void addcast(const TypeDescription* otd,Cast cast){ td.casts[(intptr_t)otd] = cast; }
+    static inline void addcast(const TypeDescription* otd, Cast cast) { td.casts[otd] = cast; }
     template <class R> static inline void addcast(Cast cast){ addcast(Type<R>::description(),cast); }
     template <class R> static inline void addcast(){ addcast<R>([](void* dst,const void* src){new(dst)R(*(T*)src); }); }
 
