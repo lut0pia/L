@@ -257,15 +257,23 @@ bool Window::loop() {
   MSG msg;
   if(_flags&loopcursor){
     bool changed(false);
-    if(_mousePos.x()<=0)
-      _mousePos.x() = _width-5,changed = true;
-    else if(_mousePos.x()>=_width-1)
-      _mousePos.x() = 5,changed = true;
-    if(_mousePos.y()<=0)
-      _mousePos.y() = _height-5,changed = true;
-    else if(_mousePos.y()>=_height-1)
-      _mousePos.y() = 5,changed = true;
-    if(changed) SetCursorPos(_mousePos.x(),_mousePos.y());
+    static const int safe_zone(128);
+    const Vector2i old_mouse_pos(_mousePos);
+    if(_mousePos.x()<safe_zone)
+      _mousePos.x() = _width-safe_zone,changed = true;
+    else if(_mousePos.x()>_width-safe_zone)
+      _mousePos.x() = safe_zone,changed = true;
+    if(_mousePos.y()<safe_zone)
+      _mousePos.y() = _height-safe_zone,changed = true;
+    else if(_mousePos.y()>_height-safe_zone)
+      _mousePos.y() = safe_zone,changed = true;
+    if(changed) {
+      POINT p;
+      GetCursorPos(&p);
+      p.x += _mousePos.x()-old_mouse_pos.x();
+      p.y += _mousePos.y()-old_mouse_pos.y();
+      SetCursorPos(p.x, p.y);
+    }
   }
   while(opened() && PeekMessage(&msg,nullptr,0,0,PM_REMOVE)) {
     TranslateMessage(&msg);
