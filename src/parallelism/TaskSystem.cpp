@@ -18,16 +18,19 @@ namespace L {
   void create_thread(void(*)(void*), void*);
 }
 
-struct FiberSlot {
-  FiberHandle handle;
-  std::atomic<uint32_t> counter;
-};
+struct FiberSlot;
 
 struct Task {
   TaskSystem::Func func;
   void* data;
   TaskSystem::Flags flags;
   FiberSlot* parent;
+};
+
+struct FiberSlot {
+  FiberHandle handle;
+  std::atomic<uint32_t> counter;
+  Task task;
 };
 
 bool initialized(false);
@@ -38,17 +41,21 @@ std::atomic<uint32_t> task_count(0);
 thread_local FiberSlot fibers[fiber_count];
 thread_local uint32_t thread_index, current_fiber;
 
-void fiber_func(void*) {
-  Task task;
-  while(task_count>0) {
-    if(thread_tasks[thread_index].pop(task) || tasks.pop(task)) {
+void fiber_func(void* arg) {
+  const uintptr_t fiber_index = uintptr_t(arg);
+  FiberSlot& fiber_slot(fibers[fiber_index]);
+  Task& task(fiber_slot.task);
+  while(true) {
+    if(task.func) {
       task.func(task.data); // Execute task
       if(task.parent) task.parent->counter--; // Notify task done
-      TaskSystem::join(); // Wait for child tasks
+      while(fiber_slot.counter) // Wait for child tasks
+        TaskSystem::yield();
+      task.func = nullptr;
       task_count--; // Notify task over
-    } else TaskSystem::yield();
+    }
+    TaskSystem::yield();
   }
-  switch_to_fiber(original_thread_fibers[thread_index]); // Go back to original context
 }
 
 void thread_func(void* arg) {
@@ -56,9 +63,17 @@ void thread_func(void* arg) {
   thread_index = uint32_t(uintptr_t(arg));
   current_fiber = 0;
   for(uint32_t i(0); i<fiber_count; i++)
-    fibers[i].handle = create_fiber(fiber_func, nullptr);
+    fibers[i].handle = create_fiber(fiber_func, (void*)i);
   original_thread_fibers[thread_index] = convert_to_fiber();
-  switch_to_fiber(fibers[0].handle);
+
+  while(task_count>0) {
+    FiberSlot& fiber_slot(fibers[current_fiber]);
+    if(fiber_slot.task.func==nullptr) // Free fiber
+      (thread_tasks[thread_index].pop(fiber_slot.task) || tasks.pop(fiber_slot.task)); // Fetch task
+    if(fiber_slot.task.func)  // Busy fiber
+      switch_to_fiber(fiber_slot.handle);
+    current_fiber = (current_fiber+1)%fiber_count;
+  }
 }
 
 void TaskSystem::init() {
@@ -79,8 +94,7 @@ void TaskSystem::push(Func f, void* d, Flags flags) {
   else tasks.push(Task{f,d,flags,parent});
 }
 void TaskSystem::yield() {
-  current_fiber = (current_fiber+1)%fiber_count;
-  switch_to_fiber(fibers[current_fiber].handle);
+  switch_to_fiber(original_thread_fibers[thread_index]);
 }
 void TaskSystem::join() {
   while(fibers[current_fiber].counter)
