@@ -10,7 +10,7 @@ namespace L {
   public:
     inline Date() = default;
     inline Date(time_t t) : _time(t) {}
-    inline bool operator<(const Date& other) { return difftime(_time, other._time)<0.f; }
+    inline bool operator<(const Date& other) const { return difftime(_time, other._time)<0.f; }
 
     inline static Date now() { return time(nullptr); }
 
