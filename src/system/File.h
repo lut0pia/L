@@ -9,7 +9,7 @@ namespace L {
   protected:
     String _path;
   public:
-    inline File(const char* path) : _path(System::formatPath(path)) {}
+    inline File(const char* path) : _path(path) {}
     inline bool operator<(const File& other) const { return _path < other._path; }
 
     inline String name() const { return System::pathFile(_path); }
