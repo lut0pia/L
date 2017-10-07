@@ -4,7 +4,9 @@ solution "L"
 
 	-- General options
 	location("prj/".._ACTION)
-	flags {"StaticRuntime","C++11","FloatFast"}
+	flags {"StaticRuntime"}
+	cppdialect "C++11"
+	floatingpoint "Fast"
 	exceptionhandling "Off"
 	rtti "Off"
 
@@ -23,7 +25,7 @@ solution "L"
 		defines {"_CRT_SECURE_NO_WARNINGS","_WINSOCK_DEPRECATED_NO_WARNINGS"}
 		buildoptions {"/wd4100","/wd4146","/wd4200","/wd4244","/wd4702","/wd4706","/wd4577","/wd4592"}
 		characterset "MBCS" -- Don't use UNICODE
-		flags {"ExtraWarnings"}
+		warnings "Extra"
 	configuration {"vs*","Debug"}
 		linkoptions {"/NODEFAULTLIB:libcmt.lib"}
 	configuration {"vs*","Release"}
@@ -57,13 +59,13 @@ solution "L"
 			objdir("obj/".._ACTION.."/smp/dev")
 			defines {"L_DEBUG"}
 			symbols "On"
-			flags {"Optimize"}
+			optimize "On"
 
 		configuration {"Release"}
 			targetname "L"
 			kind "WindowedApp"
 			objdir("obj/".._ACTION.."/smp/rls")
-			flags {"Optimize"}
+			optimize "On"
 
 	-- Library project
 	project "L"
@@ -105,10 +107,10 @@ solution "L"
 			objdir("obj/".._ACTION.."/dev")
 			defines {"L_DEBUG"}
 			symbols "On"
-			flags {"Optimize"}
+			optimize "On"
 
 		configuration  {"Release"}
 			targetdir "bin/rls"
 			objdir("obj/".._ACTION.."/rls")
 			excludes {"src/dev/**"}
-			flags {"Optimize"}
+			optimize "On"
