@@ -6,9 +6,6 @@
 
 using namespace L;
 
-const uint32_t thread_count = 4;
-const uint32_t fiber_count = 16;
-
 typedef void* FiberHandle;
 
 namespace L {
@@ -16,7 +13,11 @@ namespace L {
   FiberHandle create_fiber(void(*)(void*), void*);
   void switch_to_fiber(FiberHandle);
   void create_thread(void(*)(void*), void*);
+  uint32_t core_count();
 }
+
+const uint32_t actual_thread_count(min(TaskSystem::max_thread_count, core_count()));
+const uint32_t fiber_count = 16;
 
 struct FiberSlot;
 
@@ -35,8 +36,8 @@ struct FiberSlot {
 
 bool initialized(false);
 TSQueue<128, Task> tasks;
-TSQueue<16, Task> thread_tasks[thread_count];
-FiberHandle original_thread_fibers[thread_count];
+TSQueue<16, Task> thread_tasks[TaskSystem::max_thread_count];
+FiberHandle original_thread_fibers[TaskSystem::max_thread_count];
 std::atomic<uint32_t> task_count(0);
 thread_local FiberSlot fibers[fiber_count];
 thread_local uint32_t thread_index, current_fiber;
@@ -78,9 +79,12 @@ void thread_func(void* arg) {
 
 void TaskSystem::init() {
   initialized = true;
-  for(uintptr_t i(1); i<thread_count; i++)
+  for(uintptr_t i(1); i<actual_thread_count; i++)
     create_thread(thread_func, (void*)i);
   thread_func(nullptr);
+}
+uint32_t TaskSystem::thread_count() {
+  return actual_thread_count;
 }
 void TaskSystem::push(Func f, void* d, Flags flags) {
   FiberSlot* parent;

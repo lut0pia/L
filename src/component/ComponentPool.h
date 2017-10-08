@@ -17,11 +17,12 @@ namespace L {
       for(auto e : _pool.objects())
         f(*e);
     }
-    static void async_iterate(void(*f)(T&, uint32_t), uint32_t task_count) {
+    static void async_iterate(void(*f)(T&, uint32_t)) {
       struct TaskData {
         void(*f)(T&, uint32_t);
         uint32_t t, count;
       };
+      const uint32_t task_count(TaskSystem::thread_count());
       TaskData* task_data = Memory::allocType<TaskData>(task_count);
       for(uint32_t t(0); t<task_count; t++) {
         task_data[t] = {f,t,task_count};

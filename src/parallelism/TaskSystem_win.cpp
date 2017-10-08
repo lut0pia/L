@@ -15,4 +15,9 @@ namespace L {
   void create_thread(void(*f)(void*), void* p) {
     CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)f, (LPVOID)p, 0, NULL);
   }
+  uint32_t core_count() {
+    SYSTEM_INFO system_info;
+    GetSystemInfo(&system_info);
+    return system_info.dwNumberOfProcessors;
+  }
 }

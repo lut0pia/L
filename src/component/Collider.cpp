@@ -43,7 +43,7 @@ void Collider::unpack(const Map<Symbol, Var>& data) {
 }
 
 void Collider::subUpdateAll() {
-  static const uintptr_t task_count = 4;
+  const uintptr_t thread_count = TaskSystem::thread_count();
   // Update tree nodes
   ComponentPool<Collider>::iterate([](Collider& c) {
     c.updateBoundingBox();
@@ -53,22 +53,22 @@ void Collider::subUpdateAll() {
   });
 
   // Collision: broad phase
-  static Array<Interval3fTree<Collider*>::Node*> pairs[task_count];
-  static Array<Interval3fTree<Collider*>::Node*> tmp[task_count];
-  for(uintptr_t t(0); t<task_count; t++)
+  static Array<Interval3fTree<Collider*>::Node*> pairs[TaskSystem::max_thread_count];
+  static Array<Interval3fTree<Collider*>::Node*> tmp[TaskSystem::max_thread_count];
+  for(uintptr_t t(0); t<thread_count; t++)
     pairs[t].clear();
   ComponentPool<Collider>::async_iterate([](Collider& c, uint32_t t) {
     tree.query(c._boundingBox, tmp[t]);
     for(auto e : tmp[t])
       if(e!=c._node && e < c._node)
         pairs[t].pushMultiple(c._node, e);
-  }, task_count);
+  });
 
   // Collision: narrow phase
-  static Array<Collision> collisions[task_count];
-  for(uintptr_t i(0); i<task_count; i++)
+  static Array<Collision> collisions[TaskSystem::max_thread_count];
+  for(uintptr_t i(0); i<thread_count; i++)
     collisions[i].size(pairs[i].size()/2);
-  for(uintptr_t t(0); t<task_count; t++)
+  for(uintptr_t t(0); t<thread_count; t++)
     TaskSystem::push([](void* p) {
     const uintptr_t t((uintptr_t)p);
     for(uintptr_t i(0), j(0); i<collisions[t].size(); i++, j += 2) {
@@ -81,7 +81,7 @@ void Collider::subUpdateAll() {
   TaskSystem::join();
 
   // Apply all collisions
-  for(uintptr_t t(0); t<task_count; t++)
+  for(uintptr_t t(0); t<thread_count; t++)
     for(uintptr_t i(0); i<collisions[t].size(); i++) {
       const Collision& collision(collisions[t][i]);
       if(!collision.colliding)
