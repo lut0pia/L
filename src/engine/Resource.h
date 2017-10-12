@@ -35,7 +35,9 @@ namespace L {
     constexpr Resource() : _index(-1) {}
     constexpr Resource(intptr_t index) : _index(index) {}
     inline T& operator*() { return *slot().value; }
+    inline const T& operator*() const { return *slot().value; }
     inline T* operator->() { return slot().value; }
+    inline const T* operator->() const { return slot().value; }
     inline operator bool() const { return _index>=0 && slot().value; }
     inline const Ref<T>& ref() { return slot().value; }
 
