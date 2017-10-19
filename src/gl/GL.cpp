@@ -22,10 +22,6 @@ void GL::draw(GLenum mode, GLsizei count) {
   glBindVertexArray(dummy_vao);
   glDrawArrays(mode, 0, count);
 }
-const Texture& GL::whiteTexture() {
-  static Texture tex(1,1,&Color::white);
-  return tex;
-}
 #define L_VERTEX_SHADER \
 "#version 330 core\n" \
 L_SHAREDUNIFORM \
@@ -79,30 +75,6 @@ const Mesh& GL::quad(){
   static Mesh mesh(GL_TRIANGLE_STRIP,4,quad,sizeof(quad),{Mesh::Attribute{0,3,GL_FLOAT,GL_FALSE,0,0}});
   return mesh;
 }
-const Mesh& GL::cube(){
-  static const GLfloat cube[] = {
-    // Bottom face
-    -1,-1,-1, -1,1,-1,  1,-1,-1,
-    -1,1,-1,  1,1,-1,   1,-1,-1,
-    // Top face
-    -1,-1,1,  1,-1,1,   -1,1,1,
-    -1,1,1,   1,-1,1,   1,1,1,
-    // Back face
-    -1,-1,-1, 1,-1,-1,  -1,-1,1,
-    1,-1,-1,  1,-1,1,   -1,-1,1,
-    // Front face
-    -1,1,-1,  -1,1,1,   1,1,-1,
-    1,1,-1,   -1,1,1,   1,1,1,
-    // Left face
-    -1,-1,-1, -1,-1,1,  -1,1,-1,
-    -1,-1,1,  -1,1,1,   -1,1,-1,
-    // Right face
-    1,-1,-1,  1,1,-1,   1,-1,1,
-    1,-1,1,   1,1,-1,   1,1,1,
-  };
-  static Mesh mesh(GL_TRIANGLES,6*2*3,cube,sizeof(cube),{Mesh::Attribute{0,3,GL_FLOAT,GL_FALSE,0,0}});
-  return mesh;
-}
 const Mesh& GL::wireCube(){
   static const GLfloat wireCube[] = {
     // Bottom face
@@ -122,53 +94,6 @@ const Mesh& GL::wireCube(){
     1,1,-1,   1,1,1,
   };
   static Mesh mesh(GL_LINES,12*2,wireCube,sizeof(wireCube),{Mesh::Attribute{0,3,GL_FLOAT,GL_FALSE,0,0}});
-  return mesh;
-}
-const Mesh& GL::sphere(){
-  static const float d(sqrt(.5f));
-  static const GLfloat sphere[] = {
-    // -X-Y-Z octant
-    0,0,-1,  0,-d,-d, -d,0,-d,
-    0,-1,0,  -d,-d,0, 0,-d,-d,
-    -1,0,0,  -d,0,-d, -d,-d,0,
-    0,-d,-d, -d,-d,0, -d,0,-d,
-    // -X-Y+Z octant
-    0,0,1,   -d,0,d,  0,-d,d,
-    0,-1,0,  0,-d,d,  -d,-d,0,
-    -1,0,0,  -d,-d,0, -d,0,d,
-    0,-d,d,  -d,0,d,  -d,-d,0,
-    // -X+Y-Z octant
-    0,0,-1,  -d,0,-d, 0,d,-d,
-    0,1,0,   0,d,-d,  -d,d,0,
-    -1,0,0,  -d,d,0,  -d,0,-d,
-    0,d,-d,  -d,0,-d, -d,d,0,
-    // -X+Y+Z octant
-    0,0,1,   0,d,d,   -d,0,d,
-    0,1,0,   -d,d,0,  0,d,d,
-    -1,0,0,  -d,0,d,  -d,d,0,
-    0,d,d,   -d,d,0,  -d,0,d,
-    // +X-Y-Z octant
-    0,0,-1,  d,0,-d,  0,-d,-d,
-    0,-1,0,  0,-d,-d, d,-d,0,
-    1,0,0,   d,-d,0,  d,0,-d,
-    0,-d,-d, d,0,-d,  d,-d,0,
-    // +X-Y+Z octant
-    0,0,1,   0,-d,d,  d,0,d,
-    0,-1,0,  d,-d,0,  0,-d,d,
-    1,0,0,   d,0,d,   d,-d,0,
-    0,-d,d,  d,-d,0,  d,0,d,
-    // +X+Y-Z octant
-    0,0,-1,  0,d,-d,  d,0,-d,
-    0,1,0,   d,d,0,   0,d,-d,
-    1,0,0,   d,0,-d,  d,d,0,
-    0,d,-d,  d,d,0,   d,0,-d,
-    // +X+Y+Z octant
-    0,0,1,  d,0,d, 0,d,d,
-    0,1,0,  0,d,d, d,d,0,
-    1,0,0,  d,d,0, d,0,d,
-    0,d,d,  d,0,d, d,d,0,
-  };
-  static Mesh mesh(GL_TRIANGLES,8*4*3,sphere,sizeof(sphere),{Mesh::Attribute{0,3,GL_FLOAT,GL_FALSE,0,0}});
   return mesh;
 }
 const Mesh& GL::wireSphere(){
