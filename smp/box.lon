@@ -1,0 +1,8 @@
+{
+  'program "box.glsl"
+  'vertex_count 36
+  'primitive_mode 'triangles
+  'vectors {
+    'color "white"
+  }
+}

@@ -4,41 +4,23 @@
 
 using namespace L;
 
-void Primitive::updateComponents(){
+void Primitive::updateComponents() {
   _transform = entity()->requireComponent<Transform>();
 }
 Map<Symbol, Var> Primitive::pack() const {
-  Map<Symbol, Var> data;
-  data["type"] = Symbol(_type==Box ? "box" : "sphere");
-  data["center"] = _center;
-  data["radius"] = _radius;
-  data["color"] = _color;
-  return data;
+  return Map<Symbol, Var> {
+    {"material", _material},
+    {"scale", _scale},
+  };
 }
 void Primitive::unpack(const Map<Symbol, Var>& data) {
-  {
-    Symbol type;
-    unpack_item(data, "type", type);
-    if(type==Symbol("sphere"))
-      _type = Sphere;
-    else if(type==Symbol("box"))
-      _type = Box;
-  }
-  unpack_item(data, "center", _center);
-  unpack_item(data, "radius", _radius);
-  unpack_item(data, "color", _color);
+  unpack_item(data, "material", _material);
+  unpack_item(data, "scale", _scale);
 }
 
-void Primitive::render(const Camera& camera){
-  GL::baseColorProgram().use();
-  GL::baseColorProgram().uniform("model",_transform->matrix()*translation_matrix(_center)*scale_matrix(_radius));
-  GL::baseColorProgram().uniform("color",_color);
-  switch(_type){
-    case Box:
-      GL::cube().draw();
-      break;
-    case Sphere:
-      GL::sphere().draw();
-      break;
+void Primitive::render(const Camera& camera) {
+  if(_material.drawable()) {
+    _material.use(_transform->matrix()*scale_matrix(_scale));
+    GL::draw(_material.final_primitive_mode(), _material.final_vertex_count());
   }
 }

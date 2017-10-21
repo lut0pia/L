@@ -12,19 +12,19 @@
 	; Add rigid body
 	(entity'require-rigidbody || 'add-speed | (vec (rand-range -2 2) (rand-range -2 2) (rand-range 1 2)))
 	; Add collider
-	(if (< (rand) 0)
+	(if (< (rand) 0.0)
 		(do
+			(entity'require-primitive || 'material || 'parent | "sphere.lon")
 			(entity'require-collider || 'sphere | 0.5)
-			(entity'require-primitive || 'sphere | 0.5)
 		)
 		(do
+			(entity'require-primitive || 'material || 'parent | "box.lon")
 			(entity'require-collider || 'box | !(vec 0.5 0.5 0.5))
-			(entity'require-primitive || 'box | !(vec 0.5 0.5 0.5))
 		)
 	)
+	(entity'require-primitive || 'scale | !(vec 0.5 0.5 0.5))
 	(local color (rand-color))
-	(entity'require-primitive || 'color | color)
-	;(entity'require-light || 'spot | color (vec 0 1 0) 1 16 0.9)
+	(entity'require-primitive || 'material ||  'color | 'color color)
 	(entity'require-light || 'point | color 1 16)
 )))
 
@@ -43,7 +43,8 @@
 	(local entity (entity-make))
 	(entity'require-transform || 'move | position)
 	(entity'require-collider || 'box | size)
-	(entity'require-primitive || 'box | size)
+	(entity'require-primitive || 'scale | size)
+	(entity'require-primitive || 'material || 'parent | "box.lon")
 )))
 (set make-mesh (fun (mesh mat pos) (do
 	(local entity (entity-make))

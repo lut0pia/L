@@ -220,10 +220,8 @@ void ScriptComponent::init() {
   L_COMPONENT_METHOD(StaticMesh, "scale", 1, scale(c.local(0).get<float>()));
   // Primitive ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(Primitive, "primitive");
-  L_COMPONENT_METHOD(Primitive, "center", 1, center(c.local(0).get<Vector3f>()));
-  L_COMPONENT_METHOD(Primitive, "box", 1, box(c.local(0).get<Vector3f>()));
-  L_COMPONENT_METHOD(Primitive, "sphere", 1, sphere(c.local(0).get<float>()));
-  L_COMPONENT_METHOD(Primitive, "color", 1, color(c.local(0).get<Color>()));
+  L_COMPONENT_RETURN_METHOD(Primitive, "material", 0, material());
+  L_COMPONENT_METHOD(Primitive, "scale", 1, scale(c.local(0).get<Vector3f>()));
   // Name ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(NameComponent, "name");
   L_COMPONENT_METHOD(NameComponent, "set", 1, name(c.local(0).get<Symbol>()));
