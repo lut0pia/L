@@ -19,9 +19,8 @@ void StaticMesh::unpack(const Map<Symbol, Var>& data) {
 }
 
 void StaticMesh::render(const Camera& c) {
-  if(_mesh && _material && _material->program) {
-    _material->use();
-    _material->program->uniform("model", SQTToMat(_transform->rotation(), _transform->position(), _scale));
+  if(_mesh && _material && _material->valid()) {
+    _material->use(SQTToMat(_transform->rotation(), _transform->position(), _scale));
     _mesh->draw();
   }
 }

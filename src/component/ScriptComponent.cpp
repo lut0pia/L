@@ -80,6 +80,8 @@ void ScriptComponent::gui(const Camera& c) {
 void ScriptComponent::init() {
   L_ONCE;
 #define L_FUNCTION(name,...) Context::global(Symbol(name)) = (Function)([](Context& c) {__VA_ARGS__})
+#define L_METHOD(type,name,n,...) Context::typeValue(Type<type*>::description(),Symbol(name)) = (Function)([](Context& c) {L_ASSERT(c.localCount()>=n && c.currentSelf().is<type*>());c.currentSelf().as<type*>()->__VA_ARGS__;})
+#define L_RETURN_METHOD(type,name,n,...) Context::typeValue(Type<type*>::description(),Symbol(name)) = (Function)([](Context& c) {L_ASSERT(c.localCount()>=n && c.currentSelf().is<type*>());c.returnValue() = c.currentSelf().as<type*>()->__VA_ARGS__;})
 #define L_COMPONENT_FUNCTION(cname,fname,n,...) Context::typeValue(Type<cname*>::description(),Symbol(fname)) = (Function)([](Context& c) {L_ASSERT(c.localCount()>=n && c.currentSelf().is<cname*>());__VA_ARGS__})
 #define L_COMPONENT_METHOD(cname,fname,n,...) L_COMPONENT_FUNCTION(cname,fname,n,c.currentSelf().as<cname*>()->__VA_ARGS__;)
 #define L_COMPONENT_RETURN_METHOD(cname,fname,n,...) L_COMPONENT_FUNCTION(cname,fname,n,c.returnValue() = c.currentSelf().as<cname*>()->__VA_ARGS__;)
@@ -129,6 +131,9 @@ void ScriptComponent::init() {
       else c.returnValue() = nullptr;
     } else c.returnValue() = nullptr;
   });
+  // Material ///////////////////////////////////////////////////////////////////
+  L_METHOD(Material, "parent", 1, parent(Resource<Material>::get(c.local(0).get<String>())));
+  L_METHOD(Material, "color", 2, color(c.local(0).get<Symbol>(), c.local(1).get<Color>()));
   // Devices ///////////////////////////////////////////////////////////////////
   L_FUNCTION("get-devices", {
     auto wtr(ref<Table<Var,Var>>());
