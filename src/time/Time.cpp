@@ -43,6 +43,6 @@ Stream& L::operator<<(Stream &s,const Time& v) {
   long long msecs((us/1000LL)%1000LL);
   if(msecs) { s << ntos<10>(msecs,3) << "ms"; if(++c) return s; }
   long long usecs(us%1000LL);
-  if(usecs) { s << ntos<10>(usecs,3) << "us"; if(++c) return s; }
+  if(usecs || c<0) { s << ntos<10>(usecs,3) << "us"; if(++c) return s; }
   return s;
 }
