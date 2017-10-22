@@ -15,32 +15,26 @@ void mainjob(void*) {
   Network::init();
   Audio::init();
   glEnable(GL_CULL_FACE);
-  Engine::add_resource<Font>();
-  Engine::add_resource<Material>();
-  Engine::add_resource<GL::Mesh>();
-  Engine::add_resource<GL::Program>();
-  Engine::add_resource<GL::Texture>();
-  Engine::add_resource<Script::CodeFunction>();
-  Engine::addWindowEvent<Camera>();
-  Engine::addWindowEvent<ScriptComponent>();
-  Engine::addDeviceEvent<ScriptComponent>();
-  Engine::addUpdate<RigidBody>();
-  Engine::addUpdate<SpriteAnimator>();
-  Engine::addUpdate<ScriptComponent>();
-  Engine::addUpdate<AudioSourceComponent>();
-  Engine::addUpdate<AudioListenerComponent>();
-  Engine::addUpdate<MidiSourceComponent>();
-  Engine::addLateUpdate<LightComponent>();
-  Engine::addLateUpdate<HierarchyComponent>();
-  Engine::addRender<Primitive>();
-  Engine::addRender<Sprite>();
-  Engine::addRender<StaticMesh>();
-  if(Settings::get_int("render_collider", 0))
-    Engine::addRender<Collider>();
-  Engine::addSubUpdate<RigidBody>();
-  Engine::addSubUpdate<Collider>();
-  Engine::addLateUpdate<ScriptComponent>();
-  Engine::addGui<ScriptComponent>();
+  Engine::register_resource<Font>();
+  Engine::register_resource<Material>();
+  Engine::register_resource<GL::Mesh>();
+  Engine::register_resource<GL::Program>();
+  Engine::register_resource<GL::Texture>();
+  Engine::register_resource<Script::CodeFunction>();
+
+  Engine::register_component<Camera>();
+  Engine::register_component<RigidBody>();
+  Engine::register_component<Collider>();
+  Engine::register_component<SpriteAnimator>();
+  Engine::register_component<ScriptComponent>();
+  Engine::register_component<AudioSourceComponent>();
+  Engine::register_component<AudioListenerComponent>();
+  Engine::register_component<MidiSourceComponent>();
+  Engine::register_component<LightComponent>();
+  Engine::register_component<HierarchyComponent>();
+  Engine::register_component<Primitive>();
+  Engine::register_component<Sprite>();
+  Engine::register_component<StaticMesh>();
 
   {
     ScriptComponent::init();
@@ -57,7 +51,7 @@ void mainjob(void*) {
   { // Generate and upload dither matrix
     const uint32_t matrix_size(32);
     float matrix[matrix_size*matrix_size];
-    Engine::ditherMatrix(void_and_cluster(matrix_size, matrix_size, matrix), matrix_size, matrix_size);
+    Engine::dither_matrix(void_and_cluster(matrix_size, matrix_size, matrix), matrix_size, matrix_size);
   }
 
   while(Window::loop()) {

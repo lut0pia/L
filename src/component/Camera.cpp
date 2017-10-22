@@ -34,7 +34,7 @@ Camera::Camera() :
   _pp_buffer[1].check();
 }
 
-void Camera::updateComponents() {
+void Camera::update_components() {
   _transform = entity()->requireComponent<Transform>();
 }
 static const Symbol perspective_symbol("perspective"), ortho_symbol("ortho");
@@ -88,13 +88,13 @@ void Camera::prerender() {
   _viewProjection = _projection*_view;
   _ray = orientation*_projection.inverse();
   glViewport(0,0,_gcolor.width(),_gcolor.height());
-  Engine::sharedUniform().subData(L_SHAREDUNIFORM_VIEW,_view);
-  Engine::sharedUniform().subData(L_SHAREDUNIFORM_INVVIEW,_view.inverse());
-  Engine::sharedUniform().subData(L_SHAREDUNIFORM_VIEWPROJ,_viewProjection);
-  Engine::sharedUniform().subData(L_SHAREDUNIFORM_INVVIEWPROJ,_viewProjection.inverse());
-  Engine::sharedUniform().subData(L_SHAREDUNIFORM_PREVVIEWPROJ,_prevViewProjection);
-  Engine::sharedUniform().subData(L_SHAREDUNIFORM_EYE,_transform->position());
-  Engine::sharedUniform().subData(L_SHAREDUNIFORM_VIEWPORT, Vector4f(_viewport.min().x(),_viewport.min().y(),_viewport.max().x(),_viewport.max().y()));
+  Engine::shared_uniform().subData(L_SHAREDUNIFORM_VIEW,_view);
+  Engine::shared_uniform().subData(L_SHAREDUNIFORM_INVVIEW,_view.inverse());
+  Engine::shared_uniform().subData(L_SHAREDUNIFORM_VIEWPROJ,_viewProjection);
+  Engine::shared_uniform().subData(L_SHAREDUNIFORM_INVVIEWPROJ,_viewProjection.inverse());
+  Engine::shared_uniform().subData(L_SHAREDUNIFORM_PREVVIEWPROJ,_prevViewProjection);
+  Engine::shared_uniform().subData(L_SHAREDUNIFORM_EYE,_transform->position());
+  Engine::shared_uniform().subData(L_SHAREDUNIFORM_VIEWPORT, Vector4f(_viewport.min().x(),_viewport.min().y(),_viewport.max().x(),_viewport.max().y()));
   _gbuffer.bind();
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glEnable(GL_DEPTH_TEST);

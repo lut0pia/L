@@ -5,6 +5,7 @@
 namespace L {
   class HierarchyComponent : public Component {
     L_COMPONENT(HierarchyComponent)
+      L_COMPONENT_HAS_LATE_UPDATE(HierarchyComponent)
   protected:
     Transform *_parent, *_transform;
     Vector3f _translation;
@@ -12,8 +13,8 @@ namespace L {
   public:
     inline HierarchyComponent() : _parent(nullptr), _translation(0.f) {}
 
-    void lateUpdate();
-    void updateComponents();
+    void late_update();
+    void update_components();
 
     inline void parent(Transform* t) { _parent = t; }
     inline void translation(const Vector3f& t) { _translation = t; }

@@ -18,7 +18,7 @@ Entity::Entity(const Entity* other) : Entity() {
     p.value() = (Component*)p.key()->cpy(p.value());
     p.value()->entity(this);
     _components.push(p);
-    p.value()->updateComponents();
+    p.value()->update_components();
   }
 }
 Entity::~Entity() {
@@ -28,9 +28,9 @@ Entity::~Entity() {
     _components[0].key()->del(_components[0].value());
 }
 
-void Entity::updateComponents(){
+void Entity::update_components(){
   for(auto&& c : _components)
-    c.value()->updateComponents();
+    c.value()->update_components();
 }
 void Entity::remove(Component* c){
   for(uint32_t i(0); i<_components.size(); i++)
@@ -39,7 +39,7 @@ void Entity::remove(Component* c){
       break;
     }
   if(!_destroyed)
-    updateComponents();
+    update_components();
 }
 
 void Entity::save(const char* path) {
@@ -101,6 +101,6 @@ Stream& L::operator>(Stream& s, Entity& e) {
       L_ERRORF("Unknown component type name %s", (const char*)component_type_name);
     }
   }
-  e.updateComponents();
+  e.update_components();
   return s;
 }

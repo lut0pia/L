@@ -15,7 +15,7 @@ Collider::~Collider(){
     tree.remove(_node);
 }
 
-void Collider::updateComponents(){
+void Collider::update_components(){
   _transform = entity()->requireComponent<Transform>();
   _rigidbody = entity()->component<RigidBody>();
   _script = entity()->component<ScriptComponent>();
@@ -42,7 +42,7 @@ void Collider::unpack(const Map<Symbol, Var>& data) {
   unpack_item(data, "radius", _radius);
 }
 
-void Collider::subUpdateAll() {
+void Collider::sub_update_all() {
   const uintptr_t thread_count = TaskSystem::thread_count();
   // Update tree nodes
   ComponentPool<Collider>::iterate([](Collider& c) {
@@ -116,8 +116,9 @@ void Collider::subUpdateAll() {
       RigidBody::collision(a->_rigidbody, b->_rigidbody, collision.point, collision.normal);
     }
 }
-void Collider::renderAll(const Camera& cam) {
-  tree.draw();
+void Collider::render_all(const Camera& cam) {
+  if(Settings::get_int("render_collider", 0))
+    tree.draw();
 }
 void Collider::center(const Vector3f& center){
   _center = center;

@@ -8,6 +8,7 @@
 namespace L {
   class AudioSourceComponent : public Component {
     L_COMPONENT(AudioSourceComponent)
+      L_COMPONENT_HAS_UPDATE(AudioSourceComponent)
   protected:
     Audio::Source _source;
     Transform* _transform;
@@ -15,7 +16,7 @@ namespace L {
   public:
     void update();
 
-    inline void updateComponents() override { _transform = entity()->requireComponent<Transform>(); }
+    inline void update_components() override { _transform = entity()->requireComponent<Transform>(); }
     virtual Map<Symbol, Var> pack() const override;
     virtual void unpack(const Map<Symbol, Var>&) override;
 

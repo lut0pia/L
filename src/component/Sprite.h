@@ -9,6 +9,7 @@
 namespace L {
   class Sprite : public Component {
     L_COMPONENT(Sprite)
+      L_COMPONENT_HAS_RENDER(Sprite)
   private:
     Transform* _transform;
     Resource<GL::Texture> _texture;
@@ -18,7 +19,7 @@ namespace L {
     inline Sprite(const Sprite&) : Sprite() { L_ERROR("Sprite component should not be copied."); }
     inline Sprite& operator=(const Sprite& other) { L_ERROR("Sprite component should not be copied."); }
 
-    inline void updateComponents() override { _transform = entity()->requireComponent<Transform>(); }
+    inline void update_components() override { _transform = entity()->requireComponent<Transform>(); }
     virtual Map<Symbol, Var> pack() const override;
     virtual void unpack(const Map<Symbol, Var>&) override;
     void render(const Camera&);

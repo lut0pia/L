@@ -12,7 +12,7 @@ RigidBody::RigidBody() :
   _invMass(1.f), _restitution(.5f), _drag(0.f), _angDrag(0.f),
   _kinematic(false) {}
 
-void RigidBody::updateComponents() {
+void RigidBody::update_components() {
   _transform = entity()->requireComponent<Transform>();
   _last_position = _transform->position();
   updateInertiaTensor();
@@ -47,7 +47,7 @@ void RigidBody::updateInertiaTensor() {
 }
 void RigidBody::update() {
   if(_kinematic) {
-    float inv_delta(1.f/Engine::deltaSeconds());
+    float inv_delta(1.f/Engine::delta_seconds());
     _velocity = (_transform->position()-_last_position)*inv_delta;
     Quatf delta_quat(_transform->rotation()*_last_rotation.inverse());
     _rotation = delta_quat.to_scaled_vector()*inv_delta;
@@ -68,9 +68,9 @@ void RigidBody::update() {
     }
   }
 }
-void RigidBody::subUpdate() {
+void RigidBody::sub_update() {
   if(!_kinematic) {
-    const float delta(Engine::subDeltaSeconds());
+    const float delta(Engine::sub_delta_seconds());
     // Compute world inertia tensor
     const Matrix33f orientation(quatToMat(_transform->rotation()));
     _invInertiaTensorWorld = orientation*_invInertiaTensor*orientation.transpose();
@@ -115,7 +115,7 @@ void RigidBody::collision(RigidBody* a, RigidBody* b, const Vector3f& impact, co
   const float contact_velocity((av-bv).dot(normal));
   if(contact_velocity<0.f) {
     const float restitution(contact_velocity<-.5f ? (b ? min(a->_restitution, b->_restitution) : a->_restitution) : 0.f);
-    const float velocity_from_acc(b ? 0.f : _gravity.dot(normal)*Engine::subDeltaSeconds());
+    const float velocity_from_acc(b ? 0.f : _gravity.dot(normal)*Engine::sub_delta_seconds());
     const float desired_delta_velocity(-contact_velocity-restitution*(contact_velocity-velocity_from_acc));
     float delta_velocity(a->deltaVelocity(arel, normal));
     if(b) delta_velocity += b->deltaVelocity(brel, normal);

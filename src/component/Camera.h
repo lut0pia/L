@@ -2,11 +2,13 @@
 
 #include "Transform.h"
 #include "../gl/FrameBuffer.h"
+#include "../gl/Texture.h"
 #include "../math/Interval.h"
 
 namespace L {
   class Camera : public Component {
     L_COMPONENT(Camera)
+      L_COMPONENT_HAS_WIN_EVENT(Camera)
   private:
     Transform* _transform;
   protected:
@@ -25,7 +27,7 @@ namespace L {
     inline Camera(const Camera&) : Camera(){ L_ERROR("Camera component should not be copied."); }
     inline Camera& operator=(const Camera& other){ L_ERROR("Camera component should not be copied."); }
 
-    virtual void updateComponents() override;
+    virtual void update_components() override;
     virtual Map<Symbol, Var> pack() const override;
     virtual void unpack(const Map<Symbol, Var>&) override;
 

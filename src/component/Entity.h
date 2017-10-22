@@ -50,10 +50,10 @@ namespace L {
       CompType* component(new CompType());
       component->entity(this);
       _components.push(keyValue(Type<CompType>::description(),(Component*)component)); // Link the entity to the component
-      updateComponents();
+      update_components();
       return component;
     }
-    void updateComponents();
+    void update_components();
     void remove(Component*);
 
     static void save(const char* path);

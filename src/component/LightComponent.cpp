@@ -28,7 +28,7 @@ void LightComponent::unpack(const Map<Symbol, Var>& data) {
   unpack_item(data, "type", _type);
 }
 
-void LightComponent::lateUpdate() {
+void LightComponent::late_update() {
   _position = _transform->position();
   if(_type == 2)
     _direction = _transform->rotation().rotate(_relative_dir);

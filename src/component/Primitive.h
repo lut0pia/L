@@ -7,12 +7,13 @@
 namespace L {
   class Primitive : public Component {
     L_COMPONENT(Primitive)
+      L_COMPONENT_HAS_RENDER(Primitive)
   protected:
     Transform* _transform;
     Material _material;
     Vector3f _scale = 1.f;
   public:
-    virtual void updateComponents() override;
+    virtual void update_components() override;
     virtual Map<Symbol, Var> pack() const override;
     virtual void unpack(const Map<Symbol, Var>&) override;
 

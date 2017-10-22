@@ -5,6 +5,8 @@
 namespace L {
   class RigidBody : public Component {
     L_COMPONENT(RigidBody)
+      L_COMPONENT_HAS_ASYNC_UPDATE(RigidBody)
+      L_COMPONENT_HAS_ASYNC_SUB_UPDATE(RigidBody)
   protected:
     static Vector3f _gravity;
     Transform* _transform;
@@ -16,13 +18,13 @@ namespace L {
   public:
     RigidBody();
 
-    virtual void updateComponents() override;
+    virtual void update_components() override;
     virtual Map<Symbol, Var> pack() const override;
     virtual void unpack(const Map<Symbol, Var>&) override;
 
     void updateInertiaTensor();
     void update();
-    void subUpdate();
+    void sub_update();
 
     inline void kinematic(bool k) { _kinematic = k; }
     inline const Vector3f& velocity() const { return _velocity; }
@@ -51,6 +53,4 @@ namespace L {
     static void gravity(const Vector3f& g) { _gravity = g; }
     static const Vector3f& gravity() { return _gravity; }
   };
-  template <> inline void updateAllComponents<RigidBody>() { ComponentPool<RigidBody>::async_iterate([](RigidBody& c, uint32_t) { c.update(); }); }
-  template <> inline void subUpdateAllComponents<RigidBody>() { ComponentPool<RigidBody>::async_iterate([](RigidBody& c, uint32_t) { c.subUpdate(); }); }
 }

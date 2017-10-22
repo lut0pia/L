@@ -4,7 +4,7 @@
 
 using namespace L;
 
-void Primitive::updateComponents() {
+void Primitive::update_components() {
   _transform = entity()->requireComponent<Transform>();
 }
 Map<Symbol, Var> Primitive::pack() const {

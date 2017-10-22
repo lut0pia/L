@@ -7,6 +7,7 @@
 namespace L {
   class MidiSourceComponent : public Component {
     L_COMPONENT(MidiSourceComponent)
+      L_COMPONENT_HAS_UPDATE(MidiSourceComponent)
   protected:
     Resource<Audio::MidiSequence> _sequence;
     intptr_t _play_index;

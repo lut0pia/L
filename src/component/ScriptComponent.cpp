@@ -18,7 +18,7 @@
 using namespace L;
 using namespace Script;
 
-void ScriptComponent::updateComponents() {
+void ScriptComponent::update_components() {
   _context.selfTable()[Symbol("entity")] = entity();
  
   if(!_started && !_script_path.empty())
@@ -50,7 +50,7 @@ void ScriptComponent::update() {
   static const Symbol updateSymbol("update");
   _context.tryExecuteMethod(updateSymbol);
 }
-void ScriptComponent::lateUpdate() {
+void ScriptComponent::late_update() {
   static const Symbol lateUpdateSymbol("late-update");
   _context.tryExecuteMethod(lateUpdateSymbol);
 }
