@@ -15,7 +15,6 @@ void mainjob(void*) {
   Network::init();
   Audio::init();
   glEnable(GL_CULL_FACE);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   Engine::add_resource<Font>();
   Engine::add_resource<Material>();
   Engine::add_resource<GL::Mesh>();
