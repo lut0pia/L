@@ -17,6 +17,11 @@ void Primitive::unpack(const Map<Symbol, Var>& data) {
   unpack_item(data, "material", _material);
   unpack_item(data, "scale", _scale);
 }
+void Primitive::script_registration() {
+  L_COMPONENT_BIND(Primitive, "primitive");
+  L_COMPONENT_RETURN_METHOD(Primitive, "material", 0, material());
+  L_COMPONENT_METHOD(Primitive, "scale", 1, scale(c.local(0).get<Vector3f>()));
+}
 
 void Primitive::render(const Camera& camera) {
   if(_material.drawable()) {

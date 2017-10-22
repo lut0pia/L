@@ -22,6 +22,7 @@ void mainjob(void*) {
   Engine::register_resource<GL::Texture>();
   Engine::register_resource<Script::CodeFunction>();
 
+  Engine::register_component<Transform>();
   Engine::register_component<Camera>();
   Engine::register_component<RigidBody>();
   Engine::register_component<Collider>();
@@ -30,6 +31,7 @@ void mainjob(void*) {
   Engine::register_component<AudioSourceComponent>();
   Engine::register_component<AudioListenerComponent>();
   Engine::register_component<MidiSourceComponent>();
+  Engine::register_component<NameComponent>();
   Engine::register_component<LightComponent>();
   Engine::register_component<HierarchyComponent>();
   Engine::register_component<Primitive>();
@@ -37,7 +39,6 @@ void mainjob(void*) {
   Engine::register_component<StaticMesh>();
 
   {
-    ScriptComponent::init();
     Script::Context startupContext;
     startupContext.executeInside(Array<Var>{Resource<Script::CodeFunction>::get("startup.ls").ref()});
   }

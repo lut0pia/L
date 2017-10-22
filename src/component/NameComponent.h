@@ -15,6 +15,7 @@ namespace L {
 
     virtual Map<Symbol, Var> pack() const override;
     virtual void unpack(const Map<Symbol, Var>&) override;
+    static void script_registration();
 
     inline void name(const Symbol& name) {
       _components.remove(_name);

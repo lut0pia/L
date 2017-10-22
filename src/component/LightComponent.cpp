@@ -27,6 +27,12 @@ void LightComponent::unpack(const Map<Symbol, Var>& data) {
   unpack_item(data, "outer_angle", _outer_angle);
   unpack_item(data, "type", _type);
 }
+void LightComponent::script_registration() {
+  L_COMPONENT_BIND(LightComponent, "light");
+  L_COMPONENT_METHOD(LightComponent, "directional", 3, directional(c.local(0).get<Color>(), c.local(1).get<Vector3f>(), c.local(2).get<float>()));
+  L_COMPONENT_METHOD(LightComponent, "point", 3, point(c.local(0).get<Color>(), c.local(1).get<float>(), c.local(2).get<float>()));
+  L_COMPONENT_METHOD(LightComponent, "spot", 5, spot(c.local(0).get<Color>(), c.local(1).get<Vector3f>(), c.local(2).get<float>(), c.local(3).get<float>(), c.local(4).get<float>()));
+}
 
 void LightComponent::late_update() {
   _position = _transform->position();

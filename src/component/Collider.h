@@ -32,6 +32,7 @@ namespace L {
     virtual void update_components() override;
     virtual Map<Symbol, Var> pack() const override;
     virtual void unpack(const Map<Symbol, Var>&) override;
+    static void script_registration();
 
     static void sub_update_all();
     static void render_all(const Camera& cam);

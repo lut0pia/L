@@ -40,6 +40,7 @@ namespace L {
       if(T::gui_all != Component::gui_all) _guis.push(T::gui_all);
       if(T::win_event_all != Component::win_event_all) _win_events.push(T::win_event_all);
       if(T::dev_event_all != Component::dev_event_all) _dev_events.push(T::dev_event_all);
+      T::script_registration();
     }
 
     // Rendering

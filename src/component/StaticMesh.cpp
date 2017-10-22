@@ -17,6 +17,12 @@ void StaticMesh::unpack(const Map<Symbol, Var>& data) {
   unpack_item(data, "material", _material);
   unpack_item(data, "scale", _scale);
 }
+void StaticMesh::script_registration() {
+  L_COMPONENT_BIND(StaticMesh, "staticmesh");
+  L_COMPONENT_METHOD(StaticMesh, "mesh", 1, mesh((const char*)c.local(0).get<String>()));
+  L_COMPONENT_METHOD(StaticMesh, "material", 1, material((const char*)c.local(0).get<String>()));
+  L_COMPONENT_METHOD(StaticMesh, "scale", 1, scale(c.local(0).get<float>()));
+}
 
 void StaticMesh::render(const Camera& c) {
   if(_mesh && _material && _material->valid()) {

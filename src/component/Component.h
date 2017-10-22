@@ -2,7 +2,7 @@
 
 #include "ComponentPool.h"
 #include "../container/Map.h"
-#include "../dynamic/Variable.h"
+#include "../script/Context.h"
 #include "Entity.h"
 
 namespace L {
@@ -46,6 +46,7 @@ namespace L {
     static void gui_all(const class Camera&) {}
     static void win_event_all(const Window::Event&) {}
     static void dev_event_all(const Device::Event&) {}
+    static void script_registration() {}
 
     friend class Entity;
   };
@@ -76,3 +77,19 @@ namespace L {
 #define L_COMPONENT_HAS_GUI(name) static inline void gui_all(const Camera& cam) { gui_all_impl<name>(cam); }
 #define L_COMPONENT_HAS_WIN_EVENT(name) static inline void win_event_all(const Window::Event& e) { win_event_all_impl<name>(e); }
 #define L_COMPONENT_HAS_DEV_EVENT(name) static inline void dev_event_all(const Device::Event& e) { dev_event_all_impl<name>(e); }
+
+#define L_COMPONENT_FUNCTION(cname,fname,n,...) Script::Context::typeValue(Type<cname*>::description(),Symbol(fname)) = (Script::Function)([](Script::Context& c) {L_ASSERT(c.localCount()>=n && c.currentSelf().is<cname*>());__VA_ARGS__})
+#define L_COMPONENT_METHOD(cname,fname,n,...) L_COMPONENT_FUNCTION(cname,fname,n,c.currentSelf().as<cname*>()->__VA_ARGS__;)
+#define L_COMPONENT_RETURN_METHOD(cname,fname,n,...) L_COMPONENT_FUNCTION(cname,fname,n,c.returnValue() = c.currentSelf().as<cname*>()->__VA_ARGS__;)
+#define L_COMPONENT_ADD(cname,fname) L_COMPONENT_FUNCTION(Entity,fname,0,c.returnValue() = c.currentSelf().as<Entity*>()->add<cname>();)
+#define L_COMPONENT_GET(cname,fname) L_COMPONENT_FUNCTION(Entity,fname,0,c.returnValue() = c.currentSelf().as<Entity*>()->component<cname>();)
+#define L_COMPONENT_REQUIRE(cname,fname) L_COMPONENT_FUNCTION(Entity,fname,0,c.returnValue() = c.currentSelf().as<Entity*>()->requireComponent<cname>();)
+#define L_COMPONENT_COPY(cname) L_COMPONENT_FUNCTION(cname,"copy",1,if(c.local(0).is<cname*>())*(c.currentSelf().as<cname*>()) = *(c.local(0).as<cname*>());)
+#define L_COMPONENT_ENTITY(cname) L_COMPONENT_RETURN_METHOD(cname,"entity",0,entity())
+#define L_COMPONENT_BIND(cname,name)\
+  L_COMPONENT_ADD(cname,"add-" name);\
+  L_COMPONENT_GET(cname,"get-" name);\
+  L_COMPONENT_REQUIRE(cname,"require-" name);\
+  L_COMPONENT_ENTITY(cname);\
+  L_COMPONENT_COPY(cname);\
+  Type<cname*>::cancmp<>();

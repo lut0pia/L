@@ -33,6 +33,26 @@ void RigidBody::unpack(const Map<Symbol, Var>& data) {
   unpack_item(data, "ang_drag", _angDrag);
   unpack_item(data, "kinematic", _kinematic);
 }
+void RigidBody::script_registration() {
+  L_COMPONENT_BIND(RigidBody, "rigidbody");
+  L_COMPONENT_METHOD(RigidBody, "kinematic", 1, kinematic(c.local(0).get<bool>()));
+  L_COMPONENT_METHOD(RigidBody, "mass", 1, mass(c.local(0).get<float>()));
+  L_COMPONENT_METHOD(RigidBody, "restitution", 1, restitution(c.local(0).get<float>()));
+  L_COMPONENT_METHOD(RigidBody, "drag", 1, drag(c.local(0).get<float>()));
+  L_COMPONENT_METHOD(RigidBody, "angular-drag", 1, angularDrag(c.local(0).get<float>()));
+  L_COMPONENT_RETURN_METHOD(RigidBody, "get-speed", 0, velocity());
+  L_COMPONENT_RETURN_METHOD(RigidBody, "get-relative-speed", 0, relativeVelocity());
+  L_COMPONENT_METHOD(RigidBody, "add-speed", 1, addSpeed(c.local(0).get<Vector3f>()));
+  L_COMPONENT_METHOD(RigidBody, "add-force", 1, addForce(c.local(0).get<Vector3f>()));
+  L_COMPONENT_METHOD(RigidBody, "add-relative-force", 1, addRelativeForce(c.local(0).get<Vector3f>()));
+  L_COMPONENT_METHOD(RigidBody, "add-torque", 1, addTorque(c.local(0).get<Vector3f>()));
+  L_COMPONENT_METHOD(RigidBody, "add-relative-torque", 1, addRelativeTorque(c.local(0).get<Vector3f>()));
+  Script::Context::global(Symbol("engine-gravity")) = (Script::Function)([](Script::Context& c) {
+    if(c.localCount()>0)
+      RigidBody::gravity(c.local(0).get<Vector3f>());
+    c.returnValue() = RigidBody::gravity();
+  });
+}
 
 void RigidBody::updateInertiaTensor() {
   Matrix33f inertiaTensor(0.f);

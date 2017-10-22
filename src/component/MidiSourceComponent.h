@@ -16,6 +16,7 @@ namespace L {
   public:
     virtual Map<Symbol, Var> pack() const override;
     virtual void unpack(const Map<Symbol, Var>&) override;
+    static void script_registration();
 
     void update();
     void play();

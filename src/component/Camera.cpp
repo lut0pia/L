@@ -64,6 +64,12 @@ void Camera::unpack(const Map<Symbol, Var>& data) {
   resize_buffers();
   updateProjection();
 }
+void Camera::script_registration() {
+  L_COMPONENT_BIND(Camera, "camera");
+  L_COMPONENT_METHOD(Camera, "perspective", 3, perspective(c.local(0).get<float>(), c.local(1).get<float>(), c.local(2).get<float>()));
+  L_COMPONENT_METHOD(Camera, "ortho", 4, ortho(c.local(0).get<float>(), c.local(1).get<float>(), c.local(2).get<float>(), c.local(3).get<float>()));
+  L_COMPONENT_METHOD(Camera, "viewport", 4, viewport(Interval2f(Vector2f(c.local(0).get<float>(), c.local(1).get<float>()), Vector2f(c.local(2).get<float>(), c.local(3).get<float>()))));
+}
 
 void Camera::resize_buffers() {
   const Vector2f viewport_size(_viewport.size());

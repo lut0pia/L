@@ -19,6 +19,7 @@ namespace L {
     inline void update_components() override { _transform = entity()->requireComponent<Transform>(); }
     virtual Map<Symbol, Var> pack() const override;
     virtual void unpack(const Map<Symbol, Var>&) override;
+    static void script_registration();
 
     inline void sound(const char* filepath) { _sound = Resource<Audio::Buffer>::get(filepath); _source.stop(); _source.buffer(*_sound); }
     inline void looping(bool should_loop) { _source.looping(should_loop); }

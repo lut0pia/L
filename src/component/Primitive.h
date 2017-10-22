@@ -16,6 +16,7 @@ namespace L {
     virtual void update_components() override;
     virtual Map<Symbol, Var> pack() const override;
     virtual void unpack(const Map<Symbol, Var>&) override;
+    static void script_registration();
 
     inline void material(const char* filename) { _material.parent(Resource<Material>::get(filename)); }
     Material* material() { return &_material; }

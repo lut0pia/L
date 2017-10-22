@@ -21,6 +21,7 @@ namespace L {
     virtual void update_components() override;
     virtual Map<Symbol, Var> pack() const override;
     virtual void unpack(const Map<Symbol, Var>&) override;
+    static void script_registration();
 
     void load(const char* filename);
     void start();
@@ -30,6 +31,5 @@ namespace L {
     void event(const Window::Event&);
     void event(const Ref<Table<Var, Var>>&);
     void gui(const Camera&);
-    static void init();
   };
 }

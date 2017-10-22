@@ -14,5 +14,6 @@ namespace L {
   public:
     void update();
     void update_components();
+    static void script_registration();
   };
 }

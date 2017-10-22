@@ -22,6 +22,8 @@ namespace L {
     inline void update_components() override { _transform = entity()->requireComponent<Transform>(); }
     virtual Map<Symbol, Var> pack() const override;
     virtual void unpack(const Map<Symbol, Var>&) override;
+    static void script_registration();
+    
     void render(const Camera&);
 
     inline void texture(const char* filename) { _texture = Resource<GL::Texture>::get(filename); }

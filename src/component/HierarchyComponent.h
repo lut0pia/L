@@ -15,6 +15,7 @@ namespace L {
 
     void late_update();
     void update_components();
+    static void script_registration();
 
     inline void parent(Transform* t) { _parent = t; }
     inline void translation(const Vector3f& t) { _translation = t; }

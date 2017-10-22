@@ -17,6 +17,7 @@ namespace L {
 
     virtual Map<Symbol, Var> pack() const override;
     virtual void unpack(const Map<Symbol, Var>&) override;
+    static void script_registration();
 
     inline Vector3f toAbsolute(const Vector3f& v) const { return position()+_rotation.rotate(v); }
     inline Vector3f fromAbsolute(const Vector3f& v) const { return _rotation.inverse().rotate(v-position()); }

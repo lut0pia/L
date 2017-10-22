@@ -12,6 +12,14 @@ void MidiSourceComponent::unpack(const Map<Symbol, Var>& data) {
   unpack_item(data, "sequence", _sequence);
   unpack_item(data, "loop", _loop);
 }
+void MidiSourceComponent::script_registration() {
+  L_COMPONENT_BIND(MidiSourceComponent, "midi-source");
+  L_COMPONENT_METHOD(MidiSourceComponent, "sequence", 1, sequence(c.local(0).get<String>()));
+  L_COMPONENT_METHOD(MidiSourceComponent, "looping", 1, looping(c.local(0).get<bool>()));
+  L_COMPONENT_METHOD(MidiSourceComponent, "play", 0, play());
+  L_COMPONENT_METHOD(MidiSourceComponent, "stop", 0, stop());
+  L_COMPONENT_RETURN_METHOD(MidiSourceComponent, "is-playing", 0, playing());
+}
 
 void MidiSourceComponent::update() {
   if(_playing && _sequence) {

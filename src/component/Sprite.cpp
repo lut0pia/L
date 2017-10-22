@@ -18,6 +18,14 @@ void Sprite::unpack(const Map<Symbol, Var>& data) {
   unpack_item(data, "vertex", _vertex);
   unpack_item(data, "uv", _uv);
 }
+void Sprite::script_registration() {
+  L_COMPONENT_BIND(Sprite, "sprite");
+  L_COMPONENT_METHOD(Sprite, "texture", 1, texture(c.local(0).get<String>()));
+  L_COMPONENT_METHOD(Sprite, "vertex", 4, vertex(Interval2f(Vector2f(c.local(0).get<float>(), c.local(1).get<float>()),
+                                                            Vector2f(c.local(2).get<float>(), c.local(3).get<float>()))));
+  L_COMPONENT_METHOD(Sprite, "uv", 4, uv(Interval2f(Vector2f(c.local(0).get<float>(), c.local(1).get<float>()),
+                                                    Vector2f(c.local(2).get<float>(), c.local(3).get<float>()))));
+}
 
 void Sprite::render(const Camera&) {
   static GL::Program program(GL::Shader(
