@@ -10,10 +10,9 @@
 #include "ai/MLP.h"
 #include "ai/Perceptron.h"
 
-// Audio I/O, Wave & Midi
+// Audio
 #include "audio/Audio.h"
 #include "audio/AudioBuffer.h"
-#include "audio/AudioSource.h"
 #include "audio/Midi.h"
 #include "audio/MidiSequence.h"
 

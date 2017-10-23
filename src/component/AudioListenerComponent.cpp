@@ -2,11 +2,17 @@
 
 using namespace L;
 
+Vector3f AudioListenerComponent::_position, AudioListenerComponent::_right,
+AudioListenerComponent::_forward, AudioListenerComponent::_up,
+AudioListenerComponent::_velocity, AudioListenerComponent::_last_position;
+
 void AudioListenerComponent::update() {
-  Audio::listener_position(_transform->position());
-  Audio::listener_orientation(_transform->forward(),_transform->up());
-  Audio::listener_velocity((_transform->position()-_last_position)*Engine::delta_seconds());
-  _last_position = _transform->position();
+  _position = _transform->position();
+  _right = _transform->right();
+  _forward = _transform->forward();
+  _up = _transform->up();
+  _velocity = (_position-_last_position)*Engine::delta_seconds();
+  _last_position = _position;
 }
 void AudioListenerComponent::update_components() {
   _transform = entity()->requireComponent<Transform>();

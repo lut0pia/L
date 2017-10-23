@@ -21,17 +21,17 @@ namespace L {
       if(wav_format!=1 || data_size > size+44)
         return nullptr;
 
-      Audio::Buffer::Format format;
+      Audio::SampleFormat format;
       switch(channels<<8 | bits_per_sample) {
-        case 0x108: format = Audio::Buffer::Mono8; break;
-        case 0x110: format = Audio::Buffer::Mono16; break;
-        case 0x208: format = Audio::Buffer::Stereo8; break;
-        case 0x210: format = Audio::Buffer::Stereo16; break;
+        case 0x108: format = Audio::Mono8; break;
+        case 0x110: format = Audio::Mono16; break;
+        case 0x208: format = Audio::Stereo8; break;
+        case 0x210: format = Audio::Stereo16; break;
         default: return nullptr;
       }
 
       auto buffer(ref<Audio::Buffer>());
-      buffer->data(format, data+44, data_size, frequency);
+      buffer->data(format, frequency, data+44, data_size);
       return buffer;
     }
     static uint32_t read_int(const byte* data, size_t size = 4) {

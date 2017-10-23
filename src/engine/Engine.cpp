@@ -11,6 +11,7 @@
 #include "../system/Window.h"
 #include "SharedUniform.h"
 #include "../stream/CFileStream.h"
+#include "../component/AudioSourceComponent.h"
 
 using namespace L;
 
@@ -73,6 +74,18 @@ void Engine::update() {
     for(auto&& gui : _guis)
       gui(camera);
   });
+
+  {
+    static void* buffer;
+    static uint32_t frame_count;
+    Audio::acquire_buffer(buffer, frame_count);
+    if(frame_count) {
+      ComponentPool<AudioSourceComponent>::iterate([](AudioSourceComponent& asc) {
+        asc.render(buffer, frame_count);
+      });
+      Audio::commit_buffer();
+    }
+  }
 
   // Compute work duration
   _frame_work_durations[_frame%L_COUNT_OF(_frame_work_durations)] = _timer.since();
