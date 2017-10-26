@@ -1,5 +1,10 @@
 #include "Camera.h"
 
+#ifdef near
+#undef near
+#undef far
+#endif
+
 #include "../constants.h"
 #include "../gl/Buffer.h"
 #include "../gl/GL.h"

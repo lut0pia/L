@@ -30,8 +30,6 @@
 # include <windowsx.h>
 # include <mmsystem.h>
 # include <sys/timeb.h>
-# undef near
-# undef far
 # define popen _popen
 # define pclose _pclose
 #elif defined L_UNIX
