@@ -1,6 +1,7 @@
 #pragma once
 
 #include <initializer_list>
+#include "GL.h"
 #include "../macros.h"
 
 namespace L {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <initializer_list>
-#include <GL/glew.h>
+#include "GL.h"
 #include "../macros.h"
 
 namespace L {

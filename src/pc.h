@@ -14,12 +14,6 @@
 #include <limits>
 #include <utility>
 
-// OpenGL
-#include <GL/glew.h>
-#if defined L_WINDOWS
-# include <GL/wglew.h>
-#endif
-
 // Platform
 #if defined L_WINDOWS
 # undef _WIN32_WINNT
@@ -45,3 +39,7 @@
 # include <arpa/inet.h>
 # include <pthread.h>
 #endif
+
+// OpenGL
+#include <gl/GL.h>
+#include <gl/glext.h>

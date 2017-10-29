@@ -1,11 +1,11 @@
 #include "Window.h"
 
 #include "../gl/GL.h"
+#include <GL/wglext.h>
 #include "../stream/CFileStream.h"
 #include "../text/encoding.h"
 #include "Device.h"
 #include <windows.h>
-#include <GL/wglew.h>
 
 using namespace L;
 
@@ -213,15 +213,10 @@ void Window::open(const char* title, int width, int height, int flags) {
   HGLRC hRCFake = wglCreateContext(hDC);
   wglMakeCurrent(hDC, hRCFake);
 
-  if(glewInit() != GLEW_OK)
-    L_ERROR("Couldn't initialize GLEW");
+  GL::init();
 
   _mousePos = Vector2i(width/2, height/2);
   SetCursorPos(width/2, height/2);
-
-#define L_CHECK_EXTENSION(ext) if(!ext) L_ERRORF("OpenGL extension %s is unavailable yet necessary, make sure you're running on your dedicated graphics card.",#ext)
-  L_CHECK_EXTENSION(WGLEW_ARB_create_context);
-  L_CHECK_EXTENSION(GLEW_ARB_direct_state_access);
 
   int iContextAttribs[] =
   {
@@ -234,6 +229,8 @@ void Window::open(const char* title, int width, int height, int flags) {
     0 // End of attributes list
   };
 
+  static PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB(
+    PFNWGLCREATECONTEXTATTRIBSARBPROC(wglGetProcAddress("wglCreateContextAttribsARB")));
   if(!(hRC = wglCreateContextAttribsARB(hDC, 0, iContextAttribs)))
     L_ERROR("wglCreateContextAttribsARB failed");
 

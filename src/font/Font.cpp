@@ -1,5 +1,6 @@
 #include "Font.h"
 
+#include "../gl/Program.h"
 #include "../text/encoding.h"
 #include "../engine/SharedUniform.h"
 

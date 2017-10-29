@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../container/Array.h"
-#include <GL/glew.h>
+#include "GL.h"
 
 namespace L {
   namespace GL {

@@ -5,7 +5,6 @@ solution "L"
 
 	-- General options
 	location("prj/".._ACTION)
-	defines {"GLEW_STATIC"}
 	flags {"StaticRuntime","C++11","FloatFast"}
 	exceptionhandling "Off"
 	rtti "Off"
@@ -33,7 +32,7 @@ solution "L"
 	-- GMake
 	configuration {"gmake"}
 		buildoptions {"-fno-operator-names"}
-    links {"GL","GLU","GLEW","X11"}
+    links {"GL","GLU","X11"}
 
 	-- Sample project (startup)
 	project "Sample"
@@ -92,7 +91,7 @@ solution "L"
 
 		-- Visual Studio
 		configuration {"vs*"}
-			postbuildcommands {[[lib.exe /LTCG /NOLOGO /IGNORE:4006,4221 /LIBPATH:../../ext/lib /OUT:"$(TargetPath)" "$(TargetPath)" user32.lib opengl32.lib glew32s.lib ws2_32.lib hid.lib winmm.lib]]}
+			postbuildcommands {[[lib.exe /LTCG /NOLOGO /IGNORE:4006,4221 /LIBPATH:../../ext/lib /OUT:"$(TargetPath)" "$(TargetPath)" user32.lib opengl32.lib ws2_32.lib hid.lib winmm.lib]]}
 			files {"src/**.natvis"}
 
 		configuration {"Debug"}

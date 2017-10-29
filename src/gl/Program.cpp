@@ -70,9 +70,6 @@ void Program::uniform_block_binding(const char* name, GLuint binding) {
 void Program::uniform(const char* name, int v) {
   glUniform1i(uniform_location(name), v);
 }
-void Program::uniform(const char* name, unsigned int v) {
-  glUniform1ui(uniform_location(name), v);
-}
 void Program::uniform(const char* name, float v) {
   glUniform1f(uniform_location(name), v);
 }

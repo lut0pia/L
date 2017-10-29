@@ -3,6 +3,7 @@
 #include "../container/Table.h"
 #include "../image/Bitmap.h"
 #include "../gl/Atlas.h"
+#include "../gl/Mesh.h"
 #include "../math/Vector.h"
 #include "../time/Time.h"
 

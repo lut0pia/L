@@ -9,6 +9,7 @@
 #include "../text/Symbol.h"
 #include "../time/Date.h"
 #include "../script/Context.h"
+#include "../system/File.h"
 
 namespace L {
   struct ResourceSettings {

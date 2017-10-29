@@ -1,6 +1,7 @@
 #include "Collider.h"
 
 #include "../gl/GL.h"
+#include "../gl/Mesh.h"
 #include "../gl/Program.h"
 #include "../math/geometry.h"
 #include "../parallelism/TaskSystem.h"

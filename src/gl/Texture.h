@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GL/glew.h>
+#include "GL.h"
 #include "../macros.h"
 
 namespace L {

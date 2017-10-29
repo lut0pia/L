@@ -1,7 +1,7 @@
 #pragma once
 
+#include "GL.h"
 #include "../macros.h"
-#include <GL/glew.h>
 
 namespace L {
   namespace GL {

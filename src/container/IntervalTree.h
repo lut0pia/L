@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../container/Array.h"
 #include "../container/StaticStack.h"
 #include "../gl/GL.h"
 #include "../math/Interval.h"

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GL/glew.h>
+#include "GL.h"
 #include "Shader.h"
 #include "Texture.h"
 #include "../container/Table.h"
@@ -27,7 +27,6 @@ namespace L {
       GLuint uniform_block_index(const char* name);
       void uniform_block_binding(const char* name, GLuint binding);
       void uniform(const char* name, int);
-      void uniform(const char* name, unsigned int);
       void uniform(const char* name, float);
       void uniform(const char* name, float, float);
       void uniform(const char* name, float, float, float);
