@@ -10,6 +10,7 @@ solution "L"
 	floatingpoint "Fast"
 	exceptionhandling "Off"
 	rtti "Off"
+	editandcontinue "Off"
 
 	-- Platform
 	configuration {"windows"}
