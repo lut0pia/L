@@ -4,6 +4,7 @@ solution "L"
 
 	-- General options
 	location("prj/".._ACTION)
+  includedirs {"ext/include"}
 	flags {"StaticRuntime"}
 	cppdialect "C++11"
 	floatingpoint "Fast"
@@ -19,7 +20,6 @@ solution "L"
 
 	-- Visual Studio
 	configuration {"vs*"}
-		includedirs {"ext/include"}
 		libdirs {"ext/lib"}
 		linkoptions {"/NODEFAULTLIB:libc.lib","/NODEFAULTLIB:msvcrt.lib","/NODEFAULTLIB:libcd.lib","/NODEFAULTLIB:msvcrtd.lib"}
 		defines {"_CRT_SECURE_NO_WARNINGS","_WINSOCK_DEPRECATED_NO_WARNINGS"}
