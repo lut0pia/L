@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Premake
-(git clone https://github.com/premake/premake-core pmk) || # Attempt to clone
+(git clone --depth 1 https://github.com/premake/premake-core pmk) || # Attempt to clone
 (!(git status pmk | grep up-to-date) && cd pmk && git pull) # Otherwise pull if not up-to-date
 
 if [ ! -e premake5 ] || [ premake5 -ot pmk ] ; then # If it hasn't been built or is older than repo
