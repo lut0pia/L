@@ -17,10 +17,10 @@ using namespace L;
 
 Camera::Camera() :
   _viewport(Vector2f(0,0),Vector2f(1,1)),
-  _gbuffer(GL_FRAMEBUFFER, {&_gcolor,&_gnormal}, &_gdepth),
+  _gbuffer({&_gcolor,&_gnormal}, &_gdepth),
   _pp_buffer{
-    {GL_FRAMEBUFFER, {&_pp_color[0]}},
-    {GL_FRAMEBUFFER, {&_pp_color[1]}}} {
+    {{&_pp_color[0]}},
+    {{&_pp_color[1]}}} {
   resize_buffers();
   _gcolor.parameter(GL_TEXTURE_MIN_FILTER,GL_NEAREST);
   _gcolor.parameter(GL_TEXTURE_MAG_FILTER,GL_NEAREST);

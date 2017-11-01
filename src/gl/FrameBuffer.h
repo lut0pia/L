@@ -10,10 +10,10 @@ namespace L {
     class FrameBuffer {
       L_NOCOPY(FrameBuffer)
     private:
-      GLuint _id, _target;
+      GLuint _id;
     public:
-      FrameBuffer(GLuint target);
-      FrameBuffer(GLuint target, const std::initializer_list<Texture*>& colors, Texture* depth = nullptr);
+      FrameBuffer();
+      FrameBuffer(const std::initializer_list<Texture*>& colors, Texture* depth = nullptr);
       ~FrameBuffer();
       void bind();
       void unbind();

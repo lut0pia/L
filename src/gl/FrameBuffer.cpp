@@ -6,10 +6,10 @@
 using namespace L;
 using namespace GL;
 
-FrameBuffer::FrameBuffer(GLuint target) : _target(target) {
+FrameBuffer::FrameBuffer() {
   glCreateFramebuffers(1, &_id);
 }
-FrameBuffer::FrameBuffer(GLuint target, const std::initializer_list<Texture*>& colors, Texture* depth) : FrameBuffer(target) {
+FrameBuffer::FrameBuffer(const std::initializer_list<Texture*>& colors, Texture* depth) : FrameBuffer() {
   static GLenum attachments[] = {GL_COLOR_ATTACHMENT0,GL_COLOR_ATTACHMENT1,GL_COLOR_ATTACHMENT2,GL_COLOR_ATTACHMENT3,GL_COLOR_ATTACHMENT4,GL_COLOR_ATTACHMENT5};
   GLuint colorAttachment(GL_COLOR_ATTACHMENT0);
   for(Texture* color : colors)
@@ -22,10 +22,10 @@ FrameBuffer::~FrameBuffer() {
   glDeleteFramebuffers(1, &_id);
 }
 void FrameBuffer::bind() {
-  glBindFramebuffer(_target, _id);
+  glBindFramebuffer(GL_FRAMEBUFFER, _id);
 }
 void FrameBuffer::unbind() {
-  glBindFramebuffer(_target, 0);
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 void FrameBuffer::attach(GLenum attachment, const Texture& texture) {
   glNamedFramebufferTexture(_id, attachment, texture.id(), 0);
