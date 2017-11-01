@@ -122,7 +122,7 @@ namespace L {
     }
   };
   template <>
-  TypeDescription Type<void>::makeDesc() {
+  inline TypeDescription Type<void>::makeDesc() {
     TypeDescription wtr = {
       "void",0,
       [](void*) {},
