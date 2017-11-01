@@ -23,18 +23,6 @@ void System::sleep(const Time& t) {
 void System::beep(uint32_t frequency,uint32_t milliseconds) {
   L_ERROR("Cannot beep under UNIX.");
 }
-uint64_t System::ticks() {
-  uint64_t wtr;
-  __asm__ __volatile__
-  (
-    "cpuid \n"
-    "rdtsc \n"
-    "leal %0, %%ecx \n"
-    "movl %%eax, (%%ecx) \n"
-    "movl %%edx, 4(%%ecx)" :: "m"(wtr) : "eax","ebx","ecx","edx"
-  );
-  return wtr;
-}
 void System::toClipboard(const String& data) {
   L_ERROR("System::toClipboard not implemented.");
 }

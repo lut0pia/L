@@ -12,7 +12,6 @@ namespace L {
     void sleep(int milliseconds);
     void sleep(const Time&);
     void beep(uint32_t frequency, uint32_t milliseconds);
-    uint64_t ticks();
     void toClipboard(const String&);
     String fromClipboard();
     String env(const char*);

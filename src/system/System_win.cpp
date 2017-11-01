@@ -25,9 +25,6 @@ void System::sleep(const Time& t) {
 void System::beep(uint32_t frequency,uint32_t milliseconds) {
   ::Beep(frequency,milliseconds);
 }
-uint64_t System::ticks() {
-  return __rdtsc();
-}
 void System::toClipboard(const String& data) {
   if(OpenClipboard(nullptr) && EmptyClipboard()) {
     HGLOBAL tmp = GlobalAlloc(0,data.size()+1); // Allocate global memory
