@@ -63,15 +63,13 @@ namespace L {
       tmp[strlen(tmp)-1] = '\0';
       char* name = tmp;
 #endif
-      auto remove_sub = [](char* name, const char* sub) {
+      const char* subs[] = {"class ","struct ", " "};
+      for(const char* sub : subs) {
         while(char* found = strstr(name, sub)) {
           size_t sub_len(strlen(sub));
           memmove(found, found+sub_len, strlen(name)-(found-name)+sub_len+1);
         }
-      };
-      remove_sub(name, "class ");
-      remove_sub(name, "struct ");
-      remove_sub(name, " ");
+      }
       wtr.name = name;
       types[wtr.name] = &td;
       return wtr;
