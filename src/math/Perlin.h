@@ -8,7 +8,7 @@ namespace L {
   template <int d>
   class Perlin {
     private:
-      static const int d2 = static_pow<2,d>::value;
+      static const int d2 = 1<<d;
       MultiArray<d,Vector<d,float> > _gradients;
       float _size;
     public:

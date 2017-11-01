@@ -7,7 +7,7 @@ namespace L {
   template <int d,class K,class V>
   class Tree {
     private:
-      static const int n = static_pow<2,d>::value;
+      static const int n = 1<<d;
       static const int mask = ~((~0)<<d);
       typedef Vector<d,K> Key;
       class Node {
