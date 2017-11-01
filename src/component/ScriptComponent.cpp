@@ -1,5 +1,6 @@
 #include "ScriptComponent.h"
 
+#include "../engine/Engine.h"
 #include "../engine/Material.h"
 #include "NameComponent.h"
 #include "../text/String.h"

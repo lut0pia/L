@@ -11,6 +11,7 @@
 #include "../gl/Program.h"
 #include "LightComponent.h"
 #include "../system/Window.h"
+#include "../engine/Engine.h"
 #include "../engine/SharedUniform.h"
 
 using namespace L;
@@ -18,9 +19,7 @@ using namespace L;
 Camera::Camera() :
   _viewport(Vector2f(0,0),Vector2f(1,1)),
   _gbuffer({&_gcolor,&_gnormal}, &_gdepth),
-  _pp_buffer{
-    {{&_pp_color[0]}},
-    {{&_pp_color[1]}}} {
+  _lbuffer({&_lcolor}) {
   resize_buffers();
   _gcolor.parameter(GL_TEXTURE_MIN_FILTER,GL_NEAREST);
   _gcolor.parameter(GL_TEXTURE_MAG_FILTER,GL_NEAREST);
@@ -28,15 +27,12 @@ Camera::Camera() :
   _gnormal.parameter(GL_TEXTURE_MAG_FILTER,GL_NEAREST);
   _gdepth.parameter(GL_TEXTURE_MIN_FILTER,GL_NEAREST);
   _gdepth.parameter(GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-  _pp_color[0].parameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  _pp_color[0].parameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  _pp_color[1].parameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  _pp_color[1].parameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  _lcolor.parameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  _lcolor.parameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
   // Check framebuffer states
   _gbuffer.check();
-  _pp_buffer[0].check();
-  _pp_buffer[1].check();
+  _lbuffer.check();
 }
 
 void Camera::update_components() {
@@ -82,8 +78,7 @@ void Camera::resize_buffers() {
   _gcolor.image2D(0, GL_RGBA, viewport_width, viewport_height, 0, GL_RGBA, GL_UNSIGNED_BYTE);
   _gnormal.image2D(0, GL_RGBA16F, viewport_width, viewport_height, 0, GL_RGBA, GL_FLOAT);
   _gdepth.image2D(0, GL_DEPTH_COMPONENT24, viewport_width, viewport_height, 0, GL_DEPTH_COMPONENT, GL_FLOAT);
-  _pp_color[0].image2D(0, GL_RGB16F, viewport_width, viewport_height, 0, GL_RGB, GL_FLOAT);
-  _pp_color[1].image2D(0, GL_RGB16F, viewport_width, viewport_height, 0, GL_RGB, GL_FLOAT);
+  _lcolor.image2D(0, GL_RGB16F, viewport_width, viewport_height, 0, GL_RGB, GL_FLOAT);
 }
 void Camera::event(const Window::Event& e) {
   if(e.type == Window::Event::Resize) {
@@ -113,7 +108,7 @@ void Camera::prerender() {
 }
 void Camera::postrender(){
   _gbuffer.unbind();
-  _pp_buffer[0].bind();
+  _lbuffer.bind();
   const Interval2i vp(viewportPixel());
   const Vector2i vpSize(vp.size());
   glViewport(vp.min().x(), vp.min().y(), vpSize.x(), vpSize.y());
@@ -132,7 +127,7 @@ void Camera::postrender(){
     light.render();
   });
 
-  _pp_buffer[0].unbind();
+  _lbuffer.unbind();
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // For GUI alpha
   static GL::Program final_shader(GL::Shader(
     "#version 330 core\n"
@@ -156,7 +151,7 @@ void Camera::postrender(){
       "}", GL_FRAGMENT_SHADER));
 
   final_shader.use();
-  final_shader.uniform("color_buffer", _pp_color[0]);
+  final_shader.uniform("color_buffer", _lcolor);
   GL::draw(GL_TRIANGLES, 3);
 }
 

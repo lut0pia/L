@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <limits>
+#include <new>
 #include "../types.h"
 #include "../math/math.h"
 #include "../math/Rand.h"

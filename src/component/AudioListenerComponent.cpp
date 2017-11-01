@@ -1,5 +1,7 @@
 #include "AudioListenerComponent.h"
 
+#include "../engine/Engine.h"
+
 using namespace L;
 
 Vector3f AudioListenerComponent::_position, AudioListenerComponent::_right,

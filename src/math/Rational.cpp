@@ -5,9 +5,9 @@
 using namespace L;
 
 void Rational::simplify() {
-  const Integer gcd(gcd(_a.abs(),_b.abs()));
-  _a /= gcd;
-  _b /= gcd;
+  const Integer gcd_value(gcd(_a.abs(),_b.abs()));
+  _a /= gcd_value;
+  _b /= gcd_value;
 }
 
 Rational::Rational(const String& str,uint32_t base) : _a(str) {

@@ -14,13 +14,13 @@ namespace L {
     inline Rational(const Integer& a = 0,const Integer& b = 1) : _a(a),_b(b) { simplify(); }
     Rational(const String&,uint32_t base = 10);
 
-    inline Rational Rational::operator+(const Rational& o) const { return Rational((_a*o._b)+(o._a*_b),_b*o._b); }
-    inline Rational Rational::operator-(const Rational& o) const { return Rational((_a*o._b)-(o._a*_b),_b*o._b); }
+    inline Rational operator+(const Rational& o) const { return Rational((_a*o._b)+(o._a*_b),_b*o._b); }
+    inline Rational operator-(const Rational& o) const { return Rational((_a*o._b)-(o._a*_b),_b*o._b); }
     inline Rational operator+() const { return *this; }
     inline Rational operator-() const{ return Rational(-_a,_b); }
-    inline Rational Rational::operator*(const Rational& o) const { return Rational(*this) *= o; }
-    inline Rational Rational::operator/(const Rational& o) const { return Rational(*this) /= o; }
-    inline Rational Rational::operator%(const Rational& o) const { return *this-(Rational((*this/o).intval())*o); }
+    inline Rational operator*(const Rational& o) const { return Rational(*this) *= o; }
+    inline Rational operator/(const Rational& o) const { return Rational(*this) /= o; }
+    inline Rational operator%(const Rational& o) const { return *this-(Rational((*this/o).intval())*o); }
 
     inline Rational& operator ++(){ _a += _b; return *this; }
     inline Rational operator ++(int) { Rational wtr(*this); operator++(); return wtr; }

@@ -31,7 +31,7 @@ namespace L {
       // Search methods
       inline intptr_t findFirst(char c) const {return strchr(*this,c)-operator const char*();}
       int findFirst(const String&) const;
-      inline int findLast(char c) const {return strrchr(*this,c)-operator const char*();}
+      inline intptr_t findLast(char c) const {return strrchr(*this,c)-operator const char*();}
       inline String substr(size_t pos, size_t length = -1) const {return String(*this,pos,length);}
       int count(char) const;
 
@@ -67,8 +67,8 @@ namespace L {
       inline const char* end() const { return &operator[](size()); };
   };
   inline String operator+(const char* a, const String& b) {return String(a)+b;}
-  inline Stream& operator<<(Stream &s,const String& v) { s.write(&v[0],v.size()); return s; }
-  inline Stream& operator<(Stream &s, const String& v) { s << v.size() << ' '; s.write(&v[0], v.size()); return s << '\n'; }
-  inline Stream& operator>(Stream &s, String& v) { size_t size; s > size; v.size(size); s.read(&v[0], size); return s; }
-  inline uint32_t hash(const String& v){ return hash((const char*)v); }
+  inline Stream& operator<<(Stream &s,const String& v) { s.write(v.begin(),v.size()); return s; }
+  inline Stream& operator<(Stream &s, const String& v) { s << v.size() << ' '; s.write(v.begin(), v.size()); return s << '\n'; }
+  inline Stream& operator>(Stream &s, String& v) { size_t size; s > size; v.size(size); s.read(v.begin(), size); return s; }
+  inline uint32_t hash(const String& v){ return hash(v.begin()); }
 }

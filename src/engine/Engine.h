@@ -1,8 +1,10 @@
 #pragma once
 
 #include "../component/ComponentPool.h"
+#include "../component/Component.h"
 #include "../container/Table.h"
 #include "../gl/Buffer.h"
+#include "Resource.h"
 #include "../time/Timer.h"
 #include "../system/Device.h"
 #include "../system/Window.h"

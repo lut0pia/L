@@ -50,7 +50,7 @@ namespace L {
     }
     template <class T> T& cast() {
       if(is<T>()) return as<T>(); // It's already the right type: return as-is
-      else if(Cast cast = _td->cast(Type<T>::description())) { // Try to find cast
+      else if(Cast cast = _td->casts.get(Type<T>::description(), nullptr)) { // Try to find cast
         byte tmp[sizeof(T)]; // Temporary buffer
         cast(tmp,value()); // Cast current value to temporary buffer
         *this = static_cast<T&&>(*(T*)tmp); // Move casted value to this

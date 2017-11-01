@@ -1,5 +1,7 @@
 #include "MidiSourceComponent.h"
 
+#include "../engine/Engine.h"
+
 using namespace L;
 
 Map<Symbol, Var> MidiSourceComponent::pack() const {

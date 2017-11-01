@@ -3,7 +3,6 @@
 #include "../container/KeyValue.h"
 #include "../container/IterablePool.h"
 #include "../dynamic/Type.h"
-#include "../engine/Engine.h"
 #include "../system/Memory.h"
 
 namespace L {

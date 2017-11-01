@@ -4,6 +4,7 @@
 #include "../hash.h"
 #include "../system/Memory.h"
 #include "../stream/Stream.h"
+#include "../stream/serial.h"
 
 namespace L {
   template <class K,class V>

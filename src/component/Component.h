@@ -5,6 +5,10 @@
 #include "../script/Context.h"
 #include "Entity.h"
 
+#include "../system/Device.h"
+#include "../system/Window.h"
+
+
 namespace L {
   class Entity;
   class Component {

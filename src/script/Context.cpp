@@ -200,7 +200,7 @@ Var* Context::reference(const Var& code, Var* src) {
                 && !handle.is<void>()) {
         table = typeTable(handle.type());
       } else if(handle.is<void>())
-        L_ERRORF("Trying to index from void");
+        L_ERROR("Trying to index from void");
       else return nullptr;
       execute(array[1]); // Compute index
       Var* wtr(&(*table)[_stack.top()]); // Get pointer to field

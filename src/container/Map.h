@@ -12,7 +12,7 @@ namespace L {
     inline Map(const std::initializer_list<KV>& il) {
       Array<KV>::growTo(il.size());
       for(const KV& e : il)
-        insert(e);
+        Set<KV>::insert(e);
     }
     KV* find(const K& k) {
       int i(Set<KV>::index(k));

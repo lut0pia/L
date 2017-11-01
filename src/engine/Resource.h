@@ -15,6 +15,10 @@ namespace L {
   struct ResourceSettings {
     bool persistent : 1;
   };
+
+  template <class T> Ref<T> load_resource(const char* path, ResourceSettings&) { return Interface<T>::from_path(path); }
+  template <> Ref<Font> load_resource(const char* path, ResourceSettings&);
+
   template <class T>
   class Resource {
   protected:
@@ -85,9 +89,6 @@ namespace L {
       }
     }
   };
-
-  template <class T> Ref<T> load_resource(const char* path, ResourceSettings&) { return Interface<T>::from_path(path); }
-  template <> Ref<Font> load_resource(const char* path, ResourceSettings&);
 
   template <class T> Array<typename Resource<T>::Slot> Resource<T>::_slots;
   template <class T> Table<Symbol, intptr_t> Resource<T>::_table;

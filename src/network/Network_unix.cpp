@@ -1,5 +1,7 @@
 #include "Network.h"
 
+#include <errno.h>
+
 using namespace L;
 
 void Network::init() {}

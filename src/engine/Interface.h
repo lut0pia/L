@@ -59,7 +59,7 @@ namespace L {
       if(auto interfaces = _instances.find(file_ext(path)))
         for(auto interface : *interfaces)
           if(interface->to(path))
-            return
+            return;
     }
     static const char* file_ext(const char* path) {
       const char* ext(strrchr(path, '.'));

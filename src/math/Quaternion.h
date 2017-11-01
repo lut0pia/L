@@ -40,12 +40,12 @@ namespace L {
       return t;
     }
     void to_axis_angle(Vector<3, T>& axis, T& angle) const {
-      angle = 2 * acos(w());
+      angle = 2 * acos(this->w());
       if(angle > 0.001) {
-        const T t(1/sqrt(1-sqr(w())));
-        axis.x() = x() * t;
-        axis.y() = y() * t;
-        axis.z() = z() * t;
+        const T t(1/sqrt(1-sqr(this->w())));
+        axis.x() = this->x() * t;
+        axis.y() = this->y() * t;
+        axis.z() = this->z() * t;
       } else {
         axis.x() = 1;
         angle = axis.y() = axis.z() = 0;

@@ -25,14 +25,14 @@ void eventTranslate(const XEvent& xev) {
   Window::Event e;
   switch(xev.type) {
     case MotionNotify:
-      e.type = Window::Event::MOUSEMOVE;
+      e.type = Window::Event::MouseMove;
       e.x = xev.xmotion.x;
       e.y = xev.xmotion.y;
       break;
     case KeyPress:
       break;
     case ResizeRequest:
-      e.type = Window::Event::RESIZE;
+      e.type = Window::Event::Resize;
       e.x = xev.xresizerequest.width;
       e.y = xev.xresizerequest.height;
       XResizeWindow(dpy,win,e.x,e.y);
@@ -70,8 +70,7 @@ void Window::open(const char* title,int width,int height,int flags) {
   glXMakeCurrent(dpy,win,glc);
   winOpened = true;
 
-  if(flags & opengl)
-    GL::init();
+  GL::init();
 }
 
 void Window::close() {
