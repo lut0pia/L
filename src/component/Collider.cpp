@@ -133,9 +133,22 @@ void Collider::sub_update_all() {
       RigidBody::collision(a->_rigidbody, b->_rigidbody, collision.point, collision.normal);
     }
 }
+static void draw_tree_node(const Interval3fTree<Collider*>::Node* node) {
+  static int level(0);
+  GL::baseColorProgram().use();
+  GL::baseColorProgram().uniform("color", Color::fromHSV(pmod(level*15.f, 360.f), .5f, 1.f));
+  GL::baseColorProgram().uniform("model", translation_matrix(node->key().center())*scale_matrix(node->key().size()*.5f));
+  GL::wireCube().draw();
+  if(node->branch()) {
+    level++;
+    draw_tree_node(node->left());
+    draw_tree_node(node->right());
+    level--;
+  }
+}
 void Collider::render_all(const Camera& cam) {
   if(Settings::get_int("render_collider", 0))
-    tree.draw();
+    draw_tree_node(tree.root());
 }
 void Collider::center(const Vector3f& center){
   _center = center;

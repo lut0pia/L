@@ -2,10 +2,8 @@
 
 #include "../container/Array.h"
 #include "../container/StaticStack.h"
-#include "../gl/GL.h"
 #include "../math/Interval.h"
 #include "Pool.h"
-#include "../stream/CFileStream.h"
 
 namespace L {
   template <int d, class K, class V>
@@ -216,34 +214,6 @@ namespace L {
           clear(node->_right);
         }
         _pool.destruct(node);
-      }
-    }
-    inline void print() { if(_root) print(_root); }
-    static void print(Node* node) {
-      static int level(0);
-      for(int i(0); i<level; i++)
-        out << "  ";
-      if(node->branch()) {
-        out << node->_key << ": " << node->_height << "\n";
-        level++;
-        print(node->_left);
-        print(node->_right);
-        level--;
-      } else
-        out << node->_key << ": " << node->_value << '\n';
-    }
-    inline void draw() { if(_root) draw(_root); }
-    static void draw(Node* node) {
-      static int level(0);
-      GL::baseColorProgram().use();
-      GL::baseColorProgram().uniform("color", Color::fromHSV(pmod(level*15.f, 360.f), .5f, 1.f));
-      GL::baseColorProgram().uniform("model", translation_matrix(node->_key.center())*scale_matrix(node->_key.size()*.5f));
-      GL::wireCube().draw();
-      if(node->branch()) {
-        level++;
-        draw(node->_left);
-        draw(node->_right);
-        level--;
       }
     }
   };
