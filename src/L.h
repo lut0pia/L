@@ -31,7 +31,6 @@
 #include "component/RigidBody.h"
 #include "component/ScriptComponent.h"
 #include "component/Sprite.h"
-#include "component/SpriteAnimator.h"
 #include "component/StaticMesh.h"
 #include "component/Transform.h"
 

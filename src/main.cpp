@@ -26,7 +26,6 @@ void mainjob(void*) {
   Engine::register_component<Camera>();
   Engine::register_component<RigidBody>();
   Engine::register_component<Collider>();
-  Engine::register_component<SpriteAnimator>();
   Engine::register_component<ScriptComponent>();
   Engine::register_component<AudioSourceComponent>();
   Engine::register_component<AudioListenerComponent>();
