@@ -12,10 +12,12 @@ void* operator new(size_t size);
 namespace L {
   class Memory {
   public:
+    template<typename T, typename... Args> static T* new_type(Args&&... args) { return new(allocType<T>())T(args...); }
     template<typename T> static T* allocType(size_t count = 1) { return (T*)alloc(sizeof(T)*count); }
     static void* alloc(size_t);
     static void* allocZero(size_t); // Allocates and zero-fill block
     static void* realloc(void*, size_t oldsize, size_t newsize);
+    template<typename T> static void delete_type(T* p) { p->~T(); freeType(p); }
     template<typename T> static void freeType(T* p, size_t count = 1) { free(p, sizeof(T)*count); }
     static void free(void*, size_t);
 
