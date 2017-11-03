@@ -36,6 +36,16 @@ void ScriptComponent::script_registration() {
       Engine::timescale(c.local(0).get<float>());
     c.returnValue() = Engine::timescale();
   });
+  L_FUNCTION("engine-clear-and-read", {
+    L_ASSERT(c.localCount()==1);
+    Engine::add_deferred_action({[](void* p) {
+      String* str((String*)p);
+      Engine::clear();
+      Context context;
+      context.executeInside(Array<Var>{Resource<Script::CodeFunction>::get(*str).ref()});
+      Memory::delete_type(str);
+    }, Memory::new_type<String>(c.local(0).get<String>())});
+  });
   // Gui ///////////////////////////////////////////////////////////////////
   L_FUNCTION("draw-text", {
     Resource<Font>::get("")->draw(c.local(0).get<int>(),c.local(1).get<int>(),c.local(2).get<String>());
