@@ -153,9 +153,11 @@ void Context::execute(const Var& code, Var* selfOut) {
       if(!selfIn.is<void>()) _selves.push(selfIn);
       if(handle.is<Ref<CodeFunction>>()) {
         const Ref<CodeFunction>& function(handle.as<Ref<CodeFunction>>());
-        _stack.size(currentFrame()+function->localCount);
-        execute(function->code);
-        returnValue() = _stack.top();
+        if(function) {
+          _stack.size(currentFrame()+function->localCount);
+          execute(function->code);
+          returnValue() = _stack.top();
+        } else returnValue() = Var();
       } else if(handle.is<Function>()) // It's a function pointer
         handle.as<Function>()(*this); // Call function
       _stack.size(_frames.top()); // Resize to the previous frame
