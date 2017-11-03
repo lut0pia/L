@@ -11,11 +11,17 @@
 
 namespace L {
   class Engine {
+  public:
+    struct DeferredAction{
+      void(*func)(void*);
+      void* data;
+    };
   private:
     static Array<void(*)()> _updates, _late_updates, _sub_updates;
     static Array<void(*)(const class Camera&)> _renders, _guis;
     static Array<void(*)(const Window::Event&)> _win_events;
     static Array<void(*)(const Device::Event&)> _dev_events;
+    static Array<DeferredAction> _deferred_actions;
     static Timer _timer;
     static Time _real_delta_time, _delta_time, _accumulator, _average_frame_work_duration;
     static Time _frame_work_durations[64];
@@ -33,6 +39,7 @@ namespace L {
 
     static void update();
     static void clear();
+    static void add_deferred_action(const DeferredAction& la) { _deferred_actions.push(la); }
     template <class T> inline static void register_resource() { _updates.push(Resource<T>::update); }
     template <class T> inline static void register_component() {
       if(T::update_all != Component::update_all) _updates.push(T::update_all);

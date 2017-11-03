@@ -19,6 +19,7 @@ Array<void(*)()> Engine::_updates, Engine::_sub_updates, Engine::_late_updates;
 Array<void(*)(const Camera&)> Engine::_renders, Engine::_guis;
 Array<void(*)(const L::Window::Event&)> Engine::_win_events;
 Array<void(*)(const Device::Event&)> Engine::_dev_events;
+Array<Engine::DeferredAction> Engine::_deferred_actions;
 Timer Engine::_timer;
 const Time Engine::_sub_delta(0, 10);
 L::Time Engine::_real_delta_time, Engine::_delta_time, Engine::_accumulator(0), Engine::_average_frame_work_duration;
@@ -85,6 +86,12 @@ void Engine::update() {
       });
       Audio::commit_buffer();
     }
+  }
+
+  { // Flush deferred actions
+    for(const DeferredAction& deferred_action : _deferred_actions)
+      deferred_action.func(deferred_action.data);
+    _deferred_actions.clear();
   }
 
   // Compute work duration
