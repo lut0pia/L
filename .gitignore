@@ -5,6 +5,9 @@ obj/
 # Projects folder
 prj/
 # Sample folder
+smp/Ldev
+smp/Ldbg
+smp/L
 smp/*.exe
 smp/*.pdb
 smp/*.ilk
