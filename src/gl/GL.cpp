@@ -7,17 +7,41 @@
 #include "../stream/CFileStream.h"
 #include "../image/Color.h"
 #include "../engine/SharedUniform.h"
+#include "../text/Symbol.h"
 
 using namespace L;
 using namespace GL;
 
+// Define GL functions
 #define L_GL_FUNC(type,name) type L::name;
 #include "gl_functions.def"
 #undef L_GL_FUNC
 
-void APIENTRY GL::debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const char* message, const void *user_param) {
+static Array<Symbol> extensions;
+
+static void APIENTRY debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const char* message, const void *user_param) {
   if(type != GL_DEBUG_TYPE_PERFORMANCE && type != GL_DEBUG_TYPE_OTHER)
     err << "OpenGL debug: " << message << '\n';
+}
+void GL::init() {
+  // Load GL functions
+#define L_GL_FUNC(type,name) name = type(load_function(#name));
+#include "gl_functions.def"
+#undef L_GL_FUNC
+
+  out << "OpenGL:" << (const char*)glGetString(GL_VERSION) << ' ' << (const char*)glGetString(GL_RENDERER) << '\n';
+
+  { // Fetch supported extensions
+    GLint num_exts;
+    glGetIntegerv(GL_NUM_EXTENSIONS, &num_exts);
+    for(GLint i(0); i<num_exts; i++)
+      extensions.push((const char*)glGetStringi(GL_EXTENSIONS, i));
+  }
+
+#ifdef L_DEBUG
+  glDebugMessageCallback(debug_callback, NULL);
+  glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+#endif
 }
 
 void GL::draw(GLenum mode, GLsizei count) {

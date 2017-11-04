@@ -8,7 +8,7 @@ namespace L {
     class Mesh;
     class Program;
     void init();
-    void APIENTRY debug_callback(GLenum, GLenum, GLuint, GLenum, GLsizei, const char*, const void*);
+    void* load_function(const char*);
     void draw(GLenum mode, GLsizei count);
     Program& baseProgram();
     Program& baseColorProgram();
@@ -17,6 +17,7 @@ namespace L {
     const Mesh& wireSphere();
   }
 
+  // Declare GL functions
 #define L_GL_FUNC(type,name) extern type name;
 #include "gl_functions.def"
 #undef L_GL_FUNC
