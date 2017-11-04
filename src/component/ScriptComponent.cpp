@@ -2,6 +2,7 @@
 
 #include "../engine/Engine.h"
 #include "../engine/Material.h"
+#include "../engine/Settings.h"
 #include "NameComponent.h"
 #include "../text/String.h"
 #include "../font/Font.h"
@@ -11,7 +12,7 @@ using namespace Script;
 
 void ScriptComponent::update_components() {
   _context.selfTable()[Symbol("entity")] = entity();
- 
+
   if(!_started && !_script_path.empty())
     start();
 
@@ -45,6 +46,10 @@ void ScriptComponent::script_registration() {
       context.executeInside(Array<Var>{Resource<Script::CodeFunction>::get(*str).ref()});
       Memory::delete_type(str);
     }, Memory::new_type<String>(c.local(0).get<String>())});
+  });
+  L_FUNCTION("setting", {
+    L_ASSERT(c.localCount()==2);
+    Settings::set(c.local(0).get<Symbol>(), c.local(1));
   });
   // Gui ///////////////////////////////////////////////////////////////////
   L_FUNCTION("draw-text", {

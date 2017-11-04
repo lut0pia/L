@@ -1,0 +1,5 @@
+(setting 'fullscreen 0)
+(setting 'resolution_x 1024)
+(setting 'resolution_y 768)
+(setting 'render_collider 0)
+(engine-clear-and-read "startup.ls")

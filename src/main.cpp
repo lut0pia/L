@@ -15,32 +15,6 @@ void mainjob(void*) {
   Network::init();
   Audio::init();
   glEnable(GL_CULL_FACE);
-  Engine::register_resource<Font>();
-  Engine::register_resource<Material>();
-  Engine::register_resource<GL::Mesh>();
-  Engine::register_resource<GL::Program>();
-  Engine::register_resource<GL::Texture>();
-  Engine::register_resource<Script::CodeFunction>();
-
-  Engine::register_component<Transform>();
-  Engine::register_component<Camera>();
-  Engine::register_component<RigidBody>();
-  Engine::register_component<Collider>();
-  Engine::register_component<ScriptComponent>();
-  Engine::register_component<AudioSourceComponent>();
-  Engine::register_component<AudioListenerComponent>();
-  Engine::register_component<MidiSourceComponent>();
-  Engine::register_component<NameComponent>();
-  Engine::register_component<LightComponent>();
-  Engine::register_component<HierarchyComponent>();
-  Engine::register_component<Primitive>();
-  Engine::register_component<Sprite>();
-  Engine::register_component<StaticMesh>();
-
-  {
-    Script::Context startupContext;
-    startupContext.executeInside(Array<Var>{Resource<Script::CodeFunction>::get("startup.ls").ref()});
-  }
 
 #ifdef L_DEBUG
   ScriptServer* server(nullptr);
@@ -65,9 +39,35 @@ void mainjob(void*) {
 }
 int main(int argc, const char* argv[]) {
   TypeInit();
-  Settings::load_file("settings.ini");
 
-  const char* window_name(Settings::get_symbol("window_name", "L_Engine")); // TODO: string settings should not be symbols?
+  Engine::register_resource<Font>();
+  Engine::register_resource<Material>();
+  Engine::register_resource<GL::Mesh>();
+  Engine::register_resource<GL::Program>();
+  Engine::register_resource<GL::Texture>();
+  Engine::register_resource<Script::CodeFunction>();
+
+  Engine::register_component<Transform>();
+  Engine::register_component<Camera>();
+  Engine::register_component<RigidBody>();
+  Engine::register_component<Collider>();
+  Engine::register_component<ScriptComponent>();
+  Engine::register_component<AudioSourceComponent>();
+  Engine::register_component<AudioListenerComponent>();
+  Engine::register_component<MidiSourceComponent>();
+  Engine::register_component<NameComponent>();
+  Engine::register_component<LightComponent>();
+  Engine::register_component<HierarchyComponent>();
+  Engine::register_component<Primitive>();
+  Engine::register_component<Sprite>();
+  Engine::register_component<StaticMesh>();
+
+  {
+    Script::Context ini_context;
+    ini_context.executeInside(Array<Var>{Resource<Script::CodeFunction>::get("ini.ls").ref()});
+  }
+
+  const char* window_name(Settings::get_string("window_name", "L Engine Sample"));
   int window_flags((Settings::get_int("no_cursor", 0) ? Window::nocursor : 0)
                    | (Settings::get_int("loop_cursor", 0) ? Window::loopcursor : 0));
 
