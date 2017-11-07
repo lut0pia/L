@@ -29,7 +29,7 @@ void GL::init() {
 #include "gl_functions.def"
 #undef L_GL_FUNC
 
-  out << "OpenGL:" << (const char*)glGetString(GL_VERSION) << ' ' << (const char*)glGetString(GL_RENDERER) << '\n';
+  out << "OpenGL: " << (const char*)glGetString(GL_VERSION) << ' ' << (const char*)glGetString(GL_RENDERER) << '\n';
 
   { // Fetch supported extensions
     GLint num_exts;
@@ -37,6 +37,78 @@ void GL::init() {
     for(GLint i(0); i<num_exts; i++)
       extensions.push((const char*)glGetStringi(GL_EXTENSIONS, i));
   }
+
+#define L_GL_STATIC_FUNC(type,name) static type name(type(load_function(#name)))
+  if(extensions.find("GL_ARB_direct_state_access")==uintptr_t(-1)) {
+    L_GL_STATIC_FUNC(PFNGLGENBUFFERSPROC, glGenBuffers);
+    L_GL_STATIC_FUNC(PFNGLBUFFERDATAPROC, glBufferData);
+    L_GL_STATIC_FUNC(PFNGLBUFFERSUBDATAPROC, glBufferSubData);
+    glCreateBuffers = glGenBuffers;
+    glNamedBufferData = [](GLuint buffer, GLsizeiptr size, const void* data, GLenum usage) {
+      glBindBuffer(GL_ARRAY_BUFFER, buffer);
+      glBufferData(GL_ARRAY_BUFFER, size, data, usage);
+    };
+    glNamedBufferSubData = [](GLuint buffer, GLintptr offset, GLsizeiptr size, const void* data) {
+      glBindBuffer(GL_ARRAY_BUFFER, buffer);
+      glBufferSubData(GL_ARRAY_BUFFER, offset, size, data);
+    };
+
+    L_GL_STATIC_FUNC(PFNGLGENFRAMEBUFFERSPROC, glGenFrameBuffers);
+    L_GL_STATIC_FUNC(PFNGLDRAWBUFFERSPROC, glDrawBuffers);
+    L_GL_STATIC_FUNC(PFNGLFRAMEBUFFERTEXTURE2DPROC, glFramebufferTexture2D);
+    L_GL_STATIC_FUNC(PFNGLCHECKFRAMEBUFFERSTATUSPROC, glCheckFramebufferStatus);
+    glCreateFramebuffers = glGenFrameBuffers;
+    glNamedFramebufferDrawBuffers = [](GLuint framebuffer, GLsizei n, const GLenum* bufs) {
+      glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+      glDrawBuffers(n, bufs);
+    };
+    glNamedFramebufferTexture = [](GLuint framebuffer, GLenum attachment, GLuint texture, GLint level) {
+      glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+      glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, texture, level);
+    };
+    glCheckNamedFramebufferStatus = [](GLuint framebuffer, GLenum target) -> GLenum {
+      glBindFramebuffer(target, framebuffer);
+      return glCheckFramebufferStatus(target);
+    };
+
+    L_GL_STATIC_FUNC(PFNGLGENTEXTURESEXTPROC, glGenTexturesEXT);
+    L_GL_STATIC_FUNC(PFNGLGENERATEMIPMAPPROC, glGenerateMipmap);
+    glCreateTextures = [](GLenum target, GLsizei n, GLuint* textures) {
+      glGenTexturesEXT(n, textures);
+      for(uintptr_t i(0); i<n; i++)
+        glBindTexture(target, textures[i]);
+    };
+    glTextureImage2DEXT = [](GLuint texture, GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void* data) {
+      glBindTexture(GL_TEXTURE_2D, texture);
+      glTexImage2D(GL_TEXTURE_2D, level, internalformat, width, height, border, format, type, data);
+    };
+    glTextureSubImage2D = [](GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void* data) {
+      glBindTexture(GL_TEXTURE_2D, texture);
+      glTexSubImage2D(GL_TEXTURE_2D, level, xoffset, yoffset, width, height, format, type, data);
+    };
+    glTextureParameteri = [](GLuint texture, GLenum pname, GLint param) {
+      glBindTexture(GL_TEXTURE_2D, texture);
+      glTexParameteri(GL_TEXTURE_2D, pname, param);
+    };
+    glGenerateTextureMipmap = [](GLuint texture) {
+      glBindTexture(GL_TEXTURE_2D, texture);
+      glGenerateMipmap(GL_TEXTURE_2D);
+    };
+
+    L_GL_STATIC_FUNC(PFNGLGENVERTEXARRAYSPROC, glGenVertexArrays);
+    L_GL_STATIC_FUNC(PFNGLENABLEVERTEXATTRIBARRAYPROC, glEnableVertexAttribArray);
+    glCreateVertexArrays = glGenVertexArrays;
+    glVertexArrayElementBuffer = [](GLuint vaobj, GLuint buffer) {
+      glBindVertexArray(vaobj);
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer);
+    };
+    glEnableVertexArrayAttrib = [](GLuint vaobj, GLuint index) {
+      glBindVertexArray(vaobj);
+      glEnableVertexAttribArray(index);
+    };
+  }
+
+  L_ASSERT(extensions.find("GL_ARB_uniform_buffer_object")!=uintptr_t(-1));
 
 #ifdef L_DEBUG
   glDebugMessageCallback(debug_callback, NULL);
