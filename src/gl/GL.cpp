@@ -53,11 +53,11 @@ void GL::init() {
       glBufferSubData(GL_ARRAY_BUFFER, offset, size, data);
     };
 
-    L_GL_STATIC_FUNC(PFNGLGENFRAMEBUFFERSPROC, glGenFrameBuffers);
+    L_GL_STATIC_FUNC(PFNGLGENFRAMEBUFFERSPROC, glGenFramebuffers);
     L_GL_STATIC_FUNC(PFNGLDRAWBUFFERSPROC, glDrawBuffers);
     L_GL_STATIC_FUNC(PFNGLFRAMEBUFFERTEXTURE2DPROC, glFramebufferTexture2D);
     L_GL_STATIC_FUNC(PFNGLCHECKFRAMEBUFFERSTATUSPROC, glCheckFramebufferStatus);
-    glCreateFramebuffers = glGenFrameBuffers;
+    glCreateFramebuffers = glGenFramebuffers;
     glNamedFramebufferDrawBuffers = [](GLuint framebuffer, GLsizei n, const GLenum* bufs) {
       glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
       glDrawBuffers(n, bufs);
