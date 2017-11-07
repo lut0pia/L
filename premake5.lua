@@ -35,7 +35,7 @@ solution "L"
 	-- GMake
 	configuration {"gmake"}
 		buildoptions {"-fno-operator-names"}
-    links {"GL","GLU","X11"}
+    links {"GL","GLU","X11","pthread"}
 
 	-- Sample project (startup)
 	project "Sample"

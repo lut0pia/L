@@ -73,9 +73,9 @@ namespace L {
       for(uintptr_t i(0); i<stage; i++) {
         const String& lib(stages[i].type==GL_FRAGMENT_SHADER ? _lib_frag : _lib_vert);
         char line_preprocessor[1024];
-        sprintf(line_preprocessor, "#line %d \"%s\"\n", stages[i].line, path);
+        sprintf(line_preprocessor, "#line %d\n", stages[i].line, path);
         const char* sources[] = {lib,line_preprocessor,stages[i].start};
-        GLint source_lengths[] = {lib.size(),strlen(line_preprocessor),stages[i].size};
+        GLint source_lengths[] = {GLint(lib.size()),GLint(strlen(line_preprocessor)),GLint(stages[i].size)};
         new(shaders+i)GL::Shader(sources, source_lengths, L_COUNT_OF(sources), stages[i].type);
       }
 
