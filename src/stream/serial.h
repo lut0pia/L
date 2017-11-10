@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../macros.h"
+#include "../dev/debug.h"
 #include "Stream.h"
 
 namespace L {
-  template<class T> inline Stream& operator<(Stream& s, const T& v) { L_ERROR("Unimplemented stream out"); return s; }
-  template<class T> inline Stream& operator>(Stream& s, T& v) { L_ERROR("Unimplemented stream in"); return s; }
+  template<class T> inline Stream& operator<(Stream& s, const T& v) { error("Unimplemented stream out"); return s; }
+  template<class T> inline Stream& operator>(Stream& s, T& v) { error("Unimplemented stream in"); return s; }
 
 #define L_SERIAL_NUMERIC(type)\
   inline Stream& operator<(Stream& s, type v) { return s << ntos<10,type>(v) << '\n'; }\

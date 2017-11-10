@@ -93,7 +93,7 @@ Variable& Variable::operator[](const Variable& key) {
 const Variable& Variable::operator[](const Variable& key) const {
   auto slot(as<Table<Variable,Variable> >().find(key));
   if(slot) return slot->value();
-  else L_ERROR("Couldn't find key in Var table.");
+  else error("Couldn't find key in Var table.");
 }
 Variable& Variable::operator[](size_t i) {
   if(!is<Array<Variable> >()) *this = Array<Variable>();

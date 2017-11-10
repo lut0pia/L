@@ -23,8 +23,8 @@ namespace L {
     GL::FrameBuffer _gbuffer, _lbuffer;
   public:
     Camera();
-    inline Camera(const Camera&) : Camera(){ L_ERROR("Camera component should not be copied."); }
-    inline Camera& operator=(const Camera& other){ L_ERROR("Camera component should not be copied."); }
+    inline Camera(const Camera&) : Camera() { error("Camera component should not be copied."); }
+    inline Camera& operator=(const Camera& other) { error("Camera component should not be copied."); return *this; }
 
     virtual void update_components() override;
     virtual Map<Symbol, Var> pack() const override;

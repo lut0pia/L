@@ -1,6 +1,6 @@
 #include "Stream.h"
 
-#include "../macros.h"
+#include "../dev/debug.h"
 
 using namespace L;
 
@@ -15,7 +15,7 @@ void Stream::line(char* buffer, size_t size){
   while((*w = get())!='\n' && *w!='\r' && !end()) { // Not end of line or file
     if(w>buffer || !isspace(*w))
       if(++w == buffer_end)
-        L_ERROR("Buffer was too small");
+        error("Buffer was too small");
   }
   *w = '\0'; // Null-end string
 }

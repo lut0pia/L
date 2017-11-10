@@ -53,9 +53,8 @@
 #include "container/Tree.h"
 
 // Dev tools
-#ifdef L_DEBUG
+#include "dev/debug.h"
 #include "dev/ScriptServer.h"
-#endif
 
 // Dynamic typing/casting/compiling
 #include "dynamic/Assembly.h"

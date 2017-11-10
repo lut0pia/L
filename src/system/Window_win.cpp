@@ -1,10 +1,12 @@
 #include "Window.h"
 
 #include "../gl/GL.h"
-#include <GL/wglext.h>
+#include "../macros.h"
 #include "../stream/CFileStream.h"
 #include "../text/encoding.h"
 #include "Device.h"
+
+#include <GL/wglext.h>
 #include <windows.h>
 
 using namespace L;
@@ -124,7 +126,7 @@ LRESULT CALLBACK MainWndProc(HWND hwnd,uint32_t uMsg,WPARAM wParam,LPARAM lParam
       BYTE buffer[1024];
       UINT dwSize(sizeof(buffer));
       if(GetRawInputData((HRAWINPUT)lParam,RID_INPUT,buffer,&dwSize,sizeof(RAWINPUTHEADER))>1024)
-        L_ERROR("RawInput buffer too small, panic!");
+        error("RawInput buffer too small, panic!");
       const RAWINPUT* raw((RAWINPUT*)buffer);
       Device::processReport(raw->header.hDevice,raw->data.hid.bRawData,raw->data.hid.dwSizeHid);
       return DefWindowProc(hwnd,uMsg,wParam,lParam);
@@ -212,10 +214,10 @@ void Window::open(const char* title, int width, int height, int flags) {
 
   int pf = ChoosePixelFormat(hDC, initPFD());
   if(!pf)
-    L_ERROR("ChoosePixelFormat failed during GLEW initialization");
+    error("ChoosePixelFormat failed during GLEW initialization");
 
   if(!SetPixelFormat(hDC, pf, &pfd))
-    L_ERROR("SetPixelFormat failed during GLEW initialization");
+    error("SetPixelFormat failed during GLEW initialization");
 
   HGLRC hRCFake = wglCreateContext(hDC);
   wglMakeCurrent(hDC, hRCFake);
@@ -237,7 +239,7 @@ void Window::open(const char* title, int width, int height, int flags) {
   static PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB(
     PFNWGLCREATECONTEXTATTRIBSARBPROC(wglGetProcAddress("wglCreateContextAttribsARB")));
   if(!(hRC = wglCreateContextAttribsARB(hDC, 0, iContextAttribs)))
-    L_ERROR("wglCreateContextAttribsARB failed");
+    error("wglCreateContextAttribsARB failed");
 
   wglMakeCurrent(hDC, hRC);
   wglDeleteContext(hRCFake);

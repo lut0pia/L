@@ -44,7 +44,7 @@ Color::Color(const char* s) {
   TMP(white)
   TMP(yellow)
 #undef TMP
-  L_ERRORF("Unknown color: %s",(const char*)str);
+  error("Unknown color: %s",(const char*)str);
 }
 
 Vector4f Color::to_float_vector(const Color& color) {

@@ -1,6 +1,6 @@
 #include "Midi.h"
 
-#include "../macros.h"
+#include "../dev/debug.h"
 #include <windows.h>
 #include <mmsystem.h>
 

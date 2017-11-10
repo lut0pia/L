@@ -5,7 +5,7 @@
 #include <mfapi.h>
 #include <AudioClient.h>
 
-#include "../macros.h"
+#include "../dev/debug.h"
 #include "../stream/CFileStream.h"
 
 using namespace L;
@@ -15,7 +15,7 @@ using namespace Audio;
 #define REFTIMES_PER_MILLISEC  10000
 
 #define EXIT_ON_ERROR(hres)  \
-              if (FAILED(hres)) { L_BREAKPOINT; }
+              if (FAILED(hres)) { debugbreak(); }
 #define SAFE_RELEASE(punk)  \
               if ((punk) != NULL)  \
                 { (punk)->Release(); (punk) = NULL; }

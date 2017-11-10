@@ -68,7 +68,7 @@ CodeFunction Context::read(Stream& stream) {
 }
 bool Context::read(Var& v, Lexer& lexer) {
   if(lexer.eos()) {
-    L_WARNING("Unexpected end of stream while parsing script: there are uneven () or {}.");
+    warning("Unexpected end of stream while parsing script: there are uneven () or {}.");
     return false;
   }
   if(lexer.accept_token("(")) { // It's a list of expressions
@@ -90,7 +90,7 @@ bool Context::read(Var& v, Lexer& lexer) {
     if(!read(v, lexer))
       return false;
     if(!v.is<Symbol>()) {
-      L_WARNINGF("Expected symbol after ', got %s at line %d", (const char*)v.type()->name, lexer.line());
+      warning("Expected symbol after ', got %s at line %d", (const char*)v.type()->name, lexer.line());
       return false;
     }
     const Symbol sym(v.as<Symbol>());
@@ -99,7 +99,7 @@ bool Context::read(Var& v, Lexer& lexer) {
     if(!read(v, lexer))
       return false;
   } else if(lexer.is_token(")") || lexer.is_token("}")) {
-    L_WARNINGF("Unexpected token %s at line %d", lexer.token(), lexer.line());
+    warning("Unexpected token %s at line %d", lexer.token(), lexer.line());
     return false;
   } else {
     const char* token(lexer.token());
@@ -202,7 +202,7 @@ Var* Context::reference(const Var& code, Var* src) {
                 && !handle.is<void>()) {
         table = typeTable(handle.type());
       } else if(handle.is<void>())
-        L_ERROR("Trying to index from void");
+        error("Trying to index from void");
       else return nullptr;
       execute(array[1]); // Compute index
       Var* wtr(&(*table)[_stack.top()]); // Get pointer to field
@@ -265,7 +265,7 @@ Context::Context() : _self(ref<Table<Var, Var>>()) {
     }
   });
   _globals[Symbol("local")] = (Native)([](Context& c, const Array<Var>& a) {
-    L_BREAKPOINT;
+    debugbreak();
   });
   _globals[Symbol("do")] = (Native)([](Context& c, const Array<Var>& a) {
     for(uintptr_t i(1); i<a.size(); i++)
@@ -448,7 +448,7 @@ Context::Context() : _self(ref<Table<Var, Var>>()) {
       out << c.local(i);
   });
   _globals[Symbol("break")] = (Function)([](Context& c) {
-    L_BREAKPOINT;
+    debugbreak();
   });
   _globals[Symbol("typename")] = (Function)([](Context& c) {
     c.returnValue() = c.local(0).type()->name;

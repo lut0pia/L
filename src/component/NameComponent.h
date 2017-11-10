@@ -20,7 +20,7 @@ namespace L {
     inline void name(const Symbol& name) {
       _components.remove(_name);
       if(_components.find(name)) {
-        L_ERROR("Name already in use");
+        error("Name already in use");
       } else {
         _name = name;
         _components[_name] = this;

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../container/Table.h"
-#include "../macros.h"
+#include "../dev/debug.h"
 #include "../system/Memory.h"
 
 namespace L {

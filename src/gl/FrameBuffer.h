@@ -1,6 +1,7 @@
 #pragma once
 
 #include <initializer_list>
+#include "../dev/debug.h"
 #include "GL.h"
 #include "../macros.h"
 

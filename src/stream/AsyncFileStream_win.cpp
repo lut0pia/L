@@ -1,7 +1,7 @@
 #include "AsyncFileStream.h"
 
 #include <windows.h>
-#include "../macros.h"
+#include "../dev/debug.h"
 #include "../parallelism/TaskSystem.h"
 #include "CFileStream.h"
 

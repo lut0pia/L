@@ -93,9 +93,14 @@ solution "L"
     end
 
 		-- Visual Studio
-		configuration {"vs*"}
-			postbuildcommands {[[lib.exe /LTCG /NOLOGO /IGNORE:4006,4221 /LIBPATH:../../ext/lib /OUT:"$(TargetPath)" "$(TargetPath)" user32.lib opengl32.lib ws2_32.lib hid.lib winmm.lib]]}
+		filter {"action:vs*"}
 			files {"src/**.natvis"}
+		local staticlinkcmd = [[lib.exe /LTCG /NOLOGO /IGNORE:4006,4221 /OUT:"$(TargetPath)" "$(TargetPath)" ]]
+		local staticlinks = "user32.lib opengl32.lib ws2_32.lib hid.lib winmm.lib"
+		filter {"action:vs*", "Debug or Development"}
+			postbuildcommands {staticlinkcmd..staticlinks.." dbghelp.lib"}
+		filter {"action:vs*", "Release"}
+			postbuildcommands {staticlinkcmd..staticlinks}
 
 		configuration {"Debug"}
 			targetdir "bin/dbg"
@@ -113,5 +118,4 @@ solution "L"
 		configuration  {"Release"}
 			targetdir "bin/rls"
 			objdir("obj/".._ACTION.."/rls")
-			excludes {"src/dev/**"}
 			optimize "On"

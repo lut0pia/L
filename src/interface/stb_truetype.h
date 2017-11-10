@@ -15,7 +15,7 @@ namespace L {
     public:
       STBFont(const byte* data, uint32_t pixels) {
         if(!stbtt_InitFont(&_font, data, stbtt_GetFontOffsetForIndex(data, 0)))
-          L_ERROR("stbtt_InitFont failed");
+          error("stbtt_InitFont failed");
         stbtt_GetFontVMetrics(&_font, &_ascent, &_descent, &_lineheight);
         _scale = float(pixels)/float(_ascent);
         _lineheight += _ascent -_descent;

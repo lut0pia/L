@@ -66,10 +66,10 @@ void Buffer::data(SampleFormat format, uint32_t frequency, const void* data, siz
       break;
       default:
         this->~Buffer();
-        L_WARNING("Unhandled format for resampling");
+        warning("Unhandled format for resampling");
         break;
     }
-  } else L_WARNING("Audio downsampling is not unhandled");
+  } else warning("Audio downsampling is not unhandled");
 }
 void Buffer::render(void* buffer, uint32_t frame_start, uint32_t frame_count, float volume[2]) {
   if(frame_start<_sample_count) {
@@ -93,6 +93,6 @@ void Buffer::render(void* buffer, uint32_t frame_start, uint32_t frame_count, fl
         out_buffer[2*i] = clamp<int32_t>(left_mix, INT16_MIN, INT16_MAX);
         out_buffer[2*i+1] = clamp<int32_t>(right_mix, INT16_MIN, INT16_MAX);
       }
-    } else L_WARNING("Unable to render audio because of unhandled format conversion.");
+    } else warning("Unable to render audio because of unhandled format conversion.");
   }
 }

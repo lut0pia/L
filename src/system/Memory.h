@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../macros.h"
+#include "../dev/debug.h"
 #include "../types.h"
 
 #define L_ALLOCABLE(...) public: \

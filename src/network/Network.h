@@ -32,7 +32,7 @@ namespace L {
   namespace Network {
     // System-specific
     void init();
-    int error();
+    int error_code();
     bool would_block();
     void make_non_blocking(SOCKET);
   

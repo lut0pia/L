@@ -9,7 +9,7 @@ using namespace Network;
 SOCKET Network::connect_to(const char* ip, short port) {
   SOCKET sd(0);
   if((sd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-    L_ERRORF("Couldn't create socket to %s:%hd - %d", ip, port, error());
+    error("Couldn't create socket to %s:%hd - %d", ip, port, error_code());
 
   {
     SOCKADDR_IN sin;
@@ -18,7 +18,7 @@ SOCKET Network::connect_to(const char* ip, short port) {
     sin.sin_port = htons(port);
 
     if(connect(sd, (SOCKADDR*)&sin, sizeof(sin)) < 0)
-      L_ERRORF("Couldn't connect to %s:%hd - %d", ip, port, error());
+      error("Couldn't connect to %s:%hd - %d", ip, port, error_code());
   }
   make_non_blocking(sd);
   return sd;
@@ -81,7 +81,7 @@ String Network::HTTPRequest(const String& url) {
     while((tmp = ::recv(sd, buffer, 1024, 0)))
       wtr += String(buffer, tmp);
     return wtr;
-  } else L_ERRORF("Could not find ip for %s", (const char*)host);
+  } else error("Could not find ip for %s", (const char*)host);
 }
 void Network::HTTPDownload(const char* url, const char* name) {
   String answer(HTTPRequest(url));

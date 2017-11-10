@@ -8,7 +8,7 @@ using namespace System;
 String System::callGet(const char* cmd) {
   String wtr = "";
   FILE* pipe = _popen(cmd,"r");
-  if(!pipe) L_ERROR("Couldn't open pipe in System");
+  if(!pipe) error("Couldn't open pipe in System");
   else {
     char buffer[128];
     while(!feof(pipe)) {
@@ -33,7 +33,7 @@ void System::toClipboard(const String& data) {
     GlobalUnlock(tmp); // Unlock it
     SetClipboardData(CF_TEXT,tmp);
     CloseClipboard();
-  } else L_ERROR("Couldn't open clipboard.");
+  } else error("Couldn't open clipboard.");
 }
 String System::fromClipboard() {
   HGLOBAL tmp;
@@ -41,7 +41,7 @@ String System::fromClipboard() {
     String wtr((char*)tmp);
     CloseClipboard();
     return wtr;
-  } else L_ERROR("Cannot get clipboard data.");
+  } else error("Cannot get clipboard data.");
 }
 String System::pwd() {
   String wtr(callGet("cd"));

@@ -5,6 +5,7 @@
 #include "../objects.h"
 #include "../stream/Stream.h"
 #include "../system/Memory.h"
+#include "../dev/debug.h"
 
 namespace L {
   template <class T>

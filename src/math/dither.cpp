@@ -1,6 +1,6 @@
 #include "dither.h"
 
-#include "../macros.h"
+#include "../dev/debug.h"
 
 using namespace L;
 

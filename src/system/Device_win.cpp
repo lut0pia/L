@@ -35,13 +35,13 @@ void Device::update(){
     Rid[1].hwndTarget = 0;
 
     if(!RegisterRawInputDevices(Rid,2,sizeof(RAWINPUTDEVICE)))
-      L_ERROR("Couldn't register raw input devices");
+      error("Couldn't register raw input devices");
 
     UINT nDevices(32);
     RAWINPUTDEVICELIST pRawInputDeviceList[32];
 
     if((nDevices = GetRawInputDeviceList(pRawInputDeviceList,&nDevices,sizeof(RAWINPUTDEVICELIST)))==(UINT)-1)
-      L_ERROR("More than 32 HIDs connected.");
+      error("More than 32 HIDs connected.");
 
     for(UINT i(0); i<nDevices; i++){
       DeviceSystem* deviceSystem = new DeviceSystem;
@@ -55,9 +55,9 @@ void Device::update(){
       deviceSystem->_preparsed = (PHIDP_PREPARSED_DATA)Memory::alloc(preparsedDataSize);
 
       if(GetRawInputDeviceInfo(pRawInputDeviceList[i].hDevice,RIDI_PREPARSEDDATA,deviceSystem->_preparsed,&preparsedDataSize)==(UINT)-1)
-        L_ERROR("GetRawInputDeviceInfo failed");
+        error("GetRawInputDeviceInfo failed");
       if(!HidP_GetCaps(deviceSystem->_preparsed,&deviceSystem->_caps))
-        L_ERROR("Couldn't get caps");
+        error("Couldn't get caps");
       if(deviceSystem->_caps.Usage!=5 || deviceSystem->_caps.UsagePage!=1){ // Not a gamepad
         HidD_FreePreparsedData(deviceSystem->_preparsed);
         delete deviceSystem;
@@ -71,9 +71,9 @@ void Device::update(){
 
       L_ASSERT(deviceSystem->_caps.NumberInputButtonCaps<sizeof(deviceSystem->_buttonCaps)/sizeof(HIDP_BUTTON_CAPS));
       if(HidP_GetButtonCaps(HidP_Input,deviceSystem->_buttonCaps,&deviceSystem->_caps.NumberInputButtonCaps,deviceSystem->_preparsed) != HIDP_STATUS_SUCCESS)
-        L_ERROR("Couldn't get button caps.");
+        error("Couldn't get button caps.");
       if(HidP_GetValueCaps(HidP_Input,deviceSystem->_valueCaps,&deviceSystem->_caps.NumberInputValueCaps,deviceSystem->_preparsed) != HIDP_STATUS_SUCCESS)
-        L_ERROR("Couldn't get value caps.");
+        error("Couldn't get value caps.");
 
       deviceSystem->_minButtonUsage = deviceSystem->_buttonCaps[0].Range.UsageMin;
     }
@@ -90,7 +90,7 @@ void Device::processReport(void* id,const byte* data,size_t size){
         USAGE usage[32];
         ULONG usageLength(ULONG(sizeof(usage)/sizeof(USAGE)));
         if(HidP_GetUsages(HidP_Input,buttonUsagePage,0,usage,&usageLength,deviceSystem->_preparsed,PCHAR(data),ULONG(size)) != HIDP_STATUS_SUCCESS)
-          L_ERROR("Could not get controller usages.");
+          error("Could not get controller usages.");
 
         uint32_t newButtons(0);
         for(uintptr_t i(0); i<usageLength; i++)
@@ -110,7 +110,7 @@ void Device::processReport(void* id,const byte* data,size_t size){
           const HIDP_VALUE_CAPS& valueCap(deviceSystem->_valueCaps[i]);
           int usageValue;
           if(HidP_GetUsageValue(HidP_Input,valueCap.UsagePage,0,valueCap.NotRange.Usage,(ULONG*)&usageValue,deviceSystem->_preparsed,PCHAR(data),ULONG(size)) != HIDP_STATUS_SUCCESS)
-            L_ERROR("Could not get controller value usage.");
+            error("Could not get controller value usage.");
           float value(usageValue);
           switch(valueCap.BitSize){
             case 4: continue;

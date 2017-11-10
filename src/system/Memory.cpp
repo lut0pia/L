@@ -8,7 +8,8 @@
 using namespace L;
 
 void* operator new(size_t size) {
-  L_ERROR("Using the standard new is forbidden. Make the struct/class L_ALLOCABLE.");
+  error("Using the standard new is forbidden. Make the struct/class L_ALLOCABLE.");
+  return nullptr;
 }
 
 #ifndef L_USE_MALLOC
