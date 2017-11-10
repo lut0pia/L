@@ -80,3 +80,9 @@ int main(int argc, const char* argv[]) {
   TaskSystem::init();
   return 0;
 }
+
+#if !defined(L_DEBUG) && defined(L_WINDOWS)
+int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
+  main(0, nullptr);
+}
+#endif
