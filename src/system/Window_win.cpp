@@ -92,7 +92,14 @@ LRESULT CALLBACK MainWndProc(HWND hwnd,uint32_t uMsg,WPARAM wParam,LPARAM lParam
       e.y = GET_Y_LPARAM(lParam);
       e.x -= mousePos_p->x();
       e.y -= mousePos_p->y();
-      *mousePos_p += Vector2i(e.x,e.y);
+      if(*flags_p&Window::loopcursor) {
+        POINT p = {128, 128};
+        ClientToScreen(hWND, &p);
+        SetCursorPos(p.x, p.y);
+        *mousePos_p = Vector2i(128, 128);
+      } else {
+        *mousePos_p += Vector2i(e.x, e.y);
+      }
       break;
     case WM_MOUSEWHEEL:
       e.type = Window::Event::MouseWheel;
@@ -245,26 +252,6 @@ void Window::close() {
 bool Window::opened() { return hWND!=0; }
 bool Window::loop() {
   MSG msg;
-  if(_flags&loopcursor){
-    bool changed(false);
-    static const int safe_zone(128);
-    const Vector2i old_mouse_pos(_mousePos);
-    if(_mousePos.x()<safe_zone)
-      _mousePos.x() = _width-safe_zone,changed = true;
-    else if(_mousePos.x()>_width-safe_zone)
-      _mousePos.x() = safe_zone,changed = true;
-    if(_mousePos.y()<safe_zone)
-      _mousePos.y() = _height-safe_zone,changed = true;
-    else if(_mousePos.y()>_height-safe_zone)
-      _mousePos.y() = safe_zone,changed = true;
-    if(changed) {
-      POINT p;
-      GetCursorPos(&p);
-      p.x += _mousePos.x()-old_mouse_pos.x();
-      p.y += _mousePos.y()-old_mouse_pos.y();
-      SetCursorPos(p.x, p.y);
-    }
-  }
   while(opened() && PeekMessage(&msg,nullptr,0,0,PM_REMOVE)) {
     TranslateMessage(&msg);
     DispatchMessage(&msg);
