@@ -9,7 +9,7 @@
 #include "../script/Context.h"
 #include "../system/Device.h"
 #include "../system/Window.h"
-#include "SharedUniform.h"
+#include "ShaderLib.h"
 #include "../stream/CFileStream.h"
 #include "../component/AudioSourceComponent.h"
 

@@ -68,7 +68,7 @@
 #include "engine/Material.h"
 #include "engine/Resource.h"
 #include "engine/Settings.h"
-#include "engine/SharedUniform.h"
+#include "engine/ShaderLib.h"
 
 // Font handling
 #include "font/Font.h"

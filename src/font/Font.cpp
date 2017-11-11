@@ -2,7 +2,7 @@
 
 #include "../gl/Program.h"
 #include "../text/encoding.h"
-#include "../engine/SharedUniform.h"
+#include "../engine/ShaderLib.h"
 
 using namespace L;
 
@@ -21,7 +21,7 @@ const Font::Glyph& Font::glyph(uint32_t utf32) {
 }
 GL::Program& glyphProgram() {
   static GL::Program program(GL::Shader(
-    "#version 330 core\n"
+    L_GLSL_INTRO
     L_SHAREDUNIFORM
     "layout (location = 0) in vec2 vertex;"
     "layout (location = 1) in vec2 texcoords;"
@@ -32,7 +32,7 @@ GL::Program& glyphProgram() {
     "gl_Position = vec4(((position+vertex)/screen.xy)*vec2(2.f/(viewport.z-viewport.x),-2.f/(viewport.w-viewport.y))-vec2(1.f,-1.f),0.f,1.f);"
     "}", GL_VERTEX_SHADER),
     GL::Shader(
-      "#version 330 core\n"
+      L_GLSL_INTRO
       L_SHAREDUNIFORM
       "in vec2 ftexcoords;"
       "out vec4 fragcolor;"

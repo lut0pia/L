@@ -6,7 +6,7 @@
 #include "Program.h"
 #include "../stream/CFileStream.h"
 #include "../image/Color.h"
-#include "../engine/SharedUniform.h"
+#include "../engine/ShaderLib.h"
 #include "../text/Symbol.h"
 
 using namespace L;
@@ -124,7 +124,7 @@ void GL::draw(GLenum mode, GLsizei count) {
   glDrawArrays(mode, 0, count);
 }
 #define L_VERTEX_SHADER \
-"#version 330 core\n" \
+L_GLSL_INTRO \
 L_SHAREDUNIFORM \
 "layout (location = 0) in vec3 modelPosition;" \
 "uniform mat4 model;" \
@@ -135,7 +135,7 @@ L_SHAREDUNIFORM \
 "}"
 Program& GL::baseProgram() {
   static Program program(Shader(L_VERTEX_SHADER,GL_VERTEX_SHADER),Shader(
-    "#version 330 core\n"
+    L_GLSL_INTRO
     L_SHAREDUNIFORM
     "layout(location = 0) out vec4 ocolor;"
     "layout(location = 1) out vec4 onormal;"
@@ -153,7 +153,7 @@ Program& GL::baseProgram() {
 }
 Program& GL::baseColorProgram() {
   static Program program(Shader(L_VERTEX_SHADER,GL_VERTEX_SHADER),Shader(
-    "#version 330 core\n"
+    L_GLSL_INTRO
     L_SHAREDUNIFORM
     L_SHADER_LIB
     "layout(location = 0) out vec4 ocolor;"

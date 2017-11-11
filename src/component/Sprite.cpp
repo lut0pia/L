@@ -2,7 +2,7 @@
 
 #include "../gl/Program.h"
 #include "../gl/Shader.h"
-#include "../engine/SharedUniform.h"
+#include "../engine/ShaderLib.h"
 
 using namespace L;
 
@@ -29,7 +29,7 @@ void Sprite::script_registration() {
 
 void Sprite::render(const Camera&) {
   static GL::Program program(GL::Shader(
-    "#version 330 core\n"
+    L_GLSL_INTRO
     L_SHAREDUNIFORM
     "uniform vec4 vert;"
     "uniform vec4 uv;"
@@ -44,7 +44,7 @@ void Sprite::render(const Camera&) {
     "gl_Position = viewProj * model * vec4(vert[index/2],0.f,vert[index%2+2],1.f);"
     "}", GL_VERTEX_SHADER),
     GL::Shader(
-      "#version 330 core\n"
+      L_GLSL_INTRO
       L_SHAREDUNIFORM
       L_SHADER_LIB
       "layout(location = 0) out vec4 ocolor;"

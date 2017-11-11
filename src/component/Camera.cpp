@@ -12,7 +12,7 @@
 #include "LightComponent.h"
 #include "../system/Window.h"
 #include "../engine/Engine.h"
-#include "../engine/SharedUniform.h"
+#include "../engine/ShaderLib.h"
 
 using namespace L;
 
@@ -132,7 +132,7 @@ void Camera::postrender(){
   _lbuffer.unbind();
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // For GUI alpha
   static GL::Program final_shader(GL::Shader(
-    "#version 330 core\n"
+    L_GLSL_INTRO
     "const vec2 vertices[] = vec2[]("
     "vec2(-1.f,-1.f),vec2(3.f,-1.f),vec2(-1.f,3.f));"
     "out vec2 ftexcoords;"
@@ -141,7 +141,7 @@ void Camera::postrender(){
     "gl_Position = vec4(vertices[gl_VertexID],0.f,1.f);"
     "}", GL_VERTEX_SHADER),
     GL::Shader(
-      "#version 330 core\n"
+      L_GLSL_INTRO
       L_SHAREDUNIFORM
       L_SHADER_LIB
       "in vec2 ftexcoords;"

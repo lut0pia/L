@@ -1,7 +1,7 @@
 #include "StaticMesh.h"
 
 #include "../gl/GL.h"
-#include "../engine/SharedUniform.h"
+#include "../engine/ShaderLib.h"
 
 using namespace L;
 
