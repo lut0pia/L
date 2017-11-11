@@ -1,6 +1,6 @@
 #pragma once
 
-#define L_GLSL_INTRO "#version 330 core\n"
+#define L_GLSL_INTRO "#version 130\n#extension GL_ARB_explicit_attrib_location : require\n#extension GL_ARB_uniform_buffer_object : require\n"
 #define L_SHAREDUNIFORM_VIEW 0
 #define L_SHAREDUNIFORM_INVVIEW (L_SHAREDUNIFORM_VIEW+sizeof(Matrix44f))
 #define L_SHAREDUNIFORM_VIEWPROJ (L_SHAREDUNIFORM_INVVIEW+sizeof(Matrix44f))

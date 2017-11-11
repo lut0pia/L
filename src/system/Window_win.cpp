@@ -219,7 +219,7 @@ void Window::open(const char* title, int width, int height, int flags) {
   int iContextAttribs[] =
   {
     WGL_CONTEXT_MAJOR_VERSION_ARB, 3,
-    WGL_CONTEXT_MINOR_VERSION_ARB, 3,
+    WGL_CONTEXT_MINOR_VERSION_ARB, 0,
 #ifdef L_DEBUG
     WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_DEBUG_BIT_ARB,
 #endif

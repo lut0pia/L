@@ -15,7 +15,7 @@ You can either run the [premake](https://github.com/premake/premake-core/wiki/Us
 
 ## Dependencies
 - Premake (binaries supplied)
-- OpenGL 3.3
+- OpenGL 3.0
 
 ### Windows
 - WinAPI
