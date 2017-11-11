@@ -46,6 +46,7 @@
 			'Space (if (music-entity'require-midi-source || 'is-playing |)
 				(music-entity'require-midi-source || 'stop |)
 				(music-entity'require-midi-source || 'play |))
+			'R (engine-clear-and-read "startup.ls")
 		)
 	)
 )))
