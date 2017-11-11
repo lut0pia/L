@@ -77,5 +77,9 @@ void LightComponent::render() {
   _program->uniform("l_in_ang", _inner_angle);
   _program->uniform("l_out_ang", _outer_angle);
   _program->uniform("l_type", _type);
-  GL::draw(GL_TRIANGLES, 3); // TODO: Draw spatialized shape from light type and position
+  switch(_type)
+  {
+    case 1: GL::draw(GL_TRIANGLES, 8*3*4); break;
+    default:GL::draw(GL_TRIANGLES, 3); break;
+  }
 }

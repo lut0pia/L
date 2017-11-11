@@ -25,7 +25,7 @@
 	(entity'require-primitive || 'scale | !(vec 0.5 0.5 0.5))
 	(local color (rand-color))
 	(entity'require-primitive || 'material ||  'color | 'color color)
-	(entity'require-light || 'point | color 5 16)
+	(entity'require-light || 'point | color 5 8)
 )))
 
 (set make-terrain (fun (do
