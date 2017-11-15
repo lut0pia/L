@@ -16,8 +16,6 @@ namespace L {
     Interval2f _vertex, _uv;
   public:
     inline Sprite() : _vertex(Vector2f(-1.f, -1.f), Vector2f(1.f, 1.f)), _uv(Vector2f(0.f, 0.f), Vector2f(1.f, 1.f)) {}
-    inline Sprite(const Sprite&) : Sprite() { L_ERROR("Sprite component should not be copied."); }
-    inline Sprite& operator=(const Sprite& other) { L_ERROR("Sprite component should not be copied."); }
 
     inline void update_components() override { _transform = entity()->requireComponent<Transform>(); }
     virtual Map<Symbol, Var> pack() const override;
