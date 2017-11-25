@@ -7,8 +7,6 @@
 inline void* operator new(size_t SIZE) { L_ASSERT(SIZE==sizeof(__VA_ARGS__)); return L::Memory::allocType<__VA_ARGS__>();} \
 inline void operator delete(void* P) { L::Memory::freeType((__VA_ARGS__*)P); }
 
-void* operator new(size_t size);
-
 namespace L {
   class Memory {
   public:
