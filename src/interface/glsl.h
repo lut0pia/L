@@ -15,8 +15,8 @@ namespace L {
     };
   public:
     GLSL() : Interface{"glsl"},
-      _lib_vert("#version 330 core\n" L_SHAREDUNIFORM "\n"),
-      _lib_frag("#version 330 core\n" L_SHAREDUNIFORM L_SHADER_LIB "\n") {}
+      _lib_vert(L_GLSL_INTRO L_SHAREDUNIFORM "\n"),
+      _lib_frag(L_GLSL_INTRO L_SHAREDUNIFORM L_SHADER_LIB "\n") {}
     Ref<GL::Program> from(const char* path) override {
       // Read file data
       CFileStream file_stream(path, "rb");
