@@ -81,7 +81,13 @@ namespace L {
     }
     inline size_t size() const{ return _size; }
     inline size_t count() const{ return _count; }
-    inline Iterator begin() const{ return (_count) ? ++Iterator(_slots-1) : Iterator(nullptr); }
+    inline Iterator begin() const {
+      if(_count)
+        for(uintptr_t i(0); i<_size; i++)
+          if(_slots[i].hash())
+            return Iterator(_slots+i);
+      return Iterator(nullptr);
+    }
     inline Iterator end() const{ return (_count) ? _slots+_size : Iterator(nullptr); }
     V& operator[](const K& k){
       if(_count*10>=_size*8)
