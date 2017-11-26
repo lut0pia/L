@@ -36,7 +36,6 @@ void Engine::update() {
   Script::Context::global("delta") = _delta_seconds;
   Script::Context::global("avg-frame-work-duration") = _average_frame_work_duration;
   Engine::shared_uniform().subData(L_SHAREDUNIFORM_FRAME, _frame);
-  Engine::shared_uniform().subData(L_SHAREDUNIFORM_SCREEN, Vector4f(float(Window::width()), float(Window::height())));
 
   {
     Window::Event e;

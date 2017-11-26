@@ -53,7 +53,7 @@ uniform float l_out_ang;
 uniform int l_type;
 
 void main(){
-  vec2 texcoords = gl_FragCoord.xy/screen.xy;
+  vec2 texcoords = gl_FragCoord.xy*viewport_pixel_size.zw;
   vec4 color_sample = texture(color_buffer,texcoords);
   vec3 color = color_sample.rgb;
   float metalness = color_sample.a;

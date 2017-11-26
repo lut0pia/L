@@ -11,7 +11,8 @@
 #define L_SHAREDUNIFORM_EYE (L_SHAREDUNIFORM_DITHERMATRIXSIZE+sizeof(Vector4i))
 #define L_SHAREDUNIFORM_SCREEN (L_SHAREDUNIFORM_EYE+sizeof(Vector4f))
 #define L_SHAREDUNIFORM_VIEWPORT (L_SHAREDUNIFORM_SCREEN+sizeof(Vector4f))
-#define L_SHAREDUNIFORM_FRAME (L_SHAREDUNIFORM_VIEWPORT+sizeof(Vector4f))
+#define L_SHAREDUNIFORM_VIEWPORT_PIXEL_SIZE (L_SHAREDUNIFORM_VIEWPORT+sizeof(Vector4f))
+#define L_SHAREDUNIFORM_FRAME (L_SHAREDUNIFORM_VIEWPORT_PIXEL_SIZE+sizeof(Vector4f))
 #define L_SHAREDUNIFORM_SIZE (L_SHAREDUNIFORM_FRAME+sizeof(int))
 #define L_SHAREDUNIFORM \
 "layout (std140) uniform Shared {" \
@@ -19,7 +20,7 @@
 "vec4 ditherMatrix[256];" \
 "ivec4 ditherMatrixSize;" \
 "vec4 eye;" \
-"vec4 screen, viewport;" \
+"vec4 screen, viewport, viewport_pixel_size;" \
 "int frame;" \
 "};"
 #define L_SHADER_LIB \

@@ -12,6 +12,7 @@
 #include "LightComponent.h"
 #include "../system/Window.h"
 #include "../engine/Engine.h"
+#include "../engine/Settings.h"
 #include "../engine/ShaderLib.h"
 
 using namespace L;
@@ -21,14 +22,16 @@ Camera::Camera() :
   _gbuffer({&_gcolor,&_gnormal}, &_gdepth),
   _lbuffer({&_lcolor}) {
   resize_buffers();
-  _gcolor.parameter(GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-  _gcolor.parameter(GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-  _gnormal.parameter(GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-  _gnormal.parameter(GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-  _gdepth.parameter(GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-  _gdepth.parameter(GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-  _lcolor.parameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  _lcolor.parameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  _gcolor.parameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  _gcolor.parameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  _gnormal.parameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  _gnormal.parameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  _gdepth.parameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  _gdepth.parameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  _lcolor.parameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  _lcolor.parameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  _lcolor.parameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  _lcolor.parameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
   // Check framebuffer states
   _gbuffer.check();
@@ -73,8 +76,9 @@ void Camera::script_registration() {
 }
 
 void Camera::resize_buffers() {
+  static const float& screen_percentage(Settings::get_float("screen-percentage", 1.f));
   const Vector2f viewport_size(_viewport.size());
-  const GLsizei viewport_width(Window::width()*viewport_size.x()), viewport_height(Window::height()*viewport_size.y());
+  const GLsizei viewport_width(Window::width()*viewport_size.x()*screen_percentage), viewport_height(Window::height()*viewport_size.y()*screen_percentage);
   _gcolor.image2D(0, GL_RGBA16F, viewport_width, viewport_height, 0, GL_RGBA, GL_FLOAT);
   _gnormal.image2D(0, GL_RGBA16F, viewport_width, viewport_height, 0, GL_RGBA, GL_FLOAT);
   _gdepth.image2D(0, GL_DEPTH_COMPONENT24, viewport_width, viewport_height, 0, GL_DEPTH_COMPONENT, GL_FLOAT);
@@ -100,7 +104,9 @@ void Camera::prerender() {
   Engine::shared_uniform().subData(L_SHAREDUNIFORM_INVVIEWPROJ,_viewProjection.inverse());
   Engine::shared_uniform().subData(L_SHAREDUNIFORM_PREVVIEWPROJ,_prevViewProjection);
   Engine::shared_uniform().subData(L_SHAREDUNIFORM_EYE,_transform->position());
+  Engine::shared_uniform().subData(L_SHAREDUNIFORM_SCREEN, Vector4f(float(Window::width()), float(Window::height()), _gcolor.width(), _gcolor.height()));
   Engine::shared_uniform().subData(L_SHAREDUNIFORM_VIEWPORT, Vector4f(_viewport.min().x(),_viewport.min().y(),_viewport.max().x(),_viewport.max().y()));
+  Engine::shared_uniform().subData(L_SHAREDUNIFORM_VIEWPORT_PIXEL_SIZE, Vector4f(_gcolor.width(), _gcolor.height(), 1.f/_gcolor.width(), 1.f/_gcolor.height()));
   _gbuffer.bind();
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glEnable(GL_DEPTH_TEST);
@@ -109,9 +115,7 @@ void Camera::prerender() {
 void Camera::postrender(){
   _gbuffer.unbind();
   _lbuffer.bind();
-  const Interval2i vp(viewportPixel());
-  const Vector2i vpSize(vp.size());
-  glViewport(vp.min().x(), vp.min().y(), vpSize.x(), vpSize.y());
+  glViewport(0, 0, _lcolor.width(), _lcolor.height());
   glClear(GL_COLOR_BUFFER_BIT);
   glDisable(GL_DEPTH_TEST);
   glEnable(GL_BLEND);
@@ -130,6 +134,9 @@ void Camera::postrender(){
   }
 
   _lbuffer.unbind();
+  const Interval2i vp(viewportPixel());
+  const Vector2i vpSize(vp.size());
+  glViewport(vp.min().x(), vp.min().y(), vpSize.x(), vpSize.y());
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // For GUI alpha
   static GL::Program final_shader(GL::Shader(
     L_GLSL_INTRO
