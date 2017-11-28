@@ -25,9 +25,9 @@ namespace L {
       }
       return size;
     }
-    inline char get() override { return (_cur<_end) ? *_cur++ : EOF; }
+    inline char get() override { return (_cur<_end) ? *_cur++ : (_cur++, EOF); }
     inline void put(char c) override { if(_cur<_end) *_cur++ = c; }
-    inline bool end() override { return _cur>=_end; }
+    inline bool end() override { return _cur>_end; }
 
     inline char peek() override { return *_cur; }
     inline void seek(uintptr_t i) override { _cur = _start+i; }
