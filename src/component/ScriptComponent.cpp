@@ -13,19 +13,17 @@ using namespace Script;
 void ScriptComponent::update_components() {
   _context.selfTable()[Symbol("entity")] = entity();
 
-  if(!_started && !_script_path.empty())
+  if(!_started && _script)
     start();
 
   static const Symbol updateComponentsSymbol("update-components");
   _context.tryExecuteMethod(updateComponentsSymbol);
 }
 Map<Symbol, Var> ScriptComponent::pack() const {
-  Map<Symbol, Var> data;
-  data["script_path"] = _script_path;
-  return data;
+  return{{"script",_script}};
 }
 void ScriptComponent::unpack(const Map<Symbol, Var>& data) {
-  unpack_item(data, "script_path", _script_path);
+  unpack_item(data, "script", _script);
 }
 void ScriptComponent::script_registration() {
 #define L_FUNCTION(name,...) Context::global(Symbol(name)) = (Function)([](Context& c) {__VA_ARGS__})
@@ -104,13 +102,14 @@ void ScriptComponent::script_registration() {
 }
 
 void ScriptComponent::load(const char* filename) {
-  _script_path = filename;
+  _script = Resource<Script::CodeFunction>::get(filename);
   start();
 }
 void ScriptComponent::start() {
+  L_ASSERT(_script);
   _started = true;
   static const Symbol start_symbol("start");
-  _context.executeInside(Array<Var>{Resource<Script::CodeFunction>::get(_script_path).ref()});
+  _context.executeInside(Array<Var>{_script.ref()});
   _context.tryExecuteMethod(start_symbol);
 }
 void ScriptComponent::update() {

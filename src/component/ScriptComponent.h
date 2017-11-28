@@ -3,6 +3,7 @@
 #include "Component.h"
 #include "../script/Context.h"
 #include "../system/Device.h"
+#include "../engine/Resource.h"
 
 namespace L {
   class ScriptComponent : public Component {
@@ -14,7 +15,7 @@ namespace L {
       L_COMPONENT_HAS_DEV_EVENT(ScriptComponent)
   protected:
     Script::Context _context;
-    String _script_path;
+    Resource<Script::CodeFunction> _script;
     bool _started : 1;
   public:
     ScriptComponent() : _started(false) {}
