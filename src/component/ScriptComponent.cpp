@@ -37,6 +37,11 @@ void ScriptComponent::script_registration() {
       Engine::timescale(c.local(0).get<float>());
     c.returnValue() = Engine::timescale();
   });
+  L_FUNCTION("engine-clear", {
+    Engine::add_deferred_action({[](void*) {
+      Engine::clear();
+    }});
+  });
   L_FUNCTION("engine-clear-and-read", {
     L_ASSERT(c.localCount()==1);
     Engine::add_deferred_action({[](void* p) {
