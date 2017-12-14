@@ -101,7 +101,7 @@ namespace L {
             default: return nullptr;
           }
 
-          Audio::MidiEvent new_event{};
+          Audio::MidiEvent new_event;
           new_event.array[0] = event_type;
           for(uintptr_t i(0); i<event_size; i++)
             new_event.array[i+1] = *head++;

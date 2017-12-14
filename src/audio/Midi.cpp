@@ -6,14 +6,14 @@ using namespace L;
 using namespace Audio;
 
 void Midi::set_instrument(uint8_t channel, uint8_t instrument) {
-  MidiEvent e{};
+  MidiEvent e;
   e.type = MidiEvent::ProgramChange;
   e.channel = channel;
   e.instrument = instrument;
   send(e);
 }
 void Midi::play_note(uint8_t channel, uint8_t note, uint8_t velocity) {
-  MidiEvent e{};
+  MidiEvent e;
   e.type = MidiEvent::NoteOn;
   e.channel = channel;
   e.note = note;
@@ -21,7 +21,7 @@ void Midi::play_note(uint8_t channel, uint8_t note, uint8_t velocity) {
   send(e);
 }
 void Midi::stop_note(uint8_t channel, uint8_t note) {
-  MidiEvent e{};
+  MidiEvent e;
   e.type = MidiEvent::NoteOff;
   e.channel = channel;
   e.note = note;
