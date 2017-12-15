@@ -79,8 +79,8 @@ void Camera::resize_buffers() {
   static const float& screen_percentage(Settings::get_float("screen-percentage", 1.f));
   const Vector2f viewport_size(_viewport.size());
   const GLsizei viewport_width(Window::width()*viewport_size.x()*screen_percentage), viewport_height(Window::height()*viewport_size.y()*screen_percentage);
-  _gcolor.image2D(0, GL_RGBA16F, viewport_width, viewport_height, 0, GL_RGBA, GL_FLOAT);
-  _gnormal.image2D(0, GL_RGBA16F, viewport_width, viewport_height, 0, GL_RGBA, GL_FLOAT);
+  _gcolor.image2D(0, GL_RGBA8, viewport_width, viewport_height, 0, GL_RGBA, GL_FLOAT);
+  _gnormal.image2D(0, GL_RGBA8, viewport_width, viewport_height, 0, GL_RGBA, GL_FLOAT);
   _gdepth.image2D(0, GL_DEPTH_COMPONENT24, viewport_width, viewport_height, 0, GL_DEPTH_COMPONENT, GL_FLOAT);
   _lcolor.image2D(0, GL_RGB16F, viewport_width, viewport_height, 0, GL_RGB, GL_FLOAT);
 }
