@@ -8,7 +8,7 @@
 			(rand-range -8 8)
 			(rand-range -8 8)
 			(rand-range 2 8)))
-	(transform'rotate | !(vec 0 1 0) (* (- (rand) .5) 5))
+	(transform'rotate | (vec 0 1 0) (* (- (rand) .5) 5))
 	; Add rigid body
 	(entity'require-rigidbody || 'add-speed | (vec (rand-range -2 2) (rand-range -2 2) (rand-range 1 2)))
 	; Add collider
@@ -19,10 +19,10 @@
 		)
 		(do
 			(entity'require-primitive || 'material || 'parent | "material/box.lon")
-			(entity'require-collider || 'box | !(vec 0.5 0.5 0.5))
+			(entity'require-collider || 'box | (vec 0.5 0.5 0.5))
 		)
 	)
-	(entity'require-primitive || 'scale | !(vec 0.5 0.5 0.5))
+	(entity'require-primitive || 'scale | (vec 0.5 0.5 0.5))
 	(local color (rand-color))
 	(entity'require-primitive || 'material ||  'color | 'color color)
 	(entity'require-light || 'point | color 5 8)
