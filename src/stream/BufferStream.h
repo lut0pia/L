@@ -18,11 +18,12 @@ namespace L {
       return size;
     }
     inline size_t read(void* data, size_t size) override {
-      size = min(size, (uintptr_t)_cur-(uintptr_t)_end);
+      size = min(size, (uintptr_t)_end-(uintptr_t)_cur);
       if(size) {
         memcpy(data, _cur, size);
         _cur += size;
       }
+      _cur += (_cur==_end); // Indicate end of stream
       return size;
     }
     inline char get() override { return (_cur<_end) ? *_cur++ : (_cur++, EOF); }
