@@ -2,85 +2,91 @@
 
 #include <cstring>
 
+#include "../dev/debug.h"
+
 using namespace L;
 using namespace Script;
 
 char Lexer::get() {
-  char c(_peek);
-  if(c=='\0')
-    c = _stream.get();
-  else
-    _peek = '\0';
+  L_ASSERT(!end_of_text());
+  const char c(*_read);
+  _read++;
+  _read_size--;
   if(c=='\n')
     _line++;
   return c;
 }
-char Lexer::peek() {
-  if(_peek=='\0')
-    _peek = _stream.get();
-  return _peek;
-}
-bool Lexer::special_char(char c) {
-  return (c=='(' || c==')' || c=='{' || c=='}' || c=='\'' || c=='"' || c=='!' || c=='|' || c==';');
+void Lexer::read(const char* text, size_t size, bool last_read) {
+  L_ASSERT(!_read || end_of_text());
+  L_ASSERT(!_last_read);
+  _read = text;
+  _read_size = size;
+  _last_read = last_read;
 }
 bool Lexer::next_token() {
-  char* w(_buffer);
-  _literal = false;
+  if(_state==Comment) {
+    while(!end_of_text() && peek()!='\n')
+      get();
+    _state = end_of_text() ? Comment : Done;
+    if(_state==Comment)
+      return false;
+  }
+  if(_state==Done) {
+    _write = _buffer;
+    _literal = false;
+    _state = Started;
+  }
 
   while(true) {
-    if(w==_buffer && !_literal) { // Before anything relevant
+    if(end_of_text()) {
+      if(_last_read && _write>_buffer) {
+        *_write = '\0';
+        _state = Done;
+        return true;
+      } else return false;
+    }
+    if(_write==_buffer && !_literal) { // Before anything relevant
       char c(get());
-      if(_stream.end()) { // End of stream
-        _eos = true;
-        return false;
-      } else if(c==';') { // Comment
-        do c = get();
-        while(!_stream.end() && c!='\n');
+      if(c==';') { // Comment
+        while(!end_of_text() && peek()!='\n')
+          get();
+        _state = end_of_text() ? Comment : Done;
       } else if(c=='"') { // Start of literal
         _literal = true;
       } else if(special_char(c)) { // One char token
         _buffer[0] = c;
         _buffer[1] = '\0';
+        _state = Done;
         return true;
-      } else if(!Stream::isspace(c)) { // Start of token
-        *w++ = c;
+      } else if(!space_char(c)) { // Start of token
+        *_write++ = c;
       }
     } else if(_literal) { // Literal string
       char c(get());
-      if(w>_buffer && *(w-1)=='\\') { // Escaped character
+      if(_write>_buffer && *(_write-1)=='\\') { // Escaped character
         switch(c) {
-          case '\\':
-            *(w-1) = '\\';
-            break;
-          case 't':
-            *(w-1) = '\t';
-            break;
-          case 'n':
-            *(w-1) = '\n';
-            break;
-          case 'r':
-            *(w-1) = '\r';
-            break;
-          case '"':
-            *(w-1) = '"';
-            break;
-          default:
-            *w++ = c;
-            break;
+          case '\\': *(_write-1) = '\\'; break;
+          case 't': *(_write-1) = '\t'; break;
+          case 'n': *(_write-1) = '\n'; break;
+          case 'r': *(_write-1) = '\r'; break;
+          case '"': *(_write-1) = '"'; break;
+          default: *_write++ = c; break;
         }
       } else if(c=='"') { // End of literal string
-        *w = '\0';
+        *_write = '\0';
+        _state = Done;
         return true;
       } else { // Simple character in string
-        *w++ = c;
+        *_write++ = c;
       }
     } else { // Regular token
       char c(peek());
-      if(special_char(c) || Stream::isspace(c)) { // End of token
-        *w = '\0';
+      if(special_char(c) || space_char(c)) { // End of token
+        *_write = '\0';
+        _state = Done;
         return true;
       } else {
-        *w++ = get();
+        *_write++ = get();
       }
     }
   }
@@ -89,6 +95,5 @@ bool Lexer::accept_token(const char* str) {
   if(is_token(str)) {
     next_token();
     return true;
-  }
-  return false;
+  } else return false;
 }

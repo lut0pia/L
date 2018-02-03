@@ -7,9 +7,14 @@ namespace L {
     static MaterialLON instance;
   public:
     MaterialLON() : Interface{"lon"} {}
-    Ref<Material> from(Stream& stream) override {
-      Script::Context context;
-      Var data(context.executeInside(Array<Var>{ref<Script::CodeFunction>(Script::Context::read(stream))}));
+    Ref<Material> from(const byte* str, size_t size) override {
+      Var data;
+      {
+        Script::Compiler compiler;
+        Script::Context context;
+        compiler.read((const char*)str, size, true);
+        data = context.executeInside(Array<Var>{ref<Script::CodeFunction>(compiler.function())});
+      }
 
       if(data.is<Ref<Table<Var, Var>>>()) {
         static const Symbol program_symbol("program"),
@@ -17,7 +22,7 @@ namespace L {
           vertex_count_symbol("vertex_count"), primitive_mode_symbol("primitive_mode"),
           triangles_symbol("triangles");
         Table<Var, Var>& table(*data.as<Ref<Table<Var, Var>>>());
-        Var *program_var(table.find(program_symbol)), 
+        Var *program_var(table.find(program_symbol)),
           *scalars_var(table.find(scalars_symbol)), *textures_var(table.find(textures_symbol)), *vectors_var(table.find(vectors_symbol)),
           *vertex_count_var(table.find(vertex_count_symbol)), *primitive_mode_var(table.find(primitive_mode_symbol));
         if(program_var) {

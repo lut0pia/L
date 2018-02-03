@@ -115,8 +115,10 @@
 #include "parallelism/TaskSystem.h"
 
 // Scripting language
+#include "script/Compiler.h"
 #include "script/Context.h"
 #include "script/Lexer.h"
+#include "script/script.h"
 
 // Streams, IO
 #include "stream/AsyncFileStream.h"

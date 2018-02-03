@@ -2,17 +2,17 @@
 
 #include "../container/Table.h"
 #include "../network/Server.h"
-#include "../script//Context.h"
+#include "../script/Compiler.h"
+#include "../script/Context.h"
 
 namespace L {
   class ScriptServer : protected Server {
   protected:
-    struct Client{
-      char* _buffer;
-      uintptr_t _pos;
+    struct Client {
+      Script::Compiler compiler;
+      Script::Context context;
     };
     Table<SOCKET, Client> _clients;
-    Script::Context _script_context;
   public:
     inline ScriptServer(short port) : Server(port) {}
     void update();

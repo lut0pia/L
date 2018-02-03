@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Lexer.h"
+#include "script.h"
 #include "../container/Array.h"
 #include "../container/KeyValue.h"
 #include "../container/StaticStack.h"
@@ -11,12 +11,6 @@
 
 namespace L {
   namespace Script {
-    class Context;
-    typedef void(*Function)(Context&);
-    typedef void(*Native)(Context&, const Array<Var>&);
-    typedef struct { uint32_t i; } Local;
-    typedef struct { Symbol sym; } RawSymbol;
-    typedef struct { Var code; uint32_t localCount; } CodeFunction;
     class Context {
     private:
       static Table<Symbol, Var> _globals;
@@ -28,8 +22,6 @@ namespace L {
 
     public:
       Context();
-      static CodeFunction read(Stream&);
-      static bool read(Var& v, Lexer& lexer);
 
       inline Var& currentSelf() { L_ASSERT(!_selves.empty()); return _selves.top(); }
       inline Table<Var, Var>& selfTable() { return *_self.as<Ref<Table<Var, Var>>>(); }

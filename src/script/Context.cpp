@@ -1,6 +1,8 @@
 #include "Context.h"
 
+#include "Compiler.h"
 #include "../container/Ref.h"
+#include "../macros.h"
 #include "../math/Rand.h"
 #include "../stream/CFileStream.h"
 #include "../math/Vector.h"
@@ -21,99 +23,6 @@ static void object(Context& c) {
   const uint32_t params(c.localCount());
   for(uint32_t i(1); i<params; i += 2)
     table[c.local(i-1)] = c.local(i);
-}
-static void applyScope(Var& v, Table<Symbol, uint32_t>& localTable, uint32_t& localIndex) {
-  static const Symbol localSymbol("local"), funSymbol("fun"), foreachSymbol("foreach"), setSymbol("set");
-  if(v.is<Array<Var>>()) {
-    Array<Var>& array(v.as<Array<Var>>());
-    if(array[0].is<Symbol>()) {
-      const Symbol& sym(array[0].as<Symbol>());
-      if(array[1].is<Symbol>() && sym==localSymbol) {
-        array[0] = setSymbol;
-        localTable[array[1].as<Symbol>()] = localIndex++;
-      } else if(sym==foreachSymbol) {
-        if(array.size()>=4) // Value only
-          localTable[array[1].as<Symbol>()] = localIndex++;
-        if(array.size()>=5) // Key value
-          localTable[array[2].as<Symbol>()] = localIndex++;
-      } else if(sym==funSymbol) // Don't go inside functions
-        return;
-    }
-    for(auto&& e : array)
-      applyScope(e, localTable, localIndex);
-  } else if(v.is<Symbol>()) {
-    if(auto found = localTable.find(v.as<Symbol>()))
-      v = Local{*found};
-  }
-}
-
-CodeFunction Context::read(Stream& stream) {
-  static const Symbol doSymbol("do");
-  CodeFunction wtr{Array<Var>{doSymbol}};
-  Array<Var>& array(wtr.code.as<Array<Var>>());
-  Script::Lexer lexer(stream);
-  lexer.next_token();
-  do {
-    array.push();
-    if(!read(array.back(), lexer)) { // Read failed
-      array.size(1); // Return do nothing function
-      return wtr;
-    }
-  } while(!stream.end());
-  Table<Symbol, uint32_t> localTable;
-  uint32_t localIndex(0);
-  applyScope(wtr.code, localTable, localIndex);
-  wtr.localCount = localIndex;
-  return wtr;
-}
-bool Context::read(Var& v, Lexer& lexer) {
-  if(lexer.eos()) {
-    warning("Unexpected end of stream while parsing script: there are uneven () or {}.");
-    return false;
-  }
-  if(lexer.accept_token("(")) { // It's a list of expressions
-    v.make<Array<Var> >();
-    int i(0);
-    while(!lexer.accept_token(")"))
-      if(lexer.accept_token("|"))
-        v = Array<Var>{v}, i = 1;
-      else if(!read(v[i++], lexer))
-        return false;
-  } else if(lexer.accept_token("{")) { // It's an object
-    v.make<Array<Var> >();
-    v[0] = (Function)object;
-    int i(1);
-    while(!lexer.accept_token("}"))
-      if(!read(v[i++], lexer))
-        return false;
-  } else if(lexer.accept_token("'")) {
-    if(!read(v, lexer))
-      return false;
-    if(!v.is<Symbol>()) {
-      warning("Expected symbol after ', got %s at line %d", (const char*)v.type()->name, lexer.line());
-      return false;
-    }
-    const Symbol sym(v.as<Symbol>());
-    v.make<RawSymbol>().sym = sym;
-  } else if(lexer.accept_token("!")) {
-    if(!read(v, lexer))
-      return false;
-  } else if(lexer.is_token(")") || lexer.is_token("}")) {
-    warning("Unexpected token %s at line %d", lexer.token(), lexer.line());
-    return false;
-  } else {
-    const char* token(lexer.token());
-    if(lexer.literal()) v = token; // Character string
-    else if(strpbrk(token, "0123456789")) { // Has digits
-      if(token[strspn(token, "-0123456789")]=='\0') v = atoi(token); // Integer
-      else if(token[strspn(token, "-0123456789.")]=='\0') v = (float)atof(token); // Float
-      else v = Symbol(token);
-    } else if(lexer.is_token("true")) v = true;
-    else if(lexer.is_token("false")) v = false;
-    else v = Symbol(token);
-    lexer.next_token();
-  }
-  return true;
 }
 
 Var Context::executeReturn(const Var& code) {
@@ -260,7 +169,7 @@ Context::Context() : _self(ref<Table<Var, Var>>()) {
           localTable[sym.as<Symbol>()] = localIndex++;
         }
       fun->code = a.back();
-      applyScope(fun->code, localTable, localIndex); // The last part is always the code
+      Compiler::apply_scope(fun->code, localTable, localIndex); // The last part is always the code
       fun->localCount = localIndex;
     }
   });
