@@ -54,6 +54,7 @@
 
 // Dev tools
 #include "dev/debug.h"
+#include "dev/profiling.h"
 #include "dev/ScriptServer.h"
 
 // Dynamic typing/casting/compiling

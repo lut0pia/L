@@ -12,9 +12,11 @@ namespace L {
     };
     typedef void(*Func)(void*);
     static const uint32_t max_thread_count = 16;
+    static const uint32_t fiber_count = 4;
 
     void init();
     uint32_t thread_count();
+    uint32_t fiber_id();
     void push(Func, void* = nullptr, Flags = None);
     void yield();
     void join();

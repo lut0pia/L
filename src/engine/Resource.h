@@ -3,6 +3,7 @@
 #include "../container/Array.h"
 #include "../container/Ref.h"
 #include "../container/Table.h"
+#include "../dev/profiling.h"
 #include "../font/Font.h"
 #include "../gl/Texture.h"
 #include "Interface.h"
@@ -61,6 +62,8 @@ namespace L {
     }
 
     static Resource get(const char* path) {
+      L_SCOPE_MARKER("Resource::get");
+
       const Symbol sym(path);
       if(intptr_t* found = _table.find(sym))
         return Resource(*found);

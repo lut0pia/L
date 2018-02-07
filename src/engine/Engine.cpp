@@ -1,6 +1,7 @@
 #include "Engine.h"
 
 #include "../component/Camera.h"
+#include "../dev/profiling.h"
 #include "../hash.h"
 #include "../gl/Buffer.h"
 #include "../gl/GL.h"
@@ -28,6 +29,7 @@ float Engine::_real_delta_seconds, Engine::_delta_seconds, Engine::_sub_delta_se
 uint32_t Engine::_frame(0);
 
 void Engine::update() {
+  L_SCOPE_MARKER("Engine update");
   _real_delta_time = _timer.frame();
   _delta_time = min(_real_delta_time*_timescale, Time(0, 100)); // Cap delta time to avoid weird behaviour
   _real_delta_seconds = _real_delta_time.fSeconds();
@@ -38,21 +40,27 @@ void Engine::update() {
   Engine::shared_uniform().subData(L_SHAREDUNIFORM_FRAME, _frame);
 
   {
+    L_SCOPE_MARKER("Window events");
     Window::Event e;
     while(Window::newEvent(e))
       for(const auto& event : _win_events)
         event(e);
   }
   {
+    L_SCOPE_MARKER("Device events");
     Device::Event e;
     Device::update();
     while(Device::newEvent(e))
       for(const auto& event : _dev_events)
         event(e);
   }
-  for(const auto& update : _updates)
-    update();
   {
+    L_SCOPE_MARKER("Component updates");
+    for(const auto& update : _updates)
+      update();
+  }
+  {
+    L_SCOPE_MARKER("Component sub_updates");
     _accumulator += _delta_time;
     _sub_delta_seconds = _sub_delta.fSeconds();
     while(_sub_delta < _accumulator) {
@@ -61,21 +69,28 @@ void Engine::update() {
       _accumulator -= _sub_delta;
     }
   }
-  for(const auto& late_update : _late_updates)
-    late_update();
+  {
+    L_SCOPE_MARKER("Component late_updates");
+    for(const auto& late_update : _late_updates)
+      late_update();
+  }
 
   Entity::flush_destroy_queue();
 
-  ComponentPool<Camera>::iterate([](Camera& camera) {
-    camera.prerender();
-    for(auto&& render : _renders)
-      render(camera);
-    camera.postrender();
-    for(auto&& gui : _guis)
-      gui(camera);
-  });
+  {
+    L_SCOPE_MARKER("Graphics rendering");
+    ComponentPool<Camera>::iterate([](Camera& camera) {
+      camera.prerender();
+      for(auto&& render : _renders)
+        render(camera);
+      camera.postrender();
+      for(auto&& gui : _guis)
+        gui(camera);
+    });
+  }
 
   {
+    L_SCOPE_MARKER("Audio rendering");
     static void* buffer;
     static uint32_t frame_count;
     Audio::acquire_buffer(buffer, frame_count);
@@ -88,6 +103,7 @@ void Engine::update() {
   }
 
   { // Flush deferred actions
+    L_SCOPE_MARKER("Deferred actions");
     for(const DeferredAction& deferred_action : _deferred_actions)
       deferred_action.func(deferred_action.data);
     _deferred_actions.clear();
@@ -100,7 +116,10 @@ void Engine::update() {
     _average_frame_work_duration += duration;
   _average_frame_work_duration /= L_COUNT_OF(_frame_work_durations);
 
-  Window::swapBuffers();
+  {
+    L_SCOPE_MARKER("Buffer swap");
+    Window::swapBuffers();
+  }
   _frame++;
 }
 void Engine::clear() {

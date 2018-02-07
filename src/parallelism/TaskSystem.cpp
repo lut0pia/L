@@ -1,6 +1,7 @@
 #include "TaskSystem.h"
 
 #include "../container/TSQueue.h"
+#include "../dev/profiling.h"
 #include "../macros.h"
 #include "../system/System.h"
 
@@ -17,7 +18,6 @@ namespace L {
 }
 
 const uint32_t actual_thread_count(min(TaskSystem::max_thread_count, core_count()));
-const uint32_t fiber_count = 16;
 
 struct FiberSlot;
 
@@ -39,8 +39,12 @@ TSQueue<128, Task> tasks;
 TSQueue<16, Task> thread_tasks[TaskSystem::max_thread_count];
 FiberHandle original_thread_fibers[TaskSystem::max_thread_count];
 std::atomic<uint32_t> task_count(0);
-thread_local FiberSlot fibers[fiber_count];
+thread_local FiberSlot fibers[TaskSystem::fiber_count];
 thread_local uint32_t thread_index, current_fiber;
+
+void yield_internal() {
+  switch_to_fiber(original_thread_fibers[thread_index]);
+}
 
 void fiber_func(void* arg) {
   const uintptr_t fiber_index = uintptr_t(arg);
@@ -48,14 +52,15 @@ void fiber_func(void* arg) {
   Task& task(fiber_slot.task);
   while(true) {
     if(task.func) {
+      L_SCOPE_MARKER("Task");
       task.func(task.data); // Execute task
       if(task.parent) task.parent->counter--; // Notify task done
       while(fiber_slot.counter) // Wait for child tasks
-        TaskSystem::yield();
+        yield_internal();
       task.func = nullptr;
       task_count--; // Notify task over
     }
-    TaskSystem::yield();
+    yield_internal();
   }
 }
 
@@ -63,7 +68,7 @@ void thread_func(void* arg) {
   memset(fibers, 0, sizeof(fibers));
   thread_index = uint32_t(uintptr_t(arg));
   current_fiber = 0;
-  for(uint32_t i(0); i<fiber_count; i++)
+  for(uint32_t i(0); i<TaskSystem::fiber_count; i++)
     fibers[i].handle = create_fiber(fiber_func, (void*)i);
   original_thread_fibers[thread_index] = convert_to_fiber();
 
@@ -73,7 +78,7 @@ void thread_func(void* arg) {
       (thread_tasks[thread_index].pop(fiber_slot.task) || tasks.pop(fiber_slot.task)); // Fetch task
     if(fiber_slot.task.func)  // Busy fiber
       switch_to_fiber(fiber_slot.handle);
-    current_fiber = (current_fiber+1)%fiber_count;
+    current_fiber = (current_fiber+1)%TaskSystem::fiber_count;
   }
 }
 
@@ -85,6 +90,9 @@ void TaskSystem::init() {
 }
 uint32_t TaskSystem::thread_count() {
   return actual_thread_count;
+}
+uint32_t TaskSystem::fiber_id() {
+  return current_fiber+fiber_count*thread_index;
 }
 void TaskSystem::push(Func f, void* d, Flags flags) {
   FiberSlot* parent;
@@ -99,7 +107,8 @@ void TaskSystem::push(Func f, void* d, Flags flags) {
   } else tasks.push(Task{f,d,flags,parent});
 }
 void TaskSystem::yield() {
-  switch_to_fiber(original_thread_fibers[thread_index]);
+  L_SCOPE_MARKER("Yield");
+  yield_internal();
 }
 void TaskSystem::join() {
   while(fibers[current_fiber].counter)
