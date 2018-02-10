@@ -34,7 +34,7 @@ namespace L {
     int error_code();
     bool would_block();
     void make_non_blocking(SOCKET);
-  
+
     // Generic
     SOCKET connect_to(const char* ip, short port);
     SOCKET connect_to(uint32_t addr, short port);
@@ -43,7 +43,7 @@ namespace L {
     uint32_t dns_lookup(const char* host);
 
     // HTTP
-    String HTTPRequest(const String& url);
-    void HTTPDownload(const char* url, const char* name);
+    String http_request(const String& url);
+    void http_download(const char* url, const char* name);
   }
 }

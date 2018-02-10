@@ -61,27 +61,30 @@ uint32_t Network::dns_lookup(const char* host) {
   return 0;
 }
 
-String Network::HTTPRequest(const String& url) {
-  char buffer[1024];
-  String wtr;
-  SOCKET sd;
+String Network::http_request(const String& url) {
   // Find out what's the host and what's the request
   int slash(url.findFirst('/'));
-  String host((slash>=0) ? url.substr(0, slash) : url), request((slash>=0) ? url.substr(slash) : "/");
+  const String host((slash>=0) ? url.substr(0, slash) : url), request((slash>=0) ? url.substr(slash) : "/");
   // Connect to the server
-  uint32_t addr(dns_lookup(host));
+  const uint32_t addr(dns_lookup(host));
   if(addr) {
+    SOCKET sd;
     NetStream test(sd = connect_to(addr, 80));
     test << "GET " << request << " HTTP/1.1\r\nHost: " << host << "\r\nConnection: close\r\n\r\n";
     int tmp;
-    while((tmp = ::recv(sd, buffer, 1024, 0)))
-      if(tmp>0)
-        wtr += String(buffer, tmp);
+    char buffer[1024];
+    String wtr;
+    while((tmp = ::recv(sd, buffer, sizeof(buffer), 0)))
+      if(tmp>0) {
+        wtr.size(wtr.size()+tmp);
+        char* write_start(wtr.end()-tmp);
+        memcpy(write_start, buffer, tmp);
+      }
     return wtr;
   } else error("Could not find ip for %s", (const char*)host);
 }
-void Network::HTTPDownload(const char* url, const char* name) {
-  String answer(HTTPRequest(url));
+void Network::http_download(const char* url, const char* name) {
+  String answer(http_request(url));
   CFileStream file(name, "wb");
   file << String(answer, answer.findFirst("\r\n\r\n")+4);
 }
