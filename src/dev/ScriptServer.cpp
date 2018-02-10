@@ -1,5 +1,6 @@
 #include "ScriptServer.h"
 
+#include "../dev/profiling.h"
 #include "../stream/CFileStream.h"
 #include "../stream/BufferStream.h"
 
@@ -8,6 +9,7 @@ using namespace Network;
 using namespace Script;
 
 void ScriptServer::update() {
+  L_SCOPE_MARKER("ScriptServer::update");
   { // Accept new connections
     SOCKET socket;
     while(new_client(socket)) {

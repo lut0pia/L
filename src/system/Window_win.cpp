@@ -1,5 +1,6 @@
 #include "Window.h"
 
+#include "../dev/profiling.h"
 #include "../gl/GL.h"
 #include "../macros.h"
 #include "../stream/CFileStream.h"
@@ -180,6 +181,7 @@ PIXELFORMATDESCRIPTOR* initPFD(){
 }
 
 void Window::open(const char* title, int width, int height, int flags) {
+  L_SCOPE_MARKER("Window::open");
   buttonstate_p = _buttonstate;
   events_p = &_events;
   mousePos_p = &_mousePos;
@@ -253,6 +255,7 @@ void Window::close() {
 }
 bool Window::opened() { return hWND!=0; }
 bool Window::loop() {
+  L_SCOPE_MARKER("Window::loop");
   MSG msg;
   while(opened() && PeekMessage(&msg,nullptr,0,0,PM_REMOVE)) {
     TranslateMessage(&msg);
