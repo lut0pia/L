@@ -74,7 +74,8 @@ void thread_func(void* arg) {
     fibers[i].handle = create_fiber(fiber_func, (void*)i);
   original_thread_fibers[thread_index] = convert_to_fiber();
 
-  uint32_t local_task_count(0), starve_count(0);
+  uint32_t local_task_count(0);
+  Time starve_start;
   while(task_count>0) {
     FiberSlot& fiber_slot(fibers[current_fiber]);
     const bool had_task(fiber_slot.task.func!=nullptr);
@@ -88,12 +89,12 @@ void thread_func(void* arg) {
     else if(!had_task && fiber_slot.task.func)
       local_task_count++;
     if(local_task_count==0 && task_count>0) {
-      if(++starve_count == 1<<15) {
+      if(Time::now()-starve_start >= Time(500)) {
         L_SCOPE_MARKER("Sleep");
         semaphore.get();
-        starve_count = 0;
+        starve_start = Time::now();
       }
-    } else starve_count = 0;
+    } else starve_start = Time::now();
 
     current_fiber = (current_fiber+1)%TaskSystem::fiber_count;
   }
@@ -112,7 +113,6 @@ uint32_t TaskSystem::fiber_id() {
   return current_fiber+fiber_count*thread_index;
 }
 void TaskSystem::push(Func f, void* d, Flags flags) {
-  semaphore.put();
   FiberSlot* parent;
   if(initialized && !(flags&NoParent)) {
     parent = fibers+current_fiber;
@@ -123,6 +123,7 @@ void TaskSystem::push(Func f, void* d, Flags flags) {
     if(thread_index==0 && flags&AllowExec) f(d);
     else thread_tasks[0].push(Task{f,d,flags,parent});
   } else tasks.push(Task{f,d,flags,parent});
+  semaphore.put();
 }
 void TaskSystem::yield() {
   L_SCOPE_MARKER("Yield");
