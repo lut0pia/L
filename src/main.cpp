@@ -19,7 +19,7 @@ void mainjob(void*) {
 #ifdef L_DEBUG
   ScriptServer* server(nullptr);
   if(Settings::get_int("script_server",0))
-    server = new(Memory::allocType<ScriptServer>())ScriptServer(short(Settings::get_int("server_port", 1993)));
+    server = Memory::new_type<ScriptServer>(short(Settings::get_int("server_port", 1993)));
 #endif
 
   { // Generate and upload dither matrix
