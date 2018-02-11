@@ -39,8 +39,8 @@ namespace L {
       }
       while(true) {
         // Find track with next event
-        uint32_t smallest_time(-1);
-        uint32_t best_track;
+        uint32_t smallest_time(UINT32_MAX);
+        uint32_t best_track(0);
         for(uint32_t track(0); track<track_count; track++) {
           const byte* head(track_heads[track]);
           if(!head) continue; // Track is over
@@ -53,7 +53,7 @@ namespace L {
             smallest_time = new_time;
           }
         }
-        if(smallest_time==-1) // All tracks are over
+        if(smallest_time==UINT32_MAX) // All tracks are over
           break;
 
         // Add event from best track
