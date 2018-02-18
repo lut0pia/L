@@ -179,7 +179,7 @@ const Mesh& GL::quad(){
     -1,1,0,
     1,1,0,
   };
-  static Mesh mesh(GL_TRIANGLE_STRIP,4,quad,sizeof(quad),{Mesh::Attribute{0,3,GL_FLOAT,GL_FALSE,0,0}});
+  static Mesh mesh(GL_TRIANGLE_STRIP,4,quad,sizeof(quad),{Mesh::Attribute{3,GL_FLOAT,GL_FALSE}});
   return mesh;
 }
 const Mesh& GL::wireCube(){
@@ -200,7 +200,7 @@ const Mesh& GL::wireCube(){
     1,-1,-1,  1,-1,1,
     1,1,-1,   1,1,1,
   };
-  static Mesh mesh(GL_LINES,12*2,wireCube,sizeof(wireCube),{Mesh::Attribute{0,3,GL_FLOAT,GL_FALSE,0,0}});
+  static Mesh mesh(GL_LINES,12*2,wireCube,sizeof(wireCube),{Mesh::Attribute{3,GL_FLOAT,GL_FALSE}});
   return mesh;
 }
 const Mesh& GL::wireSphere(){
@@ -222,6 +222,6 @@ const Mesh& GL::wireSphere(){
     0,1,0,  d,d,0,   d,d,0,   1,0,0,
     1,0,0, d,-d,0,   d,-d,0,  0,-1,0,
   };
-  static Mesh mesh(GL_LINES,24*2,wireSphere,sizeof(wireSphere),{Mesh::Attribute{0,3,GL_FLOAT,GL_FALSE,0,0}});
+  static Mesh mesh(GL_LINES,24*2,wireSphere,sizeof(wireSphere),{Mesh::Attribute{3,GL_FLOAT,GL_FALSE}});
   return mesh;
 }

@@ -11,17 +11,14 @@ namespace L {
       Vector2f _uv;
       Vector3f _normal;
     } Vertex;
-    Array<Vector3f> _vertices, _normals;
-    Array<Vector2f> _uvs;
-    GL::MeshBuilder _mb;
+    
   public:
     OBJ() : Interface{"obj"} {}
 
     Ref<GL::Mesh> from(Stream& stream) override {
-      _mb.reset();
-      _vertices.clear();
-      _normals.clear();
-      _uvs.clear();
+      Array<Vector3f> _vertices, _normals;
+      Array<Vector2f> _uvs;
+      GL::MeshBuilder _mb;
       while(!stream.end()) {
         const Array<String> line(String(stream.line()).explode(' '));
         if(line.empty()) continue;
@@ -54,9 +51,9 @@ namespace L {
         _mb.computeNormals(0, sizeof(Vector2f)+sizeof(Vector3f), sizeof(Vertex));
 
       static const std::initializer_list<GL::Mesh::Attribute> attributes = {
-        {0,3,GL_FLOAT,GL_FALSE,sizeof(Vertex),0},
-        {1,2,GL_FLOAT,GL_FALSE,sizeof(Vertex),sizeof(float)*3},
-        {2,3,GL_FLOAT,GL_FALSE,sizeof(Vertex),sizeof(float)*5},
+        {3,GL_FLOAT,GL_FALSE},
+        {2,GL_FLOAT,GL_FALSE},
+        {3,GL_FLOAT,GL_FALSE},
       };
       return ref<GL::Mesh>(_mb, GL_TRIANGLES, attributes);
     }

@@ -73,8 +73,8 @@ Font::TextMesh& Font::text_mesh(const char* str) {
       }
     }
     wtr.mesh.load(GL_TRIANGLES, buffer.size(), &buffer[0], sizeof(Vector4f)*buffer.size(), {
-      GL::Mesh::Attribute{0,2,GL_FLOAT,GL_FALSE,sizeof(Vector4f),0},
-      GL::Mesh::Attribute{1,2,GL_FLOAT,GL_FALSE,sizeof(Vector4f),sizeof(float)*2}
+      GL::Mesh::Attribute{2,GL_FLOAT,GL_FALSE},
+      GL::Mesh::Attribute{2,GL_FLOAT,GL_FALSE}
     });
     return wtr;
   }
