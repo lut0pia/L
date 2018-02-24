@@ -2,10 +2,10 @@
 
 #include "GL.h"
 #include "../hash.h"
+#include "shader_lib.h"
 #include "../stream/CFileStream.h"
 
 using namespace L;
-using namespace GL;
 
 Program::Program(const Shader* s, uint32_t count) : _id(glCreateProgram()) {
   GLuint shaders[8];
@@ -90,4 +90,54 @@ void Program::uniform(GLint location, const Texture& texture, GLenum unit) {
   glUniform1i(location, unit-GL_TEXTURE0);
   glActiveTexture(unit);
   texture.bind();
+}
+
+#define L_VERTEX_SHADER \
+L_GLSL_INTRO \
+L_SHAREDUNIFORM \
+"layout (location = 0) in vec3 modelPosition;" \
+"uniform mat4 model;" \
+"smooth out vec4 position;" \
+"void main(){" \
+  "position = model * vec4(modelPosition,1.0);" \
+  "gl_Position = viewProj * position;" \
+"}"
+Program& Program::default() {
+  static Program program(Shader(L_VERTEX_SHADER, GL_VERTEX_SHADER), Shader(
+    L_GLSL_INTRO
+    L_SHAREDUNIFORM
+    "layout(location = 0) out vec4 ocolor;"
+    "layout(location = 1) out vec4 onormal;"
+    "smooth in vec4 position;"
+    "void main(){"
+    "vec3 normal = cross(dFdx(position.xyz),dFdy(position.xyz)).xyz;"
+    "if(isnan(normal.x) || length(normal)<=0.f) normal = eye.xyz-position.xyz;"
+    "ocolor.rgb = vec3(1,1,1);"
+    "ocolor.a = 0.f; /* Metalness */"
+    "onormal.xy = encodeNormal(normal);"
+    "onormal.z = 0.5f; /* Roughness */"
+    "onormal.w = 0.f; /* Emission */"
+    "}", GL_FRAGMENT_SHADER));
+  return program;
+}
+Program& Program::default_color() {
+  static Program program(Shader(L_VERTEX_SHADER, GL_VERTEX_SHADER), Shader(
+    L_GLSL_INTRO
+    L_SHAREDUNIFORM
+    L_SHADER_LIB
+    "layout(location = 0) out vec4 ocolor;"
+    "layout(location = 1) out vec4 onormal;"
+    "uniform vec4 color;"
+    "smooth in vec4 position;"
+    "void main(){"
+    "if(alpha(color.a)) discard;"
+    "vec3 normal = cross(dFdx(position.xyz),dFdy(position.xyz)).xyz;"
+    "if(isnan(normal.x) || length(normal)<=0.f) normal = eye.xyz-position.xyz;"
+    "ocolor.rgb = linearize(color.rgb);"
+    "ocolor.a = 0.f; /* Metalness */"
+    "onormal.xy = encodeNormal(normal);"
+    "onormal.z = 0.8f; /* Roughness */"
+    "onormal.w = 0.f; /* Emission */"
+    "}", GL_FRAGMENT_SHADER));
+  return program;
 }

@@ -1,11 +1,11 @@
 #include "LightComponent.h"
 
-#include "../gl/GL.h"
-#include "../engine/ShaderLib.h"
+#include "../rendering/GL.h"
+#include "../rendering/shader_lib.h"
 
 using namespace L;
 
-Resource<GL::Program> LightComponent::_program;
+Resource<Program> LightComponent::_program;
 
 Map<Symbol, Var> LightComponent::pack() const {
   Map<Symbol, Var> data;

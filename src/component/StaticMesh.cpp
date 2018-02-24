@@ -1,7 +1,7 @@
 #include "StaticMesh.h"
 
-#include "../gl/GL.h"
-#include "../engine/ShaderLib.h"
+#include "../rendering/GL.h"
+#include "../rendering/shader_lib.h"
 
 using namespace L;
 

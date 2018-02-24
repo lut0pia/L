@@ -3,7 +3,6 @@
 #include "../image/Bitmap.h"
 
 using namespace L;
-using namespace GL;
 
 Texture::Texture() : _width(0), _height(0) {
   glCreateTextures(GL_TEXTURE_2D, 1, &_id);

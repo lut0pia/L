@@ -45,9 +45,9 @@ int main(int argc, const char* argv[]) {
 
   Engine::register_resource<Font>();
   Engine::register_resource<Material>();
-  Engine::register_resource<GL::Mesh>();
-  Engine::register_resource<GL::Program>();
-  Engine::register_resource<GL::Texture>();
+  Engine::register_resource<Mesh>();
+  Engine::register_resource<Program>();
+  Engine::register_resource<Texture>();
   Engine::register_resource<Script::CodeFunction>();
 
   Engine::register_component<Transform>();

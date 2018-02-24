@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Transform.h"
-#include "../gl/FrameBuffer.h"
-#include "../gl/Texture.h"
+#include "../rendering/FrameBuffer.h"
+#include "../rendering/Texture.h"
 #include "../math/Interval.h"
 
 namespace L {
@@ -19,8 +19,8 @@ namespace L {
       Ortho
     } _projectionType;
     float _fovy,_near,_far,_left,_right,_bottom,_top;
-    GL::Texture _gcolor, _gnormal, _gdepth, _lcolor;
-    GL::FrameBuffer _gbuffer, _lbuffer;
+    Texture _gcolor, _gnormal, _gdepth, _lcolor;
+    FrameBuffer _gbuffer, _lbuffer;
   public:
     Camera();
     inline Camera(const Camera&) : Camera() { error("Camera component should not be copied."); }

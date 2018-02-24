@@ -3,7 +3,6 @@
 #include "../image/Bitmap.h"
 
 using namespace L;
-using namespace GL;
 
 Atlas::Atlas(GLsizei width, GLsizei height)
   : Texture(width, height), _xs{0}, _ys{0} {

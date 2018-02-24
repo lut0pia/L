@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Transform.h"
-#include "../engine/Material.h"
+#include "../rendering/Material.h"
 #include "../engine/Resource.h"
 
 namespace L {

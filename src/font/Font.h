@@ -2,8 +2,8 @@
 
 #include "../container/Table.h"
 #include "../image/Bitmap.h"
-#include "../gl/Atlas.h"
-#include "../gl/Mesh.h"
+#include "../rendering/Atlas.h"
+#include "../rendering/Mesh.h"
 #include "../math/Vector.h"
 #include "../time/Time.h"
 
@@ -20,11 +20,11 @@ namespace L {
     };
     struct TextMesh {
       String str;
-      GL::Mesh mesh;
+      Mesh mesh;
       Vector2i dimensions = {0,0};
       Time last_used;
     };
-    GL::Atlas _atlas;
+    Atlas _atlas;
     Glyph _ascii[128];
     Table<uint32_t, Glyph> _glyphs;
     Table<uint32_t, TextMesh> _text_meshes;

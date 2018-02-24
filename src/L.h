@@ -65,25 +65,12 @@
 // Core engine systems
 #include "engine/Engine.h"
 #include "engine/Interface.h"
-#include "engine/Material.h"
 #include "engine/Resource.h"
 #include "engine/Settings.h"
-#include "engine/ShaderLib.h"
 
 // Font handling
 #include "font/Font.h"
 #include "font/PixelFont.h"
-
-// Everything related to OpenGL
-#include "gl/Atlas.h"
-#include "gl/Buffer.h"
-#include "gl/FrameBuffer.h"
-#include "gl/GL.h"
-#include "gl/Mesh.h"
-#include "gl/MeshBuilder.h"
-#include "gl/Program.h"
-#include "gl/Shader.h"
-#include "gl/Texture.h"
 
 // Images and colors
 #include "image/Bitmap.h"
@@ -115,6 +102,19 @@
 #include "parallelism/Mutex.h"
 #include "parallelism/Semaphore.h"
 #include "parallelism/TaskSystem.h"
+
+// Rendering
+#include "rendering/Atlas.h"
+#include "rendering/FrameBuffer.h"
+#include "rendering/GL.h"
+#include "rendering/GPUBuffer.h"
+#include "rendering/Material.h"
+#include "rendering/Mesh.h"
+#include "rendering/MeshBuilder.h"
+#include "rendering/Program.h"
+#include "rendering/Shader.h"
+#include "rendering/shader_lib.h"
+#include "rendering/Texture.h"
 
 // Scripting language
 #include "script/Compiler.h"

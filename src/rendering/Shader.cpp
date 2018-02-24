@@ -3,7 +3,6 @@
 #include "../stream/CFileStream.h"
 
 using namespace L;
-using namespace GL;
 
 void Shader::load(const char** src, uint32_t count, GLint* lengths) {
   glShaderSource(_id, count, (const GLchar**)src, lengths);

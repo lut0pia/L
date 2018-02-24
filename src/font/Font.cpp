@@ -1,8 +1,8 @@
 #include "Font.h"
 
-#include "../gl/Program.h"
+#include "../rendering/Program.h"
+#include "../rendering/shader_lib.h"
 #include "../text/encoding.h"
-#include "../engine/ShaderLib.h"
 
 using namespace L;
 
@@ -19,8 +19,8 @@ const Font::Glyph& Font::glyph(uint32_t utf32) {
   }
   return *glyph;
 }
-GL::Program& glyphProgram() {
-  static GL::Program program(GL::Shader(
+Program& glyphProgram() {
+  static Program program(Shader(
     L_GLSL_INTRO
     L_SHAREDUNIFORM
     "layout (location = 0) in vec2 vertex;"
@@ -31,7 +31,7 @@ GL::Program& glyphProgram() {
     "ftexcoords = texcoords;"
     "gl_Position = vec4(((position+vertex)/screen.xy)*vec2(2.f/(viewport.z-viewport.x),-2.f/(viewport.w-viewport.y))-vec2(1.f,-1.f),0.f,1.f);"
     "}", GL_VERTEX_SHADER),
-    GL::Shader(
+    Shader(
       L_GLSL_INTRO
       L_SHAREDUNIFORM
       "in vec2 ftexcoords;"
@@ -73,14 +73,14 @@ Font::TextMesh& Font::text_mesh(const char* str) {
       }
     }
     wtr.mesh.load(GL_TRIANGLES, buffer.size(), &buffer[0], sizeof(Vector4f)*buffer.size(), {
-      GL::Mesh::Attribute{2,GL_FLOAT,GL_FALSE},
-      GL::Mesh::Attribute{2,GL_FLOAT,GL_FALSE}
+      Mesh::Attribute{2,GL_FLOAT,GL_FALSE},
+      Mesh::Attribute{2,GL_FLOAT,GL_FALSE}
     });
     return wtr;
   }
 }
 void Font::draw(int x, int y, const char* str, Vector2f anchor) {
-  GL::Program& p(glyphProgram());
+  Program& p(glyphProgram());
   TextMesh& tm(text_mesh(str));
 
   p.use();

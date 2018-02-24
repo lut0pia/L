@@ -3,7 +3,7 @@
 #include "../component/ComponentPool.h"
 #include "../component/Component.h"
 #include "../container/Table.h"
-#include "../gl/Buffer.h"
+#include "../rendering/GPUBuffer.h"
 #include "Resource.h"
 #include "../time/Timer.h"
 #include "../system/Device.h"
@@ -53,7 +53,7 @@ namespace L {
     }
 
     // Rendering
-    static GL::Buffer& shared_uniform();
+    static GPUBuffer& shared_uniform();
     static void dither_matrix(const float* data, size_t width, size_t height);
   };
 }

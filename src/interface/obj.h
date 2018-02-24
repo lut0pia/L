@@ -3,7 +3,7 @@
 #include <L/src/L.h>
 
 namespace L {
-  class OBJ : public Interface<GL::Mesh> {
+  class OBJ : public Interface<Mesh> {
     static OBJ instance;
   private:
     typedef struct {
@@ -11,14 +11,14 @@ namespace L {
       Vector2f _uv;
       Vector3f _normal;
     } Vertex;
-    
+
   public:
     OBJ() : Interface{"obj"} {}
 
-    Ref<GL::Mesh> from(Stream& stream) override {
+    Ref<Mesh> from(Stream& stream) override {
       Array<Vector3f> _vertices, _normals;
       Array<Vector2f> _uvs;
-      GL::MeshBuilder _mb;
+      MeshBuilder _mb;
       while(!stream.end()) {
         const Array<String> line(String(stream.line()).explode(' '));
         if(line.empty()) continue;
@@ -50,12 +50,12 @@ namespace L {
       if(_normals.empty())
         _mb.computeNormals(0, sizeof(Vector2f)+sizeof(Vector3f), sizeof(Vertex));
 
-      static const std::initializer_list<GL::Mesh::Attribute> attributes = {
+      static const std::initializer_list<Mesh::Attribute> attributes = {
         {3,GL_FLOAT,GL_FALSE},
         {2,GL_FLOAT,GL_FALSE},
         {3,GL_FLOAT,GL_FALSE},
       };
-      return ref<GL::Mesh>(_mb, GL_TRIANGLES, attributes);
+      return ref<Mesh>(_mb, GL_TRIANGLES, attributes);
     }
   };
   OBJ OBJ::instance;

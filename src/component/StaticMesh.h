@@ -2,9 +2,9 @@
 
 #include "Component.h"
 #include "Transform.h"
-#include "../engine/Material.h"
+#include "../rendering/Material.h"
 #include "../engine/Resource.h"
-#include "../gl/Mesh.h"
+#include "../rendering/Mesh.h"
 
 namespace L {
   class StaticMesh : public Component {
@@ -12,7 +12,7 @@ namespace L {
       L_COMPONENT_HAS_RENDER(StaticMesh)
   private:
     Transform* _transform;
-    Resource<GL::Mesh> _mesh;
+    Resource<Mesh> _mesh;
     Resource<Material> _material;
     float _scale;
   public:
@@ -23,7 +23,7 @@ namespace L {
     virtual void unpack(const Map<Symbol, Var>&) override;
     static void script_registration();
 
-    inline void mesh(const char* filename) { _mesh = Resource<GL::Mesh>::get(filename); }
+    inline void mesh(const char* filename) { _mesh = Resource<Mesh>::get(filename); }
     inline void material(const char* filename) { _material = Resource<Material>::get(filename); }
     inline void scale(float scale) { _scale = scale; }
     void render(const Camera&);

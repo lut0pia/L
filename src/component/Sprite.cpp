@@ -1,8 +1,8 @@
 #include "Sprite.h"
 
-#include "../gl/Program.h"
-#include "../gl/Shader.h"
-#include "../engine/ShaderLib.h"
+#include "../rendering/Program.h"
+#include "../rendering/Shader.h"
+#include "../rendering/shader_lib.h"
 
 using namespace L;
 
@@ -28,7 +28,7 @@ void Sprite::script_registration() {
 }
 
 void Sprite::render(const Camera&) {
-  static GL::Program program(GL::Shader(
+  static Program program(Shader(
     L_GLSL_INTRO
     L_SHAREDUNIFORM
     "uniform vec4 vert;"
@@ -43,7 +43,7 @@ void Sprite::render(const Camera&) {
     "fnormal = mat3(model)*vec3(0,-1,0);"
     "gl_Position = viewProj * model * vec4(vert[index/2],0.f,vert[index%2+2],1.f);"
     "}", GL_VERTEX_SHADER),
-    GL::Shader(
+    Shader(
       L_GLSL_INTRO
       L_SHAREDUNIFORM
       L_SHADER_LIB

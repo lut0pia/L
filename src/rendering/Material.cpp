@@ -3,7 +3,7 @@
 using namespace L;
 
 void Material::use(const Matrix44f& model) {
-  Resource<GL::Program> program(final_program());
+  Resource<Program> program(final_program());
   if(program) {
     program->use();
     apply_parameters(*program);
@@ -25,7 +25,7 @@ struct Material::ApplyHelper {
     applied[next++] = name;
   }
 };
-void Material::apply_parameters(GL::Program& program, ApplyHelper* helper) {
+void Material::apply_parameters(Program& program, ApplyHelper* helper) {
   if(!helper) {
     ApplyHelper local_helper;
     return apply_parameters(program, &local_helper);
@@ -64,7 +64,7 @@ void Material::scalar(const Symbol& name, float scalar) {
     }
   _scalars.push(name, scalar);
 }
-void Material::texture(const Symbol& name, const Resource<GL::Texture>& texture) {
+void Material::texture(const Symbol& name, const Resource<Texture>& texture) {
   for(uintptr_t i(0); i<_textures.size(); i++)
     if(_textures[i].key()==name) {
       _textures[i].value() = texture;

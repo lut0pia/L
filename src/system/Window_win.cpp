@@ -1,7 +1,7 @@
 #include "Window.h"
 
 #include "../dev/profiling.h"
-#include "../gl/GL.h"
+#include "../rendering/GL.h"
 #include "../macros.h"
 #include "../stream/CFileStream.h"
 #include "../text/encoding.h"

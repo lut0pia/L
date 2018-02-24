@@ -3,14 +3,14 @@
 #include "../component/Camera.h"
 #include "../dev/profiling.h"
 #include "../hash.h"
-#include "../gl/Buffer.h"
-#include "../gl/GL.h"
-#include "../gl/Program.h"
+#include "../rendering/GPUBuffer.h"
+#include "../rendering/GL.h"
+#include "../rendering/Program.h"
+#include "../rendering/shader_lib.h"
 #include "Resource.h"
 #include "../script/Context.h"
 #include "../system/Device.h"
 #include "../system/Window.h"
-#include "ShaderLib.h"
 #include "../stream/CFileStream.h"
 #include "../component/AudioSourceComponent.h"
 
@@ -126,8 +126,8 @@ void Engine::clear() {
   Entity::clear();
 }
 
-GL::Buffer& Engine::shared_uniform() {
-  static GL::Buffer u(GL_UNIFORM_BUFFER, L_SHAREDUNIFORM_SIZE, nullptr, GL_DYNAMIC_DRAW, 0);
+GPUBuffer& Engine::shared_uniform() {
+  static GPUBuffer u(GL_UNIFORM_BUFFER, L_SHAREDUNIFORM_SIZE, nullptr, GL_DYNAMIC_DRAW, 0);
   return u;
 }
 void Engine::dither_matrix(const float* data, size_t width, size_t height) {

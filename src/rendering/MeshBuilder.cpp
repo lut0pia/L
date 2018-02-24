@@ -3,7 +3,6 @@
 #include "../math/Vector.h"
 
 using namespace L;
-using namespace GL;
 
 void MeshBuilder::reset() {
   _vertices.clear();

@@ -6,14 +6,14 @@
 #endif
 
 #include "../constants.h"
-#include "../gl/Buffer.h"
-#include "../gl/GL.h"
-#include "../gl/Program.h"
+#include "../rendering/GPUBuffer.h"
+#include "../rendering/GL.h"
+#include "../rendering/Program.h"
 #include "LightComponent.h"
 #include "../system/Window.h"
 #include "../engine/Engine.h"
 #include "../engine/Settings.h"
-#include "../engine/ShaderLib.h"
+#include "../rendering/shader_lib.h"
 
 using namespace L;
 
@@ -121,7 +121,7 @@ void Camera::postrender(){
   glEnable(GL_BLEND);
   glBlendFunc(GL_ONE, GL_ONE); // Additive blending
 
-  Resource<GL::Program>& light_program(LightComponent::program());
+  Resource<Program>& light_program(LightComponent::program());
   if(light_program) {
     light_program->use();
     light_program->uniform("color_buffer", _gcolor, GL_TEXTURE0);
@@ -138,7 +138,7 @@ void Camera::postrender(){
   const Vector2i vpSize(vp.size());
   glViewport(vp.min().x(), vp.min().y(), vpSize.x(), vpSize.y());
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // For GUI alpha
-  static GL::Program final_shader(GL::Shader(
+  static Program final_shader(Shader(
     L_GLSL_INTRO
     "const vec2 vertices[] = vec2[]("
     "vec2(-1.f,-1.f),vec2(3.f,-1.f),vec2(-1.f,3.f));"
@@ -147,7 +147,7 @@ void Camera::postrender(){
     "ftexcoords = vertices[gl_VertexID]*.5f+.5f;"
     "gl_Position = vec4(vertices[gl_VertexID],0.f,1.f);"
     "}", GL_VERTEX_SHADER),
-    GL::Shader(
+    Shader(
       L_GLSL_INTRO
       L_SHAREDUNIFORM
       L_SHADER_LIB

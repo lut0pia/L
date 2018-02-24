@@ -4,7 +4,6 @@
 #include "../stream/CFileStream.h"
 
 using namespace L;
-using namespace GL;
 
 FrameBuffer::FrameBuffer() {
   glCreateFramebuffers(1, &_id);

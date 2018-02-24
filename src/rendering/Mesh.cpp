@@ -1,11 +1,9 @@
 #include "Mesh.h"
 
-#include "Buffer.h"
 #include "MeshBuilder.h"
 #include "GL.h"
 
 using namespace L;
-using namespace GL;
 
 Mesh::Mesh(GLenum mode, GLsizei count, const void* data, GLsizeiptr size, const std::initializer_list<Attribute>& attributes, const GLushort* iarray, GLsizei icount)
   : Mesh() {
@@ -61,4 +59,58 @@ void Mesh::draw() const {
     if(_eab) glDrawElements(_mode, _count, GL_UNSIGNED_SHORT, 0);
     else glDrawArrays(_mode, 0, _count);
   }
+}
+
+const Mesh& Mesh::quad() {
+  static const GLfloat quad[] = {
+    -1,-1,0,
+    1,-1,0,
+    -1,1,0,
+    1,1,0,
+  };
+  static Mesh mesh(GL_TRIANGLE_STRIP, 4, quad, sizeof(quad), {Mesh::Attribute{3,GL_FLOAT,GL_FALSE}});
+  return mesh;
+}
+const Mesh& Mesh::wire_cube() {
+  static const GLfloat wireCube[] = {
+    // Bottom face
+    -1,-1,-1, -1,1,-1,
+    -1,-1,-1, 1,-1,-1,
+    1,-1,-1,  1,1,-1,
+    -1,1,-1,  1,1,-1,
+    // Top face
+    -1,-1,1, -1,1,1,
+    -1,-1,1, 1,-1,1,
+    1,-1,1,  1,1,1,
+    -1,1,1,  1,1,1,
+    // Sides
+    -1,-1,-1, -1,-1,1,
+    -1,1,-1,  -1,1,1,
+    1,-1,-1,  1,-1,1,
+    1,1,-1,   1,1,1,
+  };
+  static Mesh mesh(GL_LINES, 12*2, wireCube, sizeof(wireCube), {Mesh::Attribute{3,GL_FLOAT,GL_FALSE}});
+  return mesh;
+}
+const Mesh& Mesh::wire_sphere() {
+  static const float d(sqrt(.5f));
+  static const GLfloat wireSphere[] = {
+    // X circle
+    0,0,-1, 0,-d,-d, 0,-d,-d, 0,-1,0,
+    0,-1,0, 0,-d,d,  0,-d,d,  0,0,1,
+    0,0,1,  0,d,d,   0,d,d,   0,1,0,
+    0,1,0,  0,d,-d,  0,d,-d,  0,0,-1,
+    // Y circle
+    0,0,-1, -d,0,-d, -d,0,-d, -1,0,0,
+    -1,0,0, -d,0,d,  -d,0,d,  0,0,1,
+    0,0,1,  d,0,d,   d,0,d,   1,0,0,
+    1,0,0,  d,0,-d,  d,0,-d,  0,0,-1,
+    // Z circle
+    0,-1,0, -d,-d,0, -d,-d,0, -1,0,0,
+    -1,0,0, -d,d,0,  -d,d,0,  0,1,0,
+    0,1,0,  d,d,0,   d,d,0,   1,0,0,
+    1,0,0, d,-d,0,   d,-d,0,  0,-1,0,
+  };
+  static Mesh mesh(GL_LINES, 24*2, wireSphere, sizeof(wireSphere), {Mesh::Attribute{3,GL_FLOAT,GL_FALSE}});
+  return mesh;
 }

@@ -1,6 +1,6 @@
 #include "Primitive.h"
 
-#include "../gl/GL.h"
+#include "../rendering/GL.h"
 
 using namespace L;
 

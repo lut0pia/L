@@ -5,15 +5,15 @@
 #include <stb/stb_image.h>
 
 namespace L {
-  class STB_image : public Interface<GL::Texture> {
+  class STB_image : public Interface<Texture> {
     static STB_image instance;
   public:
     inline STB_image() : Interface{"png","bmp","jpeg","jpg"} {}
-    Ref<GL::Texture> from(const byte* data, size_t size) override {
+    Ref<Texture> from(const byte* data, size_t size) override {
       int width, height, comp;
       byte* img(stbi_load_from_memory(data, int(size), &width, &height, &comp, 4));
       if(img) {
-        auto wtr = ref<GL::Texture>(0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, img);
+        auto wtr = ref<Texture>(0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, img);
         wtr->parameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         wtr->parameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         wtr->parameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);

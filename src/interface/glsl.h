@@ -3,7 +3,7 @@
 #include <L/src/L.h>
 
 namespace L {
-  class GLSL : public Interface<GL::Program> {
+  class GLSL : public Interface<Program> {
     static GLSL instance;
     String _lib_vert, _lib_frag;
     static const size_t max_stage_count = 4;
@@ -17,7 +17,7 @@ namespace L {
     GLSL() : Interface{"glsl"},
       _lib_vert(L_GLSL_INTRO L_SHAREDUNIFORM "\n"),
       _lib_frag(L_GLSL_INTRO L_SHAREDUNIFORM L_SHADER_LIB "\n") {}
-    Ref<GL::Program> from(const char* path) override {
+    Ref<Program> from(const char* path) override {
       // Read file data
       CFileStream file_stream(path, "rb");
       if(!file_stream)
@@ -68,19 +68,19 @@ namespace L {
         stages[stage-1].size = str+size-stages[stage-1].start;
 
       // Compile shaders
-      byte shaders_mem[max_stage_count*sizeof(GL::Shader)];
-      GL::Shader* shaders((GL::Shader*)shaders_mem);
+      byte shaders_mem[max_stage_count*sizeof(Shader)];
+      Shader* shaders((Shader*)shaders_mem);
       for(uintptr_t i(0); i<stage; i++) {
         const String& lib(stages[i].type==GL_FRAGMENT_SHADER ? _lib_frag : _lib_vert);
         char line_preprocessor[1024];
         sprintf(line_preprocessor, "#line %d\n", stages[i].line, path);
         const char* sources[] = {lib,line_preprocessor,stages[i].start};
         GLint source_lengths[] = {GLint(lib.size()),GLint(strlen(line_preprocessor)),GLint(stages[i].size)};
-        new(shaders+i)GL::Shader(sources, source_lengths, L_COUNT_OF(sources), stages[i].type);
+        new(shaders+i)Shader(sources, source_lengths, L_COUNT_OF(sources), stages[i].type);
       }
 
       // Link program
-      auto wtr(ref<GL::Program>(shaders, stage));
+      auto wtr(ref<Program>(shaders, stage));
 
       for(uintptr_t i(0); i<stage; i++)
         shaders[i].~Shader();

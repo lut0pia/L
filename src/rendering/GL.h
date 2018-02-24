@@ -5,16 +5,9 @@
 
 namespace L {
   namespace GL {
-    class Mesh;
-    class Program;
     void init();
     void* load_function(const char*);
     void draw(GLenum mode, GLsizei count);
-    Program& baseProgram();
-    Program& baseColorProgram();
-    const Mesh& quad();
-    const Mesh& wireCube();
-    const Mesh& wireSphere();
   }
 
   // Declare GL functions

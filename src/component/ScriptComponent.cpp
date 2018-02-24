@@ -1,7 +1,7 @@
 #include "ScriptComponent.h"
 
 #include "../engine/Engine.h"
-#include "../engine/Material.h"
+#include "../rendering/Material.h"
 #include "../engine/Settings.h"
 #include "NameComponent.h"
 #include "../text/String.h"
