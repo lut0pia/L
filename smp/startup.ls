@@ -50,7 +50,7 @@
 	(local entity (entity-make))
 	(set truc entity)
 	(local transform (entity'require-transform|))
-	(local staticmesh (entity'require-staticmesh|))
+	(local staticmesh (entity'require-mesh|))
 	(transform'move | pos)
 	(staticmesh'mesh | mesh)
 	(staticmesh'material | mat)

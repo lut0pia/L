@@ -25,13 +25,13 @@
 #include "component/Entity.h"
 #include "component/HierarchyComponent.h"
 #include "component/LightComponent.h"
+#include "component/MeshComponent.h"
 #include "component/MidiSourceComponent.h"
 #include "component/NameComponent.h"
 #include "component/Primitive.h"
 #include "component/RigidBody.h"
 #include "component/ScriptComponent.h"
 #include "component/Sprite.h"
-#include "component/StaticMesh.h"
 #include "component/Transform.h"
 
 // Objects that hold other objects

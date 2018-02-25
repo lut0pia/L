@@ -7,16 +7,16 @@
 #include "../rendering/Mesh.h"
 
 namespace L {
-  class StaticMesh : public Component {
-    L_COMPONENT(StaticMesh)
-      L_COMPONENT_HAS_RENDER(StaticMesh)
+  class MeshComponent : public Component {
+    L_COMPONENT(MeshComponent)
+      L_COMPONENT_HAS_RENDER(MeshComponent)
   private:
     Transform* _transform;
     Resource<Mesh> _mesh;
     Resource<Material> _material;
     float _scale;
   public:
-    inline StaticMesh() : _scale(1.f) {}
+    inline MeshComponent() : _scale(1.f) {}
 
     inline void update_components() { _transform = entity()->requireComponent<Transform>(); }
     virtual Map<Symbol, Var> pack() const override;
