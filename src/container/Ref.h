@@ -44,7 +44,7 @@ namespace L {
     }
     template <class R>
     inline Ref& operator=(const Ref<R>& other) {
-      if(_p != _p) {
+      if(_p != other._p) {
         this->~Ref();
         new(this)Ref(other);
       }
