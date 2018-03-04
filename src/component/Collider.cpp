@@ -62,12 +62,15 @@ void Collider::script_registration() {
 void Collider::sub_update_all() {
   const uintptr_t thread_count = TaskSystem::thread_count();
   // Update tree nodes
-  ComponentPool<Collider>::iterate([](Collider& c) {
-    c.updateBoundingBox();
-    const Interval3f& bb(c._boundingBox);
-    if(!c._node->key().contains(bb))
-      tree.update(c._node, bb.extended(c._radius.x()));
-  });
+  {
+    L_SCOPE_MARKER("Update collision tree");
+    ComponentPool<Collider>::iterate([](Collider& c) {
+      c.updateBoundingBox();
+      const Interval3f& bb(c._boundingBox);
+      if(!c._node->key().contains(bb))
+        tree.update(c._node, bb.extended(c._radius.x()));
+    });
+  }
 
   // Collision: broad phase
   static Array<Interval3fTree<Collider*>::Node*> pairs[TaskSystem::max_thread_count];
@@ -85,53 +88,57 @@ void Collider::sub_update_all() {
   static Array<Collision> collisions[TaskSystem::max_thread_count];
   for(uintptr_t i(0); i<thread_count; i++)
     collisions[i].size(pairs[i].size()/2);
-  for(uintptr_t t(0); t<thread_count; t++)
+  for(uintptr_t t(0); t<thread_count; t++) {
     TaskSystem::push([](void* p) {
-    const uintptr_t t((uintptr_t)p);
-    for(uintptr_t i(0), j(0); i<collisions[t].size(); i++, j += 2) {
-      auto &a(pairs[t][j]), &b(pairs[t][j+1]);
-      if(!a->value()->_rigidbody)
-        swap(a, b); // Rigidbody is always first argument
-      checkCollision(*a->value(), *b->value(), collisions[t][i]);
-    }
-  }, (void*)t);
+      L_SCOPE_MARKER("Collision narrow phase");
+      const uintptr_t t((uintptr_t)p);
+      for(uintptr_t i(0), j(0); i<collisions[t].size(); i++, j += 2) {
+        auto &a(pairs[t][j]), &b(pairs[t][j+1]);
+        if(!a->value()->_rigidbody)
+          swap(a, b); // Rigidbody is always first argument
+        checkCollision(*a->value(), *b->value(), collisions[t][i]);
+      }
+    }, (void*)t);
+  }
   TaskSystem::join();
 
-  // Apply all collisions
-  for(uintptr_t t(0); t<thread_count; t++)
-    for(uintptr_t i(0); i<collisions[t].size(); i++) {
-      const Collision& collision(collisions[t][i]);
-      if(!collision.colliding)
-        continue;
-      Collider *a(pairs[t][i*2]->value()), *b(pairs[t][i*2+1]->value());
+  {
+    L_SCOPE_MARKER("Apply all collisions");
+    for(uintptr_t t(0); t<thread_count; t++)
+      for(uintptr_t i(0); i<collisions[t].size(); i++) {
+        const Collision& collision(collisions[t][i]);
+        if(!collision.colliding)
+          continue;
+        Collider *a(pairs[t][i*2]->value()), *b(pairs[t][i*2+1]->value());
 
-      // Resolve interpenetration
-      if(b->_rigidbody) {
-        a->_transform->move_absolute(collision.normal*(collision.overlap*.5f));
-        b->_transform->move_absolute(collision.normal*(collision.overlap*-.5f));
-      } else a->_transform->move_absolute(collision.normal*collision.overlap);
+        // Resolve interpenetration
+        if(b->_rigidbody) {
+          a->_transform->move_absolute(collision.normal*(collision.overlap*.5f));
+          b->_transform->move_absolute(collision.normal*(collision.overlap*-.5f));
+        } else a->_transform->move_absolute(collision.normal*collision.overlap);
 
-      // Send collision events to scripts
-      if(a->_script || b->_script) {
-        auto e(ref<Table<Var, Var>>());
-        (*e)[Symbol("type")] = Symbol("COLLISION");
-        (*e)[Symbol("point")] = collision.point;
-        (*e)[Symbol("overlap")] = collision.overlap;
-        if(a->_script) {
-          (*e)[Symbol("other")] = b;
-          (*e)[Symbol("normal")] = collision.normal;
-          a->_script->event(e);
+        // Send collision events to scripts
+        if(a->_script || b->_script) {
+          auto e(ref<Table<Var, Var>>());
+          (*e)[Symbol("type")] = Symbol("COLLISION");
+          (*e)[Symbol("point")] = collision.point;
+          (*e)[Symbol("overlap")] = collision.overlap;
+          if(a->_script) {
+            (*e)[Symbol("other")] = b;
+            (*e)[Symbol("normal")] = collision.normal;
+            a->_script->event(e);
+          }
+          if(b->_script) {
+            (*e)[Symbol("other")] = a;
+            (*e)[Symbol("normal")] = -collision.normal;
+            b->_script->event(e);
+          }
         }
-        if(b->_script) {
-          (*e)[Symbol("other")] = a;
-          (*e)[Symbol("normal")] = -collision.normal;
-          b->_script->event(e);
-        }
+
+        // Physically resolve collision
+        RigidBody::collision(a->_rigidbody, b->_rigidbody, collision.point, collision.normal);
       }
-
-      // Physically resolve collision
-      RigidBody::collision(a->_rigidbody, b->_rigidbody, collision.point, collision.normal);
-    }
+  }
 }
 static void draw_tree_node(const Interval3fTree<Collider*>::Node* node) {
   static int level(0);
