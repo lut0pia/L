@@ -14,9 +14,6 @@ using namespace Script;
 
 Table<Symbol, Var> Context::_globals;
 Table<const TypeDescription*, Var> Context::_typeTables;
-StaticStack<128, Var> Context::_stack;
-StaticStack<16, uint32_t> Context::_frames;
-StaticStack<16, Var> Context::_selves;
 
 static void object(Context& c) {
   Table<Var, Var>& table(c.returnValue().make<Ref<Table<Var, Var>>>().make());
@@ -31,19 +28,19 @@ Var Context::executeReturn(const Var& code) {
   return wtr;
 }
 Var& Context::executeRef(const Var& code) {
-  const size_t stackSize(_stack.size());
+  const size_t stack_size(_stack.size());
   execute(code);
-  L_ASSERT(stackSize+1);
-  return _stack.top();
+  L_ASSERT(_stack.size()==stack_size+1);
+  return _stack.back();
 }
 void Context::discardExecute(const Var& code) {
   _stack.pop();
   execute(code);
 }
 void Context::executeDiscard(const Var& code) {
-  const size_t stackSize(_stack.size());
+  const size_t stack_size(_stack.size());
   execute(code);
-  L_ASSERT(stackSize+1);
+  L_ASSERT(_stack.size()==stack_size+1);
   _stack.pop();
 }
 void Context::execute(const Var& code, Var* selfOut) {
@@ -52,7 +49,7 @@ void Context::execute(const Var& code, Var* selfOut) {
     const Array<Var>& array(code.as<Array<Var>>()); // Get reference of array value
     Var selfIn;
     execute(array[0], &selfIn); // Execute first child of array to get function handle
-    const Var& handle(_stack.top());
+    const Var handle(_stack.back());
     if(handle.is<Native>())
       handle.as<Native>()(*this, array);
     else if(handle.is<Function>() || handle.is<Ref<CodeFunction>>()) {
@@ -65,11 +62,11 @@ void Context::execute(const Var& code, Var* selfOut) {
         if(function) {
           _stack.size(currentFrame()+function->localCount);
           execute(function->code);
-          returnValue() = _stack.top();
+          returnValue() = _stack.back();
         } else returnValue() = Var();
       } else if(handle.is<Function>()) // It's a function pointer
         handle.as<Function>()(*this); // Call function
-      _stack.size(_frames.top()); // Resize to the previous frame
+      _stack.size(_frames.back()); // Resize to the previous frame
       _frames.pop();
       if(!selfIn.is<void>()) _selves.pop();
     } else if(array.size()>1 && !handle.is<void>()) {
@@ -81,7 +78,7 @@ void Context::execute(const Var& code, Var* selfOut) {
         table = typeTable(handle.type());
       _stack.pop(); // Pop handle
       execute(array[1]); // Push index
-      _stack.top() = (*table)[_stack.top()]; // Fetch value in table (replace index)
+      _stack.back() = (*table)[_stack.back()]; // Fetch value in table (replace index)
     } else
       err << "Unable to execute command " << array << "\n";
   } else if(code.is<Local>())
@@ -114,7 +111,7 @@ Var* Context::reference(const Var& code, Var* src) {
         error("Trying to index from void");
       else return nullptr;
       execute(array[1]); // Compute index
-      Var* wtr(&(*table)[_stack.top()]); // Get pointer to field
+      Var* wtr(&(*table)[_stack.back()]); // Get pointer to field
       _stack.pop(); // Clean up index
       _stack.pop(); // Clean up handle
       return wtr;
@@ -142,7 +139,7 @@ bool Context::tryExecuteMethod(const Symbol& sym, std::initializer_list<Var> par
 Var Context::executeInside(const Var& code) {
   _selves.push(_self);
   execute(code);
-  const Var wtr(_stack.top());
+  const Var wtr(_stack.back());
   _stack.pop();
   _selves.pop();
   return wtr;
@@ -159,7 +156,7 @@ Context::Context() : _self(ref<Table<Var, Var>>()) {
   L_ONCE;
   _globals[Symbol("fun")] = (Native)([](Context& c, const Array<Var>& a) {
     if(a.size()>1) {
-      Ref<CodeFunction>& fun(c._stack.top().make<Ref<CodeFunction>>());
+      Ref<CodeFunction>& fun(c._stack.back().make<Ref<CodeFunction>>());
       Table<Symbol, uint32_t> localTable;
       uint32_t localIndex(0);
       fun.make();
@@ -183,7 +180,7 @@ Context::Context() : _self(ref<Table<Var, Var>>()) {
   _globals[Symbol("and")] = (Native)([](Context& c, const Array<Var>& a) {
     for(uintptr_t i(1); i<a.size(); i++) {
       c.discardExecute(a[i]);
-      if(!c._stack.top().get<bool>())
+      if(!c._stack.back().get<bool>())
         return;
     }
   });
@@ -204,7 +201,7 @@ Context::Context() : _self(ref<Table<Var, Var>>()) {
   _globals[Symbol("or")] = (Native)([](Context& c, const Array<Var>& a) {
     for(uintptr_t i(1); i<a.size(); i++) {
       c.discardExecute(a[i]);
-      if(c._stack.top().get<bool>())
+      if(c._stack.back().get<bool>())
         return;
     }
   });
@@ -212,7 +209,7 @@ Context::Context() : _self(ref<Table<Var, Var>>()) {
     L_ASSERT(a.size()==3);
     while(true) {
       c.discardExecute(a[1]);
-      if(c._stack.top().get<bool>())
+      if(c._stack.back().get<bool>())
         c.discardExecute(a[2]);
       else return;
     }
@@ -241,7 +238,7 @@ Context::Context() : _self(ref<Table<Var, Var>>()) {
   _globals[Symbol("if")] = (Native)([](Context& c, const Array<Var>& a) {
     for(uintptr_t i(1); i<a.size()-1; i += 2) {
       c.discardExecute(a[i]);
-      if(c._stack.top().get<bool>()) {
+      if(c._stack.back().get<bool>()) {
         c.discardExecute(a[i+1]);
         return;
       }
@@ -269,7 +266,7 @@ Context::Context() : _self(ref<Table<Var, Var>>()) {
   _globals[Symbol("set")] = (Native)([](Context& c, const Array<Var>& a) {
     if(a.size()==3) {
       c.discardExecute(a[2]);
-      *c.reference(a[1]) = c._stack.top();
+      *c.reference(a[1]) = c._stack.back();
     }
   });
 #define CMP(name,cop)\
