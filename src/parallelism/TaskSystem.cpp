@@ -54,7 +54,6 @@ void fiber_func(void* arg) {
   Task& task(fiber_slot.task);
   while(true) {
     if(task.func) {
-      L_SCOPE_MARKER("Task");
       task.func(task.data); // Execute task
       if(task.parent) task.parent->counter--; // Notify task done
       while(fiber_slot.counter) // Wait for child tasks
@@ -90,7 +89,6 @@ void thread_func(void* arg) {
       local_task_count++;
     if(local_task_count==0 && task_count>0) {
       if(Time::now()-starve_start >= Time(500)) {
-        L_SCOPE_MARKER("Sleep");
         semaphore.get();
         starve_start = Time::now();
       }
@@ -126,7 +124,6 @@ void TaskSystem::push(Func f, void* d, Flags flags) {
   semaphore.put();
 }
 void TaskSystem::yield() {
-  L_SCOPE_MARKER("Yield");
   yield_internal();
 }
 void TaskSystem::join() {
