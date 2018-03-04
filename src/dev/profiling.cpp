@@ -2,6 +2,7 @@
 
 #include "../stream/CFileStream.h"
 #include "../system/intrinsics.h"
+#include "../system/Memory.h"
 
 using namespace L;
 
@@ -23,7 +24,9 @@ ScopeMarker::~ScopeMarker() {
         return;
       }
     } while(cas(&event_index, index, index+1)!=index);
-    events[index] = {_name, _start, duration, _fiber_id};
+    char* name((char*)Memory::alloc(strlen(_name)+1));
+    strcpy(name, _name);
+    events[index] = {name, _start, duration, _fiber_id};
   }
 }
 void L::flush_profiling() {
