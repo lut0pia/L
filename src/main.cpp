@@ -38,7 +38,7 @@ void mainjob(void*) {
   Engine::clear();
 #ifdef L_DEBUG
   flush_profiling();
-#endif L_DEBUG
+#endif
 }
 int main(int argc, const char* argv[]) {
   TypeInit();
