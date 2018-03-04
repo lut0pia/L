@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../container/IterablePool.h"
+#include "../dev/profiling.h"
 #include "../parallelism/TaskSystem.h"
 
 namespace L {
@@ -14,10 +15,12 @@ namespace L {
     static void deallocate(T* p) { _pool.deallocate(p); }
     template <typename Callback>
     static void iterate(Callback f) {
+      L_SCOPE_MARKERF("Iterating over %s (%d)", Type<T>::name(), _pool.objects().size());
       for(auto e : _pool.objects())
         f(*e);
     }
     static void async_iterate(void(*f)(T&, uint32_t)) {
+      L_SCOPE_MARKERF("Iterating async over %s (%d)", Type<T>::name(), _pool.objects().size());
       struct TaskData {
         void(*f)(T&, uint32_t);
         uint32_t t, count;
@@ -27,6 +30,7 @@ namespace L {
       for(uint32_t t(0); t<task_count; t++) {
         task_data[t] = {f,t,task_count};
         TaskSystem::push([](void* p) {
+          L_SCOPE_MARKERF("Iteration task for %s", Type<T>::name());
           TaskData task_data = *(TaskData*)p;
           const uintptr_t t(task_data.t);
           const uintptr_t count(max(uintptr_t(1), _pool.objects().size()/task_data.count));
