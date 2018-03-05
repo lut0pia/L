@@ -6,6 +6,10 @@ namespace L {
   class OBJ : public Interface<Mesh> {
     static OBJ instance;
   private:
+    struct TaskPayload {
+      MeshBuilder& mb;
+      Ref<Mesh> wtr;
+    };
     typedef struct {
       Vector3f _vertex;
       Vector2f _uv;
@@ -20,7 +24,9 @@ namespace L {
       Array<Vector2f> _uvs;
       MeshBuilder _mb;
       while(!stream.end()) {
-        const Array<String> line(String(stream.line()).explode(' '));
+        char buffer[1024];
+        stream.line(buffer, sizeof(buffer));
+        const Array<String> line(String(buffer).explode(' '));
         if(line.empty()) continue;
         else if(line[0]=="v") _vertices.push(atof(line[1]), atof(line[2]), atof(line[3]));
         else if(line[0]=="vt") _uvs.push(atof(line[1]), 1.f-atof(line[2])); // OpenGL has y going bottom up
@@ -50,12 +56,18 @@ namespace L {
       if(_normals.empty())
         _mb.computeNormals(0, sizeof(Vector2f)+sizeof(Vector3f), sizeof(Vertex));
 
-      static const std::initializer_list<Mesh::Attribute> attributes = {
-        {3,GL_FLOAT,GL_FALSE},
-        {2,GL_FLOAT,GL_FALSE},
-        {3,GL_FLOAT,GL_FALSE},
-      };
-      return ref<Mesh>(_mb, GL_TRIANGLES, attributes);
+      TaskPayload payload{_mb};
+      TaskSystem::push([](void* p) {
+        TaskPayload& payload(*(TaskPayload*)p);
+        static const std::initializer_list<Mesh::Attribute> attributes = {
+          {3,GL_FLOAT,GL_FALSE},
+          {2,GL_FLOAT,GL_FALSE},
+          {3,GL_FLOAT,GL_FALSE},
+        };
+        payload.wtr = ref<Mesh>(payload.mb, GL_TRIANGLES, attributes);
+      }, &payload, TaskSystem::MainThread);
+      TaskSystem::join();
+      return payload.wtr;
     }
   };
   OBJ OBJ::instance;

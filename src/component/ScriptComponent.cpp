@@ -46,7 +46,7 @@ void ScriptComponent::script_registration() {
       String* str((String*)p);
       Engine::clear();
       Context context;
-      context.executeInside(Array<Var>{Resource<Script::CodeFunction>::get(*str).ref()});
+      context.executeInside(Array<Var>{Resource<Script::CodeFunction>::get(*str, true).ref()});
       Memory::delete_type(str);
     }, Memory::new_type<String>(c.local(0).get<String>())});
   });
@@ -56,7 +56,7 @@ void ScriptComponent::script_registration() {
   });
   // Gui ///////////////////////////////////////////////////////////////////
   L_FUNCTION("draw-text", {
-    Resource<Font>::get("")->draw(c.local(0).get<int>(),c.local(1).get<int>(),c.local(2).get<String>());
+    Resource<Font>::get("",true)->draw(c.local(0).get<int>(),c.local(1).get<int>(),c.local(2).get<String>());
   });
   // Entity ///////////////////////////////////////////////////////////////////
   Context::global(Symbol("entity-make")) = (Function)([](Context& c) {
@@ -101,7 +101,7 @@ void ScriptComponent::script_registration() {
 }
 
 void ScriptComponent::load(const char* filename) {
-  _script = Resource<Script::CodeFunction>::get(filename);
+  _script = Resource<Script::CodeFunction>::get(filename, true);
   start();
 }
 void ScriptComponent::start() {

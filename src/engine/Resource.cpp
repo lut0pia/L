@@ -5,11 +5,11 @@
 
 using namespace L;
 
-template<> Ref<Font> L::load_resource(const char* path, ResourceSettings& settings) {
-  if(*path) return Interface<Font>::from_path(path);
+template<> void L::load_resource(ResourceSlot<Font>& slot) {
+  if(*slot.path) slot.value = Interface<Font>::from_path(slot.path);
   else {
     static Ref<PixelFont> pixel_font(ref<PixelFont>());
-    settings.persistent = true;
-    return pixel_font;
+    slot.persistent = true;
+    slot.value = pixel_font;
   }
 }

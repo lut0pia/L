@@ -1,54 +1,64 @@
 #pragma once
 
 #include "../container/Array.h"
+#include "../container/Pool.h"
 #include "../container/Ref.h"
 #include "../container/Table.h"
 #include "../dev/profiling.h"
 #include "../font/Font.h"
 #include "../rendering/Texture.h"
 #include "Interface.h"
+#include "../parallelism/Lock.h"
+#include "../parallelism/TaskSystem.h"
 #include "../text/Symbol.h"
 #include "../time/Date.h"
 #include "../script/Context.h"
 #include "../system/File.h"
 
 namespace L {
-  struct ResourceSettings {
+  template <class T>
+  struct ResourceSlot {
+    Ref<T> value;
+    Symbol path;
+    Date mtime;
+    File file;
     bool persistent : 1;
+    bool loading : 1;
   };
 
-  template <class T> Ref<T> load_resource(const char* path, ResourceSettings&) { return Interface<T>::from_path(path); }
-  template <> Ref<Font> load_resource(const char* path, ResourceSettings&);
+  template <class T> void load_resource_async(ResourceSlot<T>& slot) {
+    slot.loading = true;
+    TaskSystem::push([](void* p) {
+      ResourceSlot<T>& slot(*(ResourceSlot<T>*)p);
+      L_SCOPE_MARKERF("load_resource(%s)", slot.path);
+      load_resource(slot);
+      slot.loading = false;
+    }, &slot, TaskSystem::NoParent);
+  }
+  template <class T> void load_resource(ResourceSlot<T>& slot) { slot.value = Interface<T>::from_path(slot.path); }
+  template <> void load_resource(ResourceSlot<Font>& slot);
 
   template <class T>
   class Resource {
+    typedef ResourceSlot<T> Slot;
   protected:
-    struct Slot {
-      Ref<T> value;
-      Symbol path;
-      Date mtime;
-      File file;
-      ResourceSettings settings;
-    };
-  protected:
-    static Array<Slot> _slots;
-    static Table<Symbol, intptr_t> _table;
-    intptr_t _index;
+    static Pool<Slot> _pool;
+    static Array<Slot*> _slots;
+    static Table<Symbol, Slot*> _table;
+    Slot* _slot;
 
-    inline Slot& slot() { return _slots[_index]; }
-    inline const Slot& slot() const { return _slots[_index]; }
   public:
-    constexpr Resource() : _index(-1) {}
-    constexpr Resource(intptr_t index) : _index(index) {}
-    inline T& operator*() { return *slot().value; }
-    inline const T& operator*() const { return *slot().value; }
-    inline T* operator->() { return slot().value; }
-    inline const T* operator->() const { return slot().value; }
-    inline operator bool() const { return _index>=0 && slot().value; }
-    inline const Ref<T>& ref() { return slot().value; }
+    constexpr Resource() : _slot(nullptr) {}
+    constexpr Resource(Slot* slot) : _slot(slot) {}
+    inline T& operator*() { return *_slot->value; }
+    inline const T& operator*() const { return *_slot->value; }
+    inline T* operator->() { return _slot->value; }
+    inline const T* operator->() const { return _slot->value; }
+    inline operator bool() const { return _slot && !_slot->loading && _slot->value; }
+    inline const Ref<T>& ref() { return _slot->value; }
 
     friend Stream& operator<(Stream& s, const Resource& v) {
-      if(v) s < v.slot().path;
+      if(v) s < v._slot->path;
       else s < Symbol("null");
       return s;
     }
@@ -61,30 +71,32 @@ namespace L {
       return s;
     }
 
-    static Resource get(const char* path) {
-      L_SCOPE_MARKER("Resource::get");
+    static Resource get(const char* path, bool synchronous = false) {
+      static Lock lock;
+      L_SCOPED_LOCK(lock);
 
       const Symbol sym(path);
-      if(intptr_t* found = _table.find(sym))
+      if(Slot** found = _table.find(sym))
         return Resource(*found);
 
-      Resource wtr(_slots.size());
-      _slots.push(Slot{
+      Resource wtr(new(_pool.allocate())Slot{
         nullptr, path, Date::now(), path
       });
-      Slot& slot(_slots.back());
-      slot.value = load_resource<T>(slot.path, slot.settings);
-      _table[sym] = wtr._index;
+      Slot& slot(*wtr._slot);
+      if(synchronous) load_resource<T>(slot);
+      else load_resource_async<T>(slot);
+      _table[sym] = wtr._slot;
+      _slots.push(wtr._slot);
       return wtr;
     }
     static void update() {
       if(!_slots.empty()) {
         static uintptr_t index(0);
-        Slot& slot(_slots[index%_slots.size()]);
-        if(!slot.settings.persistent) { // Persistent resources don't hot reload
+        Slot& slot(*_slots[index%_slots.size()]);
+        if(!slot.persistent) { // Persistent resources don't hot reload
           Date file_mtime;
           if(slot.file.mtime(file_mtime) && slot.mtime<file_mtime) {
-            slot.value = load_resource<T>(slot.path, slot.settings);
+            load_resource_async<T>(slot);
             slot.mtime = Date::now();
           }
         }
@@ -93,6 +105,7 @@ namespace L {
     }
   };
 
-  template <class T> Array<typename Resource<T>::Slot> Resource<T>::_slots;
-  template <class T> Table<Symbol, intptr_t> Resource<T>::_table;
+  template <class T> Pool<ResourceSlot<T>> Resource<T>::_pool;
+  template <class T> Array<ResourceSlot<T>*> Resource<T>::_slots;
+  template <class T> Table<Symbol, ResourceSlot<T>*> Resource<T>::_table;
 }

@@ -5,7 +5,6 @@
 namespace L {
   class GLSL : public Interface<Program> {
     static GLSL instance;
-    String _lib_vert, _lib_frag;
     static const size_t max_stage_count = 4;
     struct Stage {
       const char* start;
@@ -13,23 +12,18 @@ namespace L {
       size_t size;
       uint32_t line;
     };
-  public:
-    GLSL() : Interface{"glsl"},
-      _lib_vert(L_GLSL_INTRO L_SHAREDUNIFORM "\n"),
-      _lib_frag(L_GLSL_INTRO L_SHAREDUNIFORM L_SHADER_LIB "\n") {}
-    Ref<Program> from(const char* path) override {
-      // Read file data
-      CFileStream file_stream(path, "rb");
-      if(!file_stream)
-        return nullptr;
-      const size_t size(file_stream.size());
-      Buffer buffer(size);
-      void* data(buffer.data());
-      file_stream.read(data, size);
-
-      const char* str((const char*)data);
+    struct TaskPayload {
       Stage stages[max_stage_count];
-      uintptr_t stage(0);
+      Ref<Program> wtr;
+      uintptr_t stage = 0;
+    };
+  public:
+    GLSL() : Interface{"glsl"} {}
+    Ref<Program> from(const byte* data, size_t size) override {
+      const char* str((const char*)data);
+      TaskPayload payload;
+      Stage* stages(payload.stages);
+      uintptr_t& stage(payload.stage);
       uint32_t line(1);
       bool newline(true);
       const char* pp_line(nullptr);
@@ -67,25 +61,38 @@ namespace L {
       if(stage>0)
         stages[stage-1].size = str+size-stages[stage-1].start;
 
-      // Compile shaders
-      byte shaders_mem[max_stage_count*sizeof(Shader)];
-      Shader* shaders((Shader*)shaders_mem);
-      for(uintptr_t i(0); i<stage; i++) {
-        const String& lib(stages[i].type==GL_FRAGMENT_SHADER ? _lib_frag : _lib_vert);
-        char line_preprocessor[1024];
-        sprintf(line_preprocessor, "#line %d\n", stages[i].line, path);
-        const char* sources[] = {lib,line_preprocessor,stages[i].start};
-        GLint source_lengths[] = {GLint(lib.size()),GLint(strlen(line_preprocessor)),GLint(stages[i].size)};
-        new(shaders+i)Shader(sources, source_lengths, L_COUNT_OF(sources), stages[i].type);
-      }
+      TaskSystem::push([](void* p) {
+        TaskPayload& payload(*(TaskPayload*)p);
 
-      // Link program
-      auto wtr(ref<Program>(shaders, stage));
+        // Compile shaders
+        byte shaders_mem[max_stage_count*sizeof(Shader)];
+        Shader* shaders((Shader*)shaders_mem);
+        for(uintptr_t i(0); i<payload.stage; i++) {
+          static const char lib_vert[] = L_GLSL_INTRO L_SHAREDUNIFORM "\n";
+          static const char lib_frag[] = L_GLSL_INTRO L_SHAREDUNIFORM L_SHADER_LIB "\n";
+          const bool is_frag_shader(payload.stages[i].type==GL_FRAGMENT_SHADER);
+          const char* lib(is_frag_shader ? lib_frag : lib_vert);
+          size_t lib_size((is_frag_shader ? sizeof(lib_frag) : sizeof(lib_vert))-1);
+          char line_preprocessor[64];
+          sprintf(line_preprocessor, "#line %d\n", payload.stages[i].line);
+          const char* sources[] = {lib,line_preprocessor,payload.stages[i].start};
+          GLint source_lengths[] = {GLint(lib_size),GLint(strlen(line_preprocessor)),GLint(payload.stages[i].size)};
+          new(shaders+i)Shader(sources, source_lengths, L_COUNT_OF(sources), payload.stages[i].type);
+        }
 
-      for(uintptr_t i(0); i<stage; i++)
-        shaders[i].~Shader();
+        // Link program
+        payload.wtr = ref<Program>(shaders, payload.stage);
 
-      return wtr->check() ? wtr : nullptr;
+        // Destruct shaders
+        for(uintptr_t i(0); i<payload.stage; i++)
+          shaders[i].~Shader();
+
+        // Don't return ill-formed programs
+        if(!payload.wtr->check())
+          payload.wtr = nullptr;
+      }, &payload, TaskSystem::MainThread);
+      TaskSystem::join();
+      return payload.wtr;
     }
   };
   GLSL GLSL::instance;
