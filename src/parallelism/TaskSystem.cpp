@@ -26,7 +26,7 @@ struct FiberSlot;
 struct Task {
   TaskSystem::Func func;
   void* data;
-  TaskSystem::Flags flags;
+  uint32_t flags;
   FiberSlot* parent;
 };
 
@@ -110,7 +110,7 @@ uint32_t TaskSystem::thread_count() {
 uint32_t TaskSystem::fiber_id() {
   return current_fiber+fiber_count*thread_index;
 }
-void TaskSystem::push(Func f, void* d, Flags flags) {
+void TaskSystem::push(Func f, void* d, uint32_t flags) {
   FiberSlot* parent;
   if(initialized && !(flags&NoParent)) {
     parent = fibers+current_fiber;
