@@ -38,7 +38,6 @@ namespace L {
   public:
     constexpr Pool() : _block(nullptr), _freelist(nullptr), _size(0) {}
     inline ~Pool() {
-      L_ASSERT(_size==0);
       if(_block) delete _block;
     }
 
