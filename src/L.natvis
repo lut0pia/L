@@ -110,6 +110,8 @@
     <DisplayString Condition="_td == &amp;L::Type&lt;L::Script::RawSymbol&gt;::td">{*(L::Script::RawSymbol*)&amp;_data}</DisplayString>
     <DisplayString Condition="_td == &amp;L::Type&lt;L::String&gt;::td">{*(L::String*)&amp;_data}</DisplayString>
     <DisplayString Condition="_td == &amp;L::Type&lt;L::Array&lt;L::Variable&gt; &gt;::td">{*(L::Array&lt;L::Variable&gt;*)&amp;_data}</DisplayString>
+    <DisplayString Condition="_td == &amp;L::Type&lt;L::Table&lt;L::Variable,L::Variable&gt; &gt;::td">{*(L::Table&lt;L::Variable,L::Variable&gt;*)&amp;_data}</DisplayString>
+    <DisplayString Condition="_td == &amp;L::Type&lt;L::Table&lt;L::Symbol,L::Variable&gt; &gt;::td">{*(L::Table&lt;L::Symbol,L::Variable&gt;*)&amp;_data}</DisplayString>
     <DisplayString Condition="_td == &amp;L::Type&lt;L::Ref&lt;L::Table&lt;L::Variable,L::Variable&gt; &gt; &gt;::td">{*(L::Ref&lt;L::Table&lt;L::Variable,L::Variable&gt; &gt;*)&amp;_data}</DisplayString>
     <DisplayString>Unknown {_td->name._string,s8b}</DisplayString>
     <Expand>
@@ -117,6 +119,8 @@
       <ExpandedItem Condition="_td == &amp;L::Type&lt;L::Symbol&gt;::td">*(L::Symbol*)&amp;_data</ExpandedItem>
       <ExpandedItem Condition="_td == &amp;L::Type&lt;L::String&gt;::td">*(L::String*)&amp;_data</ExpandedItem>
       <ExpandedItem Condition="_td == &amp;L::Type&lt;L::Array&lt;L::Variable&gt; &gt;::td">*(L::Array&lt;L::Variable&gt;*)&amp;_data</ExpandedItem>
+      <ExpandedItem Condition="_td == &amp;L::Type&lt;L::Table&lt;L::Variable,L::Variable&gt; &gt;::td">*(L::Table&lt;L::Variable,L::Variable&gt;*)&amp;_data</ExpandedItem>
+      <ExpandedItem Condition="_td == &amp;L::Type&lt;L::Table&lt;L::Symbol,L::Variable&gt; &gt;::td">*(L::Table&lt;L::Symbol,L::Variable&gt;*)&amp;_data</ExpandedItem>
       <ExpandedItem Condition="_td == &amp;L::Type&lt;L::Ref&lt;L::Table&lt;L::Variable,L::Variable&gt; &gt; &gt;::td">*(L::Ref&lt;L::Table&lt;L::Variable,L::Variable&gt; &gt;*)&amp;_data</ExpandedItem>
     </Expand>
   </Type>
