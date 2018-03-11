@@ -55,6 +55,13 @@ namespace L {
             return object;
       return nullptr;
     }
+    static Ref<T> from_bytes(const byte* data, size_t size, const char* ext) {
+      if(auto interfaces = _instances.find(ext))
+        for(auto interface : *interfaces)
+          if(Ref<T> object = interface->from(data, size))
+            return object;
+      return nullptr;
+    }
     static void to_path(const T& v, const char* path) {
       if(auto interfaces = _instances.find(file_ext(path)))
         for(auto interface : *interfaces)
