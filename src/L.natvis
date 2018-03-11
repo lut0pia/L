@@ -48,7 +48,7 @@
 
   <Type Name="L::Ref&lt;*&gt;">
     <DisplayString Condition="_p == 0">null</DisplayString>
-    <DisplayString>{*_p} ({*((int*)_p-1)})</DisplayString>
+    <DisplayString>{*_p} ({*((int*)_p-2)})</DisplayString>
     <Expand>
       <ExpandedItem>_p</ExpandedItem>
     </Expand>
