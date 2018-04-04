@@ -16,8 +16,9 @@ namespace L {
     template <typename Callback>
     static void iterate(Callback f) {
       L_SCOPE_MARKERF("Iterating over %s (%d)", Type<T>::name(), _pool.objects().size());
-      for(auto e : _pool.objects())
-        f(*e);
+      // Don't use iterators because pool may change
+      for(uintptr_t i(0); i<_pool.objects().size(); i++)
+        f(*_pool.objects()[i]);
     }
     static void async_iterate(void(*f)(T&, uint32_t)) {
       L_SCOPE_MARKERF("Iterating async over %s (%d)", Type<T>::name(), _pool.objects().size());
