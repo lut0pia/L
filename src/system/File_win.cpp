@@ -9,9 +9,9 @@ void File::make() const {
   if(!exists())
     System::call("mkdir \""+_path+"\"");
 }
-bool File::mtime(Date& date) const {
+bool File::mtime(const char* path, Date& date) {
   bool success(false);
-  HANDLE handle = CreateFile(_path, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, 0, nullptr);
+  HANDLE handle = CreateFile(path, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, 0, nullptr);
   if(handle != INVALID_HANDLE_VALUE) {
     FILETIME ft;
     if(GetFileTime(handle, nullptr, nullptr, &ft)) {

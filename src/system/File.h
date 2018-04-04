@@ -19,6 +19,7 @@ namespace L {
 
     bool exists() const;
     void make() const;
-    bool mtime(Date&) const;
+    inline bool mtime(Date& date) const { return mtime(_path, date); }
+    static bool mtime(const char* path, Date&);
   };
 }
