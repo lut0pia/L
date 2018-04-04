@@ -29,10 +29,10 @@ namespace L {
       inline bool operator>(const String& other) const {return strcmp(*this,other)>0;}
 
       // Search methods
-      inline String substr(size_t pos, size_t length = -1) const {return String(*this,pos,length);}
       inline intptr_t find_first(char c) const {return strchr(*this,c)-operator const char*();}
       int find_first(const String&) const;
       inline intptr_t find_last(char c) const {return strrchr(*this,c)-operator const char*();}
+      inline String substr(size_t pos, size_t length = -1) const { return String(*this, pos, min(length, size()-pos)); }
       int count(char) const;
 
       Array<String> explode(char c, size_t limit = 0) const; // Splits and returns an array of each part (limit is the max number of parts)
