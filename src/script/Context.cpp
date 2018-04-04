@@ -266,7 +266,10 @@ Context::Context() : _self(ref<Table<Var, Var>>()) {
   _globals[Symbol("set")] = (Native)([](Context& c, const Array<Var>& a) {
     if(a.size()==3) {
       c.discardExecute(a[2]);
-      *c.reference(a[1]) = c._stack.back();
+      if(Var* lvalue = c.reference(a[1]))
+        *lvalue = c._stack.back();
+      else
+        err << "Unable to assign to " << a[1] << "\n";
     }
   });
 #define CMP(name,cop)\
