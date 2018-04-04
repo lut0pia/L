@@ -63,7 +63,7 @@ uint32_t Network::dns_lookup(const char* host) {
 
 String Network::http_request(const String& url) {
   // Find out what's the host and what's the request
-  int slash(url.findFirst('/'));
+  int slash(url.find_first('/'));
   const String host((slash>=0) ? url.substr(0, slash) : url), request((slash>=0) ? url.substr(slash) : "/");
   // Connect to the server
   const uint32_t addr(dns_lookup(host));
@@ -86,5 +86,5 @@ String Network::http_request(const String& url) {
 void Network::http_download(const char* url, const char* name) {
   String answer(http_request(url));
   CFileStream file(name, "wb");
-  file << String(answer, answer.findFirst("\r\n\r\n")+4);
+  file << String(answer, answer.find_first("\r\n\r\n")+4);
 }

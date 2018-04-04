@@ -25,7 +25,7 @@ String& String::operator+=(const String& other) {
   return *this;
 }
 
-int String::findFirst(const String& str) const {
+int String::find_first(const String& str) const {
   for(uint32_t i(0); i<size(); i++)
     if(strncmp(&operator[](i),str,str.size())==0)
       return i;
