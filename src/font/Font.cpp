@@ -115,4 +115,5 @@ template<> void L::load_resource(ResourceSlot<Font>& slot) {
     slot.persistent = true;
     slot.value = pixel_font;
   }
+  post_load_resource(slot);
 }

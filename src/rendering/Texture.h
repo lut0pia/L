@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../engine/Resource.h"
 #include "GL.h"
 #include "../macros.h"
 
@@ -31,4 +32,5 @@ namespace L {
     inline int height() const { return _height; }
     inline bool empty() const { return !_width || !_height; }
   };
+  template <> void post_load_resource(ResourceSlot<Texture>& slot);
 }
