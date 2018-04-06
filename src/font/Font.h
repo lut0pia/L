@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../container/Table.h"
+#include "../engine/Resource.h"
 #include "../image/Bitmap.h"
 #include "../rendering/Atlas.h"
 #include "../rendering/Mesh.h"
@@ -41,4 +42,5 @@ namespace L {
 
     void update();
   };
+  template <> void load_resource(ResourceSlot<Font>& slot);
 }

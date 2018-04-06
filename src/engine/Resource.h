@@ -5,14 +5,10 @@
 #include "../container/Ref.h"
 #include "../container/Table.h"
 #include "../dev/profiling.h"
-#include "../font/Font.h"
-#include "../rendering/Texture.h"
 #include "Interface.h"
 #include "../parallelism/Lock.h"
 #include "../parallelism/TaskSystem.h"
 #include "../text/Symbol.h"
-#include "../time/Date.h"
-#include "../script/Context.h"
 #include "../system/File.h"
 
 namespace L {
@@ -36,7 +32,6 @@ namespace L {
     }, &slot, TaskSystem::NoParent);
   }
   template <class T> void load_resource(ResourceSlot<T>& slot) { slot.value = Interface<T>::from_path(slot.path); }
-  template <> void load_resource(ResourceSlot<Font>& slot);
 
   template <class T>
   class Resource {
