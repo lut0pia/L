@@ -11,26 +11,28 @@ namespace L {
   class Symbol {
   private:
     static const size_t blob_size = 2*1024*1024;
-    static Table<const char*, const char*> _symbols;
+    static Table<uint32_t, const char*> _symbols;
     static char *_blob_next, *_blob_end;
     const char* _string;
   public:
     constexpr Symbol() : _string(nullptr) {}
-    Symbol(const char* str) {
+    inline Symbol(const char* str) : Symbol(str, strlen(str)) {}
+    Symbol(const char* str, size_t length) {
       static Lock lock;
       L_SCOPED_LOCK(lock);
-      if(const char** found = _symbols.find(str))
+      const uint32_t hash(fnv1a(str, length));
+      if(const char** found = _symbols.find(hash))
         _string = *found;
       else {
-        L_ASSERT(strcspn(str, " \t\n\v\f\r")==strlen(str));
-        const size_t length(strlen(str));
-        if(((size_t)_blob_end-(size_t)_blob_next)<=length) {
+        L_ASSERT(strcspn(str, " \t\n\v\f\r")>=length);
+        if(size_t(_blob_end)-size_t(_blob_next)<=(length+1)) {
           _blob_next = (char*)Memory::virtualAlloc(blob_size);
           _blob_end = _blob_next+blob_size;
         }
-        strcpy(_blob_next, str);
+        memcpy(_blob_next, str, length);
+        _blob_next[length] = '\0';
         _string = _blob_next;
-        _symbols[_string] = _string;
+        _symbols[hash] = _string;
         _blob_next += length+1;
       }
     }
