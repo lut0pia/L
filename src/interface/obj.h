@@ -6,15 +6,11 @@ namespace L {
   class OBJ : public Interface<Mesh> {
     static OBJ instance;
   private:
-    struct TaskPayload {
-      MeshBuilder& mb;
-      Ref<Mesh> wtr;
-    };
-    typedef struct {
+    struct Vertex {
       Vector3f _vertex;
       Vector2f _uv;
       Vector3f _normal;
-    } Vertex;
+    };
 
   public:
     OBJ() : Interface{"obj"} {}
@@ -22,7 +18,7 @@ namespace L {
     Ref<Mesh> from(Stream& stream) override {
       Array<Vector3f> _vertices, _normals;
       Array<Vector2f> _uvs;
-      MeshBuilder _mb;
+      MeshBuilder mb;
       while(!stream.end()) {
         char buffer[1024];
         stream.line(buffer, sizeof(buffer));
@@ -45,29 +41,24 @@ namespace L {
 
             if(i==1) firstVertex = vertex;
             else if(i>3) {
-              _mb.addVertex(&firstVertex, sizeof(Vertex));
-              _mb.addVertex(&lastVertex, sizeof(Vertex));
+              mb.addVertex(&firstVertex, sizeof(Vertex));
+              mb.addVertex(&lastVertex, sizeof(Vertex));
             }
-            _mb.addVertex(&vertex, sizeof(Vertex));
+            mb.addVertex(&vertex, sizeof(Vertex));
             lastVertex = vertex;
           }
         }
       }
       if(_normals.empty())
-        _mb.computeNormals(0, sizeof(Vector2f)+sizeof(Vector3f), sizeof(Vertex));
+        mb.computeNormals(0, sizeof(Vector2f)+sizeof(Vector3f), sizeof(Vertex));
 
-      TaskPayload payload{_mb};
-      TaskSystem::push([](void* p) {
-        TaskPayload& payload(*(TaskPayload*)p);
-        static const std::initializer_list<Mesh::Attribute> attributes = {
-          {3,GL_FLOAT,GL_FALSE},
-          {2,GL_FLOAT,GL_FALSE},
-          {3,GL_FLOAT,GL_FALSE},
-        };
-        payload.wtr = ref<Mesh>(payload.mb, GL_TRIANGLES, attributes);
-      }, &payload, TaskSystem::MainThread);
-      TaskSystem::join();
-      return payload.wtr;
+      static const std::initializer_list<Mesh::Attribute> attributes = {
+        {3,GL_FLOAT,GL_FALSE},
+        {2,GL_FLOAT,GL_FALSE},
+        {3,GL_FLOAT,GL_FALSE},
+      };
+      TaskSystem::change_thread_mask(1); // Go to main thread
+      return ref<Mesh>(mb, GL_TRIANGLES, attributes);
     }
   };
   OBJ OBJ::instance;
