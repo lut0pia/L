@@ -73,8 +73,9 @@ void Collider::sub_update_all() {
   }
 
   // Collision: broad phase
-  static Array<Interval3fTree<Collider*>::Node*> pairs[TaskSystem::max_thread_count];
-  static Array<Interval3fTree<Collider*>::Node*> tmp[TaskSystem::max_thread_count];
+  typedef Array<Interval3fTree<Collider*>::Node*> NodeArray;
+  static NodeArray* pairs = Memory::alloc_type_zero<NodeArray>(TaskSystem::thread_count());
+  static NodeArray* tmp = Memory::alloc_type_zero<NodeArray>(TaskSystem::thread_count());
   for(uintptr_t t(0); t<thread_count; t++)
     pairs[t].clear();
   ComponentPool<Collider>::async_iterate([](Collider& c, uint32_t t) {
@@ -85,7 +86,7 @@ void Collider::sub_update_all() {
   });
 
   // Collision: narrow phase
-  static Array<Collision> collisions[TaskSystem::max_thread_count];
+  static Array<Collision>* collisions = Memory::alloc_type_zero<Array<Collision>>(TaskSystem::thread_count());
   for(uintptr_t i(0); i<thread_count; i++)
     collisions[i].size(pairs[i].size()/2);
   for(uintptr_t t(0); t<thread_count; t++) {
