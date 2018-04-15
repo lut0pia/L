@@ -37,7 +37,7 @@ void L::flush_profiling() {
     const ProfilingEvent& event(events[i]);
     file_stream
       << (first ? ' ' : ',')
-      << "{\"ph\":\"X\",\"pid\": " << (event.fiber_id/TaskSystem::fiber_count) << ",\"tid\":" << 0 << ",\"name\":\"" << event.name
+      << "{\"ph\":\"X\",\"tid\": " << event.fiber_id << ",\"pid\":" << 0 << ",\"name\":\"" << event.name
       << "\",\"ts\":" << event.start.microseconds() << ",\"dur\":" << event.duration.microseconds() << "}\n";
     first = false;
   }

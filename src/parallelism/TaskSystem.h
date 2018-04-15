@@ -11,8 +11,6 @@ namespace L {
       AllowExec = 1<<3,
     };
     typedef void(*Func)(void*);
-    static const uint32_t max_thread_count = 16;
-    static const uint32_t fiber_count = 4;
 
     void init();
     uint32_t thread_count();
@@ -20,5 +18,6 @@ namespace L {
     void push(Func, void* = nullptr, uint32_t flags = None);
     void yield();
     void join();
+    void change_thread_mask(uint32_t mask);
   };
 }
