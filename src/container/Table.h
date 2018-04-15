@@ -44,12 +44,12 @@ namespace L {
       if(_slots){
         const size_t oldsize(_size);
         Slot* oldslots(_slots);
-        _slots = (Slot*)Memory::allocZero((_size *= 2)*sizeof(Slot));
+        _slots = Memory::alloc_type_zero<Slot>(_size *= 2);
         for(uintptr_t i(0); i<oldsize; i++)
           if(!oldslots[i].empty())
             memcpy(findSlot(oldslots[i].hash()),oldslots+i,sizeof(Slot));
         Memory::free(oldslots,oldsize*sizeof(Slot));
-      } else _slots = (Slot*)Memory::allocZero((_size = 4)*sizeof(Slot));
+      } else _slots = Memory::alloc_type_zero<Slot>(_size = 4);
     }
     class Iterator{
     private:
@@ -63,7 +63,7 @@ namespace L {
     };
   public:
     constexpr Table() : _slots(nullptr),_size(0),_count(0){}
-    Table(const Table& other) : _slots((Slot*)(other._slots?Memory::allocZero(other._size*sizeof(Slot)):nullptr)),_size(other._size),_count(other._count){
+    Table(const Table& other) : _slots(other._slots ? Memory::alloc_type_zero<Slot>(other._size) : nullptr), _size(other._size), _count(other._count) {
       for(uintptr_t i(0); i<_size; i++)
         if(!other._slots[i].empty())
           new(_slots+i)Slot(other._slots[i]);
