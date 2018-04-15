@@ -12,6 +12,7 @@ namespace L {
   public:
     template<typename T, typename... Args> static T* new_type(Args&&... args) { return new(allocType<T>())T(args...); }
     template<typename T> static T* allocType(size_t count = 1) { return (T*)alloc(sizeof(T)*count); }
+    template<typename T> static T* alloc_type_zero(size_t count = 1) { return (T*)allocZero(sizeof(T)*count); }
     static void* alloc(size_t);
     static void* allocZero(size_t); // Allocates and zero-fill block
     static void* realloc(void*, size_t oldsize, size_t newsize);
