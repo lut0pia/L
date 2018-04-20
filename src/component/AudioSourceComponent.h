@@ -10,7 +10,7 @@ namespace L {
     L_COMPONENT(AudioSourceComponent)
   protected:
     Transform* _transform;
-    Resource<Audio::Buffer> _sound;
+    Resource<AudioStream> _stream;
     float _volume;
     uint32_t _current_frame;
     bool _playing, _looping;
@@ -23,7 +23,7 @@ namespace L {
     virtual void unpack(const Map<Symbol, Var>&) override;
     static void script_registration();
 
-    inline void sound(const char* filepath) { _sound = Resource<Audio::Buffer>::get(filepath); }
+    inline void stream(const char* filepath) { _stream = Resource<AudioStream>::get(filepath); }
     inline void looping(bool should_loop) { _looping = should_loop; }
     inline void volume(float v) { _volume = v; }
     inline void play() { _current_frame = 0; _playing = true; }

@@ -3,12 +3,12 @@
 #include <L/src/L.h>
 
 namespace L {
-  class WAV : public Interface<Audio::Buffer> {
+  class WAV : public Interface<AudioStream> {
     static WAV instance;
   public:
     WAV() : Interface{"wav","wave"} {}
 
-    Ref<Audio::Buffer> from(const byte* data, size_t size) override {
+    Ref<AudioStream> from(const byte* data, size_t size) override {
       if(size<44 || memcmp(data, "RIFF", 4) || memcmp(data+8, "WAVE", 4)
          || memcmp(data+12, "fmt ", 4)|| memcmp(data+36, "data", 4))
         return nullptr;
@@ -30,9 +30,7 @@ namespace L {
         default: return nullptr;
       }
 
-      auto buffer(ref<Audio::Buffer>());
-      buffer->data(format, frequency, data+44, data_size);
-      return buffer;
+      return ref<AudioBuffer>(data+44, data_size, format, frequency);
     }
     static uint32_t read_int(const byte* data, size_t size = 4) {
       uint32_t wtr(0), offset(0);

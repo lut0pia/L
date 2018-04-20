@@ -21,5 +21,10 @@ namespace L {
     Time ideal_time_ahead();
     void acquire_buffer(void*& buffer, uint32_t& frame_count);
     void commit_buffer();
+
+    void render(void* dst, const void* src, SampleFormat format, uint32_t sample_count, float volume[2]);
+    bool convert_samples(void* dst, SampleFormat dst_fmt, uint32_t dst_freq, const void* src, SampleFormat src_fmt, uint32_t src_freq, uint32_t sample_count);
+    uint32_t convert_samples_required_count(uint32_t dst_freq, uint32_t src_freq, uint32_t src_sample_count);
+    uint32_t convert_samples_reverse_required_count(uint32_t dst_freq, uint32_t src_freq, uint32_t dst_sample_count);
   }
 }

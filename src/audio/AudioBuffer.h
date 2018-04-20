@@ -1,23 +1,20 @@
 #pragma once
 
-#include "Audio.h"
+#include "AudioStream.h"
 #include "../container/Array.h"
 
 namespace L {
-  namespace Audio {
-    class Buffer {
-    protected:
-      void* _data;
-      uint32_t _sample_count;
-      SampleFormat _format;
-    public:
-      constexpr Buffer() : _data(nullptr), _sample_count(0), _format(working_format) {}
-      ~Buffer();
-      void data(SampleFormat, uint32_t frequency, const void* data, size_t size);
-      void render(void* buffer, uint32_t frame_start, uint32_t frame_count, float volume[2]);
+  class AudioBuffer : public AudioStream {
+  protected:
+    void* _data;
+    uint32_t _sample_count;
+    Audio::SampleFormat _format;
+  public:
+    AudioBuffer(const void* data, size_t size, Audio::SampleFormat = Audio::working_format, uint32_t frequency = Audio::working_frequency);
+    ~AudioBuffer();
+    void render(void* buffer, uint32_t frame_start, uint32_t frame_count, float volume[2]) override;
 
-      inline uint32_t sample_count() const { return _sample_count; }
-      inline SampleFormat format() const { return _format; }
-    };
-  }
+    inline uint32_t sample_count() const override { return _sample_count; }
+    inline Audio::SampleFormat format() const override { return _format; }
+  };
 }
