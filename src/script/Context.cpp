@@ -429,6 +429,10 @@ Context::Context() : _self(ref<Table<Var, Var>>()) {
     L_ASSERT(c.localCount()==1);
     c.returnValue() = tanf(c.local(0).get<float>());
   });
+  _globals[Symbol("abs")] = (Function)([](Context& c) {
+    L_ASSERT(c.localCount()==1);
+    c.returnValue() = abs(c.local(0).get<float>());
+  });
   _globals[Symbol("color")] = (Function)([](Context& c) {
     Color& color(c.returnValue().make<Color>() = Color::white);
     const uint32_t params(min(c.localCount(), 4u));
