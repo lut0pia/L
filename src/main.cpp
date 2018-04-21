@@ -5,6 +5,7 @@
 #include <L/src/interface/midi.h>
 #include <L/src/interface/stb_image.h>
 #include <L/src/interface/stb_truetype.h>
+#include <L/src/interface/stb_vorbis.h>
 #include <L/src/interface/obj.h>
 #include <L/src/interface/wav.h>
 
