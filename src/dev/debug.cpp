@@ -21,4 +21,5 @@ void L::warning(const char* msg, ...) {
   fprintf(stderr, "Warning: ");
   va_start(args, msg);
   vfprintf(stderr, msg, args);
+  putc('\n', stderr);
 }
