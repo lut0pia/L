@@ -32,11 +32,8 @@ void Compiler::read(const char* text, size_t size, bool last_read) {
       const char* token(_lexer.token());
       Var& v(*_stack.top());
       if(_lexer.literal()) v = token; // Character string
-      else if(strpbrk(token, "0123456789")) { // Has digits
-        if(token[strspn(token, "-0123456789")]=='\0') v = atoi(token); // Integer
-        else if(token[strspn(token, "-0123456789.")]=='\0') v = (float)atof(token); // Float
-        else v = Symbol(token);
-      } else if(_lexer.is_token("true")) v = true;
+      else if(strpbrk(token, "0123456789") && token[strspn(token, "-0123456789.")]=='\0') v = float(atof(token));
+      else if(_lexer.is_token("true")) v = true;
       else if(_lexer.is_token("false")) v = false;
       else v = Symbol(token);
       if(_state == PostQuote) {

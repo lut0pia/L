@@ -337,7 +337,7 @@ Context::Context() : _self(ref<Table<Var, Var>>()) {
   _globals[Symbol("-")] = (Function)([](Context& c) {
     L_ASSERT(c.localCount()>=1);
     if(c.localCount()==1)
-      c.returnValue() = Var(0) - c.local(0); // TODO: replace with actual neg dynamic operator
+      c.returnValue() = Var(0.f) - c.local(0); // TODO: replace with actual neg dynamic operator
     else {
       c.returnValue() = c.local(0);
       for(uintptr_t i(1); i<c.localCount(); i++)

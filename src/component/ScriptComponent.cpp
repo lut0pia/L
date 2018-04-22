@@ -163,8 +163,8 @@ void ScriptComponent::event(const Window::Event& e) {
   auto table(ref<Table<Var, Var>>());
   (*table)[Symbol("type")] = Window::event_type_to_symbol(e.type);
   (*table)[Symbol("button")] = Window::buttonToSymbol(e.button);
-  (*table)[Symbol("x")] = e.x;
-  (*table)[Symbol("y")] = e.y;
+  (*table)[Symbol("x")] = float(e.x);
+  (*table)[Symbol("y")] = float(e.y);
   event(table);
 }
 void ScriptComponent::event(const Ref<Table<Var, Var>>&e) {
