@@ -190,7 +190,7 @@ Context::Context() : _self(ref<Table<Var, Var>>()) {
   });
   _globals[Symbol("non-null")] = (Function)([](Context& c) {
     L_ASSERT(c.localCount()==1);
-    c.returnValue() = c.local(0).as<void*>()!=nullptr;
+    c.returnValue() = !c.local(0).is<void>() &&c.local(0).as<void*>()!=nullptr;
   });
   _globals[Symbol("count")] = (Function)([](Context& c) {
     L_ASSERT(c.localCount()==1);
