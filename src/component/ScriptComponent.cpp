@@ -71,7 +71,7 @@ void ScriptComponent::script_registration() {
         "out vec2 ftexcoords;"
         "void main(){"
         "ftexcoords = vertices[gl_VertexID];"
-        "vec2 top_left_vert = (coords.xy+vertices[gl_VertexID]*coords.zw)/screen.xy;"
+        "vec2 top_left_vert = (coords.xy+vertices[gl_VertexID]*coords.zw)*viewport_pixel_size.zw;"
         "gl_Position = vec4(top_left_vert*vec2(2.f,-2.f)+vec2(-1.f,1.f),0.f,1.f);"
         "}", GL_VERTEX_SHADER),
         Shader(
