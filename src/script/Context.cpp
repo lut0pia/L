@@ -381,6 +381,8 @@ Context::Context() : _self(ref<Table<Var, Var>>()) {
         c.returnValue() = Window::isPressed((Window::Event::Button)(c.local(0).as<int>()+'0'));
     } else c.returnValue() = false;
   });
+  _globals[Symbol("window-height")] = (Function)([](Context& c) { c.returnValue() = float(Window::height()); });
+  _globals[Symbol("window-width")] = (Function)([](Context& c) { c.returnValue() = float(Window::width()); });
   _globals[Symbol("vec")] = (Function)([](Context& c) {
     const uint32_t local_count(c.localCount());
     Vector3f& vector(c.returnValue().make<Vector3f>());
