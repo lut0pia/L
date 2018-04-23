@@ -91,6 +91,33 @@ void ScriptComponent::script_registration() {
       }
     }
   });
+  L_FUNCTION("draw-rect", {
+    if(c.localCount()==5) {
+      static Program gui_rect_program(Shader(
+        L_GLSL_INTRO
+        L_SHAREDUNIFORM
+        "const vec2 vertices[] = vec2[]("
+        "vec2(0.f,0.f),vec2(0.f,1.f),vec2(1.f,0.f),"
+        "vec2(0.f,1.f),vec2(1.f,1.f),vec2(1.f,0.f));"
+        "uniform vec4 coords;"
+        "void main(){"
+        "vec2 top_left_vert = (coords.xy+vertices[gl_VertexID]*coords.zw)*viewport_pixel_size.zw;"
+        "gl_Position = vec4(top_left_vert*vec2(2.f,-2.f)+vec2(-1.f,1.f),0.f,1.f);"
+        "}", GL_VERTEX_SHADER),
+        Shader(
+          L_GLSL_INTRO
+          "out vec4 fragcolor;"
+          "uniform vec4 color;"
+          "void main(){"
+          "fragcolor = color;"
+          "}", GL_FRAGMENT_SHADER));
+      gui_rect_program.use();
+      gui_rect_program.uniform("coords", Vector4f(c.local(0).get<float>(), c.local(1).get<float>(),
+                                                  c.local(2).get<float>(), c.local(3).get<float>()));
+      gui_rect_program.uniform("color", c.local(4).get<Color>());
+      GL::draw(GL_TRIANGLES, 6);
+    }
+  });
   // Entity ///////////////////////////////////////////////////////////////////
   Context::global(Symbol("entity-make")) = (Function)([](Context& c) {
     c.returnValue() = new Entity();
