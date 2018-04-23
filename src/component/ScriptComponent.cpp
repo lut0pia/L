@@ -75,7 +75,7 @@ void ScriptComponent::script_registration() {
         "gl_Position = vec4(top_left_vert*vec2(2.f,-2.f)+vec2(-1.f,1.f),0.f,1.f);"
         "}", GL_VERTEX_SHADER),
         Shader(
-          "#version 330 core\n"
+          L_GLSL_INTRO
           "in vec2 ftexcoords;"
           "out vec4 fragcolor;"
           "uniform sampler2D tex;"
