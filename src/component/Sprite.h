@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Transform.h"
+#include "../engine/CullVolume.h"
 #include "../engine/Resource.h"
 #include "../math/Interval.h"
 #include "../rendering/Texture.h"
@@ -10,8 +11,10 @@ namespace L {
   class Sprite : public Component {
     L_COMPONENT(Sprite)
       L_COMPONENT_HAS_RENDER(Sprite)
+      L_COMPONENT_HAS_LATE_UPDATE(Sprite)
   private:
     Transform* _transform;
+    CullVolume _cull_volume;
     Resource<Texture> _texture;
     Interval2f _vertex, _uv;
   public:
@@ -22,6 +25,7 @@ namespace L {
     virtual void unpack(const Map<Symbol, Var>&) override;
     static void script_registration();
     
+    void late_update();
     void render(const Camera&);
 
     inline void texture(const char* filename) { _texture = Resource<Texture>::get(filename); }

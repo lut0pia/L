@@ -27,7 +27,16 @@ void Sprite::script_registration() {
                                                     Vector2f(c.local(2).get<float>(), c.local(3).get<float>()))));
 }
 
-void Sprite::render(const Camera&) {
+void Sprite::late_update() {
+  const Vector3f center(_transform->position()), right(_transform->right()), up(_transform->up());
+  Interval3f bounds(center);
+  bounds.add(center+right*_vertex.min().x()+up*_vertex.min().y());
+  bounds.add(center+right*_vertex.min().x()+up*_vertex.max().y());
+  bounds.add(center+right*_vertex.max().x()+up*_vertex.min().y());
+  bounds.add(center+right*_vertex.max().x()+up*_vertex.max().y());
+  _cull_volume.update_bounds(bounds);
+}
+void Sprite::render(const Camera& camera) {
   static Program program(Shader(
     L_GLSL_INTRO
     L_SHAREDUNIFORM
@@ -61,7 +70,7 @@ void Sprite::render(const Camera&) {
       "onormal.z = 1.f;" /* Roughness */
       "onormal.w = 0.f;" /* Emission */
       "}", GL_FRAGMENT_SHADER));
-  if(_texture) {
+  if(_cull_volume.visible() && _texture) {
     program.use();
     program.uniform("tex", *_texture);
     program.uniform("model", _transform->matrix());
