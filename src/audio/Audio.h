@@ -14,7 +14,7 @@ namespace L {
     static constexpr uint32_t sample_format_channels_array[] = {1,1,2,2};
     constexpr uint32_t sample_format_channels(const SampleFormat& sf) { return sample_format_channels_array[sf]; }
 
-    static constexpr uint32_t working_frequency = 48000;
+    static constexpr uint32_t working_frequency = 44100;
     static constexpr SampleFormat working_format = Stereo16;
 
     void init();
