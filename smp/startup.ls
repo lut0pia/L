@@ -53,7 +53,7 @@
 	(local staticmesh (entity'require-mesh|))
 	(transform'move | pos)
 	(staticmesh'mesh | mesh)
-	(staticmesh'material | mat)
+	(staticmesh'material || 'parent | mat)
 	entity
 )))
 

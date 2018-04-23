@@ -20,13 +20,13 @@ void MeshComponent::unpack(const Map<Symbol, Var>& data) {
 void MeshComponent::script_registration() {
   L_COMPONENT_BIND(MeshComponent, "mesh");
   L_COMPONENT_METHOD(MeshComponent, "mesh", 1, mesh((const char*)c.local(0).get<String>()));
-  L_COMPONENT_METHOD(MeshComponent, "material", 1, material((const char*)c.local(0).get<String>()));
+  L_COMPONENT_RETURN_METHOD(MeshComponent, "material", 0, material());
   L_COMPONENT_METHOD(MeshComponent, "scale", 1, scale(c.local(0).get<float>()));
 }
 
 void MeshComponent::render(const Camera& c) {
-  if(_mesh && _material && _material->valid()) {
-    _material->use(SQTToMat(_transform->rotation(), _transform->position(), _scale));
+  if(_mesh && _material.valid()) {
+    _material.use(SQTToMat(_transform->rotation(), _transform->position(), _scale));
     _mesh->draw();
   }
 }

@@ -13,7 +13,7 @@ namespace L {
   private:
     Transform* _transform;
     Resource<Mesh> _mesh;
-    Resource<Material> _material;
+    Material _material;
     float _scale;
   public:
     inline MeshComponent() : _scale(1.f) {}
@@ -24,7 +24,8 @@ namespace L {
     static void script_registration();
 
     inline void mesh(const char* filename) { _mesh = Resource<Mesh>::get(filename); }
-    inline void material(const char* filename) { _material = Resource<Material>::get(filename); }
+    inline void material(const char* filename) { _material.parent(Resource<Material>::get(filename)); }
+    Material* material() { return &_material; }
     inline void scale(float scale) { _scale = scale; }
     void render(const Camera&);
   };
