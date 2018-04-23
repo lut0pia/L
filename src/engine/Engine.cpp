@@ -1,6 +1,7 @@
 #include "Engine.h"
 
 #include "../component/Camera.h"
+#include "CullVolume.h"
 #include "../dev/profiling.h"
 #include "../hash.h"
 #include "../rendering/GPUBuffer.h"
@@ -81,6 +82,7 @@ void Engine::update() {
     L_SCOPE_MARKER("Graphics rendering");
     ComponentPool<Camera>::iterate([](Camera& camera) {
       camera.prerender();
+      CullVolume::cull(camera);
       for(auto&& render : _renders)
         render(camera);
       camera.postrender();
