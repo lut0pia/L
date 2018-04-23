@@ -7,6 +7,7 @@
 
 #include "../dev/debug.h"
 #include "../stream/CFileStream.h"
+#include "../system/Memory.h"
 
 using namespace L;
 using namespace Audio;
@@ -31,22 +32,23 @@ IMMDeviceEnumerator *pEnumerator = NULL;
 IMMDevice *pDevice = NULL;
 IAudioClient *pAudioClient = NULL;
 IAudioRenderClient *pRenderClient = NULL;
+uint32_t internal_frequency;
 
-static void init_wave_format(WAVEFORMATEXTENSIBLE * format_ext) {
+static void init_wave_format(WAVEFORMATEXTENSIBLE * format_ext, uint32_t frequency = working_frequency) {
   memset(format_ext, 0, sizeof(WAVEFORMATEXTENSIBLE));
   WAVEFORMATEX* format(&format_ext->Format);
   format->wFormatTag = WAVE_FORMAT_EXTENSIBLE;
   format->cbSize = 22;
   format->nChannels = 2;
-  format->nSamplesPerSec = working_frequency;
+  format->nSamplesPerSec = frequency;
   format->wBitsPerSample = format_ext->Samples.wValidBitsPerSample = 16;
   format->nBlockAlign = (format->nChannels*format->wBitsPerSample)/8;
-  format->nAvgBytesPerSec = working_frequency * format->nBlockAlign;
+  format->nAvgBytesPerSec = frequency * format->nBlockAlign;
   memcpy(&format_ext->SubFormat, &PcmSubformatGuid, sizeof(GUID));
 }
 
 void Audio::init() {
-  REFERENCE_TIME hnsRequestedDuration = REFTIMES_PER_SEC/5;
+  REFERENCE_TIME hnsRequestedDuration = REFTIMES_PER_SEC/2;
 
   hr = CoCreateInstance(
     CLSID_MMDeviceEnumerator, NULL,
@@ -65,9 +67,18 @@ void Audio::init() {
 
   {
     WAVEFORMATEXTENSIBLE wave_format_ext;
+    WAVEFORMATEX* wave_format_supported;
     init_wave_format(&wave_format_ext);
+    pAudioClient->IsFormatSupported(AUDCLNT_SHAREMODE_SHARED, (WAVEFORMATEX*)&wave_format_ext, &wave_format_supported);
+
+    if(wave_format_supported && wave_format_supported->nSamplesPerSec!=wave_format_ext.Format.nSamplesPerSec) {
+      // Try a second time if the sampling rate wasn't right
+      init_wave_format(&wave_format_ext, wave_format_supported->nSamplesPerSec);
+      pAudioClient->IsFormatSupported(AUDCLNT_SHAREMODE_SHARED, (WAVEFORMATEX*)&wave_format_ext, &wave_format_supported);
+    }
     hr = pAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, 0, hnsRequestedDuration, 0, (WAVEFORMATEX*)&wave_format_ext, NULL);
     EXIT_ON_ERROR(hr);
+    internal_frequency = wave_format_ext.Format.nSamplesPerSec;
   }
 
   hr = pAudioClient->GetService(
@@ -78,32 +89,37 @@ void Audio::init() {
   hr = pAudioClient->Start();  // Start playing.
   EXIT_ON_ERROR(hr)
 }
-uint32_t acquired_frame_count(0);
+char sample_buffer[sample_format_size(working_format)*working_frequency];
+uint32_t requested_frame_count(0);
 void Audio::acquire_buffer(void*& buffer, uint32_t& frame_count) {
-  L_ASSERT(acquired_frame_count==0);
+  L_ASSERT(requested_frame_count==0);
 
   // How many frames of advance do we already have?
-  uint32_t frame_count_ahead;
-  hr = pAudioClient->GetCurrentPadding(&frame_count_ahead);
+  uint32_t internal_frame_count_ahead;
+  hr = pAudioClient->GetCurrentPadding(&internal_frame_count_ahead);
   EXIT_ON_ERROR(hr);
+  const uint32_t frame_count_ahead(convert_samples_required_count(working_frequency, internal_frequency, internal_frame_count_ahead));
 
   // How many frames of advance do we want?
   const Time ideal_time_ahead(ideal_time_ahead());
   const uint32_t ideal_frame_count_ahead(ideal_time_ahead.fSeconds()*working_frequency);
-  frame_count = (frame_count_ahead<ideal_frame_count_ahead) ? (ideal_frame_count_ahead-frame_count_ahead) : 0;
+  frame_count = requested_frame_count = (frame_count_ahead<ideal_frame_count_ahead) ? (ideal_frame_count_ahead-frame_count_ahead) : 0;
 
-  // Get buffer to fill
-  BYTE *pData;
-  hr = pRenderClient->GetBuffer(frame_count, &pData);
-  EXIT_ON_ERROR(hr);
-  buffer = pData;
-  memset(buffer, 0, frame_count*sample_format_size(working_format));
-
-  acquired_frame_count = frame_count;
+  memset(sample_buffer, 0, frame_count*sample_format_size(working_format));
+  buffer = sample_buffer;
 }
 void Audio::commit_buffer() {
-  L_ASSERT(acquired_frame_count>0);
-  hr = pRenderClient->ReleaseBuffer(acquired_frame_count, 0);
+  L_ASSERT(requested_frame_count>0);
+
+  uint32_t converted_frame_count(convert_samples_required_count(internal_frequency, working_frequency, requested_frame_count));
+
+  BYTE *pData;
+  hr = pRenderClient->GetBuffer(converted_frame_count, &pData);
   EXIT_ON_ERROR(hr);
-  acquired_frame_count = 0;
+
+  convert_samples(pData, working_format, internal_frequency, sample_buffer, working_format, working_frequency, requested_frame_count);
+
+  hr = pRenderClient->ReleaseBuffer(converted_frame_count, 0);
+  EXIT_ON_ERROR(hr);
+  requested_frame_count = 0;
 }
