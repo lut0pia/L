@@ -45,6 +45,12 @@ namespace L {
     inline const T* array() const { return &_m[0][0]; }
     template <int size = l> inline Vector<size, T>& vector(uintptr_t i) { return *(Vector<size, T>*)(((Vector<l, T>*)_m)+i); }
     template <int size = l> inline const Vector<size, T>& vector(uintptr_t i) const { return *(const Vector<size, T>*)(((const Vector<l, T>*)_m)+i); }
+    template <int size = c> inline Vector<size, T> row(uintptr_t i) const {
+      Vector<size, T> wtr;
+      for(uintptr_t j(0); j<size; j++)
+        wtr[j] = _m[j][i];
+      return wtr;
+    }
 
     inline Matrix& operator+=(const Matrix& other) {
       for(int i(0); i<l*c; i++)
