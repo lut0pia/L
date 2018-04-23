@@ -24,8 +24,22 @@ void MeshComponent::script_registration() {
   L_COMPONENT_METHOD(MeshComponent, "scale", 1, scale(c.local(0).get<float>()));
 }
 
+void MeshComponent::late_update() {
+  if(_mesh) {
+    Interval3f world_bounds(_transform->position());
+    const Interval3f& model_bounds(_mesh->bounds());
+    for(uint32_t i(0); i<8; i++)
+      world_bounds.add(_transform->toAbsolute(Vector3f(
+        i&1 ? model_bounds.min().x() : model_bounds.max().x(),
+        i&2 ? model_bounds.min().y() : model_bounds.max().y(),
+        i&4 ? model_bounds.min().z() : model_bounds.max().z()
+      )));
+    _cull_volume.update_bounds(world_bounds);
+  }
+}
+
 void MeshComponent::render(const Camera& c) {
-  if(_mesh && _material.valid()) {
+  if(_cull_volume.visible() && _mesh && _material.valid()) {
     _material.use(SQTToMat(_transform->rotation(), _transform->position(), _scale));
     _mesh->draw();
   }
