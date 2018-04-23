@@ -3,12 +3,14 @@
 #include <initializer_list>
 #include "GL.h"
 #include "../macros.h"
+#include "../math/Interval.h"
 
 namespace L {
   class MeshBuilder;
   class Mesh {
     L_NOCOPY(Mesh)
   private:
+    Interval3f _bounds;
     GLuint _vao, _vbo, _eab;
     GLenum _mode;
     GLsizei _count;
@@ -26,6 +28,8 @@ namespace L {
     void load(GLenum mode, GLsizei count, const void* data, GLsizeiptr size, const std::initializer_list<Attribute>& attributes, const GLushort* indices = nullptr, GLsizei icount = 0);
     void load(const MeshBuilder&, GLenum mode, const std::initializer_list<Attribute>&);
     void draw() const;
+
+    inline const Interval3f& bounds() const { return _bounds; }
 
     static const Mesh& quad();
     static const Mesh& wire_cube();

@@ -49,6 +49,11 @@ void Mesh::load(GLenum mode, GLsizei count, const void* data, GLsizeiptr size, c
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
   if(iarray) indices(iarray, icount);
+
+  // Compute bounds
+  _bounds = (*(Vector3f*)data);
+  for(uintptr_t i(1);i<count;i++)
+    _bounds.add(*(Vector3f*)((byte*)data+stride*i));
 }
 void Mesh::load(const MeshBuilder& mb, GLenum mode, const std::initializer_list<Attribute>& attributes) {
   load(mode, GLsizei(mb.vertexCount()), mb.vertices(), mb.verticesSize(), attributes, mb.indices(), GLsizei(mb.indexCount()));
