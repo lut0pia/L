@@ -253,3 +253,12 @@ bool Camera::sees(const Interval3f& i) const {
   }
   return false;
 }
+void Camera::frustum_planes(Vector4f planes[6]) const {
+  const Matrix44f& m(_viewProjection);
+  planes[0] = m.row(3) + m.row(0);
+  planes[1] = m.row(3) - m.row(0);
+  planes[2] = m.row(3) + m.row(1);
+  planes[3] = m.row(3) - m.row(1);
+  planes[4] = m.row(3) + m.row(2);
+  planes[5] = m.row(3) - m.row(2);
+}

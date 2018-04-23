@@ -47,6 +47,7 @@ namespace L {
     Vector2f screenToPixel(const Vector2f&) const; // Returns pixel position from NDC
     Interval2i viewportPixel() const;
     bool sees(const Interval3f&) const; // Checks if an interval can currently be seen by camera
+    void frustum_planes(Vector4f[6]) const; // In world-space
 
     inline const Matrix44f& view() const { return _view; }
     inline const Matrix44f& projection() const { return _projection; }
