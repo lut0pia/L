@@ -9,9 +9,9 @@ void File::make() const {
   if(!exists())
     System::call("mkdir \""+_path+"\"");
 }
-bool File::mtime(Date& date) const {
+bool File::mtime(const char* path, Date& date) {
   struct stat buf;
-  if(!stat(_path, &buf)) {
+  if(!stat(path, &buf)) {
     date = time_t(buf.st_mtim.tv_sec);
     return true;
   } else return false;
