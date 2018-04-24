@@ -102,7 +102,7 @@ L_SHAREDUNIFORM \
   "position = model * vec4(modelPosition,1.0);" \
   "gl_Position = viewProj * position;" \
 "}"
-Program& Program::default() {
+Program& Program::default_program() {
   static Program program(Shader(L_VERTEX_SHADER, GL_VERTEX_SHADER), Shader(
     L_GLSL_INTRO
     L_SHAREDUNIFORM

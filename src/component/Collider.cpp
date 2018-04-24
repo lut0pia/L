@@ -228,8 +228,8 @@ Matrix33f Collider::inertiaTensor() const{
   return wtr;
 }
 void Collider::render(const Camera& camera) {
-  Program::default().use();
-  Program::default().uniform("model",_transform->matrix()*scale_matrix(_radius));
+  Program::default_program().use();
+  Program::default_program().uniform("model",_transform->matrix()*scale_matrix(_radius));
   switch(_type){
     case Box:
       Mesh::wire_cube().draw();

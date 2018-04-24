@@ -41,7 +41,7 @@ namespace L {
 
     void uniform(GLint location, const Texture&, GLenum unit = GL_TEXTURE0);
 
-    static Program& default();
+    static Program& default_program();
     static Program& default_color();
   };
 }
