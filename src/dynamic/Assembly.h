@@ -3,14 +3,13 @@
 #include "../container/Array.h"
 #include "../stream/Stream.h"
 #include "../system/System.h"
-#include "../types.h"
 
 namespace L {
   class Assembly {
     public:
-      static byte *_write, *_limit;
+      static uint8_t *_write, *_limit;
       static const size_t _page = 64*1024;
-      Array<byte> _assembly;
+      Array<uint8_t> _assembly;
 
     public:
       typedef enum {eax = 0,ecx,edx,ebx,esp,ebp,esi,edi} Register;
@@ -19,12 +18,12 @@ namespace L {
       inline void clear() {_assembly.clear();}
       inline uint32_t label() const { return uint32_t(_assembly.size()); }
 
-      template <typename... Args> inline void emit(byte b,Args&&... args) {_assembly.push(b); emit(args...);}
+      template <typename... Args> inline void emit(uint8_t b,Args&&... args) {_assembly.push(b); emit(args...);}
       inline void emit() {}
 
       // Assembly shortcuts
-      inline void instruction(byte opcode, byte reg, byte rm) {emit(opcode); modregrm(3,reg,rm);}
-      inline void instruction(byte opcode, byte reg, byte rm, int disp) {
+      inline void instruction(uint8_t opcode, uint8_t reg, uint8_t rm) {emit(opcode); modregrm(3,reg,rm);}
+      inline void instruction(uint8_t opcode, uint8_t reg, uint8_t rm, int disp) {
         emit(opcode);
         if(disp) {
           bool byteDisp(disp>=-128 && disp<=127);
@@ -33,8 +32,8 @@ namespace L {
           (byteDisp)?emit(disp):imm(disp);
         } else modregrm(0,reg,rm);
       }
-      inline void modregrm(byte mod, byte reg, byte rm) {emit((mod<<6)|((reg&0x7)<<3)|(rm&0x7));}
-      inline void sib(byte scale, byte index, byte base) {emit((scale<<6)|((index&0x7)<<3)|(base&0x7));}
+      inline void modregrm(uint8_t mod, uint8_t reg, uint8_t rm) {emit((mod<<6)|((reg&0x7)<<3)|(rm&0x7));}
+      inline void sib(uint8_t scale, uint8_t index, uint8_t base) {emit((scale<<6)|((index&0x7)<<3)|(base&0x7));}
       inline void imm(uint32_t i) {emit(i,i>>8,i>>16,i>>24);}
 
       inline void add(Register dst, uint32_t i) {instruction(0x81,0,dst); imm(i);}
@@ -75,7 +74,7 @@ namespace L {
         emit(0xe9);
         imm(i-(uint32_t(_assembly.size())+4));
       }
-      inline void jcc(byte opcode,uint32_t i) {
+      inline void jcc(uint8_t opcode,uint32_t i) {
         int rel(i-int(_assembly.size()));
         if(rel>=-128&&rel<=127)
           emit(opcode,rel-2);

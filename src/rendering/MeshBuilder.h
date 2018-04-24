@@ -6,7 +6,7 @@
 namespace L {
   class MeshBuilder {
   private:
-    Array<byte> _vertices;
+    Array<uint8_t> _vertices;
     Array<GLushort> _indices;
     size_t _vertexCount;
 

@@ -14,7 +14,7 @@ namespace L {
     };
   public:
     GLSL() : Interface{"glsl"} {}
-    Ref<Program> from(const byte* data, size_t size) override {
+    Ref<Program> from(const uint8_t* data, size_t size) override {
       const char* str((const char*)data);
       Stage stages[max_stage_count];
       uintptr_t stage = 0;
@@ -58,7 +58,7 @@ namespace L {
       TaskSystem::change_thread_mask(1); // Go to main thread
 
       // Compile shaders
-      byte shaders_mem[max_stage_count*sizeof(Shader)];
+      uint8_t shaders_mem[max_stage_count*sizeof(Shader)];
       Shader* shaders((Shader*)shaders_mem);
       for(uintptr_t i(0); i<stage; i++) {
         static const char lib_vert[] = L_GLSL_INTRO L_SHAREDUNIFORM "\n";

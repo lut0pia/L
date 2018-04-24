@@ -9,9 +9,9 @@ namespace L {
     static STB_image instance;
   public:
     inline STB_image() : Interface{"png","bmp","jpeg","jpg"} {}
-    Ref<Texture> from(const byte* data, size_t size) override {
+    Ref<Texture> from(const uint8_t* data, size_t size) override {
       int width, height, comp;
-      byte* img(stbi_load_from_memory(data, int(size), &width, &height, &comp, 4));
+      uint8_t* img(stbi_load_from_memory(data, int(size), &width, &height, &comp, 4));
       if(img) {
         TaskSystem::change_thread_mask(1); // Go to main thread
         Ref<Texture> wtr(ref<Texture>(0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, img));

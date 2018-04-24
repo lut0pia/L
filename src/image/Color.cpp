@@ -51,7 +51,7 @@ Vector4f Color::to_float_vector(const Color& color) {
   return Vector4f(color.r()/255.f, color.g()/255.f, color.b()/255.f, color.a()/255.f);
 }
 Color Color::from(float r, float g, float b, float a) {
-  return Color(byte(r*255.f), byte(g*255.f), byte(b*255.f), byte(a*255.f));
+  return Color(uint8_t(r*255.f), uint8_t(g*255.f), uint8_t(b*255.f), uint8_t(a*255.f));
 }
 Color Color::fromHSV(float h, float s, float v) {
   if(s <= 0.f) // No saturation is greyscale
@@ -76,6 +76,6 @@ Color Color::fromHSV(float h, float s, float v) {
 }
 Color Color::lerp(Color a, Color b, float w) {
   const float nw(1.f-w);
-  return Color(byte(nw*a.r() + w*b.r()), byte(nw*a.g() + w*b.g()), byte(nw*a.b() + w*b.b()), byte(nw*a.a() + w*b.a()));
+  return Color(uint8_t(nw*a.r() + w*b.r()), uint8_t(nw*a.g() + w*b.g()), uint8_t(nw*a.b() + w*b.b()), uint8_t(nw*a.a() + w*b.a()));
 }
 

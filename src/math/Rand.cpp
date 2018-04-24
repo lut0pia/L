@@ -14,7 +14,7 @@ uint64_t Rand::next() {
 int Rand::nextInt() {
   return next()>>32;
 }
-byte Rand::nextByte() {
+uint8_t Rand::nextByte() {
   return next()>>48;
 }
 float Rand::nextFloat() {
@@ -30,7 +30,7 @@ int Rand::next(int min, int max) {
 float Rand::next(float min, float max) {
   return (nextFloat()*(max-min))+min;
 }
-void Rand::fill(byte* dst, size_t size) {
+void Rand::fill(uint8_t* dst, size_t size) {
   while(size>0) {
     *dst++ = nextByte();
     size--;

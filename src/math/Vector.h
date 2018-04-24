@@ -3,7 +3,6 @@
 #include <cmath>
 #include <limits>
 #include <new>
-#include "../types.h"
 #include "../math/math.h"
 #include "../math/Rand.h"
 #include "../stream/serial.h"
@@ -155,7 +154,7 @@ namespace L {
     inline const T& y() const { return _c[1]; }
     inline const T& z() const { return _c[2]; }
     inline const T& w() const { return _c[3]; }
-    inline const byte* bytes() const { return (const byte*)&_c; }
+    inline const uint8_t* bytes() const { return (const uint8_t*)&_c; }
     inline const T* array() const { return _c; }
     inline T& operator[](int i) { return _c[i]; }
     inline T& x() { return _c[0]; }
@@ -188,7 +187,7 @@ namespace L {
   };
   template <int d,class T> inline Vector<d,T> operator*(const T& a,const Vector<d,T>& b) { return b*a; }
 
-  typedef Vector<4,byte> Vector4b;
+  typedef Vector<4,uint8_t> Vector4b;
   typedef Vector<2,int> Vector2i;
   typedef Vector<3,int> Vector3i;
   typedef Vector<4,int> Vector4i;

@@ -14,7 +14,7 @@ using namespace L;
 #if !L_USE_MALLOC
 const size_t allocStep = 1024*1024u;
 void* _freelist[128] = {};
-byte* _next;
+uint8_t* _next;
 size_t _bytesLeft(0);
 size_t _allocated(0), _unused(0), _wasted(0);
 Lock _lock;
@@ -53,7 +53,7 @@ void* Memory::alloc(size_t size) {
     _unused -= trueSize;
   } else {
     if(_bytesLeft<trueSize)
-      _next = (byte*)virtualAlloc(_bytesLeft = allocStep);
+      _next = (uint8_t*)virtualAlloc(_bytesLeft = allocStep);
     wtr = _next;
     _next += trueSize;
     _bytesLeft -= trueSize;

@@ -4,7 +4,6 @@
 #include "constants.h"      // Constant values
 #include "macros.h"         // Useful macros
 #include "objects.h"        // Copy/swap objects
-#include "types.h"          // Useful typedefs
 
 // Artifical Intelligence
 #include "ai/MLP.h"

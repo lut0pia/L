@@ -32,7 +32,7 @@ namespace L {
     inline ~Ref() {
       if(_p && --counter()==0){
         _p->~T();
-        Memory::free((byte*)_p-offset,size()+offset);
+        Memory::free((uint8_t*)_p-offset,size()+offset);
       }
     }
     inline Ref& operator=(const Ref& other) {
@@ -53,7 +53,7 @@ namespace L {
     template <typename... Args>
     T& make(Args&&... args){
       this->~Ref();
-      _p = (T*)((byte*)Memory::alloc(sizeof(T)+offset)+offset);
+      _p = (T*)((uint8_t*)Memory::alloc(sizeof(T)+offset)+offset);
       counter() = 1;
       size() = sizeof(T);
       ::new(_p)T(args...);

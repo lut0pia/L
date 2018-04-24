@@ -51,7 +51,7 @@ namespace L {
     template <class T> T& cast() {
       if(is<T>()) return as<T>(); // It's already the right type: return as-is
       else if(Cast cast = _td->casts.get(Type<T>::description(), nullptr)) { // Try to find cast
-        byte tmp[sizeof(T)]; // Temporary buffer
+        uint8_t tmp[sizeof(T)]; // Temporary buffer
         cast(tmp,value()); // Cast current value to temporary buffer
         *this = static_cast<T&&>(*(T*)tmp); // Move casted value to this
         ((T*)tmp)->~T(); // Destruct temporary value
@@ -61,7 +61,7 @@ namespace L {
     template <class T> T get() const {
       if(is<T>()) return as<T>(); // It's already the right type: return as-is
       else if(Cast cast = _td->casts.get(Type<T>::description(), nullptr)) { // Try to find cast
-        byte tmp[sizeof(T)]; // Temporary buffer
+        uint8_t tmp[sizeof(T)]; // Temporary buffer
         cast(tmp,value()); // Cast current value to temporary buffer
         T wtr(static_cast<T&&>(*(T*)tmp)); // Move casted value to return object
         ((T*)tmp)->~T(); // Destruct temporary value

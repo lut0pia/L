@@ -7,7 +7,7 @@ namespace L {
     static LS instance;
   public:
     LS() : Interface{"ls"} {}
-    Ref<Script::CodeFunction> from(const byte* data, size_t size) override {
+    Ref<Script::CodeFunction> from(const uint8_t* data, size_t size) override {
       Script::Compiler compiler;
       compiler.read((const char*)data, size, true);
       return ref<Script::CodeFunction>(compiler.function());

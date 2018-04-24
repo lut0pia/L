@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cmath>
-#include "../types.h"
+#include <cstdint> 
 #include "../system/intrinsics.h"
 
 namespace L {

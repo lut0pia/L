@@ -1,6 +1,6 @@
 #pragma once
 
-#include "types.h"
+#include <cstdint> 
 
 namespace L{
   inline uint32_t fnv1a(const char* str){

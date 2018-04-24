@@ -1,7 +1,6 @@
 #include "String.h"
 
 #include <cctype>
-#include "../types.h"
 #include "../macros.h"
 
 using namespace L;

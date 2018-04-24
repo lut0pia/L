@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../types.h"
+#include <cstdint> 
 
 namespace L {
   namespace Script {
@@ -11,7 +11,7 @@ namespace L {
       size_t _read_size;
       char* _write;
       uint32_t _line;
-      enum State : byte {
+      enum State : uint8_t {
         Started, Done, Comment,
       } _state;
       bool _literal : 1, _last_read : 1;

@@ -2,7 +2,6 @@
 
 #include "../system/intrinsics.h"
 #include "TaskSystem.h"
-#include "../types.h"
 
 #define L_SCOPED_LOCK(lock) L::ScopedLock LOCK__ ## __LINE__(lock);
 

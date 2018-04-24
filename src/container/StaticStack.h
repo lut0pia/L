@@ -1,13 +1,12 @@
 #pragma once
 
 #include "../dev/debug.h"
-#include "../types.h"
 
 namespace L {
   template <int n, class T>
   class StaticStack {
   private:
-    byte _array[n*sizeof(T)];
+    uint8_t _array[n*sizeof(T)];
     uintptr_t _size;
 
   public:

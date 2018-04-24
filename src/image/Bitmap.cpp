@@ -23,10 +23,10 @@ Color Bitmap::linear(float x,float y) const {
     at(xi+1,yi+1)
   };
   Vector4f tmp(Interpolation<Vector4f,2>::linear(cell,weight));
-  return Color((byte)clamp(tmp[0],0.f,255.f),
-    (byte)clamp(tmp[1],0.f,255.f),
-               (byte)clamp(tmp[2],0.f,255.f),
-               (byte)clamp(tmp[3],0.f,255.f));
+  return Color((uint8_t)clamp(tmp[0],0.f,255.f),
+    (uint8_t)clamp(tmp[1],0.f,255.f),
+               (uint8_t)clamp(tmp[2],0.f,255.f),
+               (uint8_t)clamp(tmp[3],0.f,255.f));
 }
 
 Color Bitmap::cubic(float x,float y) const {
@@ -54,10 +54,10 @@ Color Bitmap::cubic(float x,float y) const {
     at(xi+2,yi+2)
   };
   Vector4f tmp(Interpolation<Vector4f,2>::cubic(cell,weight));
-  return Color((byte)clamp(tmp[0],0.f,255.f),
-    (byte)clamp(tmp[1],0.f,255.f),
-               (byte)clamp(tmp[2],0.f,255.f),
-               (byte)clamp(tmp[3],0.f,255.f));
+  return Color((uint8_t)clamp(tmp[0],0.f,255.f),
+    (uint8_t)clamp(tmp[1],0.f,255.f),
+               (uint8_t)clamp(tmp[2],0.f,255.f),
+               (uint8_t)clamp(tmp[3],0.f,255.f));
 }
 Bitmap Bitmap::sub(int x,int y,int width,int height) const {
   Bitmap wtr;
@@ -164,14 +164,14 @@ void Bitmap::blur(int factor) {
             if(m>=1) {
               pixelCount += m;
               c = copy(i,j);
-              rt += (byte)(c.r()*m);
-              gt += (byte)(c.g()*m);
-              bt += (byte)(c.b()*m);
+              rt += (uint8_t)(c.r()*m);
+              gt += (uint8_t)(c.g()*m);
+              bt += (uint8_t)(c.b()*m);
             }
           }
-      c.r() = (byte)(rt / pixelCount);
-      c.g() = (byte)(gt / pixelCount);
-      c.b() = (byte)(bt / pixelCount);
+      c.r() = (uint8_t)(rt / pixelCount);
+      c.g() = (uint8_t)(gt / pixelCount);
+      c.b() = (uint8_t)(bt / pixelCount);
       (*this)(x,y) = c;
     }
 }

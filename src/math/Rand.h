@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../types.h"
+#include <cstdint> 
 
 namespace L {
   class Rand {
@@ -10,17 +10,17 @@ namespace L {
 
     public:
       static uint64_t next();
-      static byte nextByte();
+      static uint8_t nextByte();
       static int nextInt();
       static float nextFloat();
 
       static uint64_t next(uint64_t min, uint64_t max); // Returns a random unsigned integer between min and max
       static int next(int min, int max); // Returns a random integer between min and max
       static float next(float min, float max); // Returns a random float between min and max
-      static void fill(byte*,size_t);
+      static void fill(uint8_t*,size_t);
       template <class T>
       inline static T next() {
-        byte wtr[sizeof(T)];
+        uint8_t wtr[sizeof(T)];
         fill(wtr,sizeof(T));
         return *((T*)&wtr);
       }

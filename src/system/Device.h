@@ -28,7 +28,7 @@ namespace L {
     static const Device& device(void* id);
     static void init();
     static void update();
-    static void processReport(void* id, const byte* data, size_t size);
+    static void processReport(void* id, const uint8_t* data, size_t size);
     static bool newEvent(Event&);
   };
 }

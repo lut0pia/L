@@ -2,7 +2,6 @@
 
 #include "../container/Raw.h"
 #include "../macros.h"
-#include "../types.h"
 
 namespace L {
   class Semaphore {

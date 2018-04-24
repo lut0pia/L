@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../types.h"
+#include <cstdint> 
 
 namespace L {
   namespace TaskSystem {

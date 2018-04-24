@@ -17,7 +17,7 @@ namespace L {
         K _key;
         V _value;
       };
-      byte _data[sizeof(Layout)];
+      uint8_t _data[sizeof(Layout)];
       inline Layout& layout() { return *(Layout*)&_data; }
       inline const Layout& layout() const { return *(Layout*)&_data; }
     public:

@@ -62,9 +62,9 @@ namespace L {
   public:
     STB_vorbis() : Interface{"ogg"} {}
 
-    Ref<AudioStream> from(const byte* data, size_t size) override {
+    Ref<AudioStream> from(const uint8_t* data, size_t size) override {
       int error;
-      byte* copied_data((byte*)Memory::alloc(size));
+      uint8_t* copied_data((uint8_t*)Memory::alloc(size));
       memcpy(copied_data, data, size);
       if(stb_vorbis* handle = stb_vorbis_open_memory(copied_data, size, &error, nullptr))
         return ref<VorbisStream>(handle, copied_data, size);

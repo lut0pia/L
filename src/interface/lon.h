@@ -7,7 +7,7 @@ namespace L {
     static MaterialLON instance;
   public:
     MaterialLON() : Interface{"lon"} {}
-    Ref<Material> from(const byte* str, size_t size) override {
+    Ref<Material> from(const uint8_t* str, size_t size) override {
       Var data;
       {
         Script::Compiler compiler;

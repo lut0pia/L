@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../system/Memory.h"
-#include "../types.h"
 
 namespace L {
   template <class T>
@@ -10,7 +9,7 @@ namespace L {
     static const size_t ideal_byte_size = 4*1024u;
     struct Slot {
       Slot* _next;
-      byte _padding[sizeof(T)-sizeof(Slot*)];
+      uint8_t _padding[sizeof(T)-sizeof(Slot*)];
     };
     static_assert(sizeof(Slot)==sizeof(T), "Malformed Pool Slot");
 

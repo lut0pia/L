@@ -3,7 +3,6 @@
 #include "../container/Array.h"
 #include "../dynamic/Variable.h"
 #include "../text/Symbol.h"
-#include "../types.h"
 
 namespace L {
   namespace Script {

@@ -8,7 +8,7 @@ namespace L {
   public:
     MIDI() : Interface{"mid","midi"} {}
 
-    Ref<Audio::MidiSequence> from(const byte* data, size_t size) override {
+    Ref<Audio::MidiSequence> from(const uint8_t* data, size_t size) override {
       if(size<18 || memcmp(data, "MThd", 4))
         return nullptr;
 
@@ -21,14 +21,14 @@ namespace L {
         return nullptr;
 
       Ref<Audio::MidiSequence> wtr(ref<Audio::MidiSequence>());
-      const byte* track_heads[32];
+      const uint8_t* track_heads[32];
       uint32_t current_times[32]{};
       uint8_t previous_commands[32]{};
       uint32_t global_current_time(0);
       uint32_t us_per_tick(500000/division);
 
       { // Gather track heads
-        const byte* head(data+14);
+        const uint8_t* head(data+14);
         for(uint32_t track(0); track<track_count; track++) {
           if(memcmp(head, "MTrk", 4))
             return nullptr;
@@ -42,7 +42,7 @@ namespace L {
         uint32_t smallest_time(UINT32_MAX);
         uint32_t best_track(0);
         for(uint32_t track(0); track<track_count; track++) {
-          const byte* head(track_heads[track]);
+          const uint8_t* head(track_heads[track]);
           if(!head) continue; // Track is over
 
           const uint32_t current_time(current_times[track]);
@@ -57,7 +57,7 @@ namespace L {
           break;
 
         // Add event from best track
-        const byte*& head(track_heads[best_track]);
+        const uint8_t*& head(track_heads[best_track]);
         uint32_t& current_time(current_times[best_track]);
         uint8_t& previous_command(previous_commands[best_track]);
         const uint32_t delta_time(read_variable(head));
@@ -114,7 +114,7 @@ namespace L {
 
       return wtr;
     }
-    static uint32_t read_int(const byte* data, size_t size = 4) {
+    static uint32_t read_int(const uint8_t* data, size_t size = 4) {
       uint32_t wtr(0);
       switch(size) {
         case 4: wtr |= uint32_t(*data++);
@@ -127,7 +127,7 @@ namespace L {
       }
       return wtr;
     }
-    static uint32_t read_variable(const byte*& data) {
+    static uint32_t read_variable(const uint8_t*& data) {
       uint32_t wtr(0);
       while(true) {
         const uint8_t datum(*data++);

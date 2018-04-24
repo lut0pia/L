@@ -13,7 +13,7 @@ namespace L {
       float _scale;
       int _ascent, _descent;
     public:
-      STBFont(const byte* data, uint32_t pixels) {
+      STBFont(const uint8_t* data, uint32_t pixels) {
         if(!stbtt_InitFont(&_font, data, stbtt_GetFontOffsetForIndex(data, 0)))
           error("stbtt_InitFont failed");
         stbtt_GetFontVMetrics(&_font, &_ascent, &_descent, &_lineheight);
@@ -38,7 +38,7 @@ namespace L {
     };
   public:
     STB_truetype() : Interface{"ttf"} {}
-    Ref<Font> from(const byte* data, size_t size) override {
+    Ref<Font> from(const uint8_t* data, size_t size) override {
       return ref<STBFont>(data, 16);
     }
   };

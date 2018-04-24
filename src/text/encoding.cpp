@@ -20,17 +20,17 @@ const char* L::UTF16toUTF8(uint16_t utf16) {
   return wtr;
 }
 uint32_t L::UTF8toUTF32(const char* str, int* size) {
-  uint32_t wtr((byte)*str);
+  uint32_t wtr((uint8_t)*str);
   if(wtr>>5==0x6) { // 2 bytes
     wtr <<= 6;
-    wtr |= ((byte)*(++str)) & bitmask(6);
+    wtr |= ((uint8_t)*(++str)) & bitmask(6);
     wtr &= bitmask(11);
     *size = 2;
   } else if(wtr>>4==0xE) { // 3 bytes
     wtr <<= 6;
-    wtr |= ((byte)*(++str)) & bitmask(6);
+    wtr |= ((uint8_t)*(++str)) & bitmask(6);
     wtr <<= 6;
-    wtr |= ((byte)*(++str)) & bitmask(6);
+    wtr |= ((uint8_t)*(++str)) & bitmask(6);
     wtr &= bitmask(16);
     *size = 3;
   } else *size = 1;
@@ -51,7 +51,7 @@ String L::ANSItoUTF8(String str) {
     i += String(u).size()-1; \
     break;
   for(size_t i(0); i<str.size(); i++) {
-    switch((byte)str[i]) {
+    switch((uint8_t)str[i]) {
         ATU(0x80,"€")               ATU(0x82,"‚") ATU(0x83,"ƒ") ATU(0x84,"„") ATU(0x85,"…") ATU(0x86,"†") ATU(0x87,"‡")
         ATU(0x88,"ˆ") ATU(0x89,"‰") ATU(0x8A,"Š") ATU(0x8B,"‹") ATU(0x8C,"Œ")               ATU(0x8E,"Ž")
         ATU(0x91,"‘") ATU(0x92,"’") ATU(0x93,"“") ATU(0x94,"”") ATU(0x95,"•") ATU(0x96,"–") ATU(0x97,"—")

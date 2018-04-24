@@ -26,13 +26,13 @@ namespace L {
         const size_t file_size(fs.size());
         Buffer buffer(file_size);
         fs.read(buffer.data(), file_size);
-        return from((const byte*)buffer.data(), file_size);
+        return from((const uint8_t*)buffer.data(), file_size);
       } else return nullptr;
     }
     virtual Ref<T> from(Stream& is) {
       return nullptr;
     }
-    virtual Ref<T> from(const byte* data, size_t size) {
+    virtual Ref<T> from(const uint8_t* data, size_t size) {
       BufferStream bs((char*)data, size);
       return from(bs);
     }
@@ -44,7 +44,7 @@ namespace L {
     virtual bool to(const T& v, Stream& os) {
       return false;
     }
-    virtual bool to(const T& v, byte* data, size_t size) {
+    virtual bool to(const T& v, uint8_t* data, size_t size) {
       return false;
     }
 
@@ -55,7 +55,7 @@ namespace L {
             return object;
       return nullptr;
     }
-    static Ref<T> from_bytes(const byte* data, size_t size, const char* ext) {
+    static Ref<T> from_bytes(const uint8_t* data, size_t size, const char* ext) {
       if(auto interfaces = _instances.find(ext))
         for(auto interface : *interfaces)
           if(Ref<T> object = interface->from(data, size))

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../stream/Stream.h"
-#include "../types.h"
 
 namespace L {
   class Fixed {

@@ -55,7 +55,7 @@ void Variable::make(const TypeDescription* td) {
 }
 void Variable::cast(const TypeDescription* td,Cast cast){
   if(_td==td) return; // It's already the right type
-  byte tmp[256];
+  uint8_t tmp[256];
   cast(tmp,value()); // Cast to temporary
   this->~Variable(); // Destruct currently held value
   _td = td; // Change current type
@@ -69,7 +69,7 @@ void Variable::cast(const TypeDescription* td,Cast cast){
   else{ \
     Cast c; \
     if(type()->op && (c = other.type()->casts.get(_td, nullptr))){ /* This type has operator and other can become this type */\
-      byte tmp[256]; \
+      uint8_t tmp[256]; \
       c(tmp,other.value()); /* Cast other to tmp */\
       type()->op(value(),tmp); \
       type()->dtr(tmp); /* Destruct temporary value */\

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../types.h"
+#include <cstdint> 
 
 #if _MSC_VER
 # include <Windows.h>

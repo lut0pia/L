@@ -1,7 +1,7 @@
 #pragma once
 
+#include <cstdint> 
 #include "../dev/debug.h"
-#include "../types.h"
 
 #define L_ALLOCABLE(...) public: \
 inline void* operator new(size_t SIZE) { L_ASSERT(SIZE==sizeof(__VA_ARGS__)); return L::Memory::allocType<__VA_ARGS__>();} \

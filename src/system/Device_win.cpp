@@ -80,7 +80,7 @@ void Device::update(){
   }
 }
 
-void Device::processReport(void* id,const byte* data,size_t size){
+void Device::processReport(void* id,const uint8_t* data,size_t size){
   for(auto&& device : _devices){
     if(device._id==id){
       const DeviceSystem* deviceSystem((const DeviceSystem*)device._systemData);
@@ -130,7 +130,7 @@ void Device::processReport(void* id,const byte* data,size_t size){
               break;
           }
           device._axes[index] = (abs(value)>.16f) ? value : 0.f;
-          //out << "Value " << i << " at " << usageValue << " (" << ntos<2>((byte)value,8) << ")" << '\n';
+          //out << "Value " << i << " at " << usageValue << " (" << ntos<2>((uint8_t)value,8) << ")" << '\n';
           index++;
         }
       }

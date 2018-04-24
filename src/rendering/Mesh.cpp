@@ -53,7 +53,7 @@ void Mesh::load(GLenum mode, GLsizei count, const void* data, GLsizeiptr size, c
   // Compute bounds
   _bounds = (*(Vector3f*)data);
   for(uintptr_t i(1);i<count;i++)
-    _bounds.add(*(Vector3f*)((byte*)data+stride*i));
+    _bounds.add(*(Vector3f*)((uint8_t*)data+stride*i));
 }
 void Mesh::load(const MeshBuilder& mb, GLenum mode, const std::initializer_list<Attribute>& attributes) {
   load(mode, GLsizei(mb.vertexCount()), mb.vertices(), mb.verticesSize(), attributes, mb.indices(), GLsizei(mb.indexCount()));
