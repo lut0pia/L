@@ -2,6 +2,7 @@
 
 #include "../container/IterablePool.h"
 #include "../dev/profiling.h"
+#include "../dynamic/Type.h"
 #include "../parallelism/TaskSystem.h"
 
 namespace L {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdio>
+#include <cstdarg>
 #include "../macros.h"
 #include "../parallelism/TaskSystem.h"
 #include "../time/Time.h"
