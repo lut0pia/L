@@ -9,19 +9,27 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/smp/Ldbg",
-            "args": [],
-            "stopAtEntry": false,
             "cwd": "${workspaceFolder}/smp",
-            "environment": [],
-            "externalConsole": true,
             "MIMode": "gdb",
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                }
-            ]
+            "preLaunchTask": "build-dbg",
+        },
+        {
+            "name": "(gdb) Development",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/smp/Ldev",
+            "cwd": "${workspaceFolder}/smp",
+            "MIMode": "gdb",
+            "preLaunchTask": "build-dev",
+        },
+        {
+            "name": "(gdb) Release",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/smp/L",
+            "cwd": "${workspaceFolder}/smp",
+            "MIMode": "gdb",
+            "preLaunchTask": "build-rls",
         }
     ]
 }

@@ -1,0 +1,22 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build-dbg",
+            "type": "shell",
+            "command": "./build.sh dbg"
+        },
+        {
+            "label": "build-dev",
+            "type": "shell",
+            "command": "./build.sh dev"
+        },
+        {
+            "label": "build-rls",
+            "type": "shell",
+            "command": "./build.sh rls"
+        }
+    ]
+}
