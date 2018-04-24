@@ -57,7 +57,7 @@ void Texture::generate_mipmap() {
 
 template<> void L::post_load_resource(ResourceSlot<Texture>& slot) {
   if(Ref<Texture> tex = slot.value) {
-    TaskSystem::change_thread_mask(1);
+    L_SCOPE_THREAD_MASK(1);
     tex->parameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     tex->parameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 

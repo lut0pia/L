@@ -55,7 +55,7 @@ namespace L {
       if(stage>0)
         stages[stage-1].size = str+size-stages[stage-1].start;
 
-      TaskSystem::change_thread_mask(1); // Go to main thread
+      L_SCOPE_THREAD_MASK(1); // Go to main thread
 
       // Compile shaders
       uint8_t shaders_mem[max_stage_count*sizeof(Shader)];

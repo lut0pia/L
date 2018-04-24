@@ -13,7 +13,7 @@ namespace L {
       int width, height, comp;
       uint8_t* img(stbi_load_from_memory(data, int(size), &width, &height, &comp, 4));
       if(img) {
-        TaskSystem::change_thread_mask(1); // Go to main thread
+        L_SCOPE_THREAD_MASK(1); // Go to main thread
         Ref<Texture> wtr(ref<Texture>(0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, img));
         stbi_image_free(img);
         return wtr;

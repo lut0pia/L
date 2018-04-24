@@ -150,7 +150,11 @@ void TaskSystem::join() {
   while(fibers[local_current_fiber].counter)
     yield_internal();
 }
-void TaskSystem::change_thread_mask(uint32_t new_mask) {
+
+uint32_t TaskSystem::thread_mask() {
+  return fibers[current_fiber].thread_mask;
+}
+void TaskSystem::thread_mask(uint32_t new_mask) {
   uint32_t& thread_mask(fibers[current_fiber].thread_mask);
   if(thread_mask != new_mask) {
     thread_mask = new_mask;

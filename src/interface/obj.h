@@ -57,7 +57,7 @@ namespace L {
         {2,GL_FLOAT,GL_FALSE},
         {3,GL_FLOAT,GL_FALSE},
       };
-      TaskSystem::change_thread_mask(1); // Go to main thread
+      L_SCOPE_THREAD_MASK(1); // Go to main thread
       return ref<Mesh>(mb, GL_TRIANGLES, attributes);
     }
   };
