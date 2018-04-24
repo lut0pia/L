@@ -1,6 +1,6 @@
 #pragma once
 
-#define L_GLSL_INTRO "#version 140\n#extension GL_ARB_explicit_attrib_location : require\n#extension GL_ARB_uniform_buffer_object : require\n"
+#define L_GLSL_INTRO "#version 130\n#extension GL_ARB_explicit_attrib_location : require\n#extension GL_ARB_uniform_buffer_object : require\n"
 #define L_SHAREDUNIFORM_VIEW 0
 #define L_SHAREDUNIFORM_INVVIEW (L_SHAREDUNIFORM_VIEW+sizeof(Matrix44f))
 #define L_SHAREDUNIFORM_VIEWPROJ (L_SHAREDUNIFORM_INVVIEW+sizeof(Matrix44f))
@@ -15,7 +15,7 @@
 #define L_SHAREDUNIFORM_FRAME (L_SHAREDUNIFORM_VIEWPORT_PIXEL_SIZE+sizeof(Vector4f))
 #define L_SHAREDUNIFORM_SIZE (L_SHAREDUNIFORM_FRAME+sizeof(int))
 #define L_SHAREDUNIFORM \
-"layout (std140) uniform Shared {" \
+"layout (shared) uniform Shared {" \
 "mat4 view, invView, viewProj, invViewProj, prevViewProj;" \
 "vec4 ditherMatrix[256];" \
 "ivec4 ditherMatrixSize;" \
