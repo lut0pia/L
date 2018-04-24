@@ -1,5 +1,8 @@
 #!/bin/sh
 
+configuration=${1:-development} #Configuration is development by default
+mode=${2:-build}
+
 # Premake
 (git clone --depth 1 https://github.com/premake/premake-core pmk) || # Attempt to clone
 (!(git status pmk | grep up-to-date) && cd pmk && git pull) # Otherwise pull if not up-to-date
@@ -10,15 +13,26 @@ if [ ! -e premake5 ] || [ premake5 -ot pmk ] ; then # If it hasn't been built or
 fi
 
 # L
-configuration=${1:-development} #Configuration is development by default
 case $configuration in
-   "debug") exe="Ldbg"
-   ;;
-   "development") exe="Ldev"
-   ;;
-   "release") exe="L"
-   ;;
+  "dbg")
+    exe="Ldbg"
+    configuration=debug
+  ;;
+  "dev")
+    exe="Ldev"
+    configuration=development
+  ;;
+  "rls")
+    exe="L"
+    configuration=release
+  ;;
 esac
-./premake5 gmake && # Run premake
-(cd prj/gmake && make -j 4 config=$configuration) && # Run make
-(cd smp && ./$exe) # Execute program
+
+if
+  ./premake5 gmake && # Run premake
+  (cd prj/gmake && make -j 4 config=$configuration) # Run make
+then
+  if [ $mode = "run" ] ; then
+    (cd smp && ./$exe) # Execute program
+  fi
+fi
