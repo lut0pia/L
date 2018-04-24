@@ -4,10 +4,9 @@
 #include <X11/Xlib.h>
 #include <X11/keysymdef.h>
 #include <GL/glx.h>
-#include <GL/glu.h>
 
 #include "System.h"
-#include "../gl/GL.h"
+#include "../rendering/GL.h"
 #include "../stream/CFileStream.h"
 
 using namespace L;
