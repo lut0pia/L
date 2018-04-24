@@ -154,6 +154,7 @@ void TaskSystem::change_thread_mask(uint32_t new_mask) {
   uint32_t& thread_mask(fibers[current_fiber].thread_mask);
   if(thread_mask != new_mask) {
     thread_mask = new_mask;
-    yield();
+    if(!(new_mask&(1<<thread_index)))
+      yield(); // Only yield if the new mask doesn't allow execution anymore
   }
 }
