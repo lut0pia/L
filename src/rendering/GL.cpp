@@ -113,6 +113,8 @@ void GL::init() {
   glDebugMessageCallback(debug_callback, NULL);
   glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 #endif
+
+  glEnable(GL_CULL_FACE);
 }
 
 void GL::draw(GLenum mode, GLsizei count) {

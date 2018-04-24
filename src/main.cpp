@@ -15,7 +15,6 @@ void mainjob(void*) {
   Device::init();
   Network::init();
   Audio::init();
-  glEnable(GL_CULL_FACE);
 
 #ifdef L_DEBUG
   ScriptServer* server(nullptr);
