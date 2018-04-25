@@ -39,6 +39,7 @@ namespace L {
   public:
     STB_truetype() : Interface{"ttf"} {}
     Ref<Font> from(const uint8_t* data, size_t size) override {
+      L_SCOPE_THREAD_MASK(1);
       return ref<STBFont>(data, 16);
     }
   };

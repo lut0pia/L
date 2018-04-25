@@ -67,7 +67,7 @@ int main(int argc, const char* argv[]) {
 
   {
     Script::Context ini_context;
-    ini_context.executeInside(Array<Var>{Resource<Script::CodeFunction>::get("ini.ls", true).ref()});
+    ini_context.executeInside(Array<Var>{Resource<Script::CodeFunction>::get("ini.ls").ref()});
   }
 
   const char* window_name(Settings::get_string("window_name", "L Engine Sample"));
@@ -79,7 +79,7 @@ int main(int argc, const char* argv[]) {
   else
     Window::open(window_name, Settings::get_int("resolution_x", 1024), Settings::get_int("resolution_y", 768), window_flags);
 
-  TaskSystem::push(mainjob, nullptr, TaskSystem::MainThread);
+  TaskSystem::push(mainjob, nullptr, 1, TaskSystem::MainTask);
   TaskSystem::init();
   return 0;
 }

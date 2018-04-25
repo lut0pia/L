@@ -16,31 +16,32 @@ namespace L {
     Symbol id, path;
     Date mtime;
     bool persistent : 1;
-    bool loading : 1;
+    enum : uint32_t {
+      Unloaded, Loading, Loaded,
+    } state;
 
-    inline ResourceSlotGeneric(const char* url) : id(id), path(Symbol(url, min<size_t>(strlen(url), strchr(url, '?')-url))),
-      mtime(Date::now()), persistent(false), loading(false) {}
+    inline ResourceSlotGeneric(const char* url) : id(url), path(url, min<size_t>(strlen(url), strchr(url, '?')-url)),
+      mtime(Date::now()), persistent(false), state(Unloaded) {}
     Symbol parameter(const char* key);
   };
   template <class T>
   struct ResourceSlot : public ResourceSlotGeneric {
     using ResourceSlotGeneric::ResourceSlotGeneric;
     Ref<T> value;
+    void load() {
+      if(state==Unloaded && cas((uint32_t*)&state, Unloaded, Loading)==Unloaded) {
+        TaskSystem::push([](void* p) {
+          ResourceSlot<T>& slot(*(ResourceSlot<T>*)p);
+          L_SCOPE_MARKERF("load_resource(%s)", slot.id);
+          load_resource(slot);
+          post_load_resource(slot);
+          slot.state = Loaded;
+        }, this, uint32_t(-2), TaskSystem::NoParent);
+      }
+    }
   };
 
-  template <class T> void load_resource_async(ResourceSlot<T>& slot) {
-    slot.loading = true;
-    TaskSystem::push([](void* p) {
-      ResourceSlot<T>& slot(*(ResourceSlot<T>*)p);
-      L_SCOPE_MARKERF("load_resource(%s)", slot.id);
-      load_resource(slot);
-      slot.loading = false;
-    }, &slot, TaskSystem::NoParent);
-  }
-  template <class T> void load_resource(ResourceSlot<T>& slot) {
-    slot.value = Interface<T>::from_path(slot.path);
-    post_load_resource(slot);
-  }
+  template <class T> void load_resource(ResourceSlot<T>& slot) { slot.value = Interface<T>::from_path(slot.path); }
   template <class T> void post_load_resource(ResourceSlot<T>& slot) { }
 
   template <class T>
@@ -55,28 +56,35 @@ namespace L {
   public:
     constexpr Resource() : _slot(nullptr) {}
     constexpr Resource(Slot* slot) : _slot(slot) {}
-    inline T& operator*() { return *_slot->value; }
-    inline const T& operator*() const { return *_slot->value; }
-    inline T* operator->() { return _slot->value; }
-    inline const T* operator->() const { return _slot->value; }
-    inline operator bool() const { return _slot && !_slot->loading && _slot->value; }
-    inline const Ref<T>& ref() { return _slot->value; }
-
-    friend Stream& operator<(Stream& s, const Resource& v) {
-      if(v) s < v._slot->path;
-      else s < Symbol("null");
-      return s;
+    inline T& operator*() { flush(); return *_slot->value; }
+    inline const T& operator*() const { flush(); return *_slot->value; }
+    inline T* operator->() { flush(); return _slot->value; }
+    inline const T* operator->() const { flush(); return _slot->value; }
+    inline const Ref<T>& ref() { flush(); return _slot->value; }
+    inline operator bool() const {
+      if(_slot) {
+        _slot->load();
+        return _slot->state == ResourceSlotGeneric::Loaded && _slot->value;
+      } else return false;
     }
+    inline void flush() const {
+      if(_slot && _slot->state != ResourceSlotGeneric::Loaded) {
+        if(_slot->state == ResourceSlotGeneric::Unloaded)
+          _slot->load();
+        while(_slot->state == ResourceSlotGeneric::Loading)
+          TaskSystem::yield();
+      }
+    }
+
+    friend Stream& operator<(Stream& s, const Resource& v) { return s < (v._slot ? v._slot->id : Symbol("null")); }
     friend Stream& operator>(Stream& s, Resource& v) {
-      Symbol path;
-      s > path;
-      if(path!=Symbol("null"))
-        v = Resource::get(path);
-      else v = Resource();
+      Symbol id;
+      s > id;
+      v = id!=Symbol("null") ? Resource::get(id) : Resource();
       return s;
     }
 
-    static Resource get(const char* url, bool synchronous = false) {
+    static Resource get(const char* url) {
       static Lock lock;
       L_SCOPED_LOCK(lock);
 
@@ -85,9 +93,6 @@ namespace L {
         return Resource(*found);
 
       Resource wtr(new(_pool.allocate())Slot(url));
-      Slot& slot(*wtr._slot);
-      if(synchronous) load_resource<T>(slot);
-      else load_resource_async<T>(slot);
       _table[id] = wtr._slot;
       _slots.push(wtr._slot);
       return wtr;
@@ -96,10 +101,11 @@ namespace L {
       if(!_slots.empty()) {
         static uintptr_t index(0);
         Slot& slot(*_slots[index%_slots.size()]);
-        if(!slot.persistent) { // Persistent resources don't hot reload
+        if(!slot.persistent // Persistent resources don't hot reload
+           && slot.state == ResourceSlotGeneric::Loaded) { // No reload if it hasn't been loaded in the first place
           Date file_mtime;
           if(File::mtime(slot.path, file_mtime) && slot.mtime<file_mtime) {
-            load_resource_async<T>(slot);
+            slot.state = ResourceSlotGeneric::Unloaded;
             slot.mtime = Date::now();
           }
         }

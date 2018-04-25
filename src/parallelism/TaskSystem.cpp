@@ -116,14 +116,15 @@ uint32_t TaskSystem::thread_count() {
 uint32_t TaskSystem::fiber_id() {
   return current_fiber;
 }
-void TaskSystem::push(Func f, void* d, uint32_t flags) {
+void TaskSystem::push(Func f, void* d, uint32_t thread_mask, uint32_t flags) {
+  if(!initialized && !(flags&MainTask))
+    return f(d);
   L_SCOPE_MARKER("Pushing task");
   FiberSlot* parent;
   if(initialized && !(flags&NoParent)) {
     parent = fibers+current_fiber;
     atomic_add(parent->counter, 1);
   } else parent = nullptr;
-  uint32_t thread_mask(flags&MainThread ? 1 : -1);
   while(true) {
     for(uintptr_t i(0); i<actual_fiber_count; i++) {
       FiberSlot& slot(fibers[i]);
