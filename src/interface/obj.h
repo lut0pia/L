@@ -7,49 +7,71 @@ namespace L {
     static OBJ instance;
   private:
     struct Vertex {
-      Vector3f _vertex;
-      Vector2f _uv;
-      Vector3f _normal;
+      Vector3f position;
+      Vector2f uv;
+      Vector3f normal;
     };
 
   public:
     OBJ() : Interface{"obj"} {}
 
-    Ref<Mesh> from(Stream& stream) override {
-      Array<Vector3f> _vertices, _normals;
-      Array<Vector2f> _uvs;
+    Ref<Mesh> from(const uint8_t* data, size_t size) override {
+      Array<Vector3f> positions, normals;
+      Array<Vector2f> uvs;
+      Vertex vertex{}, firstVertex{}, lastVertex{};
+      Vector3f scalars;
+      Vector3i indices;
       MeshBuilder mb;
-      while(!stream.end()) {
-        char buffer[1024];
-        stream.line(buffer, sizeof(buffer));
-        const Array<String> line(String(buffer).explode(' '));
-        if(line.empty()) continue;
-        else if(line[0]=="v") _vertices.push(atof(line[1]), atof(line[2]), atof(line[3]));
-        else if(line[0]=="vt") _uvs.push(atof(line[1]), 1.f-atof(line[2])); // OpenGL has y going bottom up
-        else if(line[0]=="vn") _normals.push(atof(line[1]), atof(line[2]), atof(line[3]));
-        else if(line[0]=="f") {
-          Vertex vertex{}, firstVertex{}, lastVertex{};
-          for(uintptr_t i(1); i<line.size(); i++) {
-            const Array<String> indices(line[i].explode('/'));
-
-            switch(indices.size()) {
-              case 3: vertex._normal = _normals[atoi(indices[2])-1];
-              case 2: if(!_uvs.empty())vertex._uv = _uvs[atoi(indices[1])-1];
-                      else vertex._normal = _normals[atoi(indices[1])-1];
-              case 1: vertex._vertex = _vertices[atoi(indices[0])-1];
+      const char *cur((const char*)data), *end(cur+size);
+      while(cur<end) {
+        switch(*cur) { // Line start
+          case 'v':
+            cur += 1;
+            switch(*cur) {
+              case ' ': // Position
+                read_scalars(cur, scalars);
+                ignore_line(cur);
+                positions.push(scalars);
+                break;
+              case 't': // Texture coordinates
+                cur += 1;
+                read_scalars(cur, scalars);
+                ignore_line(cur);
+                uvs.push(scalars.x(), 1.f-scalars.y());
+                break;
+              case 'n': // Normal
+                cur += 1;
+                read_scalars(cur, scalars);
+                ignore_line(cur);
+                normals.push(scalars);
+                break;
+              default: ignore_line(cur); break;
             }
+            break;
+          case 'f':
+            cur += 1;
+            for(uintptr_t i(0); read_indices(cur, indices); i++) {
+              if(indices.z()>0) vertex.normal = normals[indices.z()-1];
+              if(indices.y()>0) {
+                if(!uvs.empty()) vertex.uv = uvs[indices.y()-1];
+                else vertex.normal = normals[indices.y()-1];
+              }
+              vertex.position = positions[indices.x()-1];
 
-            if(i==1) firstVertex = vertex;
-            else if(i>3) {
-              mb.addVertex(&firstVertex, sizeof(Vertex));
-              mb.addVertex(&lastVertex, sizeof(Vertex));
+              if(i==0) firstVertex = vertex;
+              else if(i>2) {
+                mb.addVertex(&firstVertex, sizeof(Vertex));
+                mb.addVertex(&lastVertex, sizeof(Vertex));
+              }
+              mb.addVertex(&vertex, sizeof(Vertex));
+              lastVertex = vertex;
             }
-            mb.addVertex(&vertex, sizeof(Vertex));
-            lastVertex = vertex;
-          }
+            break;
+          default: ignore_line(cur); break;
         }
       }
-      if(_normals.empty())
+
+      if(normals.empty())
         mb.computeNormals(0, sizeof(Vector2f)+sizeof(Vector3f), sizeof(Vertex));
 
       static const std::initializer_list<Mesh::Attribute> attributes = {
@@ -59,6 +81,29 @@ namespace L {
       };
       L_SCOPE_THREAD_MASK(1); // Go to main thread
       return ref<Mesh>(mb, GL_TRIANGLES, attributes);
+    }
+    inline void ignore_line(const char*& c) {
+      while(*c!='\n' && *c!='\r') c++;
+      while(*c=='\n' || *c=='\r') c++;
+    }
+    inline void read_scalars(const char*& c, Vector3f& scalars) {
+      for(uintptr_t i(0); i<3; i++) {
+        while(*c==' ') c++;
+        scalars[i] = atof(c);
+        while(!Stream::isspace(*c)) c++;
+      }
+    }
+    inline bool read_indices(const char*& c, Vector3i& indices) {
+      indices = 0;
+      while(Stream::isspace(*c)) c++;
+      for(uintptr_t i(0); i<3; i++) {
+        indices[i] = atoi(c);
+        while(isdigit(*c)) c++;
+        while(*c=='/') c++;
+        if(Stream::isspace(*c))
+          break;
+      }
+      return indices.x()>0;
     }
   };
   OBJ OBJ::instance;
