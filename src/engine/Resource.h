@@ -18,10 +18,13 @@ namespace L {
     bool persistent : 1;
     bool loading : 1;
 
+    inline ResourceSlotGeneric(const char* url) : id(id), path(Symbol(url, min<size_t>(strlen(url), strchr(url, '?')-url))),
+      mtime(Date::now()), persistent(false), loading(false) {}
     Symbol parameter(const char* key);
   };
   template <class T>
-  struct ResourceSlot : ResourceSlotGeneric {
+  struct ResourceSlot : public ResourceSlotGeneric {
+    using ResourceSlotGeneric::ResourceSlotGeneric;
     Ref<T> value;
   };
 
@@ -81,11 +84,8 @@ namespace L {
       if(Slot** found = _table.find(id))
         return Resource(*found);
 
-      Resource wtr(new(_pool.construct())Slot);
+      Resource wtr(new(_pool.allocate())Slot(url));
       Slot& slot(*wtr._slot);
-      slot.id = id;
-      slot.path = Symbol(url, min<size_t>(strlen(url), strchr(url, '?')-url)); // Remove parameter part
-      slot.mtime = Date::now();
       if(synchronous) load_resource<T>(slot);
       else load_resource_async<T>(slot);
       _table[id] = wtr._slot;
