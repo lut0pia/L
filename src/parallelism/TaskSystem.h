@@ -10,12 +10,14 @@ namespace L {
       MainTask = 1<<2,
     };
     typedef void(*Func)(void*);
+    typedef bool(*CondFunc)(void*);
 
     void init();
     uint32_t thread_count();
     uint32_t fiber_id();
     void push(Func, void* = nullptr, uint32_t thread_mask = -1, uint32_t flags = None);
     void yield();
+    void yield_until(CondFunc, void* = nullptr);
     void join();
 
     uint32_t thread_mask();

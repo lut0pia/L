@@ -31,10 +31,18 @@ enum FiberState : uint32_t {
 struct FiberSlot {
   FiberHandle handle;
   TaskSystem::Func func;
+  TaskSystem::CondFunc cond_func;
   void* data;
+  void* cond_data;
   FiberSlot* parent;
   uint32_t state;
   uint32_t counter, thread_mask;
+
+  inline bool check_condition() {
+    if(cond_func && cond_func(cond_data))
+      cond_func = nullptr;
+    return !cond_func;
+  }
 };
 
 bool initialized(false);
@@ -85,7 +93,8 @@ void thread_func(void* arg) {
   while(fibers[0].func) { // Exit when original task is over
     FiberSlot& slot(fibers[current_fiber]);
     if(slot.state==Ready && cas((uint32_t*)&slot.state, Ready, Running)==Ready) {
-      if(slot.thread_mask&(1<<local_thread_index)) {
+      if(slot.thread_mask&(1<<local_thread_index)
+         && slot.check_condition()) {
         switch_to_fiber(slot.handle);
         starve_start = Time::now();
       }
@@ -145,11 +154,16 @@ void TaskSystem::yield() {
   L_SCOPE_MARKER("Yield");
   yield_internal();
 }
+void TaskSystem::yield_until(CondFunc cond_func, void* cond_data) {
+  if(!cond_func(cond_data)) {
+    fibers[current_fiber].cond_func = cond_func;
+    fibers[current_fiber].cond_data = cond_data;
+    yield_internal();
+  }
+}
 void TaskSystem::join() {
   L_SCOPE_MARKER("Join");
-  const uint32_t local_current_fiber(current_fiber);
-  while(fibers[local_current_fiber].counter)
-    yield_internal();
+  yield_until([](void* data) { return *(uint32_t*)data==0; }, &fibers[current_fiber].counter);
 }
 
 uint32_t TaskSystem::thread_mask() {

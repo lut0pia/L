@@ -12,7 +12,11 @@ namespace L {
   public:
     constexpr Lock(bool locked = false) : _locked(locked ? 1 : 0) {}
     inline bool try_lock() { return !_locked && !cas(&_locked, 0, 1); }
-    inline void lock() { while(!try_lock()) TaskSystem::yield(); }
+    inline void lock() {
+      TaskSystem::yield_until([](void* data) {
+        return ((Lock*)data)->try_lock();
+      }, this);
+    }
     inline void unlock() { _locked = 0; }
   };
 

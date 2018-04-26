@@ -73,8 +73,9 @@ namespace L {
       if(_slot && _slot->state != ResourceSlotGeneric::Loaded) {
         if(_slot->state == ResourceSlotGeneric::Unloaded)
           _slot->load();
-        while(_slot->state == ResourceSlotGeneric::Loading)
-          TaskSystem::yield();
+        TaskSystem::yield_until([](void* data) {
+          return ((Slot*)data)->state == ResourceSlotGeneric::Loaded;
+        }, _slot);
       }
     }
 
