@@ -3,13 +3,15 @@
 #include "../audio/AudioBuffer.h"
 #include "Component.h"
 #include "../engine/Resource.h"
-#include "Transform.h"
 
 namespace L {
+  class ScriptComponent;
+  class Transform;
   class AudioSourceComponent : public Component {
     L_COMPONENT(AudioSourceComponent)
   protected:
     Transform* _transform;
+    ScriptComponent* _script;
     Resource<AudioStream> _stream;
     float _volume;
     uint32_t _current_frame;
@@ -18,7 +20,7 @@ namespace L {
     inline AudioSourceComponent() : _volume(1.f), _playing(false), _looping(false) {}
     void render(void* buffer, uint32_t frame_count);
 
-    inline void update_components() override { _transform = entity()->requireComponent<Transform>(); }
+    void update_components() override;
     virtual Map<Symbol, Var> pack() const override;
     virtual void unpack(const Map<Symbol, Var>&) override;
     static void script_registration();

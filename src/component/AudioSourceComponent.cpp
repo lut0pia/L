@@ -1,8 +1,14 @@
 #include "AudioSourceComponent.h"
 
 #include "AudioListenerComponent.h"
+#include "ScriptComponent.h"
 
 using namespace L;
+
+void AudioSourceComponent::update_components() {
+  _transform = entity()->requireComponent<Transform>();
+  _script = entity()->component<ScriptComponent>();
+}
 
 Map<Symbol, Var> AudioSourceComponent::pack() const {
   Map<Symbol, Var> data;
@@ -27,10 +33,15 @@ void AudioSourceComponent::script_registration() {
 void AudioSourceComponent::render(void* buffer, uint32_t frame_count) {
   if(_playing && _stream) {
     if(_current_frame>=_stream->sample_count()) {
-      if(_looping)
+      if(_looping) // Restart playing
         _current_frame = 0;
-      else {
+      else { // Stop playing
         _playing = false;
+        if(_script){ // Tell script about it
+          auto e(ref<Table<Var, Var>>());
+          (*e)[Symbol("type")] = Symbol("AudioStop");
+          _script->event(e);
+        }
         return;
       }
     }
