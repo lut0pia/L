@@ -36,7 +36,7 @@ namespace L {
           load_resource(slot);
           post_load_resource(slot);
           slot.state = Loaded;
-        }, this, uint32_t(-2), TaskSystem::NoParent);
+        }, this, uint32_t(-1), TaskSystem::NoParent);
       }
     }
   };
