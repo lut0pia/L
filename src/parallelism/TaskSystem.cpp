@@ -93,7 +93,7 @@ void thread_func(void* arg) {
     }
 
     // May sleep if unsollicited and not main thread
-    if(local_thread_index>0 && Time::now()-starve_start >= Time(500)) {
+    if(local_thread_index>0 && Time::now()-starve_start >= Time(10)) {
       semaphore.get();
       starve_start = Time::now();
     }
