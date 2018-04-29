@@ -41,7 +41,7 @@ namespace L {
     }
     void to_axis_angle(Vector<3, T>& axis, T& angle) const {
       angle = 2 * acos(this->w());
-      if(angle > 0.001) {
+      if(angle > 0.1) {
         const T t(1/sqrt(1-sqr(this->w())));
         axis.x() = this->x() * t;
         axis.y() = this->y() * t;
