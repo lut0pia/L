@@ -39,10 +39,10 @@
   </Type>
 
   <Type Name="L::Resource&lt;*&gt;">
-    <DisplayString Condition="_index &lt; 0">null</DisplayString>
-    <DisplayString>Resource: {L::Resource&lt;$T1&gt;::_slots[_index].path}</DisplayString>
+    <DisplayString Condition="_slot == nullptr">null</DisplayString>
+    <DisplayString>Resource: {_slot->id}</DisplayString>
     <Expand>
-      <ExpandedItem>L::Resource&lt;$T1&gt;::_slots[_index]</ExpandedItem>
+      <ExpandedItem>*_slot</ExpandedItem>
     </Expand>
   </Type>
 
