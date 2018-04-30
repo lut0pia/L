@@ -69,16 +69,11 @@ void Context::execute(const Var& code, Var* selfOut) {
       _stack.size(_frames.back()); // Resize to the previous frame
       _frames.pop();
       if(!selfIn.is<void>()) _selves.pop();
-    } else if(array.size()>1 && !handle.is<void>()) {
-      Ref<Table<Var, Var>> table;
-      if(selfOut) *selfOut = handle;
-      if(handle.is<Ref<Table<Var, Var>>>())
-        table = handle.as<Ref<Table<Var, Var>>>();
+    } else if(array.size()>1 && !handle.is<void>()) { // Table element access
+      if(Var* element = reference(code, selfOut))
+        _stack.back() = *element;
       else
-        table = typeTable(handle.type());
-      _stack.pop(); // Pop handle
-      execute(array[1]); // Push index
-      _stack.back() = (*table)[_stack.back()]; // Fetch value in table (replace index)
+        err << "Unable to execute table access " << array << "\n";
     } else
       err << "Unable to execute command " << array << "\n";
   } else if(code.is<Local>())
@@ -96,26 +91,26 @@ Var* Context::reference(const Var& code, Var* src) {
     return (code.as<Symbol>()==selfSymbol) ? &currentSelf() : &global(code.as<Symbol>());
   else if(code.is<Array<Var> >()) { // It's an array so it may be a reference to an object field or a
     const Array<Var>& array(code.as<Array<Var> >());
-    if(array.size()==2) { // It's a pair
-      Var& handle(executeRef(array[0])); // Compute handle
-      Ref<Table<Var, Var>> table;
-      if(src) *src = handle;
-      if(handle.is<Ref<Table<Var, Var>>>()) { // First is a regular table
-        table = handle.as<Ref<Table<Var, Var>>>();
-      } else if(!handle.is<Ref<CodeFunction>>() // First is not any kind of function or void
-                && !handle.is<Native>()
-                && !handle.is<Function>()
-                && !handle.is<void>()) {
-        table = typeTable(handle.type());
-      } else if(handle.is<void>())
+    Ref<Table<Var, Var>> table;
+    Var* wtr(&executeRef(array[0]));
+    for(uintptr_t i(1); i<array.size(); i++) {
+      if(src) *src = *wtr;
+      if(wtr->is<Ref<Table<Var, Var>>>()) { // First is a regular table
+        table = wtr->as<Ref<Table<Var, Var>>>();
+      } else if(!wtr->is<Ref<CodeFunction>>() // First is not any kind of function or void
+                && !wtr->is<Native>()
+                && !wtr->is<Function>()
+                && !wtr->is<void>()) {
+        table = typeTable(wtr->type());
+      } else if(wtr->is<void>())
         error("Trying to index from void");
       else return nullptr;
-      execute(array[1]); // Compute index
-      Var* wtr(&(*table)[_stack.back()]); // Get pointer to field
+      execute(array[i]); // Compute index
+      wtr = &(*table)[_stack.back()]; // Get pointer to field
       _stack.pop(); // Clean up index
-      _stack.pop(); // Clean up handle
-      return wtr;
     }
+    _stack.pop(); // Clean up handle
+    return wtr;
   }
   return nullptr;
 }
