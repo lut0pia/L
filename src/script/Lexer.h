@@ -43,7 +43,7 @@ namespace L {
       bool accept_token(const char* token);
 
       inline const char* token() const { return _buffer; }
-      inline bool is_token(const char* str) { return !strcmp(str, token()); }
+      inline bool is_token(const char* str) { return !_literal && !strcmp(str, token()); }
       inline uint32_t line() const { return _line; }
       inline bool literal() const { return _literal; }
     };
