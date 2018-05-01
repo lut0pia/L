@@ -11,97 +11,86 @@ using namespace L;
 # define L_USE_MALLOC 0
 #endif
 
-#if !L_USE_MALLOC
-const size_t allocStep = 1024*1024u;
-void* _freelist[128] = {};
-uint8_t* _next;
-size_t _bytesLeft(0);
-size_t _allocated(0), _unused(0), _wasted(0);
-Lock _lock;
+#if L_USE_MALLOC
+void* Memory::alloc(size_t size) { return malloc(size); }
+void* Memory::alloc_zero(size_t size) { return ::calloc(size, 1); }
+void* Memory::realloc(void* ptr, size_t oldsize, size_t newsize) { return ::realloc(ptr, newsize); }
+void Memory::free(void* ptr, size_t size) { ::free(ptr); }
+#else
+const size_t block_size = 1024*1024u;
+static void* freelist[128] = {};
+static uint8_t* next;
+static size_t bytes_left(0);
+static size_t allocated(0), unused(0), wasted(0);
+static Lock lock;
 
 // Cannot allocate less than 8 bytes for alignment purposes
-inline uint32_t freelistIndex(size_t size) {
+inline uint32_t freelist_index(size_t size) {
   return (size<=512) ? (((size+7)/8)-1) : (clog2(size)+55);
 }
-inline void freelistIndexSize(size_t size, uint32_t& index, uint32_t& trueSize) {
+inline void freelist_index_size(size_t size, uint32_t& index, uint32_t& padded_size) {
   if(size<=512) {
     index = ((size+7)/8)-1;
-    trueSize = (index+1)*8;
+    padded_size = (index+1)*8;
   } else {
     index = clog2(size);
-    trueSize = 1<<index;
+    padded_size = 1<<index;
     index += 55;
   }
 }
-#endif
 
 void* Memory::alloc(size_t size) {
-#if L_USE_MALLOC
-  return malloc(size);
-#else
-  if(size>allocStep) { // Big allocations go directly to the system
-    _allocated += size;
-    return virtualAlloc(size);
+  if(size>block_size) { // Big allocations go directly to the system
+    allocated += size;
+    return virtual_alloc(size);
   }
-  uint32_t index, trueSize;
-  freelistIndexSize(size, index, trueSize);
-  L_SCOPED_LOCK(_lock);
-  void*& freelist(_freelist[index]);
+  uint32_t index, padded_size;
+  freelist_index_size(size, index, padded_size);
+  L_SCOPED_LOCK(lock);
+  void*& freelist(freelist[index]);
   void* wtr(freelist);
-  if(wtr) {
+  if(wtr) { // There's a free space available
     freelist = *((void**)freelist);
-    _unused -= trueSize;
-  } else {
-    if(_bytesLeft<trueSize)
-      _next = (uint8_t*)virtualAlloc(_bytesLeft = allocStep);
-    wtr = _next;
-    _next += trueSize;
-    _bytesLeft -= trueSize;
+    unused -= padded_size;
+  } else { // No free space available: make one
+    if(bytes_left<padded_size) // No more space for allocation
+      next = (uint8_t*)virtual_alloc(bytes_left = block_size); // Ask system for new memory block
+    wtr = next;
+    next += padded_size;
+    bytes_left -= padded_size;
   }
-  _wasted += trueSize-size;
-  _allocated += trueSize;
+  wasted += padded_size-size;
+  allocated += padded_size;
   return wtr;
-#endif
 }
-void* Memory::allocZero(size_t size) {
-#if L_USE_MALLOC
-  return ::calloc(size, 1);
-#else
+void* Memory::alloc_zero(size_t size) {
   void* wtr(alloc(size));
   memset(wtr, 0, size);
   return wtr;
-#endif
 }
 void* Memory::realloc(void* ptr, size_t oldsize, size_t newsize) {
-#if L_USE_MALLOC
-  return ::realloc(ptr, newsize);
-#else
-  L_ASSERT(!oldsize || freelistIndex(oldsize)!=freelistIndex(newsize));
+  L_ASSERT(!oldsize || freelist_index(oldsize)!=freelist_index(newsize));
   void* wtr(alloc(newsize));
   if(ptr) {
     memcpy(wtr, ptr, oldsize);
     free(ptr, oldsize);
   }
   return wtr;
-#endif
 }
 void Memory::free(void* ptr, size_t size) {
-#if L_USE_MALLOC
-  ::free(ptr);
-#else
-  if(size>allocStep) { // Big allocations go directly to the system
-    virtualFree(ptr, size);
-    _allocated -= size;
+  if(size>block_size) { // Big allocations go directly to the system
+    virtual_free(ptr, size);
+    allocated -= size;
     return;
   }
-  uint32_t index, trueSize;
-  freelistIndexSize(size, index, trueSize);
-  L_SCOPED_LOCK(_lock);
-  void*& freelist(_freelist[index]);
+  uint32_t index, padded_size;
+  freelist_index_size(size, index, padded_size);
+  L_SCOPED_LOCK(lock);
+  void*& freelist(freelist[index]);
   *((void**)ptr) = freelist;
   freelist = ptr;
-  _unused += trueSize;
-  _wasted -= trueSize-size;
-  _allocated -= trueSize;
-#endif
+  unused += padded_size;
+  wasted -= padded_size-size;
+  allocated -= padded_size;
 }
+#endif

@@ -33,10 +33,10 @@ namespace L {
           if(abs(intptr_t(dst_sample_start)-intptr_t(_handle->current_loc))>Audio::working_frequency/2) // More than half a second difference
             stb_vorbis_seek(_handle, dst_sample_start);
           const size_t value_count(dst_sample_count*_info.channels);
-          int16_t* buffer(Memory::allocType<int16_t>(value_count));
+          int16_t* buffer(Memory::alloc_type<int16_t>(value_count));
           dst_sample_count = stb_vorbis_get_samples_short_interleaved(_handle, _info.channels, buffer, value_count);
           Audio::render(dst, buffer, _format, dst_sample_count, volume);
-          Memory::freeType(buffer, value_count);
+          Memory::free_type(buffer, value_count);
         } else {
           error("Vorbis files with sample rate differing from %d are not supported", Audio::working_frequency);
           /*

@@ -31,7 +31,7 @@ namespace L {
           uint32_t t, count;
         };
         const uint32_t task_count(TaskSystem::thread_count());
-        TaskData* task_data = Memory::allocType<TaskData>(task_count);
+        TaskData* task_data = Memory::alloc_type<TaskData>(task_count);
         for(uint32_t t(0); t<task_count; t++) {
           task_data[t] = {f,t,task_count};
           TaskSystem::push([](void* p) {
@@ -47,7 +47,7 @@ namespace L {
           }, task_data+t);
         }
         TaskSystem::join();
-        Memory::freeType(task_data, task_count);
+        Memory::free_type(task_data, task_count);
       }
     }
   };
