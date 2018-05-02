@@ -9,6 +9,10 @@ namespace L {
     size_t _size;
   public:
     constexpr Buffer() : _data(nullptr), _size(0) {}
+    inline Buffer(Buffer&& other) : _data(other._data), _size(other._size) {
+      other._data = nullptr;
+      other._size = 0;
+    }
     inline Buffer(size_t size) : _data(Memory::alloc(size)), _size(size) {}
     inline ~Buffer() {
       if(_data) Memory::free(_data, _size);
