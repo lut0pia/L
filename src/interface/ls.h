@@ -3,15 +3,10 @@
 #include <L/src/L.h>
 
 namespace L {
-  class LS : public Interface<Script::CodeFunction> {
-    static LS instance;
-  public:
-    LS() : Interface{"ls"} {}
-    Ref<Script::CodeFunction> from(const uint8_t* data, size_t size) override {
-      Script::Compiler compiler;
-      compiler.read((const char*)data, size, true);
-      return ref<Script::CodeFunction>(compiler.function());
-    }
-  };
-  LS LS::instance;
+  void ls_loader(Resource<Script::CodeFunction>::Slot& slot) {
+    Buffer buffer(slot.read_source_file());
+    Script::Compiler compiler;
+    compiler.read((const char*)buffer.data(), buffer.size(), true);
+    slot.value = ref<Script::CodeFunction>(compiler.function());
+  }
 }

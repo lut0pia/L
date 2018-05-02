@@ -5,13 +5,13 @@
 #include "../container/Ref.h"
 #include "../container/Table.h"
 #include "../dev/profiling.h"
-#include "Interface.h"
 #include "../parallelism/Lock.h"
 #include "../parallelism/TaskSystem.h"
 #include "../text/Symbol.h"
 #include "../system/File.h"
 
 namespace L {
+  class Buffer;
   struct ResourceSlotGeneric {
     Symbol id, path;
     Date mtime;
@@ -23,6 +23,7 @@ namespace L {
     inline ResourceSlotGeneric(const char* url) : id(url), path(url, min<size_t>(strlen(url), strchr(url, '?')-url)),
       mtime(Date::now()), persistent(false), state(Unloaded) {}
     Symbol parameter(const char* key);
+    Buffer read_source_file();
   };
   template <class T>
   struct ResourceSlot : public ResourceSlotGeneric {
@@ -41,13 +42,16 @@ namespace L {
     }
   };
 
-  template <class T> void load_resource(ResourceSlot<T>& slot) { slot.value = Interface<T>::from_path(slot.path); }
+  template <class T> void load_resource(ResourceSlot<T>& slot) { Resource<T>::load(slot); }
   template <class T> void post_load_resource(ResourceSlot<T>& slot) { }
 
   template <class T>
   class Resource {
+  public:
     typedef ResourceSlot<T> Slot;
+    typedef void (*Loader)(Slot&);
   protected:
+    static Table<const char*, Loader> _loaders;
     static Pool<Slot> _pool;
     static Array<Slot*> _slots;
     static Table<Symbol, Slot*> _table;
@@ -112,8 +116,19 @@ namespace L {
         index++;
       }
     }
+    static void add_loader(const char* ext, Loader loader) {
+      _loaders[ext] = loader;
+    }
+    static void load(Slot& slot) {
+      const char* ext(strrchr(slot.path, '.'));
+      ext = ext ? ext + 1 : slot.path;
+      if(Loader* loader = _loaders.find(ext)) {
+        (*loader)(slot);
+      } else warning("Unable to load resource with extension: %s", ext);
+    }
   };
 
+  template <class T> Table<const char*, typename Resource<T>::Loader> Resource<T>::_loaders;
   template <class T> Pool<ResourceSlot<T>> Resource<T>::_pool;
   template <class T> Array<ResourceSlot<T>*> Resource<T>::_slots;
   template <class T> Table<Symbol, ResourceSlot<T>*> Resource<T>::_table;

@@ -50,6 +50,20 @@ int main(int argc, const char* argv[]) {
   Engine::register_resource<Texture>();
   Engine::register_resource<Script::CodeFunction>();
 
+  Resource<Program>::add_loader("glsl", glsl_loader);
+  Resource<Script::CodeFunction>::add_loader("ls", ls_loader);
+  Resource<Material>::add_loader("lon", lon_loader);
+  Resource<Audio::MidiSequence>::add_loader("mid", midi_loader);
+  Resource<Audio::MidiSequence>::add_loader("midi", midi_loader);
+  Resource<Texture>::add_loader("jpeg", stb_image_loader);
+  Resource<Texture>::add_loader("jpg", stb_image_loader);
+  Resource<Texture>::add_loader("png", stb_image_loader);
+  Resource<Texture>::add_loader("bmp", stb_image_loader);
+  Resource<Font>::add_loader("ttf", stb_truetype_loader);
+  Resource<AudioStream>::add_loader("ogg", stb_vorbis_loader);
+  Resource<Mesh>::add_loader("obj", obj_loader);
+  Resource<AudioStream>::add_loader("wav", wav_loader);
+
   Engine::register_component<Transform>();
   Engine::register_component<Camera>();
   Engine::register_component<RigidBody>();

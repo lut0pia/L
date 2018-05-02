@@ -1,5 +1,8 @@
 #include "Resource.h"
 
+#include "../container/Buffer.h"
+#include "../stream/CFileStream.h"
+
 using namespace L;
 
 Symbol ResourceSlotGeneric::parameter(const char* key) {
@@ -15,4 +18,11 @@ Symbol ResourceSlotGeneric::parameter(const char* key) {
     return Symbol(value, value_length);
   }
   return Symbol();
+}
+Buffer ResourceSlotGeneric::read_source_file() {
+  CFileStream stream(path, "rb");
+  const size_t size(stream.size());
+  Buffer wtr(size);
+  stream.read(wtr, size);
+  return wtr;
 }
