@@ -9,13 +9,13 @@ static thread_local ucontext_t* current_context;
 
 namespace L {
   void* convert_to_fiber() {
-    ucontext_t* context(Memory::allocType<ucontext_t>());
+    ucontext_t* context(Memory::alloc_type<ucontext_t>());
     getcontext(context);
     current_context = context;
     return context;
   }
   void* create_fiber(void(*f)(void*), void* p) {
-    ucontext_t* context(Memory::allocType<ucontext_t>());
+    ucontext_t* context(Memory::alloc_type<ucontext_t>());
     if(getcontext(context)<0)
       error("getcontext error");
     context->uc_stack.ss_size = 1<<16;

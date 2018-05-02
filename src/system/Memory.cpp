@@ -18,7 +18,7 @@ void* Memory::realloc(void* ptr, size_t oldsize, size_t newsize) { return ::real
 void Memory::free(void* ptr, size_t size) { ::free(ptr); }
 #else
 const size_t block_size = 1024*1024u;
-static void* freelist[128] = {};
+static void* freelists[128] = {};
 static uint8_t* next;
 static size_t bytes_left(0);
 static size_t allocated(0), unused(0), wasted(0);
@@ -47,7 +47,7 @@ void* Memory::alloc(size_t size) {
   uint32_t index, padded_size;
   freelist_index_size(size, index, padded_size);
   L_SCOPED_LOCK(lock);
-  void*& freelist(freelist[index]);
+  void*& freelist(freelists[index]);
   void* wtr(freelist);
   if(wtr) { // There's a free space available
     freelist = *((void**)freelist);
@@ -86,7 +86,7 @@ void Memory::free(void* ptr, size_t size) {
   uint32_t index, padded_size;
   freelist_index_size(size, index, padded_size);
   L_SCOPED_LOCK(lock);
-  void*& freelist(freelist[index]);
+  void*& freelist(freelists[index]);
   *((void**)ptr) = freelist;
   freelist = ptr;
   unused += padded_size;

@@ -53,7 +53,7 @@ uint32_t Network::dns_lookup(const char* host) {
       // different fields in IPv4 and IPv6:
       if(p->ai_family == AF_INET) { // IPv4
         struct sockaddr_in *ipv4 = (struct sockaddr_in *)p->ai_addr;
-        return ipv4->sin_addr.S_un.S_addr;
+        return ipv4->sin_addr.s_addr;
       }
     }
     freeaddrinfo(res); // free the linked list

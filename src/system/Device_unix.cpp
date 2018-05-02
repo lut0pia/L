@@ -9,5 +9,5 @@ void Device::init(){
 void Device::update(){
 }
 
-void Device::processReport(void* id,const byte* data,size_t size){
+void Device::processReport(void* id,const uint8_t* data,size_t size){
 }

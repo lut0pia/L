@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cctype>
 #include <L/src/L.h>
 
 namespace L {

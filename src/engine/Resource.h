@@ -42,9 +42,6 @@ namespace L {
     }
   };
 
-  template <class T> void load_resource(ResourceSlot<T>& slot) { Resource<T>::load(slot); }
-  template <class T> void post_load_resource(ResourceSlot<T>& slot) { }
-
   template <class T>
   class Resource {
   public:
@@ -121,12 +118,15 @@ namespace L {
     }
     static void load(Slot& slot) {
       const char* ext(strrchr(slot.path, '.'));
-      ext = ext ? ext + 1 : slot.path;
+      ext = ext ? ext + 1 : (const char*)slot.path;
       if(Loader* loader = _loaders.find(ext)) {
         (*loader)(slot);
       } else warning("Unable to load resource with extension: %s", ext);
     }
   };
+
+  template <class T> void load_resource(ResourceSlot<T>& slot) { Resource<T>::load(slot); }
+  template <class T> void post_load_resource(ResourceSlot<T>& slot) { }
 
   template <class T> Table<const char*, typename Resource<T>::Loader> Resource<T>::_loaders;
   template <class T> Pool<ResourceSlot<T>> Resource<T>::_pool;
