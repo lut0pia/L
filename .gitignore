@@ -12,6 +12,7 @@ smp/*.exe
 smp/*.pdb
 smp/*.ilk
 smp/*.manifest
+smp/trace.json
 # Premake
 pmk/
 premake5
