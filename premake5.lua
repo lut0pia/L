@@ -20,16 +20,19 @@ solution "L"
 		defines {"L_UNIX"}
 
 	-- Visual Studio
-	configuration {"vs*"}
+	filter {"action:vs*"}
+		files {"src/**.natvis"}
 		libdirs {"ext/lib"}
 		linkoptions {"/NODEFAULTLIB:libc.lib","/NODEFAULTLIB:msvcrt.lib","/NODEFAULTLIB:libcd.lib","/NODEFAULTLIB:msvcrtd.lib"}
 		defines {"_CRT_SECURE_NO_WARNINGS","_WINSOCK_DEPRECATED_NO_WARNINGS"}
 		buildoptions {"/wd4100","/wd4146","/wd4200","/wd4244","/wd4702","/wd4706","/wd4577","/wd4592"}
 		characterset "MBCS" -- Don't use UNICODE
 		warnings "Extra"
-	configuration {"vs*","Debug"}
+		links {"user32","opengl32","ws2_32","hid","winmm"}
+	filter {"action:vs*", "Debug or Development"}
 		linkoptions {"/NODEFAULTLIB:libcmt.lib"}
-	configuration {"vs*","Release"}
+		links {"dbghelp"}
+	filter {"action:vs*", "Release"}
 		linkoptions {"/NODEFAULTLIB:libcmtd.lib"}
 
 	-- GMake
@@ -37,52 +40,22 @@ solution "L"
 		buildoptions {"-fno-operator-names"}
     links {"GL","X11","pthread"}
 
-	-- Sample project (startup)
-	project "Sample"
+	-- Main project (startup)
+	project "Engine"
 		language "C++"
-		files {"src/main.cpp"}
+		files {"src/**.h","src/**.cpp"}
+		excludes {"src/interface/**"} -- Interface files are not to be compiled by the library
 		debugdir "smp"
 		targetdir "smp"
 		includedirs {".."}
-		libdirs {"bin"}
-		links {"L"}
-
-		configuration {"Debug"}
-			targetname "Ldbg"
-			kind "ConsoleApp"
-			objdir("obj/".._ACTION.."/smp/dbg")
-			defines {"L_DEBUG"}
-			symbols "On"
-
-		configuration {"Development"}
-			targetname "Ldev"
-			kind "ConsoleApp"
-			objdir("obj/".._ACTION.."/smp/dev")
-			defines {"L_DEBUG"}
-			symbols "On"
-			optimize "On"
-
-		configuration {"Release"}
-			targetname "L"
-			kind "WindowedApp"
-			objdir("obj/".._ACTION.."/smp/rls")
-			optimize "On"
-
-	-- Library project
-	project "L"
-		targetdir "bin"
-		kind "StaticLib"
-		language "C++"
-		files {"src/**.h","src/**.cpp"}
-		excludes {"src/main.cpp","src/interface/**"} -- Interface files are not to be compiled by the library
 
 		-- Exclude system-specific files
 		configuration {"not windows"}
 			excludes {"**_win**"}
 		configuration {"not linux"}
 			excludes {"**_unix**"}
-    configuration {}
-
+		configuration {}
+		
 		-- PCH
     if _ACTION ~= "gmake" then
   		pchheader "pc.h"
@@ -92,30 +65,23 @@ solution "L"
       pchheader "src/pc.h"
     end
 
-		-- Visual Studio
-		filter {"action:vs*"}
-			files {"src/**.natvis"}
-		local staticlinkcmd = [[lib.exe /LTCG /NOLOGO /IGNORE:4006,4221 /OUT:"$(TargetPath)" "$(TargetPath)" ]]
-		local staticlinks = "user32.lib opengl32.lib ws2_32.lib hid.lib winmm.lib"
-		filter {"action:vs*", "Debug or Development"}
-			postbuildcommands {staticlinkcmd..staticlinks.." dbghelp.lib"}
-		filter {"action:vs*", "Release"}
-			postbuildcommands {staticlinkcmd..staticlinks}
-
 		configuration {"Debug"}
-			targetdir "bin/dbg"
+			targetname "Ldbg"
+			kind "ConsoleApp"
 			objdir("obj/".._ACTION.."/dbg")
 			defines {"L_DEBUG"}
 			symbols "On"
 
 		configuration {"Development"}
-			targetdir "bin/dev"
+			targetname "Ldev"
+			kind "ConsoleApp"
 			objdir("obj/".._ACTION.."/dev")
 			defines {"L_DEBUG"}
 			symbols "On"
 			optimize "On"
 
-		configuration  {"Release"}
-			targetdir "bin/rls"
+		configuration {"Release"}
+			targetname "L"
+			kind "WindowedApp"
 			objdir("obj/".._ACTION.."/rls")
 			optimize "On"

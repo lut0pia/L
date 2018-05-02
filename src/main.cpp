@@ -1,13 +1,13 @@
-#include <L/src/L.h>
-#include <L/src/interface/glsl.h>
-#include <L/src/interface/ls.h>
-#include <L/src/interface/lon.h>
-#include <L/src/interface/midi.h>
-#include <L/src/interface/stb_image.h>
-#include <L/src/interface/stb_truetype.h>
-#include <L/src/interface/stb_vorbis.h>
-#include <L/src/interface/obj.h>
-#include <L/src/interface/wav.h>
+#include "L.h"
+#include "interface/glsl.h"
+#include "interface/ls.h"
+#include "interface/lon.h"
+#include "interface/midi.h"
+#include "interface/stb_image.h"
+#include "interface/stb_truetype.h"
+#include "interface/stb_vorbis.h"
+#include "interface/obj.h"
+#include "interface/wav.h"
 
 using namespace L;
 
