@@ -30,7 +30,6 @@ solution "L"
 		warnings "Extra"
 		links {"user32","opengl32","ws2_32","hid","winmm"}
 	filter {"action:vs*", "Debug or Development"}
-		linkoptions {"/NODEFAULTLIB:libcmt.lib"}
 		links {"dbghelp"}
 	filter {"action:vs*", "Release"}
 		linkoptions {"/NODEFAULTLIB:libcmtd.lib"}
