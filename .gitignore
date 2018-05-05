@@ -8,9 +8,12 @@ prj/
 smp/Ldev
 smp/Ldbg
 smp/L
+smp/*.dll
 smp/*.exe
+smp/*.exp
 smp/*.pdb
 smp/*.ilk
+smp/*.lib
 smp/*.manifest
 smp/trace.json
 # Premake
