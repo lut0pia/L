@@ -37,6 +37,37 @@ namespace L {
     Table<const TypeDescription*, Cast> casts;
   };
 
+  template <typename T>
+  Symbol type_name() {
+    static Symbol wtr;
+    if(!wtr) {
+#if defined _MSC_VER
+      // "class L::Symbol __cdecl L::type_name<int>(void)"
+      // "class L::Symbol __cdecl L::type_name<class L::String>(void)"
+      char funcsig[] = __FUNCSIG__;
+      const uintptr_t start(sizeof("class L::Symbol __cdecl L::type_name<")-1);
+      const uintptr_t end(strlen(funcsig)-sizeof(">(void)")+1);
+      funcsig[end] = '\0';
+      char* name(funcsig+start);
+#else
+      // "static L::TypeDescription L::Type<T>::makeDesc() [with T = XXX]"
+      char tmp[256];
+      strcpy(tmp, __PRETTY_FUNCTION__+59);
+      tmp[strlen(tmp)-1] = '\0';
+      char* name(tmp);
+#endif
+      const char* subs[] ={ "class ","struct ", " " };
+      for(const char* sub : subs) {
+        while(char* found = strstr(name, sub)) {
+          size_t sub_len(strlen(sub));
+          memmove(found, found+sub_len, strlen(name)-(found-name)+sub_len+1);
+        }
+      }
+      wtr = name;
+    }
+    return wtr;
+  }
+
   extern Table<Symbol, const TypeDescription*> types;
   template <class T>
   class Type {
@@ -44,32 +75,9 @@ namespace L {
     static TypeDescription td;
     static TypeDescription makeDesc() {
       TypeDescription wtr = {
-        Symbol(),sizeof(T),
+        type_name<T>(),sizeof(T),
         ctr,ctrnew,cpy,cpyto,assign,dtr,del,print,out,in,Type<T>::hash,0
       };
-#if defined _MSC_VER
-      // "struct L::TypeDescription __cdecl L::Type<int>::makeDesc(void)"
-      // "struct L::TypeDescription __cdecl L::Type<class L::String>::makeDesc(void)"
-      char funcsig[] = __FUNCSIG__;
-      uintptr_t start(42);
-      uintptr_t end = strlen(funcsig)-17;
-      funcsig[end] = '\0';
-      char* name = funcsig+start;
-#else
-      // "static L::TypeDescription L::Type<T>::makeDesc() [with T = XXX]"
-      char tmp[256];
-      strcpy(tmp, __PRETTY_FUNCTION__+59);
-      tmp[strlen(tmp)-1] = '\0';
-      char* name = tmp;
-#endif
-      const char* subs[] = {"class ","struct ", " "};
-      for(const char* sub : subs) {
-        while(char* found = strstr(name, sub)) {
-          size_t sub_len(strlen(sub));
-          memmove(found, found+sub_len, strlen(name)-(found-name)+sub_len+1);
-        }
-      }
-      wtr.name = name;
       types[wtr.name] = &td;
       return wtr;
     }
