@@ -33,3 +33,16 @@ bool File::mtime(const char* path, Date& date) {
   }
   return success;
 }
+Array<String> File::list(const char* path) {
+  Array<String> wtr;
+  HANDLE handle;
+  WIN32_FIND_DATA find_data;
+  handle = FindFirstFile(path, &find_data);
+  if(handle != INVALID_HANDLE_VALUE) {
+    do {
+      wtr.push(find_data.cFileName);
+    } while(FindNextFile(handle, &find_data));
+    FindClose(handle);
+  }
+  return wtr;
+}

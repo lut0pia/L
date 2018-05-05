@@ -21,5 +21,6 @@ namespace L {
     void make() const;
 
     static bool mtime(const char* path, Date&);
+    static Array<String> list(const char* path);
   };
 }
