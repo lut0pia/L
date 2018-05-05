@@ -1,8 +1,33 @@
 #include "Symbol.h"
 
-#include "../stream/serial.h"
+#include "../container/Table.h"
+#include "../dev/debug.h"
+#include "../parallelism/Lock.h"
+#include "../system/Memory.h"
+#include "../macros.h"
 
 using namespace L;
 
-Table<uint32_t, const char*> Symbol::_symbols;
-char *Symbol::_blob_next, *Symbol::_blob_end;
+static const size_t blob_size = 2*1024*1024;
+static Table<uint32_t, const char*> _symbols;
+static char *_blob_next, *_blob_end;
+static Lock symbol_lock;
+
+Symbol::Symbol(const char* str, size_t length) {
+  L_SCOPED_LOCK(symbol_lock);
+  const uint32_t hash(fnv1a(str, length));
+  if(const char** found = _symbols.find(hash))
+    _string = *found;
+  else {
+    L_ASSERT(strcspn(str, " \t\n\v\f\r")>=length);
+    if(size_t(_blob_end)-size_t(_blob_next)<=(length+1)) {
+      _blob_next = (char*)Memory::virtual_alloc(blob_size);
+      _blob_end = _blob_next+blob_size;
+    }
+    memcpy(_blob_next, str, length);
+    _blob_next[length] = '\0';
+    _string = _blob_next;
+    _symbols[hash] = _string;
+    _blob_next += length+1;
+  }
+}
