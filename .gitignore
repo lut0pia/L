@@ -1,9 +1,9 @@
 # Binaries folder
-bin/
+/bin
 # Object files folder
-obj/
+/obj
 # Projects folder
-prj/
+/prj
 # Sample folder
 smp/Ldev
 smp/Ldbg
@@ -17,5 +17,5 @@ smp/*.lib
 smp/*.manifest
 smp/trace.json
 # Premake
-pmk/
-premake5
+/pmk
+/premake5
