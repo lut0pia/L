@@ -50,9 +50,9 @@ namespace L {
       funcsig[end] = '\0';
       char* name(funcsig+start);
 #else
-      // "static L::TypeDescription L::Type<T>::makeDesc() [with T = XXX]"
+      // "L::Symbol L::type_name() [with T = XXX]"
       char tmp[256];
-      strcpy(tmp, __PRETTY_FUNCTION__+59);
+      strcpy(tmp, __PRETTY_FUNCTION__+sizeof("L::Symbol L::type_name() [with T = ")-1);
       tmp[strlen(tmp)-1] = '\0';
       char* name(tmp);
 #endif
