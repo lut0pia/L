@@ -1,29 +1,8 @@
 #include "Time.h"
 
-#if defined L_WINDOWS
-#include <windows.h>
-#elif defined L_UNIX
-#include <sys/time.h>
-#endif
-
-#include "Timer.h"
 #include "../text/String.h"
 
 using namespace L;
-
-Time Time::now() {
-#if defined L_WINDOWS
-  int64_t counter,freq;
-  QueryPerformanceCounter((LARGE_INTEGER*)&counter);
-  QueryPerformanceFrequency((LARGE_INTEGER*)&freq);
-  freq /= 1000000LL;
-  return Time(counter / freq);
-#elif defined L_UNIX
-  struct timeval tv;
-  gettimeofday(&tv,nullptr);
-  return Time(tv.tv_usec,0,tv.tv_sec);
-#endif
-}
 
 Stream& L::operator<<(Stream &s,const Time& v) {
   int c(-1);
