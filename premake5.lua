@@ -37,7 +37,7 @@ solution "L"
 	-- GMake
 	configuration {"gmake"}
 		buildoptions {"-fno-operator-names"}
-    links {"GL","X11","pthread"}
+    links {"GL","X11","pthread","asound"}
 
 	-- Main project (startup)
 	project "Engine"

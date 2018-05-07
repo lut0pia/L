@@ -17,7 +17,10 @@ namespace L {
     static constexpr SampleFormat working_format = Stereo16;
 
     void init();
-    Time ideal_time_ahead();
+    uint32_t internal_frame_count_ahead();
+    uint32_t internal_frequency();
+    void internal_write(void* buffer, uint32_t frame_count);
+    
     void acquire_buffer(void*& buffer, uint32_t& frame_count);
     void commit_buffer();
 
