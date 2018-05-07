@@ -5,6 +5,7 @@
 #include "../container/Ref.h"
 #include "../container/Table.h"
 #include "../dev/profiling.h"
+#include "../dynamic/Type.h"
 #include "../parallelism/Lock.h"
 #include "../parallelism/TaskSystem.h"
 #include "../text/Symbol.h"
@@ -33,7 +34,7 @@ namespace L {
       if(state==Unloaded && cas((uint32_t*)&state, Unloaded, Loading)==Unloaded) {
         TaskSystem::push([](void* p) {
           ResourceSlot<T>& slot(*(ResourceSlot<T>*)p);
-          L_SCOPE_MARKERF("load_resource(%s)", slot.id);
+          L_SCOPE_MARKERF("load_resource<%s>(%s)", (const char*)type_name<T>(), slot.id);
           load_resource(slot);
           post_load_resource(slot);
           slot.state = Loaded;
@@ -100,6 +101,7 @@ namespace L {
     }
     static void update() {
       if(!_slots.empty()) {
+        L_SCOPE_MARKERF("Resource<%s>::update()", (const char*)type_name<T>());
         static uintptr_t index(0);
         Slot& slot(*_slots[index%_slots.size()]);
         if(!slot.persistent // Persistent resources don't hot reload
