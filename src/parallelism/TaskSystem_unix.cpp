@@ -1,6 +1,9 @@
 #include "TaskSystem.h"
 
 #include "../system/Memory.h"
+#include "../system/System.h"
+
+#include <pthread.h>
 #include <ucontext.h>
 
 using namespace L;
@@ -33,6 +36,8 @@ namespace L {
     pthread_create(&thread, nullptr, (void* (*)(void*))f, p);
   }
   uint32_t core_count() {
-    return 1;
+    String output;
+    System::call("nproc", output);
+    return atoi(output);
   }
 }
