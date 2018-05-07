@@ -7,20 +7,6 @@
 using namespace L;
 using namespace System;
 
-String System::callGet(const char* cmd) {
-  String wtr = "";
-  FILE* pipe = popen(cmd,"r");
-  if(!pipe) error("Couldn't open pipe in System");
-  else {
-    char buffer[128];
-    while(!feof(pipe)) {
-      if(fgets(buffer,128,pipe) != nullptr)
-        wtr += buffer;
-    }
-    pclose(pipe);
-  }
-  return wtr;
-}
 void System::sleep(const Time& t) {
   usleep(t.microseconds());
 }
@@ -34,12 +20,15 @@ String System::fromClipboard() {
   error("System::fromClipboard not implemented.");
 }
 String System::pwd() {
-  String wtr(callGet("pwd"));
+  String wtr;
+  call("pwd", wtr);
   wtr[wtr.size()-1] = '/'; // Because there's a \n at the end
   return wtr;
 }
 Vector2i System::screenSize() {
-  Array<String> res(callGet("xdpyinfo | grep 'dimensions:' | grep -o '[[:digit:]]\\+'").explode('\n'));
+  String tmp;
+  call("xdpyinfo | grep 'dimensions:' | grep -o '[[:digit:]]\\+'", tmp);
+  Array<String> res(tmp.explode('\n'));
   if(res.size()>=2)
     return Vector2i(ston<10,int>(res[0]),ston<10,int>(res[1]));
 }

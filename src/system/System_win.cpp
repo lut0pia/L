@@ -5,20 +5,6 @@
 using namespace L;
 using namespace System;
 
-String System::callGet(const char* cmd) {
-  String wtr = "";
-  FILE* pipe = _popen(cmd,"r");
-  if(!pipe) error("Couldn't open pipe in System");
-  else {
-    char buffer[128];
-    while(!feof(pipe)) {
-      if(fgets(buffer,128,pipe) != nullptr)
-        wtr += buffer;
-    }
-    _pclose(pipe);
-  }
-  return wtr;
-}
 void System::sleep(const Time& t) {
   Sleep(t.milliseconds());
 }
@@ -44,7 +30,8 @@ String System::fromClipboard() {
   } else error("Cannot get clipboard data.");
 }
 String System::pwd() {
-  String wtr(callGet("cd"));
+  String wtr;
+  call("cd", wtr);
   wtr[wtr.size()-1] = slash; // Because there's a \n at the end
   return wtr;
 }

@@ -7,7 +7,7 @@
 
 namespace L {
   namespace System {
-    String callGet(const char*); // Makes a system call and returns the result
+    int call(const char*, String& output); // Makes a system call and fills output
     int call(const char*); // Only makes a system call
     void sleep(int milliseconds);
     void sleep(const Time&);
