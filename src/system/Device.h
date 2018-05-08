@@ -14,7 +14,7 @@ namespace L {
     void* _id;
     String _name;
     uint32_t _buttons;
-    float _axes[8];
+    float _axes[16];
   private:
     static Array<Device> _devices;
     static Queue<64, Event> _events;

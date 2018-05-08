@@ -125,8 +125,8 @@ void Device::processReport(void* id, const uint8_t* data, size_t size) {
                 value = usageValue/32768.f-1.f;
               break;
           }
-          device._axes[index] = (abs(value)>.16f) ? value : 0.f;
-          //out << "Value " << i << " at " << usageValue << " (" << ntos<2>((uint8_t)value,8) << ")" << '\n';
+          device._axes[valueCap.NotRange.Usage-0x30] = (abs(value)>.225f) ? value : 0.f;
+          //out << "Value " << (valueCap.NotRange.Usage-0x30) << " at " << usageValue << " (" << ntos<2>((uint8_t)value,8) << ")" << '\n';
           index++;
         }
       }
