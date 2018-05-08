@@ -13,18 +13,42 @@
 	(self'entity | 'require-rigidbody || 'kinematic | true)
 )))
 (set (self'update) (fun (do
-	; Camera movement
+	; Movement values
 	(local transform (self'transform))
 	(local cursor (self'cursor))
 	(local cursor-transform (self'cursor-transform))
-	(local movement (* real-delta 4))
-	(if (button-pressed 'Shift) (set movement (* movement 4)))
-	(if (or (button-pressed 'Z) (button-pressed 'W)) (transform'move | (vec 0 movement 0)))
-	(if (or (button-pressed 'Q) (button-pressed 'A)) (transform'move | (vec (- movement) 0 0)))
-	(if (button-pressed 'S) (transform'move | (vec 0 (- movement) 0)))
-	(if (button-pressed 'D) (transform'move | (vec movement 0 0)))
-	; Shooting
-	(if (button-pressed 'LeftButton) (self'shoot|))
+	(local movement (* real-delta 16))
+	(local axis-x 0)
+	(local axis-y 0)
+	(local axis-rot-x 0)
+	(local axis-rot-y 0)
+	(local should-shoot false)
+
+	; Gather joystick input (based on X360 only)
+	(foreach device _ (get-devices) (do
+		(+= axis-x (device'get-axis | 0))
+		(-= axis-y (device'get-axis | 1))
+		(+= axis-rot-x (device'get-axis | 3))
+		(-= axis-rot-y (device'get-axis | 4))
+		(if (device'get-button | 0) (set should-shoot true))
+		(if (> (device'get-axis | 5) 0) (set should-shoot true))
+	))
+
+	; Gather keyboard input
+	(if (button-pressed 'Shift) (/= movement 4))
+	(if (or (button-pressed 'Z) (button-pressed 'W)) (+= axis-y 1))
+	(if (or (button-pressed 'Q) (button-pressed 'A)) (-= axis-x 1))
+	(if (button-pressed 'S) (-= axis-y 1))
+	(if (button-pressed 'D) (+= axis-x 1))
+	(if (button-pressed 'LeftButton) (set should-shoot true))
+
+	; Execute input
+	(if (> (abs axis-x) 0.1) (transform'move | (vec (* axis-x movement) 0 0)))
+	(if (> (abs axis-y) 0.1) (transform'move | (vec 0 (* axis-y movement) 0)))
+	(if (> (abs axis-rot-x) 0.1) (transform'rotate | (vec 0 0 1) (* axis-rot-x -0.05)))
+	(if (> (abs axis-rot-y) 0.1) (transform'rotate | (vec 1 0 0) (* axis-rot-y 0.05)))
+	(if should-shoot (self'shoot|))
+
 	; Cursor placing
 	(local hit (raycast (transform'get-position|) (transform'forward|)))
 	(if (non-null (hit'collider))
