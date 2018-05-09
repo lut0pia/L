@@ -213,18 +213,19 @@ Context::Context() : _self(ref<Table<Var, Var>>()) {
     L_ASSERT(a.size()>=4);
     Var *key(nullptr), *value;
     const Var* exec;
-    Var* tableVar;
+    Var table;
     if(a.size()==4) { // Value only
       value = &c.local(a[1].as<Local>().i);
-      tableVar = &c.executeRef(a[2]);
+      table = c.executeReturn(a[2]);
       exec = &a[3];
-    } else { // Key value
+    } else if(a.size()==5) { // Key value
       key = &c.local(a[1].as<Local>().i);
       value = &c.local(a[2].as<Local>().i);
-      tableVar = &c.executeRef(a[3]);
+      table = c.executeReturn(a[3]);
       exec = &a[4];
-    }
-    for(auto&& slot : *tableVar->as<Ref<Table<Var, Var>>>()) {
+    } else error("Foreach with %d parameters is not handled", a.size());
+    L_ASSERT(table.is<Ref<Table<Var, Var>>>());
+    for(const auto& slot : *table.as<Ref<Table<Var, Var>>>()) {
       if(key) *key = slot.key();
       *value = slot.value();
       c.discardExecute(*exec);
