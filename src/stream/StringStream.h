@@ -10,9 +10,9 @@ namespace L {
   public:
     inline StringStream() {}
     inline size_t write(const void* data, size_t size) override {
-      void* dst(_string+_string.size());
+      const uintptr_t prev_size(_string.size());
       _string.size(_string.size()+size);
-      memcpy(dst, data, size);
+      memcpy(_string+prev_size, data, size);
       return size;
     }
     inline size_t read(void* data, size_t size) override { return 0; }
