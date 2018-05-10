@@ -6,7 +6,7 @@
 #define L_DEBUGONLY(...) {}
 #endif
 
-#define L_ASSERT(exp) L_DEBUGONLY(if(!(exp))L::error("Assertion failure: %s",#exp);)
+#define L_ASSERT(...) L_DEBUGONLY(if(!(__VA_ARGS__))L::error("Assertion failure: %s",#__VA_ARGS__);)
 #define L_ASSERT_MSG(exp,msg) L_DEBUGONLY(if(!(exp))L::error(msg);)
 
 namespace L {
