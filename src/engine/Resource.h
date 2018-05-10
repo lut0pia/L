@@ -73,6 +73,7 @@ namespace L {
       if(_slot && _slot->state != ResourceSlotGeneric::Loaded) {
         if(_slot->state == ResourceSlotGeneric::Unloaded)
           _slot->load();
+        L_SCOPE_MARKER("Resource flush");
         TaskSystem::yield_until([](void* data) {
           return ((Slot*)data)->state == ResourceSlotGeneric::Loaded;
         }, _slot);
