@@ -3,6 +3,7 @@
 #include "../stream/CFileStream.h"
 #include "../system/intrinsics.h"
 #include "../system/Memory.h"
+#include "../text/String.h"
 
 using namespace L;
 
@@ -40,9 +41,12 @@ void L::flush_profiling() {
   bool first(true);
   for(uint32_t i(0); i<event_index; i++) {
     const ProfilingEvent& event(events[i]);
+    const String escaped_event_name(String(event.name) // Need some escaping to put into json
+                                    .replaceAll("\n", "\\n")
+                                    .replaceAll("\"", "\\\""));
     file_stream
       << (first ? ' ' : ',')
-      << "{\"ph\":\"X\",\"tid\": " << event.fiber_id << ",\"pid\":" << 0 << ",\"name\":\"" << event.name
+      << "{\"ph\":\"X\",\"tid\": " << event.fiber_id << ",\"pid\":" << 0 << ",\"name\":\"" << escaped_event_name
       << "\",\"ts\":" << event.start.microseconds() << ",\"dur\":" << event.duration.microseconds() << "}\n";
     first = false;
   }
