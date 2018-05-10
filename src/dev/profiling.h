@@ -25,14 +25,8 @@ namespace L {
     ~ScopeMarker();
   };
   class ScopeMarkerFormatted : public ScopeMarker {
-  protected:
-    char _name_buffer[512];
   public:
-    inline ScopeMarkerFormatted(const char* format, ...) : ScopeMarker(_name_buffer) {
-      va_list(args);
-      va_start(args, format);
-      vsnprintf(_name_buffer, sizeof(_name_buffer), format, args);
-    }
+    ScopeMarkerFormatted(const char* format, ...);
   };
   void flush_profiling();
 }

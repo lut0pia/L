@@ -24,10 +24,15 @@ ScopeMarker::~ScopeMarker() {
         return;
       }
     } while(cas(&event_index, index, index+1)!=index);
-    char* name((char*)Memory::alloc(strlen(_name)+1));
-    strcpy(name, _name);
-    events[index] = {name, _start, duration, _fiber_id};
+    events[index] = {_name, _start, duration, _fiber_id};
   }
+}
+ScopeMarkerFormatted::ScopeMarkerFormatted(const char* format, ...) : ScopeMarker(nullptr) {
+  va_list(args);
+  va_start(args, format);
+  const size_t size(vsnprintf(nullptr, 0, format, args)+1);
+  _name = Memory::alloc_type<char>(size);
+  vsnprintf((char*)_name, size, format, args);
 }
 void L::flush_profiling() {
   CFileStream file_stream("trace.json", "w");
