@@ -91,6 +91,7 @@ void Camera::event(const Window::Event& e) {
   }
 }
 void Camera::prerender() {
+  L_SCOPE_MARKER("Camera::prerender");
   static Matrix44f camOrient(orientation_matrix(Vector3f(1,0,0),Vector3f(0,0,1),Vector3f(0,-1,0)).inverse());
   Matrix44f orientation(orientation_matrix(_transform->right(),_transform->forward(),_transform->up()));
   _view = camOrient * _transform->matrix().inverse();
