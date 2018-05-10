@@ -116,7 +116,7 @@ LRESULT CALLBACK MainWndProc(HWND hwnd,uint32_t uMsg,WPARAM wParam,LPARAM lParam
     case WM_CHAR:
       if(wParam != '\b' && wParam != '\r') {
         e.type = Window::Event::Text;
-        strcpy(e.text,UTF16toUTF8(wParam));
+        strcpy(e.text, utf16_to_utf8(wParam));
       } else return 0;
       break;
     case WM_SETCURSOR:

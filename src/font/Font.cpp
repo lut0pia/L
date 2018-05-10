@@ -57,7 +57,7 @@ Font::TextMesh& Font::text_mesh(const char* str) {
     wtr.dimensions.y() = _lineheight;
     int x(0), y(0);
     while(*str) {
-      const uint32_t utf32(ReadUTF8(str));
+      const uint32_t utf32(utf8_to_utf32(str));
       if(utf32=='\n') { // End line
         x = 0;
         y += _lineheight;

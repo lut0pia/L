@@ -2,24 +2,23 @@
 
 using namespace L;
 
-const char* L::UTF16toUTF8(uint16_t utf16) {
-  static char wtr[4];
-  if(utf16<(1<<7)) {
-    wtr[0] = (char)utf16;
-    wtr[1] = 0;
-  } else if(utf16<(1<<11)) {
-    wtr[0] = 0xC0 | (utf16>>6);
-    wtr[1] = 0x80 | (utf16 & bitmask(6));
-    wtr[2] = 0;
-  } else {
-    wtr[0] = 0xE0 | (utf16>>12);
-    wtr[1] = 0x80 | ((utf16>>6) & bitmask(6));
-    wtr[2] = 0x80 | (utf16 & bitmask(6));
-    wtr[3] = 0;
+uint32_t L::utf8_to_utf32(const char*& str) {
+  uint32_t wtr((uint8_t)*str);
+  if(wtr>>5==0x6) { // 2 bytes
+    wtr <<= 6;
+    wtr |= ((uint8_t)*(++str)) & bitmask(6);
+    wtr &= bitmask(11);
+  } else if(wtr>>4==0xE) { // 3 bytes
+    wtr <<= 6;
+    wtr |= ((uint8_t)*(++str)) & bitmask(6);
+    wtr <<= 6;
+    wtr |= ((uint8_t)*(++str)) & bitmask(6);
+    wtr &= bitmask(16);
   }
+  str++;
   return wtr;
 }
-uint32_t L::UTF8toUTF32(const char* str, int* size) {
+uint32_t L::utf8_to_utf32(const char* str, int* size) {
   uint32_t wtr((uint8_t)*str);
   if(wtr>>5==0x6) { // 2 bytes
     wtr <<= 6;
@@ -36,16 +35,12 @@ uint32_t L::UTF8toUTF32(const char* str, int* size) {
   } else *size = 1;
   return wtr;
 }
-Array<uint32_t> L::UTF8toUTF32(const char* str) {
+Array<uint32_t> L::utf8_to_utf32_array(const char* str) {
   Array<uint32_t> wtr;
-  int utfsize;
-  while(*str) {
-    wtr.push(UTF8toUTF32(str,&utfsize));
-    str+=utfsize;
-  }
+  while(str) wtr.push(utf8_to_utf32(str));
   return wtr;
 }
-String L::ANSItoUTF8(String str) {
+String L::ansi_to_utf8(String str) {
 #define ATU(a,u) case a: \
     str.replace(i,1,u); \
     i += String(u).size()-1; \
@@ -72,6 +67,46 @@ String L::ANSItoUTF8(String str) {
   }
 #undef ATU
   return str;
+}
+const char* L::utf16_to_utf8(uint16_t utf16) {
+  thread_local char wtr[4];
+  if(utf16<(1<<7)) {
+    wtr[0] = (char)utf16;
+    wtr[1] = 0;
+  } else if(utf16<(1<<11)) {
+    wtr[0] = 0xC0 | (utf16>>6);
+    wtr[1] = 0x80 | (utf16 & bitmask(6));
+    wtr[2] = 0;
+  } else {
+    wtr[0] = 0xE0 | (utf16>>12);
+    wtr[1] = 0x80 | ((utf16>>6) & bitmask(6));
+    wtr[2] = 0x80 | (utf16 & bitmask(6));
+    wtr[3] = 0;
+  }
+  return wtr;
+}
+const char* L::utf32_to_utf8(uint32_t utf32) {
+  thread_local char wtr[5];
+  if(utf32<(1<<7)) {
+    wtr[0] = (char)utf32;
+    wtr[1] = 0;
+  } else if(utf32<(1<<11)) {
+    wtr[0] = 0xC0 | (utf32>>6);
+    wtr[1] = 0x80 | (utf32 & bitmask(6));
+    wtr[2] = 0;
+  } else if(utf32<(1<<11)) {
+    wtr[0] = 0xE0 | (utf32>>12);
+    wtr[1] = 0x80 | ((utf32>>6) & bitmask(6));
+    wtr[2] = 0x80 | (utf32 & bitmask(6));
+    wtr[3] = 0;
+  } else {
+    wtr[0] = 0xF0 | (utf32>>18);
+    wtr[1] = 0x80 | ((utf32>>12) & bitmask(6));
+    wtr[2] = 0x80 | ((utf32>>6) & bitmask(6));
+    wtr[3] = 0x80 | (utf32 & bitmask(6));
+    wtr[4] = 0;
+  }
+  return wtr;
 }
 
 String L::url_encode(const String& src) {
