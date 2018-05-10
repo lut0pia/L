@@ -9,8 +9,8 @@ namespace L {
     class Context;
     typedef void(*Function)(Context&);
     typedef void(*Native)(Context&, const Array<Var>&);
-    typedef struct { uint32_t i; } Local;
-    typedef struct { Symbol sym; } RawSymbol;
-    typedef struct { Var code; uint32_t localCount; } CodeFunction;
+    struct Local { uint32_t i; };
+    struct RawSymbol { Symbol sym; };
+    struct CodeFunction { Var code; uint32_t localCount; };
   }
 }
