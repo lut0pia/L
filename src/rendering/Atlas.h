@@ -11,7 +11,7 @@ namespace L {
     Set<int> _xs, _ys;
   public:
     Atlas(GLsizei width = 4096, GLsizei height = 4096);
-    Interval2f add(const Bitmap&);
+    Interval2f add(GLsizei width, GLsizei height, const void* data);
     Interval2f pixelToCoords(const Interval2i&) const;
     const Texture& texture() const { return *this; }
   };

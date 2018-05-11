@@ -13,7 +13,7 @@ const Font::Glyph& Font::glyph(uint32_t utf32) {
   else glyph = &_glyphs[utf32];
   if(!glyph->init) {
     load_glyph(utf32, *glyph, _bmp);
-    glyph->atlas_coords = _atlas.add(_bmp);
+    glyph->atlas_coords = _atlas.add(_bmp.width(), _bmp.height(), &_bmp[0]);
     glyph->size.x() = _bmp.width();
     glyph->size.y() = _bmp.height();
     glyph->init = true;

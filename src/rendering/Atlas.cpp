@@ -1,7 +1,5 @@
 #include "Atlas.h"
 
-#include "../image/Bitmap.h"
-
 using namespace L;
 
 Atlas::Atlas(GLsizei width, GLsizei height)
@@ -9,15 +7,15 @@ Atlas::Atlas(GLsizei width, GLsizei height)
   parameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   parameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 }
-Interval2f Atlas::add(const Bitmap& bmp) {
+Interval2f Atlas::add(GLsizei part_width, GLsizei part_height, const void* data) {
   Vector2i i(0, 0);
   while(true) {
     const Vector2i pos(_xs[i.x()], _ys[i.y()]);
-    const Interval2i candidate(pos, pos+Vector2i(bmp.width(), bmp.height()));
+    const Interval2i candidate(pos, pos+Vector2i(part_width, part_height));
     const bool valid(candidate.max().x()<width() && candidate.max().y()<height() && !_parts.overlaps(candidate));
 
     if(valid) {
-      subload(bmp, candidate.min().x(), candidate.min().y());
+      subimage2D(0, candidate.min().x(), candidate.min().y(), part_width, part_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
       _parts.insert(candidate, true);
       _xs.insert(candidate.max().x());
       _ys.insert(candidate.max().y());
