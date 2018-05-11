@@ -89,7 +89,7 @@
 	))
 )))
 (set (self'gui) (fun (do
-	(draw-image 10 10 "logo.png")
+	(draw-image 10 10 "logo.png?filter=nearest")
 	(draw-text 84 10
 		(+ "FPS: " (/ 1.0 delta) "\n"
 			 "Frame: " avg-frame-work-duration "\n"
