@@ -50,8 +50,8 @@ template<> void L::post_load_resource(ResourceSlot<Texture>& slot) {
     tex->parameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     tex->parameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
+    GLint filter(GL_LINEAR);
     {
-      GLint filter(GL_LINEAR);
       if(const Symbol filter_param = slot.parameter("filter")) {
         static const Symbol nearest("nearest");
         if(filter_param==nearest)
@@ -60,6 +60,7 @@ template<> void L::post_load_resource(ResourceSlot<Texture>& slot) {
       tex->parameter(GL_TEXTURE_MAG_FILTER, filter);
       tex->parameter(GL_TEXTURE_MIN_FILTER, filter);
     }
-    tex->generate_mipmap();
+    if(filter==GL_LINEAR)
+      tex->generate_mipmap();
   }
 }
