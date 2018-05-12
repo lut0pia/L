@@ -33,6 +33,7 @@ ScopeMarkerFormatted::ScopeMarkerFormatted(const char* format, ...) : ScopeMarke
   va_start(args, format);
   const size_t size(vsnprintf(nullptr, 0, format, args)+1);
   _name = Memory::alloc_type<char>(size);
+  va_start(args, format);
   vsnprintf((char*)_name, size, format, args);
 }
 void L::flush_profiling() {
