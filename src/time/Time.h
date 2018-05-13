@@ -32,12 +32,12 @@ namespace L {
     inline bool operator>=(const Time& other) const { return usec >= other.usec; }
     inline bool operator<=(const Time& other) const { return usec <= other.usec; }
 
-    inline long days() const { return (long)(usec/86400000000LL); }
-    inline long hours() const { return (long)(usec/3600000000LL); }
-    inline long minutes() const { return (long)(usec/60000000LL); }
-    inline long seconds() const { return (long)(usec/1000000LL); }
-    inline long long milliseconds() const { return usec/1000LL; }
-    inline long long microseconds() const { return usec; }
+    inline int64_t days() const { return usec/86400000000LL; }
+    inline int64_t hours() const { return usec/3600000000LL; }
+    inline int64_t minutes() const { return usec/60000000LL; }
+    inline int64_t seconds() const { return usec/1000000LL; }
+    inline int64_t milliseconds() const { return usec/1000LL; }
+    inline int64_t microseconds() const { return usec; }
 
     inline float fSeconds() const { return float(seconds())+(float(microseconds()%1000000LL)/1000000.f); }
 
