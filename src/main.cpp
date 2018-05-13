@@ -77,7 +77,6 @@ int main(int argc, const char* argv[]) {
   Engine::register_component<HierarchyComponent>();
   Engine::register_component<Primitive>();
   Engine::register_component<Sprite>();
-  Engine::register_component<MeshComponent>();
 
   {
     Script::Context ini_context;

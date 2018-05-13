@@ -1,5 +1,6 @@
 {
   'program "shader/staticmesh.glsl"
+  'mesh "mesh/jerrican.obj"
   'textures {
     "tex" "texture/jerrican.png"
     "mat_tex" "texture/jerrican_mat.png"

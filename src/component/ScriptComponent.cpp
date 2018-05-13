@@ -139,6 +139,8 @@ void ScriptComponent::script_registration() {
   });
   // Material ///////////////////////////////////////////////////////////////////
   L_METHOD(Material, "parent", 1, parent(Resource<Material>::get(c.local(0).get<String>())));
+  L_METHOD(Material, "program", 1, program(Resource<Program>::get(c.local(0).get<String>())));
+  L_METHOD(Material, "mesh", 1, mesh(Resource<Mesh>::get(c.local(0).get<String>())));
   L_METHOD(Material, "color", 2, color(c.local(0).get<Symbol>(), c.local(1).get<Color>()));
   // Devices ///////////////////////////////////////////////////////////////////
   L_FUNCTION("get-devices", {

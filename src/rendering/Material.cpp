@@ -2,12 +2,20 @@
 
 using namespace L;
 
-void Material::use(const Matrix44f& model) {
-  Resource<Program> program(final_program());
-  if(program) {
+void Material::draw(const Matrix44f& model) {
+  if(Resource<Program> program = final_program()) {
     program->use();
     apply_parameters(*program);
     program->uniform("model", model);
+    if(Resource<Mesh> mesh = final_mesh()) {
+      mesh->draw();
+    } else {
+      const GLenum prim_mode(final_primitive_mode());
+      const GLsizei vert_count(final_vertex_count());
+      if(prim_mode!=GL_INVALID_ENUM && vert_count!=0) {
+        GL::draw(final_primitive_mode(), final_vertex_count());
+      }
+    }
   }
 }
 
@@ -50,10 +58,13 @@ void Material::apply_parameters(Program& program, ApplyHelper* helper) {
   }
 }
 bool Material::valid() const {
-  return final_program();
+  const bool can_draw_without_mesh(final_primitive_mode()!=GL_INVALID_ENUM && final_vertex_count()!=0);
+  return final_program().is_set() && (can_draw_without_mesh || final_mesh().is_set());
 }
-bool Material::drawable() const {
-  return valid() && final_primitive_mode()!=GL_INVALID_ENUM && final_vertex_count()!=0;
+Interval3f Material::bounds() const {
+  if(Resource<Mesh> mesh = final_mesh())
+    return mesh->bounds();
+  else return Interval3f(Vector3f(-1.f),Vector3f(1.f));
 }
 
 void Material::scalar(const Symbol& name, float scalar) {

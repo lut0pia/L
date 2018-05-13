@@ -1,5 +1,6 @@
 {
   'program "shader/staticmesh.glsl"
+  'mesh "mesh/smartphone.obj"
   'textures {
     "tex" "texture/smartphone.png"
     "mat_tex" "texture/smartphone_mat.png"

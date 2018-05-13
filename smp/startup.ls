@@ -46,14 +46,13 @@
 	(entity'require-primitive || 'scale | size)
 	(entity'require-primitive || 'material || 'parent | "material/box.lon")
 )))
-(set make-mesh (fun (mesh mat pos) (do
+(set make-mesh (fun (mat pos) (do
 	(local entity (entity-make))
 	(set truc entity)
 	(local transform (entity'require-transform|))
-	(local staticmesh (entity'require-mesh|))
+	(local primitive (entity'require-primitive|))
 	(transform'move | pos)
-	(staticmesh'mesh | mesh)
-	(staticmesh'material || 'parent | mat)
+	(primitive'material || 'parent | mat)
 	entity
 )))
 
@@ -67,9 +66,9 @@
 	(entity-make | 'add-light || 'directional | (color) (vec -1 2 -3) 2)
 	(make-terrain)
 
-	(make-mesh "mesh/smartphone.obj" "material/smartphone.lon" (vec -16 -20 5))
-	(make-mesh "mesh/jerrican.obj" "material/jerrican.lon" (vec 10 -16 5))
-	(make-mesh "mesh/bush.obj" "material/bush.lon" (vec -16 -28 0))
+	(make-mesh "material/smartphone.lon" (vec -16 -20 5))
+	(make-mesh "material/jerrican.lon" (vec 10 -16 5))
+	(make-mesh "material/bush.lon" (vec -16 -28 0))
 	(set truc (entity-copy truc))
 	(truc'require-transform || 'move | (vec 30 0 0))
 
