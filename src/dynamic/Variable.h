@@ -13,11 +13,13 @@ namespace L {
 
     inline void* value(){ return (local()) ? (void*)&_data : _p; }
     inline const void* value() const{ return (local()) ? (void*)&_data : _p; }
+    template <class T> inline T* value() { return (T*)(local<T>() ? &_data : _p); }
+    template <class T> inline const T* value() const { return (T*)(local<T>() ? &_data : _p); }
 
   public:
     inline Variable() : _td(Type<void>::description()) {}
     template <class T> Variable(const T& v) : _td(Type<T>::description()) {
-      if(local())  // Value is to be contained locally
+      if(local<T>())  // Value is to be contained locally
         new(&_data) T(v);
       else _p = new T(v);
     }
@@ -30,10 +32,11 @@ namespace L {
 
     inline const TypeDescription* type() const { return _td; }
     inline bool local() const { return _td->size<=sizeof(_data); }
+    template <class T> static constexpr bool local() { return sizeof(T)<=sizeof(_data); }
 
     template <class T> inline bool is() const { return _td == Type<T>::description(); }
-    template <class T> inline const T& as() const { return *(T*)value(); }
-    template <class T> inline T& as() { return *(T*)value(); }
+    template <class T> inline const T& as() const { return *value<T>(); }
+    template <class T> inline T& as() { return *value<T>(); }
 
     inline bool canbe(const TypeDescription* td) const { return _td->casts.find(td) != nullptr; }
     template <class T> inline bool canbe() const { return canbe(Type<T>::description()); }
@@ -44,7 +47,7 @@ namespace L {
     template <class T> T& make(){
       this->~Variable(); // Destruct current
       _td = Type<T>::description(); // Change type description
-      if(local()) new(&_data) T(); // Local construct if small enough type
+      if(local<T>()) new(&_data) T(); // Local construct if small enough type
       else _p = new T(); // Dynamic allocation if large type
       return as<T>();
     }
