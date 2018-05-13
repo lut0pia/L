@@ -1,5 +1,8 @@
 #include "File.h"
 
+#include <unistd.h>
+#include <sys/stat.h>
+
 using namespace L;
 
 bool File::exists() const {
@@ -15,4 +18,9 @@ bool File::mtime(const char* path, Date& date) {
     date = time_t(buf.st_mtim.tv_sec);
     return true;
   } else return false;
+}
+Array<String> File::list(const char* path) {
+  String output;
+  System::call(String("find ")+path+" -printf \"%p\\n\"", output);
+  return output.explode('\n');
 }
