@@ -63,6 +63,7 @@ namespace L {
     inline T* operator->() { flush(); return _slot->value; }
     inline const T* operator->() const { flush(); return _slot->value; }
     inline const Ref<T>& ref() { flush(); return _slot->value; }
+    inline bool is_set() const { return _slot!=nullptr; }
     inline operator bool() const {
       if(_slot) {
         _slot->load();
