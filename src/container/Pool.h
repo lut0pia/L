@@ -15,7 +15,6 @@ namespace L {
 
     class Block {
       static const size_t slot_count = (ideal_byte_size-sizeof(Block*)) / sizeof(Slot);
-      L_ALLOCABLE(Block)
     protected:
       Slot _slots[slot_count];
       Block* _next;
@@ -26,7 +25,7 @@ namespace L {
         _slots[slot_count-1]._next = nullptr;
       }
       inline Slot* first_slot() { return _slots; }
-      inline ~Block() { delete _next; }
+      inline ~Block() { if(_next) Memory::delete_type(_next); }
     };
     static_assert(sizeof(Block)<=ideal_byte_size, "Pool block size too big");
 
@@ -37,7 +36,7 @@ namespace L {
   public:
     constexpr Pool() : _block(nullptr), _freelist(nullptr), _size(0) {}
     inline ~Pool() {
-      if(_block) delete _block;
+      if(_block) Memory::delete_type(_block);
     }
 
     template <typename... Args>
@@ -51,7 +50,7 @@ namespace L {
     T* allocate() {
       _size++;
       if(!_freelist) {
-        _block = new Block(_block);
+        _block = Memory::new_type<Block>(_block);
         _freelist = _block->first_slot();
         L_ASSERT(_freelist);
       }

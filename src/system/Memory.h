@@ -3,10 +3,6 @@
 #include <cstdint> 
 #include "../dev/debug.h"
 
-#define L_ALLOCABLE(...) public: \
-inline void* operator new(size_t SIZE) { L_ASSERT(SIZE==sizeof(__VA_ARGS__)); return L::Memory::alloc_type<__VA_ARGS__>();} \
-inline void operator delete(void* P) { L::Memory::free_type((__VA_ARGS__*)P); }
-
 namespace L {
   class Memory {
   public:

@@ -8,8 +8,6 @@
 using namespace L;
 
 struct DeviceSystem {
-  L_ALLOCABLE(DeviceSystem)
-public:
   PHIDP_PREPARSED_DATA _preparsed;
   uint32_t _minButtonUsage;
   HIDP_CAPS _caps;
@@ -40,7 +38,7 @@ void Device::init() {
     error("More than 32 HIDs connected.");
 
   for(UINT i(0); i<nDevices; i++) {
-    DeviceSystem* deviceSystem = new DeviceSystem;
+    DeviceSystem* deviceSystem = Memory::alloc_type<DeviceSystem>();
 
     UINT preparsedDataSize;
     GetRawInputDeviceInfo(pRawInputDeviceList[i].hDevice, RIDI_PREPARSEDDATA, NULL, &preparsedDataSize);
