@@ -54,7 +54,7 @@ void Device::init() {
       error("Couldn't get caps");
     if(deviceSystem->_caps.Usage!=5 || deviceSystem->_caps.UsagePage!=1) { // Not a gamepad
       HidD_FreePreparsedData(deviceSystem->_preparsed);
-      delete deviceSystem;
+      Memory::free_type(deviceSystem);
       continue;
     }
 
