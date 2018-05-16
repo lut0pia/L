@@ -2,8 +2,6 @@
 
 #include "../component/Camera.h"
 #include "../dev/profiling.h"
-#include "../rendering/Program.h"
-#include "../rendering/Mesh.h"
 
 using namespace L;
 
