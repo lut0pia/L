@@ -1,0 +1,8 @@
+{
+  'program "shader/sprite.glsl"
+  'vertex_count 6
+  'primitive_mode 'triangles
+  'vectors {
+    'uv (vec4 0 1 0 1)
+  }
+}

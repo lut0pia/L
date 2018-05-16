@@ -78,9 +78,9 @@
 	(local sprite (entity-make))
 	(sprite'require-transform || 'move | (vec -9.4 0 5))
 	(sprite'require-transform || 'rotate | (vec 0 0 1) 1.57)
-	(sprite'require-sprite || 'texture | "texture/bush.png")
-	(sprite'require-sprite || 'uv | 0 0 1 1)
-	(sprite'require-sprite || 'vertex | -5 -5 5 5)
+	(sprite'require-primitive || 'material || 'parent | "material/sprite.lon")
+	(sprite'require-primitive || 'material || 'texture | 'tex "texture/bush.png")
+	(sprite'require-primitive || 'scale | (vec 5))
 
 	; Create all boxes
 	(local box-count 16)
