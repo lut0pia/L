@@ -42,6 +42,7 @@ void LightComponent::script_registration() {
 
 void LightComponent::late_update() {
   _position = _transform->position();
+  _cull_volume.update_bounds(Interval3f(_position).extended(_radius));
   if(_type == 2)
     _direction = _transform->rotation().rotate(_relative_dir);
 }
@@ -69,17 +70,19 @@ void LightComponent::spot(const Color& color, const Vector3f& relative_dir, floa
 }
 
 void LightComponent::render() {
-  _program->uniform("l_pos", _position);
-  _program->uniform("l_dir", _direction);
-  _program->uniform("l_color", _color);
-  _program->uniform("l_int", _intensity);
-  _program->uniform("l_rad", _radius);
-  _program->uniform("l_in_ang", _inner_angle);
-  _program->uniform("l_out_ang", _outer_angle);
-  _program->uniform("l_type", _type);
-  switch(_type)
-  {
-    case 1: GL::draw(GL_TRIANGLES, 8*3*4); break;
-    default:GL::draw(GL_TRIANGLES, 3); break;
+  if(_type == 0 || _cull_volume.visible()) {
+    _program->uniform("l_pos", _position);
+    _program->uniform("l_dir", _direction);
+    _program->uniform("l_color", _color);
+    _program->uniform("l_int", _intensity);
+    _program->uniform("l_rad", _radius);
+    _program->uniform("l_in_ang", _inner_angle);
+    _program->uniform("l_out_ang", _outer_angle);
+    _program->uniform("l_type", _type);
+    switch(_type)
+    {
+      case 1: GL::draw(GL_TRIANGLES, 8*3*4); break;
+      default:GL::draw(GL_TRIANGLES, 3); break;
+    }
   }
 }

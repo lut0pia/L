@@ -2,6 +2,7 @@
 
 #include "Component.h"
 #include "Transform.h"
+#include "../engine/CullVolume.h"
 #include "../engine/Resource.h"
 #include "../rendering/Mesh.h"
 #include "../rendering/Program.h"
@@ -13,6 +14,7 @@ namespace L {
   protected:
     static Resource<Program> _program;
     Transform* _transform;
+    CullVolume _cull_volume;
     Vector3f _position, _color, _direction, _relative_dir;
     float _intensity, _radius, _inner_angle, _outer_angle;
     int _type;
