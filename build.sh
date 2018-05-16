@@ -35,4 +35,6 @@ then
   if [ $mode = "run" ] ; then
     (cd smp && ./$exe) # Execute program
   fi
+else
+  exit $?
 fi
