@@ -142,6 +142,8 @@ void ScriptComponent::script_registration() {
   L_METHOD(Material, "program", 1, program(Resource<Program>::get(c.local(0).get<String>())));
   L_METHOD(Material, "mesh", 1, mesh(Resource<Mesh>::get(c.local(0).get<String>())));
   L_METHOD(Material, "color", 2, color(c.local(0).get<Symbol>(), c.local(1).get<Color>()));
+  L_METHOD(Material, "texture", 2, texture(c.local(0), Resource<Texture>::get(c.local(1).get<String>())));
+  L_METHOD(Material, "vector", 2, vector(c.local(0), c.local(1)));
   // Devices ///////////////////////////////////////////////////////////////////
   L_FUNCTION("get-devices", {
     auto wtr(ref<Table<Var,Var>>());
