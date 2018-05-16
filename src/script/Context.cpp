@@ -387,6 +387,14 @@ Context::Context() : _self(ref<Table<Var, Var>>()) {
         vector[i] = c.local(min(local_count-1, i));
     else vector = 0.f;
   });
+  _globals[Symbol("vec4")] = (Function)([](Context& c) {
+    const uint32_t local_count(c.localCount());
+    Vector4f& vector(c.returnValue().make<Vector4f>());
+    if(local_count)
+      for(uint32_t i(0); i<4; i++)
+        vector[i] = c.local(min(local_count-1, i));
+    else vector = 0.f;
+  });
   _globals[Symbol("normalize")] = (Function)([](Context& c) {
     L_ASSERT(c.localCount()==1);
     c.returnValue() = c.local(0).get<Vector3f>().normalized();
