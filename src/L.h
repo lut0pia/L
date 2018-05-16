@@ -29,7 +29,6 @@
 #include "component/Primitive.h"
 #include "component/RigidBody.h"
 #include "component/ScriptComponent.h"
-#include "component/Sprite.h"
 #include "component/Transform.h"
 
 // Objects that hold other objects
