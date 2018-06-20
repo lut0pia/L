@@ -22,7 +22,7 @@ namespace L {
     void play();
     void stop();
 
-    inline void sequence(const char* filepath) { _sequence = Resource<Audio::MidiSequence>::get(filepath); }
+    inline void sequence(const char* filepath) { _sequence = filepath; }
     inline void looping(bool loop) { _loop = loop; }
     inline bool playing() const { return _playing; }
   };

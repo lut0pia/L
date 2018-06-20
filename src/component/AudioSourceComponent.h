@@ -25,7 +25,7 @@ namespace L {
     virtual void unpack(const Map<Symbol, Var>&) override;
     static void script_registration();
 
-    inline void stream(const char* filepath) { _stream = Resource<AudioStream>::get(filepath); }
+    inline void stream(const char* filepath) { _stream = filepath; }
     inline void looping(bool should_loop) { _looping = should_loop; }
     inline void volume(float v) { _volume = v; }
     inline void play() { _current_frame = 0; _playing = true; }

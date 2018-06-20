@@ -33,7 +33,7 @@ namespace L {
     void spot(const Color& color, const Vector3f& direction, float intensity = 1.f, float radius = 1.f, float inner_angle = .5f, float outer_angle = 0.f);
 
     void render();
-    inline static void program(const char* path) { _program = Resource<Program>::get(path); }
+    inline static void program(const char* path) { _program = path; }
     inline static Resource<Program>& program() { return _program; }
   };
 }

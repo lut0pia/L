@@ -23,7 +23,7 @@ namespace L {
     
     void render(const Camera& camera);
 
-    inline void material(const char* filename) { _material.parent(Resource<Material>::get(filename)); }
+    inline void material(const char* filename) { _material.parent(filename); }
     inline Material* material() { return &_material; }
     inline void scale(const Vector3f& s) { _scale = s; }
 

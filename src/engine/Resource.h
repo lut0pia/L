@@ -57,7 +57,20 @@ namespace L {
 
   public:
     constexpr Resource() : _slot(nullptr) {}
-    constexpr Resource(Slot* slot) : _slot(slot) {}
+    inline Resource(const String& url) : Resource((const char*)url) {}
+    Resource(const char* url) {
+      static Lock lock;
+      L_SCOPED_LOCK(lock);
+
+      const Symbol id(url);
+      if(Slot** found = _table.find(id))
+        _slot = *found;
+      else {
+        _slot = new(_pool.allocate())Slot(url);
+        _table[id] = _slot;
+        _slots.push(_slot);
+      }
+    }
     inline T& operator*() { flush(); return *_slot->value; }
     inline const T& operator*() const { flush(); return *_slot->value; }
     inline T* operator->() { flush(); return _slot->value; }
@@ -85,23 +98,10 @@ namespace L {
     friend Stream& operator>(Stream& s, Resource& v) {
       Symbol id;
       s > id;
-      v = id!=Symbol("null") ? Resource::get(id) : Resource();
+      v = id!=Symbol("null") ? Resource(id) : Resource();
       return s;
     }
 
-    static Resource get(const char* url) {
-      static Lock lock;
-      L_SCOPED_LOCK(lock);
-
-      const Symbol id(url);
-      if(Slot** found = _table.find(id))
-        return Resource(*found);
-
-      Resource wtr(new(_pool.allocate())Slot(url));
-      _table[id] = wtr._slot;
-      _slots.push(wtr._slot);
-      return wtr;
-    }
     static void update() {
       if(!_slots.empty()) {
         L_SCOPE_MARKERF("Resource<%s>::update()", (const char*)type_name<T>());

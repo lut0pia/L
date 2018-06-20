@@ -25,10 +25,10 @@ namespace L {
       Ref<Material> wtr(ref<Material>());
       // Program
       if(program_var)
-        wtr->program(Resource<Program>::get(program_var->get<String>()));
+        wtr->program(program_var->get<String>());
       // Mesh
       if(mesh_var)
-        wtr->mesh(Resource<Mesh>::get(mesh_var->get<String>()));
+        wtr->mesh(mesh_var->get<String>());
       // Iterate over scalars
       if(scalars_var && scalars_var->is<Ref<Table<Var, Var>>>())
         for(const auto& scalar : *scalars_var->as<Ref<Table<Var, Var>>>())
@@ -36,7 +36,7 @@ namespace L {
       // Iterate over textures
       if(textures_var && textures_var->is<Ref<Table<Var, Var>>>())
         for(const auto& texture : *textures_var->as<Ref<Table<Var, Var>>>())
-          wtr->texture(texture.key().get<Symbol>(), Resource<Texture>::get(texture.value().get<String>()));
+          wtr->texture(texture.key().get<Symbol>(), texture.value().get<String>());
       // Iterate over vectors
       if(vectors_var && vectors_var->is<Ref<Table<Var, Var>>>())
         for(const auto& vector : *vectors_var->as<Ref<Table<Var, Var>>>())

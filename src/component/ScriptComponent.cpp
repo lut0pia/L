@@ -47,7 +47,7 @@ void ScriptComponent::script_registration() {
       String* str((String*)p);
       Engine::clear();
       Context context;
-      context.executeInside(Array<Var>{Resource<Script::CodeFunction>::get(*str).ref()});
+      context.executeInside(Array<Var>{Resource<Script::CodeFunction>(*str).ref()});
       Memory::delete_type(str);
     }, Memory::new_type<String>(c.local(0).get<String>())});
   });
@@ -57,7 +57,7 @@ void ScriptComponent::script_registration() {
   });
   // Gui ///////////////////////////////////////////////////////////////////
   L_FUNCTION("draw-text", {
-    Resource<Font>::get("")->draw(c.local(0).get<int>(),c.local(1).get<int>(),c.local(2).get<String>());
+    Resource<Font>("")->draw(c.local(0).get<int>(),c.local(1).get<int>(),c.local(2).get<String>());
   });
   L_FUNCTION("draw-image", {
     if(c.localCount()==3) {
@@ -82,7 +82,7 @@ void ScriptComponent::script_registration() {
           "void main(){"
           "fragcolor = texture(tex,ftexcoords);"
           "}", GL_FRAGMENT_SHADER));
-      if(auto tex = Resource<Texture>::get(c.local(2).get<String>())) {
+      if(Resource<Texture> tex = c.local(2).get<String>()) {
         gui_image_program.use();
         gui_image_program.uniform("tex", *tex);
         gui_image_program.uniform("coords", Vector4f(c.local(0).get<float>(), c.local(1).get<float>(),
@@ -138,11 +138,11 @@ void ScriptComponent::script_registration() {
     } else c.returnValue() = nullptr;
   });
   // Material ///////////////////////////////////////////////////////////////////
-  L_METHOD(Material, "parent", 1, parent(Resource<Material>::get(c.local(0).get<String>())));
-  L_METHOD(Material, "program", 1, program(Resource<Program>::get(c.local(0).get<String>())));
-  L_METHOD(Material, "mesh", 1, mesh(Resource<Mesh>::get(c.local(0).get<String>())));
+  L_METHOD(Material, "parent", 1, parent(c.local(0).get<String>()));
+  L_METHOD(Material, "program", 1, program(c.local(0).get<String>()));
+  L_METHOD(Material, "mesh", 1, mesh(c.local(0).get<String>()));
   L_METHOD(Material, "color", 2, color(c.local(0).get<Symbol>(), c.local(1).get<Color>()));
-  L_METHOD(Material, "texture", 2, texture(c.local(0), Resource<Texture>::get(c.local(1).get<String>())));
+  L_METHOD(Material, "texture", 2, texture(c.local(0), c.local(1).get<String>()));
   L_METHOD(Material, "vector", 2, vector(c.local(0), c.local(1)));
   // Devices ///////////////////////////////////////////////////////////////////
   L_FUNCTION("get-devices", {
@@ -165,7 +165,7 @@ void ScriptComponent::script_registration() {
 }
 
 void ScriptComponent::load(const char* filename) {
-  _script = Resource<Script::CodeFunction>::get(filename);
+  _script = filename;
   _script.flush();
   start();
 }
