@@ -13,6 +13,7 @@ namespace L {
     inline Symbol(const char* str) : Symbol(str, strlen(str)) {}
     Symbol(const char* str, size_t length);
     inline bool operator==(const Symbol& other) const { return _string==other._string; }
+    inline bool operator!=(const Symbol& other) const { return _string!=other._string; }
     inline bool operator<(const Symbol& other) const { return strcmp(_string, other._string)<0; }
     inline operator const char*() const { return _string; }
     inline explicit operator bool() const { return _string!=nullptr; }
