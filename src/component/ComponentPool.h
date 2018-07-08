@@ -14,6 +14,7 @@ namespace L {
   public:
     static T* allocate() { return _pool.allocate(); }
     static void deallocate(T* p) { _pool.deallocate(p); }
+    static size_t size() { return _pool.objects().size(); }
     template <typename Callback>
     static void iterate(Callback f) {
       if(!_pool.objects().empty()) {
