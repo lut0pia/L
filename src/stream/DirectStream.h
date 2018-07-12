@@ -16,5 +16,7 @@ namespace L {
     virtual void seek(uintptr_t) = 0;
     virtual uintptr_t tell() = 0;
     virtual size_t size() = 0;
+
+    virtual class Buffer read_into_buffer();
   };
 }
