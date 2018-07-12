@@ -1,83 +1,71 @@
 #include "Mesh.h"
 
 #include "MeshBuilder.h"
-#include "GL.h"
 
 using namespace L;
 
-Mesh::Mesh(GLenum mode, GLsizei count, const void* data, GLsizeiptr size, const std::initializer_list<Attribute>& attributes, const GLushort* iarray, GLsizei icount)
+Mesh::Mesh(size_t count, const void* data, size_t size, const VkFormat* formats, size_t fcount, const uint16_t* iarray, size_t icount)
   : Mesh() {
-  load(mode, count, data, size, attributes, iarray, icount);
+  load(count, data, size, formats, fcount, iarray, icount);
 }
-Mesh::Mesh(const MeshBuilder& mb, GLenum mode, const std::initializer_list<Attribute>& attributes)
+Mesh::Mesh(const MeshBuilder& mb, const VkFormat* formats, size_t fcount)
   : Mesh() {
-  load(mb, mode, attributes);
+  load(mb, formats, fcount);
 }
 Mesh::~Mesh() {
-  if(_vao) glDeleteVertexArrays(1, &_vao);
-  if(_vbo) glDeleteBuffers(1, &_vbo);
-  if(_eab) glDeleteBuffers(1, &_eab);
-  _vao = _vbo = _eab = 0;
+  if(_vertex_buffer) Memory::delete_type(_vertex_buffer);
+  if(_index_buffer) Memory::delete_type(_index_buffer);
+  _vertex_buffer = _index_buffer = nullptr;
 }
-void Mesh::indices(const GLushort* data, GLsizei count) {
-  _count = count;
-  glCreateBuffers(1, &_eab);
-  glNamedBufferData(_eab, count*sizeof(GLushort), data, GL_STATIC_DRAW);
-  glVertexArrayElementBuffer(_vao, _eab);
-}
-void Mesh::load(GLenum mode, GLsizei count, const void* data, GLsizeiptr size, const std::initializer_list<Attribute>& attributes, const GLushort* iarray, GLsizei icount) {
+void Mesh::load(size_t count, const void* data, size_t size, const VkFormat* formats, size_t fcount, const uint16_t* iarray, size_t icount) {
   this->~Mesh();
-  _mode = mode;
-  _count = count;
-  glCreateVertexArrays(1, &_vao);
-  glCreateBuffers(1, &_vbo);
-  glNamedBufferData(_vbo, size, data, GL_STATIC_DRAW);
-  glBindVertexArray(_vao);
-  glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-  GLuint index(0);
-  GLsizei stride(size/count);
-  GLintptr offset(0);
-  for(auto&& a : attributes) {
-    glEnableVertexArrayAttrib(_vao, index);
-    glVertexAttribPointer(index, a.size, a.type, a.normalized, stride, (const void*)offset);
-    switch(a.type) {
-      case GL_FLOAT: offset += sizeof(float)*a.size; break;
-      default: error("Unknown GL type");
-    }
-    index++;
+
+  _vertex_buffer = Memory::new_type<GPUBuffer>(size, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
+  _vertex_buffer->load(data);
+  if(iarray) {
+    _index_buffer = Memory::new_type<GPUBuffer>(icount*sizeof(*iarray), VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
+    _index_buffer->load(iarray);
+    _count = icount;
+  } else {
+    _count = count;
   }
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-  glBindVertexArray(0);
-  if(iarray) indices(iarray, icount);
 
   // Compute bounds
+  const uint32_t vertex_size(size/count);
   _bounds = (*(Vector3f*)data);
-  for(uintptr_t i(1);i<count;i++)
-    _bounds.add(*(Vector3f*)((uint8_t*)data+stride*i));
+  for(uintptr_t i(1); i<count; i++)
+    _bounds.add(*(Vector3f*)((uint8_t*)data+vertex_size*i));
 }
-void Mesh::load(const MeshBuilder& mb, GLenum mode, const std::initializer_list<Attribute>& attributes) {
-  load(mode, GLsizei(mb.vertexCount()), mb.vertices(), mb.verticesSize(), attributes, mb.indices(), GLsizei(mb.indexCount()));
+void Mesh::load(const MeshBuilder& mb, const VkFormat* formats, size_t fcount) {
+  load(mb.vertexCount(), mb.vertices(), mb.verticesSize(), formats, fcount, mb.indices(), mb.indexCount());
 }
-void Mesh::draw() const {
-  if(_vao) {
-    glBindVertexArray(_vao);
-    if(_eab) glDrawElements(_mode, _count, GL_UNSIGNED_SHORT, 0);
-    else glDrawArrays(_mode, 0, _count);
+void Mesh::draw(VkCommandBuffer cmd_buffer) const {
+  if(_vertex_buffer) {
+    const VkBuffer buffers[] {*_vertex_buffer};
+    const VkDeviceSize offsets[] {0};
+    vkCmdBindVertexBuffers(cmd_buffer, 0, 1, buffers, offsets);
+    if(_index_buffer) {
+      vkCmdBindIndexBuffer(cmd_buffer, *_index_buffer, 0, VK_INDEX_TYPE_UINT16);
+      vkCmdDrawIndexed(cmd_buffer, _count, 1, 0, 0, 0);
+    } else {
+      vkCmdDraw(cmd_buffer, _count, 1, 0, 0);
+    }
   }
 }
 
 const Mesh& Mesh::quad() {
-  static const GLfloat quad[] = {
+  static const float quad[] = {
     -1,-1,0,
     1,-1,0,
     -1,1,0,
     1,1,0,
   };
-  static Mesh mesh(GL_TRIANGLE_STRIP, 4, quad, sizeof(quad), {Mesh::Attribute{3,GL_FLOAT,GL_FALSE}});
+  static const VkFormat formats[] {VK_FORMAT_R32G32B32_SFLOAT};
+  static Mesh mesh(4, quad, sizeof(quad), formats, L_COUNT_OF(formats));
   return mesh;
 }
 const Mesh& Mesh::wire_cube() {
-  static const GLfloat wireCube[] = {
+  static const float wireCube[] = {
     // Bottom face
     -1,-1,-1, -1,1,-1,
     -1,-1,-1, 1,-1,-1,
@@ -94,12 +82,13 @@ const Mesh& Mesh::wire_cube() {
     1,-1,-1,  1,-1,1,
     1,1,-1,   1,1,1,
   };
-  static Mesh mesh(GL_LINES, 12*2, wireCube, sizeof(wireCube), {Mesh::Attribute{3,GL_FLOAT,GL_FALSE}});
+  static const VkFormat formats[] {VK_FORMAT_R32G32B32_SFLOAT};
+  static Mesh mesh(12*2, wireCube, sizeof(wireCube), formats, L_COUNT_OF(formats));
   return mesh;
 }
 const Mesh& Mesh::wire_sphere() {
   static const float d(sqrt(.5f));
-  static const GLfloat wireSphere[] = {
+  static const float wireSphere[] = {
     // X circle
     0,0,-1, 0,-d,-d, 0,-d,-d, 0,-1,0,
     0,-1,0, 0,-d,d,  0,-d,d,  0,0,1,
@@ -116,6 +105,7 @@ const Mesh& Mesh::wire_sphere() {
     0,1,0,  d,d,0,   d,d,0,   1,0,0,
     1,0,0, d,-d,0,   d,-d,0,  0,-1,0,
   };
-  static Mesh mesh(GL_LINES, 24*2, wireSphere, sizeof(wireSphere), {Mesh::Attribute{3,GL_FLOAT,GL_FALSE}});
+  static const VkFormat formats[] {VK_FORMAT_R32G32B32_SFLOAT};
+  static Mesh mesh(24*2, wireSphere, sizeof(wireSphere), formats, L_COUNT_OF(formats));
   return mesh;
 }

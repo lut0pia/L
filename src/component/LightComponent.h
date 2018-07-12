@@ -4,22 +4,26 @@
 #include "Transform.h"
 #include "../engine/CullVolume.h"
 #include "../engine/Resource.h"
-#include "../rendering/Mesh.h"
-#include "../rendering/Program.h"
+#include "../rendering/Pipeline.h"
+#include "../rendering/DescriptorSet.h"
+#include "../rendering/Framebuffer.h"
 
 namespace L {
   class LightComponent : public Component {
     L_COMPONENT(LightComponent)
       L_COMPONENT_HAS_LATE_UPDATE(LightComponent)
   protected:
-    static Resource<Program> _program;
+    static Resource<Pipeline> _pipeline;
     Transform* _transform;
     CullVolume _cull_volume;
-    Vector3f _position, _color, _direction, _relative_dir;
+    DescriptorSet _desc_set;
+    Vector3f _color, _relative_dir;
     float _intensity, _radius, _inner_angle, _outer_angle;
     int _type;
   public:
-    inline LightComponent() { point(Color::white); }
+    inline LightComponent() : _desc_set(*_pipeline) { point(Color::white); }
+    inline LightComponent(const LightComponent&) : LightComponent() { error("LightComponent component should not be copied."); }
+    inline LightComponent& operator=(const LightComponent& other) { error("LightComponent component should not be copied."); return *this; }
 
     virtual void update_components() override { _transform = entity()->requireComponent<Transform>(); }
     virtual Map<Symbol, Var> pack() const override;
@@ -32,8 +36,8 @@ namespace L {
     void point(const Color& color, float intensity = 1.f, float radius = 1.f);
     void spot(const Color& color, const Vector3f& direction, float intensity = 1.f, float radius = 1.f, float inner_angle = .5f, float outer_angle = 0.f);
 
-    void render();
-    inline static void program(const char* path) { _program = path; }
-    inline static Resource<Program>& program() { return _program; }
+    void render(VkCommandBuffer cmd_buffer, const Framebuffer& framebuffer);
+    inline static void pipeline(const char* path) { _pipeline = path; }
+    inline static Resource<Pipeline>& pipeline() { return _pipeline; }
   };
 }

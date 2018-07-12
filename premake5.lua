@@ -16,19 +16,20 @@ solution "L"
 	configuration {"windows"}
 		architecture "x64"
 		defines {"L_WINDOWS","WIN32_LEAN_AND_MEAN","NOMINMAX","NOCRYPT"}
+		includedirs {"C:/VulkanSDK/1.1.73.0/Include"}
+		libdirs {"C:/VulkanSDK/1.1.73.0/Lib"}
 	configuration {"linux"}
 		defines {"L_UNIX"}
 
 	-- Visual Studio
 	filter {"action:vs*"}
 		files {"src/**.natvis"}
-		libdirs {"ext/lib"}
 		linkoptions {"/NODEFAULTLIB:libc.lib","/NODEFAULTLIB:msvcrt.lib","/NODEFAULTLIB:libcd.lib","/NODEFAULTLIB:msvcrtd.lib"}
 		defines {"_CRT_SECURE_NO_WARNINGS","_WINSOCK_DEPRECATED_NO_WARNINGS"}
 		buildoptions {"/wd4100","/wd4146","/wd4200","/wd4244","/wd4702","/wd4706","/wd4577","/wd4592"}
 		characterset "MBCS" -- Don't use UNICODE
 		warnings "Extra"
-		links {"user32","opengl32","ws2_32","hid","winmm"}
+		links {"user32","opengl32","ws2_32","hid","winmm","vulkan-1"}
 	filter {"action:vs*", "Debug or Development"}
 		links {"dbghelp"}
 	filter {"action:vs*", "Release"}
@@ -37,7 +38,7 @@ solution "L"
 	-- GMake
 	configuration {"gmake"}
 		buildoptions {"-fno-operator-names"}
-    links {"GL","X11","pthread","asound"}
+    links {"GL","vulkan","X11","pthread","asound"}
 
 	-- Main project (startup)
 	project "Engine"

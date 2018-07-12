@@ -1,8 +1,8 @@
 #include "Collider.h"
 
-#include "../rendering/GL.h"
+//#include "../rendering/GL.h"
 #include "../rendering/Mesh.h"
-#include "../rendering/Program.h"
+//#include "../rendering/Pipeline.h"
 #include "../math/geometry.h"
 #include "../parallelism/TaskSystem.h"
 
@@ -143,10 +143,10 @@ void Collider::sub_update_all() {
 }
 static void draw_tree_node(const Interval3fTree<Collider*>::Node* node) {
   static int level(0);
-  Program::default_color().use();
-  Program::default_color().uniform("color", Color::fromHSV(pmod(level*15.f, 360.f), .5f, 1.f));
-  Program::default_color().uniform("model", translation_matrix(node->key().center())*scale_matrix(node->key().size()*.5f));
-  Mesh::wire_cube().draw();
+//  Pipeline::default_color().use();
+//  Pipeline::default_color().uniform("color", Color::fromHSV(pmod(level*15.f, 360.f), .5f, 1.f));
+//  Pipeline::default_color().uniform("model", translation_matrix(node->key().center())*scale_matrix(node->key().size()*.5f));
+//  Mesh::wire_cube().draw();
   if(node->branch()) {
     level++;
     draw_tree_node(node->left());
@@ -228,8 +228,8 @@ Matrix33f Collider::inertiaTensor() const{
   return wtr;
 }
 void Collider::render(const Camera& camera) {
-  Program::default_program().use();
-  Program::default_program().uniform("model",_transform->matrix()*scale_matrix(_radius));
+/*  Pipeline::default_program().use();
+  Pipeline::default_program().uniform("model",_transform->matrix()*scale_matrix(_radius));
   switch(_type){
     case Box:
       Mesh::wire_cube().draw();
@@ -238,6 +238,7 @@ void Collider::render(const Camera& camera) {
       Mesh::wire_sphere().draw();
       break;
   }
+  */
 }
 template <size_t count>
 Interval1f project(const Vector3f& axis, const Vector3f* points) {

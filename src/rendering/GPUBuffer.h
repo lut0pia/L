@@ -1,23 +1,26 @@
 #pragma once
 
-#include "GL.h"
+#include "Vulkan.h"
 #include "../macros.h"
 
 namespace L {
   class GPUBuffer {
     L_NOCOPY(GPUBuffer)
-  private:
-    GLuint _id, _target;
+  protected:
+    VkBuffer _buffer;
+    VkDeviceMemory _memory;
+    VkDeviceSize _size;
+    VkBufferUsageFlagBits _usage;
   public:
-    GPUBuffer(GLuint target);
-    GPUBuffer(GLuint target, GLsizeiptr size, const void* data, GLuint usage, GLuint base = -1);
+    GPUBuffer(size_t size, VkBufferUsageFlagBits usage);
     ~GPUBuffer();
 
-    void bind();
-    void unbind();
-    void data(GLsizeiptr size, const void* data, GLuint usage);
-    void subData(GLintptr offset, GLsizeiptr size, const void* data);
-    template<class T> void subData(GLintptr offset, const T& value) { subData(offset, sizeof(T), &value); }
-    void bindBase(GLuint index);
+    inline void load(const void* data) { load(data, _size); }
+    void load(const void* data, size_t size, size_t offset = 0);
+    template <class T> void load_item(const T& datum, size_t offset = 0) { load(&datum, sizeof(T), offset); }
+
+    inline VkDeviceSize size() const { return _size; }
+    inline operator VkBuffer() { return _buffer; }
+    inline operator VkDeviceMemory() { return _memory; }
   };
 }

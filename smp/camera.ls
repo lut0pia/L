@@ -88,9 +88,9 @@
 		(e'require-rigidbody || 'add-speed | (* (vec 16 16 16) (self'transform | 'forward|)))
 	))
 )))
-(set (self'gui) (fun (do
-	(draw-image 10 10 "logo.png?filter=nearest")
-	(draw-text 84 10
+(set (self'gui) (fun (camera) (do
+	(camera'draw-image | 10 10 "logo.png?filter=nearest")
+	(camera'draw-text | 84 10
 		(+ "FPS: " (/ 1.0 delta) "\n"
 			 "Frame: " avg-frame-work-duration "\n"
 		))

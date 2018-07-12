@@ -1,11 +1,14 @@
 #include "Font.h"
 
 #include "PixelFont.h"
-#include "../rendering/Program.h"
+#include "../rendering/Pipeline.h"
 #include "../rendering/shader_lib.h"
 #include "../text/encoding.h"
+#include "../rendering/DescriptorSet.h"
 
 using namespace L;
+
+Resource<Pipeline> Font::_pipeline;
 
 const Font::Glyph& Font::glyph(uint32_t utf32) {
   Glyph* glyph;
@@ -19,30 +22,6 @@ const Font::Glyph& Font::glyph(uint32_t utf32) {
     glyph->init = true;
   }
   return *glyph;
-}
-Program& glyphProgram() {
-  static Program program(Shader(
-    L_GLSL_INTRO
-    L_SHAREDUNIFORM
-    "layout (location = 0) in vec2 vertex;"
-    "layout (location = 1) in vec2 texcoords;"
-    "uniform vec2 position;"
-    "out vec2 ftexcoords;"
-    "void main(){"
-    "ftexcoords = texcoords;"
-    "gl_Position = vec4(((position+vertex)/screen.xy)*vec2(2.f/(viewport.z-viewport.x),-2.f/(viewport.w-viewport.y))-vec2(1.f,-1.f),0.f,1.f);"
-    "}", GL_VERTEX_SHADER),
-    Shader(
-      L_GLSL_INTRO
-      L_SHAREDUNIFORM
-      "in vec2 ftexcoords;"
-      "out vec4 fragcolor;"
-      "uniform sampler2D atlas;"
-      "void main(){"
-      "vec4 color = texture(atlas,ftexcoords);"
-      "fragcolor = color;"
-      "}", GL_FRAGMENT_SHADER));
-  return program;
 }
 Font::TextMesh& Font::text_mesh(const char* str) {
   const uint32_t h(hash(str));
@@ -73,22 +52,24 @@ Font::TextMesh& Font::text_mesh(const char* str) {
         wtr.dimensions.x() = max(wtr.dimensions.x(), x);
       }
     }
-    wtr.mesh.load(GL_TRIANGLES, buffer.size(), &buffer[0], sizeof(Vector4f)*buffer.size(), {
-      Mesh::Attribute{2,GL_FLOAT,GL_FALSE},
-      Mesh::Attribute{2,GL_FLOAT,GL_FALSE}
-    });
+    static const VkFormat formats[] {
+      VK_FORMAT_R32G32_SFLOAT,
+      VK_FORMAT_R32G32_SFLOAT,
+    };
+    wtr.mesh.load(buffer.size(), &buffer[0], sizeof(Vector4f)*buffer.size(), formats, L_COUNT_OF(formats));
     return wtr;
   }
 }
-void Font::draw(int x, int y, const char* str, Vector2f anchor) {
-  Program& p(glyphProgram());
+void Font::draw(VkCommandBuffer cmd_buffer, const Matrix44f& model, const char* str, Vector2f anchor) {
+  vkCmdBindPipeline(cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *_pipeline);
+  vkCmdPushConstants(cmd_buffer, *_pipeline, _pipeline->find_binding("Constants")->stage, 0, sizeof(model), &model);
+
+  DescriptorSet desc_set(*_pipeline);
+  desc_set.set_descriptor("tex", VkDescriptorImageInfo {Vulkan::sampler(), _atlas.texture(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
+  vkCmdBindDescriptorSets(cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *_pipeline, 0, 1, &(const VkDescriptorSet&)desc_set, 0, nullptr);
+
   TextMesh& tm(text_mesh(str));
-
-  p.use();
-  p.uniform("atlas", _atlas.texture());
-  p.uniform("position", Vector2f(x-anchor.x()*tm.dimensions.x(), y-anchor.y()*tm.dimensions.y()));
-
-  tm.mesh.draw();
+  tm.mesh.draw(cmd_buffer);
   tm.last_used = Time::now();
 }
 

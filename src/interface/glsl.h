@@ -1,85 +1,106 @@
 #pragma once
 
 #include <L/src/L.h>
+#include <L/src/rendering/Shader.h>
 
 namespace L {
-  void glsl_loader(Resource<Program>::Slot& slot) {
-    static const size_t max_stage_count = 4;
-    struct Stage {
-      const char* start;
-      GLenum type;
-      size_t size;
-      uint32_t line;
-    };
+  void glsl_loader(Resource<Shader>::Slot& slot) {
+    VkShaderStageFlagBits stage(VK_SHADER_STAGE_ALL);
+    String stage_name;
+    if(!strcmp(strrchr(slot.path, '.'), ".frag")) {
+      stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+      stage_name = "frag";
+    } else if(!strcmp(strrchr(slot.path, '.'), ".vert")) {
+      stage = VK_SHADER_STAGE_VERTEX_BIT;
+      stage_name = "vert";
+    }
 
-    Buffer buffer(slot.read_source_file());
-    const size_t size(buffer.size());
+    String cmd_output;
 
-    const char* str((const char*)buffer.data());
-    Stage stages[max_stage_count];
-    uintptr_t stage = 0;
-    uint32_t line(1);
-    bool newline(true);
-    const char* pp_line(nullptr);
-    for(uintptr_t i(0); i<size; i++) {
-      char c(str[i]);
-      if(newline) { // Start of line
-        if(c=='#') // Start of a preprocessor line
-          pp_line = str+i;
-        newline = false;
+    {
+      char input_file[L_tmpnam], output_file[L_tmpnam];
+      tmpnam(input_file);
+      tmpnam(output_file);
+
+      {
+        Buffer original_text(CFileStream(slot.path, "rb").read_into_buffer());
+        CFileStream input_stream(input_file, "wb");
+        input_stream << L_GLSL_INTRO << L_SHAREDUNIFORM << L_PUSH_CONSTANTS;
+        if(stage == VK_SHADER_STAGE_FRAGMENT_BIT)
+          input_stream << L_SHADER_LIB;
+        input_stream << '\n';
+        input_stream.write(original_text.data(), original_text.size());
       }
-      if(c=='\n') { // End of line
-        newline = true;
-        line++;
-        if(pp_line) { // End of a preprocessor line
-          if(!memcmp(pp_line, "#stage ", 7)) { // Stage preprocessor
-            // Close previous stage
-            if(stage>0)
-              stages[stage-1].size = pp_line-stages[stage-1].start;
 
-            // Check new stage type
-            if(!memcmp(pp_line+7, "vert", 4))
-              stages[stage].type = GL_VERTEX_SHADER;
-            else if(!memcmp(pp_line+7, "frag", 4))
-              stages[stage].type = GL_FRAGMENT_SHADER;
-            else return;
-            stages[stage].start = str+i+1;
-            stages[stage].line = line;
-            stage++;
+      const String cmd("glslangValidator -V -q -S "+stage_name+" "+input_file+" -o "+output_file);
+      System::call(cmd, cmd_output);
+
+      {
+        CFileStream output_stream(output_file, "rb");
+        slot.value = ref<Shader>(output_stream.read_into_buffer(), stage);
+      }
+    }
+
+    if(Ref<Shader> shader = slot.value) { // Parse debug information
+      Shader::BindingType binding_type(Shader::BindingType::None);
+      Array<String> lines(cmd_output.explode('\n')), words;
+      for(String& line : lines) {
+        if(line=="Uniform reflection:")
+          binding_type = Shader::BindingType::Uniform;
+        else if(line=="Uniform block reflection:")
+          binding_type = Shader::BindingType::UniformBlock;
+        else if(line=="Vertex attribute reflection:")
+          binding_type = Shader::BindingType::VertexAttribute;
+        else if(binding_type!=Shader::BindingType::None) {
+          line.replaceAll(",", "").replaceAll(":", "");
+          words = line.explode(' ');
+          Shader::Binding binding;
+          binding.name = Symbol(words[0]);
+          binding.offset = atoi(words[2]);
+          binding.type = binding_type;
+          binding.size = atoi(words[6]);
+          binding.index = atoi(words[8]);
+          binding.binding = atoi(words[10]);
+
+          // FIXME: this is a hack until we have working reflection for shader vertex attributes
+          if(binding.name==Symbol("vposition")) {
+            binding.binding = 0;
+            binding.index = 0;
+            binding.format = VK_FORMAT_R32G32B32_SFLOAT;
+            binding.offset = 0;
+            binding.size = 12;
           }
-          pp_line = nullptr;
+          if(binding.name==Symbol("vtexcoords")) {
+            binding.binding = 0;
+            binding.index = 1;
+            binding.format = VK_FORMAT_R32G32_SFLOAT;
+            binding.offset = 12;
+            binding.size = 8;
+          }
+          if(binding.name==Symbol("vnormal")) {
+            binding.binding = 0;
+            binding.index = 2;
+            binding.format = VK_FORMAT_R32G32B32_SFLOAT;
+            binding.offset = 20;
+            binding.size = 12;
+          }
+          if(binding.name==Symbol("vpositionfont")) {
+            binding.binding = 0;
+            binding.index = 0;
+            binding.format = VK_FORMAT_R32G32_SFLOAT;
+            binding.offset = 0;
+            binding.size = 8;
+          }
+          if(binding.name==Symbol("vtexcoordsfont")) {
+            binding.binding = 0;
+            binding.index = 1;
+            binding.format = VK_FORMAT_R32G32_SFLOAT;
+            binding.offset = 8;
+            binding.size = 8;
+          }
+          shader->add_binding(binding);
         }
       }
     }
-    // Close last stage if any
-    if(stage>0)
-      stages[stage-1].size = str+size-stages[stage-1].start;
-
-    L_SCOPE_THREAD_MASK(1); // Go to main thread
-
-    // Compile shaders
-    uint8_t shaders_mem[max_stage_count*sizeof(Shader)];
-    Shader* shaders((Shader*)shaders_mem);
-    for(uintptr_t i(0); i<stage; i++) {
-      static const char lib_vert[] = L_GLSL_INTRO L_SHAREDUNIFORM "\n";
-      static const char lib_frag[] = L_GLSL_INTRO L_SHAREDUNIFORM L_SHADER_LIB "\n";
-      const bool is_frag_shader(stages[i].type==GL_FRAGMENT_SHADER);
-      const char* lib(is_frag_shader ? lib_frag : lib_vert);
-      size_t lib_size((is_frag_shader ? sizeof(lib_frag) : sizeof(lib_vert))-1);
-      char line_preprocessor[64];
-      sprintf(line_preprocessor, "#line %d\n", stages[i].line);
-      const char* sources[] ={ lib,line_preprocessor,stages[i].start };
-      GLint source_lengths[] ={ GLint(lib_size),GLint(strlen(line_preprocessor)),GLint(stages[i].size) };
-      new(shaders+i)Shader(sources, source_lengths, L_COUNT_OF(sources), stages[i].type);
-    }
-
-    // Link program
-    Ref<Program> wtr(ref<Program>(shaders, stage));
-
-    // Destruct shaders
-    for(uintptr_t i(0); i<stage; i++)
-      shaders[i].~Shader();
-    if(wtr->check())
-      slot.value = wtr;
   }
 }

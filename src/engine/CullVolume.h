@@ -11,7 +11,7 @@ namespace L {
     Node* _node;
     bool _visible;
   public:
-    constexpr CullVolume() : _node(nullptr), _visible(true) {}
+    constexpr CullVolume() : _node(nullptr), _visible(false) {}
     inline ~CullVolume() { if(_node) _tree.remove(_node); }
     void update_bounds(const Interval3f& bounds) {
       if(!_node) _node = _tree.insert(bounds, this);

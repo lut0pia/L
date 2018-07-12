@@ -1,14 +1,13 @@
 #include "Window.h"
 
 #include "../dev/profiling.h"
-#include "../rendering/GL.h"
 #include "../macros.h"
 #include "../stream/CFileStream.h"
 #include "../text/encoding.h"
 #include "Device.h"
 
-#include <GL/wglext.h>
 #include <windows.h>
+#include "../rendering/Vulkan.h"
 
 using namespace L;
 
@@ -207,46 +206,15 @@ void Window::open(const char* title, int width, int height, int flags) {
   width = rect.right-rect.left;
   height = rect.bottom-rect.top;
 
+  _mousePos = Vector2i(width/2, height/2);
+  SetCursorPos(width/2, height/2);
+
   // Create window
   hWND = CreateWindow("LWC", title, wStyle,
                       CW_USEDEFAULT, CW_USEDEFAULT, width, height,
                       nullptr, nullptr, hInstance, nullptr);
-
-  hDC = GetDC(hWND);
-
-  int pf = ChoosePixelFormat(hDC, initPFD());
-  if(!pf)
-    error("ChoosePixelFormat failed during GLEW initialization");
-
-  if(!SetPixelFormat(hDC, pf, &pfd))
-    error("SetPixelFormat failed during GLEW initialization");
-
-  HGLRC hRCFake = wglCreateContext(hDC);
-  wglMakeCurrent(hDC, hRCFake);
-
-  _mousePos = Vector2i(width/2, height/2);
-  SetCursorPos(width/2, height/2);
-
-  int iContextAttribs[] =
-  {
-    WGL_CONTEXT_MAJOR_VERSION_ARB, 3,
-    WGL_CONTEXT_MINOR_VERSION_ARB, 0,
-#ifdef L_DEBUG
-    WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_DEBUG_BIT_ARB,
-#endif
-    WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
-    0 // End of attributes list
-  };
-
-  static PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB(
-    PFNWGLCREATECONTEXTATTRIBSARBPROC(wglGetProcAddress("wglCreateContextAttribsARB")));
-  if(!(hRC = wglCreateContextAttribsARB(hDC, 0, iContextAttribs)))
-    error("wglCreateContextAttribsARB failed");
-
-  wglMakeCurrent(hDC, hRC);
-  wglDeleteContext(hRCFake);
-
-  GL::init();
+  
+  Vulkan::init();
 }
 void Window::close() {
   L_ASSERT(opened());

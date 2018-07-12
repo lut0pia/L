@@ -4,9 +4,7 @@
 #include "CullVolume.h"
 #include "../dev/profiling.h"
 #include "../hash.h"
-#include "../rendering/GPUBuffer.h"
-#include "../rendering/GL.h"
-#include "../rendering/Program.h"
+#include "../rendering/Pipeline.h"
 #include "../rendering/shader_lib.h"
 #include "Resource.h"
 #include "../script/Context.h"
@@ -38,7 +36,7 @@ void Engine::update() {
   Script::Context::global("real-delta") = _real_delta_seconds;
   Script::Context::global("delta") = _delta_seconds;
   Script::Context::global("avg-frame-work-duration") = _average_frame_work_duration;
-  Engine::shared_uniform().subData(L_SHAREDUNIFORM_FRAME, _frame);
+  Engine::shared_uniform().load_item(_frame, L_SHAREDUNIFORM_FRAME);
 
   {
     L_SCOPE_MARKER("Window events");
@@ -78,17 +76,24 @@ void Engine::update() {
 
   Entity::flush_destroy_queue();
 
-  {
+  const bool render_this_frame(ComponentPool<Camera>::size()>0);
+  if(render_this_frame) {
     L_SCOPE_MARKER("Graphics rendering");
-    ComponentPool<Camera>::iterate([](Camera& camera) {
-      camera.prerender();
+    VkCommandBuffer cmd_buffer(Vulkan::begin_render_command_buffer());
+    ComponentPool<Camera>::iterate([&](Camera& camera) {
+      camera.prerender(cmd_buffer);
       CullVolume::cull(camera);
-      for(auto&& render : _renders)
+      for(auto render : _renders)
         render(camera);
       camera.postrender();
-      for(auto&& gui : _guis)
+    });
+    Vulkan::begin_present_pass();
+    ComponentPool<Camera>::iterate([](Camera& camera) {
+      camera.present();
+      for(auto gui : _guis)
         gui(camera);
     });
+    Vulkan::end_present_pass();
   }
 
   {
@@ -118,9 +123,8 @@ void Engine::update() {
     _average_frame_work_duration += duration;
   _average_frame_work_duration /= L_COUNT_OF(_frame_work_durations);
 
-  {
-    L_SCOPE_MARKER("Buffer swap");
-    Window::swapBuffers();
+  if(render_this_frame) {
+    Vulkan::end_render_command_buffer();
   }
   _frame++;
 }
@@ -129,11 +133,11 @@ void Engine::clear() {
 }
 
 GPUBuffer& Engine::shared_uniform() {
-  static GPUBuffer u(GL_UNIFORM_BUFFER, L_SHAREDUNIFORM_SIZE, nullptr, GL_DYNAMIC_DRAW, 0);
+  static GPUBuffer u(L_SHAREDUNIFORM_SIZE, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
   return u;
 }
-void Engine::dither_matrix(const float* data, size_t width, size_t height) {
-  shared_uniform().subData(L_SHAREDUNIFORM_DITHERMATRIXSIZE, 4, &width);
-  shared_uniform().subData(L_SHAREDUNIFORM_DITHERMATRIXSIZE+4, 4, &height);
-  shared_uniform().subData(L_SHAREDUNIFORM_DITHERMATRIX, width*height*4, data);
+void Engine::dither_matrix(const float* data, uint32_t width, uint32_t height) {
+  shared_uniform().load_item(width, L_SHAREDUNIFORM_DITHERMATRIXSIZE);
+  shared_uniform().load_item(height, L_SHAREDUNIFORM_DITHERMATRIXSIZE+sizeof(width));
+  shared_uniform().load(data, width*height*sizeof(float), L_SHAREDUNIFORM_DITHERMATRIX);
 }

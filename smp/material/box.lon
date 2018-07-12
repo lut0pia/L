@@ -1,7 +1,6 @@
 {
-  'program "shader/box.glsl"
+  'pipeline ".inline?fragment=shader/color.frag&vertex=shader/box.vert"
   'vertex_count 36
-  'primitive_mode 'triangles
   'vectors {
     'color "white"
   }

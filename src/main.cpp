@@ -1,5 +1,6 @@
 #include "L.h"
 #include "interface/glsl.h"
+#include "interface/inline_pip.h"
 #include "interface/ls.h"
 #include "interface/lon.h"
 #include "interface/midi.h"
@@ -46,13 +47,15 @@ int main(int argc, const char* argv[]) {
   Engine::register_resource<Font>();
   Engine::register_resource<Material>();
   Engine::register_resource<Mesh>();
-  Engine::register_resource<Program>();
+  Engine::register_resource<Pipeline>();
   Engine::register_resource<Texture>();
   Engine::register_resource<Script::CodeFunction>();
 
-  Resource<Program>::add_loader("glsl", glsl_loader);
+  Resource<Shader>::add_loader("vert", glsl_loader);
+  Resource<Shader>::add_loader("frag", glsl_loader);
   Resource<Script::CodeFunction>::add_loader("ls", ls_loader);
-  Resource<Material>::add_loader("lon", lon_loader);
+  Resource<Material>::add_loader("lon", lon_mat_loader);
+  Resource<Pipeline>::add_loader("inline", inline_pip_loader);
   Resource<Audio::MidiSequence>::add_loader("mid", midi_loader);
   Resource<Audio::MidiSequence>::add_loader("midi", midi_loader);
   Resource<Texture>::add_loader("jpeg", stb_image_loader);

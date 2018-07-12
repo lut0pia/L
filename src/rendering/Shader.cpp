@@ -1,34 +1,15 @@
 #include "Shader.h"
 
-#include "../stream/CFileStream.h"
-
 using namespace L;
 
-void Shader::load(const char** src, uint32_t count, GLint* lengths) {
-  glShaderSource(_id, count, (const GLchar**)src, lengths);
-  glCompileShader(_id);
-}
-Shader::Shader(const char* src, GLenum type) : _id(glCreateShader(type)) {
-  load(src);
-}
-Shader::Shader(const char** src, uint32_t count, GLenum type) : _id(glCreateShader(type)) {
-  load(src, count);
-}
-Shader::Shader(const char** src, GLint* lengths, uint32_t count, GLenum type) : _id(glCreateShader(type)) {
-  load(src, count, lengths);
+Shader::Shader(const void* binary, size_t size, VkShaderStageFlagBits stage) : _stage(stage) {
+  VkShaderModuleCreateInfo create_info{};
+  create_info.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+  create_info.codeSize = size;
+  create_info.pCode = reinterpret_cast<const uint32_t*>(binary);
+
+  L_VK_CHECKED(vkCreateShaderModule(Vulkan::device(), &create_info, nullptr, &_module));
 }
 Shader::~Shader() {
-  glDeleteShader(_id);
-}
-bool Shader::check() const {
-  GLint compile_status(GL_TRUE);
-  glGetShaderiv(_id, GL_COMPILE_STATUS, &compile_status);
-  if(compile_status != GL_TRUE) {
-    GLchar buffer[2048];
-    GLsizei count;
-    glGetShaderInfoLog(_id, sizeof(buffer), &count, buffer);
-    err << "Couldn't compile shader:\n";
-    err.write(buffer, count);
-  }
-  return compile_status == GL_TRUE;
+  vkDestroyShaderModule(Vulkan::device(), _module, nullptr);
 }

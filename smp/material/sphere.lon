@@ -1,12 +1,7 @@
-(local vertex_count (* 8 3 4))
 {
-  'program "shader/sphere.glsl"
-  'vertex_count vertex_count
-  'primitive_mode 'triangles
+  'pipeline ".inline?fragment=shader/color.frag&vertex=shader/sphere.vert"
+  'vertex_count 96
   'vectors {
     'color "white"
-  }
-  'scalars {
-    'vertex_count vertex_count
   }
 }

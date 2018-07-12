@@ -101,16 +101,15 @@
 
 // Rendering
 #include "rendering/Atlas.h"
-#include "rendering/FrameBuffer.h"
-#include "rendering/GL.h"
-#include "rendering/GPUBuffer.h"
+#include "rendering/Framebuffer.h"
 #include "rendering/Material.h"
 #include "rendering/Mesh.h"
 #include "rendering/MeshBuilder.h"
-#include "rendering/Program.h"
+#include "rendering/Pipeline.h"
 #include "rendering/Shader.h"
 #include "rendering/shader_lib.h"
 #include "rendering/Texture.h"
+#include "rendering/Vulkan.h"
 
 // Scripting language
 #include "script/Compiler.h"

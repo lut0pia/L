@@ -1,7 +1,6 @@
 #pragma once
 
-#include <initializer_list>
-#include "GL.h"
+#include "GPUBuffer.h"
 #include "../macros.h"
 #include "../math/Interval.h"
 
@@ -10,24 +9,18 @@ namespace L {
   class Mesh {
     L_NOCOPY(Mesh)
   private:
+    GPUBuffer *_vertex_buffer, *_index_buffer;
     Interval3f _bounds;
-    GLuint _vao, _vbo, _eab;
-    GLenum _mode;
-    GLsizei _count;
+    uint32_t _count;
+
   public:
-    struct Attribute {
-      GLint size;
-      GLenum type;
-      GLboolean normalized;
-    };
-    inline Mesh() : _vao(0), _vbo(0), _eab(0) {}
-    Mesh(GLenum mode, GLsizei count, const void* data, GLsizeiptr size, const std::initializer_list<Attribute>&, const GLushort* indices = nullptr, GLsizei icount = 0);
-    Mesh(const MeshBuilder&, GLenum mode, const std::initializer_list<Attribute>&);
+    inline Mesh() : _vertex_buffer(nullptr), _index_buffer(nullptr) {}
+    Mesh(size_t count, const void* data, size_t size, const VkFormat* formats, size_t fcount, const uint16_t* indices = nullptr, size_t icount = 0);
+    Mesh(const MeshBuilder&, const VkFormat* formats, size_t fcount);
     ~Mesh();
-    void indices(const GLushort* data, GLsizei count);
-    void load(GLenum mode, GLsizei count, const void* data, GLsizeiptr size, const std::initializer_list<Attribute>& attributes, const GLushort* indices = nullptr, GLsizei icount = 0);
-    void load(const MeshBuilder&, GLenum mode, const std::initializer_list<Attribute>&);
-    void draw() const;
+    void load(size_t count, const void* data, size_t size, const VkFormat* formats, size_t fcount, const uint16_t* indices = nullptr, size_t icount = 0);
+    void load(const MeshBuilder&, const VkFormat* formats, size_t fcount);
+    void draw(VkCommandBuffer) const;
 
     inline const Interval3f& bounds() const { return _bounds; }
 

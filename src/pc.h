@@ -26,6 +26,7 @@
 # include <sys/timeb.h>
 # define popen _popen
 # define pclose _pclose
+#define VK_USE_PLATFORM_WIN32_KHR
 #elif defined L_UNIX
 # include <unistd.h>
 # include <signal.h>
@@ -39,8 +40,8 @@
 # include <arpa/inet.h>
 # include <pthread.h>
 # include <alsa/asoundlib.h>
+#define VK_USE_PLATFORM_XLIB_KHR
 #endif
 
-// OpenGL
-#include <GL/gl.h>
-#include <GL/glext.h>
+// Vulkan
+#include <vulkan/vulkan.h>

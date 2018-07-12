@@ -1,6 +1,6 @@
 #include "Primitive.h"
 
-#include "../rendering/GL.h"
+#include "../component/Camera.h"
 
 using namespace L;
 
@@ -25,7 +25,7 @@ void Primitive::script_registration() {
 
 void Primitive::render(const Camera& camera) {
   if(_cull_volume.visible() && _material.valid()) {
-    _material.draw(_transform->matrix()*scale_matrix(_scale));
+    _material.draw(camera.cmd_buffer(), _transform->matrix()*scale_matrix(_scale));
   }
 }
 

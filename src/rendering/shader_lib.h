@@ -1,6 +1,6 @@
 #pragma once
 
-#define L_GLSL_INTRO "#version 140\n#extension GL_ARB_explicit_attrib_location : require\n#extension GL_ARB_explicit_uniform_location : require\n#extension GL_ARB_uniform_buffer_object : require\n"
+#define L_GLSL_INTRO "#version 450\n#extension GL_ARB_separate_shader_objects : require\n"
 #define L_SHAREDUNIFORM_VIEW 0
 #define L_SHAREDUNIFORM_INVVIEW (L_SHAREDUNIFORM_VIEW+sizeof(Matrix44f))
 #define L_SHAREDUNIFORM_VIEWPROJ (L_SHAREDUNIFORM_INVVIEW+sizeof(Matrix44f))
@@ -15,13 +15,17 @@
 #define L_SHAREDUNIFORM_FRAME (L_SHAREDUNIFORM_VIEWPORT_PIXEL_SIZE+sizeof(Vector4f))
 #define L_SHAREDUNIFORM_SIZE (L_SHAREDUNIFORM_FRAME+sizeof(int))
 #define L_SHAREDUNIFORM \
-"layout (shared) uniform Shared {" \
+"layout(binding = 0) uniform Shared {" \
 "mat4 view, invView, viewProj, invViewProj, prevViewProj;" \
 "vec4 ditherMatrix[256];" \
 "ivec4 ditherMatrixSize;" \
 "vec4 eye;" \
 "vec4 screen, viewport, viewport_pixel_size;" \
 "int frame;" \
+"};"
+#define L_PUSH_CONSTANTS \
+"layout(push_constant) uniform Constants {" \
+"mat4 model;" \
 "};"
 #define L_SHADER_LIB \
 "const float PI = 3.14159265359f;" \

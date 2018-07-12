@@ -10,8 +10,8 @@ namespace L {
     IntervalTree<2, int, bool> _parts;
     Set<int> _xs, _ys;
   public:
-    Atlas(GLsizei width = 4096, GLsizei height = 4096);
-    Interval2f add(GLsizei width, GLsizei height, const void* data);
+    Atlas(uint32_t width = 4096, uint32_t height = 4096);
+    Interval2f add(uint32_t width, uint32_t height, const void* data);
     Interval2f pixelToCoords(const Interval2i&) const;
     const Texture& texture() const { return *this; }
   };

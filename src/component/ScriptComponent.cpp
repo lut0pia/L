@@ -56,67 +56,9 @@ void ScriptComponent::script_registration() {
     Settings::set(c.local(0).get<Symbol>(), c.local(1));
   });
   // Gui ///////////////////////////////////////////////////////////////////
-  L_FUNCTION("draw-text", {
-    Resource<Font>("")->draw(c.local(0).get<int>(),c.local(1).get<int>(),c.local(2).get<String>());
-  });
-  L_FUNCTION("draw-image", {
-    if(c.localCount()==3) {
-      static Program gui_image_program(Shader(
-        L_GLSL_INTRO
-        L_SHAREDUNIFORM
-        "const vec2 vertices[] = vec2[]("
-        "vec2(0.f,0.f),vec2(0.f,1.f),vec2(1.f,0.f),"
-        "vec2(0.f,1.f),vec2(1.f,1.f),vec2(1.f,0.f));"
-        "uniform vec4 coords;"
-        "out vec2 ftexcoords;"
-        "void main(){"
-        "ftexcoords = vertices[gl_VertexID];"
-        "vec2 top_left_vert = (coords.xy+vertices[gl_VertexID]*coords.zw)*viewport_pixel_size.zw;"
-        "gl_Position = vec4(top_left_vert*vec2(2.f,-2.f)+vec2(-1.f,1.f),0.f,1.f);"
-        "}", GL_VERTEX_SHADER),
-        Shader(
-          L_GLSL_INTRO
-          "in vec2 ftexcoords;"
-          "out vec4 fragcolor;"
-          "uniform sampler2D tex;"
-          "void main(){"
-          "fragcolor = texture(tex,ftexcoords);"
-          "}", GL_FRAGMENT_SHADER));
-      if(Resource<Texture> tex = c.local(2).get<String>()) {
-        gui_image_program.use();
-        gui_image_program.uniform("tex", *tex);
-        gui_image_program.uniform("coords", Vector4f(c.local(0).get<float>(), c.local(1).get<float>(),
-                                                     tex->width(), tex->height()));
-        GL::draw(GL_TRIANGLES, 6);
-      }
-    }
-  });
-  L_FUNCTION("draw-rect", {
-    if(c.localCount()==5) {
-      static Program gui_rect_program(Shader(
-        L_GLSL_INTRO
-        L_SHAREDUNIFORM
-        "const vec2 vertices[] = vec2[]("
-        "vec2(0.f,0.f),vec2(0.f,1.f),vec2(1.f,0.f),"
-        "vec2(0.f,1.f),vec2(1.f,1.f),vec2(1.f,0.f));"
-        "uniform vec4 coords;"
-        "void main(){"
-        "vec2 top_left_vert = (coords.xy+vertices[gl_VertexID]*coords.zw)*viewport_pixel_size.zw;"
-        "gl_Position = vec4(top_left_vert*vec2(2.f,-2.f)+vec2(-1.f,1.f),0.f,1.f);"
-        "}", GL_VERTEX_SHADER),
-        Shader(
-          L_GLSL_INTRO
-          "out vec4 fragcolor;"
-          "uniform vec4 color;"
-          "void main(){"
-          "fragcolor = color;"
-          "}", GL_FRAGMENT_SHADER));
-      gui_rect_program.use();
-      gui_rect_program.uniform("coords", Vector4f(c.local(0).get<float>(), c.local(1).get<float>(),
-                                                  c.local(2).get<float>(), c.local(3).get<float>()));
-      gui_rect_program.uniform("color", c.local(4).get<Color>());
-      GL::draw(GL_TRIANGLES, 6);
-    }
+  L_FUNCTION("font-pipeline", {
+    if(c.localCount()>0)
+      Font::pipeline(c.local(0).get<String>());
   });
   // Entity ///////////////////////////////////////////////////////////////////
   Context::global(Symbol("entity-make")) = (Function)([](Context& c) {
@@ -139,7 +81,7 @@ void ScriptComponent::script_registration() {
   });
   // Material ///////////////////////////////////////////////////////////////////
   L_METHOD(Material, "parent", 1, parent(c.local(0).get<String>()));
-  L_METHOD(Material, "program", 1, program(c.local(0).get<String>()));
+  L_METHOD(Material, "pipeline", 1, pipeline(c.local(0).get<String>()));
   L_METHOD(Material, "mesh", 1, mesh(c.local(0).get<String>()));
   L_METHOD(Material, "color", 2, color(c.local(0).get<Symbol>(), c.local(1).get<Color>()));
   L_METHOD(Material, "texture", 2, texture(c.local(0), c.local(1).get<String>()));
