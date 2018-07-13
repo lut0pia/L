@@ -46,5 +46,4 @@ namespace L {
 
     inline static void pipeline(const char* path) { _pipeline = path; }
   };
-  template <> void load_resource(ResourceSlot<Font>& slot);
 }

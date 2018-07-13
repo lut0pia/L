@@ -1,6 +1,28 @@
-#include "PixelFont.h"
+#include "L/src/engine/Resource.h"
+#include "L/src/font/Font.h"
 
 using namespace L;
+
+class PixelFont : public Font {
+private:
+  float _ratio;
+public:
+  PixelFont(int);
+  void load_glyph(uint32_t utf32, Glyph& out_glyph, Bitmap& out_bmp) override;
+};
+
+void pixel_font_loader(Resource<Font>::Slot& slot) {
+  int height(14);
+  if(Symbol height_value = slot.parameter("height"))
+    height = ston<10, int>(height_value);
+
+  slot.value = ref<PixelFont>(height);
+  slot.persistent = true;
+}
+
+void pixel_font_module_init() {
+  Resource<Font>::add_loader("pixel", pixel_font_loader);
+}
 
 PixelFont::PixelFont(int height) : _ratio(height/7.f) {
   _lineheight = (height*11)/7;

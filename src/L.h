@@ -66,7 +66,6 @@
 
 // Font handling
 #include "font/Font.h"
-#include "font/PixelFont.h"
 
 // Images and colors
 #include "image/Bitmap.h"

@@ -1,6 +1,5 @@
 #include "Font.h"
 
-#include "PixelFont.h"
 #include "../rendering/Pipeline.h"
 #include "../rendering/shader_lib.h"
 #include "../text/encoding.h"
@@ -87,14 +86,4 @@ void Font::update() {
       obsoleteTextMeshes.push(textMesh.key());
   for(uint32_t obsoleteTextMesh : obsoleteTextMeshes)
     _text_meshes.remove(obsoleteTextMesh);
-}
-
-template<> void L::load_resource(ResourceSlot<Font>& slot) {
-  if(*slot.path) Resource<Font>::load(slot);
-  else {
-    static Ref<PixelFont> pixel_font(ref<PixelFont>());
-    slot.persistent = true;
-    slot.value = pixel_font;
-  }
-  post_load_resource(slot);
 }
