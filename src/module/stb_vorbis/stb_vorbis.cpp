@@ -2,7 +2,8 @@
 #include <L/src/container/Buffer.h>
 #include <L/src/engine/Resource.h>
 #include <L/src/stream/CFileStream.h>
-#include <stb/stb_vorbis.c>
+
+#include "stb_vorbis.c"
 #undef L // Defined by stb_vorbis.c
 
 using namespace L;

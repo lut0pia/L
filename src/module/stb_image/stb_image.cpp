@@ -2,8 +2,9 @@
 #include <L/src/engine/Resource.h>
 #include <L/src/rendering/Texture.h>
 #include <L/src/stream/CFileStream.h>
+
 #define STB_IMAGE_IMPLEMENTATION 
-#include <stb/stb_image.h>
+#include "stb_image.h"
 
 using namespace L;
 

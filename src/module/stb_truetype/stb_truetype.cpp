@@ -1,7 +1,8 @@
 #include <L/src/engine/Resource.h>
 #include <L/src/font/Font.h>
+
 #define STB_TRUETYPE_IMPLEMENTATION 
-#include <stb/stb_truetype.h>
+#include "stb_truetype.h"
 
 using namespace L;
 

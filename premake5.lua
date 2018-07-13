@@ -4,7 +4,6 @@ solution "L"
 
 	-- General options
 	location("prj/".._ACTION)
-  includedirs {"ext/include"}
 	flags {"StaticRuntime"}
 	cppdialect "C++11"
 	floatingpoint "Fast"
