@@ -19,3 +19,5 @@ smp/trace.json
 # Premake
 /pmk
 /premake5
+# Generated source
+*.gen
