@@ -37,7 +37,7 @@ solution "L"
 		buildoptions {"/wd4100","/wd4146","/wd4200","/wd4244","/wd4702","/wd4706","/wd4577","/wd4592"}
 		characterset "MBCS" -- Don't use UNICODE
 		warnings "Extra"
-		links {"user32","opengl32","ws2_32","hid","winmm","vulkan-1"}
+		links {"user32","ws2_32","hid","winmm","vulkan-1"}
 	filter {"action:vs*", "Debug or Development"}
 		links {"dbghelp"}
 	filter {"action:vs*", "Release"}
@@ -46,7 +46,7 @@ solution "L"
 	-- GMake
 	configuration {"gmake"}
 		buildoptions {"-fno-operator-names"}
-    links {"GL","vulkan","X11","pthread","asound"}
+    links {"vulkan","X11","pthread","asound"}
 
 	-- Main project (startup)
 	project "Engine"
