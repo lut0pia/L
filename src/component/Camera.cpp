@@ -6,7 +6,6 @@
 #endif
 
 #include "../constants.h"
-#include "../font/Font.h"
 #include "../rendering/Material.h"
 #include "LightComponent.h"
 #include "../system/Window.h"

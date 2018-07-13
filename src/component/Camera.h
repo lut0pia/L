@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Transform.h"
-#include "../font/Font.h"
+#include "../rendering/Font.h"
 #include "../rendering/Framebuffer.h"
 #include "../rendering/Texture.h"
 #include "../math/Interval.h"

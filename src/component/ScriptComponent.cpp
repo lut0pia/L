@@ -5,7 +5,7 @@
 #include "../engine/Settings.h"
 #include "NameComponent.h"
 #include "../text/String.h"
-#include "../font/Font.h"
+#include "../rendering/Font.h"
 #include "../rendering/shader_lib.h"
 
 using namespace L;

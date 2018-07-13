@@ -1,5 +1,5 @@
 #include "L/src/engine/Resource.h"
-#include "L/src/font/Font.h"
+#include "L/src/rendering/Font.h"
 
 using namespace L;
 

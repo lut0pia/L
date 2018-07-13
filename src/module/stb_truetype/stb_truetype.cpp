@@ -1,5 +1,5 @@
 #include <L/src/engine/Resource.h>
-#include <L/src/font/Font.h>
+#include <L/src/rendering/Font.h>
 
 #define STB_TRUETYPE_IMPLEMENTATION 
 #include "stb_truetype.h"

@@ -64,9 +64,6 @@
 #include "engine/Resource.h"
 #include "engine/Settings.h"
 
-// Font handling
-#include "font/Font.h"
-
 // Images and colors
 #include "image/Bitmap.h"
 #include "image/Color.h"
@@ -100,6 +97,7 @@
 
 // Rendering
 #include "rendering/Atlas.h"
+#include "rendering/Font.h"
 #include "rendering/Framebuffer.h"
 #include "rendering/Material.h"
 #include "rendering/Mesh.h"
