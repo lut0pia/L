@@ -12,6 +12,15 @@ solution "L"
 	rtti "Off"
 	editandcontinue "Off"
 
+	do -- Modules
+		local modules = os.matchdirs("src/module/*")
+		local moduleinit = io.open("src/module/init.gen","w")
+		for _,module in pairs(modules) do
+			module = path.getname(module)
+			moduleinit:write("extern void " .. module .. "_module_init();" .. module .. "_module_init();")
+		end
+	end
+
 	-- Platform
 	configuration {"windows"}
 		architecture "x64"
@@ -44,7 +53,6 @@ solution "L"
 	project "Engine"
 		language "C++"
 		files {"src/**.h","src/**.cpp"}
-		excludes {"src/interface/**"} -- Interface files are not to be compiled by the library
 		debugdir "smp"
 		targetdir "smp"
 		includedirs {".."}
