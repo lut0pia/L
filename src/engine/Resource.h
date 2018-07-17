@@ -40,7 +40,6 @@ namespace L {
             slot.value = nullptr;
           }
           load_resource(slot);
-          post_load_resource(slot);
           slot.state = Loaded;
         }, this, uint32_t(-1), TaskSystem::NoParent);
       }
@@ -102,7 +101,6 @@ namespace L {
   };
 
   template <class T> void load_resource(ResourceSlot<T>& slot) { Resource<T>::load(slot); }
-  template <class T> void post_load_resource(ResourceSlot<T>& slot) { }
 
   template <class T> Table<const char*, typename Resource<T>::Loader> Resource<T>::_loaders;
 }
