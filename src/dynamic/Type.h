@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../container/Table.h"
-#include "../stream/serial.h"
+#include "../stream/serial_text.h"
 #include "../text/Symbol.h"
 #include "../hash.h"
 

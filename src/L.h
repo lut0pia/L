@@ -120,7 +120,7 @@
 #include "stream/CFileStream.h"
 #include "stream/DirectStream.h"
 #include "stream/NetStream.h"
-#include "stream/serial.h"
+#include "stream/serial_text.h"
 #include "stream/Stream.h"
 #include "stream/StringStream.h"
 

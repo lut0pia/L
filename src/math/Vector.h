@@ -5,7 +5,7 @@
 #include <new>
 #include "../math/math.h"
 #include "../math/Rand.h"
-#include "../stream/serial.h"
+#include "../stream/serial_text.h"
 
 namespace L {
   template <int d,class T>
