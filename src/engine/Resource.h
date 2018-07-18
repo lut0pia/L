@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../container/Archive.h"
+#include "../container/Buffer.h"
 #include "../container/Table.h"
 #include "../dev/profiling.h"
 #include "../dynamic/Type.h"
@@ -7,10 +9,12 @@
 #include "../parallelism/TaskSystem.h"
 #include "../system/intrinsics.h"
 #include "../text/Symbol.h"
+#include "../stream/StringStream.h"
+#include "../stream/serial_bin.h"
+#include "../system/File.h"
 #include "../time/Date.h"
 
 namespace L {
-  class Buffer;
   struct ResourceSlotGeneric {
     Symbol id, path;
     Date mtime;
@@ -24,6 +28,8 @@ namespace L {
       mtime(Date::now()), persistent(false), state(Unloaded), value(nullptr) {}
     Symbol parameter(const char* key);
     Buffer read_source_file();
+    Buffer read_archive();
+    void write_archive(const void* data, size_t size);
     static ResourceSlotGeneric* find(const char* url);
     static void update();
   };
@@ -39,7 +45,17 @@ namespace L {
             Memory::delete_type<T>((T*)slot.value);
             slot.value = nullptr;
           }
-          load_resource(slot);
+          if(Buffer buffer = slot.read_archive()){
+            load_from_archive(slot, buffer.data(), buffer.size());
+          } else {
+            Resource<T>::load(slot);
+            if(slot.value) {
+              StringStream stream;
+              if(store_to_archive(stream, *slot.value)) {
+                slot.write_archive(stream.string(), stream.string().size());
+              }
+            }
+          }
           slot.state = Loaded;
         }, this, uint32_t(-1), TaskSystem::NoParent);
       }
@@ -100,7 +116,8 @@ namespace L {
     }
   };
 
-  template <class T> void load_resource(ResourceSlot<T>& slot) { Resource<T>::load(slot); }
+  template <class T> bool store_to_archive(Stream& stream, const T& value) { return false; }
+  template <class T> void load_from_archive(ResourceSlot<T>& slot, const void* data, size_t size) { error("Unimplemented"); }
 
   template <class T> Table<const char*, typename Resource<T>::Loader> Resource<T>::_loaders;
 }

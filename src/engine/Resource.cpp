@@ -9,6 +9,7 @@
 
 using namespace L;
 
+static Archive archive("data");
 static Pool<ResourceSlotGeneric> _pool;
 static Array<ResourceSlotGeneric*> _slots;
 static Table<Symbol, ResourceSlotGeneric*> _table;
@@ -33,6 +34,17 @@ Buffer ResourceSlotGeneric::read_source_file() {
   Buffer wtr(size);
   stream.read(wtr, size);
   return wtr;
+}
+Buffer ResourceSlotGeneric::read_archive() {
+  if(Archive::Entry entry = archive.find(id)) {
+    Buffer buffer(entry.size);
+    archive.load(entry, buffer);
+    return buffer;
+  }
+  return Buffer();
+}
+void ResourceSlotGeneric::write_archive(const void* data, size_t size) {
+  archive.store(id, data, size);
 }
 ResourceSlotGeneric* ResourceSlotGeneric::find(const char* url) {
   static Lock lock;
