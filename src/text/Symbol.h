@@ -20,6 +20,8 @@ namespace L {
     friend inline Stream& operator<<(Stream& s, const Symbol& sym) { return s << sym._string; }
     friend inline Stream& operator<(Stream& s, const Symbol& sym) { return s << sym._string << '\n'; }
     friend inline Stream& operator>(Stream& s, Symbol& sym) { sym = s.word(); return s; }
+    friend Stream& operator<=(Stream& s, const Symbol& v);
+    friend Stream& operator>=(Stream& s, Symbol& v);
     friend inline uint32_t hash(const Symbol& sym) { return uint32_t(uintptr_t(sym._string)); }
   };
 }

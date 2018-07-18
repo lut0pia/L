@@ -170,5 +170,7 @@ namespace L {
     }
     friend Stream& operator<(Stream& s, const Array& v) { for(const auto& e : v) { s << "-\n"; s < e; } return s << ".\n"; }
     friend Stream& operator>(Stream& s, Array& v) { T e; while(true) { if(strcmp(s.word(), "-")) break; s > e; v.push(e); } return s; }
+    friend Stream& operator<=(Stream& s, const Array& v) { s <= v.size(); for(const T& e : v) s <= e; return s; }
+    friend Stream& operator>=(Stream& s, Array& v) { T e; auto in_size(v.size()); s >= in_size; v.size(in_size); for(T& e : v) s >= e; return s; }
   };
 }

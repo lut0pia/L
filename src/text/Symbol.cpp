@@ -3,6 +3,7 @@
 #include "../container/Table.h"
 #include "../dev/debug.h"
 #include "../parallelism/Lock.h"
+#include "../stream/serial_bin.h"
 #include "../system/Memory.h"
 #include "../macros.h"
 
@@ -30,4 +31,19 @@ Symbol::Symbol(const char* str, size_t length) {
     _symbols[hash] = _string;
     _blob_next += length+1;
   }
+}
+
+Stream& L::operator<=(Stream& s, const Symbol& v) {
+  const uint16_t len(strlen(v));
+  s <= len;
+  s.write(v, len);
+  return s;
+}
+Stream& L::operator>=(Stream& s, Symbol& v) {
+  char buffer[256];
+  uint16_t len;
+  s >= len;
+  s.read(buffer, len);
+  v = Symbol(buffer, len);
+  return s;
 }
