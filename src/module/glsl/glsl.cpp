@@ -2,6 +2,8 @@
 #include <L/src/engine/Resource.h>
 #include <L/src/rendering/Shader.h>
 #include <L/src/rendering/shader_lib.h>
+#include <L/src/system/System.h>
+#include <L/src/text/String.h>
 
 using namespace L;
 
@@ -42,7 +44,7 @@ void glsl_loader(Resource<Shader>::Slot& slot) {
     }
   }
 
-  if(Shader* shader = slot.value) { // Parse debug information
+  if(Shader* shader = (Shader*)slot.value) { // Parse debug information
     Shader::BindingType binding_type(Shader::BindingType::None);
     Array<String> lines(cmd_output.explode('\n')), words;
     for(String& line : lines) {

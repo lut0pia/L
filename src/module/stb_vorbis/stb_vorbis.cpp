@@ -1,4 +1,5 @@
 #include <L/src/audio/AudioStream.h>
+#include <L/src/container/Array.h>
 #include <L/src/container/Buffer.h>
 #include <L/src/engine/Resource.h>
 #include <L/src/stream/CFileStream.h>

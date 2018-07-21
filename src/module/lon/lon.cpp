@@ -2,6 +2,7 @@
 #include <L/src/rendering/Material.h>
 #include <L/src/script/Compiler.h>
 #include <L/src/script/Context.h>
+#include <L/src/text/String.h>
 
 using namespace L;
 

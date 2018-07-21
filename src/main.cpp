@@ -34,13 +34,6 @@ void mainjob(void*) {
 int main(int argc, const char* argv[]) {
   TypeInit();
 
-  Engine::register_resource<Font>();
-  Engine::register_resource<Material>();
-  Engine::register_resource<Mesh>();
-  Engine::register_resource<Pipeline>();
-  Engine::register_resource<Texture>();
-  Engine::register_resource<Script::CodeFunction>();
-
   Engine::register_component<Transform>();
   Engine::register_component<Camera>();
   Engine::register_component<RigidBody>();

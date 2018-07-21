@@ -1,9 +1,17 @@
 #include "Resource.h"
 
+#include "../container/Array.h"
 #include "../container/Buffer.h"
+#include "../container/Pool.h"
+#include "../parallelism/Lock.h"
 #include "../stream/CFileStream.h"
+#include "../system/File.h"
 
 using namespace L;
+
+static Pool<ResourceSlotGeneric> _pool;
+static Array<ResourceSlotGeneric*> _slots;
+static Table<Symbol, ResourceSlotGeneric*> _table;
 
 Symbol ResourceSlotGeneric::parameter(const char* key) {
   const size_t key_length(strlen(key));
@@ -25,4 +33,34 @@ Buffer ResourceSlotGeneric::read_source_file() {
   Buffer wtr(size);
   stream.read(wtr, size);
   return wtr;
+}
+ResourceSlotGeneric* ResourceSlotGeneric::find(const char* url) {
+  static Lock lock;
+  L_SCOPED_LOCK(lock);
+
+  const Symbol id(url);
+  if(ResourceSlotGeneric** found = _table.find(id))
+    return *found;
+  else {
+    ResourceSlotGeneric* slot(new(_pool.allocate())ResourceSlotGeneric(url));
+    _table[id] = slot;
+    _slots.push(slot);
+    return slot;
+  }
+}
+void ResourceSlotGeneric::update() {
+  if(!_slots.empty()) {
+    L_SCOPE_MARKER("ResourceSlotGeneric::update");
+    static uintptr_t index(0);
+    ResourceSlotGeneric& slot(*_slots[index%_slots.size()]);
+    if(!slot.persistent // Persistent resources don't hot reload
+        && slot.state == Loaded) { // No reload if it hasn't been loaded in the first place
+      Date file_mtime;
+      if(File::mtime(slot.path, file_mtime) && slot.mtime<file_mtime) {
+        slot.state = Unloaded;
+        slot.mtime = Date::now();
+      }
+    }
+    index++;
+  }
 }

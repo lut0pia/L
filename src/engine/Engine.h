@@ -4,7 +4,6 @@
 #include "../component/Component.h"
 #include "../container/Table.h"
 #include "../rendering/GPUBuffer.h"
-#include "Resource.h"
 #include "../time/Timer.h"
 #include "../system/Device.h"
 #include "../system/Window.h"
@@ -40,7 +39,6 @@ namespace L {
     static void update();
     static void clear();
     static void add_deferred_action(const DeferredAction& la) { _deferred_actions.push(la); }
-    template <class T> inline static void register_resource() { _updates.push(Resource<T>::update); }
     template <class T> inline static void register_component() {
       if(T::update_all != Component::update_all) _updates.push(T::update_all);
       if(T::late_update_all != Component::late_update_all) _late_updates.push(T::late_update_all);
