@@ -40,8 +40,4 @@
 # include <arpa/inet.h>
 # include <pthread.h>
 # include <alsa/asoundlib.h>
-#define VK_USE_PLATFORM_XLIB_KHR
 #endif
-
-// Vulkan
-#include <vulkan/vulkan.h>

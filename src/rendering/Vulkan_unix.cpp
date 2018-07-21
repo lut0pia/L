@@ -1,3 +1,4 @@
+#define VK_USE_PLATFORM_XLIB_KHR
 #include "Vulkan.h"
 
 #include <vulkan/vulkan.h>
