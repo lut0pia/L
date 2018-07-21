@@ -44,7 +44,7 @@ void midi_loader(Resource<Audio::MidiSequence>::Slot& slot) {
   if(format>1 || track_count>=32)
     return;
 
-  Ref<Audio::MidiSequence> wtr(ref<Audio::MidiSequence>());
+  Audio::MidiSequence* wtr(Memory::new_type<Audio::MidiSequence>());
   const uint8_t* track_heads[32];
   uint32_t current_times[32] {};
   uint8_t previous_commands[32] {};

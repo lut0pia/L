@@ -38,7 +38,7 @@ public:
 
 void stb_truetype_loader(Resource<Font>::Slot& slot) {
   Buffer buffer(slot.read_source_file());
-  slot.value = ref<STBFont>((uint8_t*)buffer.data(), 16);
+  slot.value = Memory::new_type<STBFont>((uint8_t*)buffer.data(), 16);
 }
 
 void stb_truetype_module_init() {

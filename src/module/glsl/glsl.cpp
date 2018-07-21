@@ -38,11 +38,11 @@ void glsl_loader(Resource<Shader>::Slot& slot) {
 
     {
       CFileStream output_stream(output_file, "rb");
-      slot.value = ref<Shader>(output_stream.read_into_buffer(), stage);
+      slot.value = Memory::new_type<Shader>(output_stream.read_into_buffer(), stage);
     }
   }
 
-  if(Ref<Shader> shader = slot.value) { // Parse debug information
+  if(Shader* shader = slot.value) { // Parse debug information
     Shader::BindingType binding_type(Shader::BindingType::None);
     Array<String> lines(cmd_output.explode('\n')), words;
     for(String& line : lines) {

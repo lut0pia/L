@@ -68,7 +68,7 @@ void stb_vorbis_loader(Resource<AudioStream>::Slot& slot) {
   uint8_t* data((uint8_t*)Memory::alloc(size));
   filestream.read(data, size);
   if(stb_vorbis* handle = stb_vorbis_open_memory(data, size, &error, nullptr))
-    slot.value = ref<VorbisStream>(handle, data, size);
+    slot.value = Memory::new_type<VorbisStream>(handle, data, size);
   else {
     Memory::free(data, size);
   }

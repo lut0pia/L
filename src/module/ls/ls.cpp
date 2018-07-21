@@ -8,7 +8,7 @@ void ls_loader(Resource<Script::CodeFunction>::Slot& slot) {
   Buffer buffer(slot.read_source_file());
   Script::Compiler compiler;
   compiler.read((const char*)buffer.data(), buffer.size(), true);
-  slot.value = ref<Script::CodeFunction>(compiler.function());
+  slot.value = Memory::new_type<Script::CodeFunction>(compiler.function());
 }
 
 void ls_module_init() {

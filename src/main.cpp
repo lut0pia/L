@@ -58,7 +58,7 @@ int main(int argc, const char* argv[]) {
 
   {
     Script::Context ini_context;
-    ini_context.executeInside(Array<Var>{Resource<Script::CodeFunction>("ini.ls").ref()});
+    ini_context.executeInside(Array<Var>{Resource<Script::CodeFunction>("ini.ls")});
   }
 
   const char* window_name(Settings::get_string("window_name", "L Engine Sample"));

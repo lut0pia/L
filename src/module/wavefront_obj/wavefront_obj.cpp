@@ -104,7 +104,7 @@ void obj_loader(Resource<Mesh>::Slot& slot) {
     VK_FORMAT_R32G32B32_SFLOAT,
   };
 
-  slot.value = ref<Mesh>(mb, formats, L_COUNT_OF(formats));
+  slot.value = Memory::new_type<Mesh>(mb, formats, L_COUNT_OF(formats));
 }
 
 void wavefront_obj_module_init() {

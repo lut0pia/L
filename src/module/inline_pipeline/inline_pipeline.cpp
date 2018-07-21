@@ -33,7 +33,7 @@ void inline_pip_loader(Resource<Pipeline>::Slot& slot) {
     raw_shaders[raw_shader_count++] = &*shader;
   }
 
-  slot.value = ref<Pipeline>(raw_shaders, raw_shader_count, *render_pass);
+  slot.value = Memory::new_type<Pipeline>(raw_shaders, raw_shader_count, *render_pass);
 }
 
 void inline_pipeline_module_init() {

@@ -47,7 +47,7 @@ void ScriptComponent::script_registration() {
       String* str((String*)p);
       Engine::clear();
       Context context;
-      context.executeInside(Array<Var>{Resource<Script::CodeFunction>(*str).ref()});
+      context.executeInside(Array<Var>{Resource<Script::CodeFunction>(*str)});
       Memory::delete_type(str);
     }, Memory::new_type<String>(c.local(0).get<String>())});
   });
@@ -115,7 +115,7 @@ void ScriptComponent::start() {
   L_ASSERT(_script);
   _started = true;
   static const Symbol start_symbol("start");
-  _context.executeInside(Array<Var>{_script.ref()});
+  _context.executeInside(Array<Var>{_script});
   _context.tryExecuteMethod(start_symbol);
 }
 void ScriptComponent::update() {

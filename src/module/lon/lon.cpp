@@ -24,7 +24,7 @@ void lon_mat_loader(Resource<Material>::Slot& slot) {
     Var *pipeline_var(table.find(pipeline_symbol)), *mesh_var(table.find(mesh_symbol)),
       *scalars_var(table.find(scalars_symbol)), *textures_var(table.find(textures_symbol)), *vectors_var(table.find(vectors_symbol)),
       *vertex_count_var(table.find(vertex_count_symbol)), *primitive_mode_var(table.find(primitive_mode_symbol));
-    Ref<Material> wtr(ref<Material>());
+    Material* wtr(Memory::new_type<Material>());
     // Pipeline
     if(pipeline_var)
       wtr->pipeline(pipeline_var->get<String>());

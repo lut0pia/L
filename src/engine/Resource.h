@@ -2,7 +2,6 @@
 
 #include "../container/Array.h"
 #include "../container/Pool.h"
-#include "../container/Ref.h"
 #include "../container/Table.h"
 #include "../dev/profiling.h"
 #include "../dynamic/Type.h"
@@ -29,12 +28,16 @@ namespace L {
   template <class T>
   struct ResourceSlot : public ResourceSlotGeneric {
     using ResourceSlotGeneric::ResourceSlotGeneric;
-    Ref<T> value;
+    T* value = nullptr;
     void load() {
       if(state==Unloaded && cas((uint32_t*)&state, Unloaded, Loading)==Unloaded) {
         TaskSystem::push([](void* p) {
           ResourceSlot<T>& slot(*(ResourceSlot<T>*)p);
           L_SCOPE_MARKERF("load_resource<%s>(%s)", (const char*)type_name<T>(), slot.id);
+          if(slot.value) {
+            Memory::delete_type(slot.value);
+            slot.value = nullptr;
+          }
           load_resource(slot);
           post_load_resource(slot);
           slot.state = Loaded;
@@ -75,7 +78,6 @@ namespace L {
     inline const T& operator*() const { flush(); return *_slot->value; }
     inline T* operator->() { flush(); return _slot->value; }
     inline const T* operator->() const { flush(); return _slot->value; }
-    inline const Ref<T>& ref() { flush(); return _slot->value; }
     inline bool is_set() const { return _slot!=nullptr; }
     inline operator bool() const {
       if(_slot) {

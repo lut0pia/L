@@ -13,7 +13,7 @@ void stb_image_loader(Resource<Texture>::Slot& slot) {
   int width, height, comp;
   uint8_t* img(stbi_load_from_memory((const stbi_uc*)buffer.data(), int(buffer.size()), &width, &height, &comp, 4));
   if(img) {
-    slot.value = ref<Texture>(width, height);
+    slot.value = Memory::new_type<Texture>(width, height);
     slot.value->load(img);
     stbi_image_free(img);
   } else {

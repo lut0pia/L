@@ -2,6 +2,7 @@
 
 #include "Compiler.h"
 #include "../container/Ref.h"
+#include "../engine/Resource.h"
 #include "../macros.h"
 #include "../math/Rand.h"
 #include "../stream/CFileStream.h"
@@ -52,13 +53,13 @@ void Context::execute(const Var& code, Var* selfOut) {
     const Var handle(_stack.back());
     if(handle.is<Native>())
       handle.as<Native>()(*this, array);
-    else if(handle.is<Function>() || handle.is<Ref<CodeFunction>>()) {
+    else if(handle.is<Function>() || handle.is<Ref<CodeFunction>>() || handle.is<Resource<CodeFunction>>()) {
       for(uint32_t i(1); i<array.size(); i++) // For all parameters
         execute(array[i]); // Compute parameter values
       _frames.push(uint32_t(_stack.size()-array.size()+1)); // Save local frame
       if(!selfIn.is<void>()) _selves.push(selfIn);
-      if(handle.is<Ref<CodeFunction>>()) {
-        const Ref<CodeFunction>& function(handle.as<Ref<CodeFunction>>());
+      if(handle.is<Ref<CodeFunction>>() || handle.is<Resource<CodeFunction>>()) {
+        const CodeFunction* function(handle.is<Ref<CodeFunction>>() ? handle.as<Ref<CodeFunction>>() : &*handle.as<Resource<CodeFunction>>());
         if(function) {
           _stack.size(currentFrame()+function->localCount);
           execute(function->code);

@@ -16,7 +16,7 @@ void pixel_font_loader(Resource<Font>::Slot& slot) {
   if(Symbol height_value = slot.parameter("height"))
     height = ston<10, int>(height_value);
 
-  slot.value = ref<PixelFont>(height);
+  slot.value = Memory::new_type<PixelFont>(height);
   slot.persistent = true;
 }
 

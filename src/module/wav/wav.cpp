@@ -42,7 +42,7 @@ void wav_loader(Resource<AudioStream>::Slot& slot) {
     default: return;
   }
 
-  slot.value = ref<AudioBuffer>(data+44, data_size, format, frequency);
+  slot.value = Memory::new_type<AudioBuffer>(data+44, data_size, format, frequency);
 }
 
 void wav_module_init() {
