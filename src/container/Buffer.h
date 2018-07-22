@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../stream/serial_bin.h"
 #include "../system/Memory.h"
 
 namespace L {
@@ -22,5 +23,8 @@ namespace L {
     inline void size(size_t new_size) { _data = Memory::realloc(_data, _size, new_size); _size = new_size; }
     inline size_t size() const { return _size; }
     inline operator void*() const { return _data; }
+
+    friend inline Stream& operator<=(Stream& s, const Buffer& v) { s <= v._size; s.write(v._data, v._size); return s; }
+    friend inline Stream& operator>=(Stream& s, Buffer& v) { size_t size; s >= size; v.~Buffer(); new(&v)Buffer(size); s.read(v._data, size); return s; }
   };
 }
