@@ -63,7 +63,7 @@ int main(int argc, const char* argv[]) {
   else
     Window::open(window_name, Settings::get_int("resolution_x", 1024), Settings::get_int("resolution_y", 768), window_flags);
 
-  TaskSystem::push(mainjob, nullptr, 1, TaskSystem::MainTask);
+  TaskSystem::push(mainjob, nullptr, uint32_t(-1), TaskSystem::MainTask);
   TaskSystem::init();
   return 0;
 }

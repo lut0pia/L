@@ -6,6 +6,8 @@
 #include <AudioClient.h>
 
 #include "../dev/debug.h"
+#include "../macros.h"
+#include "../parallelism/TaskSystem.h"
 #include "../stream/CFileStream.h"
 #include "../system/Memory.h"
 
@@ -48,6 +50,7 @@ static void init_wave_format(WAVEFORMATEXTENSIBLE * format_ext, uint32_t frequen
 }
 
 void Audio::init() {
+  L_SCOPE_THREAD_MASK(1);
   REFERENCE_TIME hnsRequestedDuration = REFTIMES_PER_SEC/2;
 
   hr = CoCreateInstance(

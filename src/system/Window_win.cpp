@@ -224,6 +224,7 @@ void Window::close() {
 bool Window::opened() { return hWND!=0; }
 bool Window::loop() {
   L_SCOPE_MARKER("Window::loop");
+  L_SCOPE_THREAD_MASK(1);
   MSG msg;
   while(opened() && PeekMessage(&msg,nullptr,0,0,PM_REMOVE)) {
     TranslateMessage(&msg);
