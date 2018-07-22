@@ -1,6 +1,7 @@
 #include "MidiSourceComponent.h"
 
 #include "../engine/Engine.h"
+#include "../engine/Resource.inl"
 
 using namespace L;
 

@@ -1,6 +1,6 @@
 #include <L/src/audio/AudioBuffer.h>
 #include <L/src/container/Buffer.h>
-#include <L/src/engine/Resource.h>
+#include <L/src/engine/Resource.inl>
 
 using namespace L;
 
@@ -17,7 +17,7 @@ inline static uint32_t wav_read_int(const uint8_t* data, size_t size = 4) {
   }
   return wtr;
 }
-void wav_loader(Resource<AudioStream>::Slot& slot) {
+void wav_loader(ResourceSlot& slot, AudioStream*& intermediate) {
   Buffer buffer(slot.read_source_file());
   const uint8_t* data((uint8_t*)buffer.data());
   const size_t size(buffer.size());
@@ -42,9 +42,9 @@ void wav_loader(Resource<AudioStream>::Slot& slot) {
     default: return;
   }
 
-  slot.value = Memory::new_type<AudioBuffer>(data+44, data_size, format, frequency);
+  intermediate = Memory::new_type<AudioBuffer>(data+44, data_size, format, frequency);
 }
 
 void wav_module_init() {
-  Resource<AudioStream>::add_loader("wav", wav_loader);
+  ResourceLoading<AudioStream>::add_loader("wav", wav_loader);
 }

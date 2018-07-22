@@ -14,6 +14,7 @@ namespace L {
     uint32_t _count;
 
   public:
+    typedef Mesh* Intermediate;
     inline Mesh() : _vertex_buffer(nullptr), _index_buffer(nullptr) {}
     Mesh(size_t count, const void* data, size_t size, const VkFormat* formats, size_t fcount, const uint16_t* indices = nullptr, size_t icount = 0);
     Mesh(const MeshBuilder&, const VkFormat* formats, size_t fcount);

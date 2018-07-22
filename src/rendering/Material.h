@@ -20,6 +20,7 @@ namespace L {
     DescriptorSet* _desc_set = nullptr;
     size_t _vertex_count = 0;
   public:
+    typedef Material* Intermediate;
     void draw(VkCommandBuffer cmd_buffer, const Matrix44f& model = Matrix44f(1.f));
     bool valid() const;
     Interval3f bounds() const;

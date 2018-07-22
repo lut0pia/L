@@ -1,4 +1,4 @@
-#include <L/src/engine/Resource.h>
+#include <L/src/engine/Resource.inl>
 #include <L/src/rendering/Font.h>
 
 #define STB_TRUETYPE_IMPLEMENTATION 
@@ -36,11 +36,11 @@ public:
   }
 };
 
-void stb_truetype_loader(Resource<Font>::Slot& slot) {
+void stb_truetype_loader(ResourceSlot& slot, Font*& intermediate) {
   Buffer buffer(slot.read_source_file());
-  slot.value = Memory::new_type<STBFont>((uint8_t*)buffer.data(), 16);
+  intermediate = Memory::new_type<STBFont>((uint8_t*)buffer.data(), 16);
 }
 
 void stb_truetype_module_init() {
-  Resource<Font>::add_loader("ttf", stb_truetype_loader);
+  ResourceLoading<Font>::add_loader("ttf", stb_truetype_loader);
 }

@@ -1,5 +1,5 @@
-#include "L/src/engine/Resource.h"
 #include "L/src/rendering/Font.h"
+#include "L/src/engine/Resource.inl"
 
 using namespace L;
 
@@ -11,17 +11,17 @@ public:
   void load_glyph(uint32_t utf32, Glyph& out_glyph, Bitmap& out_bmp) override;
 };
 
-void pixel_font_loader(Resource<Font>::Slot& slot) {
+void pixel_font_loader(ResourceSlot& slot, Font*& intermediate) {
   int height(14);
   if(Symbol height_value = slot.parameter("height"))
     height = ston<10, int>(height_value);
 
-  slot.value = Memory::new_type<PixelFont>(height);
+  intermediate = Memory::new_type<PixelFont>(height);
   slot.persistent = true;
 }
 
 void pixel_font_module_init() {
-  Resource<Font>::add_loader("pixel", pixel_font_loader);
+  ResourceLoading<Font>::add_loader("pixel", pixel_font_loader);
 }
 
 PixelFont::PixelFont(int height) : _ratio(height/7.f) {

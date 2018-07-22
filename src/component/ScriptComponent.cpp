@@ -2,6 +2,7 @@
 
 #include "../engine/Engine.h"
 #include "../rendering/Material.h"
+#include "../engine/Resource.inl"
 #include "../engine/Settings.h"
 #include "NameComponent.h"
 #include "../text/String.h"

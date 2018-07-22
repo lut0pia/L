@@ -1,7 +1,7 @@
 #include <L/src/audio/AudioStream.h>
 #include <L/src/container/Array.h>
 #include <L/src/container/Buffer.h>
-#include <L/src/engine/Resource.h>
+#include <L/src/engine/Resource.inl>
 #include <L/src/stream/CFileStream.h>
 
 #include "stb_vorbis.c"
@@ -62,19 +62,19 @@ public:
   inline Audio::SampleFormat format() const override { return _format; }
 };
 
-void stb_vorbis_loader(Resource<AudioStream>::Slot& slot) {
+void stb_vorbis_loader(ResourceSlot& slot, AudioStream*& intermediate) {
   int error;
   CFileStream filestream(slot.path, "rb");
   const size_t size(filestream.size());
   uint8_t* data((uint8_t*)Memory::alloc(size));
   filestream.read(data, size);
   if(stb_vorbis* handle = stb_vorbis_open_memory(data, size, &error, nullptr))
-    slot.value = Memory::new_type<VorbisStream>(handle, data, size);
+    intermediate = Memory::new_type<VorbisStream>(handle, data, size);
   else {
     Memory::free(data, size);
   }
 }
 
 void stb_vorbis_module_init() {
-  Resource<AudioStream>::add_loader("ogg", stb_vorbis_loader);
+  ResourceLoading<AudioStream>::add_loader("ogg", stb_vorbis_loader);
 }

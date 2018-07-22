@@ -1,20 +1,23 @@
 #include "Resource.h"
 
+#include "../container/Archive.h"
 #include "../container/Array.h"
 #include "../container/Buffer.h"
 #include "../container/Pool.h"
+#include "../container/Table.h"
+#include "../dev/profiling.h"
 #include "../parallelism/Lock.h"
 #include "../stream/CFileStream.h"
 #include "../system/File.h"
 
 using namespace L;
 
-static Archive archive("data");
-static Pool<ResourceSlotGeneric> _pool;
-static Array<ResourceSlotGeneric*> _slots;
-static Table<Symbol, ResourceSlotGeneric*> _table;
+static Archive archive("data.bin");
+static Pool<ResourceSlot> _pool;
+static Array<ResourceSlot*> _slots;
+static Table<Symbol, ResourceSlot*> _table;
 
-Symbol ResourceSlotGeneric::parameter(const char* key) {
+Symbol ResourceSlot::parameter(const char* key) {
   const size_t key_length(strlen(key));
   const char* pair(id);
   while(true) {
@@ -28,14 +31,15 @@ Symbol ResourceSlotGeneric::parameter(const char* key) {
   }
   return Symbol();
 }
-Buffer ResourceSlotGeneric::read_source_file() {
+Buffer ResourceSlot::read_source_file() {
   CFileStream stream(path, "rb");
   const size_t size(stream.size());
   Buffer wtr(size);
   stream.read(wtr, size);
   return wtr;
 }
-Buffer ResourceSlotGeneric::read_archive() {
+Buffer ResourceSlot::read_archive() {
+  L_SCOPE_MARKER("ResourceSlot::read_archive");
   if(Archive::Entry entry = archive.find(id)) {
     Buffer buffer(entry.size);
     archive.load(entry, buffer);
@@ -43,28 +47,28 @@ Buffer ResourceSlotGeneric::read_archive() {
   }
   return Buffer();
 }
-void ResourceSlotGeneric::write_archive(const void* data, size_t size) {
+void ResourceSlot::write_archive(const void* data, size_t size) {
   archive.store(id, data, size);
 }
-ResourceSlotGeneric* ResourceSlotGeneric::find(const char* url) {
+ResourceSlot* ResourceSlot::find(const char* url) {
   static Lock lock;
   L_SCOPED_LOCK(lock);
 
   const Symbol id(url);
-  if(ResourceSlotGeneric** found = _table.find(id))
+  if(ResourceSlot** found = _table.find(id))
     return *found;
   else {
-    ResourceSlotGeneric* slot(new(_pool.allocate())ResourceSlotGeneric(url));
+    ResourceSlot* slot(new(_pool.allocate())ResourceSlot(url));
     _table[id] = slot;
     _slots.push(slot);
     return slot;
   }
 }
-void ResourceSlotGeneric::update() {
+void ResourceSlot::update() {
   if(!_slots.empty()) {
     L_SCOPE_MARKER("ResourceSlotGeneric::update");
     static uintptr_t index(0);
-    ResourceSlotGeneric& slot(*_slots[index%_slots.size()]);
+    ResourceSlot& slot(*_slots[index%_slots.size()]);
     if(!slot.persistent // Persistent resources don't hot reload
         && slot.state == Loaded) { // No reload if it hasn't been loaded in the first place
       Date file_mtime;

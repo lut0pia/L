@@ -6,6 +6,7 @@
 #endif
 
 #include "../constants.h"
+#include "../engine/Resource.inl"
 #include "../rendering/Material.h"
 #include "LightComponent.h"
 #include "../system/Window.h"

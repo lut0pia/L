@@ -11,6 +11,9 @@ namespace L {
     typedef void(*Native)(Context&, const Array<Var>&);
     struct Local { uint32_t i; };
     struct RawSymbol { Symbol sym; };
-    struct CodeFunction { Var code; uint32_t localCount; };
+    struct CodeFunction {
+      typedef CodeFunction* Intermediate;
+      Var code; uint32_t localCount;
+    };
   }
 }

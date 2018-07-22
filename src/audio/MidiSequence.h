@@ -7,6 +7,7 @@
 namespace L {
   namespace Audio {
     struct MidiSequence {
+      typedef MidiSequence* Intermediate;
       struct Event {
         uint32_t delta_us;
         MidiEvent midi_event;

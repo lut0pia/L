@@ -1,6 +1,7 @@
 #include "AudioSourceComponent.h"
 
 #include "AudioListenerComponent.h"
+#include "../engine/Resource.inl"
 #include "ScriptComponent.h"
 
 using namespace L;

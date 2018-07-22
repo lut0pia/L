@@ -8,6 +8,7 @@
 smp/Ldev
 smp/Ldbg
 smp/L
+smp/*.bin
 smp/*.dll
 smp/*.exe
 smp/*.exp

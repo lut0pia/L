@@ -35,6 +35,7 @@ namespace L {
     int _lineheight;
 
   public:
+    typedef Font* Intermediate;
     inline Font() : _last_update(0) {}
     virtual ~Font() {}
     const Glyph& glyph(uint32_t utf32);

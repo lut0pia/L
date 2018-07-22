@@ -1,6 +1,6 @@
 #include <cctype>
 #include <L/src/container/Buffer.h>
-#include <L/src/engine/Resource.h>
+#include <L/src/engine/Resource.inl>
 #include <L/src/rendering/Mesh.h>
 #include <L/src/rendering/MeshBuilder.h>
 
@@ -29,7 +29,7 @@ static inline bool read_indices(const char*& c, Vector3i& indices) {
   }
   return indices.x()>0;
 }
-void obj_loader(Resource<Mesh>::Slot& slot) {
+void obj_loader(ResourceSlot& slot, Mesh*& intermediate) {
   struct Vertex {
     Vector3f position;
     Vector2f uv;
@@ -104,9 +104,9 @@ void obj_loader(Resource<Mesh>::Slot& slot) {
     VK_FORMAT_R32G32B32_SFLOAT,
   };
 
-  slot.value = Memory::new_type<Mesh>(mb, formats, L_COUNT_OF(formats));
+  intermediate = Memory::new_type<Mesh>(mb, formats, L_COUNT_OF(formats));
 }
 
 void wavefront_obj_module_init() {
-  Resource<Mesh>::add_loader("obj", obj_loader);
+  ResourceLoading<Mesh>::add_loader("obj", obj_loader);
 }

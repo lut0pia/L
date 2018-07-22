@@ -1,6 +1,6 @@
 #include <L/src/audio/MidiSequence.h>
 #include <L/src/container/Buffer.h>
-#include <L/src/engine/Resource.h>
+#include <L/src/engine/Resource.inl>
 
 using namespace L;
 
@@ -29,7 +29,7 @@ static uint32_t read_variable(const uint8_t*& data) {
   }
   return wtr;
 }
-void midi_loader(Resource<Audio::MidiSequence>::Slot& slot) {
+void midi_loader(ResourceSlot& slot, Audio::MidiSequence*& intermediate) {
   Buffer buffer(slot.read_source_file());
   const uint8_t* data((uint8_t*)buffer.data());
   const size_t size(buffer.size());
@@ -136,10 +136,10 @@ void midi_loader(Resource<Audio::MidiSequence>::Slot& slot) {
     }
   }
 
-  slot.value = wtr;
+  intermediate = wtr;
 }
 
 void mid_module_init() {
-  Resource<Audio::MidiSequence>::add_loader("mid", midi_loader);
-  Resource<Audio::MidiSequence>::add_loader("midi", midi_loader);
+  ResourceLoading<Audio::MidiSequence>::add_loader("mid", midi_loader);
+  ResourceLoading<Audio::MidiSequence>::add_loader("midi", midi_loader);
 }

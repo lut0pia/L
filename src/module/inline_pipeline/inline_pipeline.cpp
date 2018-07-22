@@ -1,10 +1,10 @@
-#include <L/src/engine/Resource.h>
+#include <L/src/engine/Resource.inl>
 #include <L/src/rendering/Pipeline.h>
 #include <L/src/stream/CFileStream.h>
 
 using namespace L;
 
-void inline_pip_loader(Resource<Pipeline>::Slot& slot) {
+void inline_pip_loader(ResourceSlot& slot, Pipeline*& intermediate) {
   const RenderPass* render_pass(&RenderPass::geometry_pass());
   Array<Resource<Shader>> shaders;
   if(Symbol vertex_path = slot.parameter("vertex")) {
@@ -33,9 +33,9 @@ void inline_pip_loader(Resource<Pipeline>::Slot& slot) {
     raw_shaders[raw_shader_count++] = &*shader;
   }
 
-  slot.value = Memory::new_type<Pipeline>(raw_shaders, raw_shader_count, *render_pass);
+  intermediate = Memory::new_type<Pipeline>(raw_shaders, raw_shader_count, *render_pass);
 }
 
 void inline_pipeline_module_init() {
-  Resource<Pipeline>::add_loader("inline", inline_pip_loader);
+  ResourceLoading<Pipeline>::add_loader("inline", inline_pip_loader);
 }

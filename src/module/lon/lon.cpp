@@ -1,4 +1,4 @@
-#include <L/src/engine/Resource.h>
+#include <L/src/engine/Resource.inl>
 #include <L/src/rendering/Material.h>
 #include <L/src/script/Compiler.h>
 #include <L/src/script/Context.h>
@@ -6,7 +6,7 @@
 
 using namespace L;
 
-void lon_mat_loader(Resource<Material>::Slot& slot) {
+void lon_mat_loader(ResourceSlot& slot, Material*& intermediate) {
   Buffer buffer(slot.read_source_file());
   Var data;
   {
@@ -50,10 +50,10 @@ void lon_mat_loader(Resource<Material>::Slot& slot) {
 
     if(vertex_count_var)
       wtr->vertex_count(vertex_count_var->get<int>());
-    slot.value = wtr;
+    intermediate = wtr;
   }
 }
 
 void lon_module_init() {
-  Resource<Material>::add_loader("lon", lon_mat_loader);
+  ResourceLoading<Material>::add_loader("lon", lon_mat_loader);
 }

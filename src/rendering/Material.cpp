@@ -1,5 +1,7 @@
 #include "Material.h"
 
+#include "../engine/Resource.inl"
+
 using namespace L;
 
 void Material::draw(VkCommandBuffer cmd_buffer, const Matrix44f& model) {

@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Vulkan.h"
 #include "../container/Array.h"
 #include "../container/Buffer.h"
 #include "../macros.h"
 #include "../text/Symbol.h"
+#include "Vulkan.h"
 
 namespace L {
   class Shader {
@@ -23,22 +23,27 @@ namespace L {
       VkFormat format;
       VkShaderStageFlags stage;
     };
+    struct Intermediate {
+      Buffer binary;
+      VkShaderStageFlagBits stage;
+      Array<Binding> bindings;
+    };
   protected:
     VkShaderModule _module;
     VkShaderStageFlagBits _stage;
     Array<Binding> _bindings;
   public:
-    inline Shader(const Buffer& buffer, VkShaderStageFlagBits stage) : Shader(buffer.data(), buffer.size(), stage) {}
-    Shader(const void* binary, size_t size, VkShaderStageFlagBits stage);
-    inline Shader(Shader&& other) : _module(other._module), _stage(other._stage) {
-      other._module = VK_NULL_HANDLE;
-    }
+    inline Shader(const Intermediate& intermediate) : Shader(intermediate.binary.data(), intermediate.binary.size(), intermediate.stage, intermediate.bindings.begin(), intermediate.bindings.size()) {}
+    Shader(const void* binary, size_t size, VkShaderStageFlagBits stage, const Binding* bindings, uint32_t binding_count);
     ~Shader();
-
-    inline void add_binding(Binding binding) { binding.stage = _stage; _bindings.push(binding); }
-    inline const Array<Binding>& bindings() const { return _bindings; }
 
     inline VkShaderModule module() const { return _module; }
     inline VkShaderStageFlagBits stage() const { return _stage; }
+    inline const Array<Binding>& bindings() const { return _bindings; }
+
+    friend inline Stream& operator<=(Stream& s, const Intermediate& v) { return s <= v.binary <= v.stage <= v.bindings; }
+    friend inline Stream& operator>=(Stream& s, Intermediate& v) { return s >= v.binary >= v.stage >= v.bindings; }
+    friend inline Stream& operator<=(Stream& s, const Binding& v) { return s <= v.name <= v.offset <= v.size <= v.index <= v.binding <= v.type <= v.format <= v.stage; }
+    friend inline Stream& operator>=(Stream& s, Binding& v) { return s >= v.name >= v.offset >= v.size >= v.index >= v.binding >= v.type >= v.format >= v.stage; }
   };
 }

@@ -12,6 +12,7 @@ namespace L {
     VkDescriptorSetLayout _desc_set_layout;
     Array<Shader::Binding> _bindings;
   public:
+    typedef Pipeline* Intermediate;
     Pipeline(const Shader** shaders, size_t count, const RenderPass& render_pass);
     ~Pipeline();
 
