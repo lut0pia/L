@@ -21,6 +21,14 @@ namespace L {
     inline ~Buffer() {
       if(_data) Memory::free(_data, _size);
     }
+    inline Buffer& operator=(Buffer&& other) {
+      this->~Buffer();
+      _data = other._data;
+      _size = other._size;
+      other._data = nullptr;
+      other._size = 0;
+      return *this;
+    }
     inline void* data() { return _data; }
     inline const void* data() const { return _data; }
     inline void size(size_t new_size) { _data = Memory::realloc(_data, _size, new_size); _size = new_size; }
