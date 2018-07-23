@@ -40,6 +40,7 @@ void Archive::store(const char* key, const void* data, size_t size) {
     e.position = file_stream.size();
   }
 
+  e.date = Date::now();
   e.hash = key_hash;
   e.size = size;
   file_stream.seek(uintptr_t(&e)-uintptr_t(_entries));

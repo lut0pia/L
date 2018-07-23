@@ -1,12 +1,14 @@
 #pragma once
 
 #include "../text/String.h"
+#include "../time/Date.h"
 #include "../hash.h"
 
 namespace L {
   class Archive {
   public:
     struct Entry {
+      Date date;
       uint32_t hash;
       uint32_t position;
       uint32_t size;

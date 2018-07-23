@@ -41,9 +41,12 @@ Buffer ResourceSlot::read_source_file() {
 Buffer ResourceSlot::read_archive() {
   L_SCOPE_MARKER("ResourceSlot::read_archive");
   if(Archive::Entry entry = archive.find(id)) {
-    Buffer buffer(entry.size);
-    archive.load(entry, buffer);
-    return buffer;
+    Date file_mtime;
+    if(!File::mtime(path, file_mtime) || file_mtime<entry.date) {
+      Buffer buffer(entry.size);
+      archive.load(entry, buffer);
+      return buffer;
+    }
   }
   return Buffer();
 }
