@@ -21,6 +21,7 @@ namespace L {
     }
     Symbol parameter(const char* key);
     Buffer read_source_file();
+    void store_source_file_to_archive();
     Buffer read_archive();
     void write_archive(const void* data, size_t size);
     static ResourceSlot* find(const char* url);
