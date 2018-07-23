@@ -36,6 +36,8 @@ namespace L {
     inline operator VkDeviceMemory() { return _memory; }
     inline operator const VkImageView() const { return _view; }
 
+    static const Texture& black();
+
     friend inline Stream& operator<=(Stream& s, const Intermediate& v) { return s <= v.binary <= v.width <= v.height <= v.format; }
     friend inline Stream& operator>=(Stream& s, Intermediate& v) { return s >= v.binary >= v.width >= v.height >= v.format; }
   };

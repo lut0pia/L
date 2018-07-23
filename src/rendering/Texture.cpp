@@ -154,3 +154,10 @@ void Texture::transition_layout(VkCommandBuffer cmd_buffer, VkImageLayout new_la
 
   _layout = new_layout;
 }
+
+const Texture& Texture::black() {
+  static Texture texture(1, 1, VK_FORMAT_R8G8B8A8_UNORM);
+  static uint32_t black_color(0);
+  L_DO_ONCE texture.load(&black_color);
+  return texture;
+}
