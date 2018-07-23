@@ -1,5 +1,6 @@
 *.h text
 *.cpp text
+*.inl text
 *.lua text
 *.ls text
 *.sh text
