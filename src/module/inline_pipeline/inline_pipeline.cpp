@@ -13,6 +13,10 @@ void inline_pip_loader(ResourceSlot& slot, Pipeline*& intermediate) {
   if(Symbol fragment_path = slot.parameter("fragment")) {
     shaders.push(fragment_path);
   }
+  for(const Resource<Shader>& shader : shaders) {
+    shader.load();
+  }
+
   if(Symbol pass_name = slot.parameter("pass")) {
     static const Symbol light_symbol("light"), present_symbol("present");
     if(pass_name==light_symbol) {
