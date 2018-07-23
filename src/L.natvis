@@ -42,7 +42,8 @@
     <DisplayString Condition="_slot == nullptr">null</DisplayString>
     <DisplayString>Resource: {_slot->id}</DisplayString>
     <Expand>
-      <ExpandedItem>*_slot</ExpandedItem>
+      <Item Name="[Slot]">*_slot</Item>
+      <Item Name="[Value]">($T1*)_slot->value</Item>
     </Expand>
   </Type>
 
