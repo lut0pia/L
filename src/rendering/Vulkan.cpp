@@ -28,6 +28,7 @@ namespace L {
     VkImageView swapchain_image_views[2];
     VkFramebuffer framebuffers[2];
     VkCommandPool* command_pool;
+    VkFence* command_fence;
     VkCommandBuffer render_command_buffers[2];
     VkDescriptorPool _descriptor_pool;
     VkSampler _sampler;
@@ -211,6 +212,18 @@ void Vulkan::init() {
 
     for(uint32_t i(0); i<command_pool_count; i++) {
       L_VK_CHECKED(vkCreateCommandPool(_device, &create_info, nullptr, command_pool+i));
+    }
+  }
+
+  { // Create command fences
+    const uint32_t command_fence_count(16); // TODO: replace with total fiber count
+    command_fence = Memory::alloc_type<VkFence>(command_fence_count);
+
+    VkFenceCreateInfo create_info {};
+    create_info.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+
+    for(uint32_t i(0); i<command_fence_count; i++) {
+      L_VK_CHECKED(vkCreateFence(_device, &create_info, nullptr, command_fence+i));
     }
   }
 
@@ -523,8 +536,13 @@ void Vulkan::end_command_buffer(VkCommandBuffer commandBuffer) {
 
   {
     L_SCOPED_LOCK(queue_lock);
-    vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE);
-    vkQueueWaitIdle(queue);
+    VkFence fence(command_fence[TaskSystem::fiber_id()]);
+    vkQueueSubmit(queue, 1, &submitInfo, fence);
+    L_SCOPE_MARKER("Command buffer fence");
+    TaskSystem::yield_until([](void* fence){
+      return vkGetFenceStatus(Vulkan::device(), *(VkFence*)fence)==VK_SUCCESS;
+    }, &fence);
+    vkResetFences(_device, 1, &fence);
   }
 
   vkFreeCommandBuffers(_device, command_pool[TaskSystem::fiber_id()], 1, &commandBuffer);
