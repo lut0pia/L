@@ -179,6 +179,8 @@ void Camera::update_viewport() {
   _vk_viewport.y = Window::width()*_viewport.min().y();
   _vk_viewport.width = Window::width()*viewport_size.x();
   _vk_viewport.height = Window::height()*viewport_size.y();
+  _vk_viewport.minDepth = 0.f;
+  _vk_viewport.maxDepth = 1.f;
 }
 
 void Camera::draw_text(int x, int y, const char* text, Resource<Font> font) {
