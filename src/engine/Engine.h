@@ -22,7 +22,7 @@ namespace L {
     static Array<void(*)(const Device::Event&)> _dev_events;
     static Array<DeferredAction> _deferred_actions;
     static Timer _timer;
-    static Time _real_delta_time, _delta_time, _accumulator, _average_frame_work_duration;
+    static Time _real_delta_time, _delta_time, _accumulator, _average_frame_work_duration, _max_frame_work_duration;
     static Time _frame_work_durations[64];
     static const Time _sub_delta;
     static float _real_delta_seconds, _delta_seconds, _sub_delta_seconds, _timescale;

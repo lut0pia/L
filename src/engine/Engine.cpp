@@ -22,7 +22,7 @@ Array<void(*)(const Device::Event&)> Engine::_dev_events;
 Array<Engine::DeferredAction> Engine::_deferred_actions;
 Timer Engine::_timer;
 const Time Engine::_sub_delta(0, 10);
-L::Time Engine::_real_delta_time, Engine::_delta_time, Engine::_accumulator(0), Engine::_average_frame_work_duration;
+L::Time Engine::_real_delta_time, Engine::_delta_time, Engine::_accumulator(0), Engine::_average_frame_work_duration, Engine::_max_frame_work_duration;
 L::Time Engine::_frame_work_durations[64];
 float Engine::_real_delta_seconds, Engine::_delta_seconds, Engine::_sub_delta_seconds(Engine::_sub_delta.fSeconds()), Engine::_timescale(1.f);
 uint32_t Engine::_frame(0);
@@ -36,6 +36,7 @@ void Engine::update() {
   Script::Context::global("real-delta") = _real_delta_seconds;
   Script::Context::global("delta") = _delta_seconds;
   Script::Context::global("avg-frame-work-duration") = _average_frame_work_duration;
+  Script::Context::global("max-frame-work-duration") = _max_frame_work_duration;
   Engine::shared_uniform().load_item(_frame, L_SHAREDUNIFORM_FRAME);
 
   {
@@ -118,9 +119,11 @@ void Engine::update() {
 
   // Compute work duration
   _frame_work_durations[_frame%L_COUNT_OF(_frame_work_durations)] = _timer.since();
-  _average_frame_work_duration = 0;
-  for(const Time& duration : _frame_work_durations)
+  _average_frame_work_duration = _max_frame_work_duration = 0;
+  for(const Time& duration : _frame_work_durations) {
     _average_frame_work_duration += duration;
+    _max_frame_work_duration = max(_max_frame_work_duration, duration);
+  }
   _average_frame_work_duration /= L_COUNT_OF(_frame_work_durations);
 
   if(render_this_frame) {
