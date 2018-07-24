@@ -29,7 +29,7 @@ static inline bool read_indices(const char*& c, Vector3i& indices) {
   }
   return indices.x()>0;
 }
-void obj_loader(ResourceSlot& slot, Mesh*& intermediate) {
+void obj_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
   struct Vertex {
     Vector3f position;
     Vector2f uv;
@@ -45,7 +45,6 @@ void obj_loader(ResourceSlot& slot, Mesh*& intermediate) {
   Vertex vertex {}, firstVertex {}, lastVertex {};
   Vector3f scalars;
   Vector3i indices;
-  MeshBuilder mb;
   const char *cur((const char*)data), *end(cur+size);
   while(cur<end) {
     switch(*cur) { // Line start
@@ -84,10 +83,10 @@ void obj_loader(ResourceSlot& slot, Mesh*& intermediate) {
 
           if(i==0) firstVertex = vertex;
           else if(i>2) {
-            mb.addVertex(&firstVertex, sizeof(Vertex));
-            mb.addVertex(&lastVertex, sizeof(Vertex));
+            intermediate.builder.addVertex(&firstVertex, sizeof(Vertex));
+            intermediate.builder.addVertex(&lastVertex, sizeof(Vertex));
           }
-          mb.addVertex(&vertex, sizeof(Vertex));
+          intermediate.builder.addVertex(&vertex, sizeof(Vertex));
           lastVertex = vertex;
         }
         break;
@@ -96,15 +95,13 @@ void obj_loader(ResourceSlot& slot, Mesh*& intermediate) {
   }
 
   if(normals.empty())
-    mb.computeNormals(0, sizeof(Vector2f)+sizeof(Vector3f), sizeof(Vertex));
+    intermediate.builder.computeNormals(0, sizeof(Vector2f)+sizeof(Vector3f), sizeof(Vertex));
 
-  static const VkFormat formats[] {
+  intermediate.formats = {
     VK_FORMAT_R32G32B32_SFLOAT,
     VK_FORMAT_R32G32_SFLOAT,
     VK_FORMAT_R32G32B32_SFLOAT,
   };
-
-  intermediate = Memory::new_type<Mesh>(mb, formats, L_COUNT_OF(formats));
 }
 
 void wavefront_obj_module_init() {

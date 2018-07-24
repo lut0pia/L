@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../container/Array.h"
+#include "../stream/serial_bin.h"
 
 namespace L {
   class MeshBuilder {
@@ -19,5 +20,8 @@ namespace L {
     inline size_t verticesSize() const { return _vertices.size(); }
     inline size_t indexCount() const { return _indices.size(); }
     inline size_t vertexCount() const { return _vertexCount; }
+
+    friend inline Stream& operator<=(Stream& s, const MeshBuilder& v) { return s <= v._vertices <= v._indices <= v._vertexCount; }
+    friend inline Stream& operator>=(Stream& s, MeshBuilder& v) { return s >= v._vertices >= v._indices >= v._vertexCount; }
   };
 }
