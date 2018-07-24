@@ -53,6 +53,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debug_callback(VkDebugReportFlagsEXT flags
 }
 
 void Vulkan::init() {
+  L_SCOPE_MARKER("Vulkan::init");
   const char* validation_layers[] = {
     "VK_LAYER_LUNARG_standard_validation",
     //"VK_LAYER_RENDERDOC_Capture",

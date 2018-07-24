@@ -14,6 +14,7 @@ void mainjob(void*) {
 #endif
 
   { // Generate and upload dither matrix
+    L_SCOPE_MARKER("Dither matrix generation");
     const uint32_t matrix_size(32);
     float matrix[matrix_size*matrix_size];
     Engine::dither_matrix(void_and_cluster(matrix_size, matrix_size, matrix), matrix_size, matrix_size);
