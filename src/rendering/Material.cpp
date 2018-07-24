@@ -6,8 +6,9 @@ using namespace L;
 
 void Material::draw(VkCommandBuffer cmd_buffer, const Matrix44f& model) {
   if(Resource<Pipeline> pipeline = final_pipeline()) {
-    const DescriptorSet* desc_set(final_desc_set());
-    vkCmdBindDescriptorSets(cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *pipeline, 0, 1, &(const VkDescriptorSet&)*desc_set, 0, nullptr);
+    DescriptorSet desc_set(*pipeline);
+    fill_desc_set(desc_set);
+    vkCmdBindDescriptorSets(cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *pipeline, 0, 1, &(const VkDescriptorSet&)desc_set, 0, nullptr);
     vkCmdPushConstants(cmd_buffer, *pipeline, pipeline->find_binding("Constants")->stage, 0, sizeof(model), &model);
     vkCmdBindPipeline(cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *pipeline);
     if(Resource<Mesh> mesh = final_mesh()) {
@@ -27,29 +28,44 @@ Interval3f Material::bounds() const {
     return mesh->bounds();
   else return Interval3f(Vector3f(-1.f), Vector3f(1.f));
 }
-void Material::make_desc_set() {
-  if(!_desc_set) {
-    _desc_set = Memory::new_type<DescriptorSet>(*final_pipeline());
-
-    // Recursively copy hierarchy's parameters
-    Resource<Material> parent(_parent);
-    while(parent.is_set()) {
-      // Use override=false to avoid overriding previous values from closer parents
-      for(const auto& pair : parent->_scalars) {
-        scalar(pair.key(), pair.value(), false);
+struct L::ApplyHelper {
+  Symbol applied[128];
+  uintptr_t next = 0;
+  bool should_apply(const Symbol& name) {
+    for(uintptr_t i(0); i<next; i++)
+      if(applied[i]==name)
+        return false;
+    applied[next++] = name;
+    return true;
+  }
+};
+void Material::fill_desc_set(DescriptorSet& desc_set, ApplyHelper* helper) {
+  if(helper) {
+    for(const auto& pair : _scalars) {
+      if(helper->should_apply(pair.key())) {
+        desc_set.set_value(pair.key(), pair.value());
       }
-      for(const auto& pair : parent->_textures) {
-        texture(pair.key(), pair.value(), false);
-      }
-      for(const auto& pair : parent->_vectors) {
-        vector(pair.key(), pair.value(), false);
-      }
-      parent = parent->_parent;
     }
+    for(const auto& pair : _textures) {
+      if(helper->should_apply(pair.key())) {
+        desc_set.set_descriptor(pair.key(), VkDescriptorImageInfo {Vulkan::sampler(), pair.value() ? *pair.value() : Texture::black(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
+      }
+    }
+    for(const auto& pair : _vectors) {
+      if(helper->should_apply(pair.key())) {
+        desc_set.set_value(pair.key(), pair.value());
+      }
+    }
+    if(_parent.is_set()) {
+      _parent->fill_desc_set(desc_set, helper);
+    }
+  } else {
+    ApplyHelper local_helper;
+    fill_desc_set(desc_set, &local_helper);
   }
 }
 
-template <class T> static bool set_parameter(Array<KeyValue<Symbol, T>>& array, const Symbol& name, const T& value, bool override) {
+template <class T> static bool set_parameter(Array<KeyValue<Symbol, T>>& array, const Symbol& name, const T& value, bool override = true) {
   for(auto& pair : array)
     if(pair.key()==name) {
       if(override) {
@@ -63,21 +79,11 @@ template <class T> static bool set_parameter(Array<KeyValue<Symbol, T>>& array, 
   return true;
 }
 void Material::scalar(const Symbol& name, float scalar, bool override) {
-  make_desc_set();
-  if(set_parameter(_scalars, name, scalar, override)) {
-    _desc_set->set_value(name, scalar);
-  }
+  set_parameter(_scalars, name, scalar, override);
 }
 void Material::texture(const Symbol& name, const Resource<Texture>& texture, bool override) {
-  make_desc_set();
-  if(set_parameter(_textures, name, texture, override)) {
-    // TODO: avoid force loading textures here, should only load when necessary
-    _desc_set->set_descriptor(name, VkDescriptorImageInfo {Vulkan::sampler(), *texture, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
-  }
+  set_parameter(_textures, name, texture, override);
 }
 void Material::vector(const Symbol& name, const Vector4f& vector, bool override) {
-  make_desc_set();
-  if(set_parameter(_vectors, name, vector, override)) {
-    _desc_set->set_value(name, vector);
-  }
+  set_parameter(_vectors, name, vector, override);
 }
