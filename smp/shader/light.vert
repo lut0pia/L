@@ -1,6 +1,6 @@
 layout(binding = 1) uniform Light { 
   vec3 l_dir;
-  vec3 l_color;
+  vec4 l_color;
   float l_int;
   float l_rad;
   float l_in_ang;

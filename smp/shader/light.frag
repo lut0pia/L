@@ -2,7 +2,7 @@ layout(location = 0) out vec4 fragcolor;
 
 layout(binding = 1) uniform Light {
   vec3 l_dir;
-  vec3 l_color;
+  vec4 l_color;
   float l_int;
   float l_rad;
   float l_in_ang;
@@ -35,7 +35,7 @@ void main() {
   float att = light_attenuation(dist,l_rad,l_int);
   if(l_type == 2 && dot(l_dir, -to_light_dir)<l_in_ang) att = 0.f;
   else if(l_type == 0) att = l_int;
-  vec3 radiance = l_color*att;
+  vec3 radiance = l_color.rgb*att;
   vec3 F0 = mix(vec3(0.04f),color,metalness);
   vec3 F = fresnel_schlick(max(dot(halfway,view_dir),0.f),F0);
   float NDF = distribution_GGX(normal,halfway,roughness);

@@ -16,12 +16,14 @@ namespace L {
     static Resource<Pipeline> _pipeline;
     Transform* _transform;
     CullVolume _cull_volume;
-    DescriptorSet _desc_set;
-    Vector3f _color, _relative_dir;
-    float _intensity, _radius, _inner_angle, _outer_angle;
-    int _type;
+    struct Values {
+      Vector4f dir, color;
+      float intensity, radius, inner_angle, outer_angle;
+      int type;
+    } _values;
+    Vector3f _relative_dir;
   public:
-    inline LightComponent() : _desc_set(*_pipeline) { point(Color::white); }
+    inline LightComponent() { point(Color::white); }
     inline LightComponent(const LightComponent&) : LightComponent() { error("LightComponent component should not be copied."); }
     inline LightComponent& operator=(const LightComponent& other) { error("LightComponent component should not be copied."); return *this; }
 
