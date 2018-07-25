@@ -23,6 +23,11 @@ namespace L {
     VkCommandBuffer begin_command_buffer();
     void end_command_buffer(VkCommandBuffer);
 
+    bool find_buffer(VkDeviceSize, VkBufferUsageFlagBits, VkBuffer&, VkDeviceMemory&);
+    void destroy_buffer(VkDeviceSize, VkBufferUsageFlagBits, VkBuffer, VkDeviceMemory);
+    bool find_desc_set(VkPipeline, VkDescriptorSet&);
+    void destroy_desc_set(VkPipeline, VkDescriptorSet);
+
     VkDevice device();
     VkDescriptorPool descriptor_pool();
     VkSampler sampler();

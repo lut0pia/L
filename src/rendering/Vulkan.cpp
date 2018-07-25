@@ -37,6 +37,19 @@ namespace L {
 
     Lock queue_lock;
 
+    struct FlyingBuffer {
+      VkBuffer buffer;
+      VkDeviceMemory memory;
+      VkDeviceSize size;
+      VkBufferUsageFlagBits usage;
+    };
+    struct FlyingSet {
+      VkDescriptorSet set;
+      VkPipeline pipeline;
+    };
+    static Array<FlyingBuffer> used_buffers, free_buffers;
+    static Array<FlyingSet> used_sets, free_sets;
+
 #ifdef L_DEBUG
     VkDebugReportCallbackEXT debug_report_callback;
 #endif
@@ -453,7 +466,15 @@ void Vulkan::end_render_command_buffer() {
     L_VK_CHECKED(vkQueuePresentKHR(queue, &presentInfo));
     vkQueueWaitIdle(queue);
   }
-  DescriptorSet::advance_frame();
+
+  for(const FlyingBuffer& buffer : used_buffers) {
+    free_buffers.push(buffer);
+  }
+  used_buffers.clear();
+  for(const FlyingSet& set : used_sets) {
+    free_sets.push(set);
+  }
+  used_sets.clear();
 }
 void Vulkan::begin_present_pass() {
   VkCommandBuffer cmd_buffer(render_command_buffers[image_index]);
@@ -507,6 +528,36 @@ void Vulkan::end_command_buffer(VkCommandBuffer commandBuffer) {
   }
 
   vkFreeCommandBuffers(_device, command_pool[TaskSystem::fiber_id()], 1, &commandBuffer);
+}
+
+bool Vulkan::find_buffer(VkDeviceSize size, VkBufferUsageFlagBits usage, VkBuffer& buffer, VkDeviceMemory& memory) {
+  for(uintptr_t i(0); i<free_buffers.size(); i++) {
+    const FlyingBuffer& flying_buffer(free_buffers[i]);
+    if(flying_buffer.size==size && flying_buffer.usage==usage) {
+      buffer = flying_buffer.buffer;
+      memory = flying_buffer.memory;
+      free_buffers.erase_fast(i);
+      return true;
+    }
+  }
+  return false;
+}
+void Vulkan::destroy_buffer(VkDeviceSize size, VkBufferUsageFlagBits usage, VkBuffer buffer, VkDeviceMemory memory) {
+  used_buffers.push(FlyingBuffer {buffer, memory, size, usage});
+}
+bool Vulkan::find_desc_set(VkPipeline pipeline, VkDescriptorSet& set) {
+  for(uintptr_t i(0); i<free_sets.size(); i++) {
+    const FlyingSet& flying_set(free_sets[i]);
+    if(flying_set.pipeline==pipeline) {
+      set = flying_set.set;
+      free_sets.erase_fast(i);
+      return true;
+    }
+  }
+  return false;
+}
+void Vulkan::destroy_desc_set(VkPipeline pipeline, VkDescriptorSet set) {
+  used_sets.push(FlyingSet {set, pipeline});
 }
 
 VkDevice Vulkan::device() { return _device; }

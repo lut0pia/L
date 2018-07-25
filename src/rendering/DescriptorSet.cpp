@@ -4,19 +4,21 @@
 
 using namespace L;
 
-static Array<VkDescriptorSet> garbage_sets;
+DescriptorSet::DescriptorSet(const Pipeline& pipeline) : _set(0), _pipeline(pipeline) {
+  L_SCOPE_MARKER("DescriptorSet creation");
 
-DescriptorSet::DescriptorSet(const Pipeline& pipeline) : _pipeline(pipeline) {
-  VkDescriptorSetLayout layouts[] = {pipeline.desc_set_layout()};
-  VkDescriptorSetAllocateInfo allocInfo = {};
-  allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-  allocInfo.descriptorPool = Vulkan::descriptor_pool();
-  allocInfo.descriptorSetCount = 1;
-  allocInfo.pSetLayouts = layouts;
+  if(!Vulkan::find_desc_set(pipeline, _set)) {
+    VkDescriptorSetLayout layouts[] = {pipeline.desc_set_layout()};
+    VkDescriptorSetAllocateInfo allocInfo = {};
+    allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+    allocInfo.descriptorPool = Vulkan::descriptor_pool();
+    allocInfo.descriptorSetCount = 1;
+    allocInfo.pSetLayouts = layouts;
 
-  L_VK_CHECKED(vkAllocateDescriptorSets(Vulkan::device(), &allocInfo, &_set));
+    L_VK_CHECKED(vkAllocateDescriptorSets(Vulkan::device(), &allocInfo, &_set));
 
-  set_descriptor("Shared", VkDescriptorBufferInfo {Engine::shared_uniform(), 0, Engine::shared_uniform().size()});
+    set_descriptor("Shared", VkDescriptorBufferInfo {Engine::shared_uniform(), 0, Engine::shared_uniform().size()});
+  }
 
   for(const auto& binding : pipeline.bindings()) {
     static const Symbol shared_symbol("Shared");
@@ -27,7 +29,7 @@ DescriptorSet::DescriptorSet(const Pipeline& pipeline) : _pipeline(pipeline) {
   }
 }
 DescriptorSet::~DescriptorSet() {
-  garbage_sets.push(_set);
+  Vulkan::destroy_desc_set(_pipeline, _set);
 }
 
 bool DescriptorSet::set_descriptor(const Symbol& name, VkDescriptorBufferInfo buffer_info) {
@@ -67,9 +69,4 @@ bool DescriptorSet::set_value(const Symbol& name, const void* data, size_t size)
     _buffers[0].load(data, size, binding->offset);
     return true;
   } else return false;
-}
-
-void DescriptorSet::advance_frame() {
-  vkFreeDescriptorSets(Vulkan::device(), Vulkan::descriptor_pool(), garbage_sets.size(), garbage_sets.begin());
-  garbage_sets.clear();
 }

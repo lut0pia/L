@@ -6,6 +6,9 @@
 using namespace L;
 
 GPUBuffer::GPUBuffer(size_t size, VkBufferUsageFlagBits usage) : _size(size), _usage(usage) {
+  if(Vulkan::find_buffer(_size, _usage, _buffer, _memory))
+    return;
+  
   VkBufferCreateInfo create_info = {};
   create_info.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
   create_info.size = _size;
@@ -26,8 +29,7 @@ GPUBuffer::GPUBuffer(size_t size, VkBufferUsageFlagBits usage) : _size(size), _u
   L_VK_CHECKED(vkBindBufferMemory(Vulkan::device(), _buffer, _memory, 0));
 }
 GPUBuffer::~GPUBuffer() {
-  vkDestroyBuffer(Vulkan::device(), _buffer, nullptr);
-  vkFreeMemory(Vulkan::device(), _memory, nullptr);
+  Vulkan::destroy_buffer(_size, _usage, _buffer, _memory);
 }
 
 void GPUBuffer::load(const void* src, size_t size, size_t offset) {
