@@ -40,6 +40,10 @@ void Engine::update() {
   Engine::shared_uniform().load_item(_frame, L_SHAREDUNIFORM_FRAME);
 
   {
+    L_SCOPE_MARKER("Resource update");
+    ResourceSlot::update();
+  }
+  {
     L_SCOPE_MARKER("Window events");
     Window::Event e;
     while(Window::newEvent(e))

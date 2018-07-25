@@ -46,6 +46,7 @@ namespace L {
           store_intermediate(slot, intermediate);
         }
         resolve_intermediate<T>(slot, intermediate);
+        slot.mtime = Date::now();
         slot.state = ResourceSlot::Loaded;
       }, _slot, uint32_t(-1), TaskSystem::NoParent);
     }

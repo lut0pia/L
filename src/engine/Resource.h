@@ -17,7 +17,7 @@ namespace L {
     void* value;
 
     inline ResourceSlot(const char* url) : id(url), path(url, min<size_t>(strlen(url), strchr(url, '?')-url)),
-      mtime(Date::now()), persistent(false), state(Unloaded), value(nullptr) {
+      persistent(false), state(Unloaded), value(nullptr) {
     }
     Symbol parameter(const char* key);
     Buffer read_source_file();

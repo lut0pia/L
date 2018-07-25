@@ -104,7 +104,6 @@ void ResourceSlot::update() {
       Date file_mtime;
       if(File::mtime(slot.path, file_mtime) && slot.mtime<file_mtime) {
         slot.state = Unloaded;
-        slot.mtime = Date::now();
       }
     }
     index++;
