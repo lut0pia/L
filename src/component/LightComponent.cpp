@@ -1,6 +1,7 @@
 #include "LightComponent.h"
 
 #include "../engine/Engine.h"
+#include "../engine/Resource.inl"
 #include "../rendering/shader_lib.h"
 
 using namespace L;

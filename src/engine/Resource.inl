@@ -30,6 +30,18 @@ namespace L {
   };
   template <class T> Table<const char*, typename ResourceLoading<T>::Loader> ResourceLoading<T>::_loaders;
 
+  template <class T> void store_intermediate(ResourceSlot& slot, T* intermediate) {
+    slot.store_source_file_to_archive();
+  }
+  template <class T> void store_intermediate(ResourceSlot& slot, const T& intermediate) {
+    StringStream stream;
+    slot.serialize(stream);
+    stream <= intermediate;
+    slot.write_archive(stream.string().begin(), stream.string().size());
+  }
+  template <class T> void resolve_intermediate(ResourceSlot& slot, T* intermediate) { slot.value = intermediate; }
+  template <class T, class R> void resolve_intermediate(ResourceSlot& slot, const R& intermediate) { slot.value = Memory::new_type<T>(intermediate); }
+
   template <class T> void Resource<T>::load() const {
     if(_slot->state==ResourceSlot::Unloaded && cas((uint32_t*)&_slot->state, ResourceSlot::Unloaded, ResourceSlot::Loading)==ResourceSlot::Unloaded) {
       TaskSystem::push([](void* p) {
@@ -67,16 +79,4 @@ namespace L {
       }, _slot);
     }
   }
-
-  template <class T> void store_intermediate(ResourceSlot& slot, T* intermediate) {
-    slot.store_source_file_to_archive();
-  }
-  template <class T> void store_intermediate(ResourceSlot& slot, const T& intermediate) {
-    StringStream stream;
-    slot.serialize(stream);
-    stream <= intermediate;
-    slot.write_archive(stream.string().begin(), stream.string().size());
-  }
-  template <class T> void resolve_intermediate(ResourceSlot& slot, T* intermediate) { slot.value = intermediate; }
-  template <class T, class R> void resolve_intermediate(ResourceSlot& slot, const R& intermediate) { slot.value = Memory::new_type<T>(intermediate); }
 }

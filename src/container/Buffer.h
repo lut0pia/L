@@ -1,5 +1,6 @@
 #pragma once
 
+#include <new>
 #include "../stream/serial_bin.h"
 #include "../system/Memory.h"
 

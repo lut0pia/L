@@ -1,5 +1,6 @@
 #include "Font.h"
 
+#include "../engine/Resource.inl"
 #include "../rendering/Pipeline.h"
 #include "../rendering/shader_lib.h"
 #include "../text/encoding.h"
