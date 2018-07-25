@@ -28,6 +28,8 @@ solution "L"
 		libdirs {"C:/VulkanSDK/1.1.73.0/Lib"}
 	configuration {"linux"}
 		defines {"L_UNIX"}
+		includedirs {"/home/lutopia/Downloads/VulkanSDK/1.1.73.0/x86_64/include"}
+		libdirs {"/home/lutopia/Downloads/VulkanSDK/1.1.73.0/x86_64/lib"}
 
 	-- Visual Studio
 	filter {"action:vs*"}
