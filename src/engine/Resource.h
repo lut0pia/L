@@ -41,6 +41,7 @@ namespace L {
     inline const T& operator*() const { flush(); return *(T*)_slot->value; }
     inline T* operator->() { flush(); return (T*)_slot->value; }
     inline const T* operator->() const { flush(); return (T*)_slot->value; }
+    inline const ResourceSlot* slot() const { return _slot; }
     inline bool is_set() const { return _slot!=nullptr; }
     inline operator bool() const {
       if(_slot) {
