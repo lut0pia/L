@@ -24,6 +24,7 @@ Archive::Entry& Archive::find(uint32_t key_hash) {
     Entry& e(_entries[index]);
     if(e.hash==key_hash || e.hash==0)
       return e;
+    index++;
   }
   static Entry none {};
   return none;
