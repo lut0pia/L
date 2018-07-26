@@ -11,7 +11,7 @@ namespace L {
     Symbol id, path;
     Date mtime;
     bool persistent : 1;
-    enum : uint32_t {
+    enum : uint32_t { // 32bits because of atomic operations
       Unloaded, Loading, Loaded,
     } state;
     void* value;
