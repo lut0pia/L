@@ -30,6 +30,7 @@ Archive::Entry& Archive::find(uint32_t key_hash) {
 }
 void Archive::store(const char* key, const void* data, size_t size) {
   L_ASSERT(size>0);
+  L_SCOPED_LOCK(_lock);
   CFileStream file_stream(_path, "rb+");
   uintptr_t key_hash(hash(key));
   Entry& e(find(key_hash));

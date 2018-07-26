@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../parallelism/Lock.h"
 #include "../text/String.h"
 #include "../time/Date.h"
 #include "../hash.h"
@@ -19,6 +20,8 @@ namespace L {
   protected:
     String _path;
     Entry* _entries;
+    Lock _lock;
+
   public:
     Archive(const char* path);
     ~Archive();
