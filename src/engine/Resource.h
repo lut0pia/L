@@ -43,12 +43,13 @@ namespace L {
     inline const T* operator->() const { flush(); return (T*)_slot->value; }
     inline const ResourceSlot* slot() const { return _slot; }
     inline bool is_set() const { return _slot!=nullptr; }
-    inline operator bool() const {
+    inline bool is_loaded() const {
       if(_slot) {
         load();
         return _slot->state == ResourceSlot::Loaded && _slot->value;
       } else return false;
     }
+    inline operator bool() const { return is_loaded(); }
     void load() const;
     void flush() const;
 
