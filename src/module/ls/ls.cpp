@@ -4,11 +4,16 @@
 
 using namespace L;
 
-void ls_loader(ResourceSlot& slot, Script::CodeFunction*& intermediate) {
+bool ls_loader(ResourceSlot& slot, Script::CodeFunction*& intermediate) {
   Buffer buffer(slot.read_source_file());
   Script::Compiler compiler;
   compiler.read((const char*)buffer.data(), buffer.size(), true);
-  intermediate = Memory::new_type<Script::CodeFunction>(compiler.function());
+  if(compiler.ready()) {
+    intermediate = Memory::new_type<Script::CodeFunction>(compiler.function());
+    return true;
+  } else {
+    return false;
+  }
 }
 
 void ls_module_init() {

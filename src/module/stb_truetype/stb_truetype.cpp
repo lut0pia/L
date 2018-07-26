@@ -36,9 +36,10 @@ public:
   }
 };
 
-void stb_truetype_loader(ResourceSlot& slot, Font*& intermediate) {
+bool stb_truetype_loader(ResourceSlot& slot, Font*& intermediate) {
   Buffer buffer(slot.read_source_file());
   intermediate = Memory::new_type<STBFont>((uint8_t*)buffer.data(), 16);
+  return true;
 }
 
 void stb_truetype_module_init() {

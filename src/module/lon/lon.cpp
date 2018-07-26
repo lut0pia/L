@@ -6,7 +6,7 @@
 
 using namespace L;
 
-void lon_mat_loader(ResourceSlot& slot, Material*& intermediate) {
+bool lon_mat_loader(ResourceSlot& slot, Material*& intermediate) {
   Buffer buffer(slot.read_source_file());
   Var data;
   {
@@ -51,7 +51,9 @@ void lon_mat_loader(ResourceSlot& slot, Material*& intermediate) {
     if(vertex_count_var)
       wtr->vertex_count(vertex_count_var->get<int>());
     intermediate = wtr;
+    return true;
   }
+  return false;
 }
 
 void lon_module_init() {

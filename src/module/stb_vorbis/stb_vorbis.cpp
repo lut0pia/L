@@ -62,16 +62,18 @@ public:
   inline Audio::SampleFormat format() const override { return _format; }
 };
 
-void stb_vorbis_loader(ResourceSlot& slot, AudioStream*& intermediate) {
+bool stb_vorbis_loader(ResourceSlot& slot, AudioStream*& intermediate) {
   int error;
   CFileStream filestream(slot.path, "rb");
   const size_t size(filestream.size());
   uint8_t* data((uint8_t*)Memory::alloc(size));
   filestream.read(data, size);
-  if(stb_vorbis* handle = stb_vorbis_open_memory(data, size, &error, nullptr))
+  if(stb_vorbis* handle = stb_vorbis_open_memory(data, size, &error, nullptr)) {
     intermediate = Memory::new_type<VorbisStream>(handle, data, size);
-  else {
+    return true;
+  } else {
     Memory::free(data, size);
+    return false;
   }
 }
 

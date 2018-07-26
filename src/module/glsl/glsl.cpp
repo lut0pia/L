@@ -8,7 +8,7 @@
 
 using namespace L;
 
-void glsl_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) {
+bool glsl_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) {
   intermediate.stage = VK_SHADER_STAGE_ALL;
   String stage_name;
   if(!strcmp(strrchr(slot.path, '.'), ".frag")) {
@@ -100,7 +100,12 @@ void glsl_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) {
     }
   }
 
-  intermediate.binary = CFileStream(output_file, "rb").read_into_buffer();
+  if(CFileStream file_stream = CFileStream(output_file, "rb")) {
+    intermediate.binary = file_stream.read_into_buffer();
+    return true;
+  } else {
+    return false;
+  }
 }
 
 void glsl_module_init() {

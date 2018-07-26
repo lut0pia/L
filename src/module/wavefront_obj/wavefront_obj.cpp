@@ -29,7 +29,7 @@ static inline bool read_indices(const char*& c, Vector3i& indices) {
   }
   return indices.x()>0;
 }
-void obj_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
+bool obj_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
   struct Vertex {
     Vector3f position;
     Vector2f uv;
@@ -102,6 +102,7 @@ void obj_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
     VK_FORMAT_R32G32_SFLOAT,
     VK_FORMAT_R32G32B32_SFLOAT,
   };
+  return true;
 }
 
 void wavefront_obj_module_init() {

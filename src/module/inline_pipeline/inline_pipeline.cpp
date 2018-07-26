@@ -4,7 +4,7 @@
 
 using namespace L;
 
-void inline_pip_loader(ResourceSlot& slot, Pipeline*& intermediate) {
+bool inline_pip_loader(ResourceSlot& slot, Pipeline*& intermediate) {
   const RenderPass* render_pass(&RenderPass::geometry_pass());
   Array<Resource<Shader>> shaders;
   if(Symbol vertex_path = slot.parameter("vertex")) {
@@ -32,12 +32,13 @@ void inline_pip_loader(ResourceSlot& slot, Pipeline*& intermediate) {
     shader.flush();
     if(!shader) {
       err << "Shader " << slot.id << " couldn't be loaded\n";
-      return;
+      return false;
     }
     raw_shaders[raw_shader_count++] = &*shader;
   }
 
   intermediate = Memory::new_type<Pipeline>(raw_shaders, raw_shader_count, *render_pass);
+  return true;
 }
 
 void inline_pipeline_module_init() {

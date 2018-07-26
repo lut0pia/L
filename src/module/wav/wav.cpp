@@ -17,13 +17,13 @@ inline static uint32_t wav_read_int(const uint8_t* data, size_t size = 4) {
   }
   return wtr;
 }
-void wav_loader(ResourceSlot& slot, AudioStream*& intermediate) {
+bool wav_loader(ResourceSlot& slot, AudioStream*& intermediate) {
   Buffer buffer(slot.read_source_file());
   const uint8_t* data((uint8_t*)buffer.data());
   const size_t size(buffer.size());
   if(size<44 || memcmp(data, "RIFF", 4) || memcmp(data+8, "WAVE", 4)
     || memcmp(data+12, "fmt ", 4)|| memcmp(data+36, "data", 4))
-    return;
+    return false;
   uint32_t wav_format(wav_read_int(data+20, 2)),
     channels(wav_read_int(data+22, 2)),
     frequency(wav_read_int(data+24)),
@@ -31,7 +31,7 @@ void wav_loader(ResourceSlot& slot, AudioStream*& intermediate) {
     data_size(wav_read_int(data+40));
 
   if(wav_format!=1 || data_size > size+44)
-    return;
+    return false;
 
   Audio::SampleFormat format;
   switch(channels<<8 | bits_per_sample) {
@@ -39,10 +39,11 @@ void wav_loader(ResourceSlot& slot, AudioStream*& intermediate) {
     case 0x110: format = Audio::Mono16; break;
     case 0x208: format = Audio::Stereo8; break;
     case 0x210: format = Audio::Stereo16; break;
-    default: return;
+    default: return false;
   }
 
   intermediate = Memory::new_type<AudioBuffer>(data+44, data_size, format, frequency);
+  return true;
 }
 
 void wav_module_init() {

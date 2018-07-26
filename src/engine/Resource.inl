@@ -11,18 +11,21 @@
 namespace L {
   template <class T>
   class ResourceLoading {
-    typedef void(*Loader)(ResourceSlot&, typename T::Intermediate&);
+    typedef bool(*Loader)(ResourceSlot&, typename T::Intermediate&);
     static Table<const char*, Loader> _loaders;
   public:
     static void add_loader(const char* ext, Loader loader) {
       _loaders[ext] = loader;
     }
-    static void load(ResourceSlot& slot, typename T::Intermediate& intermediate) {
+    static bool load(ResourceSlot& slot, typename T::Intermediate& intermediate) {
       const char* ext(strrchr(slot.path, '.'));
       ext = ext ? ext + 1 : (const char*)slot.path;
       if(Loader* loader = _loaders.find(ext)) {
-        (*loader)(slot, intermediate);
-      } else warning("Unable to load resource with extension: %s", ext);
+        return (*loader)(slot, intermediate);
+      } else {
+        warning("Unable to load resource with extension: %s", ext);
+        return false;
+      }
     }
   };
   template <class T> Table<const char*, typename ResourceLoading<T>::Loader> ResourceLoading<T>::_loaders;

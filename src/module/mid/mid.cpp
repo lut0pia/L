@@ -29,12 +29,12 @@ static uint32_t read_variable(const uint8_t*& data) {
   }
   return wtr;
 }
-void midi_loader(ResourceSlot& slot, Audio::MidiSequence*& intermediate) {
+bool midi_loader(ResourceSlot& slot, Audio::MidiSequence*& intermediate) {
   Buffer buffer(slot.read_source_file());
   const uint8_t* data((uint8_t*)buffer.data());
   const size_t size(buffer.size());
   if(size<18 || memcmp(data, "MThd", 4))
-    return;
+    return false;
 
   const uint32_t header_length(read_int(data+4)),
     format(read_int(data+8, 2)),
@@ -42,7 +42,7 @@ void midi_loader(ResourceSlot& slot, Audio::MidiSequence*& intermediate) {
     division(read_int(data+12, 2));
 
   if(format>1 || track_count>=32)
-    return;
+    return false;
 
   Audio::MidiSequence* wtr(Memory::new_type<Audio::MidiSequence>());
   const uint8_t* track_heads[32];
@@ -55,7 +55,7 @@ void midi_loader(ResourceSlot& slot, Audio::MidiSequence*& intermediate) {
     const uint8_t* head(data+14);
     for(uint32_t track(0); track<track_count; track++) {
       if(memcmp(head, "MTrk", 4))
-        return;
+        return false;
       const uint32_t track_length(read_int(head+4));
       track_heads[track] = head+8;
       head += track_length+8;
@@ -107,7 +107,7 @@ void midi_loader(ResourceSlot& slot, Audio::MidiSequence*& intermediate) {
           break;
       }
     } else if(*head>=0xf0) {
-      return;
+      return false;
     } else {
       uint8_t event_type(*head++);
       if(event_type<0x80) { // Running status
@@ -122,7 +122,7 @@ void midi_loader(ResourceSlot& slot, Audio::MidiSequence*& intermediate) {
           break;
         case 0xc0: case 0xd0:
           event_size = 1; break;
-        default: return;
+        default: return false;
       }
 
       Audio::MidiEvent new_event;
@@ -137,6 +137,7 @@ void midi_loader(ResourceSlot& slot, Audio::MidiSequence*& intermediate) {
   }
 
   intermediate = wtr;
+  return true;
 }
 
 void mid_module_init() {

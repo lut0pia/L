@@ -11,13 +11,14 @@ public:
   void load_glyph(uint32_t utf32, Glyph& out_glyph, Bitmap& out_bmp) override;
 };
 
-void pixel_font_loader(ResourceSlot& slot, Font*& intermediate) {
+bool pixel_font_loader(ResourceSlot& slot, Font*& intermediate) {
   int height(14);
   if(Symbol height_value = slot.parameter("height"))
     height = ston<10, int>(height_value);
 
   intermediate = Memory::new_type<PixelFont>(height);
   slot.persistent = true;
+  return true;
 }
 
 void pixel_font_module_init() {

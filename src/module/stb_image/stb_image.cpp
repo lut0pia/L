@@ -8,7 +8,7 @@
 
 using namespace L;
 
-void stb_image_loader(ResourceSlot& slot, Texture::Intermediate& intermediate) {
+bool stb_image_loader(ResourceSlot& slot, Texture::Intermediate& intermediate) {
   Buffer buffer(slot.read_source_file());
   int width, height, comp;
   uint8_t* img(stbi_load_from_memory((const stbi_uc*)buffer.data(), int(buffer.size()), &width, &height, &comp, 4));
@@ -18,8 +18,10 @@ void stb_image_loader(ResourceSlot& slot, Texture::Intermediate& intermediate) {
     intermediate.format = VK_FORMAT_R8G8B8A8_UNORM;
     intermediate.binary = Buffer(img, width*height*4);
     stbi_image_free(img);
+    return true;
   } else {
     out << stbi_failure_reason() << '\n';
+    return false;
   }
 }
 
