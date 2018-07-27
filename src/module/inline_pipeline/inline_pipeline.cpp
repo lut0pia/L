@@ -15,6 +15,7 @@ bool inline_pip_loader(ResourceSlot& slot, Pipeline*& intermediate) {
   }
   for(const Resource<Shader>& shader : shaders) {
     shader.load();
+    slot.dependencies.push(shader.slot());
   }
 
   if(Symbol pass_name = slot.parameter("pass")) {
