@@ -202,7 +202,7 @@ void Vulkan::init() {
   }
 
   { // Create command pools
-    const uint32_t command_pool_count(16); // TODO: replace with total fiber count
+    const uint32_t command_pool_count(TaskSystem::fiber_count());
     command_pool = Memory::alloc_type<VkCommandPool>(command_pool_count);
 
     VkCommandPoolCreateInfo create_info = {};
@@ -216,7 +216,7 @@ void Vulkan::init() {
   }
 
   { // Create command fences
-    const uint32_t command_fence_count(16); // TODO: replace with total fiber count
+    const uint32_t command_fence_count(TaskSystem::fiber_count());
     command_fence = Memory::alloc_type<VkFence>(command_fence_count);
 
     VkFenceCreateInfo create_info {};
