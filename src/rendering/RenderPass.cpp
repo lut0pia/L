@@ -38,22 +38,12 @@ RenderPass::RenderPass(const Array<VkFormat>& formats, bool present) : _formats(
   if(_has_depth)
     subpass_desc.pDepthStencilAttachment = _attachment_references.end()-1;
 
-  VkSubpassDependency dependency {};
-  dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-  dependency.dstSubpass = 0;
-  dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-  dependency.srcAccessMask = 0;
-  dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-  dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
-
   VkRenderPassCreateInfo render_pass_info = {};
   render_pass_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
   render_pass_info.attachmentCount = _attachment_descriptions.size();
   render_pass_info.pAttachments = _attachment_descriptions.begin();
   render_pass_info.subpassCount = 1;
   render_pass_info.pSubpasses = &subpass_desc;
-  render_pass_info.dependencyCount = 1;
-  render_pass_info.pDependencies = &dependency;
 
   L_VK_CHECKED(vkCreateRenderPass(Vulkan::device(), &render_pass_info, nullptr, &_render_pass));
 }
