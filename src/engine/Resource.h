@@ -8,6 +8,7 @@
 namespace L {
   class Buffer;
   struct ResourceSlot {
+    Array<const ResourceSlot*> dependencies;
     Symbol id, path;
     Date mtime;
     bool persistent : 1;
@@ -24,6 +25,8 @@ namespace L {
     void store_source_file_to_archive();
     Buffer read_archive();
     void write_archive(const void* data, size_t size);
+    void serialize(Stream&);
+    void unserialize(Stream&);
     static ResourceSlot* find(const char* url);
     static void update();
   };

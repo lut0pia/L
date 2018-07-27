@@ -80,6 +80,22 @@ Buffer ResourceSlot::read_archive() {
 void ResourceSlot::write_archive(const void* data, size_t size) {
   archive.store(id, data, size);
 }
+void ResourceSlot::serialize(Stream& stream) {
+  stream <= dependencies.size();
+  for(const ResourceSlot* dependency : dependencies) {
+    stream <= dependency->id;
+  }
+}
+void ResourceSlot::unserialize(Stream& stream) {
+  size_t dependency_count;
+  stream >= dependency_count;
+  while(dependency_count--) {
+    Symbol dependency_id;
+    stream >= dependency_id;
+    dependencies.push(find(dependency_id));
+  }
+}
+
 ResourceSlot* ResourceSlot::find(const char* url) {
   static Lock lock;
   L_SCOPED_LOCK(lock);
@@ -100,10 +116,16 @@ void ResourceSlot::update() {
     static uintptr_t index(0);
     ResourceSlot& slot(*_slots[index%_slots.size()]);
     if(!slot.persistent // Persistent resources don't hot reload
-        && slot.state == Loaded) { // No reload if it hasn't been loaded in the first place
+      && slot.state == Loaded) { // No reload if it hasn't been loaded in the first place
       Date file_mtime;
       if(File::mtime(slot.path, file_mtime) && slot.mtime<file_mtime) {
         slot.state = Unloaded;
+        slot.mtime = Date::now();
+      }
+      for(const ResourceSlot* dependency : slot.dependencies) {
+        if(slot.mtime<dependency->mtime) {
+          slot.state = Unloaded;
+        }
       }
     }
     index++;

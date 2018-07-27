@@ -39,16 +39,20 @@ namespace L {
           Memory::delete_type<T>((T*)slot.value);
           slot.value = nullptr;
         }
+        slot.dependencies.clear();
         typename T::Intermediate intermediate;
         if(Buffer buffer = slot.read_archive()) {
           BufferStream stream((char*)buffer.data(), buffer.size());
           L_SCOPE_MARKER("Resource unserialize");
+          slot.unserialize(stream);
           stream >= intermediate;
-        } else {
-          ResourceLoading<T>::load(slot, intermediate);
-          store_intermediate(slot, intermediate);
+          resolve_intermediate<T>(slot, intermediate);
+          } else {
+          if(ResourceLoading<T>::load(slot, intermediate)) {
+            store_intermediate(slot, intermediate);
+            resolve_intermediate<T>(slot, intermediate);
+          }
         }
-        resolve_intermediate<T>(slot, intermediate);
         slot.mtime = Date::now();
         slot.state = ResourceSlot::Loaded;
       }, _slot, uint32_t(-1), TaskSystem::NoParent);
@@ -69,6 +73,7 @@ namespace L {
   }
   template <class T> void store_intermediate(ResourceSlot& slot, const T& intermediate) {
     StringStream stream;
+    slot.serialize(stream);
     stream <= intermediate;
     slot.write_archive(stream.string().begin(), stream.string().size());
   }
