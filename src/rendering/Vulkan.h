@@ -27,6 +27,8 @@ namespace L {
     void destroy_buffer(VkDeviceSize, VkBufferUsageFlagBits, VkBuffer, VkDeviceMemory);
     bool find_desc_set(VkPipeline, VkDescriptorSet&);
     void destroy_desc_set(VkPipeline, VkDescriptorSet);
+    void destroy_framebuffer(VkFramebuffer);
+    void destroy_image(VkImage, VkDeviceMemory);
 
     VkDevice device();
     VkDescriptorPool descriptor_pool();

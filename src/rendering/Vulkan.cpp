@@ -48,8 +48,14 @@ namespace L {
       VkDescriptorSet set;
       VkPipeline pipeline;
     };
+    struct GarbageImage {
+      VkImage image;
+      VkDeviceMemory memory;
+    };
     static Array<FlyingBuffer> used_buffers, free_buffers;
     static Array<FlyingSet> used_sets, free_sets;
+    static Array<VkFramebuffer> garbage_framebuffers;
+    static Array<GarbageImage> garbage_images;
 
 #ifdef L_DEBUG
     VkDebugReportCallbackEXT debug_report_callback;
@@ -488,6 +494,15 @@ void Vulkan::end_render_command_buffer() {
     free_sets.push(set);
   }
   used_sets.clear();
+  for(const VkFramebuffer& framebuffer : garbage_framebuffers) {
+    vkDestroyFramebuffer(Vulkan::device(), framebuffer, nullptr);
+  }
+  garbage_framebuffers.clear();
+  for(const GarbageImage& image : garbage_images) {
+    vkDestroyImage(Vulkan::device(), image.image, nullptr);
+    vkFreeMemory(Vulkan::device(), image.memory, nullptr);
+  }
+  garbage_images.clear();
 }
 void Vulkan::begin_present_pass() {
   VkCommandBuffer cmd_buffer(render_command_buffers[image_index]);
@@ -576,6 +591,12 @@ bool Vulkan::find_desc_set(VkPipeline pipeline, VkDescriptorSet& set) {
 }
 void Vulkan::destroy_desc_set(VkPipeline pipeline, VkDescriptorSet set) {
   used_sets.push(FlyingSet {set, pipeline});
+}
+void Vulkan::destroy_framebuffer(VkFramebuffer framebuffer) {
+  garbage_framebuffers.push(framebuffer);
+}
+void Vulkan::destroy_image(VkImage image, VkDeviceMemory memory){
+  garbage_images.push(GarbageImage {image, memory});
 }
 
 VkDevice Vulkan::device() { return _device; }

@@ -34,7 +34,7 @@ Framebuffer::Framebuffer(uint32_t width, uint32_t height, const RenderPass& rend
   }
 }
 Framebuffer::~Framebuffer() {
-  vkDestroyFramebuffer(Vulkan::device(), _framebuffer, nullptr);
+  Vulkan::destroy_framebuffer(_framebuffer);
 }
 
 void Framebuffer::resize(uint32_t width, uint32_t height) {

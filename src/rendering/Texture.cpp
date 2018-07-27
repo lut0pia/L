@@ -54,8 +54,7 @@ Texture::Texture(uint32_t width, uint32_t height, VkFormat format)
   L_VK_CHECKED(vkCreateImageView(Vulkan::device(), &viewInfo, nullptr, &_view));
 }
 Texture::~Texture() {
-  vkDestroyImage(Vulkan::device(), _image, nullptr);
-  vkFreeMemory(Vulkan::device(), _memory, nullptr);
+  Vulkan::destroy_image(_image, _memory);
 }
 
 void Texture::load(const void* pixels, VkOffset3D offset, VkExtent3D extent) {
