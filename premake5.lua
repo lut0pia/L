@@ -31,7 +31,7 @@ solution "L"
 
 	-- Visual Studio
 	filter {"action:vs*"}
-		files {"src/**.natvis"}
+		files {"src/**.natvis","src/**.rc"}
 		linkoptions {"/NODEFAULTLIB:libc.lib","/NODEFAULTLIB:msvcrt.lib","/NODEFAULTLIB:libcd.lib","/NODEFAULTLIB:msvcrtd.lib"}
 		defines {"_CRT_SECURE_NO_WARNINGS","_WINSOCK_DEPRECATED_NO_WARNINGS"}
 		buildoptions {"/wd4100","/wd4146","/wd4200","/wd4244","/wd4702","/wd4706","/wd4577","/wd4592"}

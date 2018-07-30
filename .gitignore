@@ -22,3 +22,5 @@ smp/trace.json
 /premake5
 # Generated source
 *.gen
+# Visual Studio
+*.aps
