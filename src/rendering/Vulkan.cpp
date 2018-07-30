@@ -73,6 +73,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debug_callback(VkDebugReportFlagsEXT flags
 }
 
 void Vulkan::init() {
+  putenv("DISABLE_VK_LAYER_VALVE_steam_overlay_1=1");
   L_SCOPE_MARKER("Vulkan::init");
   const char* validation_layers[] = {
     "VK_LAYER_LUNARG_standard_validation",
