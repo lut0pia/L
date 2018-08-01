@@ -154,7 +154,7 @@ void registerClass(){
   wc.cbClsExtra = 0;
   wc.cbWndExtra = 0;
   wc.hInstance = GetModuleHandle(nullptr);
-  wc.hIcon = LoadIcon(nullptr,IDI_APPLICATION);
+  wc.hIcon = LoadIcon(wc.hInstance, MAKEINTRESOURCE(101));
   wc.hCursor = (*flags_p & Window::nocursor) ? nullptr : LoadCursor(nullptr,IDC_ARROW);
   wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
   wc.lpszMenuName = nullptr;
