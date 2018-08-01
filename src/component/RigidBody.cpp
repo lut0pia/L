@@ -43,11 +43,13 @@ void RigidBody::script_registration() {
   L_COMPONENT_METHOD(RigidBody, "angular-drag", 1, angularDrag(c.local(0).get<float>()));
   L_COMPONENT_RETURN_METHOD(RigidBody, "get-speed", 0, velocity());
   L_COMPONENT_RETURN_METHOD(RigidBody, "get-relative-speed", 0, relativeVelocity());
+  L_COMPONENT_RETURN_METHOD(RigidBody, "get-velocity-at", 1, velocityAt(c.local(0).get<Vector3f>()));
   L_COMPONENT_METHOD(RigidBody, "add-speed", 1, addSpeed(c.local(0).get<Vector3f>()));
   L_COMPONENT_METHOD(RigidBody, "add-force", 1, addForce(c.local(0).get<Vector3f>()));
   L_COMPONENT_METHOD(RigidBody, "add-relative-force", 1, addRelativeForce(c.local(0).get<Vector3f>()));
   L_COMPONENT_METHOD(RigidBody, "add-torque", 1, addTorque(c.local(0).get<Vector3f>()));
   L_COMPONENT_METHOD(RigidBody, "add-relative-torque", 1, addRelativeTorque(c.local(0).get<Vector3f>()));
+  L_COMPONENT_METHOD(RigidBody, "apply-impulse", 2, applyImpulse(c.local(0).get<Vector3f>(), c.local(0).get<Vector3f>()));
   Script::Context::global(Symbol("engine-gravity")) = (Script::Function)([](Script::Context& c) {
     if(c.localCount()>0)
       RigidBody::gravity(c.local(0).get<Vector3f>());
