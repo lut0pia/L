@@ -28,9 +28,9 @@ void Audio::commit_buffer() {
 
   const uint32_t internal_freq(internal_frequency());
   const uint32_t converted_frame_count(convert_samples_required_count(internal_freq, working_frequency, requested_frame_count));
-  
+
   convert_samples(internal_sample_buffer, working_format, internal_freq, sample_buffer, working_format, working_frequency, requested_frame_count);
-  
+
   internal_write(internal_sample_buffer, converted_frame_count);
 
   requested_frame_count = 0;
@@ -67,6 +67,7 @@ bool Audio::convert_samples(void* dst, SampleFormat dst_fmt, uint32_t dst_freq, 
   if(dst_fmt != src_fmt) return false;
   const size_t sample_size(sample_format_size(src_fmt));
   const uintptr_t channel_count(sample_format_channels(src_fmt));
+  const uint32_t dst_sample_count(convert_samples_required_count(dst_freq, src_freq, sample_count));
   if(dst_freq==src_freq) {
     // No conversion necessary
     memcpy(dst, src, sample_count*sample_size);
@@ -78,7 +79,6 @@ bool Audio::convert_samples(void* dst, SampleFormat dst_fmt, uint32_t dst_freq, 
     return true;
   } else if(src_freq<dst_freq) { // Have to upsample
     const float ratio(float(src_freq)/float(dst_freq));
-    const uint32_t dst_sample_count(sample_count / ratio);
     switch(src_fmt) {
       case Mono16:
       {
@@ -121,7 +121,35 @@ bool Audio::convert_samples(void* dst, SampleFormat dst_fmt, uint32_t dst_freq, 
       break;
       default: warning("Unhandled format for resampling"); break;
     }
-  } else warning("Audio downsampling is not unhandled");
+  } else { // Have to downsample
+    const float ratio(float(src_freq)/float(dst_freq));
+    switch(src_fmt) {
+      case Mono16:
+      {
+        int16_t* out_data((int16_t*)dst);
+        const int16_t* in_data((const int16_t*)src);
+        for(uintptr_t i(0); i<dst_sample_count; i++) {
+          out_data[i] = in_data[uintptr_t(i*ratio)];
+        }
+        return true;
+      }
+      break;
+      case Stereo16:
+      {
+        int16_t* out_data((int16_t*)dst);
+        const int16_t* in_data((const int16_t*)src);
+
+        for(uintptr_t i(0); i<dst_sample_count; i++) {
+          const uintptr_t in_index(i*ratio);
+          out_data[2*i] = in_data[2*in_index];
+          out_data[2*i+1] = in_data[2*in_index+1];
+        }
+        return true;
+      }
+      break;
+      default: warning("Unhandled format for resampling"); break;
+    }
+  }
   return false;
 }
 uint32_t Audio::convert_samples_required_count(uint32_t dst_freq, uint32_t src_freq, uint32_t src_sample_count) {
