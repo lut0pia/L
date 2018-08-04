@@ -24,8 +24,6 @@ namespace L {
     Vector3f _relative_dir;
   public:
     inline LightComponent() { point(Color::white); }
-    inline LightComponent(const LightComponent&) : LightComponent() { error("LightComponent component should not be copied."); }
-    inline LightComponent& operator=(const LightComponent& other) { error("LightComponent component should not be copied."); return *this; }
 
     virtual void update_components() override { _transform = entity()->requireComponent<Transform>(); }
     virtual Map<Symbol, Var> pack() const override;
