@@ -96,4 +96,4 @@
 ;(camera'require-camera || 'ortho | -1 1 -1 1)
 
 (set music-entity (entity-make))
-(music-entity'require-midi-source || 'sequence | "mozart.mid")
+(music-entity'require-midi-source || 'sequence | "audio/mozart.mid")
