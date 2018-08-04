@@ -29,5 +29,6 @@ namespace L {
     inline void looping(bool should_loop) { _looping = should_loop; }
     inline void volume(float v) { _volume = v; }
     inline void play() { _current_frame = 0; _playing = true; }
+    inline bool playing() const { return _playing; }
   };
 }
