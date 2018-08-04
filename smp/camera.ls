@@ -70,6 +70,8 @@
 			'Space (if (music-entity'require-midi-source || 'is-playing |)
 				(music-entity'require-midi-source || 'stop |)
 				(music-entity'require-midi-source || 'play |))
+			'G (if (not (sound-entity'require-audio-source || 'is-playing |))
+				(sound-entity'require-audio-source || 'play |))
 			'R (engine-clear-and-read "startup.ls")
 		)
 	)

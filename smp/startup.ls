@@ -97,3 +97,6 @@
 
 (set music-entity (entity-make))
 (music-entity'require-midi-source || 'sequence | "audio/mozart.mid")
+
+(set sound-entity (entity-make))
+(sound-entity'require-audio-source || 'stream | "audio/guitar.wav")
