@@ -29,6 +29,7 @@
 "};"
 #define L_SHADER_LIB \
 "const float PI = 3.14159265359f;" \
+"struct GBufferSample { vec3 color; float metalness; vec3 normal; float roughness; vec3 position; float depth; };" \
 "float frag_noise(){" \
 "int sub_frame = frame%4;" \
 "ivec2 frame_offset = ivec2(sub_frame/2,sub_frame%2)*2;" \
@@ -100,4 +101,18 @@
   "vec3 nominator = NDF * G * F;" \
   "float denominator = 4 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001f;" \
   "return nominator / denominator;" \
+"}" \
+"GBufferSample sample_gbuffer(sampler2D color_buffer, sampler2D normal_buffer, sampler2D depth_buffer) {" \
+  "GBufferSample s;" \
+  "vec2 texcoords = gl_FragCoord.xy*viewport_pixel_size.zw;" \
+  "vec4 color_sample = texture(color_buffer, texcoords);" \
+  "s.color = color_sample.rgb;" \
+  "s.metalness = color_sample.a;" \
+  "vec4 normal_sample = texture(normal_buffer, texcoords);" \
+  "s.normal = decodeNormal(normal_sample.xy);" \
+  "s.roughness = normal_sample.z;" \
+  "s.depth = texture(depth_buffer, texcoords).r;" \
+  "vec4 position_p = invViewProj * vec4(texcoords*2.f-1.f, s.depth, 1.f);" \
+  "s.position = position_p.xyz/position_p.w;" \
+  "return s;" \
 "}"
