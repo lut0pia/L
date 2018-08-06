@@ -35,7 +35,6 @@ namespace L {
     static void script_registration();
 
     static void sub_update_all();
-    static void render_all(const Camera& cam);
     void center(const Vector3f& center);
     void box(const Vector3f& radius);
     void sphere(float radius);
