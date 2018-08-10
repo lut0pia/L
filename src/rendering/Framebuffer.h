@@ -27,5 +27,6 @@ namespace L {
     inline uint32_t width() const { return _width; }
     inline uint32_t height() const { return _height; }
     inline VkImageView image_view(uintptr_t i) const { return _textures[i]; }
+    inline const RenderPass& render_pass() const { return _render_pass; }
   };
 }
