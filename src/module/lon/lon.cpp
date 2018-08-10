@@ -8,6 +8,9 @@ using namespace L;
 
 bool lon_mat_loader(ResourceSlot& slot, Material*& intermediate) {
   Buffer buffer(slot.read_source_file());
+  if(!buffer) {
+    return false;
+  }
   Var data;
   {
     Script::Compiler compiler;
