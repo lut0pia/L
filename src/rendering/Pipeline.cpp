@@ -5,7 +5,7 @@
 
 using namespace L;
 
-Pipeline::Pipeline(const Shader** shaders, size_t shader_count, VkCullModeFlagBits cull_mode, const RenderPass& render_pass) : _render_pass(render_pass) {
+Pipeline::Pipeline(const Shader** shaders, size_t shader_count, VkCullModeFlagBits cull_mode, BlendOverride blend_override, const RenderPass& render_pass) : _render_pass(render_pass) {
   { // Make sure shader bindings are not incompatible
     for(uintptr_t i(0); i<shader_count; i++)
       for(const Shader::Binding& binding : shaders[i]->bindings()) {
@@ -139,7 +139,16 @@ Pipeline::Pipeline(const Shader** shaders, size_t shader_count, VkCullModeFlagBi
 
   VkPipelineColorBlendAttachmentState colorBlendAttachment = {};
   colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-  if(&render_pass==&RenderPass::light_pass()) {
+  if(blend_override!=BlendOverride::None) {
+    switch(blend_override) {
+      case BlendOverride::Mult:
+        colorBlendAttachment.blendEnable = VK_TRUE;
+        colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ZERO;
+        colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_SRC_COLOR;
+        colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+        break;
+    }
+  } else if(&render_pass==&RenderPass::light_pass()) {
     colorBlendAttachment.blendEnable = VK_TRUE;
     colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
     colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE;

@@ -7,6 +7,7 @@ using namespace L;
 bool inline_pip_loader(ResourceSlot& slot, Pipeline*& intermediate) {
   const RenderPass* render_pass(&RenderPass::geometry_pass());
   VkCullModeFlagBits cull_mode(VK_CULL_MODE_BACK_BIT);
+  Pipeline::BlendOverride blend_override(Pipeline::BlendOverride::None);
   Array<Resource<Shader>> shaders;
   if(Symbol vertex_path = slot.parameter("vertex")) {
     shaders.push(vertex_path);
@@ -30,6 +31,13 @@ bool inline_pip_loader(ResourceSlot& slot, Pipeline*& intermediate) {
     }
   }
 
+  if(Symbol blend_override_name = slot.parameter("blend")) {
+    static const Symbol mult_symbol("mult");
+    if(blend_override_name==mult_symbol) {
+      blend_override = Pipeline::BlendOverride::Mult;
+    }
+  }
+
   if(Symbol pass_name = slot.parameter("pass")) {
     static const Symbol light_symbol("light"), present_symbol("present");
     if(pass_name==light_symbol) {
@@ -50,7 +58,7 @@ bool inline_pip_loader(ResourceSlot& slot, Pipeline*& intermediate) {
     raw_shaders[raw_shader_count++] = &*shader;
   }
 
-  intermediate = Memory::new_type<Pipeline>(raw_shaders, raw_shader_count, cull_mode, *render_pass);
+  intermediate = Memory::new_type<Pipeline>(raw_shaders, raw_shader_count, cull_mode, blend_override, *render_pass);
   return true;
 }
 

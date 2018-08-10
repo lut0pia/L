@@ -6,6 +6,10 @@
 namespace L {
   class Pipeline {
     L_NOCOPY(Pipeline)
+  public:
+    enum BlendOverride {
+      None, Mult,
+    };
   protected:
     VkPipeline _pipeline;
     VkPipelineLayout _layout;
@@ -14,7 +18,7 @@ namespace L {
     const RenderPass& _render_pass;
   public:
     typedef Pipeline* Intermediate;
-    Pipeline(const Shader** shaders, size_t count, VkCullModeFlagBits cull_mode, const RenderPass& render_pass);
+    Pipeline(const Shader** shaders, size_t count, VkCullModeFlagBits cull_mode, BlendOverride blend_override, const RenderPass& render_pass);
     ~Pipeline();
 
     const Shader::Binding* find_binding(const Symbol& name) const;
