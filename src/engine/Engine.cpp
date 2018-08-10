@@ -1,6 +1,8 @@
 #include "Engine.h"
 
+#include "../component/AudioSourceComponent.h"
 #include "../component/Camera.h"
+#include "../component/PostProcessComponent.h"
 #include "CullVolume.h"
 #include "../dev/profiling.h"
 #include "../hash.h"
@@ -11,7 +13,6 @@
 #include "../system/Device.h"
 #include "../system/Window.h"
 #include "../stream/CFileStream.h"
-#include "../component/AudioSourceComponent.h"
 
 using namespace L;
 
@@ -97,6 +98,15 @@ void Engine::update() {
       camera.light_buffer().begin(cmd_buffer);
       for(auto render : _renders)
         render(camera, camera.light_buffer().render_pass());
+
+      {
+        Entity* cam_entity(camera.entity());
+        Array<PostProcessComponent*> post_processes;
+        cam_entity->components(post_processes);
+        for(PostProcessComponent* post_process : post_processes) {
+          post_process->render(camera, camera.light_buffer().render_pass());
+        }
+      }
       camera.light_buffer().end(cmd_buffer);
     });
     Vulkan::begin_present_pass();

@@ -25,6 +25,7 @@
 #include "component/HierarchyComponent.h"
 #include "component/MidiSourceComponent.h"
 #include "component/NameComponent.h"
+#include "component/PostProcessComponent.h"
 #include "component/Primitive.h"
 #include "component/RigidBody.h"
 #include "component/ScriptComponent.h"
