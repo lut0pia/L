@@ -5,7 +5,7 @@
 
 using namespace L;
 
-Pipeline::Pipeline(const Shader** shaders, size_t shader_count, const RenderPass& render_pass) {
+Pipeline::Pipeline(const Shader** shaders, size_t shader_count, VkCullModeFlagBits cull_mode, const RenderPass& render_pass) : _render_pass(render_pass) {
   { // Make sure shader bindings are not incompatible
     for(uintptr_t i(0); i<shader_count; i++)
       for(const Shader::Binding& binding : shaders[i]->bindings()) {
@@ -125,7 +125,7 @@ Pipeline::Pipeline(const Shader** shaders, size_t shader_count, const RenderPass
   rasterizer.rasterizerDiscardEnable = VK_FALSE;
   rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
   rasterizer.lineWidth = 1.0f;
-  rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
+  rasterizer.cullMode = cull_mode;
   rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 
   VkPipelineMultisampleStateCreateInfo multisampling = {};

@@ -6,6 +6,7 @@ using namespace L;
 
 bool inline_pip_loader(ResourceSlot& slot, Pipeline*& intermediate) {
   const RenderPass* render_pass(&RenderPass::geometry_pass());
+  VkCullModeFlagBits cull_mode(VK_CULL_MODE_BACK_BIT);
   Array<Resource<Shader>> shaders;
   if(Symbol vertex_path = slot.parameter("vertex")) {
     shaders.push(vertex_path);
@@ -16,6 +17,17 @@ bool inline_pip_loader(ResourceSlot& slot, Pipeline*& intermediate) {
   for(const Resource<Shader>& shader : shaders) {
     shader.load();
     slot.dependencies.push(shader.slot());
+  }
+
+  if(Symbol cull_mode_name = slot.parameter("cull")) {
+    static const Symbol front_symbol("front"), back_symbol("back"), none_symbol("none");
+    if(cull_mode_name==front_symbol) {
+      cull_mode = VK_CULL_MODE_FRONT_BIT;
+    } else if(cull_mode_name==back_symbol) {
+      cull_mode = VK_CULL_MODE_BACK_BIT;
+    } else if(cull_mode_name==none_symbol) {
+      cull_mode = VK_CULL_MODE_NONE;
+    }
   }
 
   if(Symbol pass_name = slot.parameter("pass")) {
@@ -38,7 +50,7 @@ bool inline_pip_loader(ResourceSlot& slot, Pipeline*& intermediate) {
     raw_shaders[raw_shader_count++] = &*shader;
   }
 
-  intermediate = Memory::new_type<Pipeline>(raw_shaders, raw_shader_count, *render_pass);
+  intermediate = Memory::new_type<Pipeline>(raw_shaders, raw_shader_count, cull_mode, *render_pass);
   return true;
 }
 
