@@ -17,7 +17,8 @@ namespace L {
     };
   private:
     static Array<void(*)()> _updates, _late_updates, _sub_updates;
-    static Array<void(*)(const class Camera&)> _renders, _guis;
+    static Array<void(*)(const class Camera&, const class RenderPass&)> _renders;
+    static Array<void(*)(const class Camera&)> _guis;
     static Array<void(*)(const Window::Event&)> _win_events;
     static Array<void(*)(const Device::Event&)> _dev_events;
     static Array<DeferredAction> _deferred_actions;

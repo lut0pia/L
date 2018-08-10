@@ -1,13 +1,20 @@
 #include "Material.h"
 
 #include "../engine/Resource.inl"
+#include "../component/Camera.h"
 
 using namespace L;
 
-void Material::draw(VkCommandBuffer cmd_buffer, const Matrix44f& model) {
+void Material::draw(const Camera& camera, const RenderPass& render_pass, const Matrix44f& model) {
   if(Resource<Pipeline> pipeline = final_pipeline()) {
     DescriptorSet desc_set(*pipeline);
     fill_desc_set(desc_set);
+    if(&render_pass==&RenderPass::light_pass()) {
+      desc_set.set_descriptor("color_buffer", VkDescriptorImageInfo {Vulkan::sampler(), camera.geometry_buffer().image_view(0), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
+      desc_set.set_descriptor("normal_buffer", VkDescriptorImageInfo {Vulkan::sampler(), camera.geometry_buffer().image_view(1), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
+      desc_set.set_descriptor("depth_buffer", VkDescriptorImageInfo {Vulkan::sampler(), camera.geometry_buffer().image_view(2), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
+    }
+    VkCommandBuffer cmd_buffer(camera.cmd_buffer());
     vkCmdBindDescriptorSets(cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *pipeline, 0, 1, &(const VkDescriptorSet&)desc_set, 0, nullptr);
     vkCmdPushConstants(cmd_buffer, *pipeline, pipeline->find_binding("Constants")->stage, 0, sizeof(model), &model);
     vkCmdBindPipeline(cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *pipeline);

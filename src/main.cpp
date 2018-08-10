@@ -44,7 +44,6 @@ int main(int argc, const char* argv[]) {
   Engine::register_component<AudioListenerComponent>();
   Engine::register_component<MidiSourceComponent>();
   Engine::register_component<NameComponent>();
-  Engine::register_component<LightComponent>();
   Engine::register_component<HierarchyComponent>();
   Engine::register_component<Primitive>();
 

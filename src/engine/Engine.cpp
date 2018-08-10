@@ -16,7 +16,8 @@
 using namespace L;
 
 Array<void(*)()> Engine::_updates, Engine::_sub_updates, Engine::_late_updates;
-Array<void(*)(const Camera&)> Engine::_renders, Engine::_guis;
+Array<void(*)(const Camera&, const RenderPass&)> Engine::_renders;
+Array<void(*)(const Camera&)> Engine::_guis;
 Array<void(*)(const L::Window::Event&)> Engine::_win_events;
 Array<void(*)(const Device::Event&)> Engine::_dev_events;
 Array<Engine::DeferredAction> Engine::_deferred_actions;
@@ -88,9 +89,15 @@ void Engine::update() {
     ComponentPool<Camera>::iterate([&](Camera& camera) {
       camera.prerender(cmd_buffer);
       CullVolume::cull(camera);
+      camera.geometry_buffer().begin(cmd_buffer);
       for(auto render : _renders)
-        render(camera);
-      camera.postrender();
+        render(camera, camera.geometry_buffer().render_pass());
+      camera.geometry_buffer().end(cmd_buffer);
+
+      camera.light_buffer().begin(cmd_buffer);
+      for(auto render : _renders)
+        render(camera, camera.light_buffer().render_pass());
+      camera.light_buffer().end(cmd_buffer);
     });
     Vulkan::begin_present_pass();
     ComponentPool<Camera>::iterate([](Camera& camera) {

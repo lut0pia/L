@@ -1,0 +1,10 @@
+{
+  'pipeline ".inline?fragment=shader/dirlight.frag&vertex=shader/fullscreen.vert&pass=light"
+  'scalars {
+    'intensity 1
+  }
+  'vectors {
+    'color "white"
+  }
+  'vertex_count 3
+}

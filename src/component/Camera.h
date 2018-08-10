@@ -36,7 +36,6 @@ namespace L {
     void resize_buffers();
     void event(const Window::Event&);
     void prerender(VkCommandBuffer);
-    void postrender();
     void present();
 
     void viewport(const Interval2f& viewport);

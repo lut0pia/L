@@ -23,9 +23,9 @@ void Primitive::script_registration() {
   L_COMPONENT_METHOD(Primitive, "scale", 1, scale(c.local(0).get<Vector3f>()));
 }
 
-void Primitive::render(const Camera& camera) {
-  if(_cull_volume.visible() && _material.valid()) {
-    _material.draw(camera.cmd_buffer(), _transform->matrix()*scale_matrix(_scale));
+void Primitive::render(const Camera& camera, const RenderPass& render_pass) {
+  if(_cull_volume.visible() && _material.valid() && &_material.final_pipeline()->render_pass()==&render_pass) {
+    _material.draw(camera, render_pass, _transform->matrix()*scale_matrix(_scale));
   }
 }
 

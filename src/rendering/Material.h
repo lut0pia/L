@@ -20,7 +20,7 @@ namespace L {
     size_t _vertex_count = 0;
   public:
     typedef Material* Intermediate;
-    void draw(VkCommandBuffer cmd_buffer, const Matrix44f& model = Matrix44f(1.f));
+    void draw(const class Camera& camera, const class RenderPass& render_pass, const Matrix44f& model = Matrix44f(1.f));
     bool valid() const;
     Interval3f bounds() const;
     void fill_desc_set(DescriptorSet& desc_set, struct ApplyHelper* helper = nullptr);

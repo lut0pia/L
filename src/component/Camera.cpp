@@ -8,7 +8,6 @@
 #include "../constants.h"
 #include "../engine/Resource.inl"
 #include "../rendering/Material.h"
-#include "LightComponent.h"
 #include "../system/Window.h"
 #include "../engine/Engine.h"
 #include "../engine/Settings.h"
@@ -95,24 +94,9 @@ void Camera::prerender(VkCommandBuffer cmd_buffer) {
   Engine::shared_uniform().load_item(Vector4f(_geometry_buffer.width(), _geometry_buffer.height(), 1.f/_geometry_buffer.width(), 1.f/_geometry_buffer.height()), L_SHAREDUNIFORM_VIEWPORT_PIXEL_SIZE);
 
   _cmd_buffer = cmd_buffer;
-  _geometry_buffer.begin(_cmd_buffer); // Geometry pass
 
   VkViewport viewport {0,0,_geometry_buffer.width(),_geometry_buffer.height(),0.f,1.f};
   vkCmdSetViewport(_cmd_buffer, 0, 1, &viewport);
-}
-void Camera::postrender() {
-  L_SCOPE_MARKER("Camera::postrender");
-  _geometry_buffer.end(_cmd_buffer);
-  _light_buffer.begin(_cmd_buffer);
-
-  if(Resource<Pipeline> light_pipeline = LightComponent::pipeline()) {
-    vkCmdBindPipeline(_cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *light_pipeline);
-    ComponentPool<LightComponent>::iterate([&](LightComponent& light) {
-      light.render(_cmd_buffer, _geometry_buffer);
-    });
-  }
-
-  _light_buffer.end(_cmd_buffer);
 }
 void Camera::present() {
   static Resource<Pipeline> present_pipeline(".inline?fragment=shader/present.frag&vertex=shader/fullscreen.vert&pass=present");

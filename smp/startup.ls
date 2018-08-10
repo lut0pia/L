@@ -2,7 +2,9 @@
 (set rand-color (fun (color (rand) (rand) (rand))))
 (set make-box (fun (do
 	(local entity (entity-make))
-	(local transform ((entity'require-transform)))
+	(local transform (entity'require-transform|))
+	(local primitive (entity'add-primitive|))
+	(local light (entity'add-primitive|))
 	(transform'move |
 		(vec
 			(rand-range -8 8)
@@ -14,18 +16,25 @@
 	; Add collider
 	(if (< (rand) 0.0)
 		(do
-			(entity'require-primitive || 'material || 'parent | "material/sphere.lon")
+			(primitive'material || 'parent | "material/sphere.lon")
 			(entity'require-collider || 'sphere | 0.5)
 		)
 		(do
-			(entity'require-primitive || 'material || 'parent | "material/box.lon")
+			(primitive'material || 'parent | "material/box.lon")
 			(entity'require-collider || 'box | (vec 0.5 0.5 0.5))
 		)
 	)
-	(entity'require-primitive || 'scale | (vec 0.5 0.5 0.5))
 	(local color (rand-color))
-	(entity'require-primitive || 'material ||  'color | 'color color)
-	(entity'require-light || 'point | color 5 8)
+	; Geometry
+	(primitive'scale | (vec 0.5 0.5 0.5))
+	(primitive'material ||  'color | 'color color)
+	; Light
+	(local light-material )
+	(light'material || 'pipeline | ".inline?fragment=shader/pointlight.frag&vertex=shader/sphere.vert&cull=front&pass=light")
+	(light'material || 'color | 'color color)
+	(light'material || 'scalar | 'intensity 5)
+	(light'material || 'vertex-count | (* 8 3 4))
+	(light'scale | 8)
 )))
 
 (set make-terrain (fun (do
@@ -58,13 +67,18 @@
 
 (set scene-default (fun (do
 	(engine-gravity (vec 0 0 -9.8))
-	(light-pipeline ".inline?fragment=shader/light.frag&vertex=shader/light.vert&pass=light")
 	(font-pipeline ".inline?fragment=shader/texture.frag&vertex=shader/font.vert&pass=present")
 	;(engine-gravity (vec 0 0 0))
 	;(engine-timescale 0.1)
 	(entity-make | 'add-script || 'load | "camera.ls")
 	(entity-make | 'add-script || 'load | "sink.ls")
-	(entity-make | 'add-light || 'directional | (color) (vec -1 2 -3) 2)
+
+	; Make directional light
+	(local dirlight-entity (entity-make))
+	(dirlight-entity'require-transform || 'rotate | (vec -1 0 1) 1)
+	(dirlight-entity'require-primitive || 'material || 'parent | "material/dirlight.lon")
+	(dirlight-entity'require-primitive || 'scale | 99999)
+	(dirlight-entity'require-primitive || 'material || 'scalar | 'intensity 2)
 	(make-terrain)
 
 	(make-mesh "material/smartphone.lon" (vec -16 -20 5))
