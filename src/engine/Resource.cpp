@@ -42,11 +42,15 @@ Buffer ResourceSlot::read_source_file() {
     }
   }
   // Otherwise read actual source file
-  CFileStream stream(path, "rb");
-  const size_t size(stream.size());
-  Buffer wtr(size);
-  stream.read(wtr, size);
-  return wtr;
+  if(CFileStream stream = CFileStream(path, "rb")) {
+    const size_t size(stream.size());
+    Buffer wtr(size);
+    stream.read(wtr, size);
+    return wtr;
+  } else {
+    warning("Couldn't read source file: %s", (const char*)path);
+  }
+  return Buffer();
 }
 void ResourceSlot::store_source_file_to_archive() {
   if(persistent) return;
