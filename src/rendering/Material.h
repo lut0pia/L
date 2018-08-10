@@ -34,8 +34,8 @@ namespace L {
     inline void color(const Symbol& name, const Color& color) { vector(name, Color::to_float_vector(color)); }
     inline void vertex_count(size_t count) { _vertex_count = count; }
 
-    inline Resource<Pipeline> final_pipeline() const { return _pipeline.is_set() ? _pipeline : (_parent.is_set() ? _parent->final_pipeline() : _pipeline); }
-    inline Resource<Mesh> final_mesh() const { return _mesh.is_set() ? _mesh : (_parent.is_set() ? _parent->final_mesh() : _mesh); }
-    inline size_t final_vertex_count() const { return _vertex_count ? _vertex_count : (_parent.is_set() ? _parent->final_vertex_count() : _vertex_count); }
+    inline Resource<Pipeline> final_pipeline() const { return _pipeline.is_set() ? _pipeline : (_parent ? _parent->final_pipeline() : _pipeline); }
+    inline Resource<Mesh> final_mesh() const { return _mesh.is_set() ? _mesh : (_parent ? _parent->final_mesh() : _mesh); }
+    inline size_t final_vertex_count() const { return _vertex_count ? _vertex_count : (_parent ? _parent->final_vertex_count() : _vertex_count); }
   };
 }
