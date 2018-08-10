@@ -1,0 +1,4 @@
+{
+  'pipeline ".inline?fragment=shader/ssao.frag&vertex=shader/fullscreen.vert&pass=light&blend=mult"
+  'vertex_count 3
+}
