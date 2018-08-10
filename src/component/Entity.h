@@ -26,6 +26,14 @@ namespace L {
     inline void operator delete(void* p) { _pool.deallocate((Entity*)p); }
 
     template <class CompType>
+    void components(Array<CompType*>& comps) const {
+      comps.clear();
+      for(const auto& pair : _components)
+        if(pair.key()==Type<CompType>::description())
+          comps.push((CompType*)pair.value());
+    }
+
+    template <class CompType>
     CompType* component() const {
       for(auto&& pair : _components)
         if(pair.key()==Type<CompType>::description())
