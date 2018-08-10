@@ -46,7 +46,7 @@ namespace L {
     if(_slot->state==ResourceSlot::Unloaded && cas((uint32_t*)&_slot->state, ResourceSlot::Unloaded, ResourceSlot::Loading)==ResourceSlot::Unloaded) {
       TaskSystem::push([](void* p) {
         ResourceSlot& slot(*(ResourceSlot*)p);
-        L_SCOPE_MARKERF("load_resource<%s>(%s)", (const char*)type_name<T>(), slot.id);
+        L_SCOPE_MARKERF("load_resource<%s>(%s)", (const char*)type_name<T>(), (const char*)slot.id);
         if(slot.value) {
           Memory::delete_type<T>((T*)slot.value);
           slot.value = nullptr;
