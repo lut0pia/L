@@ -29,12 +29,10 @@
 	(primitive'scale | (vec 0.5 0.5 0.5))
 	(primitive'material ||  'color | 'color color)
 	; Light
-	(local light-material )
-	(light'material || 'pipeline | ".inline?fragment=shader/pointlight.frag&vertex=shader/sphere.vert&cull=front&pass=light")
+	(light'material || 'parent | "material/pointlight.lon")
 	(light'material || 'color | 'color color)
-	(light'material || 'scalar | 'intensity 5)
-	(light'material || 'vertex-count | (* 8 3 4))
-	(light'scale | 8)
+	(light'material || 'scalar | 'intensity 4)
+	(light'scale | 32)
 )))
 
 (set make-terrain (fun (do
