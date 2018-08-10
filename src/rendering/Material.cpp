@@ -30,7 +30,7 @@ void Material::draw(const Camera& camera, const RenderPass& render_pass, const M
 
 bool Material::valid() const {
   const bool can_draw_without_mesh(final_vertex_count()!=0);
-  return final_pipeline().is_set() && (can_draw_without_mesh || final_mesh().is_set());
+  return final_pipeline() && (can_draw_without_mesh || final_mesh().is_set());
 }
 Interval3f Material::bounds() const {
   if(Resource<Mesh> mesh = final_mesh())
