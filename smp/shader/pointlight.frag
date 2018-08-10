@@ -1,4 +1,3 @@
-layout(location = 0) in vec3 fnormal;
 layout(location = 0) out vec4 fragcolor;
 
 layout(binding = 1) uniform Parameters {
