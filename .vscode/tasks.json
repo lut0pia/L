@@ -6,17 +6,17 @@
         {
             "label": "build-dbg",
             "type": "shell",
-            "command": "./build.sh dbg"
+            "command": "./run.sh dbg"
         },
         {
             "label": "build-dev",
             "type": "shell",
-            "command": "./build.sh dev"
+            "command": "./run.sh dev"
         },
         {
             "label": "build-rls",
             "type": "shell",
-            "command": "./build.sh rls"
+            "command": "./run.sh rls"
         }
     ]
 }
