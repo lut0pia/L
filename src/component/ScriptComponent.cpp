@@ -85,8 +85,10 @@ void ScriptComponent::script_registration() {
   L_METHOD(Material, "pipeline", 1, pipeline(c.local(0).get<String>()));
   L_METHOD(Material, "mesh", 1, mesh(c.local(0).get<String>()));
   L_METHOD(Material, "color", 2, color(c.local(0).get<Symbol>(), c.local(1).get<Color>()));
+  L_METHOD(Material, "scalar", 2, scalar(c.local(0), c.local(1)));
   L_METHOD(Material, "texture", 2, texture(c.local(0), c.local(1).get<String>()));
   L_METHOD(Material, "vector", 2, vector(c.local(0), c.local(1)));
+  L_METHOD(Material, "vertex-count", 1, vertex_count(c.local(0)));
   // Devices ///////////////////////////////////////////////////////////////////
   L_FUNCTION("get-devices", {
     auto wtr(ref<Table<Var,Var>>());
