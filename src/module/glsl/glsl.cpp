@@ -40,6 +40,22 @@ bool glsl_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) {
   { // Parse debug information
     Shader::BindingType binding_type(Shader::BindingType::None);
     Array<String> lines(cmd_output.explode('\n')), words;
+
+    { // Early exit in case of errors
+      bool has_errors(false);
+      for(String& line : lines) {
+        if(strstr(line, "ERROR:")) {
+          line.replaceAll(input_file, String(slot.path));
+          err << line << '\n';
+          has_errors = true;
+        }
+      }
+
+      if(has_errors) {
+        return false;
+      }
+    }
+
     for(String& line : lines) {
       if(line=="Uniform reflection:")
         binding_type = Shader::BindingType::Uniform;
