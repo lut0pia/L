@@ -59,6 +59,10 @@ namespace L {
     inline const Matrix44f& view() const { return _view; }
     inline const Matrix44f& projection() const { return _projection; }
     inline const Matrix44f& viewProjection() const { return _viewProjection; }
+    inline Framebuffer& geometry_buffer() { return _geometry_buffer; }
+    inline const Framebuffer& geometry_buffer() const { return _geometry_buffer; }
+    inline Framebuffer& light_buffer() { return _light_buffer; }
+    inline const Framebuffer& light_buffer() const { return _light_buffer; }
     inline VkCommandBuffer cmd_buffer() const { return _cmd_buffer; }
   };
 }
