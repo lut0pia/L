@@ -41,6 +41,7 @@ void L::TypeInit() {
   Type<int>::addcast<String>([](void* dst, const void* src) {new(dst)String(ntos(*(int*)src)); });
   Type<unsigned int>::addcast<float>();
   Type<float>::addcast<int>();
+  Type<float>::addcast<uint64_t>();
   Type<float>::addcast<String>([](void* dst, const void* src) {new(dst)String(ntos(*(float*)src)); });
   Type<float>::addcast<Vector3f>();
   Type<String>::addcast<bool>([](void* dst, const void* src) {new(dst)bool(!((String*)src)->empty()); });
