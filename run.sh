@@ -2,7 +2,7 @@
 
 if (uname -s | grep -iqE "mingw|cygwin") ; then
   ./premake5.exe vs2015
-  start prj/vs2015/L.sln
+  start ./prj/vs2015/L.sln
   exit 0
 fi
 
