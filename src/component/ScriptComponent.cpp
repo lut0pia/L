@@ -52,6 +52,10 @@ void ScriptComponent::script_registration() {
       Memory::delete_type(str);
     }, Memory::new_type<String>(c.local(0).get<String>())});
   });
+  L_FUNCTION("read", {
+    L_ASSERT(c.localCount()==1);
+    c.executeInside(Array<Var>{Resource<Script::CodeFunction>(c.local(0).get<String>())});
+  });
   L_FUNCTION("setting", {
     L_ASSERT(c.localCount()==2);
     Settings::set(c.local(0).get<Symbol>(), c.local(1));
