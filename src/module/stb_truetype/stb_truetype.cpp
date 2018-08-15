@@ -11,12 +11,11 @@ protected:
   stbtt_fontinfo _font;
   float _scale;
   int _ascent, _descent;
+  Buffer _buffer;
 public:
-  STBFont(const uint8_t* data, uint32_t pixels) {
-    if(!stbtt_InitFont(&_font, data, stbtt_GetFontOffsetForIndex(data, 0)))
-      error("stbtt_InitFont failed");
+  STBFont(stbtt_fontinfo font, Buffer& buffer, uint32_t pixel_height) : _font(font), _buffer((Buffer&&)buffer) {
     stbtt_GetFontVMetrics(&_font, &_ascent, &_descent, &_lineheight);
-    _scale = float(pixels) / float(_ascent);
+    _scale = float(pixel_height) / float(_ascent);
     _lineheight += _ascent - _descent;
     _ascent *= _scale;
     _descent *= _scale;
@@ -37,9 +36,18 @@ public:
 };
 
 bool stb_truetype_loader(ResourceSlot& slot, Font*& intermediate) {
-  Buffer buffer(slot.read_source_file());
-  intermediate = Memory::new_type<STBFont>((uint8_t*)buffer.data(), 16);
-  return true;
+  if(Buffer buffer = slot.read_source_file()) {
+    uint32_t pixel_height(16);
+    if(Symbol height_param = slot.parameter("height")) {
+      pixel_height = atoi(height_param);
+    }
+    stbtt_fontinfo font;
+    if(stbtt_InitFont(&font, (uint8_t*)buffer.data(), stbtt_GetFontOffsetForIndex((uint8_t*)buffer.data(), 0))) {
+      intermediate = Memory::new_type<STBFont>(font, buffer, pixel_height);
+    }
+    return true;
+  }
+  return false;
 }
 
 void stb_truetype_module_init() {
