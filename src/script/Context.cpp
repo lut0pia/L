@@ -213,23 +213,23 @@ Context::Context() : _self(ref<Table<Var, Var>>()) {
   });
   _globals[Symbol("foreach")] = (Native)([](Context& c, const Array<Var>& a) {
     L_ASSERT(a.size()>=4);
-    Var *key(nullptr), *value;
     const Var* exec;
     Var table;
     if(a.size()==4) { // Value only
-      value = &c.local(a[1].as<Local>().i);
       table = c.executeReturn(a[2]);
       exec = &a[3];
     } else if(a.size()==5) { // Key value
-      key = &c.local(a[1].as<Local>().i);
-      value = &c.local(a[2].as<Local>().i);
       table = c.executeReturn(a[3]);
       exec = &a[4];
     } else error("Foreach with %d parameters is not handled", a.size());
     L_ASSERT(table.is<Ref<Table<Var, Var>>>());
     for(const auto& slot : *table.as<Ref<Table<Var, Var>>>()) {
-      if(key) *key = slot.key();
-      *value = slot.value();
+      if(a.size()==4) { // Value only
+        c.local(a[1].as<Local>().i) = slot.value();
+      } else { // Key value
+        c.local(a[1].as<Local>().i) = slot.key();
+        c.local(a[2].as<Local>().i) = slot.value();
+      }
       c.discardExecute(*exec);
     }
   });
