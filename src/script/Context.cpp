@@ -472,4 +472,8 @@ Context::Context() : _self(ref<Table<Var, Var>>()) {
       str = append + str;
     }
   });
+#define L_SCRIPT_ACCESS_METHOD(type,name) typeValue(Type<type>::description(), Symbol(#name)) = (Script::Function)([](Script::Context& c) {L_ASSERT(c.localCount()==0 && c.currentSelf().is<type>()); c.returnValue() = c.currentSelf().as<type>().name();})
+  L_SCRIPT_ACCESS_METHOD(Vector3f, x);
+  L_SCRIPT_ACCESS_METHOD(Vector3f, y);
+  L_SCRIPT_ACCESS_METHOD(Vector3f, z);
 }
