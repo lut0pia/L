@@ -34,6 +34,7 @@ void L::TypeInit() {
   Type<Time>::canmath<>();
   Type<Time>::cancmp<>();
   Type<Vector3f>::canmath();
+  Type<float>::usemod([](void* a, const void* b) {*((float*)a) = pmod(*((float*)a), *((float*)b)); });
 
   // Casts
   Type<void>::addcast<bool>([](void* dst, const void* src) {new(dst)bool(false); });
