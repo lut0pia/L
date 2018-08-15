@@ -59,7 +59,7 @@ void Camera::script_registration() {
   L_COMPONENT_METHOD(Camera, "perspective", 3, perspective(c.local(0).get<float>(), c.local(1).get<float>(), c.local(2).get<float>()));
   L_COMPONENT_METHOD(Camera, "ortho", 4, ortho(c.local(0).get<float>(), c.local(1).get<float>(), c.local(2).get<float>(), c.local(3).get<float>()));
   L_COMPONENT_METHOD(Camera, "viewport", 4, viewport(Interval2f(Vector2f(c.local(0).get<float>(), c.local(1).get<float>()), Vector2f(c.local(2).get<float>(), c.local(3).get<float>()))));
-  L_COMPONENT_METHOD(Camera, "draw-text", 3, draw_text(c.local(0).get<int>(), c.local(1).get<int>(), c.local(2).get<String>(), ".pixel"));
+  L_COMPONENT_METHOD(Camera, "draw-text", 4, draw_text(c.local(0).get<String>(), c.local(1).get<int>(), c.local(2).get<int>(), c.local(3).get<String>()));
   L_COMPONENT_METHOD(Camera, "draw-image", 3, draw_image(c.local(0).get<int>(), c.local(1).get<int>(), c.local(2).get<String>()));
 }
 
@@ -169,7 +169,7 @@ void Camera::update_viewport() {
   _vk_viewport.maxDepth = 1.f;
 }
 
-void Camera::draw_text(int x, int y, const char* text, Resource<Font> font) {
+void Camera::draw_text(Resource<Font> font, int x, int y, const char* text) {
   Matrix44f model(1.f);
   model = translation_matrix(Vector3f(x, y, 0)) * model;
   model = scale_matrix(Vector3f(2.f/_geometry_buffer.width(), 2.f/_geometry_buffer.height(), 0.f)) * model;

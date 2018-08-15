@@ -45,7 +45,7 @@ namespace L {
     void update_projection();
     void update_viewport();
 
-    void draw_text(int x, int y, const char* text, Resource<Font> font);
+    void draw_text(Resource<Font> font, int x, int y, const char* text);
     void draw_image(int x, int y, Resource<Texture> texture);
 
     bool worldToScreen(const Vector3f&, Vector2f&) const; // Finds the normalized screen position for that world space vector, returns false if behind camera
