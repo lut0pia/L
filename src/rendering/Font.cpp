@@ -16,7 +16,9 @@ const Font::Glyph& Font::glyph(uint32_t utf32) {
   else glyph = &_glyphs[utf32];
   if(!glyph->init) {
     load_glyph(utf32, *glyph, _bmp);
-    glyph->atlas_coords = _atlas.add(_bmp.width(), _bmp.height(), &_bmp[0]);
+    if(_bmp.width() && _bmp.height()) {
+      glyph->atlas_coords = _atlas.add(_bmp.width(), _bmp.height(), &_bmp[0]);
+    }
     glyph->size.x() = _bmp.width();
     glyph->size.y() = _bmp.height();
     glyph->init = true;
@@ -43,11 +45,13 @@ Font::TextMesh& Font::text_mesh(const char* str) {
         wtr.dimensions.y() = max(wtr.dimensions.y(), y+_lineheight);
       } else { // Character
         const Glyph& g(glyph(utf32));
-        const Vector4f tl(x+g.origin.x(), y+g.origin.y(), g.atlas_coords.min().x(), g.atlas_coords.min().y());
-        const Vector4f tr(tl.x()+g.size.x(), tl.y(), g.atlas_coords.max().x(), tl.w());
-        const Vector4f bl(tl.x(), tl.y()+g.size.y(), tl.z(), g.atlas_coords.max().y());
-        const Vector4f br(tr.x(), bl.y(), tr.z(), bl.w());
-        buffer.pushMultiple(tl, bl, br, tl, br, tr);
+        if(g.size.x() && g.size.y()) {
+          const Vector4f tl(x+g.origin.x(), y+g.origin.y(), g.atlas_coords.min().x(), g.atlas_coords.min().y());
+          const Vector4f tr(tl.x()+g.size.x(), tl.y(), g.atlas_coords.max().x(), tl.w());
+          const Vector4f bl(tl.x(), tl.y()+g.size.y(), tl.z(), g.atlas_coords.max().y());
+          const Vector4f br(tr.x(), bl.y(), tr.z(), bl.w());
+          buffer.pushMultiple(tl, bl, br, tl, br, tr);
+        }
         x += g.advance;
         wtr.dimensions.x() = max(wtr.dimensions.x(), x);
       }
