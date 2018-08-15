@@ -22,8 +22,8 @@ void Material::draw(const Camera& camera, const RenderPass& render_pass, const M
     vkCmdBindPipeline(cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *pipeline);
     if(Resource<Mesh> mesh = final_mesh()) {
       mesh->draw(cmd_buffer);
-    } else {
-      vkCmdDraw(cmd_buffer, final_vertex_count(), 1, 0, 0);
+    } else if(uint32_t vertex_count = final_vertex_count()) {
+      vkCmdDraw(cmd_buffer, vertex_count, 1, 0, 0);
     }
   }
 }
