@@ -133,8 +133,10 @@ void Engine::update() {
 
   { // Flush deferred actions
     L_SCOPE_MARKER("Deferred actions");
-    for(const DeferredAction& deferred_action : _deferred_actions)
+    for(uintptr_t i(0); i<_deferred_actions.size(); i++) {
+      const DeferredAction& deferred_action(_deferred_actions[i]);
       deferred_action.func(deferred_action.data);
+    }
     _deferred_actions.clear();
   }
 
