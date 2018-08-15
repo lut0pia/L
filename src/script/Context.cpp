@@ -462,4 +462,14 @@ Context::Context() : _self(ref<Table<Var, Var>>()) {
         color[i] = c.local(i).is<float>() ? (c.local(i).as<float>()*255) : c.local(i).get<int>();
     }
   });
+  _globals[Symbol("left-pad")] = (Function)([](Context& c) {
+    L_ASSERT(c.localCount()==3);
+    c.returnValue() = c.local(0).get<String>();
+    String& str(c.returnValue().as<String>());
+    const uint32_t wanted_size(c.local(1).get<float>());
+    const String append(c.local(2).get<String>());
+    while(str.size()<wanted_size) {
+      str = append + str;
+    }
+  });
 }
