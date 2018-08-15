@@ -49,5 +49,6 @@ void L::TypeInit() {
   Type<String>::addcast<Color>([](void* dst, const void* src) {new(dst)Color(*(String*)src); });
   Type<String>::addcast<Symbol>([](void* dst, const void* src) {new(dst)Symbol((const char*)(*(String*)src)); });
   Type<Symbol>::addcast<String>([](void* dst, const void* src) {new(dst)String((const char*)(*(Symbol*)src)); });
+  Type<Time>::addcast<float>([](void* dst, const void* src) {new(dst)float((*(Time*)src).fSeconds()); });
   Type<Time>::addcast<String>([](void* dst, const void* src) {new(dst)String(to_string(*(Time*)src)); });
 }
