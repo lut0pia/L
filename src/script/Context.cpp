@@ -453,9 +453,13 @@ Context::Context() : _self(ref<Table<Var, Var>>()) {
 	  c.returnValue() = floorf(c.local(0).get<float>());
   });
   _globals[Symbol("color")] = (Function)([](Context& c) {
-    Color& color(c.returnValue().make<Color>() = Color::white);
-    const uint32_t params(min(c.localCount(), 4u));
-    for(uint32_t i(0); i<params; i++)
-      color[i] = c.local(i).is<float>() ? (c.local(i).as<float>()*255) : c.local(i).get<int>();
+    if(c.local(0).is<String>()) {
+      c.returnValue() = Color(c.local(0).as<String>());
+    } else {
+      Color& color(c.returnValue().make<Color>() = Color::white);
+      const uint32_t params(min(c.localCount(), 4u));
+      for(uint32_t i(0); i<params; i++)
+        color[i] = c.local(i).is<float>() ? (c.local(i).as<float>()*255) : c.local(i).get<int>();
+    }
   });
 }
