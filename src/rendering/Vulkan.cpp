@@ -119,20 +119,39 @@ void Vulkan::init() {
   }
 #endif
 
-  { // Select physical _device
+  { // Select physical device
     VkPhysicalDevice physical_devices[16];
     uint32_t count(0);
     vkEnumeratePhysicalDevices(instance, &count, nullptr);
     L_ASSERT(count<L_COUNT_OF(physical_devices));
     vkEnumeratePhysicalDevices(instance, &count, physical_devices);
-    // TODO: test most suitable _device
     L_ASSERT(count>0);
-    physical_device = physical_devices[0];
+
+    uintptr_t best_physical_device(0);
+    size_t best_physical_device_memory(0);
+
+    { // Choose best physical device based on dedicated memory
+      for(uintptr_t i(0); i<count; i++) {
+        size_t physical_device_memory(0);
+        vkGetPhysicalDeviceMemoryProperties(physical_devices[i], &physical_device_memory_properties);
+        for(uintptr_t j(0); j<physical_device_memory_properties.memoryHeapCount; j++) {
+          if(physical_device_memory_properties.memoryHeaps[j].flags & VK_MEMORY_HEAP_DEVICE_LOCAL_BIT) {
+            physical_device_memory += physical_device_memory_properties.memoryHeaps[j].size;
+          }
+        }
+        if(physical_device_memory>best_physical_device_memory) {
+          best_physical_device_memory = physical_device_memory;
+          best_physical_device = i;
+        }
+      }
+      physical_device = physical_devices[best_physical_device];
+    }
 
     vkGetPhysicalDeviceProperties(physical_device, &physical_device_properties);
     vkGetPhysicalDeviceMemoryProperties(physical_device, &physical_device_memory_properties);
     vkGetPhysicalDeviceFeatures(physical_device, &physical_device_features);
-    out << "GPU: " << physical_device_properties.deviceName << '\n';
+    out << "GPU: " << physical_device_properties.deviceName << '\n'
+      << "GPU memory: " << (best_physical_device_memory/(1<<20)) << "MB\n";
   }
 
   { // Create surface
