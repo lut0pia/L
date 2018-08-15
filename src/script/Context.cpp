@@ -439,6 +439,11 @@ Context::Context() : _self(ref<Table<Var, Var>>()) {
     L_ASSERT(c.localCount()==1);
     c.returnValue() = tanf(c.local(0).get<float>());
   });
+  _globals[Symbol("lerp")] = (Function)([](Context& c) {
+    L_ASSERT(c.localCount()==3);
+    const float a(c.local(0).get<float>()), b(c.local(1).get<float>()), alpha(c.local(2).get<float>());
+    c.returnValue() = (a*(1.f-alpha)+b*alpha);
+  });
   _globals[Symbol("abs")] = (Function)([](Context& c) {
     L_ASSERT(c.localCount()==1);
     c.returnValue() = abs(c.local(0).get<float>());
