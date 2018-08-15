@@ -192,7 +192,7 @@ Context::Context() : _self(ref<Table<Var, Var>>()) {
   _globals[Symbol("count")] = (Function)([](Context& c) {
     L_ASSERT(c.localCount()==1);
     if(c.local(0).is<Ref<Table<Var, Var>>>())
-      c.returnValue() = (int)c.local(0).as<Ref<Table<Var, Var>>>()->count();
+      c.returnValue() = float(c.local(0).as<Ref<Table<Var, Var>>>()->count());
     else c.returnValue() = 0;
   });
   _globals[Symbol("or")] = (Native)([](Context& c, const Array<Var>& a) {
