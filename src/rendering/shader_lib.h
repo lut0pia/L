@@ -29,7 +29,7 @@
 "};"
 #define L_SHADER_LIB \
 "const float PI = 3.14159265359f;" \
-"struct GBufferSample { vec3 color; float metalness; vec3 normal; float roughness; vec3 position; float depth; };" \
+"struct GBufferSample { vec3 color; float metalness; vec3 normal; float roughness; float emissive; vec3 position; float depth; };" \
 "float frag_noise(){" \
 "int sub_frame = frame%4;" \
 "ivec2 frame_offset = ivec2(sub_frame/2,sub_frame%2)*2;" \
@@ -111,6 +111,7 @@
   "vec4 normal_sample = texture(normal_buffer, texcoords);" \
   "s.normal = decodeNormal(normal_sample.xy);" \
   "s.roughness = normal_sample.z;" \
+  "s.emissive = normal_sample.w;" \
   "s.depth = texture(depth_buffer, texcoords).r;" \
   "vec4 position_p = invViewProj * vec4(texcoords*2.f-1.f, s.depth, 1.f);" \
   "s.position = position_p.xyz/position_p.w;" \
