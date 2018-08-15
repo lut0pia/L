@@ -46,7 +46,7 @@ namespace L {
     void update_viewport();
 
     void draw_text(Resource<Font> font, int x, int y, const char* text);
-    void draw_image(int x, int y, Resource<Texture> texture);
+    void draw_image(int x, int y, Resource<Texture> texture, float scale = 1.f);
 
     bool worldToScreen(const Vector3f&, Vector2f&) const; // Finds the normalized screen position for that world space vector, returns false if behind camera
     Vector3f screenToRay(const Vector2f&) const; // Returns direction vector from normalized screen position
