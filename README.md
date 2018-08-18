@@ -24,4 +24,4 @@ You can either run the [premake](https://github.com/premake/premake-core/wiki/Us
 - ALSA
 
 ## Copyright
-All parts of this software are released into the public domain (as per [this notice](LICENCE)) unless otherwise stated. Any contribution to this repository is implicitly subjected to the same release.
+All parts of this software are released into the public domain (as per [this notice](LICENSE)) unless otherwise stated. Any contribution to this repository is implicitly subjected to the same release.
