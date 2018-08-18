@@ -30,7 +30,7 @@
 "};"
 #define L_SHADER_LIB \
 "const float PI = 3.14159265359f;" \
-"struct GBufferSample { vec3 color; float metalness; vec3 normal; float roughness; float emissive; vec3 position; float depth; };" \
+"struct GBufferSample { vec3 color; float metalness; vec3 normal; float roughness; float emissive; vec3 position; float depth; float linear_depth; };" \
 "float frag_noise(){" \
 "int sub_frame = frame%4;" \
 "ivec2 frame_offset = ivec2(sub_frame/2,sub_frame%2)*2;" \
@@ -66,6 +66,9 @@
 "float l = dot(e,e);" \
 "float g = sqrt(1.f-l/4.f);" \
 "return normalize((invView*vec4(e*g,1.f-l/2.f,0.f)).xyz);" \
+"}" \
+"float linearize_depth(float depth) {" \
+  "return projection[3][2] / (projection[2][2] + (2.f * depth - 1.f));" \
 "}" \
 "float light_attenuation(float dist, float radius, float intensity){" \
   "float num = clamp(1.f-pow(dist/radius,4.f),0.f,1.f);" \
@@ -114,6 +117,7 @@
   "s.roughness = normal_sample.z;" \
   "s.emissive = normal_sample.w;" \
   "s.depth = texture(depth_buffer, texcoords).r;" \
+  "s.linear_depth = linearize_depth(s.depth);" \
   "vec4 position_p = invViewProj * vec4(texcoords*2.f-1.f, s.depth, 1.f);" \
   "s.position = position_p.xyz/position_p.w;" \
   "return s;" \
