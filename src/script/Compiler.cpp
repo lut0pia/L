@@ -77,9 +77,9 @@ void Compiler::apply_scope(Var& v, Table<Symbol, uint32_t>& localTable, uint32_t
   static const Symbol localSymbol("local"), funSymbol("fun"), foreachSymbol("foreach"), setSymbol("set");
   if(v.is<Array<Var>>()) {
     Array<Var>& array(v.as<Array<Var>>());
-    if(array[0].is<Symbol>()) {
+    if(array.size()>0 && array[0].is<Symbol>()) {
       const Symbol& sym(array[0].as<Symbol>());
-      if(array[1].is<Symbol>() && sym==localSymbol) {
+      if(array.size()>1 && array[1].is<Symbol>() && sym==localSymbol) {
         array[0] = setSymbol;
         localTable[array[1].as<Symbol>()] = localIndex++;
       } else if(sym==foreachSymbol) {
