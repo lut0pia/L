@@ -22,6 +22,7 @@ You can either run the [premake](https://github.com/premake/premake-core/wiki/Us
 
 ### Unix
 - Xlib
+- ALSA
 
 ## Conventions
 - #pragma once (less name repetition and preprocessor pollution)
