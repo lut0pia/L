@@ -35,7 +35,7 @@
 	(light'scale | 32)
 )))
 
-(set make-terrain (fun (do
+(set make-cage (fun (do
 	(local size 20)
 	(local nsize (- size))
 	(local half (/ size 2))
@@ -83,7 +83,8 @@
 	(dirlight-entity'require-primitive || 'material || 'parent | "material/dirlight.lon")
 	(dirlight-entity'require-primitive || 'scale | 99999)
 	(dirlight-entity'require-primitive || 'material || 'scalar | 'intensity 2)
-	(make-terrain)
+	
+	(make-cage)
 
 	(make-mesh "material/smartphone.lon" (vec -16 -20 5))
 	(make-mesh "material/jerrican.lon" (vec 10 -16 5))
