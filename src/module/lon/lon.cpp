@@ -6,6 +6,11 @@
 
 using namespace L;
 
+static const Symbol pipeline_symbol("pipeline"), mesh_symbol("mesh"),
+  scalars_symbol("scalars"), textures_symbol("textures"), vectors_symbol("vectors"),
+  vertex_count_symbol("vertex_count"), primitive_mode_symbol("primitive_mode"),
+  triangles_symbol("triangles");
+
 bool lon_mat_loader(ResourceSlot& slot, Material*& intermediate) {
   Buffer buffer(slot.read_source_file());
   if(!buffer) {
@@ -20,10 +25,6 @@ bool lon_mat_loader(ResourceSlot& slot, Material*& intermediate) {
   }
 
   if(data.is<Ref<Table<Var, Var>>>()) {
-    static const Symbol pipeline_symbol("pipeline"), mesh_symbol("mesh"),
-      scalars_symbol("scalars"), textures_symbol("textures"), vectors_symbol("vectors"),
-      vertex_count_symbol("vertex_count"), primitive_mode_symbol("primitive_mode"),
-      triangles_symbol("triangles");
     Table<Var, Var>& table(*data.as<Ref<Table<Var, Var>>>());
     Var *pipeline_var(table.find(pipeline_symbol)), *mesh_var(table.find(mesh_symbol)),
       *scalars_var(table.find(scalars_symbol)), *textures_var(table.find(textures_symbol)), *vectors_var(table.find(vectors_symbol)),
