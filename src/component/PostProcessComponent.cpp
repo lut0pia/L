@@ -1,5 +1,7 @@
 #include "PostProcessComponent.h"
 
+#include "../engine/Resource.inl"
+
 using namespace L;
 
 Map<Symbol, Var> PostProcessComponent::pack() const {

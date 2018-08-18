@@ -1,6 +1,7 @@
 #include "Primitive.h"
 
 #include "../component/Camera.h"
+#include "../engine/Resource.inl"
 
 using namespace L;
 
