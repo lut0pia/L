@@ -71,6 +71,12 @@
 	(entity-make | 'add-script || 'load | "camera.ls")
 	(entity-make | 'add-script || 'load | "sink.ls")
 
+	; Make ambient light
+	(local amblight-entity (entity-make))
+	(amblight-entity'require-primitive || 'material || 'parent | "material/ssao.lon")
+	(amblight-entity'require-primitive || 'scale | 99999)
+	(amblight-entity'require-primitive || 'material || 'color | 'color (color 0.2 0.2 0.2))
+
 	; Make directional light
 	(local dirlight-entity (entity-make))
 	(dirlight-entity'require-transform || 'rotate | (vec -1 0 1) 1)

@@ -1,4 +1,10 @@
 {
-  'pipeline ".inline?fragment=shader/ssao.frag&vertex=shader/fullscreen.vert&pass=light&blend=mult"
+  'pipeline ".inline?fragment=shader/ssao.frag&vertex=shader/fullscreen.vert&pass=light"
   'vertex_count 3
+  'vectors {
+    'color "white"
+  }
+  'scalars {
+    'radius 1
+  }
 }

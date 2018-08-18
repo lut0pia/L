@@ -1,7 +1,13 @@
 layout(location = 0) out vec4 fragcolor;
+
+layout(binding = 1) uniform Parameters {
+  vec4 color;
+  float radius;
+};
  
-layout(binding = 1) uniform sampler2D normal_buffer;
-layout(binding = 2) uniform sampler2D depth_buffer;
+layout(binding = 2) uniform sampler2D color_buffer;
+layout(binding = 3) uniform sampler2D normal_buffer;
+layout(binding = 4) uniform sampler2D depth_buffer;
 
 const int samples = 16;
 const float inv_samples = 1.f/samples;
@@ -25,11 +31,11 @@ float gold_noise(in vec2 coordinate, in float seed){
 }
 
 void main() {
+  GBufferSample gbuffer = sample_gbuffer(color_buffer, normal_buffer, depth_buffer);
   vec2 texcoords = gl_FragCoord.xy*viewport_pixel_size.zw;
-  float depth = texture(depth_buffer, texcoords).r;
-  vec4 position_p = invViewProj * vec4(texcoords*2.f-1.f, depth, 1.f);
-  vec3 position = position_p.xyz/position_p.w;
-  vec3 normal = decodeNormal(texture(normal_buffer, texcoords).xy);
+  float depth = gbuffer.linear_depth;
+  vec3 position = gbuffer.position;
+  vec3 normal = gbuffer.normal;
 
   vec3 rand_vec  = normalize(vec3(
     gold_noise(texcoords,frame+0)-.5f,
@@ -39,19 +45,18 @@ void main() {
   vec3 bitangent = cross(normal, tangent);
   mat3 TBN       = mat3(tangent, bitangent, normal);
 
-  const float radius = 1.f;
-  float occlusion = 0;
+  float occlusion = 1.f;
   for(int i=0;i<samples;i++) {
-    vec3 smp = TBN * sample_hemisphere[i]; // From tangent to world-space
+    vec3 smp = TBN * (sample_hemisphere[i]+vec3(0,0,.01f)); // From tangent to world-space
     smp = position + smp * radius;
-    vec4 projected_smp = viewProj * vec4(smp,1.f);
+    vec4 projected_smp = viewProj * vec4(smp, 1.f);
     projected_smp.xyz /= projected_smp.w;
+    float neighbor_depth_target = linearize_depth(projected_smp.z);
     projected_smp.xyz = projected_smp.xyz * 0.5 + 0.5;
     
-    float neighbor_depth = texture(depth_buffer, projected_smp.xy).r;
-    float range_check = smoothstep(0.0, 1.0, radius / abs(depth - neighbor_depth));
-    occlusion += (neighbor_depth > depth-0.00001f) ? (inv_samples*range_check) : 0.f;
+    float neighbor_depth = linearize_depth(texture(depth_buffer, projected_smp.xy).r);
+    float range_check = smoothstep(0.9f, 1.f, radius / abs(depth - neighbor_depth));
+    occlusion -= (neighbor_depth < neighbor_depth_target) ? (inv_samples*range_check) : 0.f;
   }
-  occlusion = occlusion*0.7f+0.3f;
-  fragcolor.rgba = vec4(occlusion,occlusion,occlusion,1);
+  fragcolor.rgba = vec4(gbuffer.color*occlusion*color.rgb, 1.f);
 }

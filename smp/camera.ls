@@ -11,8 +11,6 @@
 	(self'cursor | 'require-primitive || 'scale | (vec 0.1))
 	(self'entity | 'require-collider || 'sphere | 0.5)
 	(self'entity | 'require-rigidbody || 'kinematic | true)
-	; SSAO post process
-	(self'entity | 'add-post-process || 'material || 'parent | "material/ssao.lon")
 )))
 (set (self'update) (fun (do
 	; Movement values
