@@ -78,9 +78,11 @@ void Context::execute(const Var& code, Var* selfOut) {
         err << "Unable to execute table access " << array << "\n";
     } else
       err << "Unable to execute command " << array << "\n";
-  } else if(code.is<Local>())
-    _stack.push(local(code.as<Local>().i));
-  else if(code.is<Symbol>()) // It's a global variable or self
+  } else if(code.is<Local>()) {
+    // Do a copy to avoid potential reading of freed memory
+    const Var value(local(code.as<Local>().i));
+    _stack.push(value);
+  } else if(code.is<Symbol>()) // It's a global variable or self
     _stack.push(code.as<Symbol>()==selfSymbol ? currentSelf() : global(code.as<Symbol>()));
   else if(code.is<RawSymbol>()) _stack.push(code.as<RawSymbol>().sym); // Return raw symbol
   else _stack.push(code); // Return raw value
