@@ -20,8 +20,10 @@ void Collider::update_components(){
   _transform = entity()->requireComponent<Transform>();
   _rigidbody = entity()->component<RigidBody>();
   _script = entity()->component<ScriptComponent>();
-  if(!_node)
+  if(!_node) {
+    updateBoundingBox();
     _node = tree.insert(_boundingBox,this);
+  }
 }
 Map<Symbol, Var> Collider::pack() const {
   Map<Symbol, Var> data;
