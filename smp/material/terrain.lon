@@ -1,0 +1,11 @@
+(local size 128)
+{
+  'pipeline ".inline?fragment=shader/terrain.frag&vertex=shader/terrain.vert"
+  'vertex_count (* size size 6)
+  'textures {
+    'height_tex "texture/perlin.png"
+  }
+  'scalars {
+    'size size
+  }
+}

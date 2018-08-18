@@ -83,7 +83,14 @@
 	(dirlight-entity'require-primitive || 'material || 'parent | "material/dirlight.lon")
 	(dirlight-entity'require-primitive || 'scale | 99999)
 	(dirlight-entity'require-primitive || 'material || 'scalar | 'intensity 2)
-	
+
+	; Make terrain
+	(local terrain-size 32)
+	(local terrain-entity (entity-make))
+	(terrain-entity'require-transform || 'move | (vec -20 0 0))
+	(terrain-entity'require-primitive || 'scale | (vec 10 10 2))
+	(terrain-entity'require-primitive || 'material || 'parent | "material/terrain.lon")
+
 	(make-cage)
 
 	(make-mesh "material/smartphone.lon" (vec -16 -20 5))
