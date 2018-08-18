@@ -85,6 +85,7 @@ void Camera::prerender(VkCommandBuffer cmd_buffer) {
   _ray = orientation*_projection.inverse();
   Engine::shared_uniform().load_item(_view, L_SHAREDUNIFORM_VIEW);
   Engine::shared_uniform().load_item(_view.inverse(), L_SHAREDUNIFORM_INVVIEW);
+  Engine::shared_uniform().load_item(_projection, L_SHAREDUNIFORM_PROJECTION);
   Engine::shared_uniform().load_item(_viewProjection, L_SHAREDUNIFORM_VIEWPROJ);
   Engine::shared_uniform().load_item(_viewProjection.inverse(), L_SHAREDUNIFORM_INVVIEWPROJ);
   Engine::shared_uniform().load_item(_prevViewProjection, L_SHAREDUNIFORM_PREVVIEWPROJ);

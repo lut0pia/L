@@ -3,7 +3,8 @@
 #define L_GLSL_INTRO "#version 450\n#extension GL_ARB_separate_shader_objects : require\n"
 #define L_SHAREDUNIFORM_VIEW 0
 #define L_SHAREDUNIFORM_INVVIEW (L_SHAREDUNIFORM_VIEW+sizeof(Matrix44f))
-#define L_SHAREDUNIFORM_VIEWPROJ (L_SHAREDUNIFORM_INVVIEW+sizeof(Matrix44f))
+#define L_SHAREDUNIFORM_PROJECTION (L_SHAREDUNIFORM_INVVIEW+sizeof(Matrix44f))
+#define L_SHAREDUNIFORM_VIEWPROJ (L_SHAREDUNIFORM_PROJECTION+sizeof(Matrix44f))
 #define L_SHAREDUNIFORM_INVVIEWPROJ (L_SHAREDUNIFORM_VIEWPROJ+sizeof(Matrix44f))
 #define L_SHAREDUNIFORM_PREVVIEWPROJ (L_SHAREDUNIFORM_INVVIEWPROJ+sizeof(Matrix44f))
 #define L_SHAREDUNIFORM_DITHERMATRIX (L_SHAREDUNIFORM_PREVVIEWPROJ+sizeof(Matrix44f))
@@ -16,7 +17,7 @@
 #define L_SHAREDUNIFORM_SIZE (L_SHAREDUNIFORM_FRAME+sizeof(int))
 #define L_SHAREDUNIFORM \
 "layout(binding = 0) uniform Shared {" \
-"mat4 view, invView, viewProj, invViewProj, prevViewProj;" \
+"mat4 view, invView, projection, viewProj, invViewProj, prevViewProj;" \
 "vec4 ditherMatrix[256];" \
 "ivec4 ditherMatrixSize;" \
 "vec4 eye;" \
