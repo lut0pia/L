@@ -25,8 +25,10 @@ solution "L"
 		architecture "x64"
 		defines {"L_WINDOWS","WIN32_LEAN_AND_MEAN","NOMINMAX","NOCRYPT"}
 		local vulkansdks = os.matchdirs("C:/VulkanSDK/*")
-		includedirs {vulkansdks[1].."/Include"}
-		libdirs {vulkansdks[1].."/Lib"}
+		if #vulkansdks >0 then
+			includedirs {vulkansdks[1].."/Include"}
+			libdirs {vulkansdks[1].."/Lib"}
+		end
 	configuration {"linux"}
 		defines {"L_UNIX"}
 		includedirs {"/home/lutopia/Downloads/VulkanSDK/1.1.73.0/x86_64/include"}
