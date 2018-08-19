@@ -40,12 +40,12 @@ inline void freelist_index_size(size_t size, uint32_t& index, uint32_t& padded_s
 }
 
 void* Memory::alloc(size_t size) {
-  if(size>block_size) { // Big allocations go directly to the system
+  uint32_t index, padded_size;
+  freelist_index_size(size, index, padded_size);
+  if(padded_size>block_size) { // Big allocations go directly to the system
     allocated += size;
     return virtual_alloc(size);
   }
-  uint32_t index, padded_size;
-  freelist_index_size(size, index, padded_size);
   L_SCOPED_LOCK(lock);
   void*& freelist(freelists[index]);
   void* wtr(freelist);
@@ -78,13 +78,13 @@ void* Memory::realloc(void* ptr, size_t oldsize, size_t newsize) {
   return wtr;
 }
 void Memory::free(void* ptr, size_t size) {
-  if(size>block_size) { // Big allocations go directly to the system
+  uint32_t index, padded_size;
+  freelist_index_size(size, index, padded_size);
+  if(padded_size>block_size) { // Big allocations go directly to the system
     virtual_free(ptr, size);
     allocated -= size;
     return;
   }
-  uint32_t index, padded_size;
-  freelist_index_size(size, index, padded_size);
   L_SCOPED_LOCK(lock);
   void*& freelist(freelists[index]);
   *((void**)ptr) = freelist;
