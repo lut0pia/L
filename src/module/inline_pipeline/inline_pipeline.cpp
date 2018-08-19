@@ -4,6 +4,10 @@
 
 using namespace L;
 
+static const Symbol front_symbol("front"), back_symbol("back"), none_symbol("none"),
+  mult_symbol("mult"),
+  light_symbol("light"), present_symbol("present");
+
 bool inline_pip_loader(ResourceSlot& slot, Pipeline*& intermediate) {
   const RenderPass* render_pass(&RenderPass::geometry_pass());
   VkCullModeFlagBits cull_mode(VK_CULL_MODE_BACK_BIT);
@@ -21,7 +25,6 @@ bool inline_pip_loader(ResourceSlot& slot, Pipeline*& intermediate) {
   }
 
   if(Symbol cull_mode_name = slot.parameter("cull")) {
-    static const Symbol front_symbol("front"), back_symbol("back"), none_symbol("none");
     if(cull_mode_name==front_symbol) {
       cull_mode = VK_CULL_MODE_FRONT_BIT;
     } else if(cull_mode_name==back_symbol) {
@@ -32,14 +35,12 @@ bool inline_pip_loader(ResourceSlot& slot, Pipeline*& intermediate) {
   }
 
   if(Symbol blend_override_name = slot.parameter("blend")) {
-    static const Symbol mult_symbol("mult");
     if(blend_override_name==mult_symbol) {
       blend_override = Pipeline::BlendOverride::Mult;
     }
   }
 
   if(Symbol pass_name = slot.parameter("pass")) {
-    static const Symbol light_symbol("light"), present_symbol("present");
     if(pass_name==light_symbol) {
       render_pass = &RenderPass::light_pass();
     } else if(pass_name==present_symbol) {
