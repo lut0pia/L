@@ -12,6 +12,7 @@
             "cwd": "${workspaceFolder}/smp",
             "MIMode": "gdb",
             "preLaunchTask": "build-dbg",
+            "visualizerFile": "${workspaceFolder}/src/L.natvis",
         },
         {
             "name": "(gdb) Development",
@@ -21,6 +22,7 @@
             "cwd": "${workspaceFolder}/smp",
             "MIMode": "gdb",
             "preLaunchTask": "build-dev",
+            "visualizerFile": "${workspaceFolder}/src/L.natvis",
         },
         {
             "name": "(gdb) Release",
@@ -30,6 +32,7 @@
             "cwd": "${workspaceFolder}/smp",
             "MIMode": "gdb",
             "preLaunchTask": "build-rls",
+            "visualizerFile": "${workspaceFolder}/src/L.natvis",
         }
     ]
 }
