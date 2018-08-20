@@ -58,7 +58,7 @@ Texture::~Texture() {
 }
 
 void Texture::load(const void* pixels, VkOffset3D offset, VkExtent3D extent) {
-  const size_t image_size(extent.width*extent.height*4);
+  const size_t image_size(extent.width*extent.height*Vulkan::format_size(_format));
   GPUBuffer buffer(image_size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT);
 
   void* data;
