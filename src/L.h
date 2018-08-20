@@ -67,7 +67,6 @@
 
 // Mathematical tools
 #include "math/digits.h"
-#include "math/dither.h"
 #include "math/Fixed.h"
 #include "math/geometry.h"
 #include "math/Integer.h"
