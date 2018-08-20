@@ -5,10 +5,6 @@
 #include "macros.h"         // Useful macros
 #include "objects.h"        // Copy/swap objects
 
-// Artifical Intelligence
-#include "ai/MLP.h"
-#include "ai/Perceptron.h"
-
 // Audio
 #include "audio/Audio.h"
 #include "audio/AudioBuffer.h"
