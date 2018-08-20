@@ -20,8 +20,7 @@
 "mat4 view, invView, projection, viewProj, invViewProj, prevViewProj;" \
 "vec4 ditherMatrix[256];" \
 "ivec4 ditherMatrixSize;" \
-"vec4 eye;" \
-"vec4 screen, viewport, viewport_pixel_size;" \
+"vec4 eye, screen, viewport, viewport_pixel_size;" \
 "int frame;" \
 "};"
 #define L_PUSH_CONSTANTS \
