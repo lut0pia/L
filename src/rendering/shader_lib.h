@@ -7,9 +7,7 @@
 #define L_SHAREDUNIFORM_VIEWPROJ (L_SHAREDUNIFORM_PROJECTION+sizeof(Matrix44f))
 #define L_SHAREDUNIFORM_INVVIEWPROJ (L_SHAREDUNIFORM_VIEWPROJ+sizeof(Matrix44f))
 #define L_SHAREDUNIFORM_PREVVIEWPROJ (L_SHAREDUNIFORM_INVVIEWPROJ+sizeof(Matrix44f))
-#define L_SHAREDUNIFORM_DITHERMATRIX (L_SHAREDUNIFORM_PREVVIEWPROJ+sizeof(Matrix44f))
-#define L_SHAREDUNIFORM_DITHERMATRIXSIZE (L_SHAREDUNIFORM_DITHERMATRIX+sizeof(Vector4f)*256)
-#define L_SHAREDUNIFORM_EYE (L_SHAREDUNIFORM_DITHERMATRIXSIZE+sizeof(Vector4i))
+#define L_SHAREDUNIFORM_EYE (L_SHAREDUNIFORM_PREVVIEWPROJ+sizeof(Matrix44f))
 #define L_SHAREDUNIFORM_SCREEN (L_SHAREDUNIFORM_EYE+sizeof(Vector4f))
 #define L_SHAREDUNIFORM_VIEWPORT (L_SHAREDUNIFORM_SCREEN+sizeof(Vector4f))
 #define L_SHAREDUNIFORM_VIEWPORT_PIXEL_SIZE (L_SHAREDUNIFORM_VIEWPORT+sizeof(Vector4f))
@@ -18,8 +16,6 @@
 #define L_SHAREDUNIFORM \
 "layout(binding = 0) uniform Shared {" \
 "mat4 view, invView, projection, viewProj, invViewProj, prevViewProj;" \
-"vec4 ditherMatrix[256];" \
-"ivec4 ditherMatrixSize;" \
 "vec4 eye, screen, viewport, viewport_pixel_size;" \
 "int frame;" \
 "};"
@@ -29,16 +25,18 @@
 "};"
 #define L_SHADER_LIB \
 "const float PI = 3.14159265359f;" \
+"const float PHI = 1.61803398874989484820459;" \
+"const float SQ2 = 1.41421356237309504880169;" \
 "struct GBufferSample { vec3 color; float metalness; vec3 normal; float roughness; float emissive; vec3 position; float depth; float linear_depth; };" \
-"float frag_noise(){" \
-"int sub_frame = frame%4;" \
-"ivec2 frame_offset = ivec2(sub_frame/2,sub_frame%2)*2;" \
-"ivec2 dither_pos = ivec2(mod(gl_FragCoord.xy+frame_offset,ditherMatrixSize.xy));" \
-"int dither_slot = dither_pos.x+dither_pos.y*ditherMatrixSize.x;" \
-"return ditherMatrix[dither_slot/4][dither_slot%4];" \
+"float gold_noise(in vec2 coordinate, in float seed) {" \
+  "float noise = fract(tan(distance(coordinate*(seed+PHI*00000.1), vec2(PHI*00000.1, PI*00000.1)))*SQ2*10000.0);" \
+  "return isnan(noise) ? 0.f : noise;" \
+"}" \
+"float frag_noise() {" \
+  "return gold_noise(gl_FragCoord.xy, frame%4);" \
 "}" \
 "bool alpha(float a){" \
-"return a<frag_noise();" \
+"return a<clamp(frag_noise(), 0.01f, 0.99f);" \
 "}" \
 "vec3 deband(vec3 v){" \
 "return v+frag_noise()*0.005f;" \

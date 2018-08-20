@@ -51,8 +51,6 @@ namespace L {
       T::script_registration();
     }
 
-    // Rendering
     static GPUBuffer& shared_uniform();
-    static void dither_matrix(const float* data, uint32_t width, uint32_t height);
   };
 }

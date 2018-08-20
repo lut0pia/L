@@ -162,8 +162,3 @@ GPUBuffer& Engine::shared_uniform() {
   static GPUBuffer u(L_SHAREDUNIFORM_SIZE, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
   return u;
 }
-void Engine::dither_matrix(const float* data, uint32_t width, uint32_t height) {
-  shared_uniform().load_item(width, L_SHAREDUNIFORM_DITHERMATRIXSIZE);
-  shared_uniform().load_item(height, L_SHAREDUNIFORM_DITHERMATRIXSIZE+sizeof(width));
-  shared_uniform().load(data, width*height*sizeof(float), L_SHAREDUNIFORM_DITHERMATRIX);
-}
