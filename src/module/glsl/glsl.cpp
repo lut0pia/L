@@ -37,6 +37,10 @@ bool glsl_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) {
   const String cmd("glslangValidator -V -q -S "+stage_name+" "+input_file+" -o "+output_file);
   System::call(cmd, cmd_output);
 
+  if(cmd_output.empty()) {
+    return false;
+  }
+
   { // Parse debug information
     Shader::BindingType binding_type(Shader::BindingType::None);
     Array<String> lines(cmd_output.explode('\n')), words;
