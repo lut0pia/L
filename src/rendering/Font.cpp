@@ -66,7 +66,7 @@ Font::TextMesh& Font::text_mesh(const char* str) {
 }
 void Font::draw(VkCommandBuffer cmd_buffer, const Matrix44f& model, const char* str, Vector2f anchor) {
   if(!*str) {
-    warning("Attempting to draw emptry string");
+    warning("Attempting to draw empty string");
     return;
   }
   if(!_pipeline) {
