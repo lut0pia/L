@@ -50,13 +50,6 @@ Camera components link regions of the screen to projections of the rendered worl
 (camera'ortho | left right bottom top) ; Generates orthographic projection matrix (near is -1 and far is 1)
 ```
 
-## StaticMesh
-StaticMesh components are used to render basic meshes in a scene.
-```clojure
-(staticmesh'mesh | "some/path.obj") ; Loads path.obj as a mesh
-(staticmesh'texture | "some/path.png") ; Loads path.png as a texture
-```
-
 ## Collider
 Collider components are used to collide with other colliders (and make rigidbodies react).
 ```clojure
