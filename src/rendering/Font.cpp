@@ -69,6 +69,9 @@ void Font::draw(VkCommandBuffer cmd_buffer, const Matrix44f& model, const char* 
     warning("Attempting to draw emptry string");
     return;
   }
+  if(!_pipeline) {
+    return;
+  }
   vkCmdBindPipeline(cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *_pipeline);
   vkCmdPushConstants(cmd_buffer, *_pipeline, _pipeline->find_binding("Constants")->stage, 0, sizeof(model), &model);
 
