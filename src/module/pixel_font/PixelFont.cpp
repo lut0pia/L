@@ -7,14 +7,14 @@ class PixelFont : public Font {
 private:
   float _ratio;
 public:
-  PixelFont(int);
+  PixelFont(uint32_t);
   void load_glyph(uint32_t utf32, Glyph& out_glyph, Bitmap& out_bmp) override;
 };
 
 bool pixel_font_loader(ResourceSlot& slot, Font*& intermediate) {
-  int height(14);
-  if(Symbol height_value = slot.parameter("height"))
-    height = ston<10, int>(height_value);
+  uint32_t height(14);
+
+  slot.parameter("height", height);
 
   intermediate = Memory::new_type<PixelFont>(height);
   slot.persistent = true;
@@ -25,7 +25,7 @@ void pixel_font_module_init() {
   ResourceLoading<Font>::add_loader("pixel", pixel_font_loader);
 }
 
-PixelFont::PixelFont(int height) : _ratio(height/7.f) {
+PixelFont::PixelFont(uint32_t height) : _ratio(height/7.f) {
   _lineheight = (height*11)/7;
 }
 #define O Color::white

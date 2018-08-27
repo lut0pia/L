@@ -116,12 +116,8 @@ static float* void_and_cluster(uint32_t width, uint32_t height, float* out) {
 static bool blue_noise_loader(ResourceSlot& slot, Texture::Intermediate& intermediate) {
   uint32_t width(32), height(32);
 
-  if(Symbol width_param = slot.parameter("width")) {
-    width = atoi(width_param);
-  }
-  if(Symbol height_param = slot.parameter("height")) {
-    height = atoi(height_param);
-  }
+  slot.parameter("width", width);
+  slot.parameter("height", height);
 
   float* matrix(Memory::alloc_type<float>(width*height));
   void_and_cluster(width, height, matrix);
