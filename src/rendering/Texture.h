@@ -21,12 +21,12 @@ namespace L {
       VkFormat format;
     };
     inline Texture(const Intermediate& intermediate) : Texture(intermediate.width, intermediate.height, intermediate.format) {
-      load(intermediate.binary);
+      load(intermediate.binary, intermediate.binary.size());
     }
     Texture(uint32_t width, uint32_t height, VkFormat format = VK_FORMAT_R8G8B8A8_UNORM);
     ~Texture();
-    inline void load(const void* pixels) { load(pixels, {}, {_width,_height,1}); }
-    void load(const void* pixels, VkOffset3D offset, VkExtent3D extent);
+    inline void load(const void* data, size_t size) { load(data, size, {}, {_width,_height,1}); }
+    void load(const void* data, size_t size, VkOffset3D offset, VkExtent3D extent);
     void transition_layout(VkCommandBuffer cmd_buffer, VkImageLayout new_layout);
 
     inline uint32_t width() const { return _width; }

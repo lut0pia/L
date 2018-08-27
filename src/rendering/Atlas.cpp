@@ -13,7 +13,7 @@ Interval2f Atlas::add(uint32_t part_width, uint32_t part_height, const void* dat
     const bool valid(candidate.max().x()<width() && candidate.max().y()<height() && !_parts.overlaps(candidate));
 
     if(valid) {
-      load(data, VkOffset3D {candidate.min().x(), candidate.min().y()}, VkExtent3D {part_width, part_height, 1});
+      load(data, part_width*part_height*4, VkOffset3D {candidate.min().x(), candidate.min().y()}, VkExtent3D {part_width, part_height, 1});
       _parts.insert(candidate, true);
       _xs.insert(candidate.max().x());
       _ys.insert(candidate.max().y());
