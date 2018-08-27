@@ -7,6 +7,7 @@
 #include "Device.h"
 
 #include <windows.h>
+#include <windowsx.h>
 #include "../rendering/Vulkan.h"
 
 using namespace L;
