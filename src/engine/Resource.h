@@ -20,7 +20,11 @@ namespace L {
     inline ResourceSlot(const char* url) : id(url), path(url, min<size_t>(strlen(url), strchr(url, '?')-url)),
       persistent(false), state(Unloaded), value(nullptr) {
     }
+
     Symbol parameter(const char* key);
+    bool parameter(const char* key, uint32_t& value);
+    bool parameter(const char* key, float& value);
+
     Buffer read_source_file();
     void store_source_file_to_archive();
     Buffer read_archive();

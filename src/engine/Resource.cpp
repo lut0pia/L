@@ -31,6 +31,21 @@ Symbol ResourceSlot::parameter(const char* key) {
   }
   return Symbol();
 }
+bool ResourceSlot::parameter(const char* key, uint32_t& value) {
+  if(const Symbol param = parameter(key)) {
+    value = atoi(param);
+    return true;
+  }
+  return false;
+}
+bool ResourceSlot::parameter(const char* key, float& value) {
+  if(const Symbol param = parameter(key)) {
+    value = atof(param);
+    return true;
+  }
+  return false;
+}
+
 Buffer ResourceSlot::read_source_file() {
   // Try to find the source file in the archive
   if(Archive::Entry entry = archive.find("file:"+String(id))) {
