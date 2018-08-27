@@ -438,6 +438,9 @@ bool Vulkan::is_stencil_format(VkFormat format) {
     default: return false;
   }
 }
+bool Vulkan::is_block_format(VkFormat format) {
+  return format >= VK_FORMAT_BC1_RGB_UNORM_BLOCK && format <= VK_FORMAT_ASTC_12x12_SRGB_BLOCK;
+}
 uint32_t Vulkan::format_size(VkFormat format) {
   switch(format) {
     case VK_FORMAT_R8_UNORM:

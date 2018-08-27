@@ -13,6 +13,7 @@ namespace L {
     VkFormat find_supported_format(VkFormat* candidates, size_t candidate_count, VkFormatFeatureFlags features);
     bool is_depth_format(VkFormat format);
     bool is_stencil_format(VkFormat format);
+    bool is_block_format(VkFormat format);
     uint32_t format_size(VkFormat format);
     uint32_t find_memory_type(uint32_t type_bits, VkMemoryPropertyFlags property_flags);
 
