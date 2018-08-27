@@ -106,7 +106,7 @@
 	(sprite'require-transform || 'move | (vec -9.4 0 5))
 	(sprite'require-transform || 'rotate | (vec 0 0 1) 1.57)
 	(sprite'require-primitive || 'material || 'parent | "material/sprite.lon")
-	(sprite'require-primitive || 'material || 'texture | 'tex "texture/bush.png")
+	(sprite'require-primitive || 'material || 'texture | 'tex "texture/bush.png?comp=bc3")
 	(sprite'require-primitive || 'scale | (vec 5))
 
 	; Create all boxes

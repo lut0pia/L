@@ -91,7 +91,7 @@
 	))
 )))
 (set (self'gui) (fun (camera) (do
-	(camera'draw-image | 10 10 "texture/logo.png")
+	(camera'draw-image | 10 10 "texture/logo.png?comp=bc3")
 	(camera'draw-text | ".pixel" 84 10
 		(+ "FPS: " (/ 1.0 delta) "\n"
 			 "Frame: " avg-frame-work-duration "\n"

@@ -2,7 +2,7 @@
   'pipeline ".inline?fragment=shader/staticmesh.frag&vertex=shader/staticmesh.vert"
   'mesh "mesh/bush.obj"
   'textures {
-    "tex" "texture/bush.png"
+    "tex" "texture/bush.png?comp=bc3"
     "mat_tex" "texture/default_mat.png"
   }
 }
