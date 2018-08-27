@@ -9,6 +9,7 @@ using namespace L;
 Texture::Texture(uint32_t width, uint32_t height, VkFormat format)
   : _width(width), _height(height), _format(format), _layout(VK_IMAGE_LAYOUT_UNDEFINED) {
   const bool depth_texture(Vulkan::is_depth_format(_format));
+  const bool compressed_texture(Vulkan::is_block_format(_format));
 
   VkImageCreateInfo imageInfo = {};
   imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -21,8 +22,9 @@ Texture::Texture(uint32_t width, uint32_t height, VkFormat format)
   imageInfo.format = _format;
   imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
   imageInfo.initialLayout = _layout;
-  if(depth_texture) imageInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
-  else imageInfo.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+  imageInfo.usage = VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+  if(depth_texture) imageInfo.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+  if(!depth_texture && !compressed_texture) imageInfo.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
   imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
   imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
 
