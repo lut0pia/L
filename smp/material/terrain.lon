@@ -3,7 +3,7 @@
   'pipeline ".inline?fragment=shader/terrain.frag&vertex=shader/terrain.vert"
   'vertex_count (* size size 6)
   'textures {
-    'height_tex "texture/perlin.png"
+    'height_tex ".perlin_noise?octaves=5&lacunarity=2.3"
   }
   'scalars {
     'size size
