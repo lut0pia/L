@@ -188,6 +188,7 @@ void Vulkan::init() {
 
     VkPhysicalDeviceFeatures enabled_features {};
     enabled_features.samplerAnisotropy = true;
+    enabled_features.textureCompressionBC = true;
 
     VkDeviceCreateInfo create_info = {};
     create_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
