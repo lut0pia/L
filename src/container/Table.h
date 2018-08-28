@@ -157,6 +157,9 @@ namespace L {
             _slots[i].~Slot();
       _count = 0;
     }
+
+    friend Stream& operator<=(Stream& s, const Table& v) { s <= v.count(); for(const auto& e : v) s <= e.key() <= e.value(); return s; }
+    friend Stream& operator>=(Stream& s, Table& t) { size_t size; s >= size; while(size--) { K k; V v; s >= k >= v; t[k] = v; } return s; }
   };
   template <class K,class V> inline Stream& operator<<(Stream& s,const Table<K,V>& v) {
     s << '{';
