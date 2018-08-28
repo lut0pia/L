@@ -47,7 +47,7 @@ namespace L {
         _slots = Memory::alloc_type_zero<Slot>(_size *= 2);
         for(uintptr_t i(0); i<oldsize; i++)
           if(!oldslots[i].empty())
-            memcpy(findSlot(oldslots[i].hash()),oldslots+i,sizeof(Slot));
+            memcpy(find_slot_or_create(oldslots[i].hash()), oldslots+i, sizeof(Slot));
         Memory::free(oldslots,oldsize*sizeof(Slot));
       } else _slots = Memory::alloc_type_zero<Slot>(_size = 4);
     }
@@ -93,7 +93,7 @@ namespace L {
       if(_count*10>=_size*8)
         grow();
       uint32_t h(hash(k));
-      Slot* slot(findSlot(h));
+      Slot* slot(find_slot_or_create(h));
       if(slot->empty()){
         new(slot)Slot(h,k);
         _count++;
@@ -101,7 +101,7 @@ namespace L {
       return slot->value();
     }
     inline uintptr_t indexFor(uint32_t h) const { return h*(float(_size)/UINT32_MAX); }
-    Slot* findSlot(uint32_t h){
+    Slot* find_slot_or_create(uint32_t h){
       while(true) {
         const uintptr_t i(indexFor(h));
         for(uintptr_t j(0); j<_size; j++){
@@ -112,7 +112,7 @@ namespace L {
         grow();
       }
     }
-    Slot* findSlot(const K& key) const {
+    Slot* find_slot(const K& key) const {
       const uint32_t h(hash(key));
       const uintptr_t i(indexFor(h));
       for(uintptr_t j(0); j<_size; j++){
@@ -125,7 +125,7 @@ namespace L {
       return nullptr;
     }
     V* find(const K& key) const {
-      Slot* slot(findSlot(key));
+      Slot* slot(find_slot(key));
       return slot && !slot->empty() ? &slot->value() : nullptr;
     }
     V get(const K& key, const V& default_value) const {
@@ -134,7 +134,7 @@ namespace L {
       else return default_value;
     }
     void remove(const K& key) {
-      Slot* slot(((const Table<K, V>*)this)->findSlot(key)); // Call the const version of this method
+      Slot* slot(find_slot(key)); // Call the const version of this method
       if(slot && !slot->empty()) {
         slot->~Slot();
         while(true) {
