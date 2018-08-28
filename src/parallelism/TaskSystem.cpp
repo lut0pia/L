@@ -60,13 +60,13 @@ void atomic_add(uint32_t& counter, uint32_t value) {
 }
 
 #if _MSC_VER
-#pragma optimize("", off)
+#pragma optimize("g", off)
 #endif
 void yield_internal() {
   switch_to_fiber(original_thread_fibers[thread_index]);
 }
 #if _MSC_VER
-#pragma optimize("", on)
+#pragma optimize("g", on)
 #endif
 
 void fiber_func(void* arg) {
