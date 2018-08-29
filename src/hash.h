@@ -26,5 +26,5 @@ namespace L{
 
   template <class T> inline uint32_t hash(const T& v){ return fnv1a((const char*)&v,sizeof(v)); }
   inline uint32_t hash(const char* str){ return fnv1a(str); }
-  inline uint32_t hash(uint32_t v){ return v; }
+  inline uint32_t hash(uint32_t v) { return v+1; }
 }
