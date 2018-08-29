@@ -1,53 +1,62 @@
 #include <L/src/engine/Resource.inl>
 #include <L/src/rendering/Font.h>
 
-#define STB_TRUETYPE_IMPLEMENTATION 
+#define STB_TRUETYPE_IMPLEMENTATION
+#define STBTT_STATIC
 #include "stb_truetype.h"
 
 using namespace L;
 
-class STBFont : public Font {
-protected:
-  stbtt_fontinfo _font;
-  float _scale;
-  int _ascent, _descent;
-  Buffer _buffer;
-public:
-  STBFont(stbtt_fontinfo font, Buffer& buffer, uint32_t pixel_height) : _font(font), _buffer((Buffer&&)buffer) {
-    stbtt_GetFontVMetrics(&_font, &_ascent, &_descent, &_lineheight);
-    _scale = float(pixel_height) / float(_ascent);
-    _lineheight += _ascent - _descent;
-    _ascent *= _scale;
-    _descent *= _scale;
-    _lineheight *= _scale;
-  }
-  void load_glyph(uint32_t utf32, Glyph& out_glyph, Bitmap& out_bmp) override {
-    int w, h;
-    unsigned char* bmp = stbtt_GetCodepointBitmap(&_font, 0, _scale, utf32, &w, &h, 0, 0);
-    stbtt_GetCodepointHMetrics(&_font, utf32, &out_glyph.advance, nullptr);
-    stbtt_GetCodepointBitmapBox(&_font, utf32, _scale, _scale, &out_glyph.origin.x(), &out_glyph.origin.y(), nullptr, nullptr);
-    out_glyph.advance *= _scale;
-    out_glyph.origin.y() = _ascent + out_glyph.origin.y();
-    out_bmp.resizeFast(w, h);
-    for(int x(0); x < w; x++)
-      for(int y(0); y < h; y++)
-        out_bmp(x, y) = Color(255, 255, 255, bmp[x + w*y]);
-  }
-};
+bool stb_truetype_loader(ResourceSlot& slot, Font::Intermediate& intermediate) {
+  Buffer source_buffer(slot.read_source_file());
 
-bool stb_truetype_loader(ResourceSlot& slot, Font*& intermediate) {
-  if(Buffer buffer = slot.read_source_file()) {
-    uint32_t pixel_height(16);
-    if(Symbol height_param = slot.parameter("height")) {
-      pixel_height = atoi(height_param);
-    }
-    stbtt_fontinfo font;
-    if(stbtt_InitFont(&font, (uint8_t*)buffer.data(), stbtt_GetFontOffsetForIndex((uint8_t*)buffer.data(), 0))) {
-      intermediate = Memory::new_type<STBFont>(font, buffer, pixel_height);
-    }
-    return true;
+  if(!source_buffer) {
+    return false; // Couldn't read source file
   }
-  return false;
+
+  stbtt_fontinfo font;
+  if(!stbtt_InitFont(&font, (uint8_t*)source_buffer.data(), stbtt_GetFontOffsetForIndex((uint8_t*)source_buffer.data(), 0))) {
+    return false; // Couldn't make sense of source file
+  }
+
+  uint32_t height(16), range_start(0), range_size(256);
+  slot.parameter("height", height);
+
+  const uint32_t atlas_width(16*height), atlas_height(16*height);
+
+  intermediate.texture_intermediate.format = VK_FORMAT_R8_UNORM;
+  intermediate.texture_intermediate.width = atlas_width;
+  intermediate.texture_intermediate.height = atlas_height;
+  intermediate.texture_intermediate.binary = Buffer(atlas_width*atlas_height);
+
+  float scale;
+  int ascent, descent;
+  stbtt_GetFontVMetrics(&font, &ascent, &descent, &intermediate.line_height);
+  scale = float(height) / float(ascent);
+  intermediate.line_height += ascent - descent;
+  ascent *= scale;
+  descent *= scale;
+  intermediate.line_height *= scale;
+
+  stbtt_pack_context pack_context;
+  Array<stbtt_packedchar> packed_chars;
+  packed_chars.size(range_size);
+
+  stbtt_PackBegin(&pack_context, (uint8_t*)intermediate.texture_intermediate.binary.data(), atlas_width, atlas_height, 0, 0, nullptr);
+  stbtt_PackFontRange(&pack_context, (uint8_t*)source_buffer.data(), 0, height, range_start, range_size, packed_chars.begin());
+  stbtt_PackEnd(&pack_context);
+
+  uint32_t utf32(range_start);
+  for(const stbtt_packedchar& packed_char : packed_chars) {
+    Font::Glyph glyph;
+    glyph.advance = packed_char.xadvance;
+    glyph.origin = {int(packed_char.xoff), int(packed_char.yoff+ascent)};
+    glyph.size = {packed_char.x1-packed_char.x0, packed_char.y1-packed_char.y0};
+    glyph.atlas_coords = Vector2f(float(packed_char.x0)/atlas_width, float(packed_char.y0)/atlas_height);
+    glyph.atlas_coords.add(Vector2f(float(packed_char.x1)/atlas_width, float(packed_char.y1)/atlas_height));
+    intermediate.glyphs[utf32++] = glyph;
+  }
+  return true;
 }
 
 void stb_truetype_module_init() {

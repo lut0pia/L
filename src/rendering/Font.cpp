@@ -1,8 +1,6 @@
 #include "Font.h"
 
 #include "../engine/Resource.inl"
-#include "../rendering/Pipeline.h"
-#include "../rendering/shader_lib.h"
 #include "../text/encoding.h"
 #include "../rendering/DescriptorSet.h"
 
@@ -10,19 +8,19 @@ using namespace L;
 
 Resource<Pipeline> Font::_pipeline;
 
-const Font::Glyph& Font::glyph(uint32_t utf32) {
-  Glyph* glyph;
-  if(utf32<128) glyph = _ascii + utf32;
-  else glyph = &_glyphs[utf32];
-  if(!glyph->init) {
-    load_glyph(utf32, *glyph, _bmp);
-    if(_bmp.width() && _bmp.height()) {
-      glyph->atlas_coords = _atlas.add(_bmp.width(), _bmp.height(), &_bmp[0]);
+Font::Font(const Intermediate& intermediate) : _atlas(intermediate.texture_intermediate), _last_update(0), _line_height(intermediate.line_height) {
+  for(const auto& pair : intermediate.glyphs) {
+    if(pair.key()<128) {
+      _ascii[pair.key()] = pair.value();
+    } else {
+      _glyphs[pair.key()] = pair.value();
     }
-    glyph->size.x() = _bmp.width();
-    glyph->size.y() = _bmp.height();
-    glyph->init = true;
   }
+}
+const Font::Glyph& Font::glyph(uint32_t utf32) {
+  static const Font::Glyph no_glyph;
+  const Glyph* glyph((utf32<128) ? (_ascii + utf32) : _glyphs.find(utf32));
+  if(!glyph) glyph = &no_glyph;
   return *glyph;
 }
 Font::TextMesh& Font::text_mesh(const char* str) {
@@ -35,14 +33,14 @@ Font::TextMesh& Font::text_mesh(const char* str) {
     wtr.str = str;
     Array<Vector4f> buffer;
     buffer.growTo(strlen(str)*6);
-    wtr.dimensions.y() = _lineheight;
+    wtr.dimensions.y() = _line_height;
     int x(0), y(0);
     while(*str) {
       const uint32_t utf32(utf8_to_utf32(str));
       if(utf32=='\n') { // End line
         x = 0;
-        y += _lineheight;
-        wtr.dimensions.y() = max(wtr.dimensions.y(), y+_lineheight);
+        y += _line_height;
+        wtr.dimensions.y() = max(wtr.dimensions.y(), y+_line_height);
       } else { // Character
         const Glyph& g(glyph(utf32));
         if(g.size.x() && g.size.y()) {
@@ -76,7 +74,8 @@ void Font::draw(VkCommandBuffer cmd_buffer, const Matrix44f& model, const char* 
   vkCmdPushConstants(cmd_buffer, *_pipeline, _pipeline->find_binding("Constants")->stage, 0, sizeof(model), &model);
 
   DescriptorSet desc_set(*_pipeline);
-  desc_set.set_descriptor("tex", VkDescriptorImageInfo {Vulkan::sampler(), _atlas.texture(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
+  desc_set.set_descriptor("atlas", VkDescriptorImageInfo {Vulkan::sampler(), _atlas, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
+  desc_set.set_value("color", Vector4f(1.f)); // TODO: Change API to allow colored text rendering
   vkCmdBindDescriptorSets(cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *_pipeline, 0, 1, &(const VkDescriptorSet&)desc_set, 0, nullptr);
 
   TextMesh& tm(text_mesh(str));
@@ -91,11 +90,11 @@ void Font::update() {
     _last_update = now;
   } else return;
 
-  static Array<uint32_t> obsoleteTextMeshes;
-  obsoleteTextMeshes.clear();
-  for(auto& textMesh : _text_meshes)
-    if(now-textMesh.value().last_used>second) // Not used for a second
-      obsoleteTextMeshes.push(textMesh.key());
-  for(uint32_t obsoleteTextMesh : obsoleteTextMeshes)
-    _text_meshes.remove(obsoleteTextMesh);
+  Array<uint32_t> obsolete_text_meshes;
+  obsolete_text_meshes.clear();
+  for(const auto& tm : _text_meshes)
+    if(now-tm.value().last_used>second) // Not used for a second
+      obsolete_text_meshes.push(tm.key());
+  for(uint32_t obsolete_text_mesh : obsolete_text_meshes)
+    _text_meshes.remove(obsolete_text_mesh);
 }
