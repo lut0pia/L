@@ -34,7 +34,7 @@ bool glsl_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) {
     input_stream.write(original_text.data(), original_text.size());
   }
 
-  const String cmd("glslangValidator -V -q -S "+stage_name+" "+input_file+" -o "+output_file);
+  const String cmd("glslangValidator -V -S "+stage_name+" "+input_file+" -o "+output_file);
   System::call(cmd, cmd_output);
 
   if(cmd_output.empty()) {
@@ -42,7 +42,6 @@ bool glsl_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) {
   }
 
   { // Parse debug information
-    Shader::BindingType binding_type(Shader::BindingType::None);
     Array<String> lines(cmd_output.explode('\n')), words;
 
     { // Early exit in case of errors
@@ -59,69 +58,11 @@ bool glsl_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) {
         return false;
       }
     }
-
-    for(String& line : lines) {
-      if(line=="Uniform reflection:")
-        binding_type = Shader::BindingType::Uniform;
-      else if(line=="Uniform block reflection:")
-        binding_type = Shader::BindingType::UniformBlock;
-      else if(line=="Vertex attribute reflection:")
-        binding_type = Shader::BindingType::VertexAttribute;
-      else if(binding_type!=Shader::BindingType::None) {
-        line.replaceAll(",", "").replaceAll(":", "");
-        words = line.explode(' ');
-        Shader::Binding binding;
-        binding.name = Symbol(words[0]);
-        binding.offset = atoi(words[2]);
-        binding.type = binding_type;
-        binding.size = atoi(words[6]);
-        binding.index = atoi(words[8]);
-        binding.binding = atoi(words[10]);
-        binding.stage = intermediate.stage;
-
-        // FIXME: this is a hack until we have working reflection for shader vertex attributes
-        if(binding.name==Symbol("vposition")) {
-          binding.binding = 0;
-          binding.index = 0;
-          binding.format = VK_FORMAT_R32G32B32_SFLOAT;
-          binding.offset = 0;
-          binding.size = 12;
-        }
-        if(binding.name==Symbol("vtexcoords")) {
-          binding.binding = 0;
-          binding.index = 1;
-          binding.format = VK_FORMAT_R32G32_SFLOAT;
-          binding.offset = 12;
-          binding.size = 8;
-        }
-        if(binding.name==Symbol("vnormal")) {
-          binding.binding = 0;
-          binding.index = 2;
-          binding.format = VK_FORMAT_R32G32B32_SFLOAT;
-          binding.offset = 20;
-          binding.size = 12;
-        }
-        if(binding.name==Symbol("vpositionfont")) {
-          binding.binding = 0;
-          binding.index = 0;
-          binding.format = VK_FORMAT_R32G32_SFLOAT;
-          binding.offset = 0;
-          binding.size = 8;
-        }
-        if(binding.name==Symbol("vtexcoordsfont")) {
-          binding.binding = 0;
-          binding.index = 1;
-          binding.format = VK_FORMAT_R32G32_SFLOAT;
-          binding.offset = 8;
-          binding.size = 8;
-        }
-        intermediate.bindings.push(binding);
-      }
-    }
   }
 
   if(CFileStream file_stream = CFileStream(output_file, "rb")) {
     intermediate.binary = file_stream.read_into_buffer();
+    Shader::reflect(intermediate);
     return true;
   } else {
     return false;

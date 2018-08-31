@@ -22,7 +22,7 @@ DescriptorSet::DescriptorSet(const Pipeline& pipeline) : _set(0), _pipeline(pipe
 
   for(const auto& binding : pipeline.bindings()) {
     static const Symbol shared_symbol("Shared");
-    if(binding.binding>0 && binding.type==Shader::BindingType::UniformBlock && binding.name!=shared_symbol) {
+    if(binding.binding>0 && binding.type==Shader::BindingType::Uniform && binding.name!=shared_symbol) {
       _buffers.push(binding.size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
       set_descriptor(binding.name, VkDescriptorBufferInfo {_buffers.back(), 0, _buffers.back().size()});
     }

@@ -28,8 +28,8 @@ Pipeline::Pipeline(const Shader** shaders, size_t shader_count, VkCullModeFlagBi
         continue;
       VkDescriptorType desc_type;
       switch(binding.type) {
-        case Shader::BindingType::Uniform: desc_type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER; break;
-        case Shader::BindingType::UniformBlock: desc_type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER; break;
+        case Shader::BindingType::UniformConstant: desc_type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER; break;
+        case Shader::BindingType::Uniform: desc_type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER; break;
         default: continue;
       }
       dslb.push<VkDescriptorSetLayoutBinding>({uint32_t(binding.binding), desc_type, 1, binding.stage});
@@ -74,17 +74,14 @@ Pipeline::Pipeline(const Shader** shaders, size_t shader_count, VkCullModeFlagBi
   uint32_t vertex_size(0);
   Array<VkVertexInputAttributeDescription> vertex_attributes;
   for(const Shader::Binding& binding : _bindings) {
-    VkVertexInputAttributeDescription vertex_attribute {};
-    switch(binding.type) {
-      case Shader::BindingType::VertexAttribute:
-        vertex_size = max<uint32_t>(vertex_size, binding.offset+binding.size);
-        vertex_attribute.binding = binding.binding;
-        vertex_attribute.location = binding.index;
-        vertex_attribute.format = binding.format;
-        vertex_attribute.offset = binding.offset;
-        vertex_attributes.push(vertex_attribute);
-        break;
-      default: continue;
+    if(binding.stage==VK_SHADER_STAGE_VERTEX_BIT && binding.type==Shader::BindingType::Input) {
+      VkVertexInputAttributeDescription vertex_attribute {};
+      vertex_size = max<uint32_t>(vertex_size, binding.offset+binding.size);
+      vertex_attribute.binding = binding.binding;
+      vertex_attribute.location = binding.index;
+      vertex_attribute.format = binding.format;
+      vertex_attribute.offset = binding.offset;
+      vertex_attributes.push(vertex_attribute);
     }
   }
 

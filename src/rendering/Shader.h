@@ -12,9 +12,10 @@ namespace L {
   public:
     enum BindingType {
       None,
+      UniformConstant,
       Uniform,
-      UniformBlock,
-      VertexAttribute,
+      Input,
+      PushConstant,
     };
     struct Binding {
       Symbol name;
@@ -33,13 +34,14 @@ namespace L {
     VkShaderStageFlagBits _stage;
     Array<Binding> _bindings;
   public:
-    inline Shader(const Intermediate& intermediate) : Shader(intermediate.binary.data(), intermediate.binary.size(), intermediate.stage, intermediate.bindings.begin(), intermediate.bindings.size()) {}
-    Shader(const void* binary, size_t size, VkShaderStageFlagBits stage, const Binding* bindings, uint32_t binding_count);
+    Shader(const Intermediate& intermediate);
     ~Shader();
 
     inline VkShaderModule module() const { return _module; }
     inline VkShaderStageFlagBits stage() const { return _stage; }
     inline const Array<Binding>& bindings() const { return _bindings; }
+
+    static void reflect(Intermediate& intermediate);
 
     friend inline Stream& operator<=(Stream& s, const Intermediate& v) { return s <= v.binary <= v.stage <= v.bindings; }
     friend inline Stream& operator>=(Stream& s, Intermediate& v) { return s >= v.binary >= v.stage >= v.bindings; }
