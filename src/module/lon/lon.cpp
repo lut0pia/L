@@ -6,7 +6,7 @@
 
 using namespace L;
 
-static const Symbol pipeline_symbol("pipeline"), mesh_symbol("mesh"),
+static const Symbol pipeline_symbol("pipeline"), mesh_symbol("mesh"), font_symbol("font"),
   scalars_symbol("scalars"), textures_symbol("textures"), vectors_symbol("vectors"),
   vertex_count_symbol("vertex_count"), primitive_mode_symbol("primitive_mode"),
   triangles_symbol("triangles");
@@ -26,7 +26,7 @@ bool lon_mat_loader(ResourceSlot& slot, Material*& intermediate) {
 
   if(data.is<Ref<Table<Var, Var>>>()) {
     Table<Var, Var>& table(*data.as<Ref<Table<Var, Var>>>());
-    Var *pipeline_var(table.find(pipeline_symbol)), *mesh_var(table.find(mesh_symbol)),
+    Var *pipeline_var(table.find(pipeline_symbol)), *mesh_var(table.find(mesh_symbol)), *font_var(table.find(font_symbol)),
       *scalars_var(table.find(scalars_symbol)), *textures_var(table.find(textures_symbol)), *vectors_var(table.find(vectors_symbol)),
       *vertex_count_var(table.find(vertex_count_symbol)), *primitive_mode_var(table.find(primitive_mode_symbol));
     Material* wtr(Memory::new_type<Material>());
@@ -36,6 +36,8 @@ bool lon_mat_loader(ResourceSlot& slot, Material*& intermediate) {
     // Mesh
     if(mesh_var)
       wtr->mesh(mesh_var->get<String>());
+    if(font_var)
+      wtr->font(font_var->get<String>());
     // Iterate over scalars
     if(scalars_var && scalars_var->is<Ref<Table<Var, Var>>>())
       for(const auto& scalar : *scalars_var->as<Ref<Table<Var, Var>>>())

@@ -3,6 +3,7 @@
 #include "../container/KeyValue.h"
 #include "../engine/Resource.h"
 #include "../image/Color.h"
+#include "Font.h"
 #include "Pipeline.h"
 #include "Texture.h"
 #include "Mesh.h"
@@ -14,6 +15,8 @@ namespace L {
     Resource<Material> _parent;
     Resource<Pipeline> _pipeline;
     Resource<Mesh> _mesh;
+    Resource<Font> _font;
+    String _text;
     Array<KeyValue<Symbol, float>> _scalars;
     Array<KeyValue<Symbol, Resource<Texture>>> _textures;
     Array<KeyValue<Symbol, Vector4f>> _vectors;
@@ -23,11 +26,14 @@ namespace L {
     void draw(const class Camera& camera, const class RenderPass& render_pass, const Matrix44f& model = Matrix44f(1.f));
     bool valid() const;
     Interval3f bounds() const;
+    Vector2f gui_size() const;
     void fill_desc_set(DescriptorSet& desc_set, struct ApplyHelper* helper = nullptr);
 
     inline void parent(const Resource<Material>& parent) { _parent = parent; }
     inline void pipeline(const Resource<Pipeline>& pipeline) { _pipeline = pipeline; }
     inline void mesh(const Resource<Mesh>& mesh) { _mesh = mesh; }
+    inline void font(const Resource<Font>& font) { _font = font; }
+    inline void text(const String& text) { _text = text; }
     void scalar(const Symbol& name, float scalar, bool override = true);
     void texture(const Symbol& name, const Resource<Texture>& texture, bool override = true);
     void vector(const Symbol& name, const Vector4f& vector, bool override = true);
@@ -36,6 +42,8 @@ namespace L {
 
     inline Resource<Pipeline> final_pipeline() const { return _pipeline.is_set() ? _pipeline : (_parent ? _parent->final_pipeline() : _pipeline); }
     inline Resource<Mesh> final_mesh() const { return _mesh.is_set() ? _mesh : (_parent ? _parent->final_mesh() : _mesh); }
+    inline Resource<Font> final_font() const { return _font.is_set() ? _font : (_parent ? _parent->final_font() : _font); }
+    inline const String& final_text() const { return _text.size()>0 ? _text : (_parent ? _parent->final_text() : _text); }
     inline size_t final_vertex_count() const { return _vertex_count ? _vertex_count : (_parent ? _parent->final_vertex_count() : _vertex_count); }
   };
 }

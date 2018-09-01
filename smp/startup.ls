@@ -65,7 +65,6 @@
 
 (set scene-default (fun (do
 	(engine-gravity (vec 0 0 -9.8))
-	(font-pipeline ".inline?fragment=shader/font.frag&vertex=shader/font.vert&pass=present")
 	;(engine-gravity (vec 0 0 0))
 	;(engine-timescale 0.1)
 	(entity-make | 'add-script || 'load | "camera.ls")

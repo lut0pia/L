@@ -1,9 +1,8 @@
 #pragma once
 
 #include "Transform.h"
-#include "../rendering/Font.h"
+#include "../engine/Resource.h"
 #include "../rendering/Framebuffer.h"
-#include "../rendering/Texture.h"
 #include "../math/Interval.h"
 
 namespace L {
@@ -44,9 +43,6 @@ namespace L {
     void pixels(); // Maps to window's pixels (origins at top-left pixel)
     void update_projection();
     void update_viewport();
-
-    void draw_text(Resource<Font> font, int x, int y, const char* text);
-    void draw_image(int x, int y, Resource<Texture> texture, float scale = 1.f);
 
     bool worldToScreen(const Vector3f&, Vector2f&) const; // Finds the normalized screen position for that world space vector, returns false if behind camera
     Vector3f screenToRay(const Vector2f&) const; // Returns direction vector from normalized screen position

@@ -60,11 +60,6 @@ void ScriptComponent::script_registration() {
     L_ASSERT(c.localCount()==2);
     Settings::set(c.local(0).get<Symbol>(), c.local(1));
   });
-  // Gui ///////////////////////////////////////////////////////////////////
-  L_FUNCTION("font-pipeline", {
-    if(c.localCount()>0)
-      Font::pipeline(c.local(0).get<String>());
-  });
   // Entity ///////////////////////////////////////////////////////////////////
   Context::global(Symbol("entity-make")) = (Function)([](Context& c) {
     c.returnValue() = new Entity();
@@ -88,6 +83,8 @@ void ScriptComponent::script_registration() {
   L_METHOD(Material, "parent", 1, parent(c.local(0).get<String>()));
   L_METHOD(Material, "pipeline", 1, pipeline(c.local(0).get<String>()));
   L_METHOD(Material, "mesh", 1, mesh(c.local(0).get<String>()));
+  L_METHOD(Material, "font", 1, font(c.local(0).get<String>()));
+  L_METHOD(Material, "text", 1, text(c.local(0).get<String>()));
   L_METHOD(Material, "color", 2, color(c.local(0).get<Symbol>(), c.local(1).get<Color>()));
   L_METHOD(Material, "scalar", 2, scalar(c.local(0), c.local(1)));
   L_METHOD(Material, "texture", 2, texture(c.local(0), c.local(1).get<String>()));

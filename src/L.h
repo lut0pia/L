@@ -18,6 +18,7 @@
 #include "component/Collider.h"
 #include "component/Component.h"
 #include "component/Entity.h"
+#include "component/GUIComponent.h"
 #include "component/HierarchyComponent.h"
 #include "component/MidiSourceComponent.h"
 #include "component/NameComponent.h"

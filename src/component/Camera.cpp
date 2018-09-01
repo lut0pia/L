@@ -59,8 +59,6 @@ void Camera::script_registration() {
   L_COMPONENT_METHOD(Camera, "perspective", 3, perspective(c.local(0).get<float>(), c.local(1).get<float>(), c.local(2).get<float>()));
   L_COMPONENT_METHOD(Camera, "ortho", 4, ortho(c.local(0).get<float>(), c.local(1).get<float>(), c.local(2).get<float>(), c.local(3).get<float>()));
   L_COMPONENT_METHOD(Camera, "viewport", 4, viewport(Interval2f(Vector2f(c.local(0).get<float>(), c.local(1).get<float>()), Vector2f(c.local(2).get<float>(), c.local(3).get<float>()))));
-  L_COMPONENT_METHOD(Camera, "draw-text", 4, draw_text(c.local(0).get<String>(), c.local(1).get<int>(), c.local(2).get<int>(), c.local(3).get<String>()));
-  L_COMPONENT_METHOD(Camera, "draw-image", 3, draw_image(c.local(0).get<int>(), c.local(1).get<int>(), c.local(2).get<String>(), c.localCount()>3 ? c.local(3).get<float>() : 1.f));
 }
 
 void Camera::resize_buffers() {
@@ -168,31 +166,6 @@ void Camera::update_viewport() {
   _vk_viewport.height = Window::height()*viewport_size.y();
   _vk_viewport.minDepth = 0.f;
   _vk_viewport.maxDepth = 1.f;
-}
-
-void Camera::draw_text(Resource<Font> font, int x, int y, const char* text) {
-  Matrix44f model(1.f);
-  model = translation_matrix(Vector3f(x, y, 0)) * model;
-  model = scale_matrix(Vector3f(2.f/_geometry_buffer.width(), 2.f/_geometry_buffer.height(), 0.f)) * model;
-  model = translation_matrix(Vector3f(-1, -1, 0)) * model;
-  font->draw(_cmd_buffer, model, text);
-}
-void Camera::draw_image(int x, int y, Resource<Texture> texture, float scale) {
-  static Resource<Pipeline> pipeline(".inline?fragment=shader/texture.frag&vertex=shader/quad.vert&pass=present");
-  if(pipeline && texture) {
-    vkCmdBindPipeline(_cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *pipeline);
-
-    Matrix44f model(1.f);
-    model = scale_matrix(Vector3f(float(texture->width()*scale)/_geometry_buffer.width(), float(texture->height()*scale)/_geometry_buffer.height(), 0.f)) * model;
-    model = translation_matrix(Vector3f(float(x*2.f+texture->width()*scale)/_geometry_buffer.width()-1, float(y*2.f+texture->height()*scale)/_geometry_buffer.height()-1, 0)) * model;
-    vkCmdPushConstants(_cmd_buffer, *pipeline, pipeline->find_binding("Constants")->stage, 0, sizeof(model), &model);
-
-    DescriptorSet desc_set(*pipeline);
-    desc_set.set_descriptor("tex", VkDescriptorImageInfo {Vulkan::sampler(), *texture, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
-    vkCmdBindDescriptorSets(_cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *pipeline, 0, 1, &(const VkDescriptorSet&)desc_set, 0, nullptr);
-
-    vkCmdDraw(_cmd_buffer, 6, 1, 0, 0);
-  }
 }
 
 bool Camera::worldToScreen(const Vector3f& p, Vector2f& wtr) const {

@@ -11,6 +11,20 @@
 	(self'cursor | 'require-primitive || 'scale | (vec 0.1))
 	(self'entity | 'require-collider || 'sphere | 0.5)
 	(self'entity | 'require-rigidbody || 'kinematic | true)
+	; Create debug text
+	(set (self'text-gui) (self'entity'add-gui|))
+	(self'text-gui'material || 'pipeline | ".inline?fragment=shader/font.frag&vertex=shader/font.vert&pass=present")
+	(self'text-gui'material || 'font | ".pixel")
+	(self'text-gui'material || 'color | 'color "white")
+	(self'text-gui'offset | 10 -10)
+	(self'text-gui'anchor | 0 1)
+	(self'text-gui'viewport-anchor | 0 1)
+	; Create logo
+	(set (self'logo-gui) (self'entity'add-gui|))
+	(self'logo-gui'material || 'pipeline | ".inline?fragment=shader/texture.frag&vertex=shader/quad.vert&pass=present")
+	(self'logo-gui'material || 'texture | 'tex "texture/logo.png?comp=bc3")
+	(self'logo-gui'material || 'vertex-count | 6)
+	(self'logo-gui'offset | 10 10)
 )))
 (set (self'update) (fun (do
 	; Movement values
@@ -58,6 +72,12 @@
 		)
 		(cursor'require-primitive || 'material || 'color | 'color (color 0 0 0 0))
 	)
+
+	; GUI
+	(self'text-gui'material || 'text |
+		(+ "FPS: " (/ 1.0 delta) "\n"
+		"Frame: " avg-frame-work-duration "\n"))
+
 )))
 (set (self'event) (fun (e) (do
 	(local transform (self'transform))
@@ -89,11 +109,4 @@
 		(e'require-primitive || 'scale | radius)
 		(e'require-rigidbody || 'add-speed | (* (vec 16 16 16) (self'transform | 'forward|)))
 	))
-)))
-(set (self'gui) (fun (camera) (do
-	(camera'draw-image | 10 10 "texture/logo.png?comp=bc3")
-	(camera'draw-text | ".pixel" 84 10
-		(+ "FPS: " (/ 1.0 delta) "\n"
-			 "Frame: " avg-frame-work-duration "\n"
-		))
 )))
