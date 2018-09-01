@@ -50,7 +50,8 @@ bool stb_image_loader(ResourceSlot& slot, Texture::Intermediate& intermediate) {
           }
         }
       } else warning("Attempting BC compression on texture with incompatible dimensions: %s is %dx%d, dimensions should be multiples of 4.", (const char*)slot.id, width, height);
-    } else {
+    }
+    if(!intermediate.binary) {
       intermediate.format = VK_FORMAT_R8G8B8A8_UNORM;
       intermediate.binary = Buffer(img, width*height*4);
     }
