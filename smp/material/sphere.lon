@@ -1,7 +1,0 @@
-{
-  'pipeline ".inline?fragment=shader/color.frag&vertex=shader/sphere.vert"
-  'vertex_count 96
-  'vectors {
-    'color "white"
-  }
-}

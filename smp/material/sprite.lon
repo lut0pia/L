@@ -1,7 +1,0 @@
-{
-  'pipeline ".inline?fragment=shader/sprite.frag&vertex=shader/sprite.vert"
-  'vertex_count 6
-  'vectors {
-    'uv (vec4 0 1 0 1)
-  }
-}

@@ -16,11 +16,11 @@
 	; Add collider
 	(if (< (rand) 0.0)
 		(do
-			(primitive'material || 'parent | "material/sphere.lon")
+			(primitive'material || 'parent | "material/sphere.ls")
 			(entity'require-collider || 'sphere | 0.5)
 		)
 		(do
-			(primitive'material || 'parent | "material/box.lon")
+			(primitive'material || 'parent | "material/box.ls")
 			(entity'require-collider || 'box | (vec 0.5 0.5 0.5))
 		)
 	)
@@ -29,7 +29,7 @@
 	(primitive'scale | (vec 0.5 0.5 0.5))
 	(primitive'material ||  'color | 'color color)
 	; Light
-	(light'material || 'parent | "material/pointlight.lon")
+	(light'material || 'parent | "material/pointlight.ls")
 	(light'material || 'color | 'color color)
 	(light'material || 'scalar | 'intensity 4)
 	(light'scale | 32)
@@ -51,7 +51,7 @@
 	(entity'require-transform || 'move | position)
 	(entity'require-collider || 'box | size)
 	(entity'require-primitive || 'scale | size)
-	(entity'require-primitive || 'material || 'parent | "material/box.lon")
+	(entity'require-primitive || 'material || 'parent | "material/box.ls")
 )))
 (set make-mesh (fun (mat pos) (do
 	(local entity (entity-make))
@@ -72,14 +72,14 @@
 
 	; Make ambient light
 	(local amblight-entity (entity-make))
-	(amblight-entity'require-primitive || 'material || 'parent | "material/ssao.lon")
+	(amblight-entity'require-primitive || 'material || 'parent | "material/ssao.ls")
 	(amblight-entity'require-primitive || 'scale | 99999)
 	(amblight-entity'require-primitive || 'material || 'color | 'color (color 0.2 0.2 0.2))
 
 	; Make directional light
 	(local dirlight-entity (entity-make))
 	(dirlight-entity'require-transform || 'rotate | (vec -1 0 1) 1)
-	(dirlight-entity'require-primitive || 'material || 'parent | "material/dirlight.lon")
+	(dirlight-entity'require-primitive || 'material || 'parent | "material/dirlight.ls")
 	(dirlight-entity'require-primitive || 'scale | 99999)
 	(dirlight-entity'require-primitive || 'material || 'scalar | 'intensity 2)
 
@@ -88,13 +88,13 @@
 	(local terrain-entity (entity-make))
 	(terrain-entity'require-transform || 'move | (vec -20 0 0))
 	(terrain-entity'require-primitive || 'scale | (vec 10 10 2))
-	(terrain-entity'require-primitive || 'material || 'parent | "material/terrain.lon")
+	(terrain-entity'require-primitive || 'material || 'parent | "material/terrain.ls")
 
 	(make-cage)
 
-	(make-mesh "material/smartphone.lon" (vec -16 -20 5))
-	(make-mesh "material/jerrican.lon" (vec 10 -16 5))
-	(make-mesh "material/bush.lon" (vec -16 -28 0))
+	(make-mesh "material/smartphone.ls" (vec -16 -20 5))
+	(make-mesh "material/jerrican.ls" (vec 10 -16 5))
+	(make-mesh "material/bush.ls" (vec -16 -28 0))
 	(set truc (entity-copy truc))
 	(truc'require-transform || 'move | (vec 30 0 0))
 
@@ -104,7 +104,7 @@
 	(local sprite (entity-make))
 	(sprite'require-transform || 'move | (vec -9.4 0 5))
 	(sprite'require-transform || 'rotate | (vec 0 0 1) 1.57)
-	(sprite'require-primitive || 'material || 'parent | "material/sprite.lon")
+	(sprite'require-primitive || 'material || 'parent | "material/sprite.ls")
 	(sprite'require-primitive || 'material || 'texture | 'tex "texture/bush.png?comp=bc3")
 	(sprite'require-primitive || 'scale | (vec 5))
 

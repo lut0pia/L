@@ -1,8 +1,0 @@
-{
-  'pipeline ".inline?fragment=shader/staticmesh.frag&vertex=shader/staticmesh.vert"
-  'mesh "mesh/smartphone.obj"
-  'textures {
-    "tex" "texture/smartphone.png?comp=bc1"
-    "mat_tex" "texture/smartphone_mat.png"
-  }
-}

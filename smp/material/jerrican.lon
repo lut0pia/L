@@ -1,8 +1,0 @@
-{
-  'pipeline ".inline?fragment=shader/staticmesh.frag&vertex=shader/staticmesh.vert"
-  'mesh "mesh/jerrican.obj"
-  'textures {
-    "tex" "texture/jerrican.png?comp=bc1"
-    "mat_tex" "texture/jerrican_mat.png"
-  }
-}

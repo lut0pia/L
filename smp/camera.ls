@@ -7,7 +7,7 @@
 	; Create cursor entity
 	(set (self'cursor) (entity-make))
 	(set (self'cursor-transform) (self'cursor | 'require-transform|))
-	(self'cursor | 'require-primitive || 'material || 'parent | "material/sphere.lon")
+	(self'cursor | 'require-primitive || 'material || 'parent | "material/sphere.ls")
 	(self'cursor | 'require-primitive || 'scale | (vec 0.1))
 	(self'entity | 'require-collider || 'sphere | 0.5)
 	(self'entity | 'require-rigidbody || 'kinematic | true)
@@ -104,7 +104,7 @@
 		(e'require-transform || 'copy | (self'transform))
 		(e'require-transform || 'move | (vec 0 0 1))
 		(e'require-collider || 'box | radius)
-		(e'require-primitive || 'material || 'parent | "material/box.lon")
+		(e'require-primitive || 'material || 'parent | "material/box.ls")
 		(e'require-primitive || 'material || 'color | 'color (rand-color))
 		(e'require-primitive || 'scale | radius)
 		(e'require-rigidbody || 'add-speed | (* (vec 16 16 16) (self'transform | 'forward|)))
