@@ -151,7 +151,7 @@ Ref<Table<Var, Var>> Context::typeTable(const TypeDescription* td) {
   return tt.as<Ref<Table<Var, Var>>>();
 }
 
-Context::Context() : _self(ref<Table<Var, Var>>()) {
+Context::Context(const Var& self) : _self(self) {
   L_ONCE;
   _globals[Symbol("fun")] = (Native)([](Context& c, const Array<Var>& a) {
     if(a.size()>1) {

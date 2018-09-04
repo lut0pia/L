@@ -18,7 +18,7 @@ namespace L {
       Var _self;
 
     public:
-      Context();
+      Context(const Var& self = ref<Table<Var, Var>>());
 
       inline Var& currentSelf() { L_ASSERT(!_selves.empty()); return _selves.back(); }
       inline Table<Var, Var>& selfTable() { return *_self.as<Ref<Table<Var, Var>>>(); }
