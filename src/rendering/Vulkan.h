@@ -8,6 +8,7 @@
 namespace L {
   namespace Vulkan {
     void init();
+    void recreate_swapchain();
 
     const char* result_str(VkResult result);
     VkFormat find_supported_format(VkFormat* candidates, size_t candidate_count, VkFormatFeatureFlags features);

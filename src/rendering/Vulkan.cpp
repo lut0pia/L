@@ -214,20 +214,6 @@ void Vulkan::init() {
         surface_format = surface_formats[i];
   }
 
-  { // Fetch surface capabilities
-    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physical_device, surface, &surface_capabilities);
-    L_ASSERT(surface_capabilities.currentExtent.width!=-1);
-  }
-
-  { // Setup _viewport
-    _viewport.x = 0.0f;
-    _viewport.y = 0.0f;
-    _viewport.width = (float)surface_capabilities.currentExtent.width;
-    _viewport.height = (float)surface_capabilities.currentExtent.height;
-    _viewport.minDepth = 0.0f;
-    _viewport.maxDepth = 1.0f;
-  }
-
   { // Create command pools
     const uint32_t command_pool_count(TaskSystem::fiber_count());
     command_pool = Memory::alloc_type<VkCommandPool>(command_pool_count);
@@ -252,6 +238,93 @@ void Vulkan::init() {
     for(uint32_t i(0); i<command_fence_count; i++) {
       L_VK_CHECKED(vkCreateFence(_device, &create_info, nullptr, command_fence+i));
     }
+  }
+
+  { // Create command buffers
+    VkCommandBufferAllocateInfo allocInfo = {};
+    allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    allocInfo.commandPool = *command_pool;
+    allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    allocInfo.commandBufferCount = (uint32_t)L_COUNT_OF(render_command_buffers);
+
+    L_VK_CHECKED(vkAllocateCommandBuffers(_device, &allocInfo, render_command_buffers));
+  }
+
+  { // Create semaphores
+    VkSemaphoreCreateInfo semaphoreInfo = {};
+    semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+    L_VK_CHECKED(vkCreateSemaphore(_device, &semaphoreInfo, nullptr, &imageAvailableSemaphore));
+    L_VK_CHECKED(vkCreateSemaphore(_device, &semaphoreInfo, nullptr, &renderFinishedSemaphore));
+  }
+
+  { // Create descriptor pool
+    VkDescriptorPoolSize pool_sizes[] = {
+      {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1<<12},
+      {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1<<10},
+    };
+
+    VkDescriptorPoolCreateInfo create_info = {};
+    create_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+    create_info.poolSizeCount = L_COUNT_OF(pool_sizes);
+    create_info.pPoolSizes = pool_sizes;
+    create_info.maxSets = 1<<16;
+    create_info.flags = VkDescriptorPoolCreateFlagBits::VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+
+    L_VK_CHECKED(vkCreateDescriptorPool(_device, &create_info, nullptr, &_descriptor_pool));
+  }
+
+  { // Create default sampler
+    VkSamplerCreateInfo samplerInfo = {};
+    samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+    samplerInfo.magFilter = VK_FILTER_LINEAR;
+    samplerInfo.minFilter = VK_FILTER_LINEAR;
+    samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+    samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+    samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+    samplerInfo.anisotropyEnable = VK_TRUE;
+    samplerInfo.maxAnisotropy = 16;
+    samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+    samplerInfo.unnormalizedCoordinates = VK_FALSE;
+    samplerInfo.compareEnable = VK_FALSE;
+    samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
+    samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+    samplerInfo.mipLodBias = 0.0f;
+    samplerInfo.minLod = 0.0f;
+    samplerInfo.maxLod = 0.0f;
+
+    L_VK_CHECKED(vkCreateSampler(Vulkan::device(), &samplerInfo, nullptr, &_sampler));
+  }
+
+  recreate_swapchain();
+}
+void Vulkan::recreate_swapchain() {
+  vkDeviceWaitIdle(Vulkan::device());
+
+  { // Cleanup
+    for(uintptr_t i(0); i < L_COUNT_OF(framebuffers); i++) {
+      vkDestroyFramebuffer(Vulkan::device(), framebuffers[i], nullptr);
+    }
+
+    for(uintptr_t i(0); i < L_COUNT_OF(swapchain_image_views); i++) {
+      vkDestroyImageView(Vulkan::device(), swapchain_image_views[i], nullptr);
+    }
+
+    vkDestroySwapchainKHR(Vulkan::device(), swapchain, nullptr);
+  }
+
+  { // Fetch surface capabilities
+    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physical_device, surface, &surface_capabilities);
+    L_ASSERT(surface_capabilities.currentExtent.width!=-1);
+  }
+
+  { // Setup _viewport
+    _viewport.x = 0.0f;
+    _viewport.y = 0.0f;
+    _viewport.width = (float)surface_capabilities.currentExtent.width;
+    _viewport.height = (float)surface_capabilities.currentExtent.height;
+    _viewport.minDepth = 0.0f;
+    _viewport.maxDepth = 1.0f;
   }
 
   { // Create swapchain
@@ -315,62 +388,6 @@ void Vulkan::init() {
 
       L_VK_CHECKED(vkCreateFramebuffer(_device, &framebufferInfo, nullptr, &framebuffers[i]));
     }
-  }
-
-  { // Create command buffers
-    VkCommandBufferAllocateInfo allocInfo = {};
-    allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-    allocInfo.commandPool = *command_pool;
-    allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-    allocInfo.commandBufferCount = (uint32_t)L_COUNT_OF(render_command_buffers);
-
-    L_VK_CHECKED(vkAllocateCommandBuffers(_device, &allocInfo, render_command_buffers));
-  }
-
-  { // Create semaphores
-    VkSemaphoreCreateInfo semaphoreInfo = {};
-    semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-
-    L_VK_CHECKED(vkCreateSemaphore(_device, &semaphoreInfo, nullptr, &imageAvailableSemaphore));
-    L_VK_CHECKED(vkCreateSemaphore(_device, &semaphoreInfo, nullptr, &renderFinishedSemaphore));
-  }
-
-  { // Create descriptor pool
-    VkDescriptorPoolSize pool_sizes[] = {
-      {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1<<12},
-      {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1<<10},
-    };
-
-    VkDescriptorPoolCreateInfo create_info = {};
-    create_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-    create_info.poolSizeCount = L_COUNT_OF(pool_sizes);
-    create_info.pPoolSizes = pool_sizes;
-    create_info.maxSets = 1<<16;
-    create_info.flags = VkDescriptorPoolCreateFlagBits::VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-
-    L_VK_CHECKED(vkCreateDescriptorPool(_device, &create_info, nullptr, &_descriptor_pool));
-  }
-
-  { // Create default sampler
-    VkSamplerCreateInfo samplerInfo = {};
-    samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-    samplerInfo.magFilter = VK_FILTER_LINEAR;
-    samplerInfo.minFilter = VK_FILTER_LINEAR;
-    samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-    samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-    samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-    samplerInfo.anisotropyEnable = VK_TRUE;
-    samplerInfo.maxAnisotropy = 16;
-    samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
-    samplerInfo.unnormalizedCoordinates = VK_FALSE;
-    samplerInfo.compareEnable = VK_FALSE;
-    samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
-    samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
-    samplerInfo.mipLodBias = 0.0f;
-    samplerInfo.minLod = 0.0f;
-    samplerInfo.maxLod = 0.0f;
-
-    L_VK_CHECKED(vkCreateSampler(Vulkan::device(), &samplerInfo, nullptr, &_sampler));
   }
 }
 
@@ -517,7 +534,13 @@ void Vulkan::end_render_command_buffer() {
     L_SCOPE_MARKER("Present");
     L_SCOPED_LOCK(queue_lock);
     L_VK_CHECKED(vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE));
-    L_VK_CHECKED(vkQueuePresentKHR(queue, &presentInfo));
+    if(VkResult result = vkQueuePresentKHR(queue, &presentInfo)) {
+      if(result==VK_ERROR_OUT_OF_DATE_KHR) {
+        recreate_swapchain();
+      } else {
+        error(Vulkan::result_str(result));
+      }
+    }
     vkQueueWaitIdle(queue);
   }
 
@@ -589,7 +612,7 @@ void Vulkan::end_command_buffer(VkCommandBuffer commandBuffer) {
     VkFence fence(command_fence[TaskSystem::fiber_id()]);
     vkQueueSubmit(queue, 1, &submitInfo, fence);
     L_SCOPE_MARKER("Command buffer fence");
-    TaskSystem::yield_until([](void* fence){
+    TaskSystem::yield_until([](void* fence) {
       return vkGetFenceStatus(Vulkan::device(), *(VkFence*)fence)==VK_SUCCESS;
     }, &fence);
     vkResetFences(_device, 1, &fence);
@@ -630,7 +653,7 @@ void Vulkan::destroy_desc_set(VkPipeline pipeline, VkDescriptorSet set) {
 void Vulkan::destroy_framebuffer(VkFramebuffer framebuffer) {
   garbage_framebuffers.push(framebuffer);
 }
-void Vulkan::destroy_image(VkImage image, VkDeviceMemory memory){
+void Vulkan::destroy_image(VkImage image, VkDeviceMemory memory) {
   garbage_images.push(GarbageImage {image, memory});
 }
 

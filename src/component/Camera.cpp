@@ -71,6 +71,7 @@ void Camera::event(const Window::Event& e) {
   if(e.type == Window::Event::Resize) {
     resize_buffers();
     update_projection();
+    update_viewport();
   }
 }
 void Camera::prerender(VkCommandBuffer cmd_buffer) {
