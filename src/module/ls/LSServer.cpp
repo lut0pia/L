@@ -1,15 +1,14 @@
-#include "ScriptServer.h"
+#include "LSServer.h"
 
-#include "../dev/profiling.h"
-#include "../stream/CFileStream.h"
-#include "../stream/BufferStream.h"
+#include <L/src/dev/profiling.h>
+#include <L/src/stream/CFileStream.h>
+#include <L/src/stream/BufferStream.h>
 
 using namespace L;
-using namespace Network;
 using namespace Script;
 
-void ScriptServer::update() {
-  L_SCOPE_MARKER("ScriptServer::update");
+void LSServer::update() {
+  L_SCOPE_MARKER("LSServer::update");
   { // Accept new connections
     SOCKET socket;
     while(new_client(socket)) {
@@ -21,7 +20,7 @@ void ScriptServer::update() {
     SOCKET socket(pair.key());
     Client& client(pair.value());
     char buffer[2<<10];
-    if(int byte_count = recv(socket, buffer, sizeof(buffer))) {
+    if(int byte_count = Network::recv(socket, buffer, sizeof(buffer))) {
       if(byte_count==-1) { // Connection closed
         _clients.remove(pair.key());
       } else { // We could read something
@@ -35,7 +34,7 @@ void ScriptServer::update() {
           {
             BufferStream buffer_stream(buffer, sizeof(buffer));
             buffer_stream << result << '\n';
-            send(socket, buffer, buffer_stream.tell());
+            Network::send(socket, buffer, buffer_stream.tell());
           }
 
           // Reset compiler

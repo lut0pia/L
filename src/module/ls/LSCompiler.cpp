@@ -1,9 +1,10 @@
-#include "Compiler.h"
+#include "LSCompiler.h"
+
+#include <L/src/container/Ref.h>
 
 using namespace L;
-using namespace Script;
 
-void Compiler::read(const char* text, size_t size, bool last_read) {
+void LSCompiler::read(const char* text, size_t size, bool last_read) {
   _lexer.read(text, size, last_read);
   while(_lexer.next_token()) {
     if(_lexer.is_token("(")) { // It's a list of expressions
@@ -22,7 +23,7 @@ void Compiler::read(const char* text, size_t size, bool last_read) {
       L_ASSERT(_stack.top(1)->is<Array<Var>>());
       auto& var_array = _stack.top(1)->as<Array<Var>>();
       var_array.pop(); // Remove current value
-      var_array = Array<Var>{var_array,Var()};
+      var_array = Array<Var> {var_array,Var()};
       _stack.top() = &var_array[1];
     } else if(_lexer.is_token("'")) {
       L_ASSERT(_state==Usual);
@@ -39,7 +40,7 @@ void Compiler::read(const char* text, size_t size, bool last_read) {
       if(_state == PostQuote) {
         L_ASSERT(v.is<Symbol>());
         const Symbol sym(v.as<Symbol>());
-        v.make<RawSymbol>().sym = sym;
+        v.make<Script::RawSymbol>().sym = sym;
         _state = Usual;
       }
       _stack.pop();
@@ -51,7 +52,7 @@ void Compiler::read(const char* text, size_t size, bool last_read) {
     }
   }
 }
-void Compiler::reset() {
+void LSCompiler::reset() {
   static const Symbol do_symbol("do");
   Array<Var>& var_array(_code.make<Array<Var>>());
   var_array.push(do_symbol);
@@ -64,16 +65,16 @@ void Compiler::reset() {
 
   _state = Usual;
 }
-CodeFunction Compiler::function() const {
+Script::CodeFunction LSCompiler::function() const {
   L_ASSERT(ready());
-  CodeFunction code_function{_code, 0};
+  Script::CodeFunction code_function {_code, 0};
   code_function.code.as<Array<Var>>().pop(); // Remove temporary void value
   Table<Symbol, uint32_t> local_table;
-  apply_scope(code_function.code, local_table, code_function.localCount);
+  apply_scope(code_function.code, local_table, code_function.local_count);
   return code_function;
 }
 
-void Compiler::apply_scope(Var& v, Table<Symbol, uint32_t>& localTable, uint32_t& localIndex) {
+void LSCompiler::apply_scope(Var& v, Table<Symbol, uint32_t>& local_table, uint32_t& local_index) {
   static const Symbol localSymbol("local"), funSymbol("fun"), foreachSymbol("foreach"), setSymbol("set");
   if(v.is<Array<Var>>()) {
     Array<Var>& array(v.as<Array<Var>>());
@@ -81,71 +82,35 @@ void Compiler::apply_scope(Var& v, Table<Symbol, uint32_t>& localTable, uint32_t
       const Symbol& sym(array[0].as<Symbol>());
       if(array.size()>1 && array[1].is<Symbol>() && sym==localSymbol) {
         array[0] = setSymbol;
-        localTable[array[1].as<Symbol>()] = localIndex++;
+        local_table[array[1].as<Symbol>()] = local_index++;
       } else if(sym==foreachSymbol) {
         if(array.size()>=4) // Value only
-          localTable[array[1].as<Symbol>()] = localIndex++;
+          local_table[array[1].as<Symbol>()] = local_index++;
         if(array.size()>=5) // Key value
-          localTable[array[2].as<Symbol>()] = localIndex++;
-      } else if(sym==funSymbol) // Don't go inside functions
+          local_table[array[2].as<Symbol>()] = local_index++;
+      } else if(sym==funSymbol) {
+        if(array.size()>1) {
+          Ref<Script::CodeFunction> fun;
+          fun.make();
+          Table<Symbol, uint32_t> fun_local_table;
+          uint32_t fun_local_index(0);
+          if(array.size()>2 && array[1].is<Array<Var> >()) // There's a list of parameter symbols
+            for(const Var& sym : array[1].as<Array<Var> >()) {
+              L_ASSERT(sym.is<Symbol>());
+              fun_local_table[sym.as<Symbol>()] = fun_local_index++;
+            }
+          fun->code = array.back(); // The last part is always the code
+          LSCompiler::apply_scope(fun->code, fun_local_table, fun_local_index);
+          fun->local_count = fun_local_index;
+          v = fun;
+        }
         return;
+      }
     }
     for(Var& e : array)
-      apply_scope(e, localTable, localIndex);
+      apply_scope(e, local_table, local_index);
   } else if(v.is<Symbol>()) {
-    if(uint32_t* found = localTable.find(v.as<Symbol>()))
-      v = Local{*found};
+    if(uint32_t* found = local_table.find(v.as<Symbol>()))
+      v = Script::Local {*found};
   }
 }
-
-/*
-bool Compiler::read(Var& v) {
-  if(_lexer.eos()) {
-    warning("Unexpected end of stream while parsing script: there are uneven () or {}.");
-    return false;
-  }
-  if(_lexer.accept_token("(")) { // It's a list of expressions
-    v.make<Array<Var> >();
-    int i(0);
-    while(!_lexer.accept_token(")"))
-      if(_lexer.accept_token("|"))
-        v = Array<Var>{v}, i = 1;
-      else if(!read(v[i++], _lexer))
-        return false;
-  } else if(_lexer.accept_token("{")) { // It's an object
-    v.make<Array<Var> >();
-    v[0] = (Function)object;
-    int i(1);
-    while(!_lexer.accept_token("}"))
-      if(!read(v[i++], _lexer))
-        return false;
-  } else if(_lexer.accept_token("'")) {
-    if(!read(v, _lexer))
-      return false;
-    if(!v.is<Symbol>()) {
-      warning("Expected symbol after ', got %s at line %d", (const char*)v.type()->name, _lexer.line());
-      return false;
-    }
-    const Symbol sym(v.as<Symbol>());
-    v.make<RawSymbol>().sym = sym;
-  } else if(_lexer.accept_token("!")) {
-    if(!read(v, _lexer))
-      return false;
-  } else if(_lexer.is_token(")") || _lexer.is_token("}")) {
-    warning("Unexpected token %s at line %d", _lexer.token(), _lexer.line());
-    return false;
-  } else {
-    const char* token(_lexer.token());
-    if(_lexer.literal()) v = token; // Character string
-    else if(strpbrk(token, "0123456789")) { // Has digits
-      if(token[strspn(token, "-0123456789")]=='\0') v = atoi(token); // Integer
-      else if(token[strspn(token, "-0123456789.")]=='\0') v = (float)atof(token); // Float
-      else v = Symbol(token);
-    } else if(_lexer.is_token("true")) v = true;
-    else if(_lexer.is_token("false")) v = false;
-    else v = Symbol(token);
-    _lexer.next_token();
-  }
-  return true;
-}
-*/

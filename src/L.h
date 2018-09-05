@@ -50,7 +50,6 @@
 // Dev tools
 #include "dev/debug.h"
 #include "dev/profiling.h"
-#include "dev/ScriptServer.h"
 
 // Dynamic typing/casting/compiling
 #include "dynamic/Assembly.h"
@@ -105,9 +104,7 @@
 #include "rendering/Vulkan.h"
 
 // Scripting language
-#include "script/Compiler.h"
 #include "script/Context.h"
-#include "script/Lexer.h"
 #include "script/script.h"
 
 // Streams, IO

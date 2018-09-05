@@ -1,6 +1,5 @@
 #include "Context.h"
 
-#include "Compiler.h"
 #include "../container/Ref.h"
 #include "../engine/Resource.h"
 #include "../engine/Resource.inl"
@@ -62,7 +61,7 @@ void Context::execute(const Var& code, Var* selfOut) {
       if(handle.is<Ref<CodeFunction>>() || handle.is<Resource<CodeFunction>>()) {
         const CodeFunction* function(handle.is<Ref<CodeFunction>>() ? handle.as<Ref<CodeFunction>>() : &*handle.as<Resource<CodeFunction>>());
         if(function) {
-          _stack.size(currentFrame()+function->localCount);
+          _stack.size(currentFrame()+function->local_count);
           execute(function->code);
           returnValue() = _stack.back();
         } else returnValue() = Var();
@@ -154,23 +153,10 @@ Ref<Table<Var, Var>> Context::typeTable(const TypeDescription* td) {
 Context::Context(const Var& self) : _self(self) {
   L_ONCE;
   _globals[Symbol("fun")] = (Native)([](Context& c, const Array<Var>& a) {
-    if(a.size()>1) {
-      Ref<CodeFunction>& fun(c._stack.back().make<Ref<CodeFunction>>());
-      Table<Symbol, uint32_t> localTable;
-      uint32_t localIndex(0);
-      fun.make();
-      if(a.size()>2 && a[1].is<Array<Var> >()) // There's a list of parameter symbols
-        for(auto&& sym : a[1].as<Array<Var> >()) {
-          L_ASSERT(sym.is<Symbol>());
-          localTable[sym.as<Symbol>()] = localIndex++;
-        }
-      fun->code = a.back();
-      Compiler::apply_scope(fun->code, localTable, localIndex); // The last part is always the code
-      fun->localCount = localIndex;
-    }
+    error("fun should have been stripped during compilation");
   });
   _globals[Symbol("local")] = (Native)([](Context& c, const Array<Var>& a) {
-    debugbreak();
+    error("local should have been stripped during compilation");
   });
   _globals[Symbol("do")] = (Native)([](Context& c, const Array<Var>& a) {
     for(uintptr_t i(1); i<a.size(); i++)

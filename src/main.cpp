@@ -7,17 +7,7 @@ void mainjob(void*) {
   Network::init();
   Audio::init();
 
-#ifdef L_DEBUG
-  ScriptServer* server(nullptr);
-  if(Settings::get_int("script_server",0))
-    server = Memory::new_type<ScriptServer>(short(Settings::get_int("server_port", 1993)));
-#endif
-
   while(Window::loop()) {
-#ifdef L_DEBUG
-    if(server)
-      server->update();
-#endif
     Engine::update();
   }
   Engine::clear();

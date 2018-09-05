@@ -1,13 +1,11 @@
-#include "Lexer.h"
+#include "LSLexer.h"
 
 #include <cstring>
-
-#include "../dev/debug.h"
+#include <L/src/dev/debug.h>
 
 using namespace L;
-using namespace Script;
 
-char Lexer::get() {
+char LSLexer::get() {
   L_ASSERT(!end_of_text());
   const char c(*_read);
   _read++;
@@ -16,14 +14,14 @@ char Lexer::get() {
     _line++;
   return c;
 }
-void Lexer::read(const char* text, size_t size, bool last_read) {
+void LSLexer::read(const char* text, size_t size, bool last_read) {
   L_ASSERT(!_read || end_of_text());
   L_ASSERT(!_last_read);
   _read = text;
   _read_size = size;
   _last_read = last_read;
 }
-bool Lexer::next_token() {
+bool LSLexer::next_token() {
   if(_state==Comment) {
     while(!end_of_text() && peek()!='\n')
       get();
@@ -91,7 +89,7 @@ bool Lexer::next_token() {
     }
   }
 }
-bool Lexer::accept_token(const char* str) {
+bool LSLexer::accept_token(const char* str) {
   if(is_token(str)) {
     next_token();
     return true;

@@ -13,7 +13,7 @@ namespace L {
     struct RawSymbol { Symbol sym; };
     struct CodeFunction {
       typedef CodeFunction* Intermediate;
-      Var code; uint32_t localCount;
+      Var code; uint32_t local_count;
     };
   }
 }
