@@ -14,7 +14,7 @@ Font::Font(const Intermediate& intermediate) : _atlas(intermediate.texture_inter
   }
 }
 const Font::Glyph& Font::glyph(uint32_t utf32) {
-  static const Font::Glyph no_glyph;
+  static const Font::Glyph no_glyph {};
   const Glyph* glyph((utf32<128) ? (_ascii + utf32) : _glyphs.find(utf32));
   if(!glyph) glyph = &no_glyph;
   return *glyph;
