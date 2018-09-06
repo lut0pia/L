@@ -13,6 +13,7 @@
             "MIMode": "gdb",
             "preLaunchTask": "build-dbg",
             "visualizerFile": "${workspaceFolder}/src/L.natvis",
+            "showDisplayString": true,
         },
         {
             "name": "(gdb) Development",
