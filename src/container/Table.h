@@ -4,6 +4,7 @@
 #include "../hash.h"
 #include "../system/Memory.h"
 #include "../stream/Stream.h"
+#include "../stream/serial_bin.h"
 #include "../stream/serial_text.h"
 
 namespace L {
