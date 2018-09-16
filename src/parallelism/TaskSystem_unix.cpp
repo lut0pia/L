@@ -21,7 +21,7 @@ namespace L {
     ucontext_t* context(Memory::alloc_type<ucontext_t>());
     if(getcontext(context)<0)
       error("getcontext error");
-    context->uc_stack.ss_size = 1<<16;
+    context->uc_stack.ss_size = 1<<17;
     context->uc_stack.ss_sp = Memory::alloc(context->uc_stack.ss_size);
     makecontext(context, (void(*)(void))f, 1, p);
     return context;
