@@ -19,6 +19,11 @@ namespace L {
         _max[i] = L::min(a._max[i],b._max[i]);
       }
     }
+    inline Interval& operator*=(const T& scalar) {
+      _min *= scalar;
+      _max *= scalar;
+      return *this;
+    }
     inline Interval operator*(const Interval& other) const {
       return Interval(*this,other);
     }
