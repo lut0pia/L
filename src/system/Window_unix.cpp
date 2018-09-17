@@ -150,13 +150,6 @@ bool Window::loop() {
   }
   return opened();
 }
-void Window::swapBuffers() {
-  if(!opened()) return;
-  //glXSwapBuffers(dpy,win);
-}
-void Window::draw(const Bitmap& bmp) {
-  if(!opened()) return;
-}
 
 void Window::title(const char* str) {
   if(!opened()) return;

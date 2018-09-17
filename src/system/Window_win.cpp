@@ -233,20 +233,6 @@ bool Window::loop() {
   }
   return opened();
 }
-void Window::swapBuffers() {
-  L_ASSERT(opened());
-  SwapBuffers(hDC);
-}
-void Window::draw(const Bitmap& bmp) {
-  L_ASSERT(opened());
-  HBITMAP hbmp = CreateBitmap(bmp.width(),bmp.height(),1,32,&bmp(0,0)),htmp;
-  HDC hMemDC = CreateCompatibleDC(hDC);
-  htmp = (HBITMAP)SelectObject(hMemDC,hbmp);
-  BitBlt(hDC,0,0,bmp.width(),bmp.height(),hMemDC,0,0,SRCCOPY);
-  SelectObject(hMemDC,htmp);
-  DeleteObject(hbmp);
-  DeleteDC(hMemDC);
-}
 
 void Window::title(const char* str) {
   L_ASSERT(opened());

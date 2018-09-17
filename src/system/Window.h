@@ -59,9 +59,6 @@ namespace L {
     static bool loop();
     static bool newEvent(Event&);
 
-    static void swapBuffers();
-    static void draw(const Bitmap&);
-
     // Setters & getters
     static void title(const char*);
     static void resize(int width,int height);
