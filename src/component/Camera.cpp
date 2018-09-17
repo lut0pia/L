@@ -20,7 +20,8 @@ static const float& screen_percentage(Settings::get_float("screen-percentage", 1
 Camera::Camera() :
   _viewport(Vector2f(0, 0), Vector2f(1, 1)),
   _geometry_buffer(Window::width(), Window::height(), RenderPass::geometry_pass()),
-  _light_buffer(Window::width(), Window::height(), RenderPass::light_pass()) {
+  _light_buffer(Window::width(), Window::height(), RenderPass::light_pass()),
+  _shared_uniform(L_SHAREDUNIFORM_SIZE, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT) {
   update_viewport();
 }
 
@@ -82,16 +83,17 @@ void Camera::prerender(VkCommandBuffer cmd_buffer) {
   _prevViewProjection = _viewProjection;
   _viewProjection = _projection*_view;
   _ray = orientation*_projection.inverse();
-  Engine::shared_uniform().load_item(_view, L_SHAREDUNIFORM_VIEW);
-  Engine::shared_uniform().load_item(_view.inverse(), L_SHAREDUNIFORM_INVVIEW);
-  Engine::shared_uniform().load_item(_projection, L_SHAREDUNIFORM_PROJECTION);
-  Engine::shared_uniform().load_item(_viewProjection, L_SHAREDUNIFORM_VIEWPROJ);
-  Engine::shared_uniform().load_item(_viewProjection.inverse(), L_SHAREDUNIFORM_INVVIEWPROJ);
-  Engine::shared_uniform().load_item(_prevViewProjection, L_SHAREDUNIFORM_PREVVIEWPROJ);
-  Engine::shared_uniform().load_item(_transform->position(), L_SHAREDUNIFORM_EYE);
-  Engine::shared_uniform().load_item(Vector4f(float(Window::width()), float(Window::height()), _geometry_buffer.width(), _geometry_buffer.height()), L_SHAREDUNIFORM_SCREEN);
-  Engine::shared_uniform().load_item(Vector4f(_viewport.min().x(), _viewport.min().y(), _viewport.max().x(), _viewport.max().y()), L_SHAREDUNIFORM_VIEWPORT);
-  Engine::shared_uniform().load_item(Vector4f(_geometry_buffer.width(), _geometry_buffer.height(), 1.f/_geometry_buffer.width(), 1.f/_geometry_buffer.height()), L_SHAREDUNIFORM_VIEWPORT_PIXEL_SIZE);
+  _shared_uniform.load_item(Engine::frame(), L_SHAREDUNIFORM_FRAME);
+  _shared_uniform.load_item(_view, L_SHAREDUNIFORM_VIEW);
+  _shared_uniform.load_item(_view.inverse(), L_SHAREDUNIFORM_INVVIEW);
+  _shared_uniform.load_item(_projection, L_SHAREDUNIFORM_PROJECTION);
+  _shared_uniform.load_item(_viewProjection, L_SHAREDUNIFORM_VIEWPROJ);
+  _shared_uniform.load_item(_viewProjection.inverse(), L_SHAREDUNIFORM_INVVIEWPROJ);
+  _shared_uniform.load_item(_prevViewProjection, L_SHAREDUNIFORM_PREVVIEWPROJ);
+  _shared_uniform.load_item(_transform->position(), L_SHAREDUNIFORM_EYE);
+  _shared_uniform.load_item(Vector4f(float(Window::width()), float(Window::height()), _geometry_buffer.width(), _geometry_buffer.height()), L_SHAREDUNIFORM_SCREEN);
+  _shared_uniform.load_item(Vector4f(_viewport.min().x(), _viewport.min().y(), _viewport.max().x(), _viewport.max().y()), L_SHAREDUNIFORM_VIEWPORT);
+  _shared_uniform.load_item(Vector4f(_geometry_buffer.width(), _geometry_buffer.height(), 1.f/_geometry_buffer.width(), 1.f/_geometry_buffer.height()), L_SHAREDUNIFORM_VIEWPORT_PIXEL_SIZE);
 
   _cmd_buffer = cmd_buffer;
 
@@ -102,6 +104,7 @@ void Camera::present() {
   static Resource<Pipeline> present_pipeline(".inline?fragment=shader/present.frag&vertex=shader/fullscreen.vert&pass=present");
   if(present_pipeline) {
     DescriptorSet present_set(*present_pipeline);
+    present_set.set_descriptor("Shared", _shared_uniform.descriptor_info());
     present_set.set_descriptor("light_buffer", VkDescriptorImageInfo {Vulkan::sampler(), _light_buffer.image_view(0), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
     vkCmdBindPipeline(_cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *present_pipeline);
     vkCmdSetViewport(_cmd_buffer, 0, 1, &_vk_viewport);

@@ -2,6 +2,7 @@
 
 #include "Transform.h"
 #include "../engine/Resource.h"
+#include "../rendering/GPUBuffer.h"
 #include "../rendering/Framebuffer.h"
 #include "../math/Interval.h"
 
@@ -22,6 +23,7 @@ namespace L {
     VkCommandBuffer _cmd_buffer;
     VkViewport _vk_viewport;
     Framebuffer _geometry_buffer, _light_buffer;
+    GPUBuffer _shared_uniform;
   public:
     Camera();
     inline Camera(const Camera&) : Camera() { error("Camera component should not be copied."); }
@@ -58,6 +60,7 @@ namespace L {
     inline const Framebuffer& geometry_buffer() const { return _geometry_buffer; }
     inline Framebuffer& light_buffer() { return _light_buffer; }
     inline const Framebuffer& light_buffer() const { return _light_buffer; }
+    inline const GPUBuffer& shared_uniform() const { return _shared_uniform; }
     inline VkCommandBuffer cmd_buffer() const { return _cmd_buffer; }
   };
 }

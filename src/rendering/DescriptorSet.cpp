@@ -1,6 +1,6 @@
 #include "DescriptorSet.h"
 
-#include "../engine/Engine.h"
+#include "../dev/profiling.h"
 
 using namespace L;
 
@@ -16,8 +16,6 @@ DescriptorSet::DescriptorSet(const Pipeline& pipeline) : _set(0), _pipeline(pipe
     allocInfo.pSetLayouts = layouts;
 
     L_VK_CHECKED(vkAllocateDescriptorSets(Vulkan::device(), &allocInfo, &_set));
-
-    set_descriptor("Shared", VkDescriptorBufferInfo {Engine::shared_uniform(), 0, Engine::shared_uniform().size()});
   }
 
   for(const auto& binding : pipeline.bindings()) {

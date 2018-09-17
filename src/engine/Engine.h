@@ -3,7 +3,6 @@
 #include "../component/ComponentPool.h"
 #include "../component/Component.h"
 #include "../container/Table.h"
-#include "../rendering/GPUBuffer.h"
 #include "../time/Timer.h"
 
 namespace L {
@@ -49,7 +48,5 @@ namespace L {
       if(T::dev_event_all != Component::dev_event_all) _dev_events.push(T::dev_event_all);
       T::script_registration();
     }
-
-    static GPUBuffer& shared_uniform();
   };
 }

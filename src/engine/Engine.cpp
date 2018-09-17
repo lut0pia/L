@@ -39,7 +39,6 @@ void Engine::update() {
   Script::Context::global("delta") = _delta_seconds;
   Script::Context::global("avg-frame-work-duration") = _average_frame_work_duration;
   Script::Context::global("max-frame-work-duration") = _max_frame_work_duration;
-  Engine::shared_uniform().load_item(_frame, L_SHAREDUNIFORM_FRAME);
 
   {
     L_SCOPE_MARKER("Resource update");
@@ -156,9 +155,4 @@ void Engine::update() {
 }
 void Engine::clear() {
   Entity::clear();
-}
-
-GPUBuffer& Engine::shared_uniform() {
-  static GPUBuffer u(L_SHAREDUNIFORM_SIZE, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-  return u;
 }
