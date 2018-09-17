@@ -52,7 +52,7 @@ namespace L {
           slot.value = nullptr;
         }
         slot.dependencies.clear();
-        typename T::Intermediate intermediate;
+        typename T::Intermediate intermediate {};
         if(Buffer buffer = slot.read_archive()) {
           BufferStream stream((char*)buffer.data(), buffer.size());
           L_SCOPE_MARKER("Resource unserialize");
