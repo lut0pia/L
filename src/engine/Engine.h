@@ -5,8 +5,6 @@
 #include "../container/Table.h"
 #include "../rendering/GPUBuffer.h"
 #include "../time/Timer.h"
-#include "../system/Device.h"
-#include "../system/Window.h"
 
 namespace L {
   class Engine {
@@ -19,8 +17,8 @@ namespace L {
     static Array<void(*)()> _updates, _late_updates, _sub_updates;
     static Array<void(*)(const class Camera&, const class RenderPass&)> _renders;
     static Array<void(*)(const class Camera&)> _guis;
-    static Array<void(*)(const Window::Event&)> _win_events;
-    static Array<void(*)(const Device::Event&)> _dev_events;
+    static Array<void(*)(const class Window::Event&)> _win_events;
+    static Array<void(*)(const struct Device::Event&)> _dev_events;
     static Array<DeferredAction> _deferred_actions;
     static Timer _timer;
     static Time _real_delta_time, _delta_time, _accumulator, _average_frame_work_duration, _max_frame_work_duration;
