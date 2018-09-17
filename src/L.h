@@ -91,7 +91,6 @@
 #include "parallelism/TaskSystem.h"
 
 // Rendering
-#include "rendering/Atlas.h"
 #include "rendering/Font.h"
 #include "rendering/Framebuffer.h"
 #include "rendering/Material.h"

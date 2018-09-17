@@ -30,7 +30,7 @@ const Font::TextMesh& Font::text_mesh(const char* str) {
     Array<Vector4f> buffer;
     buffer.growTo(strlen(str)*6);
     wtr.dimensions.y() = _line_height;
-    int x(0), y(0);
+    float x(0.f), y(0.f);
     while(*str) {
       const uint32_t utf32(utf8_to_utf32(str));
       if(utf32=='\n') { // End line
@@ -44,10 +44,10 @@ const Font::TextMesh& Font::text_mesh(const char* str) {
           const Vector4f bl(tl.x(), tl.y()+g.size.y(), tl.z(), g.atlas_coords.max().y());
           const Vector4f br(tr.x(), bl.y(), tr.z(), bl.w());
           buffer.pushMultiple(tl, bl, br, tl, br, tr);
-          wtr.dimensions.y() = max<int>(wtr.dimensions.y(), bl.y());
         }
         x += g.advance;
         wtr.dimensions.x() = max(wtr.dimensions.x(), x);
+        wtr.dimensions.y() = max(wtr.dimensions.y(), y+1.f);
       }
     }
     {

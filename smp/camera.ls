@@ -19,6 +19,7 @@
 	(self'text-gui'offset | 10 -10)
 	(self'text-gui'anchor | 0 1)
 	(self'text-gui'viewport-anchor | 0 1)
+	(self'text-gui'scale | 18 18)
 	; Create logo
 	(set (self'logo-gui) (self'entity'add-gui|))
 	(self'logo-gui'material || 'pipeline | ".inline?fragment=shader/texture.frag&vertex=shader/quad.vert&pass=present")

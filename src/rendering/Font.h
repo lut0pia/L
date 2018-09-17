@@ -10,18 +10,18 @@ namespace L {
   class Font {
   public:
     struct Glyph {
-      Vector2i origin, size;
+      Vector2f origin, size;
       Interval2f atlas_coords;
-      int advance;
+      float advance;
     };
     struct Intermediate {
       Texture::Intermediate texture_intermediate;
       Table<uint32_t, Glyph> glyphs;
-      int line_height;
+      float line_height;
     };
     struct TextMesh {
       Mesh mesh;
-      Vector2i dimensions = {0,0};
+      Vector2f dimensions;
       Time last_used;
     };
 
@@ -31,7 +31,7 @@ namespace L {
     Table<uint32_t, Glyph> _glyphs;
     Table<uint32_t, TextMesh> _text_meshes;
     Time _last_update;
-    int _line_height;
+    float _line_height;
 
   public:
     Font(const Intermediate&);
