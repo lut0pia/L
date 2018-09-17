@@ -22,5 +22,6 @@ namespace L {
     inline VkDeviceSize size() const { return _size; }
     inline operator VkBuffer() { return _buffer; }
     inline operator VkDeviceMemory() { return _memory; }
+    inline VkDescriptorBufferInfo descriptor_info() const { return {_buffer,0,_size}; }
   };
 }
