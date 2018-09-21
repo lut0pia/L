@@ -3,6 +3,7 @@
 #include "../container/Ref.h"
 #include "../engine/Resource.h"
 #include "../engine/Resource.inl"
+#include "../image/Color.h"
 #include "../macros.h"
 #include "../math/Rand.h"
 #include "../stream/CFileStream.h"

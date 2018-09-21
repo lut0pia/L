@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Component.h"
+#include "../math/Rand.h"
 #include "../text/Symbol.h"
 
 namespace L {
