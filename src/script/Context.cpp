@@ -8,6 +8,7 @@
 #include "../math/Rand.h"
 #include "../stream/CFileStream.h"
 #include "../math/Vector.h"
+#include "../system/Device.h"
 #include "../system/Window.h"
 #include "../time/Time.h"
 
@@ -362,16 +363,13 @@ Context::Context(const Var& self) : _self(self) {
   });
   _globals[Symbol("button-pressed")] = (Function)([](Context& c) {
     if(c.localCount()) {
-      if(c.local(0).is<Symbol>())
-        c.returnValue() = Window::isPressed(Window::symbolToButton(c.local(0).as<Symbol>()));
-      else if(c.local(0).is<int>())
-        c.returnValue() = Window::isPressed((Window::Event::Button)(c.local(0).as<int>()+'0'));
+      c.returnValue() = Device::any_button(Device::symbol_to_button(c.local(0)));
     } else c.returnValue() = false;
   });
   _globals[Symbol("window-height")] = (Function)([](Context& c) { c.returnValue() = float(Window::height()); });
   _globals[Symbol("window-width")] = (Function)([](Context& c) { c.returnValue() = float(Window::width()); });
-  _globals[Symbol("mouse-x")] = (Function)([](Context& c) { c.returnValue() = float(Window::mousePosition().x()); });
-  _globals[Symbol("mouse-y")] = (Function)([](Context& c) { c.returnValue() = float(Window::mousePosition().y()); });
+  _globals[Symbol("mouse-x")] = (Function)([](Context& c) { c.returnValue() = Device::any_axis(Device::Axis::MouseX); });
+  _globals[Symbol("mouse-y")] = (Function)([](Context& c) { c.returnValue() = Device::any_axis(Device::Axis::MouseY); });
   _globals[Symbol("vec")] = (Function)([](Context& c) {
     const uint32_t local_count(c.localCount());
     Vector3f& vector(c.returnValue().make<Vector3f>());

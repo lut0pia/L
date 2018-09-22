@@ -47,15 +47,14 @@ void Engine::update() {
   {
     L_SCOPE_MARKER("Window events");
     Window::Event e;
-    while(Window::newEvent(e))
+    while(Window::new_event(e))
       for(const auto& event : _win_events)
         event(e);
   }
   {
     L_SCOPE_MARKER("Device events");
     Device::Event e;
-    Device::update();
-    while(Device::newEvent(e))
+    while(Device::new_event(e))
       for(const auto& event : _dev_events)
         event(e);
   }

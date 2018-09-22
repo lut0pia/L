@@ -3,7 +3,6 @@
 using namespace L;
 
 void mainjob(void*) {
-  Device::init();
   Network::init();
   Audio::init();
 
@@ -40,11 +39,10 @@ int main(int argc, const char* argv[]) {
   }
 
   const char* window_name(Settings::get_string("window_name", "L Engine Sample"));
-  int window_flags((Settings::get_int("no_cursor", 0) ? Window::nocursor : 0)
-                   | (Settings::get_int("loop_cursor", 0) ? Window::loopcursor : 0));
+  int window_flags((Settings::get_int("no_cursor", 0) ? Window::nocursor : 0));
 
   if(Settings::get_int("fullscreen", 1))
-    Window::openFullscreen(window_name, window_flags);
+    Window::open_fullscreen(window_name, window_flags);
   else
     Window::open(window_name, Settings::get_int("resolution_x", 1024), Settings::get_int("resolution_y", 768), window_flags);
 

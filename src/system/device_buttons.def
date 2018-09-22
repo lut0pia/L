@@ -1,0 +1,18 @@
+// Keyboard buttons
+DB(A) DB(B) DB(C) DB(D) DB(E) DB(F) DB(G) DB(H) DB(I) DB(J) DB(K) DB(L) DB(M)
+DB(N) DB(O) DB(P) DB(Q) DB(R) DB(S) DB(T) DB(U) DB(V) DB(W) DB(X) DB(Y) DB(Z)
+DB(Backspace) DB(Tab) DB(Enter) DB(Pause) DB(Caps) DB(Escape) DB(Space) DB(Shift)
+DB(LeftShift) DB(RightShift) DB(LeftCtrl) DB(RightCtrl) DB(LeftAlt) DB(RightAlt)
+DB(Left) DB(Right) DB(Up) DB(Down)
+DB(PageUp) DB(PageDown) DB(End) DB(Home)
+DB(NumLock) DB(Num0) DB(Num1) DB(Num2) DB(Num3) DB(Num4) DB(Num5) DB(Num6) DB(Num7) DB(Num8) DB(Num9)
+DB(F1) DB(F2) DB(F3) DB(F4) DB(F5) DB(F6) DB(F7) DB(F8) DB(F9) DB(F10) DB(F11) DB(F12)
+
+// Mouse buttons
+DB(MouseLeft) DB(MouseRight) DB(MouseMiddle)
+
+// Gamepad buttons
+DB(GamepadLeftStick) DB(GamepadRightStick)
+DB(GamepadFaceBottom) DB(GamepadFaceRight) DB(GamepadFaceLeft) DB(GamepadFaceTop)
+DB(GamepadLeftShoulder) DB(GamepadRightShoulder)
+DB(GamepadLeftTrigger) DB(GamepadRightTrigger)

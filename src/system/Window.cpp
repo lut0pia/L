@@ -1,96 +1,33 @@
 #include "Window.h"
 
-#include "../hash.h"
+#include "../container/Queue.h"
 #include "System.h"
 
 using namespace L;
 
-bool Window::_buttonstate[Window::Event::Last] = {false};
-Queue<512,Window::Event> Window::_events;
-Vector2i Window::_mousePos;
-int Window::_width,Window::_height,Window::_flags;
-
-Window::Event::Event() {
-  memset(this,0,sizeof(*this));
+namespace L {
+  Queue<64, Window::Event> window_events;
+  int window_width, window_height, window_flags, mouse_x, mouse_y;
 }
 
-void Window::openFullscreen(const char* title,int flags) {
-  Vector2i screenSize(System::screenSize());
-  open(title,screenSize.x(),screenSize.y(),borderless | flags);
+void Window::open_fullscreen(const char* title, uint32_t flags) {
+  const Vector2i screenSize(System::screenSize());
+  open(title, screenSize.x(), screenSize.y(), borderless | flags);
 }
 
-bool Window::newEvent(Event& e) {
-  if(_events.empty())
+bool Window::new_event(Event& e) {
+  if(window_events.empty()) {
     return false;
-  else {
-    e = _events.top();
-    _events.pop();
+  } else {
+    e = window_events.top();
+    window_events.pop();
     if(e.type == Event::Resize) {
-      _width = e.x;
-      _height = e.y;
+      window_width = e.x;
+      window_height = e.y;
     }
     return true;
   }
 }
 
-Vector2f Window::normalizedMousePosition() {
-  return Vector2f((2*(float)_mousePos.x()/_width)-1,-((2*(float)_mousePos.y()/_height)-1));
-}
-Vector2f Window::normalizedToPixels(const Vector2f& p) {
-  return Vector2f(((p.x()+1)/2)*_width,((-p.y()+1)/2)*_height);
-}
-
-#define BUTTONS(CB) \
-CB(A) CB(B) CB(C) CB(D) CB(E) CB(F) \
-CB(G) CB(H) CB(I) CB(J) CB(K) CB(L) \
-CB(M) CB(N) CB(O) CB(P) CB(Q) CB(R) \
-CB(S) CB(T) CB(U) CB(V) CB(W) CB(X) \
-CB(Y) CB(Z) CB(Backspace) CB(Tab) CB(Enter) \
-CB(Pause) CB(Caps) CB(Escape) CB(Space) CB(Shift) \
-CB(LeftShift) CB(RightShift) CB(Ctrl) CB(LeftCtrl) CB(RightCtrl) \
-CB(Alt) CB(LeftAlt) CB(RightAlt) CB(Left) CB(Right) \
-CB(Up) CB(Down) CB(PageUp) CB(PageDown) CB(End) \
-CB(Home) CB(NumLock) CB(Num0) CB(Num1) CB(Num2) \
-CB(Num3) CB(Num4) CB(Num5) CB(Num6) CB(Num7) \
-CB(Num8) CB(Num9) CB(F1) CB(F2) CB(F3) CB(F4) \
-CB(F5) CB(F6) CB(F7) CB(F8) CB(F9) CB(F10) \
-CB(F11) CB(F12) CB(LeftButton) CB(RightButton) CB(MiddleButton)
-uint32_t Window::buttonToHash(Event::Button b){
-#define BTH(B) case Event::B: return FNV1A(#B);
-  switch(b){
-    BUTTONS(BTH)
-  }
-#undef BTH
-  return 0;
-}
-Window::Event::Button Window::hashToButton(uint32_t h){
-#define HTB(B) case FNV1A(#B): return Event::B;
-  switch(h){
-    BUTTONS(HTB)
-  }
-#undef HTB
-  return (Event::Button)0;
-}
-Symbol Window::buttonToSymbol(Event::Button b){
-#define BTS(B) if(b==Event::B) return Symbol(#B);
-  BUTTONS(BTS)
-#undef BTS
-    return Symbol("None");
-}
-Window::Event::Button Window::symbolToButton(Symbol s){
-#define STB(B) if(s==Symbol(#B)) return Event::B;
-  BUTTONS(STB)
-#undef STB
-    return (Event::Button)0;
-}
-#define EVENT_TYPES(CB) \
-CB(None) CB(Resize) CB(Text) \
-CB(ButtonDown) CB(ButtonUp) \
-CB(MouseMove) CB(MouseWheel)
-Symbol Window::event_type_to_symbol(Event::Type t){
-#define ETTS(ET) case Event::Type::ET: return Symbol(#ET);
-  switch(t){
-    EVENT_TYPES(ETTS)
-  }
-  return Symbol("None");
-}
+uint32_t Window::width() { return window_width; }
+uint32_t Window::height() { return window_height; }

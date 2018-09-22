@@ -1,0 +1,8 @@
+// Mouse axes
+DA(MouseX) DA(MouseY)
+DA(MouseDX) DA(MouseDY) DA(MouseWheel)
+
+// Gamepad axes
+DA(GamepadLeftStickX) DA(GamepadLeftStickY)
+DA(GamepadRightStickX) DA(GamepadRightStickY)
+DA(GamepadLeftTrigger) DA(GamepadRightTrigger)

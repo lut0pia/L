@@ -1,34 +1,57 @@
 #pragma once
 
 #include "../container/Array.h"
-#include "../container/Queue.h"
-#include "../text/String.h"
+#include "../text/Symbol.h"
 
 namespace L {
   class Device {
   public:
-    struct Event {
-      const Device* _device;
-      uint8_t _index : 7, _pressed : 1;
+    enum class Button : uint8_t {
+#define DB(button) button,
+#include "device_buttons.def"
+#undef DB
+      Last,
     };
-    void* _id;
-    String _name;
-    uint32_t _buttons;
-    float _axes[16];
-  private:
-    static Array<Device> _devices;
-    static Queue<64, Event> _events;
-    void* _systemData;
-  public:
-    inline Device() : _buttons(0), _axes{} {}
-    inline float axis(int i) const { return _axes[i]; }
-    inline bool button(int i) const { return (_buttons & (1<<i)) != 0; }
+    enum class Axis : uint8_t {
+#define DA(axis) axis,
+#include "device_axes.def"
+#undef DA
+      Last,
+    };
+    struct Event {
+      const Device* device;
+      Button button;
+      bool pressed;
+    };
+  protected:
+    Symbol _name;
+    uint32_t _buttons[size_t(Button::Last)/32+1];
+    float _axes[size_t(Axis::Last)];
+    float _rumble;
+    bool _active;
 
-    static const Array<Device>& devices() { return _devices; }
-    static const Device& device(void* id);
-    static void init();
-    static void update();
-    static void processReport(void* id, const uint8_t* data, size_t size);
-    static bool newEvent(Event&);
+    void set_button(Button button, bool value);
+
+    static void add_device(Device*);
+    static void add_event(Event);
+  public:
+    inline Device() : _buttons {}, _axes {}, _rumble(0.f), _active(false) {
+      add_device(this);
+    }
+    inline float axis(Axis axis) const { return _axes[size_t(axis)]; }
+    inline bool button(Button button) const { return (_buttons[size_t(button)/32] & (1<<(size_t(button)%32))) != 0; }
+    inline bool active() const { return _active; }
+
+    static const Array<Device*>& devices();
+    static bool new_event(Event&);
+
+    static float any_axis(Axis axis);
+    static bool any_button(Button button);
+
+    static Symbol button_to_symbol(Button);
+    static Button symbol_to_button(Symbol);
+
+    static Symbol axis_to_symbol(Axis);
+    static Axis symbol_to_axis(Symbol);
   };
 }
