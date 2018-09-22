@@ -33,35 +33,38 @@
 	(local cursor (self'cursor))
 	(local cursor-transform (self'cursor-transform))
 	(local movement (* real-delta 16))
+	(local rotation (* real-delta 2))
 	(local axis-x 0)
 	(local axis-y 0)
 	(local axis-rot-x 0)
 	(local axis-rot-y 0)
 	(local should-shoot false)
 
-	; Gather joystick input (based on X360 only)
+	; Gather joystick input
 	(foreach device _ (get-devices) (do
-		(+= axis-x (device'get-axis | 0))
-		(-= axis-y (device'get-axis | 1))
-		(+= axis-rot-x (device'get-axis | 3))
-		(-= axis-rot-y (device'get-axis | 4))
-		(if (device'get-button | 0) (set should-shoot true))
+		(+= axis-x (device'get-axis | 'GamepadLeftStickX))
+		(+= axis-y (device'get-axis | 'GamepadLeftStickY))
+		(+= axis-rot-x (* -1 (device'get-axis | 'GamepadRightStickX)))
+		(+= axis-rot-y (* 1 (device'get-axis | 'GamepadRightStickY)))
+		(+= axis-rot-x (* -0.1 (device'get-axis | 'MouseDX)))
+		(+= axis-rot-y (* -0.1 (device'get-axis | 'MouseDY)))
+		(if (device'get-button | 'GamepadFaceBottom) (set should-shoot true))
 		(if (> (device'get-axis | 5) 0) (set should-shoot true))
 	))
-
+	
 	; Gather keyboard input
-	(if (button-pressed 'Shift) (/= movement 4))
+	(if (button-pressed 'LeftShift) (/= movement 4))
 	(if (or (button-pressed 'Z) (button-pressed 'W)) (+= axis-y 1))
 	(if (or (button-pressed 'Q) (button-pressed 'A)) (-= axis-x 1))
 	(if (button-pressed 'S) (-= axis-y 1))
 	(if (button-pressed 'D) (+= axis-x 1))
-	(if (button-pressed 'LeftButton) (set should-shoot true))
+	(if (button-pressed 'MouseLeft) (set should-shoot true))
 
 	; Execute input
-	(if (> (abs axis-x) 0.1) (transform'move | (vec (* axis-x movement) 0 0)))
-	(if (> (abs axis-y) 0.1) (transform'move | (vec 0 (* axis-y movement) 0)))
-	(if (> (abs axis-rot-x) 0.1) (transform'rotate | (vec 0 0 1) (* axis-rot-x -0.05)))
-	(if (> (abs axis-rot-y) 0.1) (transform'rotate | (vec 1 0 0) (* axis-rot-y 0.05)))
+	(transform'move | (vec (* axis-x movement) 0 0))
+	(transform'move | (vec 0 (* axis-y movement) 0))
+	(transform'rotate | (vec 0 0 1) (* axis-rot-x rotation))
+	(transform'rotate | (vec 1 0 0) (* axis-rot-y rotation))
 	(if should-shoot (self'shoot|))
 
 	; Cursor placing
@@ -81,21 +84,14 @@
 
 )))
 (set (self'event) (fun (e) (do
-	(local transform (self'transform))
-	(switch (e'type)
-		'MouseMove (do
-			(transform'rotate | (vec 0 0 1) (* (e'x) -0.005))
-			(transform'rotate | (vec 1 0 0) (* (e'y) -0.005))
-		)
-		'ButtonDown (switch (e'button)
-			'Space (if (music-entity'require-midi-source || 'is-playing |)
-				(music-entity'require-midi-source || 'stop |)
-				(music-entity'require-midi-source || 'play |))
-			'G (if (not (sound-entity'require-audio-source || 'is-playing |))
-				(sound-entity'require-audio-source || 'play |))
-			'R (engine-clear-and-read "startup.ls")
-		)
-	)
+	(if (e'pressed) (switch (e'button)
+		'Space (if (music-entity'require-midi-source || 'is-playing |)
+			(music-entity'require-midi-source || 'stop |)
+			(music-entity'require-midi-source || 'play |))
+		'G (if (not (sound-entity'require-audio-source || 'is-playing |))
+			(sound-entity'require-audio-source || 'play |))
+		'R (engine-clear-and-read "startup.ls")
+	))
 )))
 (set (self'shoot) (fun (do
 	(if (> (- (now) (self'last-shoot)) (time 0.05)) (do
