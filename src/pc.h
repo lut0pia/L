@@ -7,6 +7,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <cmath>
+#include <cfloat>
 #include <ctime>
 
 // STL
