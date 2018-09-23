@@ -11,15 +11,6 @@ solution "L"
 	rtti "Off"
 	editandcontinue "Off"
 
-	do -- Modules
-		local modules = os.matchdirs("src/module/*")
-		local moduleinit = io.open("src/module/init.gen","w")
-		for _,module in pairs(modules) do
-			module = path.getname(module)
-			moduleinit:write("extern void " .. module .. "_module_init();" .. module .. "_module_init();")
-		end
-	end
-
 	-- Platform
 	configuration {"windows"}
 		architecture "x64"
@@ -67,6 +58,28 @@ solution "L"
 		configuration {"not linux"}
 			excludes {"**_unix**"}
 		configuration {}
+
+		do -- Modules
+			removefiles {"src/module/**"} -- Start by exluding all modules
+			local modules = os.matchdirs("src/module/*")
+			local moduleinit = io.open("src/module/init.gen","w")
+			for _,modulepath in pairs(modules) do
+				local module = path.getname(modulepath)
+				local moduleswitch = "L_USE_MODULE_" .. module
+				local moduleconf = loadfile(modulepath .. "/premake5.lua")
+				if moduleconf then
+					moduleconf()
+				else
+					configuration {}
+				end
+				defines {moduleswitch}
+				files {modulepath .. "/**.cpp"}
+				moduleinit:write("#if " .. moduleswitch .. "\n"
+				.. "extern void " .. module .. "_module_init();" .. module .. "_module_init();\n"
+				.. "#endif\n")
+			end
+			configuration {}
+		end
 		
 		-- PCH
     if _ACTION ~= "gmake" then

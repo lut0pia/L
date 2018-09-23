@@ -82,7 +82,7 @@ else if(rawinput->data.mouse.usButtonFlags & RI_MOUSE_ ## rb ## _UP) set_button(
 static Array<RawInputDevice*> rawinput_devices;
 static Array<RAWINPUTDEVICELIST> rawinput_device_lists;
 
-void rawinput_win_module_init() {
+void rawinput_module_init() {
   Engine::add_update([]() {
     L_SCOPE_MARKER("RawInput update");
     L_DO_ONCE {
