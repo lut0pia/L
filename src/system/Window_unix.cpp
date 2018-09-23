@@ -6,6 +6,7 @@
 #include <X11/keysymdef.h>
 
 #include "System.h"
+#include "../container/Queue.h"
 #include "../stream/CFileStream.h"
 
 #include "../rendering/Vulkan.h"
@@ -13,15 +14,20 @@
 using namespace L;
 using L::Window;
 
+namespace L {
+  extern Queue<64, Window::Event> window_events;
+  extern int window_width, window_height, window_flags, mouse_x, mouse_y;
+}
+
 static bool win_opened(false);
 Display* xdisplay;
 ::Window xwindow;
 
-void Window::open(const char* title, int width, int height, int flags) {
+void Window::open(const char* title, uint32_t width, uint32_t height, uint32_t flags) {
   if(opened()) return;
-  _width = width;
-  _height = height;
-  _flags = flags;
+  window_width = width;
+  window_height = height;
+  window_flags = flags;
 
   if((xdisplay = XOpenDisplay(nullptr)) == nullptr)
     error("Cannot open X server display.");
@@ -70,25 +76,17 @@ bool Window::loop() {
     switch(xev.type) {
       case Expose:
         XGetWindowAttributes(xdisplay, xwindow, &gwa);
-        if(_width!=gwa.width || _height!=gwa.height) {
+        if(window_width!=gwa.width || window_height!=gwa.height) {
           e.type = Event::Resize;
-          _width = e.x = gwa.width;
-          _height = e.y = gwa.height;
+          window_width = e.x = gwa.width;
+          window_height = e.y = gwa.height;
         }
         break;
       case MotionNotify:
-        e.type = Event::MouseMove;
-        e.x = xev.xmotion.x;
-        e.y = xev.xmotion.y;
-        e.x -= _mousePos.x();
-        e.y -= _mousePos.y();
-        if(_flags&loopcursor && (e.x!=0 || e.y!=0)) {
-          XWarpPointer(xdisplay, None, xwindow, 0, 0, 0, 0, 128, 128);
-          _mousePos = Vector2i(128, 128);
-        } else {
-          _mousePos += Vector2i(e.x, e.y);
-        }
+        mouse_x = xev.xmotion.x;
+        mouse_y = xev.xmotion.y;
         break;
+#if 0
       case ButtonPress:
       case ButtonRelease: {
           e.type = (xev.type==ButtonPress) ? Event::ButtonDown : Event::ButtonUp;
@@ -138,27 +136,19 @@ bool Window::loop() {
       case ClientMessage: // It's the close operation
         close();
         break;
+#endif
     }
     #undef None // That's awkward
     if(e.type!=Event::None) {
-      if(e.type==Event::ButtonDown)
-        _buttonstate[e.button] = true;
-      else if(e.type==Event::ButtonUp)
-        _buttonstate[e.button] = false;
-      _events.push(e);
+      window_events.push(e);
     }
   }
   return opened();
 }
 
 void Window::title(const char* str) {
-  if(!opened()) return;
-}
-void Window::resize(int width,int height) {
-  if(!opened()) return;
-  _width = width;
-  _height = height;
-}
 
-void Window::mousePosition(const Vector2i& p){
+}
+void Window::resize(uint32_t width, uint32_t height) {
+
 }
