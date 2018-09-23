@@ -17,12 +17,8 @@ public:
   void set_name(const char* name) {
     _name = name;
   }
-  void map_button(Device::Button b, DWORD xi_b) {
-    const bool new_state((state.Gamepad.wButtons & xi_b) != 0);
-    if(button(b) != new_state) {
-      add_event(Device::Event {this, b, new_state});
-      set_button(b, new_state);
-    }
+  inline void map_button(Device::Button b, DWORD xi_b) {
+    set_button(b, (state.Gamepad.wButtons & xi_b) != 0);
   }
   void update() {
     if(DynamicXInputGetState(user_index, &state) == ERROR_SUCCESS) {
