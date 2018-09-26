@@ -2,13 +2,8 @@
 
 #include <X11/X.h>
 #include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <X11/keysymdef.h>
 
-#include "System.h"
 #include "../container/Queue.h"
-#include "../stream/CFileStream.h"
-
 #include "../rendering/Vulkan.h"
 
 using namespace L;
@@ -86,57 +81,9 @@ bool Window::loop() {
         L::mouse_x = xev.xmotion.x;
         L::mouse_y = xev.xmotion.y;
         break;
-#if 0
-      case ButtonPress:
-      case ButtonRelease: {
-          e.type = (xev.type==ButtonPress) ? Event::ButtonDown : Event::ButtonUp;
-          if(xev.xbutton.button==Button1) e.button = Event::LeftButton;
-          else if(xev.xbutton.button==Button2) e.button = Event::RightButton;
-          else if(xev.xbutton.button==Button3) e.button = Event::MiddleButton;
-        }
-        break;
-      case KeyPress:
-      case KeyRelease: {
-          e.type = (xev.type==KeyPress) ? Event::ButtonDown : Event::ButtonUp;
-          const KeySym key_sym(XLookupKeysym(&xev.xkey, 0));
-          switch(key_sym) {
-            #define MAP(xk,lb) case xk: e.button = Event::lb; break;
-            MAP(XK_BackSpace,Backspace)
-            MAP(XK_Tab,Tab)
-            MAP(XK_Return,Enter)
-            MAP(XK_Shift_L,Shift)
-            MAP(XK_Shift_R,Shift)
-            MAP(XK_Control_L,Ctrl)
-            MAP(XK_Control_R,Ctrl)
-            MAP(XK_Alt_L,Alt)
-            MAP(XK_Alt_R,Alt)
-            MAP(XK_Pause,Pause)
-            MAP(XK_Caps_Lock,Caps)
-            MAP(XK_Escape,Escape)
-            MAP(XK_KP_Space,Space)
-            MAP(XK_Left,Left) MAP(XK_Right,Right) MAP(XK_Up,Up) MAP(XK_Down,Down)
-            MAP(XK_Num_Lock,NumLock)
-            MAP(XK_KP_1,Num1) MAP(XK_KP_2,Num2) MAP(XK_KP_3,Num3)
-            MAP(XK_KP_4,Num4) MAP(XK_KP_5,Num5) MAP(XK_KP_6,Num6)
-            MAP(XK_KP_7,Num7) MAP(XK_KP_8,Num8) MAP(XK_KP_9,Num9)
-            MAP(XK_KP_0,Num0)
-            MAP(XK_F1,F1) MAP(XK_F2,F2) MAP(XK_F3,F3) MAP(XK_F4,F4)
-            MAP(XK_F5,F5) MAP(XK_F6,F6) MAP(XK_F7,F7) MAP(XK_F8,F8)
-            MAP(XK_F9,F9) MAP(XK_F10,F10) MAP(XK_F11,F11) MAP(XK_F12,F12)
-            #undef MAP
-            default:
-              if(key_sym>=XK_a && key_sym<=XK_z)
-                e.button = Event::Button((key_sym-XK_a)+'A');
-              else if(key_sym>=XK_A && key_sym<=XK_Z)
-                e.button = Event::Button((key_sym-XK_Z)+'A');
-              break;
-          }
-        }
-        break;
       case ClientMessage: // It's the close operation
         close();
         break;
-#endif
     }
     #undef None // That's awkward
     if(e.type!=Event::None) {
