@@ -32,6 +32,8 @@ namespace L {
     static void resize(uint32_t width, uint32_t height);
     static uint32_t width();
     static uint32_t height();
+    static uint32_t mouse_x();
+    static uint32_t mouse_y();
     static inline float aspect() { return float(width())/height(); }
   };
 }

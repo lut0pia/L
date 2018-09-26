@@ -31,3 +31,5 @@ bool Window::new_event(Event& e) {
 
 uint32_t Window::width() { return window_width; }
 uint32_t Window::height() { return window_height; }
+uint32_t Window::mouse_x() { return L::mouse_x; }
+uint32_t Window::mouse_y() { return L::mouse_y; }

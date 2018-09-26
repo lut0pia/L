@@ -368,8 +368,8 @@ Context::Context(const Var& self) : _self(self) {
   });
   _globals[Symbol("window-height")] = (Function)([](Context& c) { c.returnValue() = float(Window::height()); });
   _globals[Symbol("window-width")] = (Function)([](Context& c) { c.returnValue() = float(Window::width()); });
-  _globals[Symbol("mouse-x")] = (Function)([](Context& c) { c.returnValue() = Device::any_axis(Device::Axis::MouseX); });
-  _globals[Symbol("mouse-y")] = (Function)([](Context& c) { c.returnValue() = Device::any_axis(Device::Axis::MouseY); });
+  _globals[Symbol("mouse-x")] = (Function)([](Context& c) { c.returnValue() = float(Window::mouse_x()); });
+  _globals[Symbol("mouse-y")] = (Function)([](Context& c) { c.returnValue() = float(Window::mouse_y()); });
   _globals[Symbol("vec")] = (Function)([](Context& c) {
     const uint32_t local_count(c.localCount());
     Vector3f& vector(c.returnValue().make<Vector3f>());
