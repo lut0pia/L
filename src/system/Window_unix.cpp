@@ -83,8 +83,8 @@ bool Window::loop() {
         }
         break;
       case MotionNotify:
-        mouse_x = xev.xmotion.x;
-        mouse_y = xev.xmotion.y;
+        L::mouse_x = xev.xmotion.x;
+        L::mouse_y = xev.xmotion.y;
         break;
 #if 0
       case ButtonPress:
