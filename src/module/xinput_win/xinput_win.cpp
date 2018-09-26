@@ -20,6 +20,12 @@ public:
   inline void map_button(Device::Button b, DWORD xi_b) {
     set_button(b, (state.Gamepad.wButtons & xi_b) != 0);
   }
+  inline void map_axis(Device::Axis a, SHORT xi_a) {
+    _axes[size_t(a)] = float(xi_a)/32767.f;
+  }
+  inline void map_axis(Device::Axis a, BYTE xi_a) {
+    _axes[size_t(a)] = float(xi_a)/255.f;
+  }
   void update() {
     if(DynamicXInputGetState(user_index, &state) == ERROR_SUCCESS) {
       _active = true;
@@ -32,10 +38,12 @@ public:
       map_button(Device::Button::GamepadFaceRight, XINPUT_GAMEPAD_B);
       map_button(Device::Button::GamepadFaceLeft, XINPUT_GAMEPAD_X);
       map_button(Device::Button::GamepadFaceTop, XINPUT_GAMEPAD_Y);
-      _axes[size_t(Device::Axis::GamepadLeftStickX)] = float(state.Gamepad.sThumbLX)/32767.f;
-      _axes[size_t(Device::Axis::GamepadLeftStickY)] = float(state.Gamepad.sThumbLY)/32767.f;
-      _axes[size_t(Device::Axis::GamepadRightStickX)] = float(state.Gamepad.sThumbRX)/32767.f;
-      _axes[size_t(Device::Axis::GamepadRightStickY)] = float(state.Gamepad.sThumbRY)/32767.f;
+      map_axis(Axis::GamepadLeftStickX, state.Gamepad.sThumbLX);
+      map_axis(Axis::GamepadLeftStickY, state.Gamepad.sThumbLY);
+      map_axis(Axis::GamepadRightStickX, state.Gamepad.sThumbRX);
+      map_axis(Axis::GamepadRightStickY, state.Gamepad.sThumbRY);
+      map_axis(Axis::GamepadLeftTrigger, state.Gamepad.bLeftTrigger);
+      map_axis(Axis::GamepadRightTrigger, state.Gamepad.bRightTrigger);
     } else {
       _active = false;
     }
