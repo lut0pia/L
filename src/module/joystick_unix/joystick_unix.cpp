@@ -34,11 +34,12 @@ public:
       set_button(b, _jse.value);
     }
   }
-  void map_axis(Device::Axis a, uint8_t js_a, bool invert = false) {
+  void map_axis(Device::Axis a, uint8_t js_a, bool invert = false, bool clamp = false) {
     if(_jse.number==js_a) {
       float value(_jse.value/32768.f);
       if(abs(value)<0.2f) value = 0.f;
       if(invert) value = -value;
+      if(clamp) value = L::clamp(value, 0.f, 1.f);
       _axes[uintptr_t(a)] = value;
     }
   }
@@ -66,6 +67,8 @@ public:
           map_axis(Axis::GamepadLeftStickY, 1, true);
           map_axis(Axis::GamepadRightStickX, 3);
           map_axis(Axis::GamepadRightStickY, 4, true);
+          map_axis(Axis::GamepadLeftTrigger, 2, false, true);
+          map_axis(Axis::GamepadRightTrigger, 5, false, true);
           break;
       }
     }
