@@ -101,11 +101,32 @@ Variable& Variable::operator[](size_t i) {
   return as<Array<Variable> >()[i];
 }
 
+Stream& L::operator<(Stream& s, const Variable& v) {
+  s < v.type()->name;
+  v.type()->out_text(s, v.value());
+  return s;
+}
 Stream& L::operator>(Stream& s, Variable& v) {
   Symbol type_name;
   s > type_name;
   const TypeDescription* new_type(types[type_name]);
   v.make(new_type);
-  v.type()->in(s, v.value());
+  v.type()->in_text(s, v.value());
+  return s;
+}
+Stream& L::operator<=(Stream& s, const Variable& v) {
+  s <= v.type()->name;
+  v.type()->out_bin(s, v.value());
+  return s;
+}
+Stream& L::operator>=(Stream& s, Variable& v) {
+  Symbol type_name;
+  s >= type_name;
+  if(const TypeDescription* new_type = types[type_name]) {
+    v.make(new_type);
+    v.type()->in_bin(s, v.value());
+  } else {
+    v = Var();
+  }
   return s;
 }

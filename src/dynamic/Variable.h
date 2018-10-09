@@ -101,12 +101,10 @@ namespace L {
       v.type()->print(s,v.value());
       return s;
     }
-    friend Stream& operator<(Stream& s, const Variable& v) {
-      s < v.type()->name;
-      v.type()->out(s, v.value());
-      return s;
-    }
+    friend Stream& operator<(Stream& s, const Variable& v);
     friend Stream& operator>(Stream& s, Variable& v);
+    friend Stream& operator<=(Stream& s, const Variable& v);
+    friend Stream& operator>=(Stream& s, Variable& v);
     friend inline uint32_t hash(const Variable& v){ return v.type()->hash(v.value()); }
   };
   typedef Variable Var;

@@ -21,8 +21,10 @@ namespace L {
     void(*dtr)(void*);
     void(*del)(void*);
     void(*print)(Stream&, const void*);
-    void(*out)(Stream&, const void*);
-    void(*in)(Stream&, void*);
+    void(*out_text)(Stream&, const void*);
+    void(*in_text)(Stream&, void*);
+    void(*out_bin)(Stream&, const void*);
+    void(*in_bin)(Stream&, void*);
     uint32_t(*hash)(const void*);
 
     // Optional
@@ -76,7 +78,9 @@ namespace L {
     static TypeDescription makeDesc() {
       TypeDescription wtr = {
         type_name<T>(),sizeof(T),
-        ctr,ctrnew,cpy,cpyto,assign,dtr,del,print,out,in,Type<T>::hash,0
+        ctr,ctrnew,cpy,cpyto,assign,dtr,del,
+        print,out_text,in_text,out_bin,in_bin,
+        Type<T>::hash,0
       };
       types[wtr.name] = &td;
       return wtr;
@@ -89,8 +93,10 @@ namespace L {
     static void dtr(void* p) { ((T*)p)->~T(); }
     static void del(void* p) { delete(T*)p; }
     static void print(Stream& s,const void* p) { s << (*(const T*)p); }
-    static void out(Stream& s, const void* p) { s < (*(const T*)p); }
-    static void in(Stream& s, void* p) { s > (*(T*)p); }
+    static void out_text(Stream& s, const void* p) { s < (*(const T*)p); }
+    static void in_text(Stream& s, void* p) { s > (*(T*)p); }
+    static void out_bin(Stream& s, const void* p) { s <= (*(const T*)p); }
+    static void in_bin(Stream& s, void* p) { s >= (*(T*)p); }
     static uint32_t hash(const void* p) { return L::hash(*(const T*)p); }
 
   public:
@@ -138,6 +144,8 @@ namespace L {
       [](void*) {},
       [](void*) {},
       [](Stream&, const void*) {},
+      [](Stream&, const void*) {},
+      [](Stream&, void*) {},
       [](Stream&, const void*) {},
       [](Stream&, void*) {},
       [](const void*) -> uint32_t { return 0; }
