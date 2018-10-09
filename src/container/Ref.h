@@ -14,7 +14,7 @@ namespace L {
     static const size_t offset = sizeof(RefMeta);
     T* _p;
     inline RefMeta& meta() { return *((RefMeta*)_p-1); }
-    inline uint32_t& counter(){ return meta().counter; }
+    inline uint32_t& counter() { return meta().counter; }
     inline uint32_t& size() { return meta().size; }
 
   public:
@@ -25,14 +25,14 @@ namespace L {
       if(_p) counter()++;
     }
     template <class R> inline Ref(const Ref<R>& other) {
-      static_assert(std::is_base_of<T,R>::value,"Cannot convert to a non-base class");
+      static_assert(std::is_base_of<T, R>::value, "Cannot convert to a non-base class");
       _p = other._p;
       if(_p) counter()++;
     }
     inline ~Ref() {
-      if(_p && --counter()==0){
+      if(_p && --counter()==0) {
         _p->~T();
-        Memory::free((uint8_t*)_p-offset,size()+offset);
+        Memory::free((uint8_t*)_p-offset, size()+offset);
       }
     }
     inline Ref& operator=(const Ref& other) {
@@ -51,7 +51,7 @@ namespace L {
       return *this;
     }
     template <typename... Args>
-    T& make(Args&&... args){
+    T& make(Args&&... args) {
       this->~Ref();
       _p = (T*)((uint8_t*)Memory::alloc(sizeof(T)+offset)+offset);
       counter() = 1;
@@ -69,12 +69,33 @@ namespace L {
     inline int counter() const { return (_p) ? *((int*)_p-1) : 0; }
     template <class R> friend class Ref;
   };
-  template <class T,typename... Args>
-  inline Ref<T> ref(Args&&... args){
+  template <class T, typename... Args>
+  inline Ref<T> ref(Args&&... args) {
     Ref<T> wtr;
     wtr.make(args...);
     return wtr;
   }
   template <class T>
-  inline Stream& operator<<(Stream& s,const Ref<T>& v) { return (v.null()) ? s << "null" : s << *v; }
+  inline Stream& operator<<(Stream& s, const Ref<T>& v) { return (v.null()) ? s << "null" : s << *v; }
+
+  template <class T>
+  inline Stream& operator<=(Stream& s, const Ref<T>& v) {
+    s <= v.null();
+    if(!v.null()) {
+      s <= *v;
+    }
+    return s;
+  }
+  template <class T>
+  inline Stream& operator>=(Stream& s, Ref<T>& v) {
+    bool is_null;
+    s >= is_null;
+    if(is_null) {
+      v = nullptr;
+    } else {
+      v.make();
+      s >= *v;
+    }
+    return s;
+  }
 }
