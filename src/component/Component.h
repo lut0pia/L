@@ -2,7 +2,7 @@
 
 #include "ComponentPool.h"
 #include "../container/Map.h"
-#include "../script/Context.h"
+#include "../script/ScriptContext.h"
 #include "Entity.h"
 
 #include "../system/Device.h"
@@ -82,13 +82,13 @@ namespace L {
 #define L_COMPONENT_HAS_WIN_EVENT(name) static inline void win_event_all(const Window::Event& e) { win_event_all_impl<name>(e); }
 #define L_COMPONENT_HAS_DEV_EVENT(name) static inline void dev_event_all(const Device::Event& e) { dev_event_all_impl<name>(e); }
 
-#define L_COMPONENT_FUNCTION(cname,fname,n,...) Script::Context::typeValue(Type<cname*>::description(),Symbol(fname)) = (Script::Function)([](Script::Context& c) {L_ASSERT(c.localCount()>=n && c.currentSelf().is<cname*>());__VA_ARGS__})
-#define L_COMPONENT_METHOD(cname,fname,n,...) L_COMPONENT_FUNCTION(cname,fname,n,c.currentSelf().as<cname*>()->__VA_ARGS__;)
-#define L_COMPONENT_RETURN_METHOD(cname,fname,n,...) L_COMPONENT_FUNCTION(cname,fname,n,c.returnValue() = c.currentSelf().as<cname*>()->__VA_ARGS__;)
-#define L_COMPONENT_ADD(cname,fname) L_COMPONENT_FUNCTION(Entity,fname,0,c.returnValue() = c.currentSelf().as<Entity*>()->add<cname>();)
-#define L_COMPONENT_GET(cname,fname) L_COMPONENT_FUNCTION(Entity,fname,0,c.returnValue() = c.currentSelf().as<Entity*>()->component<cname>();)
-#define L_COMPONENT_REQUIRE(cname,fname) L_COMPONENT_FUNCTION(Entity,fname,0,c.returnValue() = c.currentSelf().as<Entity*>()->requireComponent<cname>();)
-#define L_COMPONENT_COPY(cname) L_COMPONENT_FUNCTION(cname,"copy",1,if(c.local(0).is<cname*>())*(c.currentSelf().as<cname*>()) = *(c.local(0).as<cname*>());)
+#define L_COMPONENT_FUNCTION(cname,fname,n,...) ScriptContext::type_value(Type<cname*>::description(),Symbol(fname)) = (ScriptNativeFunction)([](ScriptContext& c) {L_ASSERT(c.param_count()>=n && c.current_self().is<cname*>());__VA_ARGS__})
+#define L_COMPONENT_METHOD(cname,fname,n,...) L_COMPONENT_FUNCTION(cname,fname,n,c.current_self().as<cname*>()->__VA_ARGS__;)
+#define L_COMPONENT_RETURN_METHOD(cname,fname,n,...) L_COMPONENT_FUNCTION(cname,fname,n,c.return_value() = c.current_self().as<cname*>()->__VA_ARGS__;)
+#define L_COMPONENT_ADD(cname,fname) L_COMPONENT_FUNCTION(Entity,fname,0,c.return_value() = c.current_self().as<Entity*>()->add<cname>();)
+#define L_COMPONENT_GET(cname,fname) L_COMPONENT_FUNCTION(Entity,fname,0,c.return_value() = c.current_self().as<Entity*>()->component<cname>();)
+#define L_COMPONENT_REQUIRE(cname,fname) L_COMPONENT_FUNCTION(Entity,fname,0,c.return_value() = c.current_self().as<Entity*>()->requireComponent<cname>();)
+#define L_COMPONENT_COPY(cname) L_COMPONENT_FUNCTION(cname,"copy",1,if(c.param(0).is<cname*>())*(c.current_self().as<cname*>()) = *(c.param(0).as<cname*>());)
 #define L_COMPONENT_ENTITY(cname) L_COMPONENT_RETURN_METHOD(cname,"entity",0,entity())
 #define L_COMPONENT_BIND(cname,name)\
   L_COMPONENT_ADD(cname,"add-" name);\

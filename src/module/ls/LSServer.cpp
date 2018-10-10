@@ -5,7 +5,6 @@
 #include <L/src/stream/BufferStream.h>
 
 using namespace L;
-using namespace Script;
 
 void LSServer::update() {
   L_SCOPE_MARKER("LSServer::update");
@@ -24,11 +23,12 @@ void LSServer::update() {
       if(byte_count==-1) { // Connection closed
         _clients.remove(pair.key());
       } else { // We could read something
-        client.compiler.read(buffer, byte_count, false);
-        if(client.compiler.ready()) { // There was a line ending
+        if(client.compiler.read(buffer, byte_count, false)) { // The code is compilable
+          // Compile code
+          ScriptFunction script_function(client.compiler.compile());
+
           // Execute command
-          Ref<CodeFunction> code_function(ref<CodeFunction>(client.compiler.function()));
-          Var result(client.context.executeInside(Array<Var>{code_function}));
+          const Var result(client.context.execute(script_function));
 
           // Send back result
           {
@@ -36,9 +36,6 @@ void LSServer::update() {
             buffer_stream << result << '\n';
             Network::send(socket, buffer, buffer_stream.tell());
           }
-
-          // Reset compiler
-          client.compiler.reset();
         }
       }
     }

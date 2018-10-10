@@ -46,17 +46,17 @@ void Collider::unpack(const Map<Symbol, Var>& data) {
 }
 void Collider::script_registration() {
   L_COMPONENT_BIND(Collider, "collider");
-  L_COMPONENT_METHOD(Collider, "center", 1, center(c.local(0).get<Vector3f>()));
-  L_COMPONENT_METHOD(Collider, "box", 1, box(c.local(0).get<Vector3f>()));
-  L_COMPONENT_METHOD(Collider, "sphere", 1, sphere(c.local(0).get<float>()));
-  Script::Context::global(Symbol("raycast")) = (Script::Function)([](Script::Context& c) {
-    if(c.localCount()==2 && c.local(0).is<Vector3f>() && c.local(1).is<Vector3f>()) {
+  L_COMPONENT_METHOD(Collider, "center", 1, center(c.param(0).get<Vector3f>()));
+  L_COMPONENT_METHOD(Collider, "box", 1, box(c.param(0).get<Vector3f>()));
+  L_COMPONENT_METHOD(Collider, "sphere", 1, sphere(c.param(0)));
+  ScriptContext::global(Symbol("raycast")) = (ScriptNativeFunction)([](ScriptContext& c) {
+    if(c.param_count()==2 && c.param(0).is<Vector3f>() && c.param(1).is<Vector3f>()) {
       auto wtr(ref<Table<Var, Var>>());
       float t;
-      (*wtr)[Symbol("collider")] = Collider::raycast(c.local(0).as<Vector3f>(), c.local(1).as<Vector3f>(), t);
+      (*wtr)[Symbol("collider")] = Collider::raycast(c.param(0).as<Vector3f>(), c.param(1).as<Vector3f>(), t);
       (*wtr)[Symbol("t")] = t;
-      (*wtr)[Symbol("position")] = c.local(0).as<Vector3f>()+c.local(1).as<Vector3f>()*t;
-      c.returnValue() = wtr;
+      (*wtr)[Symbol("position")] = c.param(0).as<Vector3f>()+c.param(1).as<Vector3f>()*t;
+      c.return_value() = wtr;
     }
   });
 }

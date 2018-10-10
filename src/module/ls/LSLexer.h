@@ -21,7 +21,7 @@ private:
     return (c==' ' || c=='\t' || c=='\n' || c=='\v' || c=='\f' || c=='\r');
   }
   inline static bool special_char(const char c) {
-    return (c=='(' || c==')' || c=='{' || c=='}' || c=='\'' || c=='"' || c=='!' || c=='|' || c==';');
+    return (c=='(' || c==')' || c=='{' || c=='}' || c=='\'' || c=='"' || c=='!' || c=='|' || c==';' || c==':');
   }
 
 public:

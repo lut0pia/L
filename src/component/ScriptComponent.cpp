@@ -6,107 +6,104 @@
 #include "../engine/Settings.h"
 #include "NameComponent.h"
 #include "../text/String.h"
-#include "../rendering/Font.h"
-#include "../rendering/shader_lib.h"
 
 using namespace L;
-using namespace Script;
+
+static const Symbol entity_symbol("entity"), update_components_symbol("update-components"), gui_symbol("gui"),
+start_symbol("start"), update_symbol("update"), late_update_symbol("late-update"), event_symbol("event");
 
 void ScriptComponent::update_components() {
-  _context.selfTable()[Symbol("entity")] = entity();
+  _context.self_table()[entity_symbol] = entity();
 
   if(!_started && _script)
     start();
 
-  static const Symbol updateComponentsSymbol("update-components");
-  _context.tryExecuteMethod(updateComponentsSymbol);
+  _context.try_execute_method(update_components_symbol);
 }
 Map<Symbol, Var> ScriptComponent::pack() const {
-  return{{"script",_script}};
+  return {{"script",_script}};
 }
 void ScriptComponent::unpack(const Map<Symbol, Var>& data) {
   unpack_item(data, "script", _script);
 }
 void ScriptComponent::script_registration() {
-#define L_FUNCTION(name,...) Context::global(Symbol(name)) = (Function)([](Context& c) {__VA_ARGS__})
-#define L_METHOD(type,name,n,...) Context::typeValue(Type<type*>::description(),Symbol(name)) = (Function)([](Context& c) {L_ASSERT(c.localCount()>=n && c.currentSelf().is<type*>());c.currentSelf().as<type*>()->__VA_ARGS__;})
-#define L_RETURN_METHOD(type,name,n,...) Context::typeValue(Type<type*>::description(),Symbol(name)) = (Function)([](Context& c) {L_ASSERT(c.localCount()>=n && c.currentSelf().is<type*>());c.returnValue() = c.currentSelf().as<type*>()->__VA_ARGS__;})
+#define L_FUNCTION(name,...) ScriptContext::global(Symbol(name)) = (ScriptNativeFunction)([](ScriptContext& c) {__VA_ARGS__})
+#define L_METHOD(type,name,n,...) ScriptContext::type_value(Type<type*>::description(),Symbol(name)) = (ScriptNativeFunction)([](ScriptContext& c) {L_ASSERT(c.param_count()>=n && c.current_self().is<type*>());c.current_self().as<type*>()->__VA_ARGS__;})
+#define L_RETURN_METHOD(type,name,n,...) ScriptContext::type_value(Type<type*>::description(),Symbol(name)) = (ScriptNativeFunction)([](ScriptContext& c) {L_ASSERT(c.param_count()>=n && c.current_self().is<type*>());c.return_value() = c.current_self().as<type*>()->__VA_ARGS__;})
   // Engine ///////////////////////////////////////////////////////////////////
   L_FUNCTION("engine-timescale", {
-    if(c.localCount()>0)
-      Engine::timescale(c.local(0).get<float>());
-    c.returnValue() = Engine::timescale();
+    if(c.param_count()>0)
+      Engine::timescale(c.param(0).get<float>());
+    c.return_value() = Engine::timescale();
   });
   L_FUNCTION("engine-clear", {
     Engine::add_deferred_action({[](void*) {
       Engine::clear();
     }});
   });
-  L_FUNCTION("engine-clear-and-read", {
-    L_ASSERT(c.localCount()==1);
+  ScriptContext::global("engine-clear-and-read") = (ScriptNativeFunction)([](ScriptContext& c) {
+    L_ASSERT(c.param_count()==1);
     Engine::add_deferred_action({[](void* p) {
       String* str((String*)p);
       Engine::clear();
-      Context context;
-      context.executeInside(Array<Var>{Resource<Script::CodeFunction>(*str)});
+      ScriptContext context;
+      context.execute(*Resource<ScriptFunction>(*str));
       Memory::delete_type(str);
-    }, Memory::new_type<String>(c.local(0).get<String>())});
+    }, Memory::new_type<String>(c.param(0).get<String>())});
   });
   L_FUNCTION("read", {
-    L_ASSERT(c.localCount()==1);
-    c.executeInside(Array<Var>{Resource<Script::CodeFunction>(c.local(0).get<String>())});
+    L_ASSERT(c.param_count()==1);
+    c.execute(*Resource<ScriptFunction>(c.param(0).get<String>()));
   });
   L_FUNCTION("setting", {
-    L_ASSERT(c.localCount()==2);
-    Settings::set(c.local(0).get<Symbol>(), c.local(1));
+    L_ASSERT(c.param_count()==2);
+    Settings::set(c.param(0), c.param(1));
   });
   // Entity ///////////////////////////////////////////////////////////////////
-  Context::global(Symbol("entity-make")) = (Function)([](Context& c) {
-    c.returnValue() = new Entity();
+  ScriptContext::global("entity-make") = (ScriptNativeFunction)([](ScriptContext& c) {
+    c.return_value() = new Entity();
   });
-  Context::global(Symbol("entity-copy")) = (Function)([](Context& c) {
-    if(c.localCount() && c.local(0).is<Entity*>())
-      c.returnValue() = new Entity(c.local(0).as<Entity*>());
+  ScriptContext::global("entity-copy") = (ScriptNativeFunction)([](ScriptContext& c) {
+    if(c.param_count() && c.param(0).is<Entity*>())
+      c.return_value() = new Entity(c.param(0).as<Entity*>());
   });
-  Context::global(Symbol("entity-destroy")) = (Function)([](Context& c) {
-    if(c.localCount() && c.local(0).is<Entity*>())
-      Entity::destroy(c.local(0).as<Entity*>());
+  ScriptContext::global("entity-destroy") = (ScriptNativeFunction)([](ScriptContext& c) {
+    if(c.param_count() && c.param(0).is<Entity*>())
+      Entity::destroy(c.param(0).as<Entity*>());
   });
-  Context::global(Symbol("entity-get")) = (Function)([](Context& c) {
-    if(c.localCount()) {
-      if(NameComponent* name_component = NameComponent::find(c.local(0).get<Symbol>()))
-        c.returnValue() = name_component->entity();
-      else c.returnValue() = nullptr;
-    } else c.returnValue() = nullptr;
+  ScriptContext::global("entity-get") = (ScriptNativeFunction)([](ScriptContext& c) {
+    if(c.param_count()) {
+      if(NameComponent* name_component = NameComponent::find(c.param(0).get<Symbol>()))
+        c.return_value() = name_component->entity();
+      else c.return_value() = nullptr;
+    } else c.return_value() = nullptr;
   });
   // Material ///////////////////////////////////////////////////////////////////
-  L_METHOD(Material, "parent", 1, parent(c.local(0).get<String>()));
-  L_METHOD(Material, "pipeline", 1, pipeline(c.local(0).get<String>()));
-  L_METHOD(Material, "mesh", 1, mesh(c.local(0).get<String>()));
-  L_METHOD(Material, "font", 1, font(c.local(0).get<String>()));
-  L_METHOD(Material, "text", 1, text(c.local(0).get<String>()));
-  L_METHOD(Material, "color", 2, color(c.local(0).get<Symbol>(), c.local(1).get<Color>()));
-  L_METHOD(Material, "scalar", 2, scalar(c.local(0), c.local(1)));
-  L_METHOD(Material, "texture", 2, texture(c.local(0), c.local(1).get<String>()));
-  L_METHOD(Material, "vector", 2, vector(c.local(0), c.local(1)));
-  L_METHOD(Material, "vertex-count", 1, vertex_count(c.local(0)));
+  L_METHOD(Material, "parent", 1, parent(c.param(0).get<String>()));
+  L_METHOD(Material, "pipeline", 1, pipeline(c.param(0).get<String>()));
+  L_METHOD(Material, "mesh", 1, mesh(c.param(0).get<String>()));
+  L_METHOD(Material, "font", 1, font(c.param(0).get<String>()));
+  L_METHOD(Material, "text", 1, text(c.param(0).get<String>()));
+  L_METHOD(Material, "color", 2, color(c.param(0).get<Symbol>(), c.param(1).get<Color>()));
+  L_METHOD(Material, "scalar", 2, scalar(c.param(0), c.param(1)));
+  L_METHOD(Material, "texture", 2, texture(c.param(0), c.param(1).get<String>()));
+  L_METHOD(Material, "vector", 2, vector(c.param(0), c.param(1)));
+  L_METHOD(Material, "vertex-count", 1, vertex_count(c.param(0)));
   // Devices ///////////////////////////////////////////////////////////////////
   L_FUNCTION("get-devices", {
     auto wtr(ref<Table<Var,Var>>());
     for(const Device* device : Device::devices())
       (*wtr)[device] = true;
-    c.returnValue() = wtr;
+    c.return_value() = wtr;
   });
-  L_COMPONENT_RETURN_METHOD(const Device, "get-axis", 1, axis(Device::symbol_to_axis(c.local(0))));
-  L_COMPONENT_RETURN_METHOD(const Device, "get-button", 1, button(Device::symbol_to_button(c.local(0))));
+  L_COMPONENT_RETURN_METHOD(const Device, "get-axis", 1, axis(Device::symbol_to_axis(c.param(0))));
+  L_COMPONENT_RETURN_METHOD(const Device, "get-button", 1, button(Device::symbol_to_button(c.param(0))));
   // Script ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(ScriptComponent, "script");
-  L_COMPONENT_METHOD(ScriptComponent, "load", 1, load(c.local(0).get<String>()));
+  L_COMPONENT_METHOD(ScriptComponent, "load", 1, load(c.param(0).get<String>()));
   L_COMPONENT_FUNCTION(ScriptComponent, "call", 1, {
-    Array<Var> code{c.local(0)};
-    for(uint32_t i(1); i<c.localCount(); i++)
-      code.push(c.local(i));
-    c.returnValue() = c.currentSelf().as<ScriptComponent*>()->_context.executeInside(code);
+    const std::initializer_list<Var> param_list(&c.param(1), &c.param(c.param_count()));
+    c.return_value() = c.current_self().as<ScriptComponent*>()->_context.execute(c.param(0), param_list);
   });
 }
 
@@ -118,17 +115,14 @@ void ScriptComponent::load(const char* filename) {
 void ScriptComponent::start() {
   L_ASSERT(_script);
   _started = true;
-  static const Symbol start_symbol("start");
-  _context.executeInside(Array<Var>{_script});
-  _context.tryExecuteMethod(start_symbol);
+  _context.execute(*_script);
+  _context.try_execute_method(start_symbol);
 }
 void ScriptComponent::update() {
-  static const Symbol updateSymbol("update");
-  _context.tryExecuteMethod(updateSymbol);
+  _context.try_execute_method(update_symbol);
 }
 void ScriptComponent::late_update() {
-  static const Symbol lateUpdateSymbol("late-update");
-  _context.tryExecuteMethod(lateUpdateSymbol);
+  _context.try_execute_method(late_update_symbol);
 }
 void ScriptComponent::event(const Device::Event& e) {
   auto table(ref<Table<Var, Var>>());
@@ -138,10 +132,8 @@ void ScriptComponent::event(const Device::Event& e) {
   event(table);
 }
 void ScriptComponent::event(const Ref<Table<Var, Var>>&e) {
-  static const Symbol eventSymbol("event");
-  _context.tryExecuteMethod(eventSymbol, {e});
+  _context.try_execute_method(event_symbol, {e});
 }
 void ScriptComponent::gui(const Camera& c) {
-  static const Symbol guiSymbol("gui");
-  _context.tryExecuteMethod(guiSymbol, {(Camera*)&c});
+  _context.try_execute_method(gui_symbol, {(Camera*)&c});
 }

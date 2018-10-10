@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Component.h"
-#include "../script/Context.h"
+#include "../script/ScriptContext.h"
 #include "../system/Device.h"
 #include "../engine/Resource.h"
 
@@ -13,8 +13,8 @@ namespace L {
       L_COMPONENT_HAS_GUI(ScriptComponent)
       L_COMPONENT_HAS_DEV_EVENT(ScriptComponent)
   protected:
-    Script::Context _context;
-    Resource<Script::CodeFunction> _script;
+    ScriptContext _context;
+    Resource<ScriptFunction> _script;
     bool _started : 1;
   public:
     ScriptComponent() : _started(false) {}

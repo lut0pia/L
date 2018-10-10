@@ -25,9 +25,9 @@ void AudioSourceComponent::unpack(const Map<Symbol, Var>& data) {
 }
 void AudioSourceComponent::script_registration() {
   L_COMPONENT_BIND(AudioSourceComponent, "audio-source");
-  L_COMPONENT_METHOD(AudioSourceComponent, "stream", 1, stream(c.local(0).get<String>()));
-  L_COMPONENT_METHOD(AudioSourceComponent, "volume", 1, volume(c.local(0).get<float>()));
-  L_COMPONENT_METHOD(AudioSourceComponent, "looping", 1, looping(c.local(0).get<bool>()));
+  L_COMPONENT_METHOD(AudioSourceComponent, "stream", 1, stream(c.param(0).get<String>()));
+  L_COMPONENT_METHOD(AudioSourceComponent, "volume", 1, volume(c.param(0).get<float>()));
+  L_COMPONENT_METHOD(AudioSourceComponent, "looping", 1, looping(c.param(0).get<bool>()));
   L_COMPONENT_METHOD(AudioSourceComponent, "play", 0, play());
   L_COMPONENT_METHOD(AudioSourceComponent, "stop", 0, stop());
   L_COMPONENT_RETURN_METHOD(AudioSourceComponent, "is-playing", 0, playing());

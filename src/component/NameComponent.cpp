@@ -16,7 +16,7 @@ void NameComponent::unpack(const Map<Symbol, Var>& data) {
 }
 void NameComponent::script_registration() {
   L_COMPONENT_BIND(NameComponent, "name");
-  L_COMPONENT_METHOD(NameComponent, "set", 1, name(c.local(0).get<Symbol>()));
+  L_COMPONENT_METHOD(NameComponent, "set", 1, name(c.param(0).get<Symbol>()));
   L_COMPONENT_METHOD(NameComponent, "get", 0, name());
 }
 

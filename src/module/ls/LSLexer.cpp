@@ -51,7 +51,7 @@ bool LSLexer::next_token() {
         _state = end_of_text() ? Comment : Done;
       } else if(c=='"') { // Start of literal
         _literal = true;
-      } else if(special_char(c)) { // One char token
+      } else if(special_char(c) || c=='.') { // One char token
         _buffer[0] = c;
         _buffer[1] = '\0';
         _state = Done;
@@ -78,8 +78,9 @@ bool LSLexer::next_token() {
         *_write++ = c;
       }
     } else { // Regular token
-      char c(peek());
-      if(special_char(c) || space_char(c)) { // End of token
+      const char c(peek());
+      const bool dot_inside_non_number(c=='.' && !strchr("-0123456789", _buffer[0]));
+      if(special_char(c) || space_char(c) || dot_inside_non_number) { // End of token
         *_write = '\0';
         _state = Done;
         return true;

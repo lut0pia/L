@@ -9,7 +9,7 @@
 #include "../rendering/Pipeline.h"
 #include "../rendering/shader_lib.h"
 #include "Resource.h"
-#include "../script/Context.h"
+#include "../script/ScriptContext.h"
 #include "../system/Device.h"
 #include "../system/Window.h"
 #include "../stream/CFileStream.h"
@@ -35,10 +35,10 @@ void Engine::update() {
   _delta_time = min(_real_delta_time*_timescale, Time(0, 100)); // Cap delta time to avoid weird behaviour
   _real_delta_seconds = _real_delta_time.fSeconds();
   _delta_seconds = _delta_time.fSeconds();
-  Script::Context::global("real-delta") = _real_delta_seconds;
-  Script::Context::global("delta") = _delta_seconds;
-  Script::Context::global("avg-frame-work-duration") = _average_frame_work_duration;
-  Script::Context::global("max-frame-work-duration") = _max_frame_work_duration;
+  ScriptContext::global("real-delta") = _real_delta_seconds;
+  ScriptContext::global("delta") = _delta_seconds;
+  ScriptContext::global("avg-frame-work-duration") = _average_frame_work_duration;
+  ScriptContext::global("max-frame-work-duration") = _max_frame_work_duration;
 
   {
     L_SCOPE_MARKER("Resource update");

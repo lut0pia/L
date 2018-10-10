@@ -103,7 +103,7 @@
 #include "rendering/Vulkan.h"
 
 // Scripting language
-#include "script/Context.h"
+#include "script/ScriptContext.h"
 #include "script/script.h"
 
 // Streams, IO
