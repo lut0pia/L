@@ -52,6 +52,7 @@ namespace L {
         Memory::free(oldslots,oldsize*sizeof(Slot));
       } else _slots = Memory::alloc_type_zero<Slot>(_size = 4);
     }
+  public:
     class Iterator{
     private:
       Slot* _slot;
@@ -62,7 +63,6 @@ namespace L {
       inline Slot* operator->() const{ return _slot; }
       inline Slot& operator*() const{ return *(operator->()); }
     };
-  public:
     constexpr Table() : _slots(nullptr),_size(0),_count(0){}
     Table(const Table& other) : _slots(other._slots ? Memory::alloc_type_zero<Slot>(other._size) : nullptr), _size(other._size), _count(other._count) {
       for(uintptr_t i(0); i<_size; i++)
