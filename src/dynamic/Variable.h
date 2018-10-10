@@ -6,7 +6,7 @@ namespace L {
   class Variable {
   private:
     union {
-      uintptr_t _data[3];
+      uintptr_t _data[1];
       void* _p;
     };
     const TypeDescription* _td;

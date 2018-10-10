@@ -117,17 +117,19 @@
     <DisplayString Optional="true" Condition="_td == &amp;L::Type&lt;float&gt;::td">{*(float*)_data}</DisplayString>
     <DisplayString Optional="true" Condition="_td == &amp;L::Type&lt;L::Symbol&gt;::td">{*(L::Symbol*)&amp;_data}</DisplayString>
     <DisplayString Optional="true" Condition="_td == &amp;L::Type&lt;L::Script::RawSymbol&gt;::td">{*(L::Script::RawSymbol*)&amp;_data}</DisplayString>
-    <DisplayString Optional="true" Condition="_td == &amp;L::Type&lt;L::String&gt;::td">{*(L::String*)&amp;_data}</DisplayString>
-    <DisplayString Optional="true" Condition="_td == &amp;L::Type&lt;L::Array&lt;L::Variable&gt; &gt;::td">{*(L::Array&lt;L::Variable&gt;*)&amp;_data}</DisplayString>
+    <DisplayString Optional="true" Condition="_td == &amp;L::Type&lt;L::String&gt;::td">{*(L::String*)_p}</DisplayString>
+    <DisplayString Optional="true" Condition="_td == &amp;L::Type&lt;L::Array&lt;L::Variable&gt; &gt;::td">{*(L::Array&lt;L::Variable&gt;*)_p}</DisplayString>
     <DisplayString Optional="true" Condition="_td == &amp;L::Type&lt;L::Table&lt;L::Variable,L::Variable&gt; &gt;::td">{*(L::Table&lt;L::Variable,L::Variable&gt;*)&amp;_data}</DisplayString>
     <DisplayString Optional="true" Condition="_td == &amp;L::Type&lt;L::Table&lt;L::Symbol,L::Variable&gt; &gt;::td">{*(L::Table&lt;L::Symbol,L::Variable&gt;*)&amp;_data}</DisplayString>
     <DisplayString Optional="true" Condition="_td == &amp;L::Type&lt;L::Ref&lt;L::Table&lt;L::Variable,L::Variable&gt; &gt; &gt;::td">{*(L::Ref&lt;L::Table&lt;L::Variable,L::Variable&gt; &gt;*)&amp;_data}</DisplayString>
     <DisplayString>Unknown {_td->name._string,s8b}</DisplayString>
     <Expand>
       <Item Name="Type">_td->name._string,s8b</Item>
+      <ExpandedItem Optional="true" Condition="_td == &amp;L::Type&lt;AccessChain&gt;::td">*(AccessChain*)_p</ExpandedItem>
       <ExpandedItem Optional="true" Condition="_td == &amp;L::Type&lt;L::Symbol&gt;::td">*(L::Symbol*)&amp;_data</ExpandedItem>
-      <ExpandedItem Optional="true" Condition="_td == &amp;L::Type&lt;L::String&gt;::td">*(L::String*)&amp;_data</ExpandedItem>
-      <ExpandedItem Optional="true" Condition="_td == &amp;L::Type&lt;L::Array&lt;L::Variable&gt; &gt;::td">*(L::Array&lt;L::Variable&gt;*)&amp;_data</ExpandedItem>
+      <ExpandedItem Optional="true" Condition="_td == &amp;L::Type&lt;L::String&gt;::td">*(L::String*)_p</ExpandedItem>
+      <ExpandedItem Optional="true" Condition="_td == &amp;L::Type&lt;L::ScriptFunction&gt;::td">*(L::ScriptFunction*)_p</ExpandedItem>
+      <ExpandedItem Optional="true" Condition="_td == &amp;L::Type&lt;L::Array&lt;L::Variable&gt; &gt;::td">*(L::Array&lt;L::Variable&gt;*)_p</ExpandedItem>
       <ExpandedItem Optional="true" Condition="_td == &amp;L::Type&lt;L::Table&lt;L::Variable,L::Variable&gt; &gt;::td">*(L::Table&lt;L::Variable,L::Variable&gt;*)&amp;_data</ExpandedItem>
       <ExpandedItem Optional="true" Condition="_td == &amp;L::Type&lt;L::Table&lt;L::Symbol,L::Variable&gt; &gt;::td">*(L::Table&lt;L::Symbol,L::Variable&gt;*)&amp;_data</ExpandedItem>
       <ExpandedItem Optional="true" Condition="_td == &amp;L::Type&lt;L::Ref&lt;L::Table&lt;L::Variable,L::Variable&gt; &gt; &gt;::td">*(L::Ref&lt;L::Table&lt;L::Variable,L::Variable&gt; &gt;*)&amp;_data</ExpandedItem>
