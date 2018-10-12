@@ -2,6 +2,7 @@
 
 #include <type_traits>
 #include "../stream/Stream.h"
+#include "../stream/serial_bin.h"
 #include "../system/Memory.h"
 
 namespace L {
