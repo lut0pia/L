@@ -39,5 +39,5 @@ void MidiSourceComponent::play() {
 }
 void MidiSourceComponent::stop() {
   _playing = false;
-  Audio::Midi::stop_all();
+  Midi::stop_all();
 }

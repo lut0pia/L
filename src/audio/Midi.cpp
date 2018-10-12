@@ -1,10 +1,17 @@
 #include "Midi.h"
 
-#include "../math/math.h"
-
 using namespace L;
-using namespace Audio;
 
+static Midi* instance(nullptr);
+
+Midi::Midi() {
+  instance = this;
+}
+void Midi::send(const MidiEvent& e) {
+  if(instance) {
+    instance->send_internal(e);
+  }
+}
 void Midi::set_instrument(uint8_t channel, uint8_t instrument) {
   MidiEvent e;
   e.type = MidiEvent::ProgramChange;
@@ -29,9 +36,9 @@ void Midi::stop_note(uint8_t channel, uint8_t note) {
 }
 void Midi::stop_all(uint8_t channel) {
   for(uint32_t t(0); t<128; t++)
-    Audio::Midi::stop_note(channel, t);
+    stop_note(channel, t);
 }
 void Midi::stop_all() {
   for(uint8_t c(0); c<16; c++)
-    Audio::Midi::stop_all(c);
+    stop_all(c);
 }

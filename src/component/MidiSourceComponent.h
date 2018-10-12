@@ -9,7 +9,7 @@ namespace L {
     L_COMPONENT(MidiSourceComponent)
       L_COMPONENT_HAS_UPDATE(MidiSourceComponent)
   protected:
-    Resource<Audio::MidiSequence> _sequence;
+    Resource<MidiSequence> _sequence;
     intptr_t _play_index;
     Time _play_time;
     bool _loop, _playing;

@@ -1,7 +1,6 @@
 #include "MidiSequence.h"
 
 using namespace L;
-using namespace Audio;
 
 void MidiSequence::play(intptr_t& index, Time& time) const {
   while(index<events.size()) {
