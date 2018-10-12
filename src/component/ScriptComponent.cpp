@@ -102,8 +102,8 @@ void ScriptComponent::script_registration() {
   L_COMPONENT_BIND(ScriptComponent, "script");
   L_COMPONENT_METHOD(ScriptComponent, "load", 1, load(c.param(0).get<String>()));
   L_COMPONENT_FUNCTION(ScriptComponent, "call", 1, {
-    const std::initializer_list<Var> param_list(&c.param(1), &c.param(c.param_count()));
-    c.return_value() = c.current_self().as<ScriptComponent*>()->_context.execute(c.param(0), param_list);
+    ScriptContext& context(c.current_self().as<ScriptComponent*>()->_context);
+    c.return_value() = context.execute(c.param(0), &c.param(1), c.param_count()-1);
   });
 }
 

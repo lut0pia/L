@@ -35,7 +35,10 @@ namespace L {
     inline uint32_t param_count() const { return _current_param_count; }
 
     bool try_execute_method(const Symbol&, std::initializer_list<Var> = {});
-    Var execute(const ScriptFunction& function, std::initializer_list<Var> = {});
+    Var execute(const ScriptFunction& function, std::initializer_list<Var> il) {
+      return execute(function, il.begin(), il.size());
+    }
+    Var execute(const ScriptFunction& function, const Var* params = nullptr, size_t param_count = 0);
 
     static inline Var& global(Symbol s) { return ScriptGlobal(s).value(); }
     static Ref<Table<Var, Var>> type_table(const TypeDescription*);

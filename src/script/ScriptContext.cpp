@@ -67,20 +67,19 @@ bool ScriptContext::try_execute_method(const Symbol& sym, std::initializer_list<
   }
   return false;
 }
-Var ScriptContext::execute(const ScriptFunction& function, std::initializer_list<Var> parameters) {
+Var ScriptContext::execute(const ScriptFunction& function, const Var* params, size_t param_count) {
   L_ASSERT(_frames.empty());
   _stack.size(1<<12);
   _frames.push();
   _frames.back().script = function.script;
   _frames.back().stack_start = _current_stack_start = 0;
-  _frames.back().param_count = _current_param_count = parameters.size();
+  _frames.back().param_count = _current_param_count = param_count;
 
   current_self() = _self;
 
   { // Put parameters on the stack
-    uintptr_t i(0);
-    for(const Var& p : parameters) {
-      param(i++) = p;
+    for(uintptr_t i(0); i<param_count; i++) {
+      param(i) = params[i];
     }
   }
 
