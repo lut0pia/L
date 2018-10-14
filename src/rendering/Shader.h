@@ -41,8 +41,6 @@ namespace L {
     inline VkShaderStageFlagBits stage() const { return _stage; }
     inline const Array<Binding>& bindings() const { return _bindings; }
 
-    static void reflect(Intermediate& intermediate);
-
     friend inline Stream& operator<=(Stream& s, const Intermediate& v) { return s <= v.binary <= v.stage <= v.bindings; }
     friend inline Stream& operator>=(Stream& s, Intermediate& v) { return s >= v.binary >= v.stage >= v.bindings; }
     friend inline Stream& operator<=(Stream& s, const Binding& v) { return s <= v.name <= v.offset <= v.size <= v.index <= v.binding <= v.type <= v.format <= v.stage; }

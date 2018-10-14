@@ -1,5 +1,6 @@
 #include <L/src/container/Buffer.h>
 #include <L/src/engine/Resource.inl>
+#include <L/src/pipeline/ShaderTools.h>
 #include <L/src/rendering/Shader.h>
 #include <L/src/rendering/shader_lib.h>
 #include <L/src/system/System.h>
@@ -62,7 +63,7 @@ bool glsl_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) {
 
   if(CFileStream file_stream = CFileStream(output_file, "rb")) {
     intermediate.binary = file_stream.read_into_buffer();
-    Shader::reflect(intermediate);
+    ShaderTools::reflect(intermediate);
     return true;
   } else {
     return false;
