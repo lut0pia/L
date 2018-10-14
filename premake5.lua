@@ -4,7 +4,7 @@ solution "L"
 
   -- General options
   location("prj/".._ACTION)
-  flags {"StaticRuntime"}
+  staticruntime "On"
   cppdialect "C++11"
   floatingpoint "Fast"
   exceptionhandling "Off"
