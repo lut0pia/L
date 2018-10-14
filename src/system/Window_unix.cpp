@@ -27,7 +27,7 @@ void Window::open(const char* title, uint32_t width, uint32_t height, uint32_t f
   if((xdisplay = XOpenDisplay(nullptr)) == nullptr)
     error("Cannot open X server display.");
 
-  {
+  { // Create window
     ::Window root = DefaultRootWindow(xdisplay);
     int scr = DefaultScreen(xdisplay);
     int depth = DefaultDepth(xdisplay, scr);
@@ -35,8 +35,10 @@ void Window::open(const char* title, uint32_t width, uint32_t height, uint32_t f
     XSetWindowAttributes swa {};    
     swa.event_mask = ExposureMask | KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask;
     xwindow = XCreateWindow(xdisplay,root,0,0,width,height,0,depth,InputOutput,visual,CWColormap | CWEventMask,&swa);
-    //Atom delWindow = XInternAtom(dpy,"WM_DELETE_W aINDOW",0); // This is for the window close operation
-    //XSetWMProtocols(dpy,win,&delWindow,1);
+  }
+  { // Activate window close events
+    Atom wm_delete_window(XInternAtom(xdisplay, "WM_DELETE_WINDOW", 0));
+    XSetWMProtocols(xdisplay, xwindow, &wm_delete_window, 1);
   }
   XMapWindow(xdisplay,xwindow);
   XStoreName(xdisplay,xwindow,title);
