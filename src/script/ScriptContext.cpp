@@ -3,18 +3,14 @@
 #include "../container/Ref.h"
 #include "../engine/Resource.h"
 #include "../engine/Resource.inl"
-#include "../image/Color.h"
-#include "../macros.h"
-#include "../math/Rand.h"
-#include "../stream/CFileStream.h"
-#include "../math/Vector.h"
-#include "../system/Device.h"
-#include "../system/Window.h"
-#include "../time/Time.h"
 
 using namespace L;
 
 Table<const TypeDescription*, Var> ScriptContext::_type_tables;
+
+ScriptContext::ScriptContext(const Var& self)
+  : _self(self), _current_stack_start(0), _current_param_count(0) {
+}
 
 struct ObjectIterator {
   Table<Var, Var>::Iterator begin, end;
@@ -168,158 +164,4 @@ Ref<Table<Var, Var>> ScriptContext::type_table(const TypeDescription* td) {
   if(!tt.is<Ref<Table<Var, Var>>>())
     tt = ref<Table<Var, Var>>();
   return tt.as<Ref<Table<Var, Var>>>();
-}
-
-ScriptContext::ScriptContext(const Var& self) : _self(self), _current_stack_start(0), _current_param_count(0) {
-  L_ONCE;
-  global("non-null") = (ScriptNativeFunction)([](ScriptContext& c) {
-    L_ASSERT(c.param_count()==1);
-    c.return_value() = !c.param(0).is<void>() && c.param(0).as<void*>()!=nullptr;
-  });
-  global("count") = (ScriptNativeFunction)([](ScriptContext& c) {
-    L_ASSERT(c.param_count()==1);
-    if(c.param(0).is<Ref<Table<Var, Var>>>())
-      c.return_value() = float(c.param(0).as<Ref<Table<Var, Var>>>()->count());
-    else c.return_value() = 0;
-  });
-  global("max") = (ScriptNativeFunction)([](ScriptContext& c) {
-    L_ASSERT(c.param_count()>=1);
-    c.return_value() = c.param(0);
-    for(uintptr_t i(1); i<c.param_count(); i++)
-      if(c.param(i)>c.return_value())
-        c.return_value() = c.param(i);
-  });
-  global("min") = (ScriptNativeFunction)([](ScriptContext& c) {
-    L_ASSERT(c.param_count()>=1);
-    c.return_value() = c.param(0);
-    for(uintptr_t i(1); i<c.param_count(); i++)
-      if(c.param(i)<c.return_value())
-        c.return_value() = c.param(i);
-  });
-  global("clamp") = (ScriptNativeFunction)([](ScriptContext& c) {
-    L_ASSERT(c.param_count()==3);
-    c.return_value() = clamp(c.param(0), c.param(1), c.param(2));
-  });
-  global("print") = (ScriptNativeFunction)([](ScriptContext& c) {
-    for(uintptr_t i(0); i<c.param_count(); i++)
-      out << c.param(i);
-  });
-  global("break") = (ScriptNativeFunction)([](ScriptContext& c) {
-    debugbreak();
-  });
-  global("typename") = (ScriptNativeFunction)([](ScriptContext& c) {
-    c.return_value() = c.param(0).type()->name;
-  });
-  global("now") = (ScriptNativeFunction)([](ScriptContext& c) {
-    c.return_value() = Time::now();
-  });
-  global("time") = (ScriptNativeFunction)([](ScriptContext& c) {
-    L_ASSERT(c.param_count()==1);
-    c.return_value() = Time(c.param(0).get<float>()*1000000.f);
-  });
-  global("rand") = (ScriptNativeFunction)([](ScriptContext& c) {
-    c.return_value() = Rand::nextFloat();
-  });
-  global("button-pressed") = (ScriptNativeFunction)([](ScriptContext& c) {
-    if(c.param_count()) {
-      c.return_value() = Device::any_button(Device::symbol_to_button(c.param(0)));
-    } else c.return_value() = false;
-  });
-  global("window-height") = (ScriptNativeFunction)([](ScriptContext& c) { c.return_value() = float(Window::height()); });
-  global("window-width") = (ScriptNativeFunction)([](ScriptContext& c) { c.return_value() = float(Window::width()); });
-  global("mouse-x") = (ScriptNativeFunction)([](ScriptContext& c) { c.return_value() = float(Window::mouse_x()); });
-  global("mouse-y") = (ScriptNativeFunction)([](ScriptContext& c) { c.return_value() = float(Window::mouse_y()); });
-  global("vec") = (ScriptNativeFunction)([](ScriptContext& c) {
-    const uint32_t param_count(c.param_count());
-    Vector3f& vector(c.return_value().make<Vector3f>());
-    if(param_count)
-      for(uint32_t i(0); i<3; i++)
-        vector[i] = c.param(min(param_count-1, i));
-    else vector = 0.f;
-  });
-  global("vec4") = (ScriptNativeFunction)([](ScriptContext& c) {
-    const uint32_t param_count(c.param_count());
-    Vector4f& vector(c.return_value().make<Vector4f>());
-    if(param_count)
-      for(uint32_t i(0); i<4; i++)
-        vector[i] = c.param(min(param_count-1, i));
-    else vector = 0.f;
-  });
-  global("normalize") = (ScriptNativeFunction)([](ScriptContext& c) {
-    L_ASSERT(c.param_count()==1);
-    c.return_value() = c.param(0).get<Vector3f>().normalized();
-  });
-  global("cross") = (ScriptNativeFunction)([](ScriptContext& c) {
-    L_ASSERT(c.param_count()==2);
-    c.return_value() = c.param(0).get<Vector3f>().cross(c.param(1).get<Vector3f>());
-  });
-  global("length") = (ScriptNativeFunction)([](ScriptContext& c) {
-    L_ASSERT(c.param_count()==1);
-    c.return_value() = c.param(0).get<Vector3f>().length();
-  });
-  global("distance") = (ScriptNativeFunction)([](ScriptContext& c) {
-    L_ASSERT(c.param_count()==2);
-    c.return_value() = c.param(0).get<Vector3f>().dist(c.param(1).get<Vector3f>());
-  });
-  global("dot") = (ScriptNativeFunction)([](ScriptContext& c) {
-    L_ASSERT(c.param_count()==2);
-    c.return_value() = c.param(0).get<Vector3f>().dot(c.param(1).get<Vector3f>());
-  });
-  global("sqrt") = (ScriptNativeFunction)([](ScriptContext& c) {
-    L_ASSERT(c.param_count()==1);
-    c.return_value() = sqrt(c.param(0).get<float>());
-  });
-  global("pow") = (ScriptNativeFunction)([](ScriptContext& c) {
-    L_ASSERT(c.param_count()==2);
-    c.return_value() = powf(c.param(0).get<float>(), c.param(1).get<float>());
-  });
-  global("sin") = (ScriptNativeFunction)([](ScriptContext& c) {
-    L_ASSERT(c.param_count()==1);
-    c.return_value() = sinf(c.param(0).get<float>());
-  });
-  global("cos") = (ScriptNativeFunction)([](ScriptContext& c) {
-    L_ASSERT(c.param_count()==1);
-    c.return_value() = cosf(c.param(0).get<float>());
-  });
-  global("tan") = (ScriptNativeFunction)([](ScriptContext& c) {
-    L_ASSERT(c.param_count()==1);
-    c.return_value() = tanf(c.param(0).get<float>());
-  });
-  global("lerp") = (ScriptNativeFunction)([](ScriptContext& c) {
-    L_ASSERT(c.param_count()==3);
-    const float a(c.param(0).get<float>()), b(c.param(1).get<float>()), alpha(c.param(2).get<float>());
-    c.return_value() = (a*(1.f-alpha)+b*alpha);
-  });
-  global("abs") = (ScriptNativeFunction)([](ScriptContext& c) {
-    L_ASSERT(c.param_count()==1);
-    c.return_value() = abs(c.param(0).get<float>());
-  });
-  global("floor") = (ScriptNativeFunction)([](ScriptContext& c) {
-    L_ASSERT(c.param_count()==1);
-    c.return_value() = floorf(c.param(0).get<float>());
-  });
-  global("color") = (ScriptNativeFunction)([](ScriptContext& c) {
-    if(c.param(0).is<String>()) {
-      c.return_value() = Color(c.param(0).as<String>());
-    } else {
-      Color& color(c.return_value().make<Color>() = Color::white);
-      const uint32_t params(min(c.param_count(), 4u));
-      for(uint32_t i(0); i<params; i++)
-        color[i] = c.param(i).is<float>() ? (c.param(i).as<float>()*255) : c.param(i).get<int>();
-    }
-  });
-  global("left-pad") = (ScriptNativeFunction)([](ScriptContext& c) {
-    L_ASSERT(c.param_count()==3);
-    c.return_value() = c.param(0).get<String>();
-    String& str(c.return_value().as<String>());
-    const uint32_t wanted_size(c.param(1).get<float>());
-    const String append(c.param(2).get<String>());
-    while(str.size()<wanted_size) {
-      str = append + str;
-    }
-  });
-#define L_SCRIPT_ACCESS_METHOD(type,name) type_value(Type<type>::description(), Symbol(#name)) = (ScriptNativeFunction)([](ScriptContext& c) {L_ASSERT(c.param_count()==0 && c.current_self().is<type>()); c.return_value() = c.current_self().as<type>().name();})
-  L_SCRIPT_ACCESS_METHOD(Vector3f, x);
-  L_SCRIPT_ACCESS_METHOD(Vector3f, y);
-  L_SCRIPT_ACCESS_METHOD(Vector3f, z);
 }
