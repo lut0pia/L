@@ -17,6 +17,7 @@ namespace L {
   public:
     constexpr ScriptGlobal() : _slot(nullptr) {}
     ScriptGlobal(const Symbol& name);
+    ScriptGlobal(const Symbol& name, const Var& value);
 
     inline const Symbol& name() const { return _slot->name; }
     inline Var& value() { return _slot->value; }
