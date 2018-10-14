@@ -1,4 +1,5 @@
 #include "L.h"
+#include "engine/Resource.inl"
 
 using namespace L;
 
