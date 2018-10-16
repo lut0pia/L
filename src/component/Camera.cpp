@@ -97,7 +97,7 @@ void Camera::prerender(VkCommandBuffer cmd_buffer) {
 
   _cmd_buffer = cmd_buffer;
 
-  VkViewport viewport {0,0,_geometry_buffer.width(),_geometry_buffer.height(),0.f,1.f};
+  VkViewport viewport {0,0,float(_geometry_buffer.width()),float(_geometry_buffer.height()),0.f,1.f};
   vkCmdSetViewport(_cmd_buffer, 0, 1, &viewport);
 }
 void Camera::present() {
