@@ -108,7 +108,7 @@ Var ScriptContext::execute(const ScriptFunction& function, const Var* params, si
       case Mul: local(ip->a) *= local(ip->b); break;
       case Div: local(ip->a) /= local(ip->b); break;
       case Mod: local(ip->a) %= local(ip->b); break;
-      case Inv: local(ip->a) = Var(0)-local(ip->a); break; // TODO: replace with actual invert dynamic operator
+      case Inv: local(ip->a).invert(); break;
       case Not: local(ip->a) = !local(ip->a).get<bool>(); break;
 
       case LessThan: local(ip->a) = (local(ip->b) < local(ip->c)); break;
