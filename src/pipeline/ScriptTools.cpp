@@ -1,8 +1,12 @@
 #include "ScriptTools.h"
 
+#include "../container/Table.h"
+#include "../dev/profiling.h"
+
 using namespace L;
 
 void ScriptTools::optimize(Script& script) {
+  L_SCOPE_MARKER("Script optimization");
   { // Replace LoadConst by shortcuts when available
     for(ScriptInstruction& inst : script.bytecode) {
       if(inst.opcode==LoadConst) {
@@ -21,7 +25,32 @@ void ScriptTools::optimize(Script& script) {
     }
   }
   { // Remove unused constants
-    // TODO
+    // Gather all used constants
+    Table<uintptr_t, bool> used_constants;
+    for(uintptr_t i(0); i<script.bytecode.size(); i++) {
+      if(script.bytecode[i].opcode==LoadConst) {
+        used_constants[script.bytecode[i].b] = true;
+      }
+    }
+
+    const size_t before_const_count(script.constants.size());
+    uintptr_t after_i(0);
+    for(uintptr_t before_i(0); before_i<before_const_count; before_i++) {
+      if(!used_constants.find(before_i)) { // This constant is unused
+        // Remove it from constant array
+        script.constants.erase(after_i);
+        
+        // Walk through code to update constant indices
+        for(uintptr_t j(0); j<script.bytecode.size(); j++) {
+          ScriptInstruction& inst(script.bytecode[j]);
+          if(inst.opcode==LoadConst && inst.b > after_i) {
+            inst.b--;
+          }
+        }
+      } else {
+        after_i++;
+      }
+    }
   }
 }
 
