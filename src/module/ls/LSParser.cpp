@@ -21,7 +21,7 @@ bool LSParser::read(const char* text, size_t size, bool last_read) {
       _stack.top(1)->as<Array<Var>>().pop();
       _stack.pop();
       _stack.pop();
-    } else if(_lexer.is_token(".")) {
+    } else if(_lexer.is_token(".") || _lexer.is_token(":")) {
       L_ASSERT(_state==Usual);
       L_ASSERT(_stack.top(1)->is<Array<Var>>());
       auto& var_array = _stack.top(1)->as<Array<Var>>();
@@ -32,6 +32,8 @@ bool LSParser::read(const char* text, size_t size, bool last_read) {
       } else {
         previous_var = AccessChain {Array<Var> {previous_var, Var()}};
       }
+      // Remember last access type as char (.:[)
+      previous_var.as<AccessChain>().last_access_type = *_lexer.token();
       _stack.top() = previous_var.as<AccessChain>().array.end()-1;
       continue;
     } else if(_lexer.is_token("|")) {
@@ -52,11 +54,19 @@ bool LSParser::read(const char* text, size_t size, bool last_read) {
       else if(_lexer.is_token("true")) v = true;
       else if(_lexer.is_token("false")) v = false;
       else v = Symbol(token);
-      if(_state == PostQuote || _stack.top(1)->as<Array<Var>>().back().is<AccessChain>()) {
-        L_ASSERT(v.is<Symbol>());
-        const Symbol sym(v.as<Symbol>());
-        v.make<RawSymbol>().sym = sym;
+      if (_state == PostQuote) {
+        if(v.is<Symbol>()) {
+          const Symbol sym(v.as<Symbol>());
+          v.make<RawSymbol>().sym = sym;
+        } else {
+          error("Using ' before non-symbol");
+        }
         _state = Usual;
+      } else if(AccessChain* access_chain = _stack.top(1)->as<Array<Var>>().back().try_as<AccessChain>()) {
+        if(access_chain->last_access_type=='.' && v.is<Symbol>()) {
+          const Symbol sym(v.as<Symbol>());
+          v.make<RawSymbol>().sym = sym;
+        }
       }
       _stack.pop();
     }

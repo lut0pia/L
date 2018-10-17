@@ -9,4 +9,5 @@ struct RawSymbol {
 };
 struct AccessChain {
   L::Array<L::Var> array;
+  char last_access_type; // .:[
 };
