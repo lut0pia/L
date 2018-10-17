@@ -79,6 +79,7 @@ namespace L {
     Variable& operator*=(const Variable&);
     Variable& operator/=(const Variable&);
     Variable& operator%=(const Variable&);
+    void invert();
 
     inline Variable operator+(const Variable& other) const{ Variable wtr(*this); wtr += other; return wtr; }
     inline Variable operator-(const Variable& other) const{ Variable wtr(*this); wtr -= other; return wtr; }

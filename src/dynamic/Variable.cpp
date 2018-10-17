@@ -85,6 +85,11 @@ Variable& Variable::operator-=(const Variable& other) OPERATOR(sub)
 Variable& Variable::operator*=(const Variable& other) OPERATOR(mul)
 Variable& Variable::operator/=(const Variable& other) OPERATOR(div)
 Variable& Variable::operator%=(const Variable& other) OPERATOR(mod)
+void Variable::invert() {
+  if(type()->inv) {
+    type()->inv(value());
+  }
+}
 
 Variable& Variable::operator[](const Variable& key) {
   if(!is<Table<Variable,Variable> >()) *this = Table<Variable,Variable>();
