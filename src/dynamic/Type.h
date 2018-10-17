@@ -33,6 +33,7 @@ namespace L {
     void(*mul)(void*,const void*);
     void(*div)(void*,const void*);
     void(*mod)(void*,const void*);
+    void(*inv)(void*);
 
     int(*cmp)(const void*,const void*);
 
@@ -114,16 +115,18 @@ namespace L {
     static inline void usemul(void(*mul)(void*,const void*)){ td.mul = mul; }
     static inline void usediv(void(*div)(void*,const void*)){ td.div = div; }
     static inline void usemod(void(*mod)(void*,const void*)){ td.mod = mod; }
+    static inline void useinv(void(*inv)(void*)){ td.inv = inv; }
     static inline void usecmp(int(*cmp)(const void*,const void*)){ td.cmp = cmp; }
 
     // Operator default setters
     template <class dummy = void> static inline void canall(){ cancmp<>(); canmath<>(); canmod<>(); }
-    template <class dummy = void> static inline void canmath(){ canadd<>(); cansub<>(); canmul<>(); candiv<>(); }
+    template <class dummy = void> static inline void canmath(){ canadd<>(); cansub<>(); canmul<>(); candiv<>(); caninv<>(); }
     template <class dummy = void> static inline void canadd(){ useadd([](void* a,const void* b) { *((T*)a) += *((T*)b); }); }
     template <class dummy = void> static inline void cansub(){ usesub([](void* a,const void* b) { *((T*)a) -= *((T*)b); }); }
     template <class dummy = void> static inline void canmul(){ usemul([](void* a,const void* b) { *((T*)a) *= *((T*)b); }); }
     template <class dummy = void> static inline void candiv(){ usediv([](void* a,const void* b) { *((T*)a) /= *((T*)b); }); }
     template <class dummy = void> static inline void canmod(){ usemod([](void* a,const void* b) { *((T*)a) %= *((T*)b); }); }
+    template <class dummy = void> static inline void caninv(){ useinv([](void* a) { *((T*)a) = -*((T*)a); }); }
     template <class dummy = void> static inline void cancmp(){
       usecmp([](const void* a,const void* b)->int {
         if((*(T*)a)<(*(T*)b))       return -1;
