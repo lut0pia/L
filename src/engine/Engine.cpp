@@ -9,7 +9,6 @@
 #include "../rendering/Pipeline.h"
 #include "../rendering/shader_lib.h"
 #include "Resource.h"
-#include "../script/ScriptContext.h"
 #include "../system/Device.h"
 #include "../system/Window.h"
 #include "../stream/CFileStream.h"
