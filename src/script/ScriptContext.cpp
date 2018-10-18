@@ -38,8 +38,9 @@ static Ref<Table<Var, Var>> get_table(const Var& object) {
     && !object.is<ScriptNativeFunction>()
     && !object.is<void>()) {
     table = ScriptContext::type_table(object.type());
-  } else if(object.is<void>())
-    error("Trying to index from void");
+  } else {
+    warning("Trying to index from non-indexable type: %s", object.type()->name);
+  }
   return table;
 }
 static inline void get_item(const Var& object, const Var& index, Var& res) {
