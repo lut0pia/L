@@ -9,7 +9,7 @@
 
 using namespace L;
 
-static const Symbol entity_symbol("entity"), update_components_symbol("update-components"), gui_symbol("gui"),
+static const Symbol entity_symbol("entity"), update_components_symbol("update-components"),
 start_symbol("start"), update_symbol("update"), late_update_symbol("late-update"), event_symbol("event");
 
 void ScriptComponent::update_components() {
@@ -133,7 +133,4 @@ void ScriptComponent::event(const Device::Event& e) {
 }
 void ScriptComponent::event(const Ref<Table<Var, Var>>&e) {
   _context.try_execute_method(event_symbol, {e});
-}
-void ScriptComponent::gui(const Camera& c) {
-  _context.try_execute_method(gui_symbol, {(Camera*)&c});
 }

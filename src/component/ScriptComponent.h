@@ -10,7 +10,6 @@ namespace L {
     L_COMPONENT(ScriptComponent)
       L_COMPONENT_HAS_UPDATE(ScriptComponent)
       L_COMPONENT_HAS_LATE_UPDATE(ScriptComponent)
-      L_COMPONENT_HAS_GUI(ScriptComponent)
       L_COMPONENT_HAS_DEV_EVENT(ScriptComponent)
   protected:
     ScriptContext _context;
@@ -29,6 +28,5 @@ namespace L {
     void late_update();
     void event(const Device::Event&);
     void event(const Ref<Table<Var, Var>>&);
-    void gui(const Camera&);
   };
 }
