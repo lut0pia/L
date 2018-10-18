@@ -15,6 +15,7 @@ namespace L {
   private:
     static Array<void(*)()> _updates, _late_updates, _sub_updates;
     static Array<void(*)(const class Camera&, const class RenderPass&)> _renders;
+    static Array<void(*)(void* frames, uint32_t frame_count)> _audio_renders;
     static Array<void(*)(const class Camera&)> _guis;
     static Array<void(*)(const class Window::Event&)> _win_events;
     static Array<void(*)(const struct Device::Event&)> _dev_events;
@@ -43,6 +44,7 @@ namespace L {
       if(T::late_update_all != Component::late_update_all) _late_updates.push(T::late_update_all);
       if(T::sub_update_all != Component::sub_update_all) _sub_updates.push(T::sub_update_all);
       if(T::render_all != Component::render_all) _renders.push(T::render_all);
+      if(T::audio_render_all != Component::audio_render_all) _audio_renders.push(T::audio_render_all);
       if(T::gui_all != Component::gui_all) _guis.push(T::gui_all);
       if(T::win_event_all != Component::win_event_all) _win_events.push(T::win_event_all);
       if(T::dev_event_all != Component::dev_event_all) _dev_events.push(T::dev_event_all);

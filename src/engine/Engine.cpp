@@ -1,6 +1,6 @@
 #include "Engine.h"
 
-#include "../component/AudioSourceComponent.h"
+#include "../audio/Audio.h"
 #include "../component/Camera.h"
 #include "../component/PostProcessComponent.h"
 #include "CullVolume.h"
@@ -18,6 +18,7 @@ using namespace L;
 
 Array<void(*)()> Engine::_updates, Engine::_sub_updates, Engine::_late_updates;
 Array<void(*)(const Camera&, const RenderPass&)> Engine::_renders;
+Array<void(*)(void* frames, uint32_t frame_count)> Engine::_audio_renders;
 Array<void(*)(const Camera&)> Engine::_guis;
 Array<void(*)(const L::Window::Event&)> Engine::_win_events;
 Array<void(*)(const Device::Event&)> Engine::_dev_events;
@@ -118,13 +119,12 @@ void Engine::update() {
 
   {
     L_SCOPE_MARKER("Audio rendering");
-    static void* buffer;
-    static uint32_t frame_count;
-    Audio::acquire_buffer(buffer, frame_count);
+    void* frames;
+    uint32_t frame_count;
+    Audio::acquire_buffer(frames, frame_count);
     if(frame_count) {
-      ComponentPool<AudioSourceComponent>::iterate([](AudioSourceComponent& asc) {
-        asc.render(buffer, frame_count);
-      });
+      for(const auto& audio_render : _audio_renders)
+        audio_render(frames, frame_count);
       Audio::commit_buffer();
     }
   }

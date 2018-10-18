@@ -9,6 +9,7 @@ namespace L {
   class Transform;
   class AudioSourceComponent : public Component {
     L_COMPONENT(AudioSourceComponent)
+      L_COMPONENT_HAS_AUDIO_RENDER(AudioSourceComponent)
   protected:
     Transform* _transform;
     ScriptComponent* _script;
@@ -18,7 +19,7 @@ namespace L {
     bool _playing, _looping;
   public:
     inline AudioSourceComponent() : _volume(1.f), _playing(false), _looping(false) {}
-    void render(void* buffer, uint32_t frame_count);
+    void audio_render(void* frames, uint32_t frame_count);
 
     void update_components() override;
     virtual Map<Symbol, Var> pack() const override;

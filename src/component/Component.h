@@ -47,6 +47,7 @@ namespace L {
     static void late_update_all() {}
     static void sub_update_all() {}
     static void render_all(const class Camera&, const class RenderPass&) {}
+    static void audio_render_all(void*, uint32_t) {}
     static void gui_all(const class Camera&) {}
     static void win_event_all(const Window::Event&) {}
     static void dev_event_all(const Device::Event&) {}
@@ -62,6 +63,7 @@ namespace L {
   template <class T> void late_update_all_impl() { ComponentPool<T>::iterate([](T& c) { c.late_update(); }); }
   template <class T> void late_update_all_async_impl() { ComponentPool<T>::async_iterate([](T& c, uint32_t) { c.late_update(); }); }
   template <class T> void render_all_impl(const Camera& cam, const RenderPass& rp) { ComponentPool<T>::iterate([&](T& c) { c.render(cam, rp); }); }
+  template <class T> void audio_render_all_impl(void* frames, uint32_t fc) { ComponentPool<T>::iterate([&](T& c) { c.audio_render(frames, fc); }); }
   template <class T> void gui_all_impl(const Camera& cam) { ComponentPool<T>::iterate([&](T& c) { c.gui(cam); }); }
   template <class T> void win_event_all_impl(const Window::Event& e) { ComponentPool<T>::iterate([&](T& c) { c.event(e); }); }
   template <class T> void dev_event_all_impl(const Device::Event& e) { ComponentPool<T>::iterate([&](T& c) { c.event(e); }); }
@@ -78,6 +80,7 @@ namespace L {
 #define L_COMPONENT_HAS_LATE_UPDATE(name) static inline void late_update_all() { late_update_all_impl<name>(); }
 #define L_COMPONENT_HAS_ASYNC_LATE_UPDATE(name) static inline void late_update_all() { late_update_all_async_impl<name>(); }
 #define L_COMPONENT_HAS_RENDER(name) static inline void render_all(const Camera& cam, const RenderPass& rp) { render_all_impl<name>(cam, rp); }
+#define L_COMPONENT_HAS_AUDIO_RENDER(name) static inline void audio_render_all(void* frames, uint32_t fc) { audio_render_all_impl<name>(frames, fc); }
 #define L_COMPONENT_HAS_GUI(name) static inline void gui_all(const Camera& cam) { gui_all_impl<name>(cam); }
 #define L_COMPONENT_HAS_WIN_EVENT(name) static inline void win_event_all(const Window::Event& e) { win_event_all_impl<name>(e); }
 #define L_COMPONENT_HAS_DEV_EVENT(name) static inline void dev_event_all(const Device::Event& e) { dev_event_all_impl<name>(e); }
