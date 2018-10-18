@@ -1,8 +1,11 @@
 #include <L/src/audio/Midi.h>
 #include <L/src/dev/debug.h>
+#include <L/src/system/Memory.h>
 
 #include <windows.h>
 #include <mmsystem.h>
+
+using namespace L;
 
 class MidiWin : public Midi {
 protected:
