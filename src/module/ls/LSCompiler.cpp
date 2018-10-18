@@ -27,7 +27,7 @@ ScriptFunction LSCompiler::compile() {
   }
 
   { // Compiling
-    Function& main_function(make_function(_parser.ast()));
+    Function& main_function(make_function(_parser.finish()));
     resolve_locals(main_function, main_function.code);
     compile_function(main_function);
   }
@@ -52,10 +52,6 @@ ScriptFunction LSCompiler::compile() {
 
   // Use for debugging
   //ScriptTools::print_disassembly(*_script, out);
-
-  { // Clean state for further parsing
-    _parser.reset();
-  }
 
   ScriptFunction script_function;
   script_function.script = _script;

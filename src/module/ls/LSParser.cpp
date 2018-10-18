@@ -90,3 +90,20 @@ void LSParser::reset() {
 
   _state = Usual;
 }
+Var LSParser::finish() {
+  // Can only finish if the stack size is 2
+  // Which means the first element is the do sequence
+  // and the second is a void element we are going
+  // to remove before returning
+  L_ASSERT(_stack.size()==2);
+
+  // Remove void element
+  _ast.as<Array<Var>>().pop();
+
+  // Make a copy of the ast before resetting
+  const Var sanitized_ast(_ast);
+
+  reset();
+
+  return sanitized_ast;
+}

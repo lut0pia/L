@@ -22,7 +22,9 @@ public:
   //! @param last_read True if there is no more text after this one
   //! @return true if AST is ready
   bool read(const char* text, size_t size, bool last_read = false);
+  //! Reset state of the parser
   void reset();
-
-  const L::Var& ast() const { return _ast; }
+  //! Get AST and reset parser
+  //! @return AST
+  L::Var finish();
 };
