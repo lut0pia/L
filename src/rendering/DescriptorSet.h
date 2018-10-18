@@ -20,6 +20,6 @@ namespace L {
     bool set_value(const Symbol& name, const void* data, size_t size);
     template <class T> bool set_value(const Symbol& name, const T& value) { return set_value(name, &value, sizeof(value)); }
 
-    operator const VkDescriptorSet&() const { return _set; }
+    inline const VkDescriptorSet& set() const { return _set; }
   };
 }

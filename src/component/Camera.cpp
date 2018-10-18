@@ -108,7 +108,7 @@ void Camera::present() {
     present_set.set_descriptor("light_buffer", VkDescriptorImageInfo {Vulkan::sampler(), _light_buffer.image_view(0), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
     vkCmdBindPipeline(_cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *present_pipeline);
     vkCmdSetViewport(_cmd_buffer, 0, 1, &_vk_viewport);
-    vkCmdBindDescriptorSets(_cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *present_pipeline, 0, 1, &(const VkDescriptorSet&)present_set, 0, nullptr);
+    vkCmdBindDescriptorSets(_cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *present_pipeline, 0, 1, &present_set.set(), 0, nullptr);
     vkCmdDraw(_cmd_buffer, 3, 1, 0, 0);
   }
 }

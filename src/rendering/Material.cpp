@@ -26,7 +26,7 @@ void Material::draw(const Camera& camera, const RenderPass& render_pass, const M
       }
     }
     VkCommandBuffer cmd_buffer(camera.cmd_buffer());
-    vkCmdBindDescriptorSets(cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *pipeline, 0, 1, &(const VkDescriptorSet&)desc_set, 0, nullptr);
+    vkCmdBindDescriptorSets(cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *pipeline, 0, 1, &desc_set.set(), 0, nullptr);
     if(const Shader::Binding* constants_binding = pipeline->find_binding("Constants")) {
       vkCmdPushConstants(cmd_buffer, *pipeline, constants_binding->stage, 0, sizeof(model), &model);
     }
