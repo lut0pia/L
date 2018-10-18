@@ -8,7 +8,7 @@ using namespace L;
 
 static const Symbol local_symbol("local"), set_symbol("set"), object_symbol("object"),
 fun_symbol("fun"), foreach_symbol("foreach"), do_symbol("do"), if_symbol("if"), self_symbol("self"),
-switch_symbol("switch"), while_symbol("while"), and_symbol("and"), or_symbol("or"),
+switch_symbol("switch"), while_symbol("while"), and_symbol("and"), or_symbol("or"), not_symbol("not"),
 add_symbol("+"), sub_symbol("-"), mul_symbol("*"), div_symbol("/"), mod_symbol("%"),
 add_assign_symbol("+="), sub_assign_symbol("-="), mul_assign_symbol("*="), div_assign_symbol("/="), mod_assign_symbol("%="),
 less_symbol("<"), less_equal_symbol("<="), equal_symbol("="), greater_symbol(">"), greater_equal_symbol(">="), not_equal_symbol("<>");
@@ -256,6 +256,9 @@ void LSCompiler::compile(Function& func, const Var& v, uint32_t offset) {
         for(uintptr_t end_jump : end_jumps) {
           func.bytecode[end_jump].bc = int16_t(func.bytecode.size()-end_jump)-1;
         }
+      } else if(sym==not_symbol) { // Not
+        compile(func, array[1], offset);
+        func.bytecode.push(ScriptInstruction {Not, uint8_t(offset)});
       } else if(sym==fun_symbol) { // Function
         if(array.size()>1) {
           // Make a new function from the last item of the array
