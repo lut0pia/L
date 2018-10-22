@@ -53,7 +53,7 @@ void ScriptComponent::script_registration() {
   });
   L_FUNCTION("read", {
     L_ASSERT(c.param_count()==1);
-    c.execute(*Resource<ScriptFunction>(c.param(0).get<String>()));
+    c.return_value() = *Resource<ScriptFunction>(c.param(0).get<String>());
   });
   L_FUNCTION("setting", {
     L_ASSERT(c.param_count()==2);
