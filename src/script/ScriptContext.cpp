@@ -84,6 +84,7 @@ Var ScriptContext::execute(const ScriptFunction& function, const Var* params, si
   const ScriptInstruction* ip(function.script->bytecode.begin()+function.offset);
 
   while(true) {
+    L_ASSERT(ip>=current_script->bytecode.begin() && ip<current_script->bytecode.end());
     switch(ip->opcode) {
       case CopyLocal: local(ip->a) = local(ip->b); break;
       case LoadConst: local(ip->a) = current_script->constants[ip->b]; break;
@@ -156,7 +157,6 @@ Var ScriptContext::execute(const ScriptFunction& function, const Var* params, si
         }
         break;
     }
-    L_ASSERT(ip+1>=current_script->bytecode.begin() && ip+1<current_script->bytecode.end());
     ip++;
   }
 }
