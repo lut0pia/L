@@ -235,8 +235,7 @@ void LSCompiler::compile(Function& func, const Var& v, uint32_t offset) {
         Array<uintptr_t> end_jumps; // Will jump *after* the and
         for(uintptr_t i(1); i<array.size(); i++) {
           compile(func, array[i], offset);
-          func.bytecode.push(ScriptInstruction {Not, uint8_t(offset)});
-          func.bytecode.push(ScriptInstruction {CondJump, uint8_t(offset)});
+          func.bytecode.push(ScriptInstruction {CondNotJump, uint8_t(offset)});
           end_jumps.push(func.bytecode.size()-1);
         }
 
