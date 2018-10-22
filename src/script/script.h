@@ -29,6 +29,7 @@ namespace L {
 
     Jump, // Relative jump using bc as signed offset
     CondJump, // Relative jump using bc as signed offset if local a is truthy
+    CondNotJump, // Relative jump using bc as signed offset if local a is falsey
 
     Add, // Add local b to local a
     Sub, // Subtract local b to local a

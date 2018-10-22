@@ -77,6 +77,7 @@ void ScriptTools::print_disassembly(const Script& script, Stream& s) {
 
       case Jump:         s << "Jump:         " << i.bc << "\n"; break;
       case CondJump:     s << "CondJump:     " << i.a << " => " << i.bc << "\n"; break;
+      case CondNotJump:  s << "CondNotJump:  !" << i.a << " => " << i.bc << "\n"; break;
 
       case Add:          s << "Add:          " << i.a << " += " << i.b << "\n"; break;
       case Sub:          s << "Sub:          " << i.a << " -= " << i.b << "\n"; break;

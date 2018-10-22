@@ -102,7 +102,8 @@ Var ScriptContext::execute(const ScriptFunction& function, const Var* params, si
       case IterEndJump: if(local(ip->a).as<ObjectIterator>().has_ended()) ip += intptr_t(ip->bc); break;
 
       case Jump: ip += intptr_t(ip->bc); break;
-      case CondJump: if(local(ip->a)) ip += intptr_t(ip->bc); break;
+      case CondJump: if(local(ip->a).get<bool>()) ip += intptr_t(ip->bc); break;
+      case CondNotJump: if(!local(ip->a).get<bool>()) ip += intptr_t(ip->bc); break;
 
       case Add: local(ip->a) += local(ip->b); break;
       case Sub: local(ip->a) -= local(ip->b); break;
