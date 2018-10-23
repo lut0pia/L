@@ -159,7 +159,7 @@ void LSCompiler::compile(Function& func, const Var& v, uint32_t offset) {
 
         // Jump back to the start
         func.bytecode.push(ScriptInstruction {Jump});
-        func.bytecode.back().bc = int16_t(start_index)-int16_t(func.bytecode.size())-1;
+        func.bytecode.back().bc = int16_t(start_index)-int16_t(func.bytecode.size());
 
         // This is where we jump if the condition hasn't been met before
         func.bytecode[if_not_jump].bc = int16_t(func.bytecode.size()-if_not_jump)-1;
