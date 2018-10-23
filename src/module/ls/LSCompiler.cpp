@@ -336,7 +336,7 @@ void LSCompiler::compile(Function& func, const Var& v, uint32_t offset) {
         compile_comparison(func, array, offset, LessEqual, true);
       } else if(sym==greater_equal_symbol) { // Greater equal
         compile_comparison(func, array, offset, LessThan, true);
-      } else if(sym==not_equal_symbol) { // Greater equal
+      } else if(sym==not_equal_symbol) { // Not equal
         compile_comparison(func, array, offset, Equal, true);
       } else if(sym==do_symbol) {
         for(uint32_t i(1); i<array.size(); i++) {
