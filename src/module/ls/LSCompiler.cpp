@@ -98,8 +98,10 @@ void LSCompiler::compile(Function& func, const Var& v, uint32_t offset) {
       const Symbol sym(array[0].as<Symbol>());
 
       if(sym==set_symbol || sym==local_symbol) {
-        compile(func, array[2], offset);
-        compile_assignment(func, array[1], offset, offset+1);
+        if(array.size()>=3) {
+          compile(func, array[2], offset);
+          compile_assignment(func, array[1], offset, offset+1);
+        }
       } else if(sym==object_symbol) {
         func.bytecode.push(ScriptInstruction {MakeObject, uint8_t(offset)});
         for(uint32_t i(1); i<array.size(); i+=2) {
