@@ -83,7 +83,7 @@ void xinput_win_module_init() {
     xinput_devices[i].set_name(name);
     xinput_devices[i].user_index = DWORD(i);
   }
-  Engine::add_update([]() {
+  Engine::add_parallel_update([]() {
     L_SCOPE_MARKER("XInput update");
     for(XInputDevice& xinput_device : xinput_devices) {
       xinput_device.update();
