@@ -59,12 +59,12 @@ void Engine::update() {
         event(e);
   }
   {
-    L_SCOPE_MARKER("Component updates");
+    L_SCOPE_MARKER("Updates");
     for(const auto& update : _updates)
       update();
   }
   {
-    L_SCOPE_MARKER("Component sub_updates");
+    L_SCOPE_MARKER("Sub updates");
     _accumulator += _delta_time;
     _sub_delta_seconds = _sub_delta.fSeconds();
     while(_sub_delta < _accumulator) {
@@ -74,7 +74,7 @@ void Engine::update() {
     }
   }
   {
-    L_SCOPE_MARKER("Component late_updates");
+    L_SCOPE_MARKER("Late updates");
     for(const auto& late_update : _late_updates)
       late_update();
   }
