@@ -33,7 +33,7 @@ solution "L"
     buildoptions {"/wd4100","/wd4146","/wd4200","/wd4244","/wd4702","/wd4706","/wd4577","/wd4592"}
     characterset "MBCS" -- Don't use UNICODE
     warnings "Extra"
-    links {"user32","ws2_32","hid","winmm","vulkan-1"}
+    links {"ws2_32","vulkan-1"}
   filter {"action:vs*", "Debug or Development"}
     links {"dbghelp"}
   filter {"action:vs*", "Release"}

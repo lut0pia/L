@@ -1,1 +1,2 @@
 configuration {"windows"}
+  links {"hid"}
