@@ -437,14 +437,24 @@ void LSCompiler::compile_op_assign(Function& func, const Array<Var>& array, uint
 }
 void LSCompiler::compile_comparison(Function& func, const L::Array<L::Var>& array, uint32_t offset, ScriptOpCode cmp, bool not) {
   L_ASSERT(array.size()>=3);
-  if(array.size()==3) { // Only two operands
-    compile(func, array[1], offset);
-    compile(func, array[2], offset+1);
-    func.bytecode.push(ScriptInstruction {cmp, uint8_t(offset), uint8_t(offset), uint8_t(offset+1)});
-    if(not) {
-      func.bytecode.push(ScriptInstruction {Not, uint8_t(offset)});
+  if(array.size()>=3) {
+    Array<uintptr_t> end_jumps; // Will jump *after* the comparison
+    compile(func, array[1], offset+1);
+    for(uintptr_t i(2); i<array.size(); i++) {
+      compile(func, array[i], offset+i);
+      func.bytecode.push(ScriptInstruction {cmp, uint8_t(offset), uint8_t(offset+i-1), uint8_t(offset+i)});
+      if(not) {
+        func.bytecode.push(ScriptInstruction {Not, uint8_t(offset)});
+      }
+      func.bytecode.push(ScriptInstruction {CondNotJump, uint8_t(offset)});
+      end_jumps.push(func.bytecode.size()-1);
+    }
+
+    // Update all end jumps to jump here
+    for(uintptr_t end_jump : end_jumps) {
+      func.bytecode[end_jump].bc = int16_t(func.bytecode.size()-end_jump)-1;
     }
   } else {
-    error("Multi comparison not supported yet");
+    error("Comparisons need at least two operands");
   }
 }
