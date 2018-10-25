@@ -124,7 +124,7 @@ void Engine::update() {
   {
     L_SCOPE_MARKER("Audio rendering");
     void* frames;
-    uint32_t frame_count;
+    uint32_t frame_count(0);
     Audio::acquire_buffer(frames, frame_count);
     if(frame_count) {
       for(const auto& audio_render : _audio_renders)
