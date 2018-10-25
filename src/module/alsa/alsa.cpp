@@ -11,10 +11,11 @@ using namespace Audio;
 class ALSAOutput : public AudioOutput {
 protected:
   snd_pcm_t* _handle;
+  uint32_t _frequency;
   uint32_t _buffer_size;
 public:
-  ALSAOutput(snd_pcm_t* handle)
-    : _handle(handle), _buffer_size(snd_pcm_avail_update(_handle)) {
+  ALSAOutput(snd_pcm_t* handle, uint32_t frequency)
+    : _handle(handle), _frequency(frequency), _buffer_size(snd_pcm_avail_update(_handle)) {
   }
   uint32_t frame_count_ahead() override {
     snd_pcm_sframes_t avail_update(snd_pcm_avail_update(_handle));
@@ -25,7 +26,7 @@ public:
     }
     return _buffer_size-avail_update;
   }
-  uint32_t frequency() override { return Audio::working_frequency; }
+  uint32_t frequency() override { return _frequency; }
   void write(void* buffer, uint32_t frame_count) override {
     int rc = snd_pcm_writei(_handle, buffer, frame_count);
     if(rc == -EPIPE) {
@@ -46,7 +47,7 @@ void alsa_module_init() {
 
   int dir(0);
   int rc;
-  const unsigned int frequency(Audio::working_frequency);
+  unsigned int frequency(Audio::working_frequency);
 
   /* Open PCM device for playback. */
   rc = snd_pcm_open(&handle, "default", SND_PCM_STREAM_PLAYBACK, 0);
@@ -79,5 +80,5 @@ void alsa_module_init() {
   /* Use a buffer large enough to hold one period */
   snd_pcm_hw_params_get_period_size(params, &frames, &dir);
 
-  Memory::new_type<ALSAOutput>(handle);
+  Memory::new_type<ALSAOutput>(handle, frequency);
 }
