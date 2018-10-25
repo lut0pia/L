@@ -5,6 +5,30 @@
 
 using namespace L;
 
+static bool is_jump_inst(ScriptInstruction inst) {
+  return inst.opcode==IterEndJump || inst.opcode==Jump || inst.opcode==CondJump || inst.opcode==CondNotJump;
+}
+static void remove_instruction(Script& script, uintptr_t index) {
+  for(uintptr_t i(0); i<script.bytecode.size(); i++) {
+    ScriptInstruction& inst(script.bytecode[i]);
+    // Shift every jump that should be affected
+    if(is_jump_inst(inst)) {
+      uintptr_t ji(i+intptr_t(inst.bc));
+      if(i<index && index<=ji) {
+        inst.bc--;
+      } else if(ji<=index && index<i) {
+        inst.bc++;
+      }
+    }
+    // Shift functions that should be affected
+    else if(inst.opcode==LoadFun) {
+      if(index<inst.bc) {
+        inst.bc--;
+      }
+    }
+  }
+  script.bytecode.erase(index);
+}
 void ScriptTools::optimize(Script& script) {
   L_SCOPE_MARKER("Script optimization");
   { // Replace LoadConst by shortcuts when available
@@ -24,6 +48,16 @@ void ScriptTools::optimize(Script& script) {
       }
     }
   }
+
+  { // Remove null jumps
+    for(uintptr_t i(0); i<script.bytecode.size(); i++) {
+      if(is_jump_inst(script.bytecode[i]) && script.bytecode[i].bc==0) {
+        remove_instruction(script, i);
+        i--;
+      }
+    }
+  }
+
   { // Remove unused constants
     // Gather all used constants
     Table<uintptr_t, bool> used_constants;
@@ -39,7 +73,7 @@ void ScriptTools::optimize(Script& script) {
       if(!used_constants.find(before_i)) { // This constant is unused
         // Remove it from constant array
         script.constants.erase(after_i);
-        
+
         // Walk through code to update constant indices
         for(uintptr_t j(0); j<script.bytecode.size(); j++) {
           ScriptInstruction& inst(script.bytecode[j]);
