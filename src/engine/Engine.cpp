@@ -45,7 +45,7 @@ void Engine::update() {
     for(const auto& parallel_update : _parallel_updates) {
       TaskSystem::push([](void* f) {
         ((void(*)())f)();
-      }, parallel_update);
+      }, (void*)parallel_update);
     }
     TaskSystem::join();
   }
