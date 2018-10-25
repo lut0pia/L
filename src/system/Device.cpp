@@ -1,6 +1,7 @@
 #include "Device.h"
 
 #include "../container/Queue.h"
+#include "../parallelism/Lock.h"
 
 using namespace L;
 
@@ -22,9 +23,13 @@ void Device::set_button(Button b, bool value) {
 }
 
 void Device::add_device(Device* d) {
+  static Lock lock;
+  L_SCOPED_LOCK(lock);
   device_list.push(d);
 }
 void Device::add_event(Event e) {
+  static Lock lock;
+  L_SCOPED_LOCK(lock);
   device_events.push(e);
 }
 
