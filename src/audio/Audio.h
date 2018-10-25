@@ -16,11 +16,6 @@ namespace L {
     static constexpr uint32_t working_frequency = 44100;
     static constexpr SampleFormat working_format = Stereo16;
 
-    void init();
-    uint32_t internal_frame_count_ahead();
-    uint32_t internal_frequency();
-    void internal_write(void* buffer, uint32_t frame_count);
-    
     void acquire_buffer(void*& buffer, uint32_t& frame_count);
     void commit_buffer();
 

@@ -5,7 +5,6 @@ using namespace L;
 
 void mainjob(void*) {
   Network::init();
-  Audio::init();
 
   while(Window::loop()) {
     Engine::update();

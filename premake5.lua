@@ -42,7 +42,7 @@ solution "L"
   -- GMake
   configuration {"gmake"}
     buildoptions {"-fno-operator-names"}
-    links {"vulkan","X11","pthread","asound"}
+    links {"vulkan","X11","pthread"}
 
   -- Main project (startup)
   project "Engine"

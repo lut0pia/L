@@ -1,6 +1,7 @@
 #include "Audio.h"
 
 #include "../engine/Engine.h"
+#include "AudioOutput.h"
 
 using namespace L;
 using namespace Audio;
@@ -11,10 +12,15 @@ uint32_t requested_frame_count(0);
 void Audio::acquire_buffer(void*& buffer, uint32_t& frame_count) {
   L_ASSERT(requested_frame_count==0);
 
+  if(AudioOutput::instance()==nullptr) {
+    return;
+  }
+  AudioOutput& output(*AudioOutput::instance());
+
   const Time ideal_time_ahead(Engine::delta_time()*int64_t(2));
 
   // How many frames of advance do we have?
-  const uint32_t frame_count_ahead(convert_samples_required_count(working_frequency, internal_frequency(), internal_frame_count_ahead()));
+  const uint32_t frame_count_ahead(convert_samples_required_count(working_frequency, output.frequency(), output.frame_count_ahead()));
 
   // How many frames of advance do we want?
   const uint32_t ideal_frame_count_ahead(ideal_time_ahead.fSeconds()*working_frequency);
@@ -26,12 +32,17 @@ void Audio::acquire_buffer(void*& buffer, uint32_t& frame_count) {
 void Audio::commit_buffer() {
   L_ASSERT(requested_frame_count>0);
 
-  const uint32_t internal_freq(internal_frequency());
+  if(AudioOutput::instance()==nullptr) {
+    return;
+  }
+  AudioOutput& output(*AudioOutput::instance());
+
+  const uint32_t internal_freq(output.frequency());
   const uint32_t converted_frame_count(convert_samples_required_count(internal_freq, working_frequency, requested_frame_count));
 
   convert_samples(internal_sample_buffer, working_format, internal_freq, sample_buffer, working_format, working_frequency, requested_frame_count);
 
-  internal_write(internal_sample_buffer, converted_frame_count);
+  output.write(internal_sample_buffer, converted_frame_count);
 
   requested_frame_count = 0;
 }
