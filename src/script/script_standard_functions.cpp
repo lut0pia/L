@@ -21,10 +21,10 @@ using namespace L;
 
 L_SCRIPT_NATIVE_RETURN("rand", 0, Rand::nextFloat());
 L_SCRIPT_NATIVE_RETURN("now", 0, Time::now());
-L_SCRIPT_NATIVE_RETURN("window-width", 0, Window::width());
-L_SCRIPT_NATIVE_RETURN("window-height", 0, Window::height());
-L_SCRIPT_NATIVE_RETURN("mouse-x", 0, Window::mouse_x());
-L_SCRIPT_NATIVE_RETURN("mouse-y", 0, Window::mouse_y());
+L_SCRIPT_NATIVE_RETURN("window-width", 0, float(Window::width()));
+L_SCRIPT_NATIVE_RETURN("window-height", 0, float(Window::height()));
+L_SCRIPT_NATIVE_RETURN("mouse-x", 0, float(Window::mouse_x()));
+L_SCRIPT_NATIVE_RETURN("mouse-y", 0, float(Window::mouse_y()));
 L_SCRIPT_NATIVE_RETURN("non-null", 1, !c.param(0).is<void>() && c.param(0).as<void*>()!=nullptr);
 L_SCRIPT_NATIVE_RETURN("clamp", 3, clamp(c.param(0), c.param(1), c.param(2)));
 L_SCRIPT_NATIVE_RETURN("typename", 1, c.param(0).type()->name);
