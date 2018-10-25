@@ -15,7 +15,7 @@
 
 using namespace L;
 
-Array<void(*)()> Engine::_updates, Engine::_sub_updates, Engine::_late_updates;
+Array<void(*)()> Engine::_parallel_updates, Engine::_updates, Engine::_sub_updates, Engine::_late_updates;
 Array<void(*)(const Camera&, const RenderPass&)> Engine::_renders;
 Array<void(*)(void* frames, uint32_t frame_count)> Engine::_audio_renders;
 Array<void(*)(const Camera&)> Engine::_guis;
@@ -41,8 +41,13 @@ void Engine::update() {
   ScriptContext::global("max-frame-work-duration") = _max_frame_work_duration;
 
   {
-    L_SCOPE_MARKER("Resource update");
-    ResourceSlot::update();
+    L_SCOPE_MARKER("Parallel updates");
+    for(const auto& parallel_update : _parallel_updates) {
+      TaskSystem::push([](void* f) {
+        ((void(*)())f)();
+      }, parallel_update);
+    }
+    TaskSystem::join();
   }
   {
     L_SCOPE_MARKER("Window events");

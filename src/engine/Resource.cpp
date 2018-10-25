@@ -131,7 +131,7 @@ ResourceSlot* ResourceSlot::find(const char* url) {
 }
 void ResourceSlot::update() {
   if(!_slots.empty()) {
-    L_SCOPE_MARKER("ResourceSlotGeneric::update");
+    L_SCOPE_MARKER("Resource update");
     static uintptr_t index(0);
     ResourceSlot& slot(*_slots[index%_slots.size()]);
     if(!slot.persistent // Persistent resources don't hot reload

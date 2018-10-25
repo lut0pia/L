@@ -18,6 +18,8 @@ void mainjob(void*) {
 int main(int argc, const char* argv[]) {
   TypeInit();
 
+  Engine::add_parallel_update(ResourceSlot::update);
+
   Engine::register_component<Transform>();
   Engine::register_component<Camera>();
   Engine::register_component<RigidBody>();

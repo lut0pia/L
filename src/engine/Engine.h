@@ -13,7 +13,7 @@ namespace L {
       void* data;
     };
   private:
-    static Array<void(*)()> _updates, _late_updates, _sub_updates;
+    static Array<void(*)()> _parallel_updates, _updates, _late_updates, _sub_updates;
     static Array<void(*)(const class Camera&, const class RenderPass&)> _renders;
     static Array<void(*)(void* frames, uint32_t frame_count)> _audio_renders;
     static Array<void(*)(const class Camera&)> _guis;
@@ -38,6 +38,7 @@ namespace L {
     static void update();
     static void clear();
     static void add_deferred_action(const DeferredAction& la) { _deferred_actions.push(la); }
+    static void add_parallel_update(void(*update)()) { _parallel_updates.push(update); }
     static void add_update(void(*update)()) { _updates.push(update); }
     template <class T> inline static void register_component() {
       if(T::update_all != Component::update_all) _updates.push(T::update_all);
