@@ -83,25 +83,25 @@ static Array<RawInputDevice*> rawinput_devices;
 static Array<RAWINPUTDEVICELIST> rawinput_device_lists;
 
 void rawinput_module_init() {
-  Engine::add_update([]() {
+  RAWINPUTDEVICE Rid[4] {};
+
+  Rid[0].usUsagePage = 0x01;
+  Rid[0].usUsage = 0x01; // Mouse
+  Rid[1].usUsagePage = 0x01;
+  Rid[1].usUsage = 0x02; // Mouse
+  Rid[2].usUsagePage = 0x01;
+  Rid[2].usUsage = 0x06; // Keyboard
+  Rid[3].usUsagePage = 0x01;
+  Rid[3].usUsage = 0x07; // Keyboard
+
+  if(!RegisterRawInputDevices(Rid, L_COUNT_OF(Rid), sizeof(RAWINPUTDEVICE))) {
+    warning("Couldn't register raw input devices, mouse support may be harmed");
+    return;
+  }
+
+  Engine::add_parallel_update([]() {
     L_SCOPE_MARKER("RawInput update");
-    L_DO_ONCE {
-      RAWINPUTDEVICE Rid[4] {};
-
-      Rid[0].usUsagePage = 0x01;
-      Rid[0].usUsage = 0x01; // Mouse
-      Rid[1].usUsagePage = 0x01;
-      Rid[1].usUsage = 0x02; // Mouse
-      Rid[2].usUsagePage = 0x01;
-      Rid[2].usUsage = 0x06; // Keyboard
-      Rid[3].usUsagePage = 0x01;
-      Rid[3].usUsage = 0x07; // Keyboard
-
-      if(!RegisterRawInputDevices(Rid, L_COUNT_OF(Rid), sizeof(RAWINPUTDEVICE))) {
-        warning("Couldn't register raw input devices, mouse support may be harmed");
-        return;
-      }
-    }
+    L_SCOPE_THREAD_MASK(1);
 
     { // Fetch rawinput devices
       UINT rawinput_device_count;
