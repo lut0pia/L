@@ -23,6 +23,7 @@ namespace L {
     VkCommandBuffer _cmd_buffer;
     VkViewport _vk_viewport;
     Framebuffer _geometry_buffer, _light_buffer;
+    Time _framebuffer_mtime;
     GPUBuffer _shared_uniform;
   public:
     Camera();
@@ -62,5 +63,6 @@ namespace L {
     inline const Framebuffer& light_buffer() const { return _light_buffer; }
     inline const GPUBuffer& shared_uniform() const { return _shared_uniform; }
     inline VkCommandBuffer cmd_buffer() const { return _cmd_buffer; }
+    inline Time framebuffer_mtime() const { return _framebuffer_mtime; }
   };
 }

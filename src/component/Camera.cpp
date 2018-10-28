@@ -11,6 +11,7 @@
 #include "../system/Window.h"
 #include "../engine/Engine.h"
 #include "../engine/Settings.h"
+#include "../rendering/DescriptorSet.h"
 #include "../rendering/shader_lib.h"
 
 using namespace L;
@@ -21,6 +22,7 @@ Camera::Camera() :
   _viewport(Vector2f(0, 0), Vector2f(1, 1)),
   _geometry_buffer(Window::width(), Window::height(), RenderPass::geometry_pass()),
   _light_buffer(Window::width(), Window::height(), RenderPass::light_pass()),
+  _framebuffer_mtime(Time::now()),
   _shared_uniform(L_SHAREDUNIFORM_SIZE, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT) {
   update_viewport();
 }
@@ -67,6 +69,7 @@ void Camera::resize_buffers() {
   const uint32_t viewport_width(Window::width()*viewport_size.x()*screen_percentage), viewport_height(Window::height()*viewport_size.y()*screen_percentage);
   _geometry_buffer.resize(viewport_width, viewport_height);
   _light_buffer.resize(viewport_width, viewport_height);
+  _framebuffer_mtime = Time::now();
 }
 void Camera::event(const Window::Event& e) {
   if(e.type == Window::Event::Resize) {
