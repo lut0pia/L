@@ -89,22 +89,22 @@ void thread_func(void* arg) {
   current_fiber = 0;
   original_thread_fibers[local_thread_index] = convert_to_fiber();
 
-  Time starve_start(Time::now());
+  uint32_t starve_count(0);
   while(fibers[0].func) { // Exit when original task is over
     FiberSlot& slot(fibers[current_fiber]);
     if(slot.state==Ready && cas((uint32_t*)&slot.state, Ready, Running)==Ready) {
       if(slot.thread_mask&(1<<local_thread_index)
          && slot.check_condition()) {
         switch_to_fiber(slot.handle);
-        starve_start = Time::now();
+        starve_count = 0;
       }
       slot.state = (slot.func==nullptr ? Empty : Ready);
     }
 
     // May sleep if unsollicited and not main thread
-    if(local_thread_index>0 && Time::now()-starve_start >= Time(10)) {
+    if(local_thread_index>0 && ++starve_count > (1<<8)) {
       semaphore.get();
-      starve_start = Time::now();
+      starve_count = 0;
     }
 
     current_fiber = (current_fiber+1)%actual_fiber_count;
