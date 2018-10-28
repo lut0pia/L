@@ -25,12 +25,18 @@ void Primitive::script_registration() {
 }
 
 void Primitive::render(const Camera& camera, const RenderPass& render_pass) {
-  if(_cull_volume.visible() && _material.valid() && &_material.final_pipeline()->render_pass()==&render_pass) {
+  if(_cull_volume.visible() && _material.valid_for_render_pass(render_pass)) {
     _material.draw(camera, render_pass, _transform->matrix()*scale_matrix(_scale));
   }
 }
 
 void Primitive::late_update_all() {
+  {
+    L_SCOPE_MARKER("Primitive material update");
+    ComponentPool<Primitive>::iterate([](Primitive& c) {
+      c._material.update();
+    });
+  }
   {
     L_SCOPE_MARKER("Primitive bounds computation");
     ComponentPool<Primitive>::async_iterate([](Primitive& c, uint32_t) {

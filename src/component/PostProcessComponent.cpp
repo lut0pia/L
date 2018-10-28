@@ -18,7 +18,8 @@ void PostProcessComponent::script_registration() {
 }
 
 void PostProcessComponent::render(const Camera& camera, const RenderPass& render_pass) {
-  if(_material.valid() && &_material.final_pipeline()->render_pass()==&render_pass) {
+  _material.update();
+  if(_material.valid_for_render_pass(render_pass)) {
     _material.draw(camera, render_pass);
   }
 }

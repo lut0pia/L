@@ -31,7 +31,8 @@ void GUIComponent::script_registration() {
 }
 
 void GUIComponent::gui(const Camera& camera) {
-  if(&camera==_camera && _material.valid() && &_material.final_pipeline()->render_pass()==&RenderPass::present_pass()) {
+  _material.update();
+  if(&camera==_camera && _material.valid_for_render_pass(RenderPass::present_pass())) {
     const Vector2f dimensions(_material.gui_size()*_scale);
     const Matrix44f model(translation_matrix(Vector3f(_viewport_anchor.x()*2.f-1.f, _viewport_anchor.y()*2.f-1.f, 0))
       * scale_matrix(Vector3f(dimensions.x()/camera.geometry_buffer().width(), dimensions.y()/camera.geometry_buffer().height(), 0.f))
