@@ -57,6 +57,8 @@ namespace L {
       } else return false;
     }
     inline operator bool() const { return is_loaded(); }
+    inline bool operator==(const Resource& other) { return slot()==other.slot(); }
+    inline bool operator!=(const Resource& other) { return !operator==(other); }
     void load() const;
     void flush() const;
 
