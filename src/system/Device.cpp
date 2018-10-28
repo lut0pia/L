@@ -63,27 +63,39 @@ bool Device::any_button(Button button) {
   return false;
 }
 
-Symbol Device::button_to_symbol(Button b) {
-#define DB(button) if(b==Button::button) return Symbol(#button);
+// Create static button symbols for quick access
+#define DB(button) static Symbol button##_button_symbol(#button);
 #include "device_buttons.def"
 #undef DB
-  return Symbol("None");
+
+// Create static axis symbols for quick access
+#define DA(axis) static Symbol axis##_axis_symbol(#axis);
+#include "device_axes.def"
+#undef DA
+
+static Symbol None_symbol("None");
+
+Symbol Device::button_to_symbol(Button b) {
+#define DB(button) if(b==Button::button) return button##_button_symbol;
+#include "device_buttons.def"
+#undef DB
+  return None_symbol;
 }
 Device::Button Device::symbol_to_button(Symbol s) {
-#define DB(button) if(s==Symbol(#button)) return Button::button;
+#define DB(button) if(s==button##_button_symbol) return Button::button;
 #include "device_buttons.def"
 #undef DB
   return Button::Last;
 }
 
 Symbol Device::axis_to_symbol(Axis a) {
-#define DA(axis) if(a==Axis::axis) return Symbol(#axis);
+#define DA(axis) if(a==Axis::axis) return axis##_axis_symbol;
 #include "device_axes.def"
 #undef DA
-  return Symbol("None");
+  return None_symbol;
 }
 Device::Axis Device::symbol_to_axis(Symbol s) {
-#define DA(axis) if(s==Symbol(#axis)) return Axis::axis;
+#define DA(axis) if(s==axis##_axis_symbol) return Axis::axis;
 #include "device_axes.def"
 #undef DA
   return Axis::Last;
