@@ -13,7 +13,6 @@
 // STL
 #include <initializer_list>
 #include <limits>
-#include <utility>
 
 // Platform
 #if defined L_WINDOWS
