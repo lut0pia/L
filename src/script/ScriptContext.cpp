@@ -65,6 +65,7 @@ bool ScriptContext::try_execute_method(const Symbol& sym, std::initializer_list<
   return false;
 }
 Var ScriptContext::execute(const ScriptFunction& function, const Var* params, size_t param_count) {
+  L_SCOPE_MARKER("Script execution");
   L_ASSERT(_frames.empty());
   _stack.size(1<<12);
   _frames.push();
