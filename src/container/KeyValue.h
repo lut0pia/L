@@ -21,9 +21,11 @@ namespace L {
     inline const V* operator*() const { return &_value; }
     inline V* operator*() { return &_value; }
 
-    friend Stream& operator<<(Stream& s, const KeyValue& v) { return s << v._key << ':' << v._value; }
-    friend Stream& operator<(Stream& s, const KeyValue& v) { return s < v._key < v._value; }
-    friend Stream& operator>(Stream& s, KeyValue& v) { return s > v._key > v._value; }
+    friend inline Stream& operator<<(Stream& s, const KeyValue& v) { return s << v._key << ':' << v._value; }
+    friend inline Stream& operator<(Stream& s, const KeyValue& v) { return s < v._key < v._value; }
+    friend inline Stream& operator>(Stream& s, KeyValue& v) { return s > v._key > v._value; }
+    friend inline Stream& operator<=(Stream& s, const KeyValue& v) { return s <= v._key <= v._value; }
+    friend inline Stream& operator>=(Stream& s, KeyValue& v) { return s >= v._key >= v._value; }
   };
   template <class K, class V>
   inline KeyValue<K, V> keyValue(const K& k, const V& v) {
