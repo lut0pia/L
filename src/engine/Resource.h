@@ -62,10 +62,17 @@ namespace L {
     void load() const;
     void flush() const;
 
-    friend Stream& operator<(Stream& s, const Resource& v) { return s < (v._slot ? v._slot->id : Symbol("null")); }
-    friend Stream& operator>(Stream& s, Resource& v) {
+    friend inline Stream& operator<(Stream& s, const Resource& v) { return s < (v._slot ? v._slot->id : Symbol("null")); }
+    friend inline Stream& operator>(Stream& s, Resource& v) {
       Symbol id;
       s > id;
+      v = id!=Symbol("null") ? Resource(id) : Resource();
+      return s;
+    }
+    friend inline Stream& operator<=(Stream& s, const Resource& v) { return s <= (v._slot ? v._slot->id : Symbol("null")); }
+    friend inline Stream& operator>=(Stream& s, Resource& v) {
+      Symbol id;
+      s >= id;
       v = id!=Symbol("null") ? Resource(id) : Resource();
       return s;
     }
