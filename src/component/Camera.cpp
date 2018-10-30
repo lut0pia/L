@@ -146,8 +146,8 @@ void Camera::update_projection() {
         right(top*aspect);
       _projection(0, 0) = _near/right;
       _projection(1, 1) = -_near/top;
-      _projection(2, 2) = (-_far+_near)/(_far-_near);
-      _projection(2, 3) = (-2.f*_far*_near)/(_far-_near);
+      _projection(2, 2) = -_far/(_far-_near);
+      _projection(2, 3) = -_far*_near/(_far-_near);
       _projection(3, 2) = -1.f;
       _projection(3, 3) = 0.f;
     }
