@@ -17,7 +17,9 @@ void mainjob(void*) {
 int main(int argc, const char* argv[]) {
   TypeInit();
 
+#if L_DEBUG
   Engine::add_parallel_update(ResourceSlot::update);
+#endif
 
   Engine::register_component<Transform>();
   Engine::register_component<Camera>();
