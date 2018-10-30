@@ -294,40 +294,20 @@ void LSCompiler::compile(Function& func, const Var& v, uint32_t offset) {
       } else if(sym==mod_assign_symbol) {
         compile_op_assign(func, array, offset, Mod);
       } else if(sym==add_symbol) { // Addition
-        L_ASSERT(array.size()>1);
-        compile(func, array[1], offset);
-        for(uint32_t i(2); i<array.size(); i++) {
-          compile(func, array[i], offset+1);
-          func.bytecode.push(ScriptInstruction {Add, uint8_t(offset), uint8_t(offset+1)});
-        }
+        compile_operator(func, array, offset, Add);
       } else if(sym==sub_symbol) { // Subtraction and invert
-        L_ASSERT(array.size()>1);
-        compile(func, array[1], offset);
         if(array.size()>2) {
-          for(uint32_t i(2); i<array.size(); i++) {
-            compile(func, array[i], offset+1);
-            func.bytecode.push(ScriptInstruction {Sub, uint8_t(offset), uint8_t(offset+1)});
-          }
+          compile_operator(func, array, offset, Sub);
         } else {
+          compile(func, array[1], offset);
           func.bytecode.push(ScriptInstruction {Inv, uint8_t(offset)});
         }
       } else if(sym==mul_symbol) { // Multiplication
-        L_ASSERT(array.size()>1);
-        compile(func, array[1], offset);
-        for(uint32_t i(2); i<array.size(); i++) {
-          compile(func, array[i], offset+1);
-          func.bytecode.push(ScriptInstruction {Mul, uint8_t(offset), uint8_t(offset+1)});
-        }
+        compile_operator(func, array, offset, Mul);
       } else if(sym==div_symbol) { // Division
-        L_ASSERT(array.size()==3);
-        compile(func, array[1], offset);
-        compile(func, array[2], offset+1);
-        func.bytecode.push(ScriptInstruction {Div, uint8_t(offset), uint8_t(offset+1)});
+        compile_operator(func, array, offset, Div);
       } else if(sym==mod_symbol) { // Modulo
-        L_ASSERT(array.size()==3);
-        compile(func, array[1], offset);
-        compile(func, array[2], offset+1);
-        func.bytecode.push(ScriptInstruction {Mod, uint8_t(offset), uint8_t(offset+1)});
+        compile_operator(func, array, offset, Mod);
       } else if(sym==less_symbol) { // Less
         compile_comparison(func, array, offset, LessThan);
       } else if(sym==less_equal_symbol) { // Less equal
@@ -413,6 +393,14 @@ void LSCompiler::compile_assignment(Function& func, const L::Var& dst, uint8_t s
     func.bytecode.push(ScriptInstruction {SetItem, uint8_t(offset+1), uint8_t(offset), src});
   } else {
     error("Trying to set a literal value or something?");
+  }
+}
+void LSCompiler::compile_operator(Function& func, const L::Array<L::Var>& array, uint32_t offset, ScriptOpCode opcode) {
+  L_ASSERT(array.size()>1);
+  compile(func, array[1], offset);
+  for(uint32_t i(2); i<array.size(); i++) {
+    compile(func, array[i], offset+1);
+    func.bytecode.push(ScriptInstruction {opcode, uint8_t(offset), uint8_t(offset+1)});
   }
 }
 void LSCompiler::compile_op_assign(Function& func, const Array<Var>& array, uint32_t offset, ScriptOpCode opcode) {

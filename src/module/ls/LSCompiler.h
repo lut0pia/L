@@ -44,6 +44,7 @@ protected:
   void compile_access_chain(Function&, const L::Array<L::Var>& array, uint32_t offset, bool get);
   void compile_function_call(Function& func, const L::Array<L::Var>& array, uint32_t offset);
   void compile_assignment(Function& func, const L::Var& dst, uint8_t src, uint32_t offset);
+  void compile_operator(Function& func, const L::Array<L::Var>& array, uint32_t offset, L::ScriptOpCode opcode);
   void compile_op_assign(Function& func, const L::Array<L::Var>& array, uint32_t offset, L::ScriptOpCode opcode);
   void compile_comparison(Function& func, const L::Array<L::Var>& array, uint32_t offset, L::ScriptOpCode cmp, bool not = false);
 };
