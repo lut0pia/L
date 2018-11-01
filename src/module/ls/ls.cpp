@@ -9,15 +9,14 @@
 
 using namespace L;
 
-bool ls_material_loader(ResourceSlot& slot, Material*& intermediate) {
+bool ls_material_loader(ResourceSlot& slot, Material& intermediate) {
   if(Buffer buffer = slot.read_source_file()) {
     ScriptFunction script_function;
     script_function.offset = 0;
     script_function.script = ref<Script>();
     LSCompiler compiler;
     if(compiler.read((const char*)buffer.data(), buffer.size(), true)) {
-      intermediate = Memory::new_type<Material>();
-      ScriptContext context(intermediate);
+      ScriptContext context(&intermediate);
       context.execute(compiler.compile());
       return true;
     }

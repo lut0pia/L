@@ -78,6 +78,10 @@ uint64_t Material::State::loading_state() const {
   }
   return state;
 }
+
+Material::Material() {
+  _last_state_dirty = Time::now();
+}
 void Material::update() {
   if(_state_dirty || (_parent && _last_state_update<_parent->_last_state_dirty)) {
     _last_state_update = Time::now();

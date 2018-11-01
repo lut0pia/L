@@ -36,9 +36,10 @@ namespace L {
     Array<DescSetPairing> _desc_set_pairings;
     Time _last_state_dirty = 0, _last_state_update = 0;
     uint64_t _loading_state = 0;
-    bool _state_dirty = false;
+    bool _state_dirty = true;
   public:
-    typedef Material* Intermediate;
+    typedef Material Intermediate;
+    Material();
     void update();
     bool valid_for_render_pass(const class RenderPass&) const;
     void draw(const class Camera&, const class RenderPass&, const Matrix44f& model = Matrix44f(1.f));
@@ -59,5 +60,10 @@ namespace L {
     inline void vertex_count(size_t count) { _partial_state.vertex_count = count; }
 
     inline const State& final_state() const { return _final_state; }
+
+    friend inline Stream& operator<=(Stream& s, const Material& v) { return s <= v._parent <= v._partial_state; }
+    friend inline Stream& operator>=(Stream& s, Material& v) { return s >= v._parent >= v._partial_state; }
+    friend inline Stream& operator<=(Stream& s, const Material::State& v) { return s <= v.pipeline <= v.mesh <= v.font <= v.text <= v.scalars <= v.textures <= v.vectors <= v.vertex_count; }
+    friend inline Stream& operator>=(Stream& s, Material::State& v) { return s >= v.pipeline >= v.mesh >= v.font >= v.text >= v.scalars >= v.textures >= v.vectors >= v.vertex_count; }
   };
 }
