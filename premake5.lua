@@ -41,7 +41,7 @@ solution "L"
     linkoptions {"/NODEFAULTLIB:libcmtd.lib"}
 
   -- GMake
-  configuration {"gmake"}
+  configuration {"gmake2"}
     buildoptions {"-fno-operator-names"}
     links {"vulkan","X11","pthread"}
 
@@ -83,7 +83,7 @@ solution "L"
     end
     
     -- PCH
-    if _ACTION ~= "gmake" then
+    if _ACTION ~= "gmake2" then
       pchheader "pc.h"
       pchsource "src/pc.cpp"
       forceincludes {"pc.h"}

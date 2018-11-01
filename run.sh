@@ -35,8 +35,8 @@ case $configuration in
 esac
 
 if
-  ./premake5 gmake && # Run premake
-  (cd prj/gmake && make -j 4 config=$configuration) # Run make
+  ./premake5 gmake2 && # Run premake
+  (cd prj/gmake2 && make config=$configuration -j 4) # Run make
 then
   if [ $mode = "run" ] ; then
     (cd smp && ./$exe) # Execute program
