@@ -4,8 +4,8 @@
 #include "Stream.h"
 
 namespace L {
-  template<class T> inline Stream& operator<(Stream& s, const T& v) { error("Unimplemented text out"); return s; }
-  template<class T> inline Stream& operator>(Stream& s, T& v) { error("Unimplemented text in"); return s; }
+  template<class T> inline Stream& operator<(Stream& s, const T&) { error("Unimplemented text out"); return s; }
+  template<class T> inline Stream& operator>(Stream& s, T&) { error("Unimplemented text in"); return s; }
 
 #define L_SERIAL_NUMERIC(type)\
   inline Stream& operator<(Stream& s, type v) { return s << ntos<10,type>(v) << '\n'; }\

@@ -28,7 +28,7 @@ namespace L {
   public:
     Camera();
     inline Camera(const Camera&) : Camera() { error("Camera component should not be copied."); }
-    inline Camera& operator=(const Camera& other) { error("Camera component should not be copied."); return *this; }
+    inline Camera& operator=(const Camera&) { error("Camera component should not be copied."); return *this; }
 
     virtual void update_components() override;
     virtual Map<Symbol, Var> pack() const override;

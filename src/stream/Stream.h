@@ -18,7 +18,7 @@ namespace L {
     const char* bufferize(size_t*); // Reads as many chars as possible
 
     // Default operators
-    template<class T> inline Stream& operator<<(const T& v) { write("N/A",3); return *this; }
+    template<class T> inline Stream& operator<<(const T&) { write("N/A",3); return *this; }
 
     template<class T> inline Stream& operator<<(T* v) { return *this << ntos<16>((uintptr_t)v,sizeof(v)*2); }
 

@@ -26,7 +26,7 @@ namespace L {
     return wtr;
   }
 
-  template <class T> inline bool ntos_valid(const T& v) { return true; }
+  template <class T> inline bool ntos_valid(const T&) { return true; }
   inline bool ntos_valid(float v) { return !isnan(v); }
 
   template <int base = 10, class T>

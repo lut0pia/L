@@ -37,7 +37,7 @@ void L::TypeInit() {
   Type<float>::usemod([](void* a, const void* b) {*((float*)a) = pmod(*((float*)a), *((float*)b)); });
 
   // Casts
-  Type<void>::addcast<bool>([](void* dst, const void* src) {new(dst)bool(false); });
+  Type<void>::addcast<bool>([](void* dst, const void*) {new(dst)bool(false); });
   Type<int>::addcast<bool>([](void* dst, const void* src) {new(dst)bool((*(int*)src)!=0); });
   Type<int>::addcast<float>();
   Type<int>::addcast<String>([](void* dst, const void* src) {new(dst)String(ntos(*(int*)src)); });

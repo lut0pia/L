@@ -7,6 +7,6 @@ using namespace L;
 void* Memory::virtual_alloc(size_t size) {
   return VirtualAlloc(0, size, MEM_COMMIT|MEM_RESERVE, PAGE_READWRITE);
 }
-void Memory::virtual_free(void* ptr, size_t size) {
+void Memory::virtual_free(void* ptr, size_t) {
   VirtualFree(ptr, 0, MEM_RELEASE);
 }

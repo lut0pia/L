@@ -8,7 +8,7 @@
 #include "../stream/StringStream.h"
 
 namespace L {
-  template <class T> void store_intermediate(ResourceSlot& slot, T* intermediate) {
+  template <class T> void store_intermediate(ResourceSlot& slot, T*) {
     slot.store_source_file_to_archive();
   }
   template <class T> void store_intermediate(ResourceSlot& slot, const T& intermediate) {

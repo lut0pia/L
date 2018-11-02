@@ -15,7 +15,7 @@ namespace L {
       memcpy(_string+prev_size, data, size);
       return size;
     }
-    inline size_t read(void* data, size_t size) override { return 0; }
+    inline size_t read(void* data, size_t) override { return 0; }
     const String& string() const { return _string; }
   };
   template <class T>
