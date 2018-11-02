@@ -52,6 +52,7 @@ bool ResourceSlot::flush_all_dependencies() {
   }
   for(ResourceSlot* dependency : dependencies) {
     if(!dependency->flush()) {
+      warning("Unable to load all dependencies for resource: %s", id);
       return false;
     }
   }
