@@ -15,6 +15,7 @@ namespace L {
     enum : uint32_t { // 32bits because of atomic operations
       Unloaded, Loading, Loaded,
     } state;
+    void(*load_function)(ResourceSlot&);
     void* value;
 
     inline ResourceSlot(const char* url) : id(url), path(url, min<size_t>(strlen(url), strchr(url, '?')-url)),
@@ -24,6 +25,9 @@ namespace L {
     Symbol parameter(const char* key);
     bool parameter(const char* key, uint32_t& value);
     bool parameter(const char* key, float& value);
+
+    void load();
+    void flush();
 
     Buffer read_source_file();
     void store_source_file_to_archive();
@@ -43,7 +47,9 @@ namespace L {
   public:
     constexpr Resource() : _slot(nullptr) {}
     inline Resource(const String& url) : Resource((const char*)url) {}
-    inline Resource(const char* url) : _slot(ResourceSlot::find(url)) {}
+    inline Resource(const char* url) : _slot(ResourceSlot::find(url)) {
+      _slot->load_function = load_function;
+    }
     inline T& operator*() { flush(); return *(T*)_slot->value; }
     inline const T& operator*() const { flush(); return *(T*)_slot->value; }
     inline T* operator->() { flush(); return (T*)_slot->value; }
@@ -59,8 +65,10 @@ namespace L {
     inline operator bool() const { return is_loaded(); }
     inline bool operator==(const Resource& other) { return slot()==other.slot(); }
     inline bool operator!=(const Resource& other) { return !operator==(other); }
-    void load() const;
-    void flush() const;
+    inline void load() const { if(_slot) _slot->load(); }
+    inline void flush() const { if(_slot) _slot->flush(); }
+
+    static void load_function(ResourceSlot&);
 
     friend inline Stream& operator<(Stream& s, const Resource& v) { return s < (v._slot ? v._slot->id : Symbol()); }
     friend inline Stream& operator>(Stream& s, Resource& v) {

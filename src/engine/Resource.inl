@@ -4,7 +4,6 @@
 #include "../container/Buffer.h"
 #include "../container/Table.h"
 #include "../dev/profiling.h"
-#include "../dynamic/Type.h"
 #include "../stream/BufferStream.h"
 #include "../stream/StringStream.h"
 
@@ -92,29 +91,11 @@ namespace L {
     }
   };
 
-  template <class T> void Resource<T>::load() const {
-    if(_slot->state==ResourceSlot::Unloaded && cas((uint32_t*)&_slot->state, ResourceSlot::Unloaded, ResourceSlot::Loading)==ResourceSlot::Unloaded) {
-      TaskSystem::push([](void* p) {
-        ResourceSlot& slot(*(ResourceSlot*)p);
-        L_SCOPE_MARKERF("load_resource<%s>(%s)", (const char*)type_name<T>(), (const char*)slot.id);
-        if(slot.value) {
-          Memory::delete_type<T>((T*)slot.value);
-          slot.value = nullptr;
-        }
-        slot.dependencies.clear();
-        ResourceLoader<T, typename T::Intermediate>::load(slot);
-        slot.mtime = Date::now();
-        slot.state = ResourceSlot::Loaded;
-      }, _slot, uint32_t(-1), TaskSystem::NoParent);
+  template <class T> void Resource<T>::load_function(ResourceSlot& slot) {
+    if(slot.value) {
+      Memory::delete_type<T>((T*)slot.value);
+      slot.value = nullptr;
     }
-  }
-  template <class T> void Resource<T>::flush() const {
-    if(_slot && _slot->state != ResourceSlot::Loaded) {
-      L_SCOPE_MARKER("Resource flush");
-      load();
-      TaskSystem::yield_until([](void* data) {
-        return ((ResourceSlot*)data)->state == ResourceSlot::Loaded;
-      }, _slot);
-    }
+    ResourceLoader<T, typename T::Intermediate>::load(slot);
   }
 }

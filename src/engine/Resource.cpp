@@ -46,6 +46,28 @@ bool ResourceSlot::parameter(const char* key, float& value) {
   return false;
 }
 
+void ResourceSlot::load() {
+  if(state==ResourceSlot::Unloaded && cas((uint32_t*)&state, ResourceSlot::Unloaded, ResourceSlot::Loading)==ResourceSlot::Unloaded) {
+    TaskSystem::push([](void* p) {
+      ResourceSlot& slot(*(ResourceSlot*)p);
+      L_SCOPE_MARKERF("Resource load (%s)", (const char*)slot.id);
+      slot.dependencies.clear();
+      slot.load_function(slot);
+      slot.mtime = Date::now();
+      slot.state = ResourceSlot::Loaded;
+    }, this, uint32_t(-1), TaskSystem::NoParent);
+  }
+}
+void ResourceSlot::flush() {
+  if(state != ResourceSlot::Loaded) {
+    L_SCOPE_MARKERF("Resource flush (%s)", (const char*)id);
+    load();
+    TaskSystem::yield_until([](void* data) {
+      return ((ResourceSlot*)data)->state == ResourceSlot::Loaded;
+    }, this);
+  }
+}
+
 Buffer ResourceSlot::read_source_file() {
   // Try to find the source file in the archive
   if(Archive::Entry entry = archive.find("file:"+String(id))) {
