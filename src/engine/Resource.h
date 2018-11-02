@@ -27,7 +27,7 @@ namespace L {
     bool parameter(const char* key, float& value);
 
     void load();
-    void flush();
+    bool flush();
 
     Buffer read_source_file();
     void store_source_file_to_archive();

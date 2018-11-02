@@ -58,7 +58,7 @@ void ResourceSlot::load() {
     }, this, uint32_t(-1), TaskSystem::NoParent);
   }
 }
-void ResourceSlot::flush() {
+bool ResourceSlot::flush() {
   if(state != ResourceSlot::Loaded) {
     L_SCOPE_MARKERF("Resource flush (%s)", (const char*)id);
     load();
@@ -66,6 +66,7 @@ void ResourceSlot::flush() {
       return ((ResourceSlot*)data)->state == ResourceSlot::Loaded;
     }, this);
   }
+  return value != nullptr;
 }
 
 Buffer ResourceSlot::read_source_file() {
