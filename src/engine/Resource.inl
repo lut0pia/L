@@ -32,14 +32,14 @@ namespace L {
         L_SCOPE_MARKER("Resource unserialize");
         slot.unserialize(stream);
         stream >= intermediate;
-        return true;
+        return slot.flush_all_dependencies();
       } else { // Try to load it from source
         const char* ext(strrchr(slot.path, '.'));
         ext = ext ? ext + 1 : (const char*)slot.path;
         if(Loader* loader = _loaders.find(ext)) {
           if((*loader)(slot, intermediate)) {
             store_intermediate(slot, intermediate);
-            return true;
+            return slot.flush_all_dependencies();
           } else {
             warning("Unable to load resource: %s", slot.id);
           }
