@@ -11,7 +11,7 @@ namespace L {
   template <int d,class T>
   class Vector {
   protected:
-    T _c[d];
+    T _c[d>0?d:1]; // Avoid zero-sized array
   public:
     inline Vector() = default;
     template <class R>
