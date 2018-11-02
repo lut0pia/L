@@ -34,16 +34,22 @@ Symbol::Symbol(const char* str, size_t length) {
 }
 
 Stream& L::operator<=(Stream& s, const Symbol& v) {
-  const uint16_t len(strlen(v));
+  const uint16_t len(v._string ? strlen(v) : 0);
   s <= len;
-  s.write(v, len);
+  if(len>0) {
+    s.write(v, len);
+  }
   return s;
 }
 Stream& L::operator>=(Stream& s, Symbol& v) {
   char buffer[256];
   uint16_t len;
   s >= len;
-  s.read(buffer, len);
-  v = Symbol(buffer, len);
+  if(len>0) {
+    s.read(buffer, len);
+    v = Symbol(buffer, len);
+  } else {
+    v = Symbol();
+  }
   return s;
 }
