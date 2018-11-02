@@ -91,21 +91,6 @@ void Variable::invert() {
   }
 }
 
-Variable& Variable::operator[](const Variable& key) {
-  if(!is<Table<Variable,Variable> >()) *this = Table<Variable,Variable>();
-  return as<Table<Variable,Variable> >()[key];
-}
-const Variable& Variable::operator[](const Variable& key) const {
-  auto slot(as<Table<Variable,Variable> >().find(key));
-  if(slot) return slot->value();
-  else error("Couldn't find key in Var table.");
-}
-Variable& Variable::operator[](size_t i) {
-  if(!is<Array<Variable> >()) *this = Array<Variable>();
-  if(as<Array<Variable> >().size()<=i) as<Array<Variable> >().size(i+1);
-  return as<Array<Variable> >()[i];
-}
-
 Stream& L::operator<(Stream& s, const Variable& v) {
   s < v.type()->name;
   v.type()->out_text(s, v.value());

@@ -94,10 +94,6 @@ namespace L {
     inline bool operator>=(const Variable& other) const { return !(*this < other); }
     inline bool operator<=(const Variable& other) const { return !(*this > other); }
 
-    Variable& operator[](const Variable&);
-    const Variable& operator[](const Variable&) const;
-    Variable& operator[](size_t);
-
     template<class T> inline operator T() { return get<T>(); }
 
     friend inline Stream& operator<<(Stream& s,const Variable& v) {
