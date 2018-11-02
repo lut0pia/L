@@ -12,7 +12,7 @@
       (rand-range 2 8)))
   (transform.rotate (vec 0 1 0) (* (- (rand) 0.5) 5))
   ; Add rigid body
-  (entity.require-rigidbody|.add-speed (vec (rand-range -2 2) (rand-range -2 2) (rand-range 1 2)))
+  (entity.require-rigidbody|.add-velocity (vec (rand-range -2 2) (rand-range -2 2) (rand-range 1 2)))
   ; Add collider
   (if (< (rand) 0.0)
     (do

@@ -7,7 +7,7 @@
 using namespace L;
 
 void AudioSourceComponent::update_components() {
-  _transform = entity()->requireComponent<Transform>();
+  _transform = entity()->require_component<Transform>();
   _script = entity()->component<ScriptComponent>();
 }
 

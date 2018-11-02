@@ -19,14 +19,14 @@ namespace L {
     virtual void unpack(const Map<Symbol, Var>&) override;
     static void script_registration();
 
-    inline Vector3f toAbsolute(const Vector3f& v) const { return position()+_rotation.rotate(v); }
-    inline Vector3f fromAbsolute(const Vector3f& v) const { return _rotation.inverse().rotate(v-position()); }
+    inline Vector3f to_absolute(const Vector3f& v) const { return position()+_rotation.rotate(v); }
+    inline Vector3f from_absolute(const Vector3f& v) const { return _rotation.inverse().rotate(v-position()); }
     inline void rotate(const Quatf& q) { _rotation = _rotation * q; }
     inline void rotate(const Vector3f& v, float d) { rotate(Quatf(v, d)); }
     inline void rotate_absolute(const Quatf& q) { _rotation = q * _rotation; }
     inline void rotate_absolute(const Vector3f& v, float d) { rotate_absolute(Quatf(v, d)); }
-    inline void phiLook(float d) { rotate(Vector3f(1, 0, 0), d); }
-    inline void thetaLook(float d) { rotate(Vector3f(0, 0, 1), d); }
+    inline void phi_look(float d) { rotate(Vector3f(1, 0, 0), d); }
+    inline void theta_look(float d) { rotate(Vector3f(0, 0, 1), d); }
     inline void move(const Vector3f& d) { _position += _rotation.rotate(d); }
     inline void move_absolute(const Vector3f& v) { _position += v; }
 
@@ -38,6 +38,6 @@ namespace L {
     inline Vector3f right() const { return rotation().rotate(Vector3f(1, 0, 0)); }
     inline Vector3f forward() const { return rotation().rotate(Vector3f(0, 1, 0)); }
     inline Vector3f up() const { return rotation().rotate(Vector3f(0, 0, 1)); }
-    inline Matrix44f matrix() const { return SQTToMat(rotation(), position()); }
+    inline Matrix44f matrix() const { return sqt_to_mat(rotation(), position()); }
   };
 }

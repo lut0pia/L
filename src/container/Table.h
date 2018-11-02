@@ -101,10 +101,10 @@ namespace L {
       }
       return slot->value();
     }
-    inline uintptr_t indexFor(uint32_t h) const { return h*(float(_size)/UINT32_MAX); }
+    inline uintptr_t index_for(uint32_t h) const { return h*(float(_size)/UINT32_MAX); }
     Slot* find_slot_or_create(uint32_t h){
       while(true) {
-        const uintptr_t i(indexFor(h));
+        const uintptr_t i(index_for(h));
         for(uintptr_t j(0); j<_size; j++){
           const uintptr_t k((i+j)%_size);
           if(_slots[k].empty() || _slots[k].hash()==h)
@@ -115,7 +115,7 @@ namespace L {
     }
     Slot* find_slot(const K& key) const {
       const uint32_t h(hash(key));
-      const uintptr_t i(indexFor(h));
+      const uintptr_t i(index_for(h));
       for(uintptr_t j(0); j<_size; j++){
         const uintptr_t k((i+j)%_size);
         if(_slots[k].hash()==h)
@@ -142,7 +142,7 @@ namespace L {
           uintptr_t slotIndex(slot-_slots);
           uintptr_t nextSlotIndex((slotIndex+1)%_size);
           Slot* nextSlot(_slots+nextSlotIndex);
-          if(!nextSlot->empty() && indexFor(nextSlot->hash())!=nextSlotIndex) {
+          if(!nextSlot->empty() && index_for(nextSlot->hash())!=nextSlotIndex) {
             memcpy(slot, nextSlot, sizeof(*slot));
             slot = nextSlot;
           } else break;

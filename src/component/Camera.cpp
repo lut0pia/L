@@ -28,7 +28,7 @@ Camera::Camera() :
 }
 
 void Camera::update_components() {
-  _transform = entity()->requireComponent<Transform>();
+  _transform = entity()->require_component<Transform>();
 }
 static const Symbol perspective_symbol("perspective"), ortho_symbol("ortho");
 Map<Symbol, Var> Camera::pack() const {

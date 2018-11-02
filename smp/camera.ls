@@ -102,6 +102,6 @@
     (e.require-primitive|.material|.parent "material/box.ls")
     (e.require-primitive|.material|.color 'color (rand-color))
     (e.require-primitive|.scale radius)
-    (e.require-rigidbody|.add-speed (* (vec 16 16 16) (self.transform.forward)))
+    (e.require-rigidbody|.add-velocity (* (vec 16 16 16) (self.transform.forward)))
   ))
 )))

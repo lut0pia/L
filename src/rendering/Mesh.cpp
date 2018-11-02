@@ -37,7 +37,7 @@ void Mesh::load(size_t count, const void* data, size_t size, const VkFormat* for
     _bounds.add(*(Vector3f*)((uint8_t*)data+vertex_size*i));
 }
 void Mesh::load(const MeshBuilder& mb, const VkFormat* formats, size_t fcount) {
-  load(mb.vertexCount(), mb.vertices(), mb.verticesSize(), formats, fcount, mb.indices(), mb.indexCount());
+  load(mb.vertex_count(), mb.vertices(), mb.vertices_size(), formats, fcount, mb.indices(), mb.index_count());
 }
 void Mesh::draw(VkCommandBuffer cmd_buffer) const {
   if(_vertex_buffer) {

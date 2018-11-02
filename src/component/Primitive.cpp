@@ -6,7 +6,7 @@
 using namespace L;
 
 void Primitive::update_components() {
-  _transform = entity()->requireComponent<Transform>();
+  _transform = entity()->require_component<Transform>();
 }
 Map<Symbol, Var> Primitive::pack() const {
   return Map<Symbol, Var> {
@@ -43,7 +43,7 @@ void Primitive::late_update_all() {
       const Interval3f model_bounds(c._material.bounds());
       c._bounds = c._transform->position();
       for(uint32_t i(0); i<8; i++)
-        c._bounds.add(c._transform->toAbsolute(Vector3f(
+        c._bounds.add(c._transform->to_absolute(Vector3f(
           (i&1 ? model_bounds.min().x() : model_bounds.max().x())*c._scale.x(),
           (i&2 ? model_bounds.min().y() : model_bounds.max().y())*c._scale.y(),
           (i&4 ? model_bounds.min().z() : model_bounds.max().z())*c._scale.z()

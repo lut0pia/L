@@ -74,7 +74,7 @@ be affected by gravity and collide with other rigid bodies and static colliders.
 (rigidbody'restitution | 0.8) ; Sets the restitution (bounciness) of the body
 (rigidbody'drag | 0.8) ; Sets the drag of the body (0 is none)
 (rigidbody'angular-drag | 0.8) ; Sets the angular drag of the body (0 is none)
-(rigidbody'add-speed | (vec 0 4 0)) ; Simply adds velocity to the body
+(rigidbody'add-velocity | (vec 0 4 0)) ; Simply adds velocity to the body
 (rigidbody'add-force | (vec 0 4 0)) ; Adds an absolute force to the body
 (rigidbody'add-relative-force | (vec 0 4 0)) ; Adds a relative absolute force to the body
 (rigidbody'add-torque | (vec 0 4 0)) ; Adds an absolute torque to the body

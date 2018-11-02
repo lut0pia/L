@@ -1,10 +1,10 @@
 #include "Collider.h"
 
-//#include "../rendering/GL.h"
-#include "../rendering/Mesh.h"
-//#include "../rendering/Pipeline.h"
 #include "../math/geometry.h"
 #include "../parallelism/TaskSystem.h"
+#include "RigidBody.h"
+#include "ScriptComponent.h"
+#include "Transform.h"
 
 using namespace L;
 
@@ -17,12 +17,12 @@ Collider::~Collider(){
 }
 
 void Collider::update_components(){
-  _transform = entity()->requireComponent<Transform>();
+  _transform = entity()->require_component<Transform>();
   _rigidbody = entity()->component<RigidBody>();
   _script = entity()->component<ScriptComponent>();
   if(!_node) {
-    updateBoundingBox();
-    _node = tree.insert(_boundingBox,this);
+    update_bounding_box();
+    _node = tree.insert(_bounding_box,this);
   }
 }
 Map<Symbol, Var> Collider::pack() const {
@@ -67,8 +67,8 @@ void Collider::sub_update_all() {
   {
     L_SCOPE_MARKER("Update collision tree");
     ComponentPool<Collider>::iterate([](Collider& c) {
-      c.updateBoundingBox();
-      const Interval3f& bb(c._boundingBox);
+      c.update_bounding_box();
+      const Interval3f& bb(c._bounding_box);
       if(!c._node->key().contains(bb))
         tree.update(c._node, bb.extended(c._radius.x()));
     });
@@ -81,7 +81,7 @@ void Collider::sub_update_all() {
   for(uintptr_t t(0); t<thread_count; t++)
     pairs[t].clear();
   ComponentPool<Collider>::async_iterate([](Collider& c, uint32_t t) {
-    tree.query(c._boundingBox, tmp[t]);
+    tree.query(c._bounding_box, tmp[t]);
     for(auto e : tmp[t])
       if(e!=c._node && e < c._node)
         pairs[t].pushMultiple(c._node, e);
@@ -99,7 +99,7 @@ void Collider::sub_update_all() {
         auto &a(pairs[t][j]), &b(pairs[t][j+1]);
         if(!a->value()->_rigidbody)
           swap(a, b); // Rigidbody is always first argument
-        checkCollision(*a->value(), *b->value(), collisions[t][i]);
+        check_collision(*a->value(), *b->value(), collisions[t][i]);
       }
     }, (void*)t);
   }
@@ -146,56 +146,56 @@ void Collider::sub_update_all() {
 void Collider::center(const Vector3f& center){
   _center = center;
   if(_rigidbody)
-    _rigidbody->updateInertiaTensor();
+    _rigidbody->update_inertia_tensor();
 }
 void Collider::box(const Vector3f& radius) {
   _type = Box;
   _radius = radius;
   if(_rigidbody)
-    _rigidbody->updateInertiaTensor();
+    _rigidbody->update_inertia_tensor();
 }
 void Collider::sphere(float radius) {
   _type = Sphere;
   _radius = radius;
   if(_rigidbody)
-    _rigidbody->updateInertiaTensor();
+    _rigidbody->update_inertia_tensor();
 }
-void Collider::updateBoundingBox() {
-  const Vector3f center(_transform->toAbsolute(_center));
+void Collider::update_bounding_box() {
+  const Vector3f center(_transform->to_absolute(_center));
   switch(_type) {
     case Box:
     {
       const Vector3f right(_transform->right()*_radius.x()),forward(_transform->forward()*_radius.y()),up(_transform->up()*_radius.z());
-      _boundingBox = (center-right-forward-up);
-      _boundingBox.add(center-right-forward+up);
-      _boundingBox.add(center-right+forward-up);
-      _boundingBox.add(center-right+forward+up);
-      _boundingBox.add(center+right-forward-up);
-      _boundingBox.add(center+right-forward+up);
-      _boundingBox.add(center+right+forward-up);
-      _boundingBox.add(center+right+forward+up);
+      _bounding_box = (center-right-forward-up);
+      _bounding_box.add(center-right-forward+up);
+      _bounding_box.add(center-right+forward-up);
+      _bounding_box.add(center-right+forward+up);
+      _bounding_box.add(center+right-forward-up);
+      _bounding_box.add(center+right-forward+up);
+      _bounding_box.add(center+right+forward-up);
+      _bounding_box.add(center+right+forward+up);
       break;
     }
     case Sphere:
-      _boundingBox = Interval3f(center-_radius,center+_radius);
+      _bounding_box = Interval3f(center-_radius,center+_radius);
       break;
   }
 }
-bool Collider::raycastSingle(const Vector3f& origin,const Vector3f& direction,float& t) const{
+bool Collider::raycast_single(const Vector3f& origin,const Vector3f& direction,float& t) const{
   switch(_type){
     case Box:
-      return rayBoxIntersect(
+      return ray_box_intersect(
         Interval3f(_center-_radius,_center+_radius),
-        _transform->fromAbsolute(origin),
+        _transform->from_absolute(origin),
         _transform->rotation().inverse().rotate(direction),t);
       break;
     case Sphere:
-      return raySphereIntersect(_transform->toAbsolute(_center),_radius.x(),origin,direction,t);
+      return ray_sphere_intersect(_transform->to_absolute(_center),_radius.x(),origin,direction,t);
       break;
   }
   return false;
 }
-Matrix33f Collider::inertiaTensor() const{
+Matrix33f Collider::inertia_tensor() const{
   Matrix33f wtr(0.f);
   switch(_type){
     case Box:
@@ -245,13 +245,13 @@ Vector3f least_to_axis(const Vector3f& axis, const Vector3f* points) {
   }
   return points[least_index];
 }
-bool Collider::checkCollision(const Collider& a,const Collider& b, Collision& collision) {
-  if(a.entity()==b.entity() || !a._boundingBox.overlaps(b._boundingBox) || !a._rigidbody)
+bool Collider::check_collision(const Collider& a,const Collider& b, Collision& collision) {
+  if(a.entity()==b.entity() || !a._bounding_box.overlaps(b._bounding_box) || !a._rigidbody)
     return collision.colliding = false;
 
   if(a._type==Sphere && b._type==Sphere){
-    const Vector3f apos(a._transform->toAbsolute(a._center)),
-      bpos(b._transform->toAbsolute(b._center)),
+    const Vector3f apos(a._transform->to_absolute(a._center)),
+      bpos(b._transform->to_absolute(b._center)),
       btoa(apos-bpos);
     const float distance(btoa.length());
     collision.overlap = (a._radius.x()+b._radius.x())-distance;
@@ -276,34 +276,34 @@ bool Collider::checkCollision(const Collider& a,const Collider& b, Collision& co
       au.cross(bu).normalized()
     };
     const Vector3f apoints[] = {
-      at->toAbsolute(a._center+Vector3f(-a._radius.x(),-a._radius.y(),-a._radius.z())),
-      at->toAbsolute(a._center+Vector3f(-a._radius.x(),-a._radius.y(),a._radius.z())),
-      at->toAbsolute(a._center+Vector3f(-a._radius.x(),a._radius.y(),-a._radius.z())),
-      at->toAbsolute(a._center+Vector3f(-a._radius.x(),a._radius.y(),a._radius.z())),
-      at->toAbsolute(a._center+Vector3f(a._radius.x(),-a._radius.y(),-a._radius.z())),
-      at->toAbsolute(a._center+Vector3f(a._radius.x(),-a._radius.y(),a._radius.z())),
-      at->toAbsolute(a._center+Vector3f(a._radius.x(),a._radius.y(),-a._radius.z())),
-      at->toAbsolute(a._center+Vector3f(a._radius.x(),a._radius.y(),a._radius.z())),
+      at->to_absolute(a._center+Vector3f(-a._radius.x(),-a._radius.y(),-a._radius.z())),
+      at->to_absolute(a._center+Vector3f(-a._radius.x(),-a._radius.y(),a._radius.z())),
+      at->to_absolute(a._center+Vector3f(-a._radius.x(),a._radius.y(),-a._radius.z())),
+      at->to_absolute(a._center+Vector3f(-a._radius.x(),a._radius.y(),a._radius.z())),
+      at->to_absolute(a._center+Vector3f(a._radius.x(),-a._radius.y(),-a._radius.z())),
+      at->to_absolute(a._center+Vector3f(a._radius.x(),-a._radius.y(),a._radius.z())),
+      at->to_absolute(a._center+Vector3f(a._radius.x(),a._radius.y(),-a._radius.z())),
+      at->to_absolute(a._center+Vector3f(a._radius.x(),a._radius.y(),a._radius.z())),
     };
     const Vector3f bpoints[] = {
-      bt->toAbsolute(b._center+Vector3f(-b._radius.x(),-b._radius.y(),-b._radius.z())),
-      bt->toAbsolute(b._center+Vector3f(-b._radius.x(),-b._radius.y(),b._radius.z())),
-      bt->toAbsolute(b._center+Vector3f(-b._radius.x(),b._radius.y(),-b._radius.z())),
-      bt->toAbsolute(b._center+Vector3f(-b._radius.x(),b._radius.y(),b._radius.z())),
-      bt->toAbsolute(b._center+Vector3f(b._radius.x(),-b._radius.y(),-b._radius.z())),
-      bt->toAbsolute(b._center+Vector3f(b._radius.x(),-b._radius.y(),b._radius.z())),
-      bt->toAbsolute(b._center+Vector3f(b._radius.x(),b._radius.y(),-b._radius.z())),
-      bt->toAbsolute(b._center+Vector3f(b._radius.x(),b._radius.y(),b._radius.z())),
+      bt->to_absolute(b._center+Vector3f(-b._radius.x(),-b._radius.y(),-b._radius.z())),
+      bt->to_absolute(b._center+Vector3f(-b._radius.x(),-b._radius.y(),b._radius.z())),
+      bt->to_absolute(b._center+Vector3f(-b._radius.x(),b._radius.y(),-b._radius.z())),
+      bt->to_absolute(b._center+Vector3f(-b._radius.x(),b._radius.y(),b._radius.z())),
+      bt->to_absolute(b._center+Vector3f(b._radius.x(),-b._radius.y(),-b._radius.z())),
+      bt->to_absolute(b._center+Vector3f(b._radius.x(),-b._radius.y(),b._radius.z())),
+      bt->to_absolute(b._center+Vector3f(b._radius.x(),b._radius.y(),-b._radius.z())),
+      bt->to_absolute(b._center+Vector3f(b._radius.x(),b._radius.y(),b._radius.z())),
     };
     uintptr_t axis(sizeof(axes));
     collision.overlap = 0.f;
     for(uintptr_t i(0); i<sizeof(axes)/sizeof(Vector3f); i++) {
       if(axes[i].lengthSquared()>0.00001f) { // The axis is not a null vector (caused by a cross product)
-        Interval1f axisA(project<8>(axes[i], apoints)), axisB(project<8>(axes[i], bpoints)), intersection(axisA, axisB); // Compute projections and intersection
+        Interval1f axis_a(project<8>(axes[i], apoints)), axis_b(project<8>(axes[i], bpoints)), intersection(axis_a, axis_b); // Compute projections and intersection
         const float overlap(intersection.size().x());
         if(overlap>0.f) {
           if(axis==sizeof(axes) || overlap<collision.overlap) { // First or smallest overlap yet
-            collision.normal = (axisA.center().x()<axisB.center().x()) ? -axes[i] : axes[i];
+            collision.normal = (axis_a.center().x()<axis_b.center().x()) ? -axes[i] : axes[i];
             collision.overlap = overlap;
             axis = i;
           }
@@ -316,7 +316,7 @@ bool Collider::checkCollision(const Collider& a,const Collider& b, Collision& co
     else{
       Vector3f avertex(least_to_axis<8>(collision.normal, apoints)), bvertex(least_to_axis<8>(-collision.normal, bpoints));
       const Vector3f& aaxis(axes[(axis-6)/3]),baxis(axes[((axis-6)%3)+3]); // Find axes used in cross product
-      if(!lineLineIntersect(avertex,avertex+aaxis,bvertex,bvertex+baxis,&avertex,&bvertex))
+      if(!line_line_intersect(avertex,avertex+aaxis,bvertex,bvertex+baxis,&avertex,&bvertex))
         return collision.colliding = false; // Unable to compute intersection
       collision.point = (avertex+bvertex)/2.f;
     }
@@ -329,11 +329,11 @@ bool Collider::checkCollision(const Collider& a,const Collider& b, Collision& co
       box = &b;
       sphere = &a;
     }
-    const Vector3f sphereCenter(sphere->_transform->toAbsolute(sphere->_center));
-    const Vector3f relCenter(box->_transform->fromAbsolute(sphereCenter));
-    const Vector3f closest(clamp(relCenter,-box->_radius,box->_radius));
-    if(relCenter == closest){ // The sphere's center is in the box
-      const Vector3f dist(abs(box->_radius-relCenter)); // Distance to box border
+    const Vector3f sphere_center(sphere->_transform->to_absolute(sphere->_center));
+    const Vector3f rel_center(box->_transform->from_absolute(sphere_center));
+    const Vector3f closest(clamp(rel_center,-box->_radius,box->_radius));
+    if(rel_center == closest){ // The sphere's center is in the box
+      const Vector3f dist(abs(box->_radius-rel_center)); // Distance to box border
       if(dist.x() < dist.y() && dist.x() < dist.z()){
         collision.normal = (box==&a) ? Vector3f(1.f,0,0) : Vector3f(-1.f,0,0);
         collision.overlap = dist.x();
@@ -344,12 +344,12 @@ bool Collider::checkCollision(const Collider& a,const Collider& b, Collision& co
         collision.normal = (box==&a) ? Vector3f(0,0,1.f) : Vector3f(0,0,-1.f);
         collision.overlap = dist.z();
       }
-      collision.normal = box->_transform->toAbsolute(collision.normal);
+      collision.normal = box->_transform->to_absolute(collision.normal);
     } else {
-      collision.point = box->_transform->toAbsolute(closest);
-      collision.overlap = sphere->_radius.x()-collision.point.dist(sphereCenter);
+      collision.point = box->_transform->to_absolute(closest);
+      collision.overlap = sphere->_radius.x()-collision.point.dist(sphere_center);
       if(collision.overlap>.0f){
-        collision.normal = (box==&a) ? collision.point-sphereCenter : sphereCenter-collision.point;
+        collision.normal = (box==&a) ? collision.point-sphere_center : sphere_center-collision.point;
         collision.normal.normalize();
       } else return collision.colliding = false; // No collision
     }
@@ -364,18 +364,18 @@ Collider* Collider::raycast(const Vector3f& origin,Vector3f direction,float& t){
     queue.push(tree.root());
 
   direction.normalize();
-  const Vector3f invDir(1.f/direction.x(),1.f/direction.y(),1.f/direction.z());
+  const Vector3f inv_dir(1.f/direction.x(),1.f/direction.y(),1.f/direction.z());
   Collider* wtr(nullptr);
   while(!queue.empty()){
     const Node* node(queue.back());
     queue.pop();
     float hitT;
-    const Interval3f& aabb(node->leaf() ? node->value()->_boundingBox : node->key());
-    if(rayBoxIntersect(aabb,origin,direction,hitT,invDir)){
+    const Interval3f& aabb(node->leaf() ? node->value()->_bounding_box : node->key());
+    if(ray_box_intersect(aabb,origin,direction,hitT,inv_dir)){
       if(wtr && t<hitT) // Already have closer hit
         continue;
       if(node->leaf()){
-        if(node->value()->raycastSingle(origin,direction,hitT)){
+        if(node->value()->raycast_single(origin,direction,hitT)){
           wtr = node->value();
           t = hitT;
         }

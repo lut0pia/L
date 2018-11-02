@@ -7,24 +7,24 @@ using namespace L;
 void MeshBuilder::reset() {
   _vertices.clear();
   _indices.clear();
-  _vertexCount = 0;
+  _vertex_count = 0;
 }
-void MeshBuilder::addVertex(const void* vertex, size_t size) {
+void MeshBuilder::add_vertex(const void* vertex, size_t size) {
   uintptr_t index(0);
-  while(index<_vertexCount && memcmp(&_vertices[size*index], vertex, size))
+  while(index<_vertex_count && memcmp(&_vertices[size*index], vertex, size))
     index++;
-  if(index==_vertexCount) {
+  if(index==_vertex_count) {
     _vertices.size(_vertices.size()+size);
-    memcpy(&_vertices[_vertexCount*size], vertex, size);
-    _vertexCount++;
+    memcpy(&_vertices[_vertex_count*size], vertex, size);
+    _vertex_count++;
   }
   _indices.push(index);
 }
-void MeshBuilder::computeNormals(uint32_t vertexOffset, uint32_t normalOffset, size_t vertexSize) {
+void MeshBuilder::compute_normals(uint32_t vertexOffset, uint32_t normalOffset, size_t vertexSize) {
 #define ATTRIBUTE_OF(i,offset) (*(Vector3f*)(_vertices.begin()+vertexSize*i+offset))
 #define VERTEX_OF(i) ATTRIBUTE_OF(i,vertexOffset)
 #define NORMAL_OF(i) ATTRIBUTE_OF(i,normalOffset)
-  for(uint32_t i(0); i<_vertexCount; i++)
+  for(uint32_t i(0); i<_vertex_count; i++)
     NORMAL_OF(i) = Vector3f(0, 0, 0);
   for(uint32_t i(0); i<_indices.size(); i += 3) {
     const Vector3f& a(VERTEX_OF(_indices[i]));
@@ -35,6 +35,6 @@ void MeshBuilder::computeNormals(uint32_t vertexOffset, uint32_t normalOffset, s
     NORMAL_OF(_indices[i+1]) += n;
     NORMAL_OF(_indices[i+2]) += n;
   }
-  for(uint32_t i(0); i<_vertexCount; i++)
+  for(uint32_t i(0); i<_vertex_count; i++)
     NORMAL_OF(i).normalize();
 }

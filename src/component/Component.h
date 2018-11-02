@@ -90,7 +90,7 @@ namespace L {
 #define L_COMPONENT_RETURN_METHOD(cname,fname,n,...) L_COMPONENT_FUNCTION(cname,fname,n,c.return_value() = c.current_self().as<cname*>()->__VA_ARGS__;)
 #define L_COMPONENT_ADD(cname,fname) L_COMPONENT_FUNCTION(Entity,fname,0,c.return_value() = c.current_self().as<Entity*>()->add<cname>();)
 #define L_COMPONENT_GET(cname,fname) L_COMPONENT_FUNCTION(Entity,fname,0,c.return_value() = c.current_self().as<Entity*>()->component<cname>();)
-#define L_COMPONENT_REQUIRE(cname,fname) L_COMPONENT_FUNCTION(Entity,fname,0,c.return_value() = c.current_self().as<Entity*>()->requireComponent<cname>();)
+#define L_COMPONENT_REQUIRE(cname,fname) L_COMPONENT_FUNCTION(Entity,fname,0,c.return_value() = c.current_self().as<Entity*>()->require_component<cname>();)
 #define L_COMPONENT_COPY(cname) L_COMPONENT_FUNCTION(cname,"copy",1,if(c.param(0).is<cname*>())*(c.current_self().as<cname*>()) = *(c.param(0).as<cname*>());)
 #define L_COMPONENT_ENTITY(cname) L_COMPONENT_RETURN_METHOD(cname,"entity",0,entity())
 #define L_COMPONENT_BIND(cname,name)\

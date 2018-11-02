@@ -4,7 +4,7 @@
 
 using namespace L;
 
-bool L::lineLineIntersect(const Vector3f& p1, const Vector3f& p2,
+bool L::line_line_intersect(const Vector3f& p1, const Vector3f& p2,
                           const Vector3f& p3, const Vector3f& p4,
                           Vector3f* a, Vector3f* b) {
   Vector3f p43(p4-p3);
@@ -27,7 +27,7 @@ bool L::lineLineIntersect(const Vector3f& p1, const Vector3f& p2,
   *b = p3 + p43*mub;
   return true;
 }
-Matrix44f L::SQTToMat(const Quatf& q, const Vector3f& t, float s) {
+Matrix44f L::sqt_to_mat(const Quatf& q, const Vector3f& t, float s) {
   Matrix44f wtr;
   const float& x(q.x());
   const float& y(q.y());
@@ -54,7 +54,7 @@ Matrix44f L::SQTToMat(const Quatf& q, const Vector3f& t, float s) {
   wtr(3, 3) = 1.f;
   return wtr;
 }
-Matrix33f L::quatToMat(const Quatf& q) {
+Matrix33f L::quat_to_mat(const Quatf& q) {
   Matrix33f wtr;
   const float& x(q.x());
   const float& y(q.y());
@@ -74,7 +74,7 @@ Matrix33f L::quatToMat(const Quatf& q) {
   wtr(2, 2) = 1.f - 2.f*x2 - 2.f*y2;
   return wtr;
 }
-bool L::raySphereIntersect(const Vector3f& c, float r, const Vector3f& o, const Vector3f& d, float& t) {
+bool L::ray_sphere_intersect(const Vector3f& c, float r, const Vector3f& o, const Vector3f& d, float& t) {
   const float radiusSqr(sqr(r));
   const Vector3f oc(o - c);
   const float ddotoc(d.dot(oc));
@@ -82,7 +82,7 @@ bool L::raySphereIntersect(const Vector3f& c, float r, const Vector3f& o, const 
   t = -ddotoc-sqrt(delta);
   return t>=0;
 }
-bool L::rayBoxIntersect(const Interval3f& b, const Vector3f& o, const Vector3f& d, float& t, const Vector3f& id) {
+bool L::ray_box_intersect(const Interval3f& b, const Vector3f& o, const Vector3f& d, float& t, const Vector3f& id) {
   const float xmin = (b.min().x() - o.x())*id.x();
   const float xmax = (b.max().x() - o.x())*id.x();
   const float ymin = (b.min().y() - o.y())*id.y();

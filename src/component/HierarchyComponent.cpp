@@ -9,7 +9,7 @@ void HierarchyComponent::late_update() {
   }
 }
 void HierarchyComponent::update_components() {
-  _transform = entity()->requireComponent<Transform>();
+  _transform = entity()->require_component<Transform>();
 }
 void HierarchyComponent::script_registration() {
   L_COMPONENT_BIND(HierarchyComponent, "hierarchy");

@@ -17,7 +17,7 @@ void AudioListenerComponent::update() {
   _last_position = _position;
 }
 void AudioListenerComponent::update_components() {
-  _transform = entity()->requireComponent<Transform>();
+  _transform = entity()->require_component<Transform>();
   _last_position = _transform->position();
 }
 void AudioListenerComponent::script_registration() {

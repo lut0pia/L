@@ -83,10 +83,10 @@ bool obj_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
 
           if(i==0) firstVertex = vertex;
           else if(i>2) {
-            intermediate.builder.addVertex(&firstVertex, sizeof(Vertex));
-            intermediate.builder.addVertex(&lastVertex, sizeof(Vertex));
+            intermediate.builder.add_vertex(&firstVertex, sizeof(Vertex));
+            intermediate.builder.add_vertex(&lastVertex, sizeof(Vertex));
           }
-          intermediate.builder.addVertex(&vertex, sizeof(Vertex));
+          intermediate.builder.add_vertex(&vertex, sizeof(Vertex));
           lastVertex = vertex;
         }
         break;
@@ -95,7 +95,7 @@ bool obj_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
   }
 
   if(normals.empty())
-    intermediate.builder.computeNormals(0, sizeof(Vector2f)+sizeof(Vector3f), sizeof(Vertex));
+    intermediate.builder.compute_normals(0, sizeof(Vector2f)+sizeof(Vector3f), sizeof(Vertex));
 
   intermediate.formats = {
     VK_FORMAT_R32G32B32_SFLOAT,

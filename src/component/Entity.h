@@ -47,7 +47,7 @@ namespace L {
       return 0;
     }
     template <class CompType>
-    CompType* requireComponent() {
+    CompType* require_component() {
       CompType* wtr(component<CompType>());
       if(wtr) return wtr;
       else return add<CompType>();
