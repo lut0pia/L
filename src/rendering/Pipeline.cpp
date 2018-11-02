@@ -1,14 +1,17 @@
 #include "Pipeline.h"
 
 #include "../engine/Engine.h"
+#include "../engine/Resource.inl"
 #include "Texture.h"
 
 using namespace L;
 
-Pipeline::Pipeline(const Shader** shaders, size_t shader_count, VkCullModeFlagBits cull_mode, BlendOverride blend_override, const RenderPass& render_pass) : _render_pass(render_pass) {
+static Symbol light_symbol("light"), present_symbol("present");
+
+Pipeline::Pipeline(const Intermediate& intermediate) {
   { // Make sure shader bindings are not incompatible
-    for(uintptr_t i(0); i<shader_count; i++)
-      for(const Shader::Binding& binding : shaders[i]->bindings()) {
+    for(const Resource<Shader>& shader : intermediate.shaders) {
+      for(const Shader::Binding& binding : shader->bindings()) {
         bool already_bound(false);
         for(Shader::Binding& own_binding : _bindings)
           if(binding.name==own_binding.name && binding.binding==own_binding.binding) {
@@ -19,6 +22,17 @@ Pipeline::Pipeline(const Shader** shaders, size_t shader_count, VkCullModeFlagBi
         if(!already_bound)
           _bindings.push(binding);
       }
+    }
+  }
+
+  { // Determine render pass from name
+    if(intermediate.render_pass==light_symbol) {
+      _render_pass = &RenderPass::light_pass();
+    } else if(intermediate.render_pass==present_symbol) {
+      _render_pass = &RenderPass::present_pass();
+    } else { // Default to geometry pass
+      _render_pass = &RenderPass::geometry_pass();
+    }
   }
 
   { // Create desc set layout
@@ -63,11 +77,12 @@ Pipeline::Pipeline(const Shader** shaders, size_t shader_count, VkCullModeFlagBi
 
 
   VkPipelineShaderStageCreateInfo shader_stages[4] {};
-  for(uintptr_t i(0); i<shader_count; i++) {
-    VkPipelineShaderStageCreateInfo& shader_stage(shader_stages[i]);
+  uint32_t stage_count(0);
+  for(Resource<Shader> shader : intermediate.shaders) {
+    VkPipelineShaderStageCreateInfo& shader_stage(shader_stages[stage_count++]);
     shader_stage.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-    shader_stage.stage = shaders[i]->stage();
-    shader_stage.module = shaders[i]->module();
+    shader_stage.stage = shader->stage();
+    shader_stage.module = shader->module();
     shader_stage.pName = "main";
   }
 
@@ -122,7 +137,7 @@ Pipeline::Pipeline(const Shader** shaders, size_t shader_count, VkCullModeFlagBi
   rasterizer.rasterizerDiscardEnable = VK_FALSE;
   rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
   rasterizer.lineWidth = 1.0f;
-  rasterizer.cullMode = cull_mode;
+  rasterizer.cullMode = intermediate.cull_mode;
   rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 
   VkPipelineMultisampleStateCreateInfo multisampling = {};
@@ -136,8 +151,8 @@ Pipeline::Pipeline(const Shader** shaders, size_t shader_count, VkCullModeFlagBi
 
   VkPipelineColorBlendAttachmentState colorBlendAttachment = {};
   colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-  if(blend_override!=BlendOverride::None) {
-    switch(blend_override) {
+  if(intermediate.blend_override!=BlendOverride::None) {
+    switch(intermediate.blend_override) {
       case BlendOverride::Mult:
         colorBlendAttachment.blendEnable = VK_TRUE;
         colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ZERO;
@@ -145,12 +160,12 @@ Pipeline::Pipeline(const Shader** shaders, size_t shader_count, VkCullModeFlagBi
         colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
         break;
     }
-  } else if(&render_pass==&RenderPass::light_pass()) {
+  } else if(_render_pass==&RenderPass::light_pass()) {
     colorBlendAttachment.blendEnable = VK_TRUE;
     colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
     colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
     colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
-  } else if(&render_pass==&RenderPass::present_pass()) {
+  } else if(_render_pass==&RenderPass::present_pass()) {
     colorBlendAttachment.blendEnable = VK_TRUE;
     colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
     colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
@@ -172,7 +187,7 @@ Pipeline::Pipeline(const Shader** shaders, size_t shader_count, VkCullModeFlagBi
   color_blending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
   color_blending.logicOpEnable = VK_FALSE;
   color_blending.logicOp = VK_LOGIC_OP_COPY; // Optional
-  color_blending.attachmentCount = render_pass.color_attachment_count();
+  color_blending.attachmentCount = _render_pass->color_attachment_count();
   color_blending.pAttachments = color_blend_attachments;
 
   VkDynamicState dynamic_states[] = {
@@ -186,7 +201,7 @@ Pipeline::Pipeline(const Shader** shaders, size_t shader_count, VkCullModeFlagBi
 
   VkGraphicsPipelineCreateInfo create_info = {};
   create_info.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-  create_info.stageCount = shader_count;
+  create_info.stageCount = stage_count;
   create_info.pStages = shader_stages;
   create_info.pVertexInputState = &vertex_input;
   create_info.pInputAssemblyState = &inputAssembly;
@@ -197,7 +212,7 @@ Pipeline::Pipeline(const Shader** shaders, size_t shader_count, VkCullModeFlagBi
   create_info.pColorBlendState = &color_blending;
   create_info.pDynamicState = &dynamic_state_create_info;
   create_info.layout = _layout;
-  create_info.renderPass = render_pass;
+  create_info.renderPass = *_render_pass;
   create_info.subpass = 0;
   create_info.basePipelineHandle = VK_NULL_HANDLE; // Optional
   create_info.basePipelineIndex = -1; // Optional

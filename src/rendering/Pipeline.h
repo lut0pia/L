@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../engine/Resource.h"
 #include "RenderPass.h"
 #include "Shader.h"
 
@@ -7,7 +8,7 @@ namespace L {
   class Pipeline {
     L_NOCOPY(Pipeline)
   public:
-    enum BlendOverride {
+    enum class BlendOverride {
       None, Mult,
     };
   protected:
@@ -15,10 +16,15 @@ namespace L {
     VkPipelineLayout _layout;
     VkDescriptorSetLayout _desc_set_layout;
     Array<Shader::Binding> _bindings;
-    const RenderPass& _render_pass;
+    const RenderPass* _render_pass;
   public:
-    typedef Pipeline* Intermediate;
-    Pipeline(const Shader** shaders, size_t count, VkCullModeFlagBits cull_mode, BlendOverride blend_override, const RenderPass& render_pass);
+    struct Intermediate {
+      Array<Resource<Shader>> shaders;
+      Symbol render_pass;
+      VkCullModeFlags cull_mode = VK_CULL_MODE_BACK_BIT;
+      BlendOverride blend_override = BlendOverride::None;
+    };
+    Pipeline(const Intermediate& intermediate);
     ~Pipeline();
 
     const Shader::Binding* find_binding(const Symbol& name) const;
@@ -27,6 +33,9 @@ namespace L {
     operator VkPipelineLayout() const { return _layout; }
     inline VkDescriptorSetLayout desc_set_layout() const { return _desc_set_layout; }
     inline const Array<Shader::Binding>& bindings() const { return _bindings; }
-    inline const RenderPass& render_pass() const { return _render_pass; }
+    inline const RenderPass& render_pass() const { return *_render_pass; }
+
+    friend inline Stream& operator<=(Stream& s, const Intermediate& v) { return s <= v.shaders <= v.render_pass <= v.cull_mode <= v.blend_override; }
+    friend inline Stream& operator>=(Stream& s, Intermediate& v) { return s >= v.shaders >= v.render_pass >= v.cull_mode >= v.blend_override; }
   };
 }
