@@ -2,7 +2,7 @@
 
 using namespace L;
 
-void MidiSequence::play(intptr_t& index, Time& time) const {
+void MidiSequence::play(uintptr_t& index, Time& time) const {
   while(index<events.size()) {
     const Event& e(events[index]);
     const Time delta_time(e.delta_us);

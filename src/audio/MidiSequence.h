@@ -14,7 +14,7 @@ namespace L {
     };
     Array<Event> events;
 
-    void play(intptr_t& index, Time& time) const; // Play from index for time
+    void play(uintptr_t& index, Time& time) const; // Play from index for time
 
     friend inline Stream& operator<=(Stream& s, const Intermediate& v) { return s <= v.events; }
     friend inline Stream& operator>=(Stream& s, Intermediate& v) { return s >= v.events; }
