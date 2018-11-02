@@ -29,7 +29,7 @@ static uint32_t read_variable(const uint8_t*& data) {
   }
   return wtr;
 }
-bool midi_loader(ResourceSlot& slot, MidiSequence*& intermediate) {
+bool midi_loader(ResourceSlot& slot, MidiSequence& intermediate) {
   Buffer buffer(slot.read_source_file());
   const uint8_t* data((uint8_t*)buffer.data());
   const size_t size(buffer.size());
@@ -44,7 +44,6 @@ bool midi_loader(ResourceSlot& slot, MidiSequence*& intermediate) {
   if(format>1 || track_count>=32)
     return false;
 
-  MidiSequence* wtr(Memory::new_type<MidiSequence>());
   const uint8_t* track_heads[32];
   uint32_t current_times[32] {};
   uint8_t previous_commands[32] {};
@@ -129,14 +128,13 @@ bool midi_loader(ResourceSlot& slot, MidiSequence*& intermediate) {
       new_event.array[0] = event_type;
       for(uintptr_t i(0); i<event_size; i++)
         new_event.array[i+1] = *head++;
-      wtr->events.push(MidiSequence::Event {
+      intermediate.events.push(MidiSequence::Event {
         global_delta_time*us_per_tick,
         new_event,
       });
     }
   }
 
-  intermediate = wtr;
   return true;
 }
 
