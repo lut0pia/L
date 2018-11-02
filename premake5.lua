@@ -47,7 +47,7 @@ solution "L"
   -- Main project (startup)
   project "Engine"
     language "C++"
-    files {"src/**.h","src/**.cpp"}
+    files {"src/**.h","src/**.cpp","src/**.inl"}
     debugdir "smp"
     targetdir "smp"
     includedirs {".."}
