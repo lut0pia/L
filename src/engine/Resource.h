@@ -8,7 +8,7 @@
 namespace L {
   class Buffer;
   struct ResourceSlot {
-    Array<const ResourceSlot*> dependencies;
+    Array<ResourceSlot*> dependencies;
     Symbol id, path;
     Date mtime;
     bool persistent : 1;
@@ -26,6 +26,7 @@ namespace L {
     bool parameter(const char* key, uint32_t& value);
     bool parameter(const char* key, float& value);
 
+    bool flush_all_dependencies();
     void load();
     bool flush();
 

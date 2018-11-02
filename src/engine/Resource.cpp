@@ -46,6 +46,17 @@ bool ResourceSlot::parameter(const char* key, float& value) {
   return false;
 }
 
+bool ResourceSlot::flush_all_dependencies() {
+  for(ResourceSlot* dependency : dependencies) {
+    dependency->load();
+  }
+  for(ResourceSlot* dependency : dependencies) {
+    if(!dependency->flush()) {
+      return false;
+    }
+  }
+  return true;
+}
 void ResourceSlot::load() {
   if(state==ResourceSlot::Unloaded && cas((uint32_t*)&state, ResourceSlot::Unloaded, ResourceSlot::Loading)==ResourceSlot::Unloaded) {
     TaskSystem::push([](void* p) {
