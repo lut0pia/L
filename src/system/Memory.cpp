@@ -25,22 +25,23 @@ static size_t allocated(0), unused(0), wasted(0);
 static Lock lock;
 
 // Cannot allocate less than 8 bytes for alignment purposes
-inline uint32_t freelist_index(size_t size) {
+inline uintptr_t freelist_index(size_t size) {
   return (size<=512) ? (((size+7)/8)-1) : (clog2(size)+55);
 }
-inline void freelist_index_size(size_t size, uint32_t& index, uint32_t& padded_size) {
+inline void freelist_index_size(size_t size, uintptr_t& index, size_t& padded_size) {
   if(size<=512) {
     index = ((size+7)/8)-1;
     padded_size = (index+1)*8;
   } else {
     index = clog2(size);
-    padded_size = 1<<index;
+    padded_size = uintptr_t(1)<<index;
     index += 55;
   }
 }
 
 void* Memory::alloc(size_t size) {
-  uint32_t index, padded_size;
+  uintptr_t index;
+  size_t padded_size;
   freelist_index_size(size, index, padded_size);
   if(padded_size>block_size) { // Big allocations go directly to the system
     allocated += size;
@@ -78,7 +79,8 @@ void* Memory::realloc(void* ptr, size_t oldsize, size_t newsize) {
   return wtr;
 }
 void Memory::free(void* ptr, size_t size) {
-  uint32_t index, padded_size;
+  uintptr_t index;
+  size_t padded_size;
   freelist_index_size(size, index, padded_size);
   if(padded_size>block_size) { // Big allocations go directly to the system
     virtual_free(ptr, size);
