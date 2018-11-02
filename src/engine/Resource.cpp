@@ -97,6 +97,7 @@ Buffer ResourceSlot::read_archive() {
   return Buffer();
 }
 void ResourceSlot::write_archive(const void* data, size_t size) {
+  L_SCOPE_MARKER("ResourceSlot::write_archive");
   archive.store(id, data, size);
 }
 void ResourceSlot::serialize(Stream& stream) {
