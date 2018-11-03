@@ -68,7 +68,7 @@ namespace L {
   template <class T>
   struct ResourceLoader<T, T> {
     static void load(ResourceSlot& slot) {
-      typename T::Intermediate* intermediate(Memory::new_type<T::Intermediate>());
+      typename T::Intermediate* intermediate(Memory::new_type<typename T::Intermediate>());
       if(ResourceLoading<T>::load(slot, *intermediate)) {
         slot.value = intermediate;
       } else {

@@ -53,8 +53,8 @@ namespace L {
       inline void xor(Register dst, Register src) {instruction(0x33,dst,src);}
       inline void clr(Register r) {xor(r,r);}
 
-      inline void push(uint32_t i) {emit(0x68ui8); imm(i);}
-      inline void push(Register r) {emit(0x50ui8+r);}
+      inline void push(uint32_t i) {emit(0x68u); imm(i);}
+      inline void push(Register r) {emit(0x50u+r);}
 
       inline void pop(Register r) {emit(0x58+r);}
       inline void pop(uint32_t n=1) {add(esp,4*n);}
