@@ -20,10 +20,10 @@ namespace L {
       uint32_t width, height;
       VkFormat format;
     };
-    inline Texture(const Intermediate& intermediate) : Texture(intermediate.width, intermediate.height, intermediate.format) {
-      load(intermediate.binary, intermediate.binary.size());
+    inline Texture(const Intermediate& intermediate)
+      : Texture(intermediate.width, intermediate.height, intermediate.format, intermediate.binary, intermediate.binary.size()) {
     }
-    Texture(uint32_t width, uint32_t height, VkFormat format = VK_FORMAT_R8G8B8A8_UNORM);
+    Texture(uint32_t width, uint32_t height, VkFormat format = VK_FORMAT_R8G8B8A8_UNORM, const void* data = nullptr, size_t size = 0);
     ~Texture();
     inline void load(const void* data, size_t size) { load(data, size, {}, {_width,_height,1}); }
     void load(const void* data, size_t size, VkOffset3D offset, VkExtent3D extent);

@@ -6,7 +6,7 @@
 
 using namespace L;
 
-Texture::Texture(uint32_t width, uint32_t height, VkFormat format)
+Texture::Texture(uint32_t width, uint32_t height, VkFormat format, const void* data, size_t size)
   : _width(width), _height(height), _format(format), _layout(VK_IMAGE_LAYOUT_UNDEFINED) {
   const bool depth_texture(Vulkan::is_depth_format(_format));
   const bool compressed_texture(Vulkan::is_block_format(_format));
@@ -54,6 +54,10 @@ Texture::Texture(uint32_t width, uint32_t height, VkFormat format)
   viewInfo.subresourceRange.layerCount = 1;
 
   L_VK_CHECKED(vkCreateImageView(Vulkan::device(), &viewInfo, nullptr, &_view));
+
+  if(data) { // Optional loading of texture data
+    load(data, size);
+  }
 }
 Texture::~Texture() {
   Vulkan::destroy_image(_image, _memory);
