@@ -176,8 +176,8 @@ namespace L {
         */
         Node *L(node->_left), *R(node->_right), *LL(L->_left), *LR(L->_right), *RL(R->_left), *RR(R->_right);
         Node *a(nullptr), *b(nullptr);
-        float minCost(cost(L->_key, R->_key));
-#define L_ROTATION_COST(A,B,AC,BC) {const float c(cost(AC,BC)); if(c<minCost){ minCost = c; a = A; b = B; } }
+        float min_cost(cost(L->_key, R->_key));
+#define L_ROTATION_COST(A,B,AC,BC) {const float c(cost(AC,BC)); if(c<min_cost){ min_cost = c; a = A; b = B; } }
 #define L_ROTATION_COST_GC_C(A,B) L_ROTATION_COST(A,B,A->sibling()->_key+B->_key,A->_key)
         if(L->branch()) {
           L_ROTATION_COST_GC_C(LL, R);
