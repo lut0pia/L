@@ -421,7 +421,6 @@ const char* Vulkan::result_str(VkResult result) {
     CASE(VK_ERROR_INCOMPATIBLE_DISPLAY_KHR);
     CASE(VK_ERROR_VALIDATION_FAILED_EXT);
     CASE(VK_ERROR_INVALID_SHADER_NV);
-    CASE(VK_ERROR_FRAGMENTATION_EXT);
     CASE(VK_ERROR_NOT_PERMITTED_EXT);
     default: return "unknown";
   }
