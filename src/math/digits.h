@@ -37,7 +37,7 @@ namespace L {
     if(negative) v = -v;
 
     int point(ntos_point<base>(v)); // Check for point
-    typename inttype<T>::type i(v); // Convert to int
+    auto i((typename inttype<T>::type)v); // Convert to int
 
     // Stringify
     if(!i) do { *--wtr = '0'; } while(--pad>0);

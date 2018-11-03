@@ -20,7 +20,7 @@ namespace L {
       Array<KeyValue<Symbol, float>> scalars;
       Array<KeyValue<Symbol, Resource<Texture>>> textures;
       Array<KeyValue<Symbol, Vector4f>> vectors;
-      size_t vertex_count = 0;
+      uint32_t vertex_count = 0;
 
       void apply(const State&);
       void fill_desc_set(class DescriptorSet&) const;
@@ -57,7 +57,7 @@ namespace L {
     void texture(const Symbol& name, const Resource<Texture>& texture, bool override = true);
     void vector(const Symbol& name, const Vector4f& vector, bool override = true);
     inline void color(const Symbol& name, const Color& color) { vector(name, Color::to_float_vector(color)); }
-    inline void vertex_count(size_t count) { _partial_state.vertex_count = count; }
+    inline void vertex_count(uint32_t count) { _partial_state.vertex_count = count; }
 
     inline const State& final_state() const { return _final_state; }
 

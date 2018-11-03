@@ -66,7 +66,8 @@ void Camera::script_registration() {
 
 void Camera::resize_buffers() {
   const Vector2f viewport_size(_viewport.size());
-  const uint32_t viewport_width(Window::width()*viewport_size.x()*screen_percentage), viewport_height(Window::height()*viewport_size.y()*screen_percentage);
+  const uint32_t viewport_width(uint32_t(Window::width()*viewport_size.x()*screen_percentage));
+  const uint32_t viewport_height(uint32_t(Window::height()*viewport_size.y()*screen_percentage));
   _geometry_buffer.resize(viewport_width, viewport_height);
   _light_buffer.resize(viewport_width, viewport_height);
   _framebuffer_mtime = Time::now();

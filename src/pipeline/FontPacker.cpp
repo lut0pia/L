@@ -50,7 +50,7 @@ Interval2i FontPacker::add_bmp(const uint8_t* data, uint32_t width, uint32_t hei
       _xs.insert(candidate.max().x());
       _ys.insert(candidate.max().y());
       return candidate;
-    } else if(candidate.max().y()>_intermediate.texture_intermediate.height) {
+    } else if(uint32_t(candidate.max().y())>_intermediate.texture_intermediate.height) {
       grow();
       i = {0,0};
     } else {
@@ -70,9 +70,9 @@ Interval2f FontPacker::pixel_to_coords(const Interval2i& i) const {
 }
 
 static bool value_at(const uint8_t* bmp, size_t width, size_t height, float x, float y) {
-  intptr_t xi(roundf(x));
-  intptr_t yi(roundf(y));
-  if(xi<0 || yi<0 || xi>=width || yi>=height) {
+  const intptr_t xi(intptr_t(roundf(x)));
+  const intptr_t yi(intptr_t(roundf(y)));
+  if(xi<0 || yi<0 || xi>=intptr_t(width) || yi>=intptr_t(height)) {
     return false;
   } else {
     return bmp[yi*width+xi]>=128;
@@ -104,7 +104,7 @@ static float distance_to_invert(const uint8_t* bmp, size_t width, size_t height,
         distance_helper(bmp, width, height, origin_value, ox, oy, ox-i*step.x(), oy+j*step.y(), min_distance) ||
         distance_helper(bmp, width, height, origin_value, ox, oy, ox+i*step.x(), oy+j*step.y(), min_distance));
       if(found && max_i<0) {
-        max_i = ceilf(sqrtf(i*i+i*i));
+        max_i = intptr_t(ceilf(sqrtf(i*i+i*i)));
       }
       if(max_i>=0 && i>=max_i) {
         stop = true;
@@ -116,9 +116,9 @@ static float distance_to_invert(const uint8_t* bmp, size_t width, size_t height,
 void FontPacker::add_glyph(const uint8_t* bmp, size_t width, size_t height, Font::Glyph& glyph) {
   { // Check visibility
     bool visible(false);
-    for(intptr_t x(0); x<width && !visible; x++) {
-      for(intptr_t y(0); y<height && !visible; y++) {
-        if(value_at(bmp, width, height, x, y)) {
+    for(uintptr_t x(0); x<width && !visible; x++) {
+      for(uintptr_t y(0); y<height && !visible; y++) {
+        if(value_at(bmp, width, height, float(x), float(y))) {
           visible = true;
         }
       }
@@ -129,7 +129,7 @@ void FontPacker::add_glyph(const uint8_t* bmp, size_t width, size_t height, Font
     }
   }
 
-  const Vector2f bmp_pixels_per_unit(Vector2f(width, height)/glyph.size);
+  const Vector2f bmp_pixels_per_unit(Vector2f(float(width), float(height))/glyph.size);
 
   // Add padding to avoid sampling neighbor glyphs in shader
   const float font_unit_padding(0.2f);
@@ -144,10 +144,10 @@ void FontPacker::add_glyph(const uint8_t* bmp, size_t width, size_t height, Font
   }
 
   const float sdf_pixels_per_unit(32.f);
-  const Vector2i sdf_pixel_size(ceilf(glyph.size.x()*sdf_pixels_per_unit), ceilf(glyph.size.y()*sdf_pixels_per_unit));
+  const Vector2i sdf_pixel_size(int(ceilf(glyph.size.x()*sdf_pixels_per_unit)), int(ceilf(glyph.size.y()*sdf_pixels_per_unit)));
   const size_t sdf_byte_size(sdf_pixel_size.product());
   uint8_t* sdf((uint8_t*)Memory::alloc(sdf_byte_size));
-  const Vector2f step(width/max<float>(sdf_pixel_size.x(), width), height/max<float>(sdf_pixel_size.y(), height));
+  const Vector2f step(width/max<float>(sdf_pixel_size.x(), float(width)), height/max<float>(sdf_pixel_size.y(), float(height)));
   const float pixel_distance_to_half_byte(128.f/bmp_pixels_per_unit.x()); // TODO: this isn't very robust
 
   for(intptr_t x(0); x<sdf_pixel_size.x(); x++) {
@@ -155,7 +155,7 @@ void FontPacker::add_glyph(const uint8_t* bmp, size_t width, size_t height, Font
       const float font_unit_x((float(x)/sdf_pixels_per_unit)-font_unit_padding);
       const float font_unit_y((float(y)/sdf_pixels_per_unit)-font_unit_padding);
       const float xf(font_unit_x*bmp_pixels_per_unit.x()), yf(font_unit_y*bmp_pixels_per_unit.y());
-      const uint8_t half_byte_distance(clamp<int32_t>(distance_to_invert(bmp, width, height, xf, yf, step)*pixel_distance_to_half_byte, -128, 127));
+      const uint8_t half_byte_distance(uint8_t(clamp<int32_t>(int32_t(distance_to_invert(bmp, width, height, xf, yf, step)*pixel_distance_to_half_byte), -128, 127)));
       sdf[y*sdf_pixel_size.x()+x] = 0x80+half_byte_distance;
     }
   }

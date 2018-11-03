@@ -161,20 +161,20 @@ Vector2f Material::gui_size() const {
     if(&pipeline->render_pass()==&RenderPass::present_pass() &&
       _final_state.textures.size()>0 && _final_state.textures[0].value()) {
       const Texture& texture(*_final_state.textures[0].value());
-      return Vector2f(texture.width(), texture.height());
+      return Vector2f(float(texture.width()), float(texture.height()));
     }
   }
   return Vector2f(0, 0);
 }
 const DescriptorSet& Material::descriptor_set(const Camera& camera, const Pipeline& pipeline) {
-  DescSetPairing* pairing(nullptr);
-  for(auto& p : _desc_set_pairings) {
-    if(p.camera == &camera) {
-      pairing = &p;
+  DescSetPairing* working_pairing(nullptr);
+  for(DescSetPairing& pairing : _desc_set_pairings) {
+    if(pairing.camera == &camera) {
+      working_pairing = &pairing;
       break;
     }
   }
-  if(!pairing) {
+  if(!working_pairing) {
     { // Create new pairing
       DescSetPairing new_pairing;
       new_pairing.camera = &camera;
@@ -182,30 +182,30 @@ const DescriptorSet& Material::descriptor_set(const Camera& camera, const Pipeli
       new_pairing.last_framebuffer_update = 0;
       _desc_set_pairings.push(new_pairing);
     }
-    pairing = &_desc_set_pairings.back();
-    pairing->desc_set->set_descriptor("Shared", camera.shared_uniform().descriptor_info());
-    _final_state.fill_desc_set(*pairing->desc_set);
+    working_pairing = &_desc_set_pairings.back();
+    working_pairing->desc_set->set_descriptor("Shared", camera.shared_uniform().descriptor_info());
+    _final_state.fill_desc_set(*working_pairing->desc_set);
   } else {
     // Check new loading state of the final material state (so many states heh?)
     const uint64_t new_loading_state(_final_state.loading_state());
 
     if(new_loading_state!=_loading_state) {
       // Update all descriptor sets
-      for(const auto& pairing : _desc_set_pairings) {
+      for(const DescSetPairing& pairing : _desc_set_pairings) {
         _final_state.fill_desc_set(*pairing.desc_set);
       }
       _loading_state = new_loading_state;
     }
   }
   if(&pipeline.render_pass()==&RenderPass::light_pass()
-    && pairing->last_framebuffer_update<camera.framebuffer_mtime()) {
-    pairing->desc_set->set_descriptor("color_buffer", VkDescriptorImageInfo {Vulkan::sampler(), camera.geometry_buffer().image_view(0), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
-    pairing->desc_set->set_descriptor("normal_buffer", VkDescriptorImageInfo {Vulkan::sampler(), camera.geometry_buffer().image_view(1), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
-    pairing->desc_set->set_descriptor("depth_buffer", VkDescriptorImageInfo {Vulkan::sampler(), camera.geometry_buffer().image_view(2), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
-    pairing->last_framebuffer_update = camera.framebuffer_mtime();
+    && working_pairing->last_framebuffer_update<camera.framebuffer_mtime()) {
+    working_pairing->desc_set->set_descriptor("color_buffer", VkDescriptorImageInfo {Vulkan::sampler(), camera.geometry_buffer().image_view(0), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
+    working_pairing->desc_set->set_descriptor("normal_buffer", VkDescriptorImageInfo {Vulkan::sampler(), camera.geometry_buffer().image_view(1), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
+    working_pairing->desc_set->set_descriptor("depth_buffer", VkDescriptorImageInfo {Vulkan::sampler(), camera.geometry_buffer().image_view(2), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
+    working_pairing->last_framebuffer_update = camera.framebuffer_mtime();
   }
-  L_ASSERT(pipeline.desc_set_layout()==pairing->desc_set->layout());
-  return *pairing->desc_set;
+  L_ASSERT(pipeline.desc_set_layout()==working_pairing->desc_set->layout());
+  return *working_pairing->desc_set;
 }
 void Material::mark_state_dirty() {
   _last_state_dirty = Time::now();

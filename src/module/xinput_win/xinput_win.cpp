@@ -84,7 +84,7 @@ void xinput_win_module_init() {
 
   for(uintptr_t i(0); i<XUSER_MAX_COUNT; i++) {
     char name[256];
-    sprintf(name, "XPad%d", i+1);
+    sprintf(name, "XPad%zu", i+1);
     xinput_devices[i].set_name(name);
     xinput_devices[i]._user_index = DWORD(i);
   }

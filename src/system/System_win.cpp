@@ -22,12 +22,14 @@ void System::toClipboard(const String& data) {
   } else error("Couldn't open clipboard.");
 }
 String System::fromClipboard() {
-  HGLOBAL tmp;
-  if(OpenClipboard(nullptr) && (tmp = GetClipboardData(CF_TEXT))) {
-    String wtr((char*)tmp);
+  String wtr;
+  if(OpenClipboard(nullptr)) {
+    if(HGLOBAL tmp = GetClipboardData(CF_TEXT)) {
+      wtr = (char*)tmp;
+    } else warning("Cannot get clipboard data");
     CloseClipboard();
-    return wtr;
-  } else error("Cannot get clipboard data.");
+  } else warning("Cannot open clipboard");
+  return wtr;
 }
 String System::pwd() {
   String wtr;

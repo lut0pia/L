@@ -14,7 +14,7 @@ namespace L {
     bool _negative;
   public:
     inline Integer() : _negative(false) { _part.push(0); }
-    inline Integer(const int& n) : _negative(n<0) {
+    inline Integer(int32_t n) : _negative(n<0) {
       _part.push((negative()) ? -n : n);
     }
     Integer(const char*,int base = 10);

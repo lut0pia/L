@@ -154,7 +154,7 @@ void ShaderTools::reflect(Shader::Intermediate& intermediate) {
 
     binding.stage = intermediate.stage;
     binding.format = find_type(binary, size, type_id);
-    binding.size = find_type_size(binary, size, type_id);
+    binding.size = int32_t(find_type_size(binary, size, type_id));
 
     for_opcodes(binary, size, OpDecorate, [&](const uint32_t* decoration) {
       if(decoration[1]==variable_id) {
@@ -177,7 +177,7 @@ void ShaderTools::reflect(Shader::Intermediate& intermediate) {
             default: return;
           }
           for_opcodes(binary, size, OpMemberName, [&](const uint32_t* name) {
-            if(name[1]==type_id && name[2]==binding.index) {
+            if(name[1]==type_id && int32_t(name[2])==binding.index) {
               binding.name = (const char*)(name+3);
             }
           });

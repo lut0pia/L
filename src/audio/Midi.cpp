@@ -35,7 +35,7 @@ void Midi::stop_note(uint8_t channel, uint8_t note) {
   send(e);
 }
 void Midi::stop_all(uint8_t channel) {
-  for(uint32_t t(0); t<128; t++)
+  for(uint8_t t(0); t<128; t++)
     stop_note(channel, t);
 }
 void Midi::stop_all() {

@@ -12,7 +12,7 @@ void Rational::simplify() {
 
 Rational::Rational(const String& str,uint32_t base) : _a(str) {
   const intptr_t point(str.find_first('.'));
-  _b = (point>=0) ? pow<Integer>(base,str.size()-point-uintptr_t(1)) : 1;
+  _b = (point>=0) ? pow<Integer>(base,int32_t(str.size()-point-uintptr_t(1))) : 1;
   simplify();
 }
 

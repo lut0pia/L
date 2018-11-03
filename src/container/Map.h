@@ -15,14 +15,14 @@ namespace L {
         Set<KV>::insert(e);
     }
     KV* find(const K& k) {
-      int i(Set<KV>::index(k));
-      if(i>=(int)Array<KV>::size() || Array<KV>::operator[](i)>k)
+      const uintptr_t i(Set<KV>::index(k));
+      if(i>=Array<KV>::size() || Array<KV>::operator[](i)>k)
         return 0;
       else return &Array<KV>::operator[](i);
     }
     const V* find(const K& k) const {
-      int i(Set<KV>::index(k));
-      if(i>=(int)Array<KV>::size() || Array<KV>::operator[](i)>k)
+      const uintptr_t i(Set<KV>::index(k));
+      if(i>=Array<KV>::size() || Array<KV>::operator[](i)>k)
         return 0;
       else return &Array<KV>::operator[](i).value();
     }
@@ -32,7 +32,7 @@ namespace L {
       Set<KV>::insert(KV(k, V()));
       return operator[](k);
     }
-    inline const KV& at(int i) const { return Set<KV>::operator[](i); }
+    inline const KV& at(uintptr_t i) const { return Set<KV>::operator[](i); }
     inline bool has(const K& k) const { return find(k)!=0; }
 
     friend inline Stream& operator<<(Stream& s, const Map& v) { return s << (const Array<KV>&)v; }

@@ -34,7 +34,7 @@ Symbol::Symbol(const char* str, size_t length) {
 }
 
 Stream& L::operator<=(Stream& s, const Symbol& v) {
-  const uint16_t len(v._string ? strlen(v) : 0);
+  const uint16_t len(uint16_t(v._string ? strlen(v) : 0));
   s <= len;
   if(len>0) {
     s.write(v, len);

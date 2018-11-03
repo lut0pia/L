@@ -56,7 +56,7 @@ namespace L {
           const Node *left((*cur)->_left), *right((*cur)->_right);
           const Key& leftKey(left->_key), rightKey(right->_key);
           const Key newLeft(leftKey+key), newRight(rightKey+key);
-          const float extentDiffLeft(newLeft.extent()-leftKey.extent()),
+          const K extentDiffLeft(newLeft.extent()-leftKey.extent()),
             extentDiffRight(newRight.extent()-rightKey.extent());
           cur = (extentDiffLeft<extentDiffRight) ? (&(*cur)->_left) : (&(*cur)->_right);
         }
@@ -160,7 +160,7 @@ namespace L {
         node = node->_parent;
       }
     }
-    static inline float cost(const Key& a, const Key& b) {
+    static inline K cost(const Key& a, const Key& b) {
       return abs(a.extent()-b.extent())+(a*b).extent();
     }
     static void balance(Node* node) {
@@ -176,8 +176,8 @@ namespace L {
         */
         Node *L(node->_left), *R(node->_right), *LL(L->_left), *LR(L->_right), *RL(R->_left), *RR(R->_right);
         Node *a(nullptr), *b(nullptr);
-        float min_cost(cost(L->_key, R->_key));
-#define L_ROTATION_COST(A,B,AC,BC) {const float c(cost(AC,BC)); if(c<min_cost){ min_cost = c; a = A; b = B; } }
+        K min_cost(cost(L->_key, R->_key));
+#define L_ROTATION_COST(A,B,AC,BC) {const K c(cost(AC,BC)); if(c<min_cost){ min_cost = c; a = A; b = B; } }
 #define L_ROTATION_COST_GC_C(A,B) L_ROTATION_COST(A,B,A->sibling()->_key+B->_key,A->_key)
         if(L->branch()) {
           L_ROTATION_COST_GC_C(LL, R);

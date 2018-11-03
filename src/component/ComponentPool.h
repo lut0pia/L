@@ -38,7 +38,7 @@ namespace L {
           TaskSystem::push([](void* p) {
             L_SCOPE_MARKERF("Iteration task for %s", Type<T>::name());
             TaskData task_data = *(TaskData*)p;
-            const uintptr_t t(task_data.t);
+            const uint32_t t(task_data.t);
             const uintptr_t count(max(uintptr_t(1), _pool.objects().size()/task_data.count));
             const uintptr_t start(count*t);
             const uintptr_t end(t==task_data.count-1 ? _pool.objects().size() : min(_pool.objects().size(), start+count));

@@ -21,6 +21,6 @@ namespace L {
     template <class T> bool set_value(const Symbol& name, const T& value) { return set_value(name, &value, sizeof(value)); }
 
     inline const VkDescriptorSet& set() const { return _set; }
-    inline const VkDescriptorSetLayout& layout() const { return _pipeline.desc_set_layout(); }
+    inline VkDescriptorSetLayout layout() const { return _pipeline.desc_set_layout(); }
   };
 }

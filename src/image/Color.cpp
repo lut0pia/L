@@ -24,11 +24,11 @@ Color::Color(const char* s) {
   else if(str[0]=='#') { // Hexa color
     if(str.size()==7) { // #RRBBGG
       uint32_t rgb(ston<16,uint32_t>(str.substr(1)));
-      new(this)Color(rgb>>16,rgb>>8,rgb);
+      new(this)Color(uint8_t(rgb>>16), uint8_t(rgb>>8), uint8_t(rgb));
       return;
     } else if(str.size()==9) { // #RRGGBBAA
       uint32_t rgba(ston<16,uint32_t>(str.substr(1)));
-      new(this)Color(rgba>>24,rgba>>16,rgba>>8,rgba);
+      new(this)Color(uint8_t(rgba>>24), uint8_t(rgba>>16), uint8_t(rgba>>8), uint8_t(rgba));
       return;
     }
   }
@@ -63,7 +63,7 @@ Color Color::fromHSV(float h, float s, float v) {
   const float ff(h - i);
   const float p(v * (1.f - s));
   const float q(v * (1.f - (s * ff)));
-  const float t(v * (1.f - (s * (1.0 - ff))));
+  const float t(v * (1.f - (s * (1.f - ff))));
 
   switch(i) {
     case 0: return Color::from(v, t, p);

@@ -24,18 +24,18 @@ namespace L {
       return wtr;
     }
     Set& operator+=(const Set& other) {
-      for(int i(0); i<other.size(); i++)
+      for(uintptr_t i(0); i<other.size(); i++)
         insert(other[i]);
       return *this;
     }
     void insert(const T& e) {
-      int i(SortedArray<T>::index(e));
-      if(i>=(int)Array<T>::size() || e<Array<T>::operator[](i))
+      const uintptr_t i(SortedArray<T>::index(e));
+      if(i>=Array<T>::size() || e<Array<T>::operator[](i))
         Array<T>::insert(i, e);
     }
     void erase(const T& e) {
-      int i(SortedArray<T>::index(e));
-      if(i<(int)Array<T>::size() && !(Array<T>::operator[](i)<e))
+      const uintptr_t i(SortedArray<T>::index(e));
+      if(i<Array<T>::size() && !(Array<T>::operator[](i)<e))
         Array<T>::erase(i);
     }
     inline bool has(const T& e) {

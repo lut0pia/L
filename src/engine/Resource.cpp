@@ -25,22 +25,22 @@ Symbol ResourceSlot::parameter(const char* key) {
     if(!pair) break; // Couldn't find the key
     if(pair[-1]!='?' && pair[-1]!='&') continue; // Make sure it's prefixed with ? or &
     if(pair[key_length]!='=') continue; // Make sure it's suffixed with =
-    const char* value(pair+key_length+1);
-    const size_t value_length(strcspn(value, "&\0"));
-    return Symbol(value, value_length);
+    const char* param_string(pair+key_length+1);
+    const size_t param_length(strcspn(param_string, "&\0"));
+    return Symbol(param_string, param_length);
   }
   return Symbol();
 }
-bool ResourceSlot::parameter(const char* key, uint32_t& value) {
+bool ResourceSlot::parameter(const char* key, uint32_t& param_value) {
   if(const Symbol param = parameter(key)) {
-    value = atoi(param);
+    param_value = atoi(param);
     return true;
   }
   return false;
 }
-bool ResourceSlot::parameter(const char* key, float& value) {
+bool ResourceSlot::parameter(const char* key, float& param_value) {
   if(const Symbol param = parameter(key)) {
-    value = atof(param);
+    param_value = atof(param);
     return true;
   }
   return false;

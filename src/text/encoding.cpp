@@ -74,13 +74,13 @@ const char* L::utf16_to_utf8(uint16_t utf16) {
     wtr[0] = (char)utf16;
     wtr[1] = 0;
   } else if(utf16<(1<<11)) {
-    wtr[0] = 0xC0 | (utf16>>6);
-    wtr[1] = 0x80 | (utf16 & bitmask(6));
+    wtr[0] = 0xC0i8 | char(utf16>>6);
+    wtr[1] = 0x80i8 | char(utf16 & bitmask(6));
     wtr[2] = 0;
   } else {
-    wtr[0] = 0xE0 | (utf16>>12);
-    wtr[1] = 0x80 | ((utf16>>6) & bitmask(6));
-    wtr[2] = 0x80 | (utf16 & bitmask(6));
+    wtr[0] = 0xE0i8 | char(utf16>>12);
+    wtr[1] = 0x80i8 | char((utf16>>6) & bitmask(6));
+    wtr[2] = 0x80i8 | char(utf16 & bitmask(6));
     wtr[3] = 0;
   }
   return wtr;
@@ -88,22 +88,22 @@ const char* L::utf16_to_utf8(uint16_t utf16) {
 const char* L::utf32_to_utf8(uint32_t utf32) {
   thread_local char wtr[5];
   if(utf32<(1<<7)) {
-    wtr[0] = (char)utf32;
+    wtr[0] = char(utf32);
     wtr[1] = 0;
   } else if(utf32<(1<<11)) {
-    wtr[0] = 0xC0 | (utf32>>6);
-    wtr[1] = 0x80 | (utf32 & bitmask(6));
+    wtr[0] = 0xC0i8 | char(utf32>>6);
+    wtr[1] = 0x80i8 | char(utf32 & bitmask(6));
     wtr[2] = 0;
   } else if(utf32<(1<<11)) {
-    wtr[0] = 0xE0 | (utf32>>12);
-    wtr[1] = 0x80 | ((utf32>>6) & bitmask(6));
-    wtr[2] = 0x80 | (utf32 & bitmask(6));
+    wtr[0] = 0xE0i8 | char(utf32>>12);
+    wtr[1] = 0x80i8 | char((utf32>>6) & bitmask(6));
+    wtr[2] = 0x80i8 | char(utf32 & bitmask(6));
     wtr[3] = 0;
   } else {
-    wtr[0] = 0xF0 | (utf32>>18);
-    wtr[1] = 0x80 | ((utf32>>12) & bitmask(6));
-    wtr[2] = 0x80 | ((utf32>>6) & bitmask(6));
-    wtr[3] = 0x80 | (utf32 & bitmask(6));
+    wtr[0] = 0xF0i8 | char(utf32>>18);
+    wtr[1] = 0x80i8 | char((utf32>>12) & bitmask(6));
+    wtr[2] = 0x80i8 | char((utf32>>6) & bitmask(6));
+    wtr[3] = 0x80i8 | char(utf32 & bitmask(6));
     wtr[4] = 0;
   }
   return wtr;

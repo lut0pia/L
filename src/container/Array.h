@@ -146,7 +146,7 @@ namespace L {
     void erase(size_t i,size_t count) {
       for(uintptr_t j(0); j<count; j++)
         (_data+i+j)->~T(); // Destruct values
-      shift(i+count,-count); // Move right part
+      shift(i+count,-intptr_t(count)); // Move right part
       _size -= count; // Decrease size
     }
 

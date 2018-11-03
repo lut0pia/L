@@ -31,7 +31,7 @@ void Mesh::load(size_t count, const void* data, size_t size, const VkFormat* for
   }
 
   // Compute bounds
-  const uint32_t vertex_size(size/count);
+  const size_t vertex_size(size/count);
   _bounds = (*(Vector3f*)data);
   for(uintptr_t i(1); i<count; i++)
     _bounds.add(*(Vector3f*)((uint8_t*)data+vertex_size*i));

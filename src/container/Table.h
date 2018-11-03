@@ -101,7 +101,7 @@ namespace L {
       }
       return slot->value();
     }
-    inline uintptr_t index_for(uint32_t h) const { return h*(float(_size)/UINT32_MAX); }
+    inline uintptr_t index_for(uint32_t h) const { return uintptr_t(h*(float(_size)/UINT32_MAX)); }
     Slot* find_slot_or_create(uint32_t h){
       while(true) {
         const uintptr_t i(index_for(h));

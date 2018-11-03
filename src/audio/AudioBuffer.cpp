@@ -5,7 +5,7 @@ using namespace Audio;
 
 AudioBuffer::AudioBuffer(const void* data, size_t size, SampleFormat format, uint32_t frequency) {
   const size_t sample_size(sample_format_size(format));
-  const uint32_t sample_count(size/sample_size);
+  const uint32_t sample_count(uint32_t(size/sample_size));
   L_ASSERT(sample_size*sample_count==size);
   _format = format;
   _sample_count = convert_samples_required_count(working_frequency, frequency, sample_count);

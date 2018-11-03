@@ -12,7 +12,7 @@ namespace L {
       Array<uint8_t> _assembly;
 
     public:
-      typedef enum {eax = 0,ecx,edx,ebx,esp,ebp,esi,edi} Register;
+      enum Register : uint8_t { eax = 0, ecx, edx, ebx, esp, ebp, esi, edi };
 
       void load(void*);
       inline void clear() {_assembly.clear();}
@@ -53,8 +53,8 @@ namespace L {
       inline void xor(Register dst, Register src) {instruction(0x33,dst,src);}
       inline void clr(Register r) {xor(r,r);}
 
-      inline void push(uint32_t i) {emit(0x68); imm(i);}
-      inline void push(Register r) {emit(0x50+r);}
+      inline void push(uint32_t i) {emit(0x68ui8); imm(i);}
+      inline void push(Register r) {emit(0x50ui8+r);}
 
       inline void pop(Register r) {emit(0x58+r);}
       inline void pop(uint32_t n=1) {add(esp,4*n);}

@@ -35,7 +35,7 @@ ScriptFunction LSCompiler::compile() {
   { // Bundling functions together
     for(Function* function : _functions) {
       function->bytecode.push(ScriptInstruction {Return}); // Better safe than sorry
-      function->bytecode_offset = _script->bytecode.size();
+      function->bytecode_offset = uint32_t(_script->bytecode.size());
       _script->bytecode.insertArray(_script->bytecode.size(), function->bytecode);
     }
   }
@@ -206,7 +206,7 @@ void LSCompiler::compile(Function& func, const Var& v, uint32_t offset) {
 
         // Compile the default case if there's one
         // We'll fallthrough here if none of the conditions were met
-        if(array.size()&1!=0) {
+        if((array.size() & 1) != 0) {
           // Default case is always at the end of the switch
           compile(func, array.back(), offset);
         }
@@ -268,9 +268,9 @@ void LSCompiler::compile(Function& func, const Var& v, uint32_t offset) {
 
           { // Deal with potential parameters
             if(array.size()>2 && array[1].is<Array<Var>>()) { // There's a list of parameter symbols
-              for(const Var& sym : array[1].as<Array<Var>>()) {
-                L_ASSERT(sym.is<Symbol>());
-                new_function.local_table[sym.as<Symbol>()] = new_function.local_count++;
+              for(const Var& param_name : array[1].as<Array<Var>>()) {
+                L_ASSERT(param_name.is<Symbol>());
+                new_function.local_table[param_name.as<Symbol>()] = new_function.local_count++;
               }
             }
           }

@@ -158,7 +158,7 @@ void Vulkan::init() {
     create_surface(&surface);
   }
 
-  uint32_t queue_family_index(-1);
+  uint32_t queue_family_index(uint32_t(-1));
   { // Fetch queue family index
     uint32_t count(0);
     vkGetPhysicalDeviceQueueFamilyProperties(physical_device, &count, nullptr);
@@ -345,29 +345,29 @@ void Vulkan::recreate_swapchain() {
     create_info.oldSwapchain = VK_NULL_HANDLE;
 
     L_VK_CHECKED(vkCreateSwapchainKHR(_device, &create_info, nullptr, &swapchain));
+  }
 
-    { // Fetch swapchain images
-      uint32_t swapchain_image_count;
-      vkGetSwapchainImagesKHR(_device, swapchain, &swapchain_image_count, nullptr);
-      L_ASSERT(swapchain_image_count==2);
-      vkGetSwapchainImagesKHR(_device, swapchain, &swapchain_image_count, swapchain_images);
-    }
+  { // Fetch swapchain images
+    uint32_t swapchain_image_count;
+    vkGetSwapchainImagesKHR(_device, swapchain, &swapchain_image_count, nullptr);
+    L_ASSERT(swapchain_image_count==2);
+    vkGetSwapchainImagesKHR(_device, swapchain, &swapchain_image_count, swapchain_images);
+  }
 
-    { // Create swapchain image views
-      for(uint32_t i(0); i<2; i++) {
-        VkImageViewCreateInfo create_info {};
-        create_info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-        create_info.image = swapchain_images[i];
-        create_info.viewType = VK_IMAGE_VIEW_TYPE_2D;
-        create_info.format = surface_format.format;
-        create_info.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-        create_info.subresourceRange.baseMipLevel = 0;
-        create_info.subresourceRange.levelCount = 1;
-        create_info.subresourceRange.baseArrayLayer = 0;
-        create_info.subresourceRange.layerCount = 1;
+  { // Create swapchain image views
+    for(uint32_t i(0); i<2; i++) {
+      VkImageViewCreateInfo create_info {};
+      create_info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+      create_info.image = swapchain_images[i];
+      create_info.viewType = VK_IMAGE_VIEW_TYPE_2D;
+      create_info.format = surface_format.format;
+      create_info.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+      create_info.subresourceRange.baseMipLevel = 0;
+      create_info.subresourceRange.levelCount = 1;
+      create_info.subresourceRange.baseArrayLayer = 0;
+      create_info.subresourceRange.layerCount = 1;
 
-        L_VK_CHECKED(vkCreateImageView(_device, &create_info, nullptr, swapchain_image_views+i));
-      }
+      L_VK_CHECKED(vkCreateImageView(_device, &create_info, nullptr, swapchain_image_views+i));
     }
   }
 
@@ -484,10 +484,11 @@ uint32_t Vulkan::find_memory_type(uint32_t type_bits, VkMemoryPropertyFlags prop
     if((type_bits&(1<<i)) && (physical_device_memory_properties.memoryTypes[i].propertyFlags & property_flags) == property_flags)
       return i;
   error("Vulkan: failed to find suitable memory");
+  return 0;
 }
 static uint32_t image_index;
 VkCommandBuffer Vulkan::begin_render_command_buffer() {
-  vkAcquireNextImageKHR(_device, swapchain, -1, imageAvailableSemaphore, VK_NULL_HANDLE, &image_index);
+  vkAcquireNextImageKHR(_device, swapchain, uint64_t(-1), imageAvailableSemaphore, VK_NULL_HANDLE, &image_index);
   VkCommandBuffer cmd_buffer(render_command_buffers[image_index]);
 
   VkCommandBufferBeginInfo beginInfo = {};

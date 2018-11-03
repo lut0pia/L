@@ -15,7 +15,7 @@ int Rand::nextInt() {
   return next()>>32;
 }
 uint8_t Rand::nextByte() {
-  return next()>>48;
+  return uint8_t(next()>>48);
 }
 float Rand::nextFloat() {
   return next()/(float)(uint64_t)-1;

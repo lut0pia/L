@@ -39,12 +39,12 @@ void Archive::store(const char* key, const void* data, size_t size) {
   // Reuse space if it's enough, otherwise or if there was no entry before,
   // append to end of file
   if(!e.hash || e.size<size) {
-    e.position = file_stream.size();
+    e.position = uint32_t(file_stream.size());
   }
 
   e.date = Date::now();
   e.hash = key_hash;
-  e.size = size;
+  e.size = uint32_t(size);
   file_stream.seek(uintptr_t(&e)-uintptr_t(_entries));
   file_stream.write(&e, sizeof(e));
   file_stream.seek(e.position);

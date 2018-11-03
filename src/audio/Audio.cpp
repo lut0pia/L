@@ -53,8 +53,8 @@ void Audio::render(void* dst, const void* src, SampleFormat format, uint32_t sam
       int16_t* out_buffer((int16_t*)dst);
       const int16_t* in_data((const int16_t*)src);
       for(uintptr_t i(0); i<sample_count; i++) {
-        const int32_t left_mix(int32_t(out_buffer[2*i]) + int32_t(in_data[2*(i)])*volume[0]);
-        const int32_t right_mix(int32_t(out_buffer[2*i+1]) + int32_t(in_data[2*(i)+1])*volume[1]);
+        const int32_t left_mix(int32_t(int32_t(out_buffer[2*i]) + in_data[2*(i)]*volume[0]));
+        const int32_t right_mix(int32_t(int32_t(out_buffer[2*i+1]) + in_data[2*(i)+1]*volume[1]));
         out_buffer[2*i] = clamp<int32_t>(left_mix, INT16_MIN, INT16_MAX);
         out_buffer[2*i+1] = clamp<int32_t>(right_mix, INT16_MIN, INT16_MAX);
       }
@@ -64,10 +64,10 @@ void Audio::render(void* dst, const void* src, SampleFormat format, uint32_t sam
       const int16_t* in_data((const int16_t*)src);
       for(uintptr_t i(0); i<sample_count; i++) {
         const int16_t& frame_value(in_data[i]);
-        const int32_t left_mix(int32_t(out_buffer[2*i]) + frame_value*volume[0]);
-        const int32_t right_mix(int32_t(out_buffer[2*i+1]) + frame_value*volume[1]);
-        out_buffer[2*i] = clamp<int32_t>(left_mix, INT16_MIN, INT16_MAX);
-        out_buffer[2*i+1] = clamp<int32_t>(right_mix, INT16_MIN, INT16_MAX);
+        const int32_t left_mix(int32_t(int32_t(out_buffer[2*i]) + frame_value*volume[0]));
+        const int32_t right_mix(int32_t(int32_t(out_buffer[2*i+1]) + frame_value*volume[1]));
+        out_buffer[2*i] = clamp<int32_t>(left_mix, int32_t(INT16_MIN), int32_t(INT16_MAX));
+        out_buffer[2*i+1] = clamp<int32_t>(right_mix, int32_t(INT16_MIN), int32_t(INT16_MAX));
       }
       return;
     }
@@ -84,7 +84,7 @@ bool Audio::convert_samples(void* dst, SampleFormat dst_fmt, uint32_t dst_freq, 
     memcpy(dst, src, sample_count*sample_size);
     return true;
   } else if(src_freq==dst_freq*2) { // Can copy every second sample
-    const uint32_t dst_sample_count(sample_count / 2);
+    L_ASSERT(dst_sample_count == sample_count / 2);
     for(uintptr_t i(0); i<dst_sample_count; i++)
       memcpy((uint8_t*)dst+sample_size*i, (const uint8_t*)src+sample_size*i*2, sample_size);
     return true;
@@ -124,8 +124,8 @@ bool Audio::convert_samples(void* dst, SampleFormat dst_fmt, uint32_t dst_freq, 
           const int16_t& in_value_left_b(in_data[2*in_index_b]);
           const int16_t& in_value_right_a(in_data[2*in_index_b+1]);
           const int16_t& in_value_right_b(in_data[2*in_index_b+1]);
-          out_data[2*i] = in_value_left_a*(1.f-fract)+in_value_left_b*fract;
-          out_data[2*i+1] = in_value_right_a*(1.f-fract)+in_value_right_b*fract;
+          out_data[2*i] = int16_t(in_value_left_a*(1.f-fract))+int16_t(in_value_left_b*fract);
+          out_data[2*i+1] = int16_t(in_value_right_a*(1.f-fract))+int16_t(in_value_right_b*fract);
         }
         return true;
       }

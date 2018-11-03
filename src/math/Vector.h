@@ -8,7 +8,7 @@
 #include "../stream/serial_text.h"
 
 namespace L {
-  template <int d,class T>
+  template <size_t d,class T>
   class Vector {
   protected:
     T _c[d>0?d:1]; // Avoid zero-sized array
@@ -16,11 +16,11 @@ namespace L {
     inline Vector() = default;
     template <class R>
     inline Vector(const Vector<d,R>& other) {
-      for(int i(0); i<d; i++)
+      for(uintptr_t i(0); i<d; i++)
         _c[i] = T(other[i]);
     }
     inline Vector(const T& v) {
-      for(int i(0); i<d; i++)
+      for(uintptr_t i(0); i<d; i++)
         _c[i] = v;
     }
     template <typename... Args>
@@ -29,27 +29,27 @@ namespace L {
       new(((T*)this)+1)Vector<d-1,T>(args...);
     }
     inline Vector(const Vector<d-1,T>& p,const T& w = 1.0) {
-      for(int i(0); i<d-1; i++)
+      for(uintptr_t i(0); i<d-1; i++)
         _c[i] = p[i];
       _c[d-1] = w;
     }
     inline Vector(const Vector<d+1,T>& p) {
-      for(int i(0); i<d; i++)
+      for(uintptr_t i(0); i<d; i++)
         _c[i] = p[i];
     }
 
     Vector& operator+=(const Vector& other) {
-      for(int i(0); i<d; i++)
+      for(uintptr_t i(0); i<d; i++)
         _c[i] += other._c[i];
       return *this;
     }
     Vector& operator-=(const Vector& other) {
-      for(int i(0); i<d; i++)
+      for(uintptr_t i(0); i<d; i++)
         _c[i] -= other._c[i];
       return *this;
     }
     Vector& operator*=(const Vector& other) {
-      for(int i(0); i<d; i++)
+      for(uintptr_t i(0); i<d; i++)
         _c[i] *= other._c[i];
       return *this;
     }
@@ -58,7 +58,7 @@ namespace L {
       return *this;
     }
     Vector& operator/=(const Vector& other) {
-      for(int i(0); i<d; i++)
+      for(uintptr_t i(0); i<d; i++)
         _c[i] /= other._c[i];
       return *this;
     }
@@ -66,7 +66,7 @@ namespace L {
     inline Vector operator-(const Vector& other) const { return Vector(*this) -= other; }
     Vector operator-() const {
       Vector wtr;
-      for(int i(0); i<d; i++)
+      for(uintptr_t i(0); i<d; i++)
         wtr._c[i] = -_c[i];
       return wtr;
     }
@@ -75,14 +75,14 @@ namespace L {
     inline Vector operator/(const Vector& other) const { return Vector(*this) /= other; }
 
     bool operator==(const Vector& other) const {
-      for(int i(0); i<d; i++)
+      for(uintptr_t i(0); i<d; i++)
         if(_c[i] != other._c[i])
           return false;
       return true;
     }
     inline bool operator!=(const Vector& other) const { return !(*this == other); }
     bool operator<(const Vector& other) const {
-      for(int i(0); i<d; i++)
+      for(uintptr_t i(0); i<d; i++)
         if(_c[i] < other._c[i])
           return true;
         else if(_c[i] > other._c[i])
@@ -92,7 +92,7 @@ namespace L {
     inline bool operator>(const Vector& other) const { return other<*this; }
     T lengthSquared() const {
       T wtr(0);
-      for(int i(0); i<d; i++)
+      for(uintptr_t i(0); i<d; i++)
         wtr += _c[i]*_c[i];
       return wtr;
     }
@@ -100,13 +100,13 @@ namespace L {
     inline Vector& length(const T& s){ return this->operator*=(s/length()); }
     T manhattan() const {
       T wtr(0);
-      for(int i(0); i<d; i++)
+      for(uintptr_t i(0); i<d; i++)
         wtr += L::abs(_c[i]);
       return wtr;
     }
     Vector& normalize() {
       T n(length());
-      for(int i(0); i<d; i++)
+      for(uintptr_t i(0); i<d; i++)
         _c[i] /= n;
       return *this;
     }
@@ -120,25 +120,25 @@ namespace L {
     }
     T dot(const Vector& other) const {
       T wtr(0);
-      for(int i(0); i<d; i++)
+      for(uintptr_t i(0); i<d; i++)
         wtr += _c[i]*other._c[i];
       return wtr;
     }
     T product() const {
       T wtr(1);
-      for(int i(0); i<d; i++)
+      for(uintptr_t i(0); i<d; i++)
         wtr *= _c[i];
       return wtr;
     }
     T sum() const {
       T wtr(0);
-      for(int i(0); i<d; i++)
+      for(uintptr_t i(0); i<d; i++)
         wtr += _c[i];
       return wtr;
     }
     inline Vector reflect(const Vector& v) const { return ((*this*(dot(v)*T(2)))-v); }
     bool increment(const Vector& min,const Vector& max,const Vector& delta = 1) {
-      for(int i(0); i<d; i++) {
+      for(uintptr_t i(0); i<d; i++) {
         _c[i] += delta[i];
         if(_c[i]>=max._c[i]) {
           _c[i] = min._c[i];
@@ -149,14 +149,14 @@ namespace L {
       return true;
     }
 
-    inline const T& operator[](int i) const { return _c[i]; }
+    inline const T& operator[](uintptr_t i) const { return _c[i]; }
     inline const T& x() const { return _c[0]; }
     inline const T& y() const { return _c[1]; }
     inline const T& z() const { return _c[2]; }
     inline const T& w() const { return _c[3]; }
     inline const uint8_t* bytes() const { return (const uint8_t*)&_c; }
     inline const T* array() const { return _c; }
-    inline T& operator[](int i) { return _c[i]; }
+    inline T& operator[](uintptr_t i) { return _c[i]; }
     inline T& x() { return _c[0]; }
     inline T& y() { return _c[1]; }
     inline T& z() { return _c[2]; }
@@ -166,7 +166,7 @@ namespace L {
     static inline Vector max() { return Vector(std::numeric_limits<T>::max()); }
     static Vector random() {
       Vector wtr;
-      for(int i(0); i<d; i++)
+      for(uintptr_t i(0); i<d; i++)
         wtr[i] = Rand::nextFloat()-.5f;
       wtr.normalize();
       return wtr;
@@ -185,7 +185,7 @@ namespace L {
     friend inline Stream& operator<(Stream& s, const Vector& v) { for(uintptr_t i(0); i<d; i++) s < v[i]; return s; }
     friend inline Stream& operator>(Stream &s, Vector& v) { for(uintptr_t i(0); i<d; i++) s > v[i]; return s; }
   };
-  template <int d,class T> inline Vector<d,T> operator*(const T& a,const Vector<d,T>& b) { return b*a; }
+  template <size_t d,class T> inline Vector<d,T> operator*(const T& a,const Vector<d,T>& b) { return b*a; }
 
   typedef Vector<4,uint8_t> Vector4b;
   typedef Vector<2,int> Vector2i;
@@ -195,17 +195,17 @@ namespace L {
   typedef Vector<3,float> Vector3f;
   typedef Vector<4,float> Vector4f;
 
-  template <int d,class T>
+  template <size_t d,class T>
   Vector<d,T> clamp(const Vector<d,T>& v,const Vector<d,T>& min,const Vector<d,T>& max) {
     Vector<d,T> wtr;
-    for(int i(0); i<d; i++)
+    for(uintptr_t i(0); i<d; i++)
       wtr[i] = clamp(v[i],min[i],max[i]);
     return wtr;
   }
-  template <int d,class T>
+  template <size_t d,class T>
   Vector<d,T> abs(const Vector<d,T>& v) {
     Vector<d,T> wtr;
-    for(int i(0); i<d; i++)
+    for(uintptr_t i(0); i<d; i++)
       wtr[i] = abs(v[i]);
     return wtr;
   }

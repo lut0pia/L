@@ -19,7 +19,7 @@ namespace L {
     inline Time operator-() const{ return Time(-usec); }
     inline Time operator*(const Time& other) const{ return Time(usec*other.usec); }
     inline Time operator/(const Time& other) const{ return Time(usec/other.usec); }
-    inline Time operator*(float other) const{ return Time(usec*other); }
+    inline Time operator*(float other) const{ return Time(int64_t(usec*other)); }
     inline Time operator*(int64_t other) const{ return Time(usec*other); }
     inline Time operator/(int64_t other) const{ return Time(usec/other); }
     inline Time& operator+=(const Time& other){ usec += other.usec; return *this; }

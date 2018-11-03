@@ -150,7 +150,7 @@ void Texture::transition_layout(VkCommandBuffer cmd_buffer, VkImageLayout new_la
     src_stage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
     dst_stage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
   } else {
-    error("Unsupported Texture layout transition");
+    return error("Unsupported Texture layout transition");
   }
 
   vkCmdPipelineBarrier(cmd_buffer, src_stage, dst_stage,

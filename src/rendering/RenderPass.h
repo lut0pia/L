@@ -17,7 +17,7 @@ namespace L {
     RenderPass(const Array<VkFormat>& formats, bool present = false);
     ~RenderPass();
 
-    inline uint32_t color_attachment_count() const { return _attachment_descriptions.size()-_has_depth; }
+    inline uint32_t color_attachment_count() const { return uint32_t(_attachment_descriptions.size())-_has_depth; }
     inline const Array<VkFormat> formats() const { return _formats; }
     operator VkRenderPass() const { return _render_pass; }
 

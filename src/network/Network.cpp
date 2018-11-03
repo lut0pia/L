@@ -12,7 +12,7 @@ SOCKET Network::connect_to(const char* ip, short port) {
 SOCKET Network::connect_to(uint32_t addr, short port) {
   SOCKET sd(0);
   if((sd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-    error("Couldn't create socket to %s:%hd - %d", inet_ntoa(*((in_addr*)addr)), port, error_code());
+    error("Couldn't create socket to %s:%hd - %d", inet_ntoa((in_addr&)addr), port, error_code());
 
   {
     SOCKADDR_IN sin;
@@ -21,7 +21,7 @@ SOCKET Network::connect_to(uint32_t addr, short port) {
     sin.sin_port = htons(port);
 
     if(connect(sd, (SOCKADDR*)&sin, sizeof(sin)) < 0)
-      error("Couldn't connect to %s:%hd - %d", inet_ntoa(*((in_addr*)addr)), port, error_code());
+      error("Couldn't connect to %s:%hd - %d", inet_ntoa((in_addr&)addr), port, error_code());
   }
   make_non_blocking(sd);
   return sd;
@@ -35,12 +35,13 @@ int Network::recv(SOCKET sd, char* buffer, size_t size) {
   else return result;
 }
 bool Network::send(SOCKET sd, const char* buffer, size_t size) {
-  int result(0);
-  while(size && (result = ::send(sd, buffer, int(size), 0))) {
+  while(size) {
+    int result(::send(sd, buffer, int(size), 0));
+    if(result == 0) break; // Failure
     buffer += result;
     size -= result;
   }
-  return result != 0;
+  return size == 0;
 }
 uint32_t Network::dns_lookup(const char* host) {
   struct addrinfo hints, *res, *p;
@@ -67,21 +68,20 @@ String Network::http_request(const String& url) {
   const String host((slash>=0) ? url.substr(0, slash) : url), request((slash>=0) ? url.substr(slash) : "/");
   // Connect to the server
   const uint32_t addr(dns_lookup(host));
+  String wtr;
   if(addr) {
     SOCKET sd;
     NetStream test(sd = connect_to(addr, 80));
     test << "GET " << request << " HTTP/1.1\r\nHost: " << host << "\r\nConnection: close\r\n\r\n";
-    int tmp;
     char buffer[1024];
-    String wtr;
-    while((tmp = ::recv(sd, buffer, sizeof(buffer), 0)))
+    while(int tmp = ::recv(sd, buffer, sizeof(buffer), 0))
       if(tmp>0) {
         wtr.size(wtr.size()+tmp);
         char* write_start(wtr.end()-tmp);
         memcpy(write_start, buffer, tmp);
       }
-    return wtr;
   } else error("Could not find ip for %s", (const char*)host);
+  return wtr;
 }
 void Network::http_download(const char* url, const char* name) {
   String answer(http_request(url));

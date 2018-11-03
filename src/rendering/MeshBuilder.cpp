@@ -18,7 +18,7 @@ void MeshBuilder::add_vertex(const void* vertex, size_t size) {
     memcpy(&_vertices[_vertex_count*size], vertex, size);
     _vertex_count++;
   }
-  _indices.push(index);
+  _indices.push(uint16_t(index));
 }
 void MeshBuilder::compute_normals(uint32_t vertexOffset, uint32_t normalOffset, size_t vertexSize) {
 #define ATTRIBUTE_OF(i,offset) (*(Vector3f*)(_vertices.begin()+vertexSize*i+offset))

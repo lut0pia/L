@@ -62,7 +62,7 @@ L_SCRIPT_NATIVE("print",[](ScriptContext& c) {
   for(uintptr_t i(0); i<c.param_count(); i++)
     out << c.param(i);
 });
-L_SCRIPT_NATIVE("break",[](ScriptContext& c) {
+L_SCRIPT_NATIVE("break",[](ScriptContext&) {
   debugbreak();
 });
 L_SCRIPT_NATIVE("vec",[](ScriptContext& c) {
@@ -93,7 +93,7 @@ L_SCRIPT_NATIVE("color",[](ScriptContext& c) {
     Color& color(c.return_value().make<Color>() = Color::white);
     const uint32_t params(min(c.param_count(), 4u));
     for(uint32_t i(0); i<params; i++)
-      color[i] = c.param(i).is<float>() ? (c.param(i).as<float>()*255) : c.param(i).get<int>();
+      color[i] = uint8_t(c.param(i).is<float>() ? (c.param(i).as<float>()*255) : c.param(i).get<int>());
   }
 });
 L_SCRIPT_NATIVE("left-pad",[](ScriptContext& c) {

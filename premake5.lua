@@ -30,7 +30,8 @@ solution "L"
     files {"src/**.natvis","src/**.rc"}
     linkoptions {"/NODEFAULTLIB:libc.lib","/NODEFAULTLIB:msvcrt.lib","/NODEFAULTLIB:libcd.lib","/NODEFAULTLIB:msvcrtd.lib"}
     defines {"_CRT_SECURE_NO_WARNINGS","_WINSOCK_DEPRECATED_NO_WARNINGS"}
-    buildoptions {"/wd4100","/wd4146","/wd4200","/wd4244","/wd4702","/wd4706","/wd4577","/wd4592"}
+    buildoptions {"/wd4100"} -- Unreferenced formal parameter
+    buildoptions {"/wd4146"} -- Unary minus operator applied to unsigned type
     characterset "MBCS" -- Don't use UNICODE
     warnings "Extra"
     links {"ws2_32","vulkan-1"}

@@ -19,7 +19,8 @@ namespace L {
       uintptr_t param_count;
     };
     Array<Frame> _frames;
-    uintptr_t _current_stack_start, _current_param_count;
+    uintptr_t _current_stack_start;
+    uint32_t _current_param_count;
     Var _self;
 
   public:
@@ -31,7 +32,7 @@ namespace L {
     inline Var& param(uintptr_t i) { return local(i+2); } // Parameters start after return value and self
 
     inline Table<Var, Var>& self_table() { return *_self.as<Ref<Table<Var, Var>>>(); }
-    inline uint32_t local_count() const { return uint32_t(_stack.size())-_current_stack_start; }
+    inline uint32_t local_count() const { return uint32_t(_stack.size()-_current_stack_start); }
     inline uint32_t param_count() const { return _current_param_count; }
 
     bool try_execute_method(const Symbol&, std::initializer_list<Var> = {});

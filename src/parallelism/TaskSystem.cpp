@@ -75,7 +75,7 @@ void fiber_func(void* arg) {
   while(true) {
     if(slot.func) {
       slot.func(slot.data); // Execute task
-      if(slot.parent) atomic_add(slot.parent->counter, -1); // Notify task done
+      if(slot.parent) atomic_add(slot.parent->counter, uint32_t(-1)); // Notify task done
       while(slot.counter) // Wait for child tasks
         yield_internal();
       slot.func = nullptr;
@@ -113,7 +113,7 @@ void thread_func(void* arg) {
 
 void TaskSystem::init() {
   initialized = true;
-  for(uint32_t i(0); i<actual_fiber_count; i++)
+  for(uintptr_t i(0); i<actual_fiber_count; i++)
     fibers[i].handle = create_fiber(fiber_func, (void*)i);
   for(uintptr_t i(1); i<actual_thread_count; i++)
     create_thread(thread_func, (void*)i);

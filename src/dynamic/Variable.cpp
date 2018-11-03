@@ -67,15 +67,21 @@ void Variable::cast(const TypeDescription* td,Cast cast){
   if(type()==other.type() && type()->op) \
     type()->op(value(),other.value()); \
   else{ \
-    Cast c; \
-    if(type()->op && (c = other.type()->casts.get(_td, nullptr))){ /* This type has operator and other can become this type */\
-      uint8_t tmp[256]; \
-      c(tmp,other.value()); /* Cast other to tmp */\
-      type()->op(value(),tmp); \
-      type()->dtr(tmp); /* Destruct temporary value */\
-    } else if(other.type()->op && (c = _td->casts.get(other.type(), nullptr))){ /* Other's type has operator and this can become other's type */\
-      cast(other.type(),c); /* Cast this to other's type */\
-      type()->op(value(),other.value()); \
+    if(type()->op) { /* This type has operator */\
+      if(Cast c = other.type()->casts.get(_td, nullptr)) { /* Other can become this type */\
+        uint8_t tmp[256]; \
+        c(tmp,other.value()); /* Cast other to tmp */\
+        type()->op(value(),tmp); \
+        type()->dtr(tmp); /* Destruct temporary value */\
+        return *this; \
+      } \
+    } \
+    if(other.type()->op) { /* Other's type has operator */\
+      if(Cast c = _td->casts.get(other.type(), nullptr)) { /* This can become other's type */\
+        cast(other.type(), c); /* Cast this to other's type */\
+        type()->op(value(), other.value()); \
+        return *this; \
+      } \
     } \
   } \
   return *this; \

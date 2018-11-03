@@ -91,7 +91,7 @@ String& String::padLeft(size_t n,char c) {
 String& String::toLower() {
   char* c(*this);
   while(*c!='\0') {
-    *c = tolower(*c);
+    *c = char(tolower(*c));
     c++;
   }
   return *this;
@@ -103,7 +103,7 @@ String& String::capitalize()  {
     if(Stream::isspace(*c))
       first = true;
     else {
-      *c = (first)?toupper(*c):tolower(*c);
+      *c = char(first?toupper(*c):tolower(*c));
       first = false;
     }
     c++;

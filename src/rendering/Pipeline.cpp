@@ -52,7 +52,7 @@ Pipeline::Pipeline(const Intermediate& intermediate) {
     {
       VkDescriptorSetLayoutCreateInfo create_info = {};
       create_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-      create_info.bindingCount = dslb.size();
+      create_info.bindingCount = uint32_t(dslb.size());
       create_info.pBindings = dslb.begin();
 
       L_VK_CHECKED(vkCreateDescriptorSetLayout(Vulkan::device(), &create_info, nullptr, &_desc_set_layout));
@@ -112,7 +112,7 @@ Pipeline::Pipeline(const Intermediate& intermediate) {
     vertex_input.vertexBindingDescriptionCount = 1;
     vertex_input.pVertexBindingDescriptions = &vertex_binding;
 
-    vertex_input.vertexAttributeDescriptionCount = vertex_attributes.size();
+    vertex_input.vertexAttributeDescriptionCount = uint32_t(vertex_attributes.size());
     vertex_input.pVertexAttributeDescriptions = vertex_attributes.begin();
   }
 

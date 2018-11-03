@@ -212,7 +212,7 @@ Matrix33f Collider::inertia_tensor() const{
   }
   return wtr;
 }
-void Collider::render(const Camera& camera) {
+void Collider::render(const Camera&) {
 /*  Pipeline::default_program().use();
   Pipeline::default_program().uniform("model",_transform->matrix()*scale_matrix(_radius));
   switch(_type){
