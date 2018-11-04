@@ -15,10 +15,10 @@ solution "L"
   configuration {"windows"}
     architecture "x64"
     defines {"L_WINDOWS","WIN32_LEAN_AND_MEAN","NOMINMAX","NOCRYPT"}
-    local vulkansdks = os.matchdirs("C:/VulkanSDK/*")
-    if #vulkansdks >0 then
-      includedirs {vulkansdks[1].."/Include"}
-      libdirs {vulkansdks[1].."/Lib"}
+    local vk_sdk = os.getenv("VULKAN_SDK")
+    if vk_sdk then
+      includedirs {vk_sdk.."/Include"}
+      libdirs {vk_sdk.."/Lib"}
     end
   configuration {"linux"}
     defines {"L_UNIX"}
