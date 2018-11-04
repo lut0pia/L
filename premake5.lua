@@ -56,7 +56,10 @@ solution "L"
       excludes {"**_win**"}
     configuration {"not linux"}
       excludes {"**_unix**"}
-      
+
+    filter {"configurations:Release"}
+      excludes {"src/pipeline/**"}
+
     do -- Modules
       configuration {}
       removefiles {"src/module/**"} -- Start by exluding all modules
