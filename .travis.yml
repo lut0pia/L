@@ -1,0 +1,26 @@
+sudo: required
+dist: xenial
+language: c++
+env: VERBOSE=1
+
+addons:
+  apt:
+    packages:
+    # Core
+      - build-essential
+      - libvulkan-dev
+    # Modules
+      - libasound2-dev
+      - libxi-dev
+
+script: ./run.sh dbg build
+
+os:
+  - linux
+
+compiler:
+  - gcc
+
+git:
+  depth: 1
+  quiet: true
