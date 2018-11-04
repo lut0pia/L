@@ -27,7 +27,7 @@ namespace L {
   }
 
   template <class T> inline bool ntos_valid(const T&) { return true; }
-  inline bool ntos_valid(float v) { return !isnan(v); }
+  inline bool ntos_valid(float v) { return !std::isnan(v); }
 
   template <int base = 10, class T>
   const char* ntos(T v, int pad = 0) { // Converts a number to a string
