@@ -1,20 +1,20 @@
-#define VK_USE_PLATFORM_XLIB_KHR
-
 #include <L/src/engine/Engine.h>
 #include <L/src/rendering/Vulkan.h>
 #include <L/src/system/Window.h>
 
+#define VK_USE_PLATFORM_XLIB_KHR
 #include <X11/X.h>
 #include <X11/Xlib.h>
+#include <vulkan/vulkan_xlib.h>
 
 using namespace L;
 using L::Window;
 
-static XWindow* instance(nullptr);
+static class XWindow* instance(nullptr);
 
 class XWindow : public Window {
 protected:
-  Display* _xdisplay;
+  ::Display* _xdisplay;
   ::Window _xwindow;
 
 public:
@@ -29,7 +29,7 @@ public:
         case Expose:
           XGetWindowAttributes(_xdisplay, _xwindow, &gwa);
           if(_width!=gwa.width || _height!=gwa.height) {
-            e.type = Event::Resize;
+            e.type = Event::Type::Resize;
             _width = e.x = gwa.width;
             _height = e.y = gwa.height;
           }
@@ -47,9 +47,6 @@ public:
         _events.push(e);
       }
     }
-  }
-  static void static_update() {
-    instance->update();
   }
 
   void open(const char* title, uint32_t width, uint32_t height, uint32_t flags) override {
@@ -113,6 +110,6 @@ public:
 void xlib_module_init() {
   instance = Memory::new_type<XWindow>();
   Engine::add_parallel_update([]() {
-    XWindow::update();
+    instance->update();
   });
 }
