@@ -15,18 +15,7 @@
 #include <limits>
 
 // Platform
-#if defined L_WINDOWS
-# undef _WIN32_WINNT
-# define _WIN32_WINNT 0x501
-# include <winsock2.h>
-# include <ws2tcpip.h>
-# include <windows.h>
-# include <windowsx.h>
-# include <mmsystem.h>
-# include <sys/timeb.h>
-# define popen _popen
-# define pclose _pclose
-#elif defined L_UNIX
+#ifdef L_UNIX
 # include <unistd.h>
 # include <signal.h>
 # include <sys/mman.h>

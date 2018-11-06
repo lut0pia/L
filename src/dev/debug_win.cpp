@@ -2,6 +2,7 @@
 
 #include "../stream/CFileStream.h"
 
+#include <Windows.h>
 #include <DbgHelp.h>
 
 using namespace L;

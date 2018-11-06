@@ -1,5 +1,7 @@
 #include "TaskSystem.h"
 
+#include <Windows.h>
+
 using namespace L;
 
 namespace L {
