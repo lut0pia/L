@@ -26,7 +26,6 @@
 # include <sys/timeb.h>
 # define popen _popen
 # define pclose _pclose
-#define VK_USE_PLATFORM_WIN32_KHR
 #elif defined L_UNIX
 # include <unistd.h>
 # include <signal.h>

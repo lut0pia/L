@@ -73,7 +73,7 @@ void Camera::resize_buffers() {
   _framebuffer_mtime = Time::now();
 }
 void Camera::event(const Window::Event& e) {
-  if(e.type == Window::Event::Resize) {
+  if(e.type == Window::Event::Type::Resize) {
     resize_buffers();
     update_projection();
     update_viewport();

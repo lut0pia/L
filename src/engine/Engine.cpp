@@ -51,10 +51,10 @@ void Engine::update() {
   }
   {
     L_SCOPE_MARKER("Window events");
-    Window::Event e;
-    while(Window::new_event(e))
+    for(const Window::Event& e : Window::events())
       for(const auto& event : _win_events)
         event(e);
+    Window::flush_events();
   }
   {
     L_SCOPE_MARKER("Device events");
@@ -86,7 +86,7 @@ void Engine::update() {
 
   Entity::flush_destroy_queue();
 
-  const bool render_this_frame(ComponentPool<Camera>::size()>0);
+  const bool render_this_frame(ComponentPool<Camera>::size()>0 && Window::opened());
   if(render_this_frame) {
     L_SCOPE_MARKER("Graphics rendering");
     VkCommandBuffer cmd_buffer(Vulkan::begin_render_command_buffer());

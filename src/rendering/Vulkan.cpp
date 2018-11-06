@@ -1,12 +1,12 @@
 #include "Vulkan.h"
 
-#include "../dev/debug.h"
-#include "../macros.h"
-#include "../stream/CFileStream.h"
 #include "DescriptorSet.h"
-#include "../parallelism/Lock.h"
-
+#include "../dev/debug.h"
 #include "../dev/profiling.h"
+#include "../macros.h"
+#include "../parallelism/Lock.h"
+#include "../stream/CFileStream.h"
+#include "../system/Window.h"
 
 using namespace L;
 
@@ -60,10 +60,6 @@ namespace L {
 #ifdef L_DEBUG
     VkDebugReportCallbackEXT debug_report_callback;
 #endif
-
-    // System-specific function
-    void create_surface(VkSurfaceKHR*);
-    const char* extra_extension();
   }
 }
 
@@ -92,7 +88,7 @@ void Vulkan::init() {
 
     const char* required_extensions[] = {
       VK_KHR_SURFACE_EXTENSION_NAME,
-      extra_extension(),
+      Window::instance()->extra_vulkan_extension(),
 #ifdef L_DEBUG
       VK_EXT_DEBUG_REPORT_EXTENSION_NAME,
 #endif
@@ -155,7 +151,7 @@ void Vulkan::init() {
   }
 
   { // Create surface
-    create_surface(&surface);
+    Window::instance()->create_vulkan_surface(instance, &surface);
   }
 
   uint32_t queue_family_index(uint32_t(-1));

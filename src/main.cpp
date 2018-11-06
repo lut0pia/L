@@ -6,7 +6,7 @@ using namespace L;
 void mainjob(void*) {
   Network::init();
 
-  while(Window::loop()) {
+  while(Window::opened()) {
     Engine::update();
   }
   Engine::clear();
@@ -46,9 +46,9 @@ int main(int argc, const char* argv[]) {
   int window_flags((Settings::get_int("no_cursor", 0) ? Window::nocursor : 0));
 
   if(Settings::get_int("fullscreen", 1))
-    Window::open_fullscreen(window_name, window_flags);
+    Window::instance()->open_fullscreen(window_name, window_flags);
   else
-    Window::open(window_name, Settings::get_int("resolution_x", 1024), Settings::get_int("resolution_y", 768), window_flags);
+    Window::instance()->open(window_name, Settings::get_int("resolution_x", 1024), Settings::get_int("resolution_y", 768), window_flags);
 
   TaskSystem::push(mainjob, nullptr, uint32_t(-1), TaskSystem::MainTask);
   TaskSystem::init();
