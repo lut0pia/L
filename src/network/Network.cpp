@@ -1,6 +1,8 @@
 #include "Network.h"
 
+#ifdef L_WINDOWS
 #include <WS2tcpip.h>
+#endif
 
 using namespace L;
 using namespace Network;
