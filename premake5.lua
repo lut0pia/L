@@ -74,7 +74,10 @@ solution "L"
         defines {moduleswitch}
         files {modulepath .. "/**.cpp"}
         moduleinit:write("#if " .. moduleswitch .. "\n"
+        .. "{\n"
+        .. "L_SCOPE_MARKER(\"" .. module .. "\");\n"
         .. "extern void " .. module .. "_module_init();" .. module .. "_module_init();\n"
+        .. "}\n"
         .. "#endif\n")
       end
       configuration {}
