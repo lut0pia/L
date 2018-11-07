@@ -1,11 +1,13 @@
+#define VK_USE_PLATFORM_XLIB_KHR
+#include <vulkan/vulkan.h>
+#undef None // That's awkward
+
 #include <L/src/engine/Engine.h>
 #include <L/src/rendering/Vulkan.h>
 #include <L/src/system/Window.h>
 
-#define VK_USE_PLATFORM_XLIB_KHR
 #include <X11/X.h>
 #include <X11/Xlib.h>
-#include <vulkan/vulkan_xlib.h>
 
 using namespace L;
 using L::Window;
@@ -42,7 +44,6 @@ public:
           close();
           break;
       }
-#undef None // That's awkward
       if(e.type!=Event::Type::None) {
         _events.push(e);
       }
