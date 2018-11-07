@@ -56,9 +56,9 @@ solution "L"
       excludes {"**_win**"}
     configuration {"not linux"}
       excludes {"**_unix**"}
-    configuration {}
-
+      
     do -- Modules
+      configuration {}
       removefiles {"src/module/**"} -- Start by exluding all modules
       local modules = os.matchdirs("src/module/*")
       local moduleinit = io.open("src/module/init.gen","w")
@@ -80,10 +80,10 @@ solution "L"
         .. "}\n"
         .. "#endif\n")
       end
-      configuration {}
     end
     
     -- PCH
+    configuration {}
     if _ACTION ~= "gmake2" then
       pchheader "pc.h"
       pchsource "src/pc.cpp"
