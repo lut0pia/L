@@ -1,5 +1,7 @@
 #include "Memory.h"
 
+#include <sys/mman.h>
+
 using namespace L;
 
 void* Memory::virtual_alloc(size_t size) {

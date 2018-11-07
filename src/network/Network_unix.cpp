@@ -1,6 +1,7 @@
 #include "Network.h"
 
 #include <errno.h>
+#include <fcntl.h>
 
 using namespace L;
 
