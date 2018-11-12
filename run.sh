@@ -3,6 +3,18 @@
 mode=${1:-build}
 configuration=${2:-development} #Configuration is development by default
 
+if [ $mode = "stats" ] ; then
+  echo "Core file count:"
+  git ls-files src | grep -v module/ | wc -l
+  echo "Core line count:"
+  git ls-files src | grep -v module/ | xargs cat | wc -l
+  echo "Module count:"
+  find src/module/* -maxdepth 1 -type d | wc -l
+  echo "Module line count:"
+  git ls-files src | grep module/ | xargs cat | wc -l
+  exit 0
+fi
+
 if (uname -s | grep -iqE "mingw|cygwin") ; then
   ./premake5.exe vs2015
   start ./prj/vs2015/L.sln
