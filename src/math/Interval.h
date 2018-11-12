@@ -60,10 +60,10 @@ namespace L {
       return wtr;
     }
     bool contains(Vector<d,T> p) const {
+      bool containment(true);
       for(int i(0); i<d; i++)
-        if(_min[i] > p[i] || p[i] > _max[i])
-          return false;
-      return true;
+        containment &= _min[i] < p[i] & p[i] < _max[i];
+      return containment;
     }
     bool contains(Interval other) const{
       for(int i(0); i<d; i++)
