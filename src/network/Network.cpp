@@ -1,14 +1,14 @@
 #include "Network.h"
 
-#ifdef L_WINDOWS
-#include <WS2tcpip.h>
-#endif
-
 using namespace L;
 using namespace Network;
 
 #include "../stream/NetStream.h"
 #include "../stream/CFileStream.h"
+
+#ifdef L_WINDOWS
+#include <WS2tcpip.h>
+#endif
 
 SOCKET Network::connect_to(const char* ip, short port) {
   return connect_to(inet_addr(ip), port);
