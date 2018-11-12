@@ -21,12 +21,12 @@ namespace L {
   public:
     constexpr Array() : _data(nullptr),_size(0),_capacity(0) {}
     inline Array(const std::initializer_list<T>& il) : _data(nullptr),_size(0),_capacity(0){
-      growTo(il.size());
+      grow_to(il.size());
       for(auto && e : il)
         push(e);
     }
     inline Array(const T* a,size_t size) : _data(nullptr),_size(0),_capacity(0) {
-      growTo(size);
+      grow_to(size);
       while(_size<size)
         push(*a++);
     }
@@ -91,7 +91,7 @@ namespace L {
 
     template <typename... Args>
     void size(size_t n,Args&&... args) {
-      if(_capacity<n) growTo(n);
+      grow_to(n);
       if(_size<n)
         for(uintptr_t i(_size); i<n; i++)
           new(_data+i)T(args...);
@@ -107,7 +107,7 @@ namespace L {
         _capacity = n;
       }
     }
-    void growTo(size_t size) {
+    inline void grow_to(size_t size) {
       if(size>capacity()) {
         // Avoid too low start (16 bytes min) and target power of two (uint8_t-wise)
         capacity(max<size_t>(16u, upperpow2(size*sizeof(T)))/sizeof(T));
@@ -116,7 +116,7 @@ namespace L {
     inline void shrink() { capacity(size()); }
     template <typename... Args>
     void insert(size_t i,Args&&... args) {
-      growTo(_size+1); // Check capacity
+      grow_to(_size+1); // Check capacity
       shift(i,1); // Move right part
       new(_data+i)T(args...); // Place new value
       _size++; // Increase size
@@ -125,7 +125,7 @@ namespace L {
     template <typename... Args> inline void replace(size_t i,Args&&... args) { reconstruct(operator[](i),args...); }
     void replaceArray(size_t i, size_t len, const Array& a, size_t alen = size_t(-1), size_t ai = 0) {
       if(alen==size_t(-1)) alen = a.size();
-      growTo(_size+(alen-len)); // Check capacity
+      grow_to(_size+(alen-len)); // Check capacity
       shift(i+len,alen-len);
       copy(&operator[](i),&a[ai],alen);
       _size += alen-len;

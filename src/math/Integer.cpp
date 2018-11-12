@@ -124,7 +124,7 @@ Integer& Integer::operator*=(const Integer& other) {
   Integer result;
   {
     const size_t result_size(size()+other.size());
-    result._part.growTo(result_size); // Allocate space for result
+    result._part.grow_to(result_size); // Allocate space for result
     while(result.size()<result_size)
       result._part.push(0);
   }

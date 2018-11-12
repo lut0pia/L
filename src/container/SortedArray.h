@@ -8,7 +8,7 @@ namespace L {
   public:
     inline SortedArray() {}
     inline SortedArray(const std::initializer_list<T>& il) {
-      Array<T>::growTo(il.size());
+      Array<T>::grow_to(il.size());
       for(auto&& e : il)
         insert(e);
     }

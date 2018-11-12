@@ -28,7 +28,7 @@ const Font::TextMesh& Font::text_mesh(const char* str) {
     update();
     TextMesh& wtr(_text_meshes[h]);
     Array<Vector4f> buffer;
-    buffer.growTo(strlen(str)*6);
+    buffer.grow_to(strlen(str)*6);
     wtr.dimensions.y() = _line_height;
     float x(0.f), y(0.f);
     while(*str) {

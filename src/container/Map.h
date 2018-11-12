@@ -10,7 +10,7 @@ namespace L {
   public:
     constexpr Map() {}
     inline Map(const std::initializer_list<KV>& il) {
-      Array<KV>::growTo(il.size());
+      Array<KV>::grow_to(il.size());
       for(const KV& e : il)
         Set<KV>::insert(e);
     }
