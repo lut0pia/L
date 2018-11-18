@@ -21,7 +21,7 @@ const size_t block_size = 1024*1024u;
 static void* freelists[128] = {};
 static uint8_t* next;
 static size_t bytes_left(0);
-static size_t allocated(0), unused(0), wasted(0);
+static size_t reserved(0), allocated(0), unused(0), wasted(0);
 static Lock lock;
 
 // Cannot allocate less than 8 bytes for alignment purposes
@@ -45,6 +45,7 @@ void* Memory::alloc(size_t size) {
   freelist_index_size(size, index, padded_size);
   if(padded_size>block_size) { // Big allocations go directly to the system
     allocated += size;
+    reserved += size;
     return virtual_alloc(size);
   }
   L_SCOPED_LOCK(lock);
@@ -54,8 +55,10 @@ void* Memory::alloc(size_t size) {
     freelist = *((void**)freelist);
     unused -= padded_size;
   } else { // No free space available: make one
-    if(bytes_left<padded_size) // No more space for allocation
+    if(bytes_left<padded_size) { // No more space for allocation
       next = (uint8_t*)virtual_alloc(bytes_left = block_size); // Ask system for new memory block
+      reserved += block_size;
+    }
     wtr = next;
     next += padded_size;
     bytes_left -= padded_size;
@@ -91,6 +94,7 @@ void Memory::free(void* ptr, size_t size) {
   if(padded_size>block_size) { // Big allocations go directly to the system
     virtual_free(ptr, size);
     allocated -= size;
+    reserved -= size;
     return;
   }
   L_SCOPED_LOCK(lock);
