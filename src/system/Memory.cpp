@@ -2,6 +2,7 @@
 
 #include <cstdlib>
 #include <cstring>
+#include "../dev/profiling.h"
 #include "../math/math.h"
 #include "../parallelism/Lock.h"
 
@@ -45,7 +46,9 @@ void* Memory::alloc(size_t size) {
   freelist_index_size(size, index, padded_size);
   if(padded_size>block_size) { // Big allocations go directly to the system
     allocated += size;
+    L_COUNT_MARKER("Allocated memory", allocated);
     reserved += size;
+    L_COUNT_MARKER("Reserved memory", reserved);
     return virtual_alloc(size);
   }
   L_SCOPED_LOCK(lock);
@@ -54,17 +57,21 @@ void* Memory::alloc(size_t size) {
   if(wtr) { // There's a free space available
     freelist = *((void**)freelist);
     unused -= padded_size;
+    L_COUNT_MARKER("Unused memory", unused);
   } else { // No free space available: make one
     if(bytes_left<padded_size) { // No more space for allocation
       next = (uint8_t*)virtual_alloc(bytes_left = block_size); // Ask system for new memory block
       reserved += block_size;
+      L_COUNT_MARKER("Reserved memory", reserved);
     }
     wtr = next;
     next += padded_size;
     bytes_left -= padded_size;
   }
   wasted += padded_size-size;
+  L_COUNT_MARKER("Wasted memory", wasted);
   allocated += padded_size;
+  L_COUNT_MARKER("Allocated memory", allocated);
   return wtr;
 }
 void* Memory::alloc_zero(size_t size) {
@@ -79,6 +86,7 @@ void* Memory::realloc(void* ptr, size_t oldsize, size_t newsize) {
   if(oldsize && oldsize < block_size && newsize < block_size &&
     freelist_index(oldsize)==freelist_index(newsize)) {
     wasted += oldsize-newsize;
+    L_COUNT_MARKER("Wasted memory", wasted);
     return ptr;
   }
   void* wtr(alloc(newsize));
@@ -95,7 +103,9 @@ void Memory::free(void* ptr, size_t size) {
   if(padded_size>block_size) { // Big allocations go directly to the system
     virtual_free(ptr, size);
     allocated -= size;
+    L_COUNT_MARKER("Allocated memory", allocated);
     reserved -= size;
+    L_COUNT_MARKER("Reserved memory", reserved);
     return;
   }
   L_SCOPED_LOCK(lock);
@@ -103,7 +113,10 @@ void Memory::free(void* ptr, size_t size) {
   *((void**)ptr) = freelist;
   freelist = ptr;
   unused += padded_size;
+  L_COUNT_MARKER("Unused memory", unused);
   wasted -= padded_size-size;
+  L_COUNT_MARKER("Wasted memory", wasted);
   allocated -= padded_size;
+  L_COUNT_MARKER("Allocated memory", allocated);
 }
 #endif
