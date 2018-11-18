@@ -168,6 +168,18 @@ void TaskSystem::join() {
   L_SCOPE_MARKER("Join");
   yield_until([](void* data) { return *(uint32_t*)data==0; }, &fibers[current_fiber].counter);
 }
+void TaskSystem::join_all() {
+  L_ASSERT(current_fiber==0);
+  L_SCOPE_MARKER("Join all");
+  yield_until([](void*) {
+    for(uintptr_t i(1); i<actual_fiber_count; i++) {
+      if(fibers[i].func) {
+        return false;
+      }
+    }
+    return true;
+  });
+}
 
 uint32_t TaskSystem::thread_mask() {
   return fibers[current_fiber].thread_mask;

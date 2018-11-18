@@ -20,6 +20,7 @@ namespace L {
     void yield();
     void yield_until(CondFunc, void* = nullptr);
     void join();
+    void join_all();
 
     uint32_t thread_mask();
     void thread_mask(uint32_t mask);
