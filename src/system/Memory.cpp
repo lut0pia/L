@@ -70,10 +70,16 @@ void* Memory::alloc_zero(size_t size) {
   return wtr;
 }
 void* Memory::realloc(void* ptr, size_t oldsize, size_t newsize) {
-  L_ASSERT(!oldsize || freelist_index(oldsize)!=freelist_index(newsize));
+  L_ASSERT(newsize>0);
+  // If the change in size does not incur a change in freelist index,
+  // then we can simply ignore the realloc
+  if(oldsize && oldsize < block_size && newsize < block_size &&
+    freelist_index(oldsize)==freelist_index(newsize)) {
+    return ptr;
+  }
   void* wtr(alloc(newsize));
   if(ptr) {
-    memcpy(wtr, ptr, oldsize);
+    memcpy(wtr, ptr, min(oldsize, newsize));
     free(ptr, oldsize);
   }
   return wtr;
