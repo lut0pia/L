@@ -78,6 +78,7 @@ void* Memory::realloc(void* ptr, size_t oldsize, size_t newsize) {
   // then we can simply ignore the realloc
   if(oldsize && oldsize < block_size && newsize < block_size &&
     freelist_index(oldsize)==freelist_index(newsize)) {
+    wasted += oldsize-newsize;
     return ptr;
   }
   void* wtr(alloc(newsize));
