@@ -7,15 +7,10 @@ namespace L {
   class StringStream : public Stream {
   protected:
     String _string;
+    uintptr_t _index = 0;
   public:
-    inline StringStream() {}
-    inline size_t write(const void* data, size_t size) override {
-      const uintptr_t prev_size(_string.size());
-      _string.size(_string.size()+size);
-      memcpy(_string+prev_size, data, size);
-      return size;
-    }
-    inline size_t read(void*, size_t) override { return 0; }
+    size_t write(const void*, size_t) override;
+    size_t read(void*, size_t) override;
     const String& string() const { return _string; }
   };
   template <class T>
