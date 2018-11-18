@@ -10,6 +10,7 @@ void mainjob(void*) {
     Engine::update();
   }
   Engine::clear();
+  TaskSystem::join_all();
 #ifdef L_DEBUG
   flush_profiling();
 #endif
