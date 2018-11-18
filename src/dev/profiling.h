@@ -3,7 +3,6 @@
 #include <cstdio>
 #include <cstdarg>
 #include "../macros.h"
-#include "../parallelism/TaskSystem.h"
 #include "../time/Time.h"
 
 #ifdef L_DEBUG
@@ -19,9 +18,8 @@ namespace L {
   protected:
     const char* _name;
     const Time _start;
-    const uint32_t _fiber_id;
   public:
-    inline ScopeMarker(const char* name) : _name(name), _start(Time::now()), _fiber_id(TaskSystem::fiber_id()) {}
+    inline ScopeMarker(const char* name) : _name(name), _start(Time::now()) {}
     ~ScopeMarker();
   };
   class ScopeMarkerFormatted : public ScopeMarker {

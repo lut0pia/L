@@ -1,5 +1,6 @@
 #include "profiling.h"
 
+#include "../parallelism/TaskSystem.h"
 #include "../stream/CFileStream.h"
 #include "../system/intrinsics.h"
 #include "../system/Memory.h"
@@ -25,7 +26,7 @@ ScopeMarker::~ScopeMarker() {
         return;
       }
     } while(cas(&event_index, index, index+1)!=index);
-    events[index] = {_name, _start, duration, _fiber_id};
+    events[index] = {_name, _start, duration, TaskSystem::fiber_id()};
   }
 }
 ScopeMarkerFormatted::ScopeMarkerFormatted(const char* format, ...) : ScopeMarker(nullptr) {
