@@ -1,6 +1,7 @@
 #pragma once
 
-#include <cstdint> 
+#include <cstdint>
+#include "../macros.h"
 
 namespace L {
   namespace TaskSystem {

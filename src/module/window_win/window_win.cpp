@@ -1,6 +1,7 @@
 #define VK_USE_PLATFORM_WIN32_KHR
 
 #include <L/src/engine/Engine.h>
+#include <L/src/parallelism/TaskSystem.h>
 #include <L/src/rendering/Vulkan.h>
 #include <L/src/system/Window.h>
 

@@ -5,6 +5,7 @@
 #include "../rendering/GPUBuffer.h"
 #include "../rendering/Framebuffer.h"
 #include "../math/Interval.h"
+#include "../time/Time.h"
 
 namespace L {
   class Camera : public Component {
