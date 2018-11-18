@@ -1,17 +1,23 @@
 #pragma once
 
+#ifndef L_PROFILING
+#ifdef L_DEBUG
+#define L_PROFILING 1
+#else
+#define L_PROFILING 0
+#endif
+#endif
+
+#if L_PROFILING
+
 #include <cstdio>
 #include <cstdarg>
 #include "../macros.h"
 #include "../time/Time.h"
 
-#ifdef L_DEBUG
 #define L_SCOPE_MARKER(name) L::ScopeMarker L_CONCAT(MARKER_,__LINE__)(name)
 #define L_SCOPE_MARKERF(format,...) L::ScopeMarkerFormatted L_CONCAT(MARKER_,__LINE__)(format,__VA_ARGS__)
-#else
-#define L_SCOPE_MARKER(name)
-#define L_SCOPE_MARKERF(format,...)
-#endif
+#define L_COUNT_MARKER(name,value) count_marker(name,value)
 
 namespace L {
   class ScopeMarker {
@@ -26,5 +32,12 @@ namespace L {
   public:
     ScopeMarkerFormatted(const char* format, ...);
   };
+  void count_marker(const char* name, int32_t value);
   void flush_profiling();
 }
+
+#else
+#define L_SCOPE_MARKER(name)
+#define L_SCOPE_MARKERF(format,...)
+#define L_COUNT_MARKER(name,value)
+#endif
