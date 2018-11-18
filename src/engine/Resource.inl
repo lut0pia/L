@@ -6,16 +6,24 @@
 #include "../dev/profiling.h"
 #include "../stream/BufferStream.h"
 #include "../stream/StringStream.h"
+#include "../text/compression.h"
 
 namespace L {
   template <class T> void store_intermediate(ResourceSlot& slot, T*) {
     slot.store_source_file_to_archive();
   }
   template <class T> void store_intermediate(ResourceSlot& slot, const T& intermediate) {
-    StringStream stream;
-    slot.serialize(stream);
-    stream <= intermediate;
-    slot.write_archive(stream.string().begin(), stream.string().size());
+    StringStream uncompressed_stream, compressed_stream;
+    {
+      L_SCOPE_MARKER("Resource serialize");
+      slot.serialize(uncompressed_stream);
+      uncompressed_stream <= intermediate;
+    }
+    {
+      L_SCOPE_MARKER("Resource compress");
+      lz_compress(uncompressed_stream.string().begin(), uncompressed_stream.string().size(), compressed_stream);
+    }
+    slot.write_archive(compressed_stream.string().begin(), compressed_stream.string().size());
   }
 
   template <class T>
@@ -27,11 +35,18 @@ namespace L {
       _loaders[ext] = loader;
     }
     static bool load(ResourceSlot& slot, typename T::Intermediate& intermediate) {
-      if(Buffer buffer = slot.read_archive()) { // Look in the archive for that resource
-        BufferStream stream((char*)buffer.data(), buffer.size());
-        L_SCOPE_MARKER("Resource unserialize");
-        slot.unserialize(stream);
-        stream >= intermediate;
+      if(Buffer compressed_buffer = slot.read_archive()) { // Look in the archive for that resource
+        Buffer buffer;
+        {
+          L_SCOPE_MARKER("Resource decompress");
+          buffer = lz_decompress(compressed_buffer.data(), compressed_buffer.size());
+        }
+        {
+          L_SCOPE_MARKER("Resource unserialize");
+          BufferStream stream((char*)buffer.data(), buffer.size());
+          slot.unserialize(stream);
+          stream >= intermediate;
+        }
         return slot.flush_all_dependencies();
       } else { // Try to load it from source
         const char* ext(strrchr(slot.path, '.'));
