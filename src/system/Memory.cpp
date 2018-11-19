@@ -80,21 +80,27 @@ void* Memory::alloc_zero(size_t size) {
   return wtr;
 }
 void* Memory::realloc(void* ptr, size_t oldsize, size_t newsize) {
-  L_ASSERT(newsize>0);
+  if(oldsize==newsize) {
+    return ptr;
+  } else if(newsize==0 && oldsize>0) {
+    free(ptr, oldsize);
+    return nullptr;
+  }
   // If the change in size does not incur a change in freelist index,
   // then we can simply ignore the realloc
-  if(oldsize && oldsize < block_size && newsize < block_size &&
+  else if(oldsize && oldsize < block_size && newsize < block_size &&
     freelist_index(oldsize)==freelist_index(newsize)) {
     wasted += oldsize-newsize;
     L_COUNT_MARKER("Wasted memory", wasted);
     return ptr;
+  } else {
+    void* wtr(alloc(newsize));
+    if(ptr) {
+      memcpy(wtr, ptr, min(oldsize, newsize));
+      free(ptr, oldsize);
+    }
+    return wtr;
   }
-  void* wtr(alloc(newsize));
-  if(ptr) {
-    memcpy(wtr, ptr, min(oldsize, newsize));
-    free(ptr, oldsize);
-  }
-  return wtr;
 }
 void Memory::free(void* ptr, size_t size) {
   uintptr_t index;
