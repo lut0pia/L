@@ -32,6 +32,17 @@ static const uint8_t* find_pattern(const uint8_t* haystack, const uint8_t* needl
   }
   return pattern;
 }
+static void output_raw(const uint8_t* data, size_t size, Stream& out_stream) {
+  while(size) {
+    const uint16_t offset(0), chunk_size(min<size_t>(size, 0xffff));
+    out_stream.write(&offset, sizeof(offset));
+    out_stream.write(&chunk_size, sizeof(chunk_size));
+    out_stream.write(data, chunk_size);
+
+    data += chunk_size;
+    size -= chunk_size;
+  }
+}
 void L::lz_compress(const void* in_data_void, size_t in_size, Stream& out_stream) {
   const uint8_t* in_data_start((uint8_t*)in_data_void);
   const uint8_t* in_data(in_data_start);
@@ -42,11 +53,7 @@ void L::lz_compress(const void* in_data_void, size_t in_size, Stream& out_stream
     size_t pattern_size;
     if(const uint8_t* pattern = find_pattern(max(in_data_start, in_data_needle-0x2000), in_data_needle, in_size, &pattern_size)) {
       if(in_data!=in_data_needle) {
-        const uint16_t offset(0), size(in_data_needle-in_data);
-        L_ASSERT(!offset || size<offset);
-        out_stream.write(&offset, sizeof(offset));
-        out_stream.write(&size, sizeof(size));
-        out_stream.write(in_data, size);
+        output_raw(in_data, in_data_needle-in_data, out_stream);
       }
       {
         const uint16_t offset(in_data_needle-pattern), size(pattern_size);
@@ -63,10 +70,7 @@ void L::lz_compress(const void* in_data_void, size_t in_size, Stream& out_stream
     }
   }
   if(in_data!=in_data_needle) {
-    const uint16_t offset(0), size(in_data_needle-in_data);
-    out_stream.write(&offset, sizeof(offset));
-    out_stream.write(&size, sizeof(size));
-    out_stream.write(in_data, size);
+    output_raw(in_data, in_data_needle-in_data, out_stream);
   }
 }
 
