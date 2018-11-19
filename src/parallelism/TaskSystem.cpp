@@ -19,7 +19,7 @@ namespace L {
 
 const uint32_t fiber_per_thread_count = 4;
 const uint32_t actual_thread_count(core_count());
-const uint32_t actual_fiber_count = actual_thread_count*fiber_per_thread_count;
+const uint32_t actual_fiber_count = max<uint32_t>(actual_thread_count*fiber_per_thread_count, 12);
 Semaphore semaphore(0, actual_thread_count);
 
 enum FiberState : uint32_t {
