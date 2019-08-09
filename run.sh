@@ -1,7 +1,10 @@
 #!/bin/sh
 
+# Environment and parameters
+
 mode=${1:-build}
-configuration=${2:-development} #Configuration is development by default
+configuration=${2:-development} # Configuration is development by default
+windows=`uname -s | grep -iqE "mingw|cygwin"`
 
 if [ $mode = "stats" ] ; then
   echo "Core file count:"
@@ -15,22 +18,8 @@ if [ $mode = "stats" ] ; then
   exit 0
 fi
 
-if (uname -s | grep -iqE "mingw|cygwin") ; then
-  ./premake5.exe vs2015
-  start ./prj/vs2015/L.sln
-  exit 0
-fi
+# Configuration
 
-# Premake
-(git clone --depth 1 https://github.com/premake/premake-core pmk) || # Attempt to clone
-(!(git status pmk | grep up-to-date) && cd pmk && git pull) # Otherwise pull if not up-to-date
-
-if [ ! -e premake5 ] || [ premake5 -ot pmk ] ; then # If it hasn't been built or is older than repo
-	(cd pmk && make -f Bootstrap.mak linux) && # Build premake
-	cp pmk/bin/release/premake5 premake5 # Copy binary
-fi
-
-# L
 case $configuration in
   "dbg")
     exe="Ldbg"
@@ -46,13 +35,56 @@ case $configuration in
   ;;
 esac
 
-if
-  ./premake5 gmake2 && # Run premake
-  (cd prj/gmake2 && make config=$configuration -j 4) # Run make
-then
+# Premake
+
+mkdir pmk 2> /dev/null
+
+if $windows ; then
+  premake_url="https://github.com/premake/premake-core/releases/download/v5.0.0-alpha14/premake-5.0.0-alpha14-windows.zip"
+  premake_bin=premake5.exe
+  premake_action=vs2015
+else
+  premake_url="https://github.com/premake/premake-core/releases/download/v5.0.0-alpha14/premake-5.0.0-alpha14-linux.tar.gz"
+  premake_bin=premake5
+  premake_action=gmake2
+fi
+
+premake_ar=pmk/$(basename $premake_url)
+
+if [ ! -f $premake_ar ] ; then
+  echo Downloading premake archive: $premake_ar
+  if $windows ; then
+    powershell -command "iwr -outf $premake_ar $premake_url"
+  else
+    wget -O $premake_ar $premake_url
+  fi
+fi
+
+if [ ! -f $premake_bin ] || [ $premake_bin -ot $premake_ar ] ; then
+  echo Extracting premake binary from: $premake_ar
+  if $windows ; then
+    unzip -oq $premake_ar
+  else
+    tar xvzf $premake_ar
+  fi
+  touch $premake_bin # Update mtime
+fi
+
+if ./$premake_bin $premake_action ; then # Run premake
+  if [ $mode = "open" ] ; then
+    if $windows; then
+      start ./prj/$premake_action/L.sln
+      exit 0
+    fi
+  fi
+  if $windows ; then
+    cmd.exe /C "\"$VS140COMNTOOLS\vsvars32.bat\" && MSBuild /NOLOGO prj/$premake_action/L.sln /p:configuration=$configuration"
+  else
+    (cd prj/$premake_action && make config=$configuration -j 4) # Run make
+  fi
   if [ $mode = "run" ] ; then
     (cd smp && ./$exe) # Execute program
   fi
-else
-  exit $?
 fi
+
+exit $?

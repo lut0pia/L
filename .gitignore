@@ -20,6 +20,7 @@ smp/trace.json
 # Premake
 /pmk
 /premake5
+/premake5.exe
 # Generated source
 *.gen
 # Visual Studio
