@@ -4,7 +4,7 @@
 
 mode=${1:-build}
 configuration=${2:-development} # Configuration is development by default
-windows=`uname -s | grep -iqE "mingw|cygwin"`
+(uname -s | grep -iqE "mingw|cygwin") && windows=true || windows=false
 
 if [ $mode = "stats" ] ; then
   echo "Core file count:"
