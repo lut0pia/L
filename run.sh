@@ -57,7 +57,7 @@ esac
 
 # Premake
 
-mkdir pmk 2> /dev/null
+mkdir -p pmk
 
 if $windows ; then
   premake_url="https://github.com/premake/premake-core/releases/download/v5.0.0-alpha14/premake-5.0.0-alpha14-windows.zip"
