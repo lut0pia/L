@@ -84,7 +84,7 @@ solution "L"
         .. "#endif\n")
       end
     end
-    
+
     -- PCH
     configuration {}
     if _ACTION ~= "gmake2" then
