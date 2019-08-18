@@ -3,7 +3,7 @@
 # Environment and parameters
 
 mode=${1:-build}
-configuration=${2:-development} # Configuration is development by default
+configuration=${2:-dev} # Configuration is development by default
 (uname -s | grep -iqE "mingw|cygwin") && windows=true || windows=false
 
 if [ $mode = "stats" ] ; then
