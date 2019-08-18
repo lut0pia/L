@@ -6,6 +6,24 @@ mode=${1:-build}
 configuration=${2:-development} # Configuration is development by default
 (uname -s | grep -iqE "mingw|cygwin") && windows=true || windows=false
 
+# Functions
+
+download () {
+  if $windows ; then
+    powershell -command "iwr -outf $1 $2"
+  else
+    wget -O $1 $2
+  fi
+}
+
+extract () {
+  if $windows ; then
+    unzip -oq $1
+  else
+    tar xvzf $1
+  fi
+}
+
 # Stats action
 
 if [ $mode = "stats" ] ; then
@@ -55,20 +73,12 @@ premake_ar=pmk/$(basename $premake_url)
 
 if [ ! -f $premake_ar ] ; then
   echo Downloading premake archive: $premake_ar
-  if $windows ; then
-    powershell -command "iwr -outf $premake_ar $premake_url"
-  else
-    wget -O $premake_ar $premake_url
-  fi
+  download $premake_ar $premake_url
 fi
 
 if [ ! -f $premake_bin ] || [ $premake_bin -ot $premake_ar ] ; then
   echo Extracting premake binary from: $premake_ar
-  if $windows ; then
-    unzip -oq $premake_ar
-  else
-    tar xvzf $premake_ar
-  fi
+  extract $premake_ar
   touch $premake_bin # Update mtime
 fi
 
