@@ -6,6 +6,8 @@ mode=${1:-build}
 configuration=${2:-development} # Configuration is development by default
 (uname -s | grep -iqE "mingw|cygwin") && windows=true || windows=false
 
+# Stats action
+
 if [ $mode = "stats" ] ; then
   echo "Core file count:"
   git ls-files src | grep -v module/ | wc -l
