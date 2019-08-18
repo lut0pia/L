@@ -6,6 +6,26 @@ mode=${1:-build}
 configuration=${2:-dev} # Configuration is development by default
 (uname -s | grep -iqE "mingw|cygwin") && windows=true || windows=false
 
+# Functions
+
+download () {
+  if $windows ; then
+    powershell -command "iwr -outf $1 $2"
+  else
+    wget -O $1 $2
+  fi
+}
+
+extract () {
+  if $windows ; then
+    unzip -oq $1
+  else
+    tar xvzf $1
+  fi
+}
+
+# Stats action
+
 if [ $mode = "stats" ] ; then
   echo "Core file count:"
   git ls-files src | grep -v module/ | wc -l
@@ -35,14 +55,31 @@ case $configuration in
   ;;
 esac
 
+# Detect Visual Studio version
+
+if $windows ; then
+  if [ -e "$SYSTEMDRIVE/Program Files (x86)/Microsoft Visual Studio/2017/Community" ] ; then
+    vsver=2017
+    vsvars="$SYSTEMDRIVE/Program Files (x86)/Microsoft Visual Studio/2017/Community/Common7/Tools/VsDevCmd.bat"
+  elif [ "$VS140COMNTOOLS" != "" ] ; then
+    vsver=2015
+    vsvars="$VS140COMNTOOLS/vsvars32.bat"
+  else
+    echo "Could not detect any Visual Studio installation"
+    exit 1
+  fi
+
+  echo "Detected Visual Studio version: $vsver"
+fi
+
 # Premake
 
-mkdir pmk 2> /dev/null
+mkdir -p pmk
 
 if $windows ; then
   premake_url="https://github.com/premake/premake-core/releases/download/v5.0.0-alpha14/premake-5.0.0-alpha14-windows.zip"
   premake_bin=premake5.exe
-  premake_action=vs2015
+  premake_action=vs$vsver
 else
   premake_url="https://github.com/premake/premake-core/releases/download/v5.0.0-alpha14/premake-5.0.0-alpha14-linux.tar.gz"
   premake_bin=premake5
@@ -53,20 +90,12 @@ premake_ar=pmk/$(basename $premake_url)
 
 if [ ! -f $premake_ar ] ; then
   echo Downloading premake archive: $premake_ar
-  if $windows ; then
-    powershell -command "iwr -outf $premake_ar $premake_url"
-  else
-    wget -O $premake_ar $premake_url
-  fi
+  download $premake_ar $premake_url
 fi
 
 if [ ! -f $premake_bin ] || [ $premake_bin -ot $premake_ar ] ; then
   echo Extracting premake binary from: $premake_ar
-  if $windows ; then
-    unzip -oq $premake_ar
-  else
-    tar xvzf $premake_ar
-  fi
+  extract $premake_ar
   touch $premake_bin # Update mtime
 fi
 
@@ -78,7 +107,7 @@ if ./$premake_bin $premake_action ; then # Run premake
     fi
   fi
   if $windows ; then
-    cmd.exe /C "\"$VS140COMNTOOLS\vsvars32.bat\" && MSBuild /NOLOGO prj/$premake_action/L.sln /p:configuration=$configuration"
+    cmd.exe /C "\"$vsvars\" && MSBuild /NOLOGO prj/$premake_action/L.sln /p:configuration=$configuration"
   else
     (cd prj/$premake_action && make config=$configuration -j 4) # Run make
   fi

@@ -35,10 +35,15 @@ bool glsl_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) {
     input_stream.write(original_text.data(), original_text.size());
   }
 
-  const String cmd("glslangValidator -V -S "+stage_name+" "+input_file+" -o "+output_file);
-  System::call(cmd, cmd_output);
+#ifdef L_WINDOWS
+#define GLSL_VALIDATOR "%VULKAN_SDK%\\Bin\\glslangValidator"
+#else
+#define GLSL_VALIDATOR "glslangValidator"
+#endif
+  const String cmd(GLSL_VALIDATOR " -V -S " + stage_name + " " + input_file + " -o " + output_file);
+  const int cmd_result(System::call(cmd, cmd_output));
 
-  if(cmd_output.empty()) {
+  if(cmd_result != 0 || cmd_output.empty()) {
     return false;
   }
 
