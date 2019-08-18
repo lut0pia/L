@@ -55,6 +55,23 @@ case $configuration in
   ;;
 esac
 
+# Detect Visual Studio version
+
+if $windows ; then
+  if [ -e "$SYSTEMDRIVE/Program Files (x86)/Microsoft Visual Studio/2017/Community" ] ; then
+    vsver=2017
+    vsvars="$SYSTEMDRIVE/Program Files (x86)/Microsoft Visual Studio/2017/Community/Common7/Tools/VsDevCmd.bat"
+  elif [ "$VS140COMNTOOLS" != "" ] ; then
+    vsver=2015
+    vsvars="$VS140COMNTOOLS/vsvars32.bat"
+  else
+    echo "Could not detect any Visual Studio installation"
+    exit 1
+  fi
+
+  echo "Detected Visual Studio version: $vsver"
+fi
+
 # Premake
 
 mkdir -p pmk
@@ -62,7 +79,7 @@ mkdir -p pmk
 if $windows ; then
   premake_url="https://github.com/premake/premake-core/releases/download/v5.0.0-alpha14/premake-5.0.0-alpha14-windows.zip"
   premake_bin=premake5.exe
-  premake_action=vs2015
+  premake_action=vs$vsver
 else
   premake_url="https://github.com/premake/premake-core/releases/download/v5.0.0-alpha14/premake-5.0.0-alpha14-linux.tar.gz"
   premake_bin=premake5
@@ -90,7 +107,7 @@ if ./$premake_bin $premake_action ; then # Run premake
     fi
   fi
   if $windows ; then
-    cmd.exe /C "\"$VS140COMNTOOLS\vsvars32.bat\" && MSBuild /NOLOGO prj/$premake_action/L.sln /p:configuration=$configuration"
+    cmd.exe /C "\"$vsvars\" && MSBuild /NOLOGO prj/$premake_action/L.sln /p:configuration=$configuration"
   else
     (cd prj/$premake_action && make config=$configuration -j 4) # Run make
   fi
