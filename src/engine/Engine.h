@@ -17,7 +17,7 @@ namespace L {
     static Array<void(*)(const class Camera&, const class RenderPass&)> _renders;
     static Array<void(*)(void* frames, uint32_t frame_count)> _audio_renders;
     static Array<void(*)(const class Camera&)> _guis;
-    static Array<void(*)(const class Window::Event&)> _win_events;
+    static Array<void(*)(const struct Window::Event&)> _win_events;
     static Array<void(*)(const struct Device::Event&)> _dev_events;
     static Array<DeferredAction> _deferred_actions;
     static Timer _timer;
