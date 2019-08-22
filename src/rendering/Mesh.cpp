@@ -25,9 +25,9 @@ void Mesh::load(size_t count, const void* data, size_t size, const VkFormat* for
   if(iarray) {
     _index_buffer = Memory::new_type<GPUBuffer>(icount*sizeof(*iarray), VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
     _index_buffer->load(iarray);
-    _count = icount;
+    _count = uint32_t(icount);
   } else {
-    _count = count;
+    _count = uint32_t(count);
   }
 
   // Compute bounds

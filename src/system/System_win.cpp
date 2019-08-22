@@ -6,7 +6,7 @@ using namespace L;
 using namespace System;
 
 void System::sleep(const Time& t) {
-  Sleep(t.milliseconds());
+  Sleep(DWORD(t.milliseconds()));
 }
 void System::beep(uint32_t frequency,uint32_t milliseconds) {
   ::Beep(frequency,milliseconds);

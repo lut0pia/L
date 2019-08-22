@@ -8,7 +8,7 @@ namespace L {
   public:
     inline Color() = default;
     inline Color(const Vector4b& v) : Vector4b(v) {}
-    inline Color(uint8_t gs) : Vector4b(gs, gs, gs, 0xff) {}
+    inline Color(uint8_t gs) : Vector4b(gs, gs, gs, uint8_t(0xff)) {}
     inline Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 0xFF) : Vector4b(r, g, b, a) {}
     Color(const char*);
 

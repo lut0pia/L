@@ -24,7 +24,7 @@ Framebuffer::Framebuffer(uint32_t width, uint32_t height, const RenderPass& rend
     VkFramebufferCreateInfo create_info = {};
     create_info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
     create_info.renderPass = _render_pass;
-    create_info.attachmentCount = attachment_views.size();
+    create_info.attachmentCount = uint32_t(attachment_views.size());
     create_info.pAttachments = attachment_views.begin();
     create_info.width = width;
     create_info.height = height;
@@ -49,7 +49,7 @@ void Framebuffer::begin(VkCommandBuffer cmd_buffer) {
   render_pass_info.framebuffer = _framebuffer;
   render_pass_info.renderArea.offset = {0, 0};
   render_pass_info.renderArea.extent = VkExtent2D {_width, _height};
-  render_pass_info.clearValueCount = _clear_values.size();
+  render_pass_info.clearValueCount = uint32_t(_clear_values.size());
   render_pass_info.pClearValues = _clear_values.begin();
 
   vkCmdBeginRenderPass(cmd_buffer, &render_pass_info, VK_SUBPASS_CONTENTS_INLINE);

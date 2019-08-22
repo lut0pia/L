@@ -33,8 +33,8 @@ Interval2i FontPacker::add_bmp(const uint8_t* data, uint32_t width, uint32_t hei
   while(true) {
     const Vector2i pos(_xs[i.x()], _ys[i.y()]);
     const Interval2i candidate(pos, pos+Vector2i(width, height));
-    const bool valid(candidate.max().x()<=_intermediate.texture_intermediate.width &&
-      candidate.max().y()<=_intermediate.texture_intermediate.height &&
+    const bool valid(candidate.max().x() <= int(_intermediate.texture_intermediate.width) &&
+      candidate.max().y() <= int(_intermediate.texture_intermediate.height) &&
       !_parts.overlaps(candidate));
 
     if(valid) {
@@ -104,7 +104,7 @@ static float distance_to_invert(const uint8_t* bmp, size_t width, size_t height,
         distance_helper(bmp, width, height, origin_value, ox, oy, ox-i*step.x(), oy+j*step.y(), min_distance) ||
         distance_helper(bmp, width, height, origin_value, ox, oy, ox+i*step.x(), oy+j*step.y(), min_distance));
       if(found && max_i<0) {
-        max_i = intptr_t(ceilf(sqrtf(i*i+i*i)));
+        max_i = intptr_t(ceilf(sqrtf(float(i*i + i*i))));
       }
       if(max_i>=0 && i>=max_i) {
         stop = true;
@@ -147,7 +147,7 @@ void FontPacker::add_glyph(const uint8_t* bmp, size_t width, size_t height, Font
   const Vector2i sdf_pixel_size(int(ceilf(glyph.size.x()*sdf_pixels_per_unit)), int(ceilf(glyph.size.y()*sdf_pixels_per_unit)));
   const size_t sdf_byte_size(sdf_pixel_size.product());
   uint8_t* sdf((uint8_t*)Memory::alloc(sdf_byte_size));
-  const Vector2f step(width/max<float>(sdf_pixel_size.x(), float(width)), height/max<float>(sdf_pixel_size.y(), float(height)));
+  const Vector2f step(width / max<float>(float(sdf_pixel_size.x()), float(width)), height / max<float>(float(sdf_pixel_size.y()), float(height)));
   const float pixel_distance_to_half_byte(128.f/bmp_pixels_per_unit.x()); // TODO: this isn't very robust
 
   for(intptr_t x(0); x<sdf_pixel_size.x(); x++) {

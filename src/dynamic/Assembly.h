@@ -29,12 +29,12 @@ namespace L {
           bool byteDisp(disp>=-128 && disp<=127);
           modregrm((byteDisp)?1:2,reg,rm);
           if(rm==esp) sib(0,rm,rm);
-          (byteDisp)?emit(disp):imm(disp);
+          (byteDisp) ? emit(uint8_t(disp)) : imm(disp);
         } else modregrm(0,reg,rm);
       }
       inline void modregrm(uint8_t mod, uint8_t reg, uint8_t rm) {emit((mod<<6)|((reg&0x7)<<3)|(rm&0x7));}
       inline void sib(uint8_t scale, uint8_t index, uint8_t base) {emit((scale<<6)|((index&0x7)<<3)|(base&0x7));}
-      inline void imm(uint32_t i) {emit(i,i>>8,i>>16,i>>24);}
+      inline void imm(uint32_t i) { emit(uint8_t(i), uint8_t(i >> 8), uint8_t(i >> 16), uint8_t(i >> 24)); }
 
       inline void add(Register dst, uint32_t i) {instruction(0x81,0,dst); imm(i);}
       inline void add(Register dst, Register src) {instruction(0x03,dst,src);}
@@ -60,7 +60,7 @@ namespace L {
       inline void pop(uint32_t n=1) {add(esp,4*n);}
 
       // Subroutines
-      inline void call(void* f) {mov(Assembly::eax,(uint32_t)(uintptr_t)f); emit(0xff,0xd0);}
+      inline void call(void* f) { mov(Assembly::eax, (uint32_t)(uintptr_t)f); emit(uint8_t(0xff), uint8_t(0xd0)); }
       inline void include(void* f) {
         sub(esp,4);
         load(f);
@@ -76,10 +76,10 @@ namespace L {
       }
       inline void jcc(uint8_t opcode,uint32_t i) {
         int rel(i-int(_assembly.size()));
-        if(rel>=-128&&rel<=127)
-          emit(opcode,rel-2);
+        if(rel >= -128 && rel <= 127)
+          emit(opcode, uint8_t(rel - 2));
         else {
-          emit(0x0f,opcode+0x10);
+          emit(0x0f, uint8_t(opcode + 0x10));
           imm(rel-6);
         }
       }

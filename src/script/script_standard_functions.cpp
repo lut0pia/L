@@ -28,7 +28,7 @@ L_SCRIPT_NATIVE_RETURN("mouse-y", 0, float(Window::cursor_y()));
 L_SCRIPT_NATIVE_RETURN("non-null", 1, !c.param(0).is<void>() && c.param(0).as<void*>()!=nullptr);
 L_SCRIPT_NATIVE_RETURN("clamp", 3, clamp(c.param(0), c.param(1), c.param(2)));
 L_SCRIPT_NATIVE_RETURN("typename", 1, c.param(0).type()->name);
-L_SCRIPT_NATIVE_RETURN("time", 1, Time(c.param(0).get<float>()*1000000.f));
+L_SCRIPT_NATIVE_RETURN("time", 1, Time(int64_t(c.param(0).get<float>()*1000000.f)));
 L_SCRIPT_NATIVE_RETURN("button-pressed", 1, Device::any_button(Device::symbol_to_button(c.param(0))));
 L_SCRIPT_NATIVE_RETURN("normalize", 1, c.param(0).get<Vector3f>().normalized());
 L_SCRIPT_NATIVE_RETURN("cross", 2, c.param(0).get<Vector3f>().cross(c.param(1).get<Vector3f>()));
@@ -100,7 +100,7 @@ L_SCRIPT_NATIVE("left-pad",[](ScriptContext& c) {
   L_ASSERT(c.param_count()==3);
   c.return_value() = c.param(0).get<String>();
   String& str(c.return_value().as<String>());
-  const uint32_t wanted_size(c.param(1).get<float>());
+  const uint32_t wanted_size(uint32_t(c.param(1).get<float>()));
   const String append(c.param(2).get<String>());
   while(str.size()<wanted_size) {
     str = append + str;

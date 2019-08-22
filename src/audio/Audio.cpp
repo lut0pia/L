@@ -23,7 +23,7 @@ void Audio::acquire_buffer(void*& buffer, uint32_t& frame_count) {
   const uint32_t frame_count_ahead(convert_samples_required_count(working_frequency, output.frequency(), output.frame_count_ahead()));
 
   // How many frames of advance do we want?
-  const uint32_t ideal_frame_count_ahead(ideal_time_ahead.fSeconds()*working_frequency);
+  const uint32_t ideal_frame_count_ahead(uint32_t(ideal_time_ahead.fSeconds()*working_frequency));
   frame_count = requested_frame_count = (frame_count_ahead<ideal_frame_count_ahead) ? (ideal_frame_count_ahead-frame_count_ahead) : 0;
 
   memset(sample_buffer, 0, frame_count*sample_format_size(working_format));
@@ -55,8 +55,8 @@ void Audio::render(void* dst, const void* src, SampleFormat format, uint32_t sam
       for(uintptr_t i(0); i<sample_count; i++) {
         const int32_t left_mix(int32_t(int32_t(out_buffer[2*i]) + in_data[2*(i)]*volume[0]));
         const int32_t right_mix(int32_t(int32_t(out_buffer[2*i+1]) + in_data[2*(i)+1]*volume[1]));
-        out_buffer[2*i] = clamp<int32_t>(left_mix, INT16_MIN, INT16_MAX);
-        out_buffer[2*i+1] = clamp<int32_t>(right_mix, INT16_MIN, INT16_MAX);
+        out_buffer[2*i] = int16_t(clamp<int32_t>(left_mix, int32_t(INT16_MIN), int32_t(INT16_MAX)));
+        out_buffer[2*i+1] = int16_t(clamp<int32_t>(right_mix, int32_t(INT16_MIN), int32_t(INT16_MAX)));
       }
       return;
     } else if(format==Mono16) {
@@ -66,8 +66,8 @@ void Audio::render(void* dst, const void* src, SampleFormat format, uint32_t sam
         const int16_t& frame_value(in_data[i]);
         const int32_t left_mix(int32_t(int32_t(out_buffer[2*i]) + frame_value*volume[0]));
         const int32_t right_mix(int32_t(int32_t(out_buffer[2*i+1]) + frame_value*volume[1]));
-        out_buffer[2*i] = clamp<int32_t>(left_mix, int32_t(INT16_MIN), int32_t(INT16_MAX));
-        out_buffer[2*i+1] = clamp<int32_t>(right_mix, int32_t(INT16_MIN), int32_t(INT16_MAX));
+        out_buffer[2*i] = int16_t(clamp<int32_t>(left_mix, int32_t(INT16_MIN), int32_t(INT16_MAX)));
+        out_buffer[2*i+1] = int16_t(clamp<int32_t>(right_mix, int32_t(INT16_MIN), int32_t(INT16_MAX)));
       }
       return;
     }
@@ -100,11 +100,11 @@ bool Audio::convert_samples(void* dst, SampleFormat dst_fmt, uint32_t dst_freq, 
           float dummy;
           const float in_index(i*ratio);
           const float fract(modff(in_index, &dummy));
-          const uintptr_t in_index_a(in_index);
+          const uintptr_t in_index_a((uintptr_t)in_index);
           const uintptr_t in_index_b(min<uintptr_t>(in_index_a+1, sample_count-1));
           const int16_t& in_value_a(in_data[in_index_a]);
           const int16_t& in_value_b(in_data[in_index_b]);
-          out_data[i] = in_value_a*(1.f-fract)+in_value_b*fract;
+          out_data[i] = int16_t(in_value_a*(1.f - fract) + in_value_b*fract);
         }
         return true;
       }
@@ -118,7 +118,7 @@ bool Audio::convert_samples(void* dst, SampleFormat dst_fmt, uint32_t dst_freq, 
           float dummy;
           const float in_index(i*ratio);
           const float fract(modff(in_index, &dummy));
-          const uintptr_t in_index_a(in_index);
+          const uintptr_t in_index_a((uintptr_t)in_index);
           const uintptr_t in_index_b(min<uintptr_t>(in_index_a+1, sample_count-1));
           const int16_t& in_value_left_a(in_data[2*in_index_a]);
           const int16_t& in_value_left_b(in_data[2*in_index_b]);
@@ -151,7 +151,7 @@ bool Audio::convert_samples(void* dst, SampleFormat dst_fmt, uint32_t dst_freq, 
         const int16_t* in_data((const int16_t*)src);
 
         for(uintptr_t i(0); i<dst_sample_count; i++) {
-          const uintptr_t in_index(i*ratio);
+          const uintptr_t in_index((uintptr_t)(i*ratio));
           out_data[2*i] = in_data[2*in_index];
           out_data[2*i+1] = in_data[2*in_index+1];
         }
@@ -165,12 +165,12 @@ bool Audio::convert_samples(void* dst, SampleFormat dst_fmt, uint32_t dst_freq, 
 }
 uint32_t Audio::convert_samples_required_count(uint32_t dst_freq, uint32_t src_freq, uint32_t src_sample_count) {
   const float ratio(float(src_freq)/float(dst_freq));
-  const uint32_t dst_sample_count(src_sample_count / ratio);
+  const uint32_t dst_sample_count(uint32_t(src_sample_count / ratio));
   return dst_sample_count;
 }
 uint32_t Audio::convert_samples_reverse_required_count(uint32_t dst_freq, uint32_t src_freq, uint32_t dst_sample_count) {
   const float ratio(float(src_freq)/float(dst_freq));
-  const uint32_t src_sample_count(dst_sample_count * ratio);
+  const uint32_t src_sample_count(uint32_t(dst_sample_count * ratio));
   const uint32_t lol(convert_samples_required_count(dst_freq, src_freq, src_sample_count));
   //L_ASSERT(convert_samples_required_count(dst_freq, src_freq, src_sample_count)==dst_sample_count);
   return src_sample_count;

@@ -164,7 +164,7 @@ Vector2f Material::gui_size() const {
       return Vector2f(float(texture.width()), float(texture.height()));
     }
   }
-  return Vector2f(0, 0);
+  return Vector2f(0.f, 0.f);
 }
 const DescriptorSet& Material::descriptor_set(const Camera& camera, const Pipeline& pipeline) {
   DescSetPairing* working_pairing(nullptr);

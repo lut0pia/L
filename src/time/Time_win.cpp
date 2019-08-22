@@ -16,5 +16,5 @@ static struct WinTimeMult {
 Time Time::now() {
   int64_t counter;
   QueryPerformanceCounter((LARGE_INTEGER*)&counter);
-  return Time(counter*win_time_mult.value);
+  return Time(int64_t(counter * win_time_mult.value));
 }

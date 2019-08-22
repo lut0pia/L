@@ -16,7 +16,7 @@ RenderPass::RenderPass(const Array<VkFormat>& formats, bool present) : _formats(
     attachment_desc.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 
     VkAttachmentReference attachment_ref {};
-    attachment_ref.attachment = i;
+    attachment_ref.attachment = uint32_t(i);
 
     if(Vulkan::is_depth_format(formats[i])) {
       L_ASSERT(i==format_count-1);

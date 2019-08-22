@@ -107,7 +107,7 @@ namespace L {
     // Casts
     static inline void addcast(const TypeDescription* otd, Cast cast) { td.casts[otd] = cast; }
     template <class R> static inline void addcast(Cast cast){ addcast(Type<R>::description(),cast); }
-    template <class R> static inline void addcast(){ addcast<R>([](void* dst,const void* src){new(dst)R(*(T*)src); }); }
+    template <class R> static inline void addcast(){ addcast<R>([](void* dst,const void* src){new(dst)R(R(*(T*)src)); }); }
 
     // Operator setters
     static inline void useadd(void(*add)(void*,const void*)){ td.add = add; }

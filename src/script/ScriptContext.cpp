@@ -71,7 +71,8 @@ Var ScriptContext::execute(const ScriptFunction& function, const Var* params, si
   _frames.push();
   _frames.back().script = function.script;
   _frames.back().stack_start = _current_stack_start = 0;
-  _frames.back().param_count = _current_param_count = param_count;
+  _frames.back().param_count = param_count;
+  _current_param_count = uint32_t(param_count);
 
   current_self() = _self;
 
@@ -129,7 +130,7 @@ Var ScriptContext::execute(const ScriptFunction& function, const Var* params, si
         if(new_func.is<ScriptNativeFunction>()) {
           return_value().as<ScriptNativeFunction>()(*this);
           _current_stack_start = _frames.back().stack_start;
-          _current_param_count = _frames.back().param_count;
+          _current_param_count = uint32_t(_frames.back().param_count);
         } else if(new_func.is<ScriptFunction>()) {
           const ScriptFunction& script_function(new_func.as<ScriptFunction>());
           L_ASSERT(script_function.offset<script_function.script->bytecode.size());
@@ -151,7 +152,7 @@ Var ScriptContext::execute(const ScriptFunction& function, const Var* params, si
           return _stack[0];
         } else {
           _current_stack_start = _frames.back().stack_start;
-          _current_param_count = _frames.back().param_count;
+          _current_param_count = uint32_t(_frames.back().param_count);
 
           current_script = _frames.back().script;
           ip = _frames.back().ip;

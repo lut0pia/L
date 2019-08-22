@@ -68,7 +68,7 @@ uint32_t Network::dns_lookup(const char* host) {
 
 String Network::http_request(const String& url) {
   // Find out what's the host and what's the request
-  int slash(url.find_first('/'));
+  intptr_t slash(url.find_first('/'));
   const String host((slash>=0) ? url.substr(0, slash) : url), request((slash>=0) ? url.substr(slash) : "/");
   // Connect to the server
   const uint32_t addr(dns_lookup(host));

@@ -46,7 +46,7 @@ String Rational::toString(uint32_t lbase) const {
     do {
       n *= lbase;
       buff = (n.intval()%lbase).part(0);
-      wtr.push(((buff<10) ? buff+'0' : buff+'W'));
+      wtr.push(char(buff < 10 ? buff + '0' : buff + 'W'));
     } while(n._b!=1 && ++i<10);
   }
   return ((negative()) ? "-" : "")+wtr;

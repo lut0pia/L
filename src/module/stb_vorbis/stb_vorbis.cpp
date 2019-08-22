@@ -32,7 +32,7 @@ public:
         stb_vorbis_seek(_handle, dst_sample_start);
       const size_t value_count(dst_sample_count*_info.channels);
       int16_t* buffer(Memory::alloc_type<int16_t>(value_count));
-      dst_sample_count = stb_vorbis_get_samples_short_interleaved(_handle, _info.channels, buffer, value_count);
+      dst_sample_count = stb_vorbis_get_samples_short_interleaved(_handle, _info.channels, buffer, int(value_count));
       Audio::render(dst, buffer, _format, dst_sample_count, volume);
       Memory::free_type(buffer, value_count);
     } else {
@@ -47,7 +47,7 @@ public:
 bool stb_vorbis_loader(ResourceSlot& slot, AudioStream*& intermediate) {
   int error;
   Buffer buffer(slot.read_source_file());
-  if(stb_vorbis* handle = stb_vorbis_open_memory((uint8_t*)buffer.data(), buffer.size(), &error, nullptr)) {
+  if(stb_vorbis* handle = stb_vorbis_open_memory((uint8_t*)buffer.data(), int(buffer.size()), &error, nullptr)) {
     intermediate = Memory::new_type<VorbisStream>(handle, buffer);
     return true;
   } else {

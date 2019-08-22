@@ -59,7 +59,7 @@ Color Color::fromHSV(float h, float s, float v) {
 
   if(h >= 360.f) h = 0.f;
   h /= 60.f;
-  const uint32_t i(h);
+  const uint32_t i((uint32_t)h);
   const float ff(h - i);
   const float p(v * (1.f - s));
   const float q(v * (1.f - (s * ff)));

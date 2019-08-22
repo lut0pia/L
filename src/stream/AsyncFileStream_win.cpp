@@ -79,7 +79,7 @@ uintptr_t AsyncFileStream::tell() {
 }
 void AsyncFileStream::seek(uintptr_t i) {
   L_ASSERT(i>>10<<10==i);
-  _pos = i;
+  _pos = DWORD(i);
 }
 size_t AsyncFileStream::size() {
   union {

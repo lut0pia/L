@@ -33,7 +33,7 @@ void Archive::store(const char* key, const void* data, size_t size) {
   L_ASSERT(size>0);
   L_SCOPED_LOCK(_lock);
   CFileStream file_stream(_path, "rb+");
-  uintptr_t key_hash(hash(key));
+  const uint32_t key_hash(hash(key));
   Entry& e(find(key_hash));
 
   // Reuse space if it's enough, otherwise or if there was no entry before,

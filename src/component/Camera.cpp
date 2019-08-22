@@ -19,7 +19,7 @@ using namespace L;
 static const float& screen_percentage(Settings::get_float("screen-percentage", 1.0f));
 
 Camera::Camera() :
-  _viewport(Vector2f(0, 0), Vector2f(1, 1)),
+  _viewport(Vector2f(0.f, 0.f), Vector2f(1.f, 1.f)),
   _geometry_buffer(Window::width(), Window::height(), RenderPass::geometry_pass()),
   _light_buffer(Window::width(), Window::height(), RenderPass::light_pass()),
   _framebuffer_mtime(Time::now()),
@@ -81,7 +81,7 @@ void Camera::event(const Window::Event& e) {
 }
 void Camera::prerender(VkCommandBuffer cmd_buffer) {
   L_SCOPE_MARKER("Camera::prerender");
-  static Matrix44f camOrient(orientation_matrix(Vector3f(1, 0, 0), Vector3f(0, 0, 1), Vector3f(0, -1, 0)).inverse());
+  static Matrix44f camOrient(orientation_matrix(Vector3f(1.f, 0.f, 0.f), Vector3f(0.f, 0.f, 1.f), Vector3f(0.f, -1.f, 0.f)).inverse());
   Matrix44f orientation(orientation_matrix(_transform->right(), _transform->forward(), _transform->up()));
   _view = camOrient * _transform->matrix().inverse();
   _prevViewProjection = _viewProjection;
@@ -95,9 +95,9 @@ void Camera::prerender(VkCommandBuffer cmd_buffer) {
   _shared_uniform.load_item(_viewProjection.inverse(), L_SHAREDUNIFORM_INVVIEWPROJ);
   _shared_uniform.load_item(_prevViewProjection, L_SHAREDUNIFORM_PREVVIEWPROJ);
   _shared_uniform.load_item(_transform->position(), L_SHAREDUNIFORM_EYE);
-  _shared_uniform.load_item(Vector4f(float(Window::width()), float(Window::height()), _geometry_buffer.width(), _geometry_buffer.height()), L_SHAREDUNIFORM_SCREEN);
+  _shared_uniform.load_item(Vector4f(float(Window::width()), float(Window::height()), float(_geometry_buffer.width()), float(_geometry_buffer.height())), L_SHAREDUNIFORM_SCREEN);
   _shared_uniform.load_item(Vector4f(_viewport.min().x(), _viewport.min().y(), _viewport.max().x(), _viewport.max().y()), L_SHAREDUNIFORM_VIEWPORT);
-  _shared_uniform.load_item(Vector4f(_geometry_buffer.width(), _geometry_buffer.height(), 1.f/_geometry_buffer.width(), 1.f/_geometry_buffer.height()), L_SHAREDUNIFORM_VIEWPORT_PIXEL_SIZE);
+  _shared_uniform.load_item(Vector4f(float(_geometry_buffer.width()), float(_geometry_buffer.height()), 1.f/_geometry_buffer.width(), 1.f/_geometry_buffer.height()), L_SHAREDUNIFORM_VIEWPORT_PIXEL_SIZE);
 
   _cmd_buffer = cmd_buffer;
 
@@ -184,7 +184,7 @@ bool Camera::worldToScreen(const Vector3f& p, Vector2f& wtr) const {
   return true;
 }
 Vector3f Camera::screenToRay(const Vector2f& p) const {
-  return Vector3f(_ray * Vector4f(p.x(), p.y(), 0, 1));
+  return Vector3f(_ray * Vector4f(p.x(), p.y(), 0.f, 1.f));
 }
 Vector2f Camera::screenToPixel(const Vector2f& v) const {
   const Vector2f viewportSize(_viewport.size());
@@ -195,7 +195,7 @@ Interval2i Camera::viewportPixel() const {
   return Interval2i(_viewport.min()*windowSize, _viewport.max()*windowSize);
 }
 bool Camera::sees(const Interval3f& i) const {
-  static const Interval3f ndc(Vector3f(-1, -1, -1), Vector3f(1, 1, 1));
+  static const Interval3f ndc(Vector3f(-1.f, -1.f, -1.f), Vector3f(1.f, 1.f, 1.f));
   Interval3f projected;
   for(int c(0); c<8; c++) { // Cycle through corners of the interval
     Vector3f p(((c&0x1) ? i.min().x() : i.max().x()),

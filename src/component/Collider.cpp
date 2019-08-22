@@ -334,14 +334,14 @@ bool Collider::check_collision(const Collider& a,const Collider& b, Collision& c
     const Vector3f closest(clamp(rel_center,-box->_radius,box->_radius));
     if(rel_center == closest){ // The sphere's center is in the box
       const Vector3f dist(abs(box->_radius-rel_center)); // Distance to box border
-      if(dist.x() < dist.y() && dist.x() < dist.z()){
-        collision.normal = (box==&a) ? Vector3f(1.f,0,0) : Vector3f(-1.f,0,0);
+      if(dist.x() < dist.y() && dist.x() < dist.z()) {
+        collision.normal = (box == &a) ? Vector3f(1.f, 0.f, 0.f) : Vector3f(-1.f, 0.f, 0.f);
         collision.overlap = dist.x();
-      } else if(dist.y() < dist.x() && dist.y() < dist.z()){
-        collision.normal = (box==&a) ? Vector3f(0,1.f,0) : Vector3f(0,-1.f,0);
+      } else if(dist.y() < dist.x() && dist.y() < dist.z()) {
+        collision.normal = (box == &a) ? Vector3f(0.f, 1.f, 0.f) : Vector3f(0.f, -1.f, 0.f);
         collision.overlap = dist.y();
       } else {
-        collision.normal = (box==&a) ? Vector3f(0,0,1.f) : Vector3f(0,0,-1.f);
+        collision.normal = (box == &a) ? Vector3f(0.f, 0.f, 1.f) : Vector3f(0.f, 0.f, -1.f);
         collision.overlap = dist.z();
       }
       collision.normal = box->_transform->to_absolute(collision.normal);

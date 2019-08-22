@@ -88,7 +88,7 @@ void ScriptComponent::script_registration() {
   L_METHOD(Material, "scalar", 2, scalar(c.param(0), c.param(1)));
   L_METHOD(Material, "texture", 2, texture(c.param(0), c.param(1).get<String>()));
   L_METHOD(Material, "vector", 2, vector(c.param(0), c.param(1)));
-  L_METHOD(Material, "vertex-count", 1, vertex_count(float(c.param(0))));
+  L_METHOD(Material, "vertex-count", 1, vertex_count(uint32_t(c.param(0).get<float>())));
   // Devices ///////////////////////////////////////////////////////////////////
   L_FUNCTION("get-devices", {
     auto wtr(ref<Table<Var,Var>>());

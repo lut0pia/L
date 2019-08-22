@@ -41,7 +41,7 @@ bool Server::new_client(SOCKET& sd) {
   static timeval tv{};
   fd_set fds(_listen_fds);
 
-  if(select(_sd+1, &fds, nullptr, nullptr, &tv)==-1)
+  if(select(int(_sd + 1), &fds, nullptr, nullptr, &tv) == -1)
     error("Server select error %d", ::error_code());
 
   if(FD_ISSET(_sd, &fds)) {

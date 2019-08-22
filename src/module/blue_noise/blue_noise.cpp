@@ -28,8 +28,8 @@ static float* kernel(gaussian_kernel());
 static void void_or_cluster(Cell* matrix, uint32_t width, uint32_t height, uint32_t target, uint32_t& rx, uint32_t& ry) {
   float max_value(0.f);
   int32_t xo(Rand::next(0, width-1)), yo(Rand::next(0, height-1)); // Offset start of search
-  for(int32_t xod(0); xod<width; xod++)
-    for(int32_t yod(0); yod<height; yod++) {
+  for(int32_t xod(0); xod < int32_t(width); xod++)
+    for(int32_t yod(0); yod < int32_t(height); yod++) {
       const int32_t x(pmod(xod+xo, int32_t(width)));
       const int32_t y(pmod(yod+yo, int32_t(height)));
       if((matrix+x*height+y)->b==target) {

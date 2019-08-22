@@ -25,7 +25,7 @@ void MeshBuilder::compute_normals(uint32_t vertexOffset, uint32_t normalOffset, 
 #define VERTEX_OF(i) ATTRIBUTE_OF(i,vertexOffset)
 #define NORMAL_OF(i) ATTRIBUTE_OF(i,normalOffset)
   for(uint32_t i(0); i<_vertex_count; i++)
-    NORMAL_OF(i) = Vector3f(0, 0, 0);
+    NORMAL_OF(i) = Vector3f(0.f, 0.f, 0.f);
   for(uint32_t i(0); i<_indices.size(); i += 3) {
     const Vector3f& a(VERTEX_OF(_indices[i]));
     Vector3f n((VERTEX_OF(_indices[i+1])-a)
