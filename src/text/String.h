@@ -2,6 +2,7 @@
 
 #include <cstring>
 #include "../container/Array.h"
+#include "../hash.h"
 #include "../stream/serial_bin.h"
 #include "../stream/serial_text.h"
 
