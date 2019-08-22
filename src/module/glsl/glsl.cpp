@@ -165,7 +165,6 @@ bool glsl_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) {
   program.addShader(&shader);
   const bool link_success = program.link(message_flags);
   const bool map_success = program.mapIO();
-  const char* link_log = program.getInfoLog();
 
   L_ASSERT(link_success && map_success);
 

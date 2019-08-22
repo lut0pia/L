@@ -47,7 +47,6 @@ void L::lz_compress(const void* in_data_void, size_t in_size, Stream& out_stream
   const uint8_t* in_data_start((uint8_t*)in_data_void);
   const uint8_t* in_data(in_data_start);
   const uint8_t* in_data_needle(in_data);
-  const uint8_t* in_data_end(in_data+in_size);
   const size_t in_start_size(in_size);
   while(in_size>0) {
     size_t pattern_size;
