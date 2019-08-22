@@ -5,6 +5,7 @@
 #include <L/src/stream/CFileStream.h>
 
 #pragma warning(push, 0)
+#pragma warning(disable: 4701)
 #include "stb_vorbis.c"
 #pragma warning(pop)
 #undef L // Defined by stb_vorbis.c
