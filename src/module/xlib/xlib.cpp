@@ -32,8 +32,8 @@ public:
           XGetWindowAttributes(_xdisplay, _xwindow, &gwa);
           if(_width!=gwa.width || _height!=gwa.height) {
             e.type = Event::Type::Resize;
-            _width = e.x = gwa.width;
-            _height = e.y = gwa.height;
+            _width = e.coords.x = gwa.width;
+            _height = e.coords.y = gwa.height;
           }
           break;
         case MotionNotify:
