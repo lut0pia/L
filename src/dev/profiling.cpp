@@ -43,11 +43,11 @@ ScopeMarkerFormatted::ScopeMarkerFormatted(const char* format, ...) : ScopeMarke
 struct ProfilingCounterEvent {
   const char* name;
   Time time;
-  int32_t value;
+  int64_t value;
 };
 ProfilingCounterEvent counter_events[2<<17];
 uint32_t counter_event_index(0);
-void L::count_marker(const char* name, int32_t value) {
+void L::count_marker(const char* name, int64_t value) {
   uint32_t index;
   do {
     index = counter_event_index;

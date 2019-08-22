@@ -32,7 +32,7 @@ namespace L {
   public:
     ScopeMarkerFormatted(const char* format, ...);
   };
-  void count_marker(const char* name, int32_t value);
+  void count_marker(const char* name, int64_t value);
   void flush_profiling();
 }
 
