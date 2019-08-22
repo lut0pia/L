@@ -2,8 +2,10 @@
 
 #include "../stream/CFileStream.h"
 
+#pragma warning(push, 0)
 #include <Windows.h>
 #include <DbgHelp.h>
+#pragma warning(pop)
 
 using namespace L;
 

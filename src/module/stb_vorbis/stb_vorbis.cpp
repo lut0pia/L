@@ -4,7 +4,9 @@
 #include <L/src/engine/Resource.inl>
 #include <L/src/stream/CFileStream.h>
 
+#pragma warning(push, 0)
 #include "stb_vorbis.c"
+#pragma warning(pop)
 #undef L // Defined by stb_vorbis.c
 
 using namespace L;
