@@ -111,9 +111,15 @@ if ./$premake_bin $premake_action ; then # Run premake
   else
     (cd prj/$premake_action && make config=$configuration -j 4) # Run make
   fi
-  if [ $mode = "run" ] ; then
+
+  success=$?
+
+  if [ $success = 0 ] && [ $mode = "run" ] ; then
     (cd smp && ./$exe) # Execute program
+    success=$?
   fi
+
+  exit $success
 fi
 
 exit $?
