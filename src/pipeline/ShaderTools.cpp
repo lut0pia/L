@@ -35,7 +35,7 @@ static const uint32_t* find_opcode(const uint32_t* binary, uint32_t opcode) {
 static const uint32_t* find_id(const uint32_t* binary, size_t size, uint32_t id) {
   const uint32_t* end(binary+(size/4));
   binary += 5; // Skip header
-  uint32_t current_id(-1);
+  uint32_t current_id(~0u);
   while(binary<end) {
     switch(read_opcode(binary)) {
       case OpTypeStruct:
