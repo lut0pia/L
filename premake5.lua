@@ -11,6 +11,7 @@ solution "L"
   rtti "Off"
   editandcontinue "Off"
   warnings "Extra"
+  flags {"FatalWarnings"}
 
   -- Platform
   configuration {"windows"}
