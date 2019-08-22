@@ -17,7 +17,7 @@ public:
   }
 protected:
   void send_internal(const MidiEvent& e) override {
-    midiOutShortMsg(_device, e.message);
+    midiOutShortMsg(_device, e.msg32);
   }
 };
 

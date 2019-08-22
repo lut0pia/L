@@ -10,7 +10,7 @@ namespace L {
       ControllerChange = 0xb,
       ProgramChange = 0xc,
     };
-    uint32_t message;
+    uint32_t msg32;
     uint8_t array[4];
     struct {
       uint8_t channel : 4;
@@ -23,7 +23,7 @@ namespace L {
         uint8_t velocity;
         uint8_t value;
       };
-    };
+    } msg;
   };
   class Midi {
   protected:

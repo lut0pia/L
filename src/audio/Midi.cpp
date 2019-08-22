@@ -14,24 +14,24 @@ void Midi::send(const MidiEvent& e) {
 }
 void Midi::set_instrument(uint8_t channel, uint8_t instrument) {
   MidiEvent e;
-  e.type = MidiEvent::ProgramChange;
-  e.channel = channel;
-  e.instrument = instrument;
+  e.msg.type = MidiEvent::ProgramChange;
+  e.msg.channel = channel;
+  e.msg.instrument = instrument;
   send(e);
 }
 void Midi::play_note(uint8_t channel, uint8_t note, uint8_t velocity) {
   MidiEvent e;
-  e.type = MidiEvent::NoteOn;
-  e.channel = channel;
-  e.note = note;
-  e.velocity = velocity;
+  e.msg.type = MidiEvent::NoteOn;
+  e.msg.channel = channel;
+  e.msg.note = note;
+  e.msg.velocity = velocity;
   send(e);
 }
 void Midi::stop_note(uint8_t channel, uint8_t note) {
   MidiEvent e;
-  e.type = MidiEvent::NoteOff;
-  e.channel = channel;
-  e.note = note;
+  e.msg.type = MidiEvent::NoteOff;
+  e.msg.channel = channel;
+  e.msg.note = note;
   send(e);
 }
 void Midi::stop_all(uint8_t channel) {
