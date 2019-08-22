@@ -10,6 +10,7 @@ solution "L"
   exceptionhandling "Off"
   rtti "Off"
   editandcontinue "Off"
+  warnings "Extra"
 
   -- Platform
   configuration {"windows"}
@@ -31,7 +32,6 @@ solution "L"
     buildoptions {"/wd4100"} -- Unreferenced formal parameter
     buildoptions {"/wd4146"} -- Unary minus operator applied to unsigned type
     characterset "MBCS" -- Don't use UNICODE
-    warnings "Extra"
     links {"ws2_32","vulkan-1"}
   filter {"action:vs*", "Debug or Development"}
     links {"dbghelp"}
