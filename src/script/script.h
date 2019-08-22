@@ -58,8 +58,10 @@ namespace L {
     ScriptOpCode opcode;
     uint8_t a;
     union {
-      struct { uint8_t b, c; };
-      int16_t bc;
+      struct {
+        uint8_t b, c;
+      } bc8;
+      int16_t bc16;
     };
   };
   struct Script {

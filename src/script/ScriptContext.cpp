@@ -88,44 +88,44 @@ Var ScriptContext::execute(const ScriptFunction& function, const Var* params, si
   while(true) {
     L_ASSERT(ip>=current_script->bytecode.begin() && ip<current_script->bytecode.end());
     switch(ip->opcode) {
-      case CopyLocal: local(ip->a) = local(ip->b); break;
-      case LoadConst: local(ip->a) = current_script->constants[ip->b]; break;
-      case LoadBool: local(ip->a) = (ip->b!=0); break;
-      case LoadInt: local(ip->a) = float(ip->bc); break;
-      case LoadGlobal: local(ip->a) = current_script->globals[ip->b].value(); break;
-      case StoreGlobal: current_script->globals[ip->a].value() = local(ip->b); break;
-      case LoadFun: local(ip->a) = ScriptFunction {current_script, uintptr_t(ip->bc)}; break;
+      case CopyLocal: local(ip->a) = local(ip->bc8.b); break;
+      case LoadConst: local(ip->a) = current_script->constants[ip->bc8.b]; break;
+      case LoadBool: local(ip->a) = (ip->bc8.b!=0); break;
+      case LoadInt: local(ip->a) = float(ip->bc16); break;
+      case LoadGlobal: local(ip->a) = current_script->globals[ip->bc8.b].value(); break;
+      case StoreGlobal: current_script->globals[ip->a].value() = local(ip->bc8.b); break;
+      case LoadFun: local(ip->a) = ScriptFunction {current_script, uintptr_t(ip->bc16)}; break;
 
       case MakeObject: local(ip->a) = ref<Table<Var, Var>>(); break;
-      case GetItem: get_item(local(ip->a), local(ip->b), local(ip->c)); break;
-      case SetItem: set_item(local(ip->a), local(ip->b), local(ip->c)); break;
+      case GetItem: get_item(local(ip->a), local(ip->bc8.b), local(ip->bc8.c)); break;
+      case SetItem: set_item(local(ip->a), local(ip->bc8.b), local(ip->bc8.c)); break;
 
-      case MakeIterator: local(ip->a) = ObjectIterator(get_table(local(ip->b))); break;
-      case Iterate: local(ip->c).as<ObjectIterator>().iterate(local(ip->a), local(ip->b)); break;
-      case IterEndJump: if(local(ip->a).as<ObjectIterator>().has_ended()) ip += intptr_t(ip->bc); break;
+      case MakeIterator: local(ip->a) = ObjectIterator(get_table(local(ip->bc8.b))); break;
+      case Iterate: local(ip->bc8.c).as<ObjectIterator>().iterate(local(ip->a), local(ip->bc8.b)); break;
+      case IterEndJump: if(local(ip->a).as<ObjectIterator>().has_ended()) ip += intptr_t(ip->bc16); break;
 
-      case Jump: ip += intptr_t(ip->bc); break;
-      case CondJump: if(local(ip->a).get<bool>()) ip += intptr_t(ip->bc); break;
-      case CondNotJump: if(!local(ip->a).get<bool>()) ip += intptr_t(ip->bc); break;
+      case Jump: ip += intptr_t(ip->bc16); break;
+      case CondJump: if(local(ip->a).get<bool>()) ip += intptr_t(ip->bc16); break;
+      case CondNotJump: if(!local(ip->a).get<bool>()) ip += intptr_t(ip->bc16); break;
 
-      case Add: local(ip->a) += local(ip->b); break;
-      case Sub: local(ip->a) -= local(ip->b); break;
-      case Mul: local(ip->a) *= local(ip->b); break;
-      case Div: local(ip->a) /= local(ip->b); break;
-      case Mod: local(ip->a) %= local(ip->b); break;
+      case Add: local(ip->a) += local(ip->bc8.b); break;
+      case Sub: local(ip->a) -= local(ip->bc8.b); break;
+      case Mul: local(ip->a) *= local(ip->bc8.b); break;
+      case Div: local(ip->a) /= local(ip->bc8.b); break;
+      case Mod: local(ip->a) %= local(ip->bc8.b); break;
       case Inv: local(ip->a).invert(); break;
       case Not: local(ip->a) = !local(ip->a).get<bool>(); break;
 
-      case LessThan: local(ip->a) = (local(ip->b) < local(ip->c)); break;
-      case LessEqual: local(ip->a) = (local(ip->b) <= local(ip->c)); break;
-      case Equal: local(ip->a) = (local(ip->b) == local(ip->c)); break;
+      case LessThan: local(ip->a) = (local(ip->bc8.b) < local(ip->bc8.c)); break;
+      case LessEqual: local(ip->a) = (local(ip->bc8.b) <= local(ip->bc8.c)); break;
+      case Equal: local(ip->a) = (local(ip->bc8.b) == local(ip->bc8.c)); break;
 
       case Call:
       {
         const Var& new_func(local(ip->a));
 
         _current_stack_start += ip->a;
-        _current_param_count = ip->b;
+        _current_param_count = ip->bc8.b;
 
         if(new_func.is<ScriptNativeFunction>()) {
           return_value().as<ScriptNativeFunction>()(*this);

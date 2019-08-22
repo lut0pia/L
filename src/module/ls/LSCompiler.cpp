@@ -43,7 +43,7 @@ ScriptFunction LSCompiler::compile() {
   { // Linking
     for(ScriptInstruction& inst : _script->bytecode) {
       if(inst.opcode == LoadFun) {
-        inst.bc = _functions[inst.bc]->bytecode_offset;
+        inst.bc16 = _functions[inst.bc16]->bytecode_offset;
       }
     }
   }
@@ -115,7 +115,7 @@ void LSCompiler::compile(Function& func, const Var& v, uint32_t offset) {
 
           // If the result is true, jump right afterwards
           func.bytecode.push(ScriptInstruction {CondJump, uint8_t(offset)});
-          func.bytecode.back().bc = 1;
+          func.bytecode.back().bc16 = 1;
 
           // If the result is false, jump after the execution block (will get updated after compilation)
           func.bytecode.push(ScriptInstruction {Jump});
@@ -131,15 +131,15 @@ void LSCompiler::compile(Function& func, const Var& v, uint32_t offset) {
             const uintptr_t else_avoid_jump(func.bytecode.size()-1);
 
             // This is where we jump if the condition hasn't been met before
-            func.bytecode[if_not_jump].bc = int16_t(func.bytecode.size()-if_not_jump)-1;
+            func.bytecode[if_not_jump].bc16 = int16_t(func.bytecode.size()-if_not_jump)-1;
 
             compile(func, array.back(), offset);
 
             // This is where we jump to avoid the else branch (condition was met before)
-            func.bytecode[else_avoid_jump].bc = int16_t(func.bytecode.size()-else_avoid_jump)-1;
+            func.bytecode[else_avoid_jump].bc16 = int16_t(func.bytecode.size()-else_avoid_jump)-1;
           } else { // No else branch
             // This is where we jump if the condition hasn't been met before
-            func.bytecode[if_not_jump].bc = int16_t(func.bytecode.size()-if_not_jump)-1;
+            func.bytecode[if_not_jump].bc16 = int16_t(func.bytecode.size()-if_not_jump)-1;
           }
         }
       } else if(sym==while_symbol) { // While
@@ -149,7 +149,7 @@ void LSCompiler::compile(Function& func, const Var& v, uint32_t offset) {
 
         // If the result is true, jump right afterwards
         func.bytecode.push(ScriptInstruction {CondJump, uint8_t(offset)});
-        func.bytecode.back().bc = 1;
+        func.bytecode.back().bc16 = 1;
 
         // If the result is false, jump after the execution block (will get updated after compilation)
         func.bytecode.push(ScriptInstruction {Jump});
@@ -159,10 +159,10 @@ void LSCompiler::compile(Function& func, const Var& v, uint32_t offset) {
 
         // Jump back to the start
         func.bytecode.push(ScriptInstruction {Jump});
-        func.bytecode.back().bc = int16_t(start_index)-int16_t(func.bytecode.size());
+        func.bytecode.back().bc16 = int16_t(start_index)-int16_t(func.bytecode.size());
 
         // This is where we jump if the condition hasn't been met before
-        func.bytecode[if_not_jump].bc = int16_t(func.bytecode.size()-if_not_jump)-1;
+        func.bytecode[if_not_jump].bc16 = int16_t(func.bytecode.size()-if_not_jump)-1;
       } else if(sym==foreach_symbol) {
         L_ASSERT(array.size()==5);
         // Compute object at offset
@@ -183,10 +183,10 @@ void LSCompiler::compile(Function& func, const Var& v, uint32_t offset) {
 
         // Jump back to beginning of loop
         func.bytecode.push(ScriptInstruction {Jump});
-        func.bytecode.back().bc = int16_t(end_jump)-int16_t(func.bytecode.size());
+        func.bytecode.back().bc16 = int16_t(end_jump)-int16_t(func.bytecode.size());
 
         // This is where we jump if the iterator has reached the end
-        func.bytecode[end_jump].bc = int16_t(func.bytecode.size()-end_jump)-1;
+        func.bytecode[end_jump].bc16 = int16_t(func.bytecode.size()-end_jump)-1;
       } else if(sym==switch_symbol) { // Switch
         // Put first compare value at offset
         compile(func, array[1], offset);
@@ -219,7 +219,7 @@ void LSCompiler::compile(Function& func, const Var& v, uint32_t offset) {
         for(uintptr_t i(2); i<array.size()-1; i += 2) {
           // Update corresponding conditional jump to jump here
           const uintptr_t cond_jump(cond_jumps[(i-2)/2]);
-          func.bytecode[cond_jump].bc = int16_t(func.bytecode.size()-cond_jump)-1;
+          func.bytecode[cond_jump].bc16 = int16_t(func.bytecode.size()-cond_jump)-1;
 
           // Compile the code
           compile(func, array[i+1], offset);
@@ -231,7 +231,7 @@ void LSCompiler::compile(Function& func, const Var& v, uint32_t offset) {
 
         // Update all end jumps to jump here
         for(uintptr_t end_jump : end_jumps) {
-          func.bytecode[end_jump].bc = int16_t(func.bytecode.size()-end_jump)-1;
+          func.bytecode[end_jump].bc16 = int16_t(func.bytecode.size()-end_jump)-1;
         }
       } else if(sym==and_symbol) { // And
         Array<uintptr_t> end_jumps; // Will jump *after* the and
@@ -243,7 +243,7 @@ void LSCompiler::compile(Function& func, const Var& v, uint32_t offset) {
 
         // Update all end jumps to jump here
         for(uintptr_t end_jump : end_jumps) {
-          func.bytecode[end_jump].bc = int16_t(func.bytecode.size()-end_jump)-1;
+          func.bytecode[end_jump].bc16 = int16_t(func.bytecode.size()-end_jump)-1;
         }
       } else if(sym==or_symbol) { // Or
         Array<uintptr_t> end_jumps; // Will jump *after* the or
@@ -255,7 +255,7 @@ void LSCompiler::compile(Function& func, const Var& v, uint32_t offset) {
 
         // Update all end jumps to jump here
         for(uintptr_t end_jump : end_jumps) {
-          func.bytecode[end_jump].bc = int16_t(func.bytecode.size()-end_jump)-1;
+          func.bytecode[end_jump].bc16 = int16_t(func.bytecode.size()-end_jump)-1;
         }
       } else if(sym==not_symbol) { // Not
         compile(func, array[1], offset);
@@ -277,7 +277,7 @@ void LSCompiler::compile(Function& func, const Var& v, uint32_t offset) {
 
           // Save index of function in LoadFun to allow linking later
           func.bytecode.push(ScriptInstruction {LoadFun, uint8_t(offset)});
-          func.bytecode.back().bc = int16_t(_functions.size()-1);
+          func.bytecode.back().bc16 = int16_t(_functions.size()-1);
 
           resolve_locals(new_function, new_function.code);
           compile_function(new_function);
@@ -440,7 +440,7 @@ void LSCompiler::compile_comparison(Function& func, const L::Array<L::Var>& arra
 
     // Update all end jumps to jump here
     for(uintptr_t end_jump : end_jumps) {
-      func.bytecode[end_jump].bc = int16_t(func.bytecode.size()-end_jump)-1;
+      func.bytecode[end_jump].bc16 = int16_t(func.bytecode.size()-end_jump)-1;
     }
   } else {
     error("Comparisons need at least two operands");
