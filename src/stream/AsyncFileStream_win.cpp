@@ -86,9 +86,9 @@ size_t AsyncFileStream::size() {
     size_t wtr;
     struct {
       DWORD low, high;
-    };
+    } word;
   };
-  low = GetFileSize(_handle, &high);
+  word.low = GetFileSize(_handle, &word.high);
   return wtr;
 }
 
