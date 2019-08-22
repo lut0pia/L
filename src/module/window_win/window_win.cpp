@@ -50,8 +50,8 @@ public:
         break;
       case WM_SIZE: // The size of the window has changed
         e.type = Event::Type::Resize;
-        e.x = _win_instance->_width = LOWORD(lParam);
-        e.y = _win_instance->_height = HIWORD(lParam);
+        e.coords.x = _win_instance->_width = LOWORD(lParam);
+        e.coords.y = _win_instance->_height = HIWORD(lParam);
         break;
       default:
         return DefWindowProc(hwnd, uMsg, wParam, lParam);

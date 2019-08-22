@@ -14,7 +14,7 @@ namespace L {
       Type type;
       struct {
         int32_t x, y;
-      };
+      } coords;
     };
   protected:
     static Window* _instance;
