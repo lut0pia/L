@@ -13,7 +13,7 @@ static inline void ignore_line(const char*& c) {
 static inline void read_scalars(const char*& c, Vector3f& scalars) {
   for(uintptr_t i(0); i<3; i++) {
     while(*c==' ') c++;
-    scalars[i] = atof(c);
+    scalars[i] = float(atof(c));
     while(!Stream::isspace(*c)) c++;
   }
 }

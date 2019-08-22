@@ -40,7 +40,7 @@ bool ResourceSlot::parameter(const char* key, uint32_t& param_value) {
 }
 bool ResourceSlot::parameter(const char* key, float& param_value) {
   if(const Symbol param = parameter(key)) {
-    param_value = atof(param);
+    param_value = float(atof(param));
     return true;
   }
   return false;
