@@ -5,11 +5,8 @@
 
 using namespace L;
 
-union Cell {
-  struct {
-    uint32_t i : 1, b : 1, rank : (sizeof(float)*8-2);
-  };
-  uint32_t full;
+struct Cell {
+  uint32_t i : 1, b : 1, rank : (sizeof(float)*8-2);
 };
 static const int32_t k_width(9), k_height(9);
 static const int32_t k_width_h(k_width/2), k_height_h(k_height/2);
@@ -68,7 +65,7 @@ static float* void_and_cluster(uint32_t width, uint32_t height, float* out) {
   const uint32_t size(width*height);
   Cell* matrix((Cell*)out);
   for(uint32_t i(0); i<size; i++)
-    matrix[i].full = 0;
+    matrix[i] = {};
 
   // Initial binary pattern generation
   const uint32_t n(size/10);
