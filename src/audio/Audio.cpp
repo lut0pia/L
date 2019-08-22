@@ -48,29 +48,28 @@ void Audio::commit_buffer() {
 }
 
 void Audio::render(void* dst, const void* src, SampleFormat format, uint32_t sample_count, float volume[2]) {
-  if(working_format==Stereo16) {
-    if(format==Stereo16) {
-      int16_t* out_buffer((int16_t*)dst);
-      const int16_t* in_data((const int16_t*)src);
-      for(uintptr_t i(0); i<sample_count; i++) {
-        const int32_t left_mix(int32_t(int32_t(out_buffer[2*i]) + in_data[2*(i)]*volume[0]));
-        const int32_t right_mix(int32_t(int32_t(out_buffer[2*i+1]) + in_data[2*(i)+1]*volume[1]));
-        out_buffer[2*i] = int16_t(clamp<int32_t>(left_mix, int32_t(INT16_MIN), int32_t(INT16_MAX)));
-        out_buffer[2*i+1] = int16_t(clamp<int32_t>(right_mix, int32_t(INT16_MIN), int32_t(INT16_MAX)));
-      }
-      return;
-    } else if(format==Mono16) {
-      int16_t* out_buffer((int16_t*)dst);
-      const int16_t* in_data((const int16_t*)src);
-      for(uintptr_t i(0); i<sample_count; i++) {
-        const int16_t& frame_value(in_data[i]);
-        const int32_t left_mix(int32_t(int32_t(out_buffer[2*i]) + frame_value*volume[0]));
-        const int32_t right_mix(int32_t(int32_t(out_buffer[2*i+1]) + frame_value*volume[1]));
-        out_buffer[2*i] = int16_t(clamp<int32_t>(left_mix, int32_t(INT16_MIN), int32_t(INT16_MAX)));
-        out_buffer[2*i+1] = int16_t(clamp<int32_t>(right_mix, int32_t(INT16_MIN), int32_t(INT16_MAX)));
-      }
-      return;
+  static_assert(working_format == Stereo16, "Unable to render audio because of unhandled format conversion.");
+  if(format == Stereo16) {
+    int16_t* out_buffer((int16_t*)dst);
+    const int16_t* in_data((const int16_t*)src);
+    for(uintptr_t i(0); i < sample_count; i++) {
+      const int32_t left_mix(int32_t(int32_t(out_buffer[2 * i]) + in_data[2 * (i)] * volume[0]));
+      const int32_t right_mix(int32_t(int32_t(out_buffer[2 * i + 1]) + in_data[2 * (i)+1] * volume[1]));
+      out_buffer[2 * i] = int16_t(clamp<int32_t>(left_mix, int32_t(INT16_MIN), int32_t(INT16_MAX)));
+      out_buffer[2 * i + 1] = int16_t(clamp<int32_t>(right_mix, int32_t(INT16_MIN), int32_t(INT16_MAX)));
     }
+    return;
+  } else if(format == Mono16) {
+    int16_t* out_buffer((int16_t*)dst);
+    const int16_t* in_data((const int16_t*)src);
+    for(uintptr_t i(0); i < sample_count; i++) {
+      const int16_t& frame_value(in_data[i]);
+      const int32_t left_mix(int32_t(int32_t(out_buffer[2 * i]) + frame_value*volume[0]));
+      const int32_t right_mix(int32_t(int32_t(out_buffer[2 * i + 1]) + frame_value*volume[1]));
+      out_buffer[2 * i] = int16_t(clamp<int32_t>(left_mix, int32_t(INT16_MIN), int32_t(INT16_MAX)));
+      out_buffer[2 * i + 1] = int16_t(clamp<int32_t>(right_mix, int32_t(INT16_MIN), int32_t(INT16_MAX)));
+    }
+    return;
   }
   warning("Unable to render audio because of unhandled format conversion.");
 }
