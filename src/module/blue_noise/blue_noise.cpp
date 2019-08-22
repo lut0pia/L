@@ -56,11 +56,6 @@ static void load_binary_pattern(Cell* matrix, uint32_t width, uint32_t height) {
     for(uint32_t x(0); x<width; x++)
       (matrix+x*height+y)->b = (matrix+x*height+y)->i;
 }
-static void reverse_binary_pattern(Cell* matrix, uint32_t width, uint32_t height) {
-  for(uint32_t y(0); y<height; y++)
-    for(uint32_t x(0); x<width; x++)
-      (matrix+x*height+y)->b = 1-(matrix+x*height+y)->b;
-}
 static float* void_and_cluster(uint32_t width, uint32_t height, float* out) {
   const uint32_t size(width*height);
   Cell* matrix((Cell*)out);
