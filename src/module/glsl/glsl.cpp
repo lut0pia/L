@@ -123,12 +123,10 @@ bool glsl_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) {
   if(!strcmp(strrchr(slot.path, '.'), ".frag")) {
     intermediate.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
     shader_language = EShLanguage::EShLangFragment;
-  }
-  else if(!strcmp(strrchr(slot.path, '.'), ".vert")) {
+  } else if(!strcmp(strrchr(slot.path, '.'), ".vert")) {
     intermediate.stage = VK_SHADER_STAGE_VERTEX_BIT;
     shader_language = EShLanguage::EShLangVertex;
-  }
-  else {
+  } else {
     error("No shader language");
   }
 
