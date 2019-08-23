@@ -42,6 +42,7 @@ solution "L"
   -- GMake
   configuration {"gmake2"}
     buildoptions {"-fno-operator-names"}
+    disablewarnings {"missing-field-initializers"}
     links {"vulkan","X11","pthread"}
 
   -- Main project (startup)
