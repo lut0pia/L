@@ -159,6 +159,7 @@ Pipeline::Pipeline(const Intermediate& intermediate) {
         colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_SRC_COLOR;
         colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
         break;
+      default: break;
     }
   } else if(_render_pass==&RenderPass::light_pass()) {
     colorBlendAttachment.blendEnable = VK_TRUE;
