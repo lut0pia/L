@@ -154,7 +154,7 @@ void Vulkan::init() {
     Window::instance()->create_vulkan_surface(instance, &surface);
   }
 
-  uint32_t queue_family_index(uint32_t(-1));
+  uint32_t queue_family_index(UINT32_MAX);
   { // Fetch queue family index
     uint32_t count(0);
     vkGetPhysicalDeviceQueueFamilyProperties(physical_device, &count, nullptr);
@@ -167,7 +167,7 @@ void Vulkan::init() {
       if(present_support && queue_family_properties[i].queueCount>0 && queue_family_properties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
         queue_family_index = i;
     }
-    L_ASSERT(queue_family_index!=-1);
+    L_ASSERT(queue_family_index != UINT32_MAX);
   }
 
   { // Create device and fetch queue
@@ -311,7 +311,7 @@ void Vulkan::recreate_swapchain() {
 
   { // Fetch surface capabilities
     vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physical_device, surface, &surface_capabilities);
-    L_ASSERT(surface_capabilities.currentExtent.width!=-1);
+    L_ASSERT(surface_capabilities.currentExtent.width != UINT32_MAX);
   }
 
   { // Setup _viewport
