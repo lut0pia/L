@@ -76,7 +76,6 @@ void Audio::render(void* dst, const void* src, SampleFormat format, uint32_t sam
 bool Audio::convert_samples(void* dst, SampleFormat dst_fmt, uint32_t dst_freq, const void* src, SampleFormat src_fmt, uint32_t src_freq, uint32_t sample_count) {
   if(dst_fmt != src_fmt) return false;
   const size_t sample_size(sample_format_size(src_fmt));
-  const uintptr_t channel_count(sample_format_channels(src_fmt));
   const uint32_t dst_sample_count(convert_samples_required_count(dst_freq, src_freq, sample_count));
   if(dst_freq==src_freq) {
     // No conversion necessary
@@ -170,7 +169,5 @@ uint32_t Audio::convert_samples_required_count(uint32_t dst_freq, uint32_t src_f
 uint32_t Audio::convert_samples_reverse_required_count(uint32_t dst_freq, uint32_t src_freq, uint32_t dst_sample_count) {
   const float ratio(float(src_freq)/float(dst_freq));
   const uint32_t src_sample_count(uint32_t(dst_sample_count * ratio));
-  const uint32_t lol(convert_samples_required_count(dst_freq, src_freq, src_sample_count));
-  //L_ASSERT(convert_samples_required_count(dst_freq, src_freq, src_sample_count)==dst_sample_count);
   return src_sample_count;
 }
