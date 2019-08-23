@@ -5,7 +5,6 @@
 #include <L/src/stream/CFileStream.h>
 
 L_PUSH_NO_WARNINGS
-L_DISABLE_MSC_WARNING(4701)
 
 #include "stb_vorbis.c"
 #undef L // Defined by stb_vorbis.c
