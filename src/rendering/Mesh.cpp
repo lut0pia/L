@@ -15,10 +15,17 @@ Mesh::Mesh(const MeshBuilder& mb, const VkFormat* formats, size_t fcount)
 Mesh::~Mesh() {
   if(_vertex_buffer) Memory::delete_type(_vertex_buffer);
   if(_index_buffer) Memory::delete_type(_index_buffer);
-  _vertex_buffer = _index_buffer = nullptr;
 }
 void Mesh::load(size_t count, const void* data, size_t size, const VkFormat* formats, size_t fcount, const uint16_t* iarray, size_t icount) {
-  this->~Mesh();
+  if(_vertex_buffer) {
+    Memory::delete_type(_vertex_buffer);
+    _vertex_buffer = nullptr;
+  }
+  if(_index_buffer) {
+    Memory::delete_type(_index_buffer);
+    _index_buffer = nullptr;
+  }
+  _formats = Array<VkFormat>(formats, fcount);
 
   _vertex_buffer = Memory::new_type<GPUBuffer>(size, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
   _vertex_buffer->load(data);

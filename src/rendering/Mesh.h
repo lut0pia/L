@@ -10,6 +10,7 @@ namespace L {
     L_NOCOPY(Mesh)
   private:
     GPUBuffer *_vertex_buffer, *_index_buffer;
+    Array<VkFormat> _formats;
     Interval3f _bounds;
     uint32_t _count;
 
