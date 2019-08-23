@@ -7,7 +7,7 @@
 using namespace L;
 
 void L::error(const char* msg, ...) {
-  va_list(args);
+  va_list args;
   fprintf(stderr, "Error: ");
   va_start(args, msg);
   vfprintf(stderr, msg, args);
@@ -17,7 +17,7 @@ void L::error(const char* msg, ...) {
   exit(0xA55E2737);
 }
 void L::warning(const char* msg, ...) {
-  va_list(args);
+  va_list args;
   fprintf(stderr, "Warning: ");
   va_start(args, msg);
   vfprintf(stderr, msg, args);

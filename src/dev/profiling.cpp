@@ -32,7 +32,7 @@ ScopeMarker::~ScopeMarker() {
   }
 }
 ScopeMarkerFormatted::ScopeMarkerFormatted(const char* format, ...) : ScopeMarker(nullptr) {
-  va_list(args);
+  va_list args;
   va_start(args, format);
   const size_t size(vsnprintf(nullptr, 0, format, args)+1);
   _name = Memory::alloc_type<char>(size);
