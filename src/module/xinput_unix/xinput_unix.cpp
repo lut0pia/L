@@ -44,9 +44,9 @@ public:
     if(evtype==XI_RawButtonPress || evtype==XI_RawButtonRelease) {
       const bool pressed(evtype==XI_RawButtonPress);
       switch(rawev->detail) {
-        case 1: set_button(Button::MouseLeft, pressed);
-        case 2: set_button(Button::MouseMiddle, pressed);
-        case 3: set_button(Button::MouseRight, pressed);
+        case 1: set_button(Button::MouseLeft, pressed); break;
+        case 2: set_button(Button::MouseMiddle, pressed); break;
+        case 3: set_button(Button::MouseRight, pressed); break;
       }
     } else if(evtype==XI_KeyPress || evtype==XI_KeyRelease) {
       const bool pressed(evtype==XI_KeyPress);
