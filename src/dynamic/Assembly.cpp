@@ -20,7 +20,3 @@ void* Assembly::commit() const {
   _write += _assembly.size(); // Update write cursor
   return wtr;
 }
-
-Stream& L::operator<<(Stream& s, const Assembly& a) {
-  return s << a._assembly;
-}

@@ -91,6 +91,6 @@ namespace L {
 
       void* commit() const;
 
-      friend Stream& operator<<(Stream&, const Assembly&);
+      friend inline Stream& operator<<(Stream& s, const Assembly& v) { return s << v._assembly; }
   };
 }
