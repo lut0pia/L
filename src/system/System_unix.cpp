@@ -20,8 +20,11 @@ Vector2i System::screenSize() {
   String tmp;
   call("xdpyinfo | grep 'dimensions:' | grep -o '[[:digit:]]\\+'", tmp);
   Array<String> res(tmp.explode('\n'));
-  if(res.size()>=2)
-    return Vector2i(ston<10,int>(res[0]),ston<10,int>(res[1]));
+  if(res.size() >= 2) {
+    return Vector2i(ston<10, int>(res[0]), ston<10, int>(res[1]));
+  }
+  error("Couldn't determine screen size");
+  return Vector2i(0, 0);
 }
 
 String System::formatPath(String path) {
