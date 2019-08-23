@@ -9,10 +9,13 @@ static uint32_t read_int(const uint8_t* data, size_t size = 4) {
   switch(size) {
     case 4: wtr |= uint32_t(*data++);
       wtr <<= 8;
+      // Fallthrough
     case 3: wtr |= uint32_t(*data++);
       wtr <<= 8;
+      // Fallthrough
     case 2: wtr |= uint32_t(*data++);
       wtr <<= 8;
+      // Fallthrough
     case 1: wtr |= uint32_t(*data);
   }
   return wtr;
