@@ -25,6 +25,7 @@
 #define L_PUSH_NO_WARNINGS \
   _Pragma("GCC diagnostic push") \
   _Pragma("GCC diagnostic ignored \"-Wall\"") \
+  _Pragma("GCC diagnostic ignored \"-Wunused-function\"") \
   _Pragma("GCC diagnostic ignored \"-Wunused-value\"") \
   _Pragma("GCC diagnostic ignored \"-Wunused-parameter\"")
 #define L_POP_NO_WARNINGS _Pragma("GCC diagnostic pop")
