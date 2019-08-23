@@ -54,10 +54,11 @@ Interval2i FontPacker::add_bmp(const uint8_t* data, uint32_t width, uint32_t hei
       grow();
       i = {0,0};
     } else {
-      if(++i.x()==_xs.size()) {
+      if(++i.x() == intptr_t(_xs.size())) {
         i.x() = 0;
-        if(++i.y()==_ys.size())
+        if(++i.y() == intptr_t(_ys.size())) {
           break; // No more y steps
+        }
       }
     }
   }

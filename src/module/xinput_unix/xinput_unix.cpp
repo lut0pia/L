@@ -203,7 +203,7 @@ void xinput_unix_module_init() {
     // TODO: handle hot plugging devices
     int device_count(0);
     XIDeviceInfo *device_list(pXIQueryDevice(display, XIAllDevices, &device_count));
-    for (uintptr_t i(0); i < device_count; i++) {
+    for (uintptr_t i(0); i < uintptr_t(device_count); i++) {
         if(XInputDevice::valid(device_list+i)) {
           Memory::new_type<XInputDevice>(device_list+i);
         }

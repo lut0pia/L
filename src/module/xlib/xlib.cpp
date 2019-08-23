@@ -30,7 +30,7 @@ public:
       switch(xev.type) {
         case Expose:
           XGetWindowAttributes(_xdisplay, _xwindow, &gwa);
-          if(_width!=gwa.width || _height!=gwa.height) {
+          if(_width != uint32_t(gwa.width) || _height != uint32_t(gwa.height)) {
             e.type = Event::Type::Resize;
             _width = e.coords.x = gwa.width;
             _height = e.coords.y = gwa.height;

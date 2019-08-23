@@ -22,7 +22,7 @@ static void remove_instruction(Script& script, uintptr_t index) {
     }
     // Shift functions that should be affected
     else if(inst.opcode==LoadFun) {
-      if(index<inst.bc16) {
+      if(index < uintptr_t(inst.bc16)) {
         inst.bc16--;
       }
     }
