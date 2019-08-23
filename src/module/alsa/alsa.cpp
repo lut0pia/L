@@ -28,13 +28,13 @@ public:
   }
   uint32_t frequency() override { return _frequency; }
   void write(void* buffer, uint32_t frame_count) override {
-    int rc = snd_pcm_writei(_handle, buffer, frame_count);
+    snd_pcm_sframes_t rc = snd_pcm_writei(_handle, buffer, frame_count);
     if(rc == -EPIPE) {
       warning("ALSA: Underrun occurred");
       snd_pcm_prepare(_handle);
     } else if(rc < 0) {
       error("ALSA: writei: %s", snd_strerror(rc));
-    } else if(rc != frame_count) {
+    } else if(rc != snd_pcm_sframes_t(frame_count)) {
       error("ALSA: short write, wrote %d instead of %d", rc, frame_count);
     }
   }
