@@ -72,4 +72,6 @@ namespace L {
     friend Stream& operator<(Stream&, const Entity&);
     friend Stream& operator>(Stream&, Entity&);
   };
+  Stream& operator<(Stream&, const Entity&);
+  Stream& operator>(Stream&, Entity&);
 }

@@ -24,4 +24,7 @@ namespace L {
     friend Stream& operator>=(Stream& s, Symbol& v);
     friend inline uint32_t hash(const Symbol& sym) { return uint32_t(uintptr_t(sym._string)); }
   };
+
+  Stream& operator<=(Stream& s, const Symbol& v);
+  Stream& operator>=(Stream& s, Symbol& v);
 }

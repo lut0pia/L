@@ -46,6 +46,8 @@ namespace L {
 
     friend Stream& operator<<(Stream &s, const Time& v);
   };
+
+  Stream& operator<<(Stream &s, const Time& v);
 }
 
 

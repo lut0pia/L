@@ -66,4 +66,5 @@ namespace L {
     friend class Rational;
     friend Stream& operator<<(Stream&,const Integer&);
   };
+  Stream& operator<<(Stream&,const Integer&);
 }

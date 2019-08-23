@@ -106,5 +106,11 @@ namespace L {
     friend Stream& operator>=(Stream& s, Variable& v);
     friend inline uint32_t hash(const Variable& v){ return v.type()->hash(v.value()); }
   };
+
+  Stream& operator<(Stream& s, const Variable& v);
+  Stream& operator>(Stream& s, Variable& v);
+  Stream& operator<=(Stream& s, const Variable& v);
+  Stream& operator>=(Stream& s, Variable& v);
+
   typedef Variable Var;
 }

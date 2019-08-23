@@ -25,4 +25,7 @@ namespace L {
     friend Stream& operator<=(Stream&, const ScriptGlobal&);
     friend Stream& operator>=(Stream&, ScriptGlobal&);
   };
+
+  Stream& operator<=(Stream&, const ScriptGlobal&);
+  Stream& operator>=(Stream&, ScriptGlobal&);
 }
