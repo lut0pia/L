@@ -14,8 +14,8 @@ namespace L {
   void swap(T& a, T& b) {
     char tmp[sizeof(T)];
     memcpy(tmp,&a,sizeof(T));
-    memcpy(&a,&b,sizeof(T));
-    memcpy(&b,tmp,sizeof(T));
+    memcpy((void*)&a,&b,sizeof(T));
+    memcpy((void*)&b,tmp,sizeof(T));
   }
 
   template <class T>

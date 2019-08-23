@@ -33,7 +33,7 @@ Variable& Variable::operator=(const Variable& other) {
 Variable& Variable::operator=(Variable&& other){
   if(this != &other) {
     this->~Variable();
-    memcpy(this,&other,sizeof(Variable));
+    memcpy((void*)this,&other,sizeof(Variable));
     other._td = Type<int>::description();
   }
   return *this;

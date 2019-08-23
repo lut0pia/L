@@ -15,7 +15,7 @@ namespace L {
     size_t _size,_capacity;
 
     inline void shift(uintptr_t i,intptr_t offset) {
-      memmove(_data+i+offset,_data+i,(_size-i)*sizeof(T));
+      memmove((void*)(_data+i+offset), _data+i, (_size-i)*sizeof(T));
     }
 
   public:
@@ -138,7 +138,7 @@ namespace L {
     inline void erase_fast(uintptr_t i) {
       _data[i].~T(); // Destruct value
       if(i<_size-1)
-        memcpy(_data+i, _data+_size-1, sizeof(T)); // Swap with last element
+        memcpy((void*)(_data+i), _data+_size-1, sizeof(T)); // Swap with last element
       _size--; // Decrease size
     }
     void erase(size_t i,size_t count) {

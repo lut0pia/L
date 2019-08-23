@@ -48,7 +48,7 @@ namespace L {
         _slots = Memory::alloc_type_zero<Slot>(_size *= 2);
         for(uintptr_t i(0); i<oldsize; i++)
           if(!oldslots[i].empty())
-            memcpy(find_slot_or_create(oldslots[i].hash()), oldslots+i, sizeof(Slot));
+            memcpy((void*)(find_slot_or_create(oldslots[i].hash())), oldslots+i, sizeof(Slot));
         Memory::free(oldslots,oldsize*sizeof(Slot));
       } else _slots = Memory::alloc_type_zero<Slot>(_size = 4);
     }
@@ -143,11 +143,11 @@ namespace L {
           uintptr_t nextSlotIndex((slotIndex+1)%_size);
           Slot* nextSlot(_slots+nextSlotIndex);
           if(!nextSlot->empty() && index_for(nextSlot->hash())!=nextSlotIndex) {
-            memcpy(slot, nextSlot, sizeof(*slot));
+            memcpy((void*)slot, nextSlot, sizeof(*slot));
             slot = nextSlot;
           } else break;
         }
-        memset(slot, 0, sizeof(*slot));
+        memset((void*)slot, 0, sizeof(*slot));
         _count--;
       }
     }
