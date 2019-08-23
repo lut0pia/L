@@ -36,6 +36,6 @@ String System::formatPath(String path) {
 void* System::alloc(size_t size) {
   return mmap(0,size,PROT_READ | PROT_WRITE | PROT_EXEC,MAP_PRIVATE | MAP_ANONYMOUS,-1,0);
 }
-void System::dealloc(void* p) {
+void System::dealloc(void*) {
   error("System::dealloc not implemented.");
 }
