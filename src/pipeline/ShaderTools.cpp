@@ -71,27 +71,38 @@ static VkFormat find_type(const uint32_t* binary, size_t size, uint32_t type_id)
         switch(type[2]) {
           case 16: return VK_FORMAT_R16_UINT;
           case 32: return VK_FORMAT_R32_UINT;
+          default: break;
         }
+        break;
       case OpTypeFloat:
         switch(type[2]) {
           case 16: return VK_FORMAT_R16_SFLOAT;
           case 32: return VK_FORMAT_R32_SFLOAT;
+          default: break;
         }
+        break;
       case OpTypeVector:
         switch(find_type(binary, size, type[2])) {
           case VK_FORMAT_R16_SFLOAT:
             switch(type[3]) {
               case 2: return VK_FORMAT_R16G16_SFLOAT;
               case 3: return VK_FORMAT_R16G16B16_SFLOAT;
+              default: break;
             }
+            break;
           case VK_FORMAT_R32_SFLOAT:
             switch(type[3]) {
               case 2: return VK_FORMAT_R32G32_SFLOAT;
               case 3: return VK_FORMAT_R32G32B32_SFLOAT;
               case 4: return VK_FORMAT_R32G32B32A32_SFLOAT;
+              default: break;
             }
+            break;
+          default: break;
         }
+        break;
       case OpTypePointer: return find_type(binary, size, type[3]);
+      default: break;
     }
   }
   return VK_FORMAT_UNDEFINED;
