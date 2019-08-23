@@ -4,11 +4,13 @@
 #include <L/src/engine/Resource.inl>
 #include <L/src/stream/CFileStream.h>
 
-#pragma warning(push, 0)
-#pragma warning(disable: 4701)
+L_PUSH_NO_WARNINGS
+L_DISABLE_MSC_WARNING(4701)
+
 #include "stb_vorbis.c"
-#pragma warning(pop)
 #undef L // Defined by stb_vorbis.c
+
+L_POP_NO_WARNINGS
 
 using namespace L;
 

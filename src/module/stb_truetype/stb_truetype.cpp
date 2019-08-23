@@ -2,13 +2,13 @@
 #include <L/src/pipeline/FontPacker.h>
 #include <L/src/rendering/Font.h>
 
-#pragma warning(push, 0)
+L_PUSH_NO_WARNINGS
 
 #define STB_TRUETYPE_IMPLEMENTATION
 #define STBTT_STATIC
 #include "stb_truetype.h"
 
-#pragma warning(pop)
+L_POP_NO_WARNINGS
 
 using namespace L;
 

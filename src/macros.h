@@ -15,3 +15,16 @@
 #define L_ONCE do{static bool DONE_ONCE(false);if(DONE_ONCE) return;DONE_ONCE = true;}while(false)
 
 #define L_COUNT_OF(a) (sizeof(a)/sizeof(*a))
+
+// Compiler-specific pragmas
+#if defined _MSC_VER
+#define L_PUSH_NO_WARNINGS __pragma(warning(push, 0))
+#define L_POP_NO_WARNINGS __pragma(warning(pop))
+#define L_DISABLE_MSC_WARNING(N) __pragma(warning(disable: N))
+#else
+#define L_PUSH_NO_WARNINGS \
+  _Pragma("GCC diagnostic push") \
+  _Pragma("GCC diagnostic ignored \"-Wall\"")
+#define L_POP_NO_WARNINGS _Pragma("GCC diagnostic pop")
+#define L_DISABLE_MSC_WARNING(N)
+#endif

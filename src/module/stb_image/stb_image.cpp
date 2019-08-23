@@ -3,7 +3,7 @@
 #include <L/src/rendering/Texture.h>
 #include <L/src/stream/CFileStream.h>
 
-#pragma warning(push, 0)
+L_PUSH_NO_WARNINGS
 
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_STATIC
@@ -13,7 +13,7 @@
 #define STB_DXT_STATIC
 #include "stb_dxt.h"
 
-#pragma warning(pop)
+L_POP_NO_WARNINGS
 
 using namespace L;
 

@@ -1,11 +1,12 @@
 #include "debug.h"
 
+#include "../macros.h"
 #include "../stream/CFileStream.h"
 
-#pragma warning(push, 0)
+L_PUSH_NO_WARNINGS
 #include <Windows.h>
 #include <DbgHelp.h>
-#pragma warning(pop)
+L_POP_NO_WARNINGS
 
 using namespace L;
 
