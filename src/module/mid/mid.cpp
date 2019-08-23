@@ -39,8 +39,7 @@ bool midi_loader(ResourceSlot& slot, MidiSequence& intermediate) {
   if(size<18 || memcmp(data, "MThd", 4))
     return false;
 
-  const uint32_t header_length(read_int(data+4)),
-    format(read_int(data+8, 2)),
+  const uint32_t format(read_int(data+8, 2)),
     track_count(read_int(data+10, 2)),
     division(read_int(data+12, 2));
 
