@@ -158,6 +158,9 @@ Var ScriptContext::execute(const ScriptFunction& function, const Var* params, si
           ip = _frames.back().ip;
         }
         break;
+      default:
+        error("Unhandled script instruction");
+        break;
     }
     ip++;
   }
