@@ -19,9 +19,9 @@ namespace L {
       uintptr_t param_count;
     };
     Array<Frame> _frames;
+    Var _self;
     uintptr_t _current_stack_start;
     uint32_t _current_param_count;
-    Var _self;
 
   public:
     ScriptContext(const Var& self = ref<Table<Var, Var>>());
