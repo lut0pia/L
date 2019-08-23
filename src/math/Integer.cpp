@@ -128,9 +128,9 @@ Integer& Integer::operator*=(const Integer& other) {
     while(result.size()<result_size)
       result._part.push(0);
   }
-  for(int i(0); i<size(); i++) {
+  for(uintptr_t i(0); i < size(); i++) {
     type carry(0);
-    for(int j(0); j<other.size(); j++) {
+    for(uintptr_t j(0); j < other.size(); j++) {
       const extype product = extype(_part[i])*extype(other._part[j])+extype(carry);
       result._part[i+j] = type(product);
       carry = type(product>>typebits);
