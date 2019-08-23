@@ -58,13 +58,24 @@ esac
 # Detect Visual Studio version
 
 if $windows ; then
-  if [ -e "$SYSTEMDRIVE/Program Files (x86)/Microsoft Visual Studio/2017/Community" ] ; then
-    vsver=2017
-    vsvars="$SYSTEMDRIVE/Program Files (x86)/Microsoft Visual Studio/2017/Community/Common7/Tools/VsDevCmd.bat"
-  elif [ "$VS140COMNTOOLS" != "" ] ; then
-    vsver=2015
-    vsvars="$VS140COMNTOOLS/vsvars32.bat"
-  else
+  #for ver in 2019 2017 ; do
+  #  for flavor in Enterprise Professional Community ; do
+  #    if [ -e "$SYSTEMDRIVE/Program Files (x86)/Microsoft Visual Studio/$ver/$flavor" ] ; then
+  #      vsver=$ver
+  #      vsvars="$SYSTEMDRIVE/Program Files (x86)/Microsoft Visual Studio/$ver/$flavor/Common7/Tools/VsDevCmd.bat"
+  #      break 2
+  #    fi
+  #  done
+  #done
+
+  if [ "$vsver" == "" ] ; then
+    if [ "$VS140COMNTOOLS" != "" ] ; then
+      vsver=2015
+      vsvars="$VS140COMNTOOLS/vsvars32.bat"
+    fi
+  fi
+
+  if [ "$vsver" == "" ] ; then
     echo "Could not detect any Visual Studio installation"
     exit 1
   fi
