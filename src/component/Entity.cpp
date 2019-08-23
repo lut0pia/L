@@ -63,7 +63,7 @@ void Entity::load(const char* path) {
 }
 
 void Entity::destroy(Entity* e) {
-  if(_destroy_queue.find(e)==-1)
+  if(_destroy_queue.find(e) == uintptr_t(-1))
     _destroy_queue.push(e);
 }
 void Entity::flush_destroy_queue() {
