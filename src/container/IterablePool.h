@@ -19,7 +19,7 @@ namespace L {
     void deallocate(T* p) {
       _pool.deallocate(p);
       const uintptr_t i = _objects.find(p);
-      if(i!=-1)
+      if(i != uintptr_t(-1))
         _objects.erase_fast(i);
     }
     const Array<T*>& objects() const { return _objects; }
