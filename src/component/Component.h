@@ -85,7 +85,7 @@ namespace L {
 #define L_COMPONENT_HAS_WIN_EVENT(name) static inline void win_event_all(const Window::Event& e) { win_event_all_impl<name>(e); }
 #define L_COMPONENT_HAS_DEV_EVENT(name) static inline void dev_event_all(const Device::Event& e) { dev_event_all_impl<name>(e); }
 
-#define L_COMPONENT_FUNCTION(cname,fname,n,...) ScriptContext::type_value(Type<cname*>::description(),Symbol(fname)) = (ScriptNativeFunction)([](ScriptContext& c) {L_ASSERT(c.param_count()>=n && c.current_self().is<cname*>());__VA_ARGS__})
+#define L_COMPONENT_FUNCTION(cname,fname,n,...) ScriptContext::type_value(Type<cname*>::description(),Symbol(fname)) = (ScriptNativeFunction)([](ScriptContext& c) {L_ASSERT(int64_t(c.param_count())>=n && c.current_self().is<cname*>());__VA_ARGS__})
 #define L_COMPONENT_METHOD(cname,fname,n,...) L_COMPONENT_FUNCTION(cname,fname,n,c.current_self().as<cname*>()->__VA_ARGS__;)
 #define L_COMPONENT_RETURN_METHOD(cname,fname,n,...) L_COMPONENT_FUNCTION(cname,fname,n,c.return_value() = c.current_self().as<cname*>()->__VA_ARGS__;)
 #define L_COMPONENT_ADD(cname,fname) L_COMPONENT_FUNCTION(Entity,fname,0,c.return_value() = c.current_self().as<Entity*>()->add<cname>();)
