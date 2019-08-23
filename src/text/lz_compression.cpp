@@ -47,7 +47,6 @@ void L::lz_compress(const void* in_data_void, size_t in_size, Stream& out_stream
   const uint8_t* in_data_start((uint8_t*)in_data_void);
   const uint8_t* in_data(in_data_start);
   const uint8_t* in_data_needle(in_data);
-  const size_t in_start_size(in_size);
   while(in_size>0) {
     size_t pattern_size;
     if(const uint8_t* pattern = find_pattern(max(in_data_start, in_data_needle-0x2000), in_data_needle, in_size, &pattern_size)) {
