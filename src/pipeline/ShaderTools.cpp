@@ -150,7 +150,7 @@ void ShaderTools::reflect(Shader::Intermediate& intermediate) {
     Shader::Binding binding {};
 
     for_opcodes(binary, size, OpName, [&](const uint32_t* name) {
-      if(!binding.name && name[1]==variable_id || name[1]==type_id) {
+      if((!binding.name && name[1]==variable_id) || name[1]==type_id) {
         binding.name = (const char*)(name+2);
       }
     });
