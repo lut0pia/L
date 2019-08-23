@@ -1,6 +1,4 @@
-#pragma once
-
-// CSTD
+// C
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
@@ -10,6 +8,6 @@
 #include <cfloat>
 #include <ctime>
 
-// STL
+// C++
 #include <initializer_list>
 #include <limits>
