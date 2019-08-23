@@ -19,7 +19,7 @@ namespace L {
     inline Component() {}
     inline Component(const Component&) {}
     inline Component& operator=(const Component&) { return *this; }
-    inline ~Component() { entity()->remove(this); }
+    inline virtual ~Component() { entity()->remove(this); }
     inline Entity* entity() const { return _entity; }
 
     virtual void update_components() {}
