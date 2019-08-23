@@ -4,7 +4,7 @@
 
 using namespace L;
 
-DescriptorSet::DescriptorSet(const Pipeline& pipeline) : _set(0), _pipeline(pipeline) {
+DescriptorSet::DescriptorSet(const Pipeline& pipeline) : _pipeline(pipeline), _set(0) {
   L_SCOPE_MARKER("DescriptorSet creation");
 
   if(!Vulkan::find_desc_set(pipeline, _set)) {
