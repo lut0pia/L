@@ -46,11 +46,7 @@ public:
   void update() {
     int bytes_read;
     while((bytes_read = read(_fd, &_jse, sizeof(_jse))) == sizeof(_jse)) {
-      bool issue_event(true);
-      if(_jse.type&JS_EVENT_INIT) { // It's an init event
-        issue_event = false; // We don't want to create events for that
-        _jse.type &= ~JS_EVENT_INIT;
-      }
+      _jse.type &= ~JS_EVENT_INIT; // We don't care that it's an init event
       switch(_jse.type) {
         case JS_EVENT_BUTTON:
           map_button(Button::GamepadFaceBottom, 0);
