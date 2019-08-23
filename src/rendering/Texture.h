@@ -34,7 +34,7 @@ namespace L {
     inline VkFormat format() const { return _format; }
     inline operator VkImage() { return _image; }
     inline operator VkDeviceMemory() { return _memory; }
-    inline operator const VkImageView() const { return _view; }
+    inline operator VkImageView() const { return _view; }
 
     static const Texture& black();
 
