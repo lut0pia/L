@@ -15,7 +15,7 @@ void mainjob(void*) {
   flush_profiling();
 #endif
 }
-int main(int argc, const char* argv[]) {
+int main(int, const char*[]) {
   TypeInit();
 
 #if L_DEBUG
