@@ -94,8 +94,12 @@ public:
     _opened = false;
   }
 
-  void title(const char* str) override {}
-  void resize(uint32_t width, uint32_t height) override {}
+  void title(const char*) override {
+    warning("Setting window title is unsupported for X windows");
+  }
+  void resize(uint32_t, uint32_t) override {
+    warning("Resizing window is unsupported for X windows");
+  }
   void create_vulkan_surface(VkInstance instance, VkSurfaceKHR* surface) override {
     VkXlibSurfaceCreateInfoKHR create_info {};
     create_info.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
