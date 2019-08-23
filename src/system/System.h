@@ -11,10 +11,6 @@ namespace L {
     int call(const char*); // Only makes a system call
     void sleep(int milliseconds);
     void sleep(const Time&);
-    void beep(uint32_t frequency, uint32_t milliseconds);
-    void toClipboard(const String&);
-    String fromClipboard();
-    String env(const char*);
     String pwd();
     Vector2i screenSize();
 

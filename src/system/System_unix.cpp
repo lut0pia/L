@@ -10,15 +10,6 @@ using namespace System;
 void System::sleep(const Time& t) {
   usleep(t.microseconds());
 }
-void System::beep(uint32_t frequency,uint32_t milliseconds) {
-  error("Cannot beep under UNIX.");
-}
-void System::toClipboard(const String& data) {
-  error("System::toClipboard not implemented.");
-}
-String System::fromClipboard() {
-  error("System::fromClipboard not implemented.");
-}
 String System::pwd() {
   String wtr;
   call("pwd", wtr);
