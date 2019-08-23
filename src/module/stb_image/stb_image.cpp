@@ -7,11 +7,11 @@ L_PUSH_NO_WARNINGS
 
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_STATIC
-#include "stb_image.h"
+#include <stb_image.h>
 
 #define STB_DXT_IMPLEMENTATION
 #define STB_DXT_STATIC
-#include "stb_dxt.h"
+#include <stb_dxt.h>
 
 L_POP_NO_WARNINGS
 
