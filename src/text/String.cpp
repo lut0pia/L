@@ -14,7 +14,7 @@ String::String(const char* buffer, size_t length) : Array<char>(length+1) {
   operator[](length) = '\0';
 }
 String::String(const String& str, size_t pos, size_t length)
-  : Array<char>((length = (length==-1)?str.size()-pos:length)+1) {
+  : Array<char>((length = (length == size_t(-1)) ? str.size() - pos : length) + 1) {
   memcpy(&operator[](0),&str[pos],length);
   operator[](length) = '\0';
 }
