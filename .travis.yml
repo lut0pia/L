@@ -15,7 +15,7 @@ addons:
 
 cache:
   directories:
-    - pmk # Avoid rebuilding premake everytime
+    - pmk # Avoid downloading premake everytime
 
 script: ./run.sh build dbg
 
