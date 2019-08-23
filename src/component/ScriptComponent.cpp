@@ -36,7 +36,7 @@ void ScriptComponent::script_registration() {
       Engine::timescale(c.param(0).get<float>());
     c.return_value() = Engine::timescale();
   });
-  L_FUNCTION("engine-clear", {
+  ScriptContext::global("engine-clear") = (ScriptNativeFunction)([](ScriptContext&) {
     Engine::add_deferred_action({[](void*) {
       Engine::clear();
     }});
