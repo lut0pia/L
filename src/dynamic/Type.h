@@ -11,7 +11,7 @@ namespace L {
   struct TypeDescription{
     // Mandatory
     Symbol name;
-    int size;
+    size_t size;
 
     void(*ctr)(void*);
     void* (*ctrnew)();
