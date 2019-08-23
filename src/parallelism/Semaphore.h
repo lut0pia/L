@@ -9,7 +9,7 @@ namespace L {
   protected:
     Raw<sizeof(void*)*4> _data;
   public:
-    Semaphore(uint32_t initial_count = 0, uint32_t max_count = 1<<30);
+    Semaphore(uint32_t initial_count = 0);
     ~Semaphore();
     bool try_get();
     void get();

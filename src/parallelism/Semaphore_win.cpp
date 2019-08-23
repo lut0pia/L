@@ -7,9 +7,9 @@ using namespace L;
 
 #define _handle (_data.as<HANDLE>())
 
-Semaphore::Semaphore(uint32_t initial_count, uint32_t max_count) {
-  _handle = CreateSemaphore(NULL, initial_count, max_count, NULL);
-  L_ASSERT(_handle!=NULL);
+Semaphore::Semaphore(uint32_t initial_count) {
+  _handle = CreateSemaphore(NULL, initial_count, 1 << 30, NULL);
+  L_ASSERT(_handle != NULL);
 }
 Semaphore::~Semaphore() {
   CloseHandle(_handle);
