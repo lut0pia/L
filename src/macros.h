@@ -22,10 +22,18 @@
   __pragma(warning(disable: 4701))
 #define L_POP_NO_WARNINGS __pragma(warning(pop))
 #else
+#if __GNUC__ >= 7
+#define L_GCC7_IGNORE_WARNINGS \
+  _Pragma("GCC diagnostic ignored \"-Wimplicit-fallthrough\"")
+#else
+#define L_GCC7_IGNORE_WARNINGS
+#endif
 #define L_PUSH_NO_WARNINGS \
   _Pragma("GCC diagnostic push") \
   _Pragma("GCC diagnostic ignored \"-Wall\"") \
-  _Pragma("GCC diagnostic ignored \"-Wimplicit-fallthrough\"") \
+  _Pragma("GCC diagnostic ignored \"-Wpedantic\"") \
+  _Pragma("GCC diagnostic ignored \"-Wextra\"") \
+  L_GCC7_IGNORE_WARNINGS \
   _Pragma("GCC diagnostic ignored \"-Wunused-function\"") \
   _Pragma("GCC diagnostic ignored \"-Wunused-value\"") \
   _Pragma("GCC diagnostic ignored \"-Wunused-parameter\"")
