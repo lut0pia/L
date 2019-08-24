@@ -37,7 +37,7 @@ bool stb_truetype_loader(ResourceSlot& slot, Font::Intermediate& intermediate) {
   uint32_t range_start(0), range_end(256);
   for(uint32_t utf32(range_start); utf32<range_end; utf32++) {
     Font::Glyph& glyph(intermediate.glyphs[utf32]);
-    int w, h, advance, ox, oy;
+    int w(0), h(0), advance(0), ox(0), oy(0);
     unsigned char* bmp = stbtt_GetCodepointBitmap(&font, bmp_scale, bmp_scale, utf32, &w, &h, 0, 0);
     stbtt_GetCodepointHMetrics(&font, utf32, &advance, nullptr);
     stbtt_GetCodepointBitmapBox(&font, utf32, 1.f, 1.f, &ox, &oy, nullptr, nullptr);

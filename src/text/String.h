@@ -71,8 +71,8 @@ namespace L {
   inline String operator+(const char* a, const String& b) {return String(a)+b;}
   inline Stream& operator<<(Stream &s,const String& v) { s.write(v.begin(),v.size()); return s; }
   inline Stream& operator<(Stream &s, const String& v) { s << v.size() << ' '; s.write(v.begin(), v.size()); return s << '\n'; }
-  inline Stream& operator>(Stream &s, String& v) { size_t size; s > size; v.size(size); s.read(v.begin(), size); return s; }
+  inline Stream& operator>(Stream &s, String& v) { size_t size(0); s > size; v.size(size); s.read(v.begin(), size); return s; }
   inline Stream& operator<=(Stream &s, const String& v) { s <= v.size(); s.write(v.begin(), v.size()); return s; }
-  inline Stream& operator>=(Stream &s, String& v) { size_t size; s >= size; v.size(size); s.read(v.begin(), size); return s; }
+  inline Stream& operator>=(Stream &s, String& v) { size_t size(0); s >= size; v.size(size); s.read(v.begin(), size); return s; }
   inline uint32_t hash(const String& v){ return hash(v.begin()); }
 }

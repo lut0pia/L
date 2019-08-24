@@ -118,7 +118,7 @@ static size_t find_type_size(const uint32_t* binary, size_t size, uint32_t type_
         const uint32_t struct_member_count(read_word_count(type)-2);
         const uint32_t last_member_type_id(type[struct_member_count+1]);
         const size_t last_member_size(find_type_size(binary, size, last_member_type_id));
-        uint32_t last_member_offset;
+        uint32_t last_member_offset(0);
         for_opcodes(binary, size, OpMemberDecorate, [&](const uint32_t* decoration) {
           if(decoration[1]==type_id && decoration[2]==struct_member_count-1 && decoration[3]==DeOffset) {
             last_member_offset = decoration[4];
