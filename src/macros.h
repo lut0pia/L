@@ -37,6 +37,7 @@
   _Pragma("GCC diagnostic ignored \"-Wunused-function\"") \
   _Pragma("GCC diagnostic ignored \"-Wunused-value\"") \
   _Pragma("GCC diagnostic ignored \"-Wunused-parameter\"") \
+  _Pragma("GCC diagnostic ignored \"-Wmaybe-uninitialized\"") \
   L_GCC7_IGNORE_WARNINGS
 #define L_POP_NO_WARNINGS _Pragma("GCC diagnostic pop")
 #endif
