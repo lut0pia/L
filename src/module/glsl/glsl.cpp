@@ -5,8 +5,12 @@
 #include <L/src/rendering/shader_lib.h>
 #include <L/src/stream/CFileStream.h>
 
+L_PUSH_NO_WARNINGS
+
 #include <glslang/Public/ShaderLang.h>
 #include <SPIRV/GlslangToSpv.h>
+
+L_POP_NO_WARNINGS
 
 using namespace L;
 

@@ -1,5 +1,5 @@
 filter {"configurations:not Release"}
-  includedirs {os.getcwd() .. "/include"}
+  sysincludedirs {os.getcwd() .. "/include"}
   libdirs {os.getcwd() .. "/lib"}
 filter {"configurations:Debug", "system:Windows"}
   links {"glslangd", "HLSLd", "OGLCompilerd", "OSDependentd", "SPIRVd"}
