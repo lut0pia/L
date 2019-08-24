@@ -139,7 +139,7 @@ bool glsl_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) {
     (const char*)source_buffer.data(),
   };
   const int shader_string_lengths[] = {
-    (intermediate.stage == VK_SHADER_STAGE_FRAGMENT_BIT ? sizeof(frag_intro) : sizeof(vert_intro)) - 1,
+    int(intermediate.stage == VK_SHADER_STAGE_FRAGMENT_BIT ? sizeof(frag_intro) : sizeof(vert_intro)) - 1,
     int(source_buffer.size()),
   };
   const char* shader_filenames[] = {
