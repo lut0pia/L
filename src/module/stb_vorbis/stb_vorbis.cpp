@@ -2,6 +2,7 @@
 #include <L/src/container/Array.h>
 #include <L/src/container/Buffer.h>
 #include <L/src/engine/Resource.inl>
+#include <L/src/macros.h>
 #include <L/src/stream/CFileStream.h>
 
 L_PUSH_NO_WARNINGS
