@@ -16,7 +16,7 @@ namespace L {
       other._size = 0;
     }
     inline Buffer(size_t size) : _data(Memory::alloc(size)), _size(size) {}
-    inline Buffer(void* data, size_t size) : _data(Memory::alloc(size)), _size(size) {
+    inline Buffer(const void* data, size_t size) : _data(Memory::alloc(size)), _size(size) {
       memcpy(_data, data, _size);
     }
     inline ~Buffer() {
