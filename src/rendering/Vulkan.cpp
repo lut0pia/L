@@ -63,20 +63,18 @@ namespace L {
   }
 }
 
+#ifdef L_DEBUG
 static VKAPI_ATTR VkBool32 VKAPI_CALL debug_callback(VkDebugReportFlagsEXT, VkDebugReportObjectTypeEXT, uint64_t, size_t, int32_t, const char*, const char* msg, void*) {
   err << "Vulkan debug: " << msg << '\n';
   return VK_FALSE;
 }
+#endif
 
 void Vulkan::init() {
 #ifdef L_WINDOWS
   _putenv("DISABLE_VK_LAYER_VALVE_steam_overlay_1=1");
 #endif
   L_SCOPE_MARKER("Vulkan::init");
-  const char* validation_layers[] = {
-    "VK_LAYER_LUNARG_standard_validation",
-    //"VK_LAYER_RENDERDOC_Capture",
-  };
 
   { // Create instance
     VkApplicationInfo app_info = {};
@@ -99,6 +97,10 @@ void Vulkan::init() {
     create_info.ppEnabledExtensionNames = required_extensions;
 
 #ifdef L_DEBUG
+    const char* validation_layers[] = {
+      "VK_LAYER_LUNARG_standard_validation",
+      //"VK_LAYER_RENDERDOC_Capture",
+    };
     create_info.enabledLayerCount = L_COUNT_OF(validation_layers);
     create_info.ppEnabledLayerNames = validation_layers;
 #endif
