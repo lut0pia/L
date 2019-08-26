@@ -1,5 +1,21 @@
-#include "L.h"
+#include "engine/Engine.h"
 #include "engine/Resource.inl"
+#include "engine/Settings.h"
+#include "network/Network.h"
+
+#include "component/AudioListenerComponent.h"
+#include "component/AudioSourceComponent.h"
+#include "component/Camera.h"
+#include "component/Collider.h"
+#include "component/GUIComponent.h"
+#include "component/HierarchyComponent.h"
+#include "component/MidiSourceComponent.h"
+#include "component/NameComponent.h"
+#include "component/PostProcessComponent.h"
+#include "component/Primitive.h"
+#include "component/RigidBody.h"
+#include "component/ScriptComponent.h"
+#include "component/Transform.h"
 
 using namespace L;
 
