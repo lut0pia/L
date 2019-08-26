@@ -2,7 +2,7 @@
 #include <L/src/container/Buffer.h>
 #include <L/src/engine/Resource.inl>
 #include <L/src/rendering/Mesh.h>
-#include <L/src/rendering/MeshBuilder.h>
+#include <L/src/pipeline/MeshBuilder.h>
 
 using namespace L;
 
@@ -35,6 +35,7 @@ bool obj_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
     Vector2f uv;
     Vector3f normal;
   };
+  MeshBuilder mesh_builder;
 
   Buffer buffer(slot.read_source_file());
   const void* data(buffer.data());
@@ -83,10 +84,10 @@ bool obj_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
 
           if(i==0) firstVertex = vertex;
           else if(i>2) {
-            intermediate.builder.add_vertex(&firstVertex, sizeof(Vertex));
-            intermediate.builder.add_vertex(&lastVertex, sizeof(Vertex));
+            mesh_builder.add_vertex(&firstVertex, sizeof(Vertex));
+            mesh_builder.add_vertex(&lastVertex, sizeof(Vertex));
           }
-          intermediate.builder.add_vertex(&vertex, sizeof(Vertex));
+          mesh_builder.add_vertex(&vertex, sizeof(Vertex));
           lastVertex = vertex;
         }
         break;
@@ -95,8 +96,10 @@ bool obj_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
   }
 
   if(normals.empty())
-    intermediate.builder.compute_normals(0, sizeof(Vector2f)+sizeof(Vector3f), sizeof(Vertex));
+    mesh_builder.compute_normals(0, sizeof(Vector2f)+sizeof(Vector3f), sizeof(Vertex));
 
+  intermediate.vertices = Buffer(mesh_builder.vertices(), mesh_builder.vertices_size());
+  intermediate.indices = Buffer(mesh_builder.indices(), mesh_builder.index_count() * sizeof(uint16_t));
   intermediate.formats = {
     VK_FORMAT_R32G32B32_SFLOAT,
     VK_FORMAT_R32G32_SFLOAT,

@@ -1,21 +1,30 @@
 #include "Mesh.h"
 
-#include "MeshBuilder.h"
-
 using namespace L;
 
 Mesh::Mesh(size_t count, const void* data, size_t size, const VkFormat* formats, size_t fcount, const uint16_t* iarray, size_t icount)
   : Mesh() {
   load(count, data, size, formats, fcount, iarray, icount);
 }
-Mesh::Mesh(const MeshBuilder& mb, const VkFormat* formats, size_t fcount)
-  : Mesh() {
-  load(mb, formats, fcount);
+Mesh::Mesh(const Intermediate& intermediate) : Mesh() {
+  size_t vertex_size = 0;
+  for(const VkFormat& format : intermediate.formats) {
+    vertex_size += Vulkan::format_size(format);
+  }
+  load(
+    intermediate.vertices.size() / vertex_size,
+    intermediate.vertices,
+    intermediate.vertices.size(),
+    intermediate.formats.begin(),
+    intermediate.formats.size(),
+    (const uint16_t*)(const void*)intermediate.indices,
+    intermediate.indices.size() / 2);
 }
 Mesh::~Mesh() {
   if(_vertex_buffer) Memory::delete_type(_vertex_buffer);
   if(_index_buffer) Memory::delete_type(_index_buffer);
 }
+
 void Mesh::load(size_t count, const void* data, size_t size, const VkFormat* formats, size_t fcount, const uint16_t* iarray, size_t icount) {
   if(_vertex_buffer) {
     Memory::delete_type(_vertex_buffer);
@@ -30,7 +39,7 @@ void Mesh::load(size_t count, const void* data, size_t size, const VkFormat* for
   _vertex_buffer = Memory::new_type<GPUBuffer>(size, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
   _vertex_buffer->load(data);
   if(iarray) {
-    _index_buffer = Memory::new_type<GPUBuffer>(icount*sizeof(*iarray), VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
+    _index_buffer = Memory::new_type<GPUBuffer>(icount * sizeof(*iarray), VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
     _index_buffer->load(iarray);
     _count = uint32_t(icount);
   } else {
@@ -38,13 +47,10 @@ void Mesh::load(size_t count, const void* data, size_t size, const VkFormat* for
   }
 
   // Compute bounds
-  const size_t vertex_size(size/count);
+  const size_t vertex_size(size / count);
   _bounds = (*(Vector3f*)data);
-  for(uintptr_t i(1); i<count; i++)
-    _bounds.add(*(Vector3f*)((uint8_t*)data+vertex_size*i));
-}
-void Mesh::load(const MeshBuilder& mb, const VkFormat* formats, size_t fcount) {
-  load(mb.vertex_count(), mb.vertices(), mb.vertices_size(), formats, fcount, mb.indices(), mb.index_count());
+  for(uintptr_t i(1); i < count; i++)
+    _bounds.add(*(Vector3f*)((uint8_t*)data + vertex_size*i));
 }
 void Mesh::draw(VkCommandBuffer cmd_buffer) const {
   if(_vertex_buffer) {
@@ -90,7 +96,7 @@ const Mesh& Mesh::wire_cube() {
     1,1,-1,   1,1,1,
   };
   static const VkFormat formats[] {VK_FORMAT_R32G32B32_SFLOAT};
-  static Mesh mesh(12*2, wireCube, sizeof(wireCube), formats, L_COUNT_OF(formats));
+  static Mesh mesh(12 * 2, wireCube, sizeof(wireCube), formats, L_COUNT_OF(formats));
   return mesh;
 }
 const Mesh& Mesh::wire_sphere() {
@@ -113,6 +119,6 @@ const Mesh& Mesh::wire_sphere() {
     1,0,0, d,-d,0,   d,-d,0,  0,-1,0,
   };
   static const VkFormat formats[] {VK_FORMAT_R32G32B32_SFLOAT};
-  static Mesh mesh(24*2, wireSphere, sizeof(wireSphere), formats, L_COUNT_OF(formats));
+  static Mesh mesh(24 * 2, wireSphere, sizeof(wireSphere), formats, L_COUNT_OF(formats));
   return mesh;
 }
