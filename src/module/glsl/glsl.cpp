@@ -121,13 +121,17 @@ static const TBuiltInResource builtin_resources = {
     },
 };
 
+static const Symbol stage_symbol("stage"), frag_symbol("frag"), vert_symbol("vert");
+
 bool glsl_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) {
   intermediate.stage = VK_SHADER_STAGE_ALL;
   EShLanguage shader_language;
-  if(!strcmp(strrchr(slot.path, '.'), ".frag")) {
+  const Symbol stage_param = slot.parameter(stage_symbol);
+
+  if(!strcmp(strrchr(slot.path, '.'), ".frag") || stage_param == frag_symbol) {
     intermediate.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
     shader_language = EShLanguage::EShLangFragment;
-  } else if(!strcmp(strrchr(slot.path, '.'), ".vert")) {
+  } else if(!strcmp(strrchr(slot.path, '.'), ".vert") || stage_param == vert_symbol) {
     intermediate.stage = VK_SHADER_STAGE_VERTEX_BIT;
     shader_language = EShLanguage::EShLangVertex;
   } else {
