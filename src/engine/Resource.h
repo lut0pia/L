@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../container/Buffer.h"
+#include "../container/Table.h"
 #include "../math/math.h"
 #include "../text/String.h"
 #include "../text/Symbol.h"
@@ -9,7 +11,9 @@ namespace L {
   class Buffer;
   struct ResourceSlot {
     Array<ResourceSlot*> dependencies;
-    Symbol id, path;
+    Table<Symbol, Symbol> parameters;
+    Symbol id, path, ext;
+    Buffer source_buffer;
     Date mtime;
     bool persistent : 1;
     enum : uint32_t { // 32bits because of atomic operations
@@ -18,13 +22,11 @@ namespace L {
     void(*load_function)(ResourceSlot&);
     void* value;
 
-    inline ResourceSlot(const char* url) : id(url), path(url, min<size_t>(strlen(url), strchr(url, '?')-url)),
-      persistent(false), state(Unloaded), value(nullptr) {
-    }
+    ResourceSlot(const char* url);
 
-    Symbol parameter(const char* key);
-    bool parameter(const char* key, uint32_t& value);
-    bool parameter(const char* key, float& value);
+    Symbol parameter(const Symbol& key) const;
+    bool parameter(const Symbol& key, uint32_t& value) const;
+    bool parameter(const Symbol& key, float& value) const;
 
     bool flush_all_dependencies();
     void load();

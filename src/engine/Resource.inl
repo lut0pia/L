@@ -49,9 +49,7 @@ namespace L {
         }
         return slot.flush_all_dependencies();
       } else { // Try to load it from source
-        const char* ext(strrchr(slot.path, '.'));
-        ext = ext ? ext + 1 : (const char*)slot.path;
-        if(Loader* loader = _loaders.find(ext)) {
+        if(Loader* loader = _loaders.find(slot.ext)) {
           if((*loader)(slot, intermediate)) {
             store_intermediate(slot, intermediate);
             return slot.flush_all_dependencies();
@@ -59,7 +57,7 @@ namespace L {
             warning("Unable to load resource: %s", slot.id);
           }
         } else {
-          warning("Unable to load resource with extension: %s", ext);
+          warning("Unable to load resource with extension: %s", slot.ext);
         }
         return false;
       }

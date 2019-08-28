@@ -17,28 +17,39 @@ static Pool<ResourceSlot> _pool;
 static Array<ResourceSlot*> _slots;
 static Table<Symbol, ResourceSlot*> _table;
 
-Symbol ResourceSlot::parameter(const char* key) {
-  const size_t key_length(strlen(key));
-  const char* pair(id);
-  while(true) {
-    pair = strstr(pair+1, key); // Find all occurences of the key
-    if(!pair) break; // Couldn't find the key
-    if(pair[-1]!='?' && pair[-1]!='&') continue; // Make sure it's prefixed with ? or &
-    if(pair[key_length]!='=') continue; // Make sure it's suffixed with =
-    const char* param_string(pair+key_length+1);
-    const size_t param_length(strcspn(param_string, "&\0"));
-    return Symbol(param_string, param_length);
+ResourceSlot::ResourceSlot(const char* url) : id(url),
+path(url, min<size_t>(strlen(url), strchr(url, '?') - url)),
+persistent(false), state(Unloaded), value(nullptr) {
+  // Extract file extension from path
+  const char* dot = strrchr(path, '.');
+  ext = dot ? dot + 1 : (const char*)path;
+
+  // Extract parameters from url
+  const char* pair = strchr(id, '?');
+  while(pair && *pair) {
+    pair += 1;
+    const char* equal = strchr(pair, '=');
+    if(!equal) break;
+
+    const char* val = equal + 1;
+    const uintptr_t val_len = strcspn(val, "&\0");
+    parameters[Symbol(pair, equal - pair)] = Symbol(val, val_len);
+
+    pair = val + val_len;
   }
-  return Symbol();
 }
-bool ResourceSlot::parameter(const char* key, uint32_t& param_value) {
+
+Symbol ResourceSlot::parameter(const Symbol& key) const {
+  return parameters.get(key, Symbol());
+}
+bool ResourceSlot::parameter(const Symbol& key, uint32_t& param_value) const {
   if(const Symbol param = parameter(key)) {
     param_value = atoi(param);
     return true;
   }
   return false;
 }
-bool ResourceSlot::parameter(const char* key, float& param_value) {
+bool ResourceSlot::parameter(const Symbol& key, float& param_value) const {
   if(const Symbol param = parameter(key)) {
     param_value = float(atof(param));
     return true;
@@ -82,6 +93,10 @@ bool ResourceSlot::flush() {
 }
 
 Buffer ResourceSlot::read_source_file() {
+  // If a source buffer was provided, use it
+  if(source_buffer) {
+    return Buffer(source_buffer, source_buffer.size());
+  }
   // Try to find the source file in the archive
   if(Archive::Entry entry = archive.find("file:"+String(id))) {
     Date file_mtime;
