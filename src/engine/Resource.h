@@ -85,5 +85,11 @@ namespace L {
       v = id ? Resource(id) : Resource();
       return s;
     }
+
+    friend inline uint32_t hash(const Resource& v) {
+      uint32_t h = hash(v.slot());
+      hash_combine(h, v.slot() ? v.slot()->value : nullptr);
+      return h;
+    }
   };
 }
