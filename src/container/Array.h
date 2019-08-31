@@ -170,5 +170,7 @@ namespace L {
     friend Stream& operator>(Stream& s, Array& v) { T e; while(true) { if(strcmp(s.word(), "-")) break; s > e; v.push(e); } return s; }
     friend Stream& operator<=(Stream& s, const Array& v) { s <= v.size(); for(const T& e : v) s <= e; return s; }
     friend Stream& operator>=(Stream& s, Array& v) { auto in_size(v.size()); s >= in_size; v.size(in_size); for(T& e : v) s >= e; return s; }
+
+    friend uint32_t hash(const Array& v) { uint32_t h = 0; for(const T& e : v) hash_combine(h, e); return h; }
   };
 }
