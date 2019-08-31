@@ -89,6 +89,7 @@ namespace L {
     friend inline uint32_t hash(const Resource& v) {
       uint32_t h = hash(v.slot());
       hash_combine(h, v.slot() ? v.slot()->value : nullptr);
+      hash_combine(h, v.slot() ? v.slot()->state : ResourceSlot::Unloaded);
       return h;
     }
   };

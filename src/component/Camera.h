@@ -4,6 +4,7 @@
 #include "../engine/Resource.h"
 #include "../rendering/GPUBuffer.h"
 #include "../rendering/Framebuffer.h"
+#include "../rendering/Material.h"
 #include "../math/Interval.h"
 #include "../time/Time.h"
 
@@ -21,6 +22,7 @@ namespace L {
       Ortho
     } _projectionType;
     float _fovy, _near, _far, _left, _right, _bottom, _top;
+    Material _present_material;
     VkCommandBuffer _cmd_buffer;
     VkViewport _vk_viewport;
     Framebuffer _geometry_buffer, _light_buffer;
@@ -58,6 +60,7 @@ namespace L {
     inline const Matrix44f& view() const { return _view; }
     inline const Matrix44f& projection() const { return _projection; }
     inline const Matrix44f& viewProjection() const { return _viewProjection; }
+    inline Material* present_material() { return &_present_material; }
     inline Framebuffer& geometry_buffer() { return _geometry_buffer; }
     inline const Framebuffer& geometry_buffer() const { return _geometry_buffer; }
     inline Framebuffer& light_buffer() { return _light_buffer; }

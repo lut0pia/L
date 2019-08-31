@@ -54,6 +54,7 @@ void Camera::unpack(const Map<Symbol, Var>& data) {
 }
 void Camera::script_registration() {
   L_COMPONENT_BIND(Camera, "camera");
+  L_COMPONENT_RETURN_METHOD(Camera, "present-material", 0, present_material());
   L_COMPONENT_METHOD(Camera, "perspective", 3, perspective(c.param(0), c.param(1), c.param(2)));
   L_COMPONENT_METHOD(Camera, "ortho", 4, ortho(c.param(0), c.param(1), c.param(2), c.param(3)));
   L_COMPONENT_METHOD(Camera, "viewport", 4, viewport(Interval2f(Vector2f(c.param(0).get<float>(), c.param(1).get<float>()), Vector2f(c.param(2).get<float>(), c.param(3).get<float>()))));
@@ -98,18 +99,12 @@ void Camera::prerender(VkCommandBuffer cmd_buffer) {
 
   VkViewport viewport {0,0,float(_geometry_buffer.width()),float(_geometry_buffer.height()),0.f,1.f};
   vkCmdSetViewport(_cmd_buffer, 0, 1, &viewport);
+
+  _present_material.update();
 }
 void Camera::present() {
-  static Resource<Pipeline> present_pipeline(".inline?fragment=shader/present.frag&vertex=shader/fullscreen.vert&pass=present");
-  if(present_pipeline) {
-    DescriptorSet present_set(*present_pipeline);
-    present_set.set_descriptor("Shared", _shared_uniform.descriptor_info());
-    present_set.set_descriptor("light_buffer", VkDescriptorImageInfo {Vulkan::sampler(), _light_buffer.image_view(0), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
-    vkCmdBindPipeline(_cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *present_pipeline);
-    vkCmdSetViewport(_cmd_buffer, 0, 1, &_vk_viewport);
-    vkCmdBindDescriptorSets(_cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *present_pipeline, 0, 1, &present_set.set(), 0, nullptr);
-    vkCmdDraw(_cmd_buffer, 3, 1, 0, 0);
-  }
+  vkCmdSetViewport(_cmd_buffer, 0, 1, &_vk_viewport);
+  _present_material.draw(*this, RenderPass::present_pass());
 }
 
 void Camera::viewport(const Interval2f& i) {

@@ -151,9 +151,9 @@ Pipeline::Pipeline(const Intermediate& intermediate) {
 
   VkPipelineColorBlendAttachmentState colorBlendAttachment = {};
   colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-  if(intermediate.blend_override!=BlendOverride::None) {
+  if(intermediate.blend_override!=BlendMode::None) {
     switch(intermediate.blend_override) {
-      case BlendOverride::Mult:
+      case BlendMode::Mult:
         colorBlendAttachment.blendEnable = VK_TRUE;
         colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ZERO;
         colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_SRC_COLOR;

@@ -4,6 +4,11 @@
   (self.transform.move (vec 0 -20 10))
   (local camera (self.entity.require-camera))
   (camera.perspective 70 0.01 512)
+  ; Create present material
+  (camera.present-material|.shader 'fragment "shader/present.frag")
+  (camera.present-material|.shader 'vertex "shader/fullscreen.vert")
+  (camera.present-material|.render-pass 'present)
+  (camera.present-material|.vertex-count 3)
   ; Create cursor entity
   (set self.cursor (entity-make))
   (set self.cursor-transform (self.cursor.require-transform))
@@ -13,7 +18,9 @@
   (self.entity.require-rigidbody|.kinematic true)
   ; Create debug text
   (set self.text-gui (self.entity.add-gui))
-  (self.text-gui.material|.pipeline ".inline?fragment=shader/font.frag&vertex=shader/font.vert&pass=present")
+  (self.text-gui.material|.shader 'fragment "shader/font.frag")
+  (self.text-gui.material|.shader 'vertex "shader/font.vert")
+  (self.text-gui.material|.render-pass 'present)
   (self.text-gui.material|.font ".pixel")
   (self.text-gui.material|.color 'color "white")
   (self.text-gui.offset 10 -10)
@@ -22,7 +29,9 @@
   (self.text-gui.scale 18 18)
   ; Create logo
   (set self.logo-gui (self.entity.add-gui))
-  (self.logo-gui.material|.pipeline ".inline?fragment=shader/texture.frag&vertex=shader/quad.vert&pass=present")
+  (self.logo-gui.material|.shader 'fragment "shader/texture.frag")
+  (self.logo-gui.material|.shader 'vertex "shader/quad.vert")
+  (self.logo-gui.material|.render-pass 'present)
   (self.logo-gui.material|.texture 'tex "texture/logo.png?comp=bc3")
   (self.logo-gui.material|.vertex-count 6)
   (self.logo-gui.offset 10 10)

@@ -5,12 +5,11 @@
 #include "Shader.h"
 
 namespace L {
+  enum class BlendMode {
+    None, Mult,
+  };
   class Pipeline {
     L_NOCOPY(Pipeline)
-  public:
-    enum class BlendOverride {
-      None, Mult,
-    };
   protected:
     VkPipeline _pipeline;
     VkPipelineLayout _layout;
@@ -22,7 +21,7 @@ namespace L {
       Array<Resource<Shader>> shaders;
       Symbol render_pass;
       VkCullModeFlags cull_mode = VK_CULL_MODE_BACK_BIT;
-      BlendOverride blend_override = BlendOverride::None;
+      BlendMode blend_override = BlendMode::None;
     };
     Pipeline(const Intermediate& intermediate);
     ~Pipeline();
@@ -34,8 +33,5 @@ namespace L {
     inline VkDescriptorSetLayout desc_set_layout() const { return _desc_set_layout; }
     inline const Array<Shader::Binding>& bindings() const { return _bindings; }
     inline const RenderPass& render_pass() const { return *_render_pass; }
-
-    friend inline Stream& operator<=(Stream& s, const Intermediate& v) { return s <= v.shaders <= v.render_pass <= v.cull_mode <= v.blend_override; }
-    friend inline Stream& operator>=(Stream& s, Intermediate& v) { return s >= v.shaders >= v.render_pass >= v.cull_mode >= v.blend_override; }
   };
 }

@@ -79,16 +79,7 @@ void ScriptComponent::script_registration() {
     } else c.return_value() = nullptr;
   });
   // Material ///////////////////////////////////////////////////////////////////
-  L_METHOD(Material, "parent", 1, parent(c.param(0).get<String>()));
-  L_METHOD(Material, "pipeline", 1, pipeline(c.param(0).get<String>()));
-  L_METHOD(Material, "mesh", 1, mesh(c.param(0).get<String>()));
-  L_METHOD(Material, "font", 1, font(c.param(0).get<String>()));
-  L_METHOD(Material, "text", 1, text(c.param(0).get<String>()));
-  L_METHOD(Material, "color", 2, color(c.param(0).get<Symbol>(), c.param(1).get<Color>()));
-  L_METHOD(Material, "scalar", 2, scalar(c.param(0), c.param(1)));
-  L_METHOD(Material, "texture", 2, texture(c.param(0), c.param(1).get<String>()));
-  L_METHOD(Material, "vector", 2, vector(c.param(0), c.param(1)));
-  L_METHOD(Material, "vertex-count", 1, vertex_count(uint32_t(c.param(0).get<float>())));
+  Material::script_registration();
   // Devices ///////////////////////////////////////////////////////////////////
   L_FUNCTION("get-devices", {
     auto wtr(ref<Table<Var,Var>>());
