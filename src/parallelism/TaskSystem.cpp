@@ -126,6 +126,9 @@ void TaskSystem::init() {
 uint32_t TaskSystem::thread_count() {
   return actual_thread_count;
 }
+uint32_t TaskSystem::thread_id() {
+  return thread_index;
+}
 uint32_t TaskSystem::fiber_count() {
   return actual_fiber_count;
 }
