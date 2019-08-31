@@ -5,6 +5,10 @@
 #include "Semaphore.h"
 #include "../system/System.h"
 
+#ifdef _WIN32
+#include <Windows.h>
+#endif
+
 using namespace L;
 
 typedef void* FiberHandle;

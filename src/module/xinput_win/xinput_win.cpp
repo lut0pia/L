@@ -2,6 +2,7 @@
 #include <L/src/system/Device.h>
 #include <L/src/time/Timer.h>
 
+#include <Windows.h>
 #include <Xinput.h>
 
 using namespace L;

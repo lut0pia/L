@@ -1,10 +1,5 @@
 #include "Camera.h"
 
-#ifdef near
-#undef near
-#undef far
-#endif
-
 #include "../constants.h"
 #include "../engine/Resource.inl"
 #include "../rendering/Material.h"

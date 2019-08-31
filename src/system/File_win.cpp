@@ -1,5 +1,6 @@
 #include "File.h"
 
+#include <Windows.h>
 #include <sys/stat.h>
 
 using namespace L;
