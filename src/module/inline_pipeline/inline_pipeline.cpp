@@ -16,7 +16,7 @@ bool inline_pip_loader(ResourceSlot& slot, Pipeline::Intermediate& intermediate)
     intermediate.shaders.push(fragment_path);
   }
   for(Resource<Shader>& shader : intermediate.shaders) {
-    slot.dependencies.push(shader.slot());
+    slot.dependencies.push(const_cast<ResourceSlot*>(shader.slot()));
   }
 
   if(Symbol cull_mode_name = slot.parameter("cull")) {

@@ -13,19 +13,31 @@ Font::Font(const Intermediate& intermediate) : _atlas(intermediate.texture_inter
     }
   }
 }
-const Font::Glyph& Font::glyph(uint32_t utf32) {
+const Font::Glyph& Font::glyph(uint32_t utf32) const {
   static const Font::Glyph no_glyph {};
   const Glyph* glyph((utf32<128) ? (_ascii + utf32) : _glyphs.find(utf32));
   if(!glyph) glyph = &no_glyph;
   return *glyph;
 }
-const Font::TextMesh& Font::text_mesh(const char* str) {
+const Font::TextMesh& Font::text_mesh(const char* str) const {
   const uint32_t h(hash(str));
   if(TextMesh* found = _text_meshes.find(h)) {
     found->last_used = Time::now();
     return *found;
   } else {
-    update();
+    { // Removed unused cached text meshes
+      static const Time second(0, 0, 1);
+      const Time now(Time::now());
+      if(now - _last_update > second) {
+        Array<uint32_t> obsolete_text_meshes;
+        obsolete_text_meshes.clear();
+        for(const auto& tm : _text_meshes)
+          if(now - tm.value().last_used > second) // Not used for a second
+            obsolete_text_meshes.push(tm.key());
+        for(uint32_t obsolete_text_mesh : obsolete_text_meshes)
+          _text_meshes.remove(obsolete_text_mesh);
+      }
+    }
     TextMesh& wtr(_text_meshes[h]);
     Array<Vector4f> buffer;
     buffer.grow_to(strlen(str)*6);
@@ -65,20 +77,4 @@ const Font::TextMesh& Font::text_mesh(const char* str) {
     wtr.mesh.load(buffer.size(), &buffer[0], sizeof(Vector4f)*buffer.size(), formats, L_COUNT_OF(formats));
     return wtr;
   }
-}
-
-void Font::update() {
-  static const Time second(0, 0, 1);
-  const Time now(Time::now());
-  if(now-_last_update>second) {
-    _last_update = now;
-  } else return;
-
-  Array<uint32_t> obsolete_text_meshes;
-  obsolete_text_meshes.clear();
-  for(const auto& tm : _text_meshes)
-    if(now-tm.value().last_used>second) // Not used for a second
-      obsolete_text_meshes.push(tm.key());
-  for(uint32_t obsolete_text_mesh : obsolete_text_meshes)
-    _text_meshes.remove(obsolete_text_mesh);
 }

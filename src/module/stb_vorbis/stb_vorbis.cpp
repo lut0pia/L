@@ -31,7 +31,7 @@ public:
   ~VorbisStream() {
     stb_vorbis_close(_handle);
   }
-  void render(void* dst, uint32_t dst_sample_start, uint32_t dst_sample_count, float volume[2]) override {
+  void render(void* dst, uint32_t dst_sample_start, uint32_t dst_sample_count, float volume[2]) const override {
     if(_info.sample_rate==Audio::working_frequency) {
       if(abs(intptr_t(dst_sample_start)-intptr_t(_handle->current_loc))>Audio::working_frequency/2) // More than half a second difference
         stb_vorbis_seek(_handle, dst_sample_start);

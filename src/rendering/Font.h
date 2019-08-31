@@ -29,15 +29,14 @@ namespace L {
     Texture _atlas;
     Glyph _ascii[128]; // Fast path
     Table<uint32_t, Glyph> _glyphs;
-    Table<uint32_t, TextMesh> _text_meshes;
-    Time _last_update;
+    mutable Table<uint32_t, TextMesh> _text_meshes;
+    mutable Time _last_update;
     float _line_height;
 
   public:
     Font(const Intermediate&);
-    const Glyph& glyph(uint32_t utf32);
-    const TextMesh& text_mesh(const char*);
-    void update();
+    const Glyph& glyph(uint32_t utf32) const;
+    const TextMesh& text_mesh(const char*) const;
 
     inline const Texture& atlas() const { return _atlas; }
 

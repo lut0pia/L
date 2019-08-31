@@ -53,11 +53,8 @@ namespace L {
     inline Resource(const char* url) : _slot(ResourceSlot::find(url)) {
       _slot->load_function = load_function;
     }
-    inline T& operator*() { flush(); return *(T*)_slot->value; }
     inline const T& operator*() const { flush(); return *(T*)_slot->value; }
-    inline T* operator->() { flush(); return (T*)_slot->value; }
     inline const T* operator->() const { flush(); return (T*)_slot->value; }
-    inline ResourceSlot* slot() { return _slot; }
     inline const ResourceSlot* slot() const { return _slot; }
     inline bool is_set() const { return _slot!=nullptr; }
     inline bool is_loaded() const {

@@ -90,7 +90,7 @@ void Material::update() {
     _final_state.reset();
 
     // Go up material hierarchy to apply partial states
-    Material* mat(this);
+    const Material* mat(this);
     while(true) {
       _final_state.apply(mat->_partial_state);
 

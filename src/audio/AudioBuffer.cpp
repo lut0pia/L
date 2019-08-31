@@ -16,7 +16,7 @@ AudioBuffer::~AudioBuffer() {
   Memory::free(_data, _sample_count*sample_format_size(_format));
 }
 
-void AudioBuffer::render(void* buffer, uint32_t frame_start, uint32_t frame_count, float volume[2]) {
+void AudioBuffer::render(void* buffer, uint32_t frame_start, uint32_t frame_count, float volume[2]) const {
   if(frame_start<_sample_count) {
     const uint32_t copy_sample_count(min(frame_count, _sample_count-frame_start));
     Audio::render(buffer, (const char*)_data+frame_start*sample_format_size(_format), _format, copy_sample_count, volume);
