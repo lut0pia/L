@@ -35,7 +35,10 @@ bool obj_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
     Vector2f uv;
     Vector3f normal;
   };
-  MeshBuilder mesh_builder;
+  MeshBuilder mesh_builder(sizeof(Vertex));
+  mesh_builder.position_offset = 0;
+  mesh_builder.uv_offset = sizeof(Vector2f) + sizeof(Vector3f);
+  mesh_builder.normal_offset = sizeof(Vector2f) + sizeof(Vector3f);
 
   Buffer buffer(slot.read_source_file());
   const void* data(buffer.data());
@@ -84,10 +87,10 @@ bool obj_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
 
           if(i==0) firstVertex = vertex;
           else if(i>2) {
-            mesh_builder.add_vertex(&firstVertex, sizeof(Vertex));
-            mesh_builder.add_vertex(&lastVertex, sizeof(Vertex));
+            mesh_builder.add_vertex(&firstVertex);
+            mesh_builder.add_vertex(&lastVertex);
           }
-          mesh_builder.add_vertex(&vertex, sizeof(Vertex));
+          mesh_builder.add_vertex(&vertex);
           lastVertex = vertex;
         }
         break;
@@ -96,7 +99,7 @@ bool obj_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
   }
 
   if(normals.empty())
-    mesh_builder.compute_normals(0, sizeof(Vector2f)+sizeof(Vector3f), sizeof(Vertex));
+    mesh_builder.compute_normals();
 
   intermediate.vertices = Buffer(mesh_builder.vertices(), mesh_builder.vertices_size());
   intermediate.indices = Buffer(mesh_builder.indices(), mesh_builder.index_count() * sizeof(uint16_t));
