@@ -122,7 +122,7 @@ void ResourceSlot::store_source_file_to_archive() {
   }
 }
 Buffer ResourceSlot::read_archive() {
-  L_SCOPE_MARKER("ResourceSlot::read_archive");
+  L_SCOPE_MARKER("Resource read archive");
   if(Archive::Entry entry = archive.find(id)) {
     Date file_mtime;
     if(!File::mtime(path, file_mtime) || file_mtime<entry.date) {
@@ -134,7 +134,7 @@ Buffer ResourceSlot::read_archive() {
   return Buffer();
 }
 void ResourceSlot::write_archive(const void* data, size_t size) {
-  L_SCOPE_MARKER("ResourceSlot::write_archive");
+  L_SCOPE_MARKER("Resource write archive");
   archive.store(id, data, size);
 }
 
