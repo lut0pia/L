@@ -25,7 +25,7 @@ void GUIComponent::script_registration() {
   L_COMPONENT_BIND(GUIComponent, "gui");
   L_COMPONENT_RETURN_METHOD(GUIComponent, "material", 0, material());
   L_COMPONENT_METHOD(GUIComponent, "offset", 2, offset(Vector2i(c.param(0).get<int>(), c.param(1).get<int>())));
-  L_COMPONENT_METHOD(GUIComponent, "viewport-anchor", 2, viewport_anchor(Vector2f(c.param(0).get<float>(), c.param(1).get<float>())));
+  L_COMPONENT_METHOD(GUIComponent, "viewport_anchor", 2, viewport_anchor(Vector2f(c.param(0).get<float>(), c.param(1).get<float>())));
   L_COMPONENT_METHOD(GUIComponent, "anchor", 2, anchor(Vector2f(c.param(0).get<float>(), c.param(1).get<float>())));
   L_COMPONENT_METHOD(GUIComponent, "scale", 2, scale(Vector2f(c.param(0).get<float>(), c.param(1).get<float>())));
 }

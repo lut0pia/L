@@ -17,5 +17,5 @@ void HierarchyComponent::script_registration() {
   L_COMPONENT_METHOD(HierarchyComponent, "translation", 1, translation(c.param(0).get<Vector3f>()));
   L_COMPONENT_METHOD(HierarchyComponent, "rotation", 2, rotation(c.param(0).get<Vector3f>(), c.param(1).get<float>()));
   L_COMPONENT_METHOD(HierarchyComponent, "rotate", 2, rotate(c.param(0).get<Vector3f>(), c.param(1).get<float>()));
-  L_COMPONENT_METHOD(HierarchyComponent, "rotate-absolute", 2, rotate_absolute(c.param(0).get<Vector3f>(), c.param(1).get<float>()));
+  L_COMPONENT_METHOD(HierarchyComponent, "rotate_absolute", 2, rotate_absolute(c.param(0).get<Vector3f>(), c.param(1).get<float>()));
 }

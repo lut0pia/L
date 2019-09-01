@@ -325,9 +325,9 @@ void Material::script_registration() {
   L_METHOD(Material, "parent", 1, parent(c.param(0).get<String>()));
   // Pipeline state
   L_METHOD(Material, "shader", 2, shader(symbol_to_stage(c.param(0)), c.param(1).get<String>()));
-  L_METHOD(Material, "render-pass", 1, render_pass(c.param(0)));
-  L_METHOD(Material, "cull-mode", 1, cull_mode(symbol_to_cull_mode(c.param(0))));
-  L_METHOD(Material, "blend-mode", 1, blend_mode(symbol_to_blend_mode(c.param(0))));
+  L_METHOD(Material, "render_pass", 1, render_pass(c.param(0)));
+  L_METHOD(Material, "cull_mode", 1, cull_mode(symbol_to_cull_mode(c.param(0))));
+  L_METHOD(Material, "blend_mode", 1, blend_mode(symbol_to_blend_mode(c.param(0))));
   // Descriptor state
   L_METHOD(Material, "texture", 2, texture(c.param(0), c.param(1).get<String>()));
   L_METHOD(Material, "vector", 2, vector(c.param(0), c.param(1)));
@@ -337,5 +337,5 @@ void Material::script_registration() {
   // Dynamic state
   L_METHOD(Material, "mesh", 1, mesh(c.param(0).get<String>()));
   L_METHOD(Material, "text", 1, text(c.param(0).get<String>()));
-  L_METHOD(Material, "vertex-count", 1, vertex_count(uint32_t(c.param(0).get<float>())));
+  L_METHOD(Material, "vertex_count", 1, vertex_count(uint32_t(c.param(0).get<float>())));
 }

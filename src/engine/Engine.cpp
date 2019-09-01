@@ -35,10 +35,10 @@ void Engine::update() {
   _delta_time = min(_real_delta_time*_timescale, Time(0, 100)); // Cap delta time to avoid weird behaviour
   _real_delta_seconds = _real_delta_time.fSeconds();
   _delta_seconds = _delta_time.fSeconds();
-  ScriptContext::global("real-delta") = _real_delta_seconds;
+  ScriptContext::global("real_delta") = _real_delta_seconds;
   ScriptContext::global("delta") = _delta_seconds;
-  ScriptContext::global("avg-frame-work-duration") = _average_frame_work_duration;
-  ScriptContext::global("max-frame-work-duration") = _max_frame_work_duration;
+  ScriptContext::global("avg_frame_work_duration") = _average_frame_work_duration;
+  ScriptContext::global("max_frame_work_duration") = _max_frame_work_duration;
 
   {
     L_SCOPE_MARKER("Parallel updates");

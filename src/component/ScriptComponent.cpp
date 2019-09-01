@@ -31,17 +31,17 @@ void ScriptComponent::script_registration() {
 #define L_METHOD(type,name,n,...) ScriptContext::type_value(Type<type*>::description(),Symbol(name)) = (ScriptNativeFunction)([](ScriptContext& c) {L_ASSERT(c.param_count()>=n && c.current_self().is<type*>());c.current_self().as<type*>()->__VA_ARGS__;})
 #define L_RETURN_METHOD(type,name,n,...) ScriptContext::type_value(Type<type*>::description(),Symbol(name)) = (ScriptNativeFunction)([](ScriptContext& c) {L_ASSERT(c.param_count()>=n && c.current_self().is<type*>());c.return_value() = c.current_self().as<type*>()->__VA_ARGS__;})
   // Engine ///////////////////////////////////////////////////////////////////
-  L_FUNCTION("engine-timescale", {
+  L_FUNCTION("engine_timescale", {
     if(c.param_count()>0)
       Engine::timescale(c.param(0).get<float>());
     c.return_value() = Engine::timescale();
   });
-  ScriptContext::global("engine-clear") = (ScriptNativeFunction)([](ScriptContext&) {
+  ScriptContext::global("engine_clear") = (ScriptNativeFunction)([](ScriptContext&) {
     Engine::add_deferred_action({[](void*) {
       Engine::clear();
     }});
   });
-  ScriptContext::global("engine-clear-and-read") = (ScriptNativeFunction)([](ScriptContext& c) {
+  ScriptContext::global("engine_clear_and_read") = (ScriptNativeFunction)([](ScriptContext& c) {
     L_ASSERT(c.param_count()==1);
     Engine::add_deferred_action({[](void* p) {
       String* str((String*)p);
@@ -60,18 +60,18 @@ void ScriptComponent::script_registration() {
     Settings::set(c.param(0), c.param(1));
   });
   // Entity ///////////////////////////////////////////////////////////////////
-  ScriptContext::global("entity-make") = (ScriptNativeFunction)([](ScriptContext& c) {
+  ScriptContext::global("entity_make") = (ScriptNativeFunction)([](ScriptContext& c) {
     c.return_value() = new Entity();
   });
-  ScriptContext::global("entity-copy") = (ScriptNativeFunction)([](ScriptContext& c) {
+  ScriptContext::global("entity_copy") = (ScriptNativeFunction)([](ScriptContext& c) {
     if(c.param_count() && c.param(0).is<Entity*>())
       c.return_value() = new Entity(c.param(0).as<Entity*>());
   });
-  ScriptContext::global("entity-destroy") = (ScriptNativeFunction)([](ScriptContext& c) {
+  ScriptContext::global("entity_destroy") = (ScriptNativeFunction)([](ScriptContext& c) {
     if(c.param_count() && c.param(0).is<Entity*>())
       Entity::destroy(c.param(0).as<Entity*>());
   });
-  ScriptContext::global("entity-get") = (ScriptNativeFunction)([](ScriptContext& c) {
+  ScriptContext::global("entity_get") = (ScriptNativeFunction)([](ScriptContext& c) {
     if(c.param_count()) {
       if(NameComponent* name_component = NameComponent::find(c.param(0).get<Symbol>()))
         c.return_value() = name_component->entity();
@@ -81,14 +81,14 @@ void ScriptComponent::script_registration() {
   // Material ///////////////////////////////////////////////////////////////////
   Material::script_registration();
   // Devices ///////////////////////////////////////////////////////////////////
-  L_FUNCTION("get-devices", {
+  L_FUNCTION("get_devices", {
     auto wtr(ref<Table<Var,Var>>());
     for(const Device* device : Device::devices())
       (*wtr)[device] = true;
     c.return_value() = wtr;
   });
-  L_COMPONENT_RETURN_METHOD(const Device, "get-axis", 1, axis(Device::symbol_to_axis(c.param(0))));
-  L_COMPONENT_RETURN_METHOD(const Device, "get-button", 1, button(Device::symbol_to_button(c.param(0))));
+  L_COMPONENT_RETURN_METHOD(const Device, "get_axis", 1, axis(Device::symbol_to_axis(c.param(0))));
+  L_COMPONENT_RETURN_METHOD(const Device, "get_button", 1, button(Device::symbol_to_button(c.param(0))));
   // Script ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(ScriptComponent, "script");
   L_COMPONENT_METHOD(ScriptComponent, "load", 1, load(c.param(0).get<String>()));

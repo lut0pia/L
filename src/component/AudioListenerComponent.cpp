@@ -21,5 +21,5 @@ void AudioListenerComponent::update_components() {
   _last_position = _transform->position();
 }
 void AudioListenerComponent::script_registration() {
-  L_COMPONENT_BIND(AudioListenerComponent, "audio-listener");
+  L_COMPONENT_BIND(AudioListenerComponent, "audio_listener");
 }

@@ -21,15 +21,15 @@ using namespace L;
 
 L_SCRIPT_NATIVE_RETURN("rand", 0, Rand::nextFloat());
 L_SCRIPT_NATIVE_RETURN("now", 0, Time::now());
-L_SCRIPT_NATIVE_RETURN("window-width", 0, float(Window::width()));
-L_SCRIPT_NATIVE_RETURN("window-height", 0, float(Window::height()));
-L_SCRIPT_NATIVE_RETURN("mouse-x", 0, float(Window::cursor_x()));
-L_SCRIPT_NATIVE_RETURN("mouse-y", 0, float(Window::cursor_y()));
-L_SCRIPT_NATIVE_RETURN("non-null", 1, !c.param(0).is<void>() && c.param(0).as<void*>()!=nullptr);
+L_SCRIPT_NATIVE_RETURN("window_width", 0, float(Window::width()));
+L_SCRIPT_NATIVE_RETURN("window_height", 0, float(Window::height()));
+L_SCRIPT_NATIVE_RETURN("mouse_x", 0, float(Window::cursor_x()));
+L_SCRIPT_NATIVE_RETURN("mouse_y", 0, float(Window::cursor_y()));
+L_SCRIPT_NATIVE_RETURN("non_null", 1, !c.param(0).is<void>() && c.param(0).as<void*>()!=nullptr);
 L_SCRIPT_NATIVE_RETURN("clamp", 3, clamp(c.param(0), c.param(1), c.param(2)));
 L_SCRIPT_NATIVE_RETURN("typename", 1, c.param(0).type()->name);
 L_SCRIPT_NATIVE_RETURN("time", 1, Time(int64_t(c.param(0).get<float>()*1000000.f)));
-L_SCRIPT_NATIVE_RETURN("button-pressed", 1, Device::any_button(Device::symbol_to_button(c.param(0))));
+L_SCRIPT_NATIVE_RETURN("button_pressed", 1, Device::any_button(Device::symbol_to_button(c.param(0))));
 L_SCRIPT_NATIVE_RETURN("normalize", 1, c.param(0).get<Vector3f>().normalized());
 L_SCRIPT_NATIVE_RETURN("cross", 2, c.param(0).get<Vector3f>().cross(c.param(1).get<Vector3f>()));
 L_SCRIPT_NATIVE_RETURN("length", 1, c.param(0).get<Vector3f>().length());
@@ -96,7 +96,7 @@ L_SCRIPT_NATIVE("color",[](ScriptContext& c) {
       color[i] = uint8_t(c.param(i).is<float>() ? (c.param(i).as<float>()*255) : c.param(i).get<int>());
   }
 });
-L_SCRIPT_NATIVE("left-pad",[](ScriptContext& c) {
+L_SCRIPT_NATIVE("left_pad",[](ScriptContext& c) {
   L_ASSERT(c.param_count()==3);
   c.return_value() = c.param(0).get<String>();
   String& str(c.return_value().as<String>());

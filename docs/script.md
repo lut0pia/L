@@ -45,25 +45,25 @@ When the first part of a list is not a command but an object (as in `(object som
 * `fun` can be used to create a function. It takes either a list of symbols (its parameters) and an instruction or just an instruction.
 ```clojure
 (local fart (fun (print "PROUT!")))
-(local do-twice (fun (f) (do (f) (f))))
-(do-twice fart) ; Prints PROUT!PROUT!
+(local do_twice (fun (f) (do (f) (f))))
+(do_twice fart) ; Prints PROUT!PROUT!
 ```
 
 ## Conditions
 * `if` can be used to execute different instructions depending on conditions. You can have as many pairs of condition-instruction as you want, they'll be tested in order and the if instruction will return at the first validated condition. If no condition is validated and there's a sole instruction after the pairs, then that instruction is executed.
 ```clojure
 (if
-	condition (do-thing) ; if condition then do-thing
-	other-condition (do-other-thing) ; else if other-condition then do-other-thing
-	(do-whatever) ; else do-whatever
+	condition (do_thing) ; if condition then do_thing
+	other_condition (do_other_thing) ; else if other_condition then do_other_thing
+	(do_whatever) ; else do_whatever
 )
 ```
 * `switch` can be used to execute different instructions depending on a value. You can have as many pairs of match-instruction as you want, they'll be tested in order and the switch instruction will return at the first validated match. If no match is validated and there's a sole instruction after the pairs, then that instruction is executed.
 ```clojure
 (switch value
-	3 (do-thing) ; if value=3 then do-thing
-	"foo" (do-other-thing) ; if value="foo" then do-other-thing
-	(do-whatever) ; else do-whatever
+	3 (do_thing) ; if value=3 then do_thing
+	"foo" (do_other_thing) ; if value="foo" then do_other_thing
+	(do_whatever) ; else do_whatever
 )
 ```
 * `or` and `and` execute their parameters in order, and do not execute any more instructions as soon as their return value is known.

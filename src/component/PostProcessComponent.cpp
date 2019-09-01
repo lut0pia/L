@@ -13,7 +13,7 @@ void PostProcessComponent::unpack(const Map<Symbol, Var>& data) {
   unpack_item(data, "material", _material);
 }
 void PostProcessComponent::script_registration() {
-  L_COMPONENT_BIND(PostProcessComponent, "post-process");
+  L_COMPONENT_BIND(PostProcessComponent, "post_process");
   L_COMPONENT_RETURN_METHOD(PostProcessComponent, "material", 0, material());
 }
 

@@ -1,6 +1,6 @@
 (local size 128)
 (self.shader 'fragment "shader/terrain.frag")
 (self.shader 'vertex "shader/terrain.vert")
-(self.vertex-count (* size size 6))
+(self.vertex_count (* size size 6))
 (self.texture 'height_tex ".perlin_noise?octaves=5&lacunarity=2.3")
 (self.scalar 'size size)
