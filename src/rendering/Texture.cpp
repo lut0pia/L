@@ -3,6 +3,7 @@
 #include <string.h>
 #include "GPUBuffer.h"
 #include "../dev/debug.h"
+#include "../math/math.h"
 
 using namespace L;
 
@@ -10,15 +11,16 @@ Texture::Texture(uint32_t width, uint32_t height, VkFormat format, const void* d
   : _width(width), _height(height), _format(format), _layout(VK_IMAGE_LAYOUT_UNDEFINED) {
   const bool depth_texture(Vulkan::is_depth_format(_format));
   const bool compressed_texture(Vulkan::is_block_format(_format));
+  const bool cubemap(_width*6==_height);
 
   VkImageCreateInfo imageInfo = {};
   imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
   imageInfo.imageType = VK_IMAGE_TYPE_2D;
   imageInfo.extent.width = _width;
-  imageInfo.extent.height = _height;
+  imageInfo.extent.height = _height = cubemap ? _width : _height;
   imageInfo.extent.depth = 1;
   imageInfo.mipLevels = 1;
-  imageInfo.arrayLayers = 1;
+  imageInfo.arrayLayers = _layer_count = cubemap ? 6 : 1;
   imageInfo.format = _format;
   imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
   imageInfo.initialLayout = _layout;
@@ -27,6 +29,7 @@ Texture::Texture(uint32_t width, uint32_t height, VkFormat format, const void* d
   if(!depth_texture && !compressed_texture) imageInfo.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
   imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
   imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+  if(cubemap) imageInfo.flags |= VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT;
 
   L_VK_CHECKED(vkCreateImage(Vulkan::device(), &imageInfo, nullptr, &_image));
 
@@ -45,13 +48,13 @@ Texture::Texture(uint32_t width, uint32_t height, VkFormat format, const void* d
   VkImageViewCreateInfo viewInfo = {};
   viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
   viewInfo.image = _image;
-  viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+  viewInfo.viewType = cubemap ? VK_IMAGE_VIEW_TYPE_CUBE : VK_IMAGE_VIEW_TYPE_2D;
   viewInfo.format = _format;
   viewInfo.subresourceRange.aspectMask = depth_texture ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT;
   viewInfo.subresourceRange.baseMipLevel = 0;
   viewInfo.subresourceRange.levelCount = 1;
   viewInfo.subresourceRange.baseArrayLayer = 0;
-  viewInfo.subresourceRange.layerCount = 1;
+  viewInfo.subresourceRange.layerCount = _layer_count;
 
   L_VK_CHECKED(vkCreateImageView(Vulkan::device(), &viewInfo, nullptr, &_view));
 
@@ -82,7 +85,7 @@ void Texture::load(const void* data, size_t size, VkOffset3D offset, VkExtent3D 
   region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
   region.imageSubresource.mipLevel = 0;
   region.imageSubresource.baseArrayLayer = 0;
-  region.imageSubresource.layerCount = 1;
+  region.imageSubresource.layerCount = _layer_count;
 
   region.imageOffset = offset;
   region.imageExtent = extent;
@@ -110,7 +113,7 @@ void Texture::transition_layout(VkCommandBuffer cmd_buffer, VkImageLayout new_la
   barrier.subresourceRange.baseMipLevel = 0;
   barrier.subresourceRange.levelCount = 1;
   barrier.subresourceRange.baseArrayLayer = 0;
-  barrier.subresourceRange.layerCount = 1;
+  barrier.subresourceRange.layerCount = _layer_count;
 
   if(new_layout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
     barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;

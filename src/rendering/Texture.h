@@ -8,7 +8,7 @@ namespace L {
   class Texture {
     L_NOCOPY(Texture)
   protected:
-    uint32_t _width, _height;
+    uint32_t _width, _height, _layer_count;
     VkFormat _format;
     VkImageLayout _layout;
     VkDeviceMemory _memory;
