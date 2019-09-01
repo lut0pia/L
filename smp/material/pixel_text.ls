@@ -1,0 +1,5 @@
+(self.shader 'fragment "shader/font.frag")
+(self.shader 'vertex "shader/font.vert")
+(self.render_pass 'present)
+(self.font ".pixel")
+(self.color 'color "white")

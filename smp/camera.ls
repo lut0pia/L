@@ -18,11 +18,7 @@
   (self.entity.require_rigidbody|.kinematic true)
   ; Create debug text
   (set self.text_gui (self.entity.add_gui))
-  (self.text_gui.material|.shader 'fragment "shader/font.frag")
-  (self.text_gui.material|.shader 'vertex "shader/font.vert")
-  (self.text_gui.material|.render_pass 'present)
-  (self.text_gui.material|.font ".pixel")
-  (self.text_gui.material|.color 'color "white")
+  (self.text_gui.material|.parent "material/pixel_text.ls")
   (self.text_gui.offset 10 -10)
   (self.text_gui.anchor 0 1)
   (self.text_gui.viewport_anchor 0 1)
