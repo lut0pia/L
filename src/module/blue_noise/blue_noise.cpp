@@ -56,9 +56,9 @@ static void load_binary_pattern(Cell* matrix, uint32_t width, uint32_t height) {
     for(uint32_t x(0); x<width; x++)
       (matrix+x*height+y)->b = (matrix+x*height+y)->i;
 }
-static float* void_and_cluster(uint32_t width, uint32_t height, float* out) {
+static float* void_and_cluster(uint32_t width, uint32_t height, float* raw_matrix) {
   const uint32_t size(width*height);
-  Cell* matrix((Cell*)out);
+  Cell* matrix((Cell*)raw_matrix);
   for(uint32_t i(0); i<size; i++)
     matrix[i] = {};
 
@@ -101,8 +101,8 @@ static float* void_and_cluster(uint32_t width, uint32_t height, float* out) {
 
   // Normalize
   for(uint32_t i(0); i<size; i++)
-    out[i] = float(matrix[i].rank+1)/(size+1);
-  return out;
+    raw_matrix[i] = float(matrix[i].rank+1)/(size+1);
+  return raw_matrix;
 }
 
 static bool blue_noise_loader(ResourceSlot& slot, Texture::Intermediate& intermediate) {
