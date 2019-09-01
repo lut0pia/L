@@ -3,7 +3,7 @@
   (set self.transform (self.entity.require_transform))
   (self.transform.move (vec 0 -20 10))
   (local camera (self.entity.require_camera))
-  (camera.perspective 70 0.01 512)
+  (camera.perspective 70 0.1 4096)
   ; Create present material
   (camera.present_material|.shader 'fragment "shader/present.frag")
   (camera.present_material|.shader 'vertex "shader/fullscreen.vert")
