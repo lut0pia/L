@@ -10,7 +10,6 @@
 namespace L {
   class Buffer;
   struct ResourceSlot {
-    Array<ResourceSlot*> dependencies;
     Table<Symbol, Symbol> parameters;
     Symbol id, path, ext;
     Buffer source_buffer;
@@ -28,7 +27,6 @@ namespace L {
     bool parameter(const Symbol& key, uint32_t& value) const;
     bool parameter(const Symbol& key, float& value) const;
 
-    bool flush_all_dependencies();
     void load();
     bool flush();
 
@@ -36,8 +34,6 @@ namespace L {
     void store_source_file_to_archive();
     Buffer read_archive();
     void write_archive(const void* data, size_t size);
-    void serialize(Stream&);
-    void unserialize(Stream&);
     static ResourceSlot* find(const char* url);
     static void update();
   };

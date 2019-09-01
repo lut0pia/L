@@ -16,7 +16,6 @@ namespace L {
     StringStream uncompressed_stream, compressed_stream;
     {
       L_SCOPE_MARKER("Resource serialize");
-      slot.serialize(uncompressed_stream);
       uncompressed_stream <= intermediate;
     }
     {
@@ -44,15 +43,14 @@ namespace L {
         {
           L_SCOPE_MARKER("Resource unserialize");
           BufferStream stream((char*)buffer.data(), buffer.size());
-          slot.unserialize(stream);
           stream >= intermediate;
         }
-        return slot.flush_all_dependencies();
+        return true;
       } else { // Try to load it from source
         if(Loader* loader = _loaders.find(slot.ext)) {
           if((*loader)(slot, intermediate)) {
             store_intermediate(slot, intermediate);
-            return slot.flush_all_dependencies();
+            return true;
           } else {
             warning("Unable to load resource: %s", slot.id);
           }

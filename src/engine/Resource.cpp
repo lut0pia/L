@@ -57,24 +57,11 @@ bool ResourceSlot::parameter(const Symbol& key, float& param_value) const {
   return false;
 }
 
-bool ResourceSlot::flush_all_dependencies() {
-  for(ResourceSlot* dependency : dependencies) {
-    dependency->load();
-  }
-  for(ResourceSlot* dependency : dependencies) {
-    if(!dependency->flush()) {
-      warning("Unable to load all dependencies for resource: %s", id);
-      return false;
-    }
-  }
-  return true;
-}
 void ResourceSlot::load() {
   if(state==ResourceSlot::Unloaded && cas((uint32_t*)&state, ResourceSlot::Unloaded, ResourceSlot::Loading)==ResourceSlot::Unloaded) {
     TaskSystem::push([](void* p) {
       ResourceSlot& slot(*(ResourceSlot*)p);
       L_SCOPE_MARKERF("Resource load (%s)", (const char*)slot.id);
-      slot.dependencies.clear();
       slot.load_function(slot);
       slot.mtime = Date::now();
       slot.state = ResourceSlot::Loaded;
@@ -150,21 +137,6 @@ void ResourceSlot::write_archive(const void* data, size_t size) {
   L_SCOPE_MARKER("ResourceSlot::write_archive");
   archive.store(id, data, size);
 }
-void ResourceSlot::serialize(Stream& stream) {
-  stream <= dependencies.size();
-  for(const ResourceSlot* dependency : dependencies) {
-    stream <= dependency->id;
-  }
-}
-void ResourceSlot::unserialize(Stream& stream) {
-  size_t dependency_count;
-  stream >= dependency_count;
-  while(dependency_count--) {
-    Symbol dependency_id;
-    stream >= dependency_id;
-    dependencies.push(find(dependency_id));
-  }
-}
 
 ResourceSlot* ResourceSlot::find(const char* url) {
   static Lock lock;
@@ -191,11 +163,6 @@ void ResourceSlot::update() {
       if(File::mtime(slot.path, file_mtime) && slot.mtime<file_mtime) {
         slot.state = Unloaded;
         slot.mtime = Date::now();
-      }
-      for(const ResourceSlot* dependency : slot.dependencies) {
-        if(slot.mtime<dependency->mtime) {
-          slot.state = Unloaded;
-        }
       }
     }
     index++;
