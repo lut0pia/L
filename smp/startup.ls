@@ -83,6 +83,11 @@
   (dirlight_entity.require_primitive|.scale 99999)
   (dirlight_entity.require_primitive|.material|.scalar 'intensity 2)
 
+  ; Make sky
+  (local sky_entity (entity_make))
+  (sky_entity.require_primitive|.material|.parent "material/sky.ls")
+  (sky_entity.require_primitive|.scale 100)
+
   ; Make terrain
   (local terrain_size 32)
   (local terrain_entity (entity_make))

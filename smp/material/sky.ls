@@ -1,0 +1,5 @@
+(self.shader 'fragment "shader/sky.frag")
+(self.shader 'vertex "shader/sky.vert")
+(self.cull_mode 'front)
+(self.vertex_count 36)
+(self.texture 'cubemap "texture/skybox.png?comp=bc1")
