@@ -9,8 +9,6 @@ L is a simple public-domain, minimal dependency, Vulkan game engine.
 
 The `build` action will just build the engine (default configuration is development), while the `run` action will also run the [sample](./smp/), and the `open` action will open the Visual Studio project (Windows-only).
 
-There are some
-
 ## Dependencies
 - Premake (binaries supplied)
 - Vulkan
