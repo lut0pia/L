@@ -47,19 +47,22 @@ namespace L {
         }
         return true;
       } else { // Try to load it from source
-        if(Loader* loader = _loaders.find(slot.ext)) {
-          if((*loader)(slot, intermediate)) {
-            store_intermediate(slot, intermediate);
-            return true;
-          } else {
-            warning("Unable to load resource: %s", slot.id);
-          }
+        if(load_internal(slot, intermediate)) {
+          store_intermediate(slot, intermediate);
+          return true;
         } else {
-          warning("Unable to load resource with extension: %s", slot.ext);
+          warning("Unable to load resource: %s", slot.id);
         }
         return false;
       }
-
+    }
+    static bool load_internal(ResourceSlot& slot, typename T::Intermediate& intermediate) {
+      if(Loader* loader = _loaders.find(slot.ext)) {
+        return (*loader)(slot, intermediate);
+      } else {
+        warning("Unable to load resource with extension: %s", slot.ext);
+        return false;
+      }
     }
   };
   template <class T> Table<const char*, typename ResourceLoading<T>::Loader> ResourceLoading<T>::_loaders;
