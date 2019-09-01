@@ -55,7 +55,7 @@
 )))
 (set make_mesh (fun (mat pos) (do
   (local entity (entity_make))
-  (set truc entity)
+  (set last_mesh entity)
   (local transform (entity.require_transform))
   (local primitive (entity.require_primitive))
   (transform.move pos)
@@ -100,8 +100,12 @@
   (make_mesh "material/smartphone.ls" (vec -16 -20 5))
   (make_mesh "material/jerrican.ls" (vec 10 -16 5))
   (make_mesh "material/bush.ls" (vec -16 -28 0))
-  (set truc (entity_copy truc))
-  (truc.require_transform|.move (vec 30 0 0))
+  (set last_mesh (entity_copy last_mesh))
+  (last_mesh.require_transform|.move (vec 30 0 0))
+
+  (make_mesh "material/DamagedHelmet.glb" (vec 20 0 10))
+  (last_mesh.require_primitive|.scale 5)
+  (last_mesh.require_transform|.rotate_absolute (vec 0 0 1) 3.14)
 
   (local sprite (entity_make))
   (sprite.require_transform|.move (vec -9.4 0 5))
