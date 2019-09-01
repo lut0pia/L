@@ -31,7 +31,7 @@ namespace L {
       uint32_t vertex_count = 0;
 
       void apply(const State&);
-      void fill_desc_set(class DescriptorSet&) const;
+      bool fill_desc_set(class DescriptorSet&) const;
 
       uint32_t pipeline_hash() const;
       uint32_t descriptor_hash() const;
@@ -40,6 +40,7 @@ namespace L {
       const class Camera* camera;
       class DescriptorSet* desc_set;
       Time last_framebuffer_update;
+      bool valid;
     };
     State _partial_state, _final_state;
     Pipeline* _pipeline = nullptr;
@@ -57,7 +58,7 @@ namespace L {
     void draw(const class Camera&, const class RenderPass&, const Matrix44f& model = Matrix44f(1.f));
     Interval3f bounds() const;
     Vector2f gui_size() const;
-    const class DescriptorSet& descriptor_set(const class Camera&, const Pipeline&);
+    const class DescriptorSet* descriptor_set(const class Camera&, const Pipeline&);
     void mark_state_dirty();
 
     // Chain state
