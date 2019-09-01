@@ -63,7 +63,10 @@ int main(int, const char*[]) {
   }
 
   const char* window_name(Settings::get_string("window_name", "L Engine Sample"));
-  int window_flags((Settings::get_int("no_cursor", 0) ? Window::nocursor : 0));
+
+  uint32_t window_flags = 0;
+  window_flags |= Settings::get_int("no_cursor", 0) ? Window::nocursor : 0;
+  window_flags |= Settings::get_int("resizable_window", 0) ? Window::resizable : 0;
 
   if(Settings::get_int("fullscreen", 1))
     Window::instance()->open_fullscreen(window_name, window_flags);
