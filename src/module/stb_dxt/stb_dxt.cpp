@@ -3,6 +3,8 @@
 #include <L/src/rendering/Texture.h>
 #include <L/src/stream/CFileStream.h>
 
+#include <utility>
+
 L_PUSH_NO_WARNINGS
 
 #define STB_DXT_IMPLEMENTATION
