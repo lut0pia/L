@@ -2,13 +2,16 @@
 
 #include "../container/Pool.h"
 #include "../container/Table.h"
+#include "../parallelism/Lock.h"
 
 using namespace L;
 
 static Pool<ScriptGlobal::Slot> slots;
 static Table<Symbol, ScriptGlobal::Slot*> slots_by_name;
+static Lock slots_lock;
 
 ScriptGlobal::ScriptGlobal(const Symbol& name) {
+  L_SCOPED_LOCK(slots_lock);
   if(Slot** found = slots_by_name.find(name)) {
     _slot = *found;
   } else {
