@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vulkan/vulkan_core.h>
+#include <vulkan/vulkan.h>
 
 #define L_VK_EXT_FUNC(name,...) (PFN_##name(vkGetInstanceProcAddr(instance, "vkCreateDebugReportCallbackEXT")))(__VA_ARGS__)
 #define L_VK_CHECKED(...) {VkResult result(__VA_ARGS__);L_ASSERT_MSG(result==VK_SUCCESS,Vulkan::result_str(result));}
