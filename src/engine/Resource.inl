@@ -28,10 +28,15 @@ namespace L {
   template <class T>
   class ResourceLoading {
     typedef bool(*Loader)(ResourceSlot&, typename T::Intermediate&);
+    typedef void(*Transformer)(const ResourceSlot&, typename T::Intermediate&);
     static Table<const char*, Loader> _loaders;
+    static Array<Transformer> _transformers;
   public:
     static void add_loader(const char* ext, Loader loader) {
       _loaders[ext] = loader;
+    }
+    static void add_transformer(Transformer transformer) {
+      _transformers.push(transformer);
     }
     static bool load(ResourceSlot& slot, typename T::Intermediate& intermediate) {
       if(Buffer compressed_buffer = slot.read_archive()) { // Look in the archive for that resource
@@ -48,6 +53,9 @@ namespace L {
         return true;
       } else { // Try to load it from source
         if(load_internal(slot, intermediate)) {
+          for(Transformer transformer : _transformers) {
+            transformer(slot, intermediate);
+          }
           store_intermediate(slot, intermediate);
           return true;
         } else {
@@ -66,6 +74,7 @@ namespace L {
     }
   };
   template <class T> Table<const char*, typename ResourceLoading<T>::Loader> ResourceLoading<T>::_loaders;
+  template <class T> Array<typename ResourceLoading<T>::Transformer> ResourceLoading<T>::_transformers;
 
   // General case where the intermediate type can be anything
   template <class T, class Inter>
