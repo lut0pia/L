@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../stream/Stream.h"
+#include "../hash.h"
 
 namespace L {
   template <class K, class V>
