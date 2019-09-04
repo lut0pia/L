@@ -11,25 +11,6 @@ using namespace L;
 
 static const Symbol ls_symbol("ls");
 
-bool ls_material_loader(ResourceSlot& slot, Material& intermediate) {
-  if(slot.ext != ls_symbol) {
-    return false;
-  }
-
-  if(Buffer buffer = slot.read_source_file()) {
-    ScriptFunction script_function;
-    script_function.offset = 0;
-    script_function.script = ref<Script>();
-    LSCompiler compiler;
-    if(compiler.read((const char*)buffer.data(), buffer.size(), true)) {
-      ScriptContext context(&intermediate);
-      context.execute(compiler.compile());
-      return true;
-    }
-  }
-  return false;
-}
-
 bool ls_script_loader(ResourceSlot& slot, ScriptFunction& intermediate) {
   if(slot.ext != ls_symbol) {
     return false;
@@ -48,7 +29,6 @@ bool ls_script_loader(ResourceSlot& slot, ScriptFunction& intermediate) {
 }
 void ls_module_init() {
   ResourceLoading<ScriptFunction>::add_loader(ls_script_loader);
-  ResourceLoading<Material>::add_loader(ls_material_loader);
 
 #ifdef L_DEBUG
   static LSServer* server(nullptr);
