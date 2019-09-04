@@ -9,7 +9,13 @@
 
 using namespace L;
 
+static const Symbol ls_symbol("ls");
+
 bool ls_material_loader(ResourceSlot& slot, Material& intermediate) {
+  if(slot.ext != ls_symbol) {
+    return false;
+  }
+
   if(Buffer buffer = slot.read_source_file()) {
     ScriptFunction script_function;
     script_function.offset = 0;
@@ -25,6 +31,10 @@ bool ls_material_loader(ResourceSlot& slot, Material& intermediate) {
 }
 
 bool ls_script_loader(ResourceSlot& slot, ScriptFunction& intermediate) {
+  if(slot.ext != ls_symbol) {
+    return false;
+  }
+
   if(Buffer buffer = slot.read_source_file()) {
     intermediate.offset = 0;
     intermediate.script = ref<Script>();
@@ -37,8 +47,8 @@ bool ls_script_loader(ResourceSlot& slot, ScriptFunction& intermediate) {
   return false;
 }
 void ls_module_init() {
-  ResourceLoading<ScriptFunction>::add_loader("ls", ls_script_loader);
-  ResourceLoading<Material>::add_loader("ls", ls_material_loader);
+  ResourceLoading<ScriptFunction>::add_loader(ls_script_loader);
+  ResourceLoading<Material>::add_loader(ls_material_loader);
 
 #ifdef L_DEBUG
   static LSServer* server(nullptr);

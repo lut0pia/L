@@ -4,7 +4,13 @@
 
 using namespace L;
 
+static const Symbol pixel_symbol("pixel");
+
 bool pixel_font_loader(ResourceSlot& slot, Font::Intermediate& intermediate) {
+  if(slot.ext != pixel_symbol) {
+    return false;
+  }
+
   intermediate.line_height = 11.f/9.f;
   FontPacker helper(intermediate);
 
@@ -26,5 +32,5 @@ bool pixel_font_loader(ResourceSlot& slot, Font::Intermediate& intermediate) {
 }
 
 void pixel_font_module_init() {
-  ResourceLoading<Font>::add_loader("pixel", pixel_font_loader);
+  ResourceLoading<Font>::add_loader(pixel_font_loader);
 }

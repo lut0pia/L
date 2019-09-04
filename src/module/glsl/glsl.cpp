@@ -124,6 +124,10 @@ static const TBuiltInResource builtin_resources = {
 static const Symbol stage_symbol("stage"), frag_symbol("frag"), vert_symbol("vert");
 
 bool glsl_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) {
+  if(slot.ext != frag_symbol && slot.ext != vert_symbol) {
+    return false;
+  }
+
   intermediate.stage = VK_SHADER_STAGE_ALL;
   EShLanguage shader_language;
   const Symbol stage_param = slot.parameter(stage_symbol);
@@ -186,6 +190,5 @@ bool glsl_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) {
 void glsl_module_init() {
   glslang::InitializeProcess();
 
-  ResourceLoading<Shader>::add_loader("vert", glsl_loader);
-  ResourceLoading<Shader>::add_loader("frag", glsl_loader);
+  ResourceLoading<Shader>::add_loader(glsl_loader);
 }

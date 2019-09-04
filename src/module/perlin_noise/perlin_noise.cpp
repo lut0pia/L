@@ -29,6 +29,8 @@
 
 using namespace L;
 
+static const Symbol perlin_noise_symbol("perlin_noise");
+
 // Hash lookup table as defined by Ken Perlin. This is a random permutation of numbers 0-255
 static uint8_t p[] {151,160,137,91,90,15,
   131,13,201,95,96,53,194,233,7,225,140,36,103,30,69,142,8,99,37,240,21,10,23,
@@ -153,6 +155,10 @@ static float octave_perlin(float x, float y, uint32_t octaves, float persistence
 }
 
 static bool perlin_noise_loader(ResourceSlot& slot, Texture::Intermediate& intermediate) {
+  if(slot.ext != perlin_noise_symbol) {
+    return false;
+  }
+
   uint32_t width(512), height(512), octaves(1);
   float persistence(.5f), lacunarity(2.f);
 
@@ -189,5 +195,5 @@ static bool perlin_noise_loader(ResourceSlot& slot, Texture::Intermediate& inter
 }
 
 void perlin_noise_module_init() {
-  ResourceLoading<Texture>::add_loader("perlin_noise", perlin_noise_loader);
+  ResourceLoading<Texture>::add_loader(perlin_noise_loader);
 }

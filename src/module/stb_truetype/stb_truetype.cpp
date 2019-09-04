@@ -12,7 +12,13 @@ L_POP_NO_WARNINGS
 
 using namespace L;
 
+static const Symbol ttf_symbol("ttf");
+
 bool stb_truetype_loader(ResourceSlot& slot, Font::Intermediate& intermediate) {
+  if(slot.ext != ttf_symbol) {
+    return false;
+  }
+
   Buffer source_buffer(slot.read_source_file());
 
   if(!source_buffer) {
@@ -51,5 +57,5 @@ bool stb_truetype_loader(ResourceSlot& slot, Font::Intermediate& intermediate) {
 }
 
 void stb_truetype_module_init() {
-  ResourceLoading<Font>::add_loader("ttf", stb_truetype_loader);
+  ResourceLoading<Font>::add_loader(stb_truetype_loader);
 }

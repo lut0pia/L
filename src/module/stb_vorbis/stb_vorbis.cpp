@@ -14,6 +14,8 @@ L_POP_NO_WARNINGS
 
 using namespace L;
 
+static const Symbol ogg_symbol("ogg");
+
 class VorbisStream : public AudioStream {
 protected:
   static const size_t block_size = 1<<14;
@@ -50,6 +52,9 @@ public:
 };
 
 bool stb_vorbis_loader(ResourceSlot& slot, AudioStream*& intermediate) {
+  if(slot.ext != ogg_symbol) {
+    return false;
+  }
   int error;
   Buffer buffer(slot.read_source_file());
   if(stb_vorbis* handle = stb_vorbis_open_memory((uint8_t*)buffer.data(), int(buffer.size()), &error, nullptr)) {
@@ -61,5 +66,5 @@ bool stb_vorbis_loader(ResourceSlot& slot, AudioStream*& intermediate) {
 }
 
 void stb_vorbis_module_init() {
-  ResourceLoading<AudioStream>::add_loader("ogg", stb_vorbis_loader);
+  ResourceLoading<AudioStream>::add_loader(stb_vorbis_loader);
 }

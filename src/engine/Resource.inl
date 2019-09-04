@@ -29,11 +29,11 @@ namespace L {
   class ResourceLoading {
     typedef bool(*Loader)(ResourceSlot&, typename T::Intermediate&);
     typedef void(*Transformer)(const ResourceSlot&, typename T::Intermediate&);
-    static Table<const char*, Loader> _loaders;
+    static Array<Loader> _loaders;
     static Array<Transformer> _transformers;
   public:
-    static void add_loader(const char* ext, Loader loader) {
-      _loaders[ext] = loader;
+    static void add_loader(Loader loader) {
+      _loaders.push(loader);
     }
     static void add_transformer(Transformer transformer) {
       _transformers.push(transformer);
@@ -65,15 +65,16 @@ namespace L {
       }
     }
     static bool load_internal(ResourceSlot& slot, typename T::Intermediate& intermediate) {
-      if(Loader* loader = _loaders.find(slot.ext)) {
-        return (*loader)(slot, intermediate);
-      } else {
-        warning("Unable to load resource with extension: %s", slot.ext);
-        return false;
+      for(Loader loader : _loaders) {
+        if(loader(slot, intermediate)) {
+          return true;
+        }
       }
+      warning("Unable to load resource with extension: %s", slot.ext);
+      return false;
     }
   };
-  template <class T> Table<const char*, typename ResourceLoading<T>::Loader> ResourceLoading<T>::_loaders;
+  template <class T> Array<typename ResourceLoading<T>::Loader> ResourceLoading<T>::_loaders;
   template <class T> Array<typename ResourceLoading<T>::Transformer> ResourceLoading<T>::_transformers;
 
   // General case where the intermediate type can be anything

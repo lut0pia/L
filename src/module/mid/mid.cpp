@@ -4,6 +4,8 @@
 
 using namespace L;
 
+static const Symbol mid_symbol("mid"), midi_symbol("midi");
+
 static uint32_t read_int(const uint8_t* data, size_t size = 4) {
   uint32_t wtr(0);
   switch(size) {
@@ -33,6 +35,10 @@ static uint32_t read_variable(const uint8_t*& data) {
   return wtr;
 }
 bool midi_loader(ResourceSlot& slot, MidiSequence& intermediate) {
+  if(slot.ext != mid_symbol && slot.ext != midi_symbol) {
+    return false;
+  }
+
   Buffer buffer(slot.read_source_file());
   const uint8_t* data((uint8_t*)buffer.data());
   const size_t size(buffer.size());
@@ -141,6 +147,5 @@ bool midi_loader(ResourceSlot& slot, MidiSequence& intermediate) {
 }
 
 void mid_module_init() {
-  ResourceLoading<MidiSequence>::add_loader("mid", midi_loader);
-  ResourceLoading<MidiSequence>::add_loader("midi", midi_loader);
+  ResourceLoading<MidiSequence>::add_loader(midi_loader);
 }

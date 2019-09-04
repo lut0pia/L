@@ -13,7 +13,13 @@ L_POP_NO_WARNINGS
 
 using namespace L;
 
+static const Symbol bmp_symbol("bmp"), jpeg_symbol("jpeg"), jpg_symbol("jpg"), png_symbol("png"), tga_symbol("tga");
+
 bool stb_image_loader(ResourceSlot& slot, Texture::Intermediate& intermediate) {
+  if(slot.ext != bmp_symbol && slot.ext != jpeg_symbol && slot.ext != jpg_symbol && slot.ext != png_symbol && slot.ext != tga_symbol) {
+    return false;
+  }
+
   int width, height, components;
   uint8_t* img;
   {
@@ -35,9 +41,5 @@ bool stb_image_loader(ResourceSlot& slot, Texture::Intermediate& intermediate) {
 }
 
 void stb_image_module_init() {
-  ResourceLoading<Texture>::add_loader("bmp", stb_image_loader);
-  ResourceLoading<Texture>::add_loader("jpeg", stb_image_loader);
-  ResourceLoading<Texture>::add_loader("jpg", stb_image_loader);
-  ResourceLoading<Texture>::add_loader("png", stb_image_loader);
-  ResourceLoading<Texture>::add_loader("tga", stb_image_loader);
+  ResourceLoading<Texture>::add_loader(stb_image_loader);
 }

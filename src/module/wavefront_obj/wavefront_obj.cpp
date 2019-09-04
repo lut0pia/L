@@ -6,6 +6,8 @@
 
 using namespace L;
 
+static const Symbol obj_symbol("obj");
+
 static inline void ignore_line(const char*& c) {
   while(*c!='\n' && *c!='\r') c++;
   while(*c=='\n' || *c=='\r') c++;
@@ -30,6 +32,10 @@ static inline bool read_indices(const char*& c, Vector3i& indices) {
   return indices.x()>0;
 }
 bool obj_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
+  if(slot.ext != obj_symbol) {
+    return false;
+  }
+
   struct Vertex {
     Vector3f position;
     Vector2f uv;
@@ -112,5 +118,5 @@ bool obj_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
 }
 
 void wavefront_obj_module_init() {
-  ResourceLoading<Mesh>::add_loader("obj", obj_loader);
+  ResourceLoading<Mesh>::add_loader(obj_loader);
 }

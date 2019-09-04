@@ -4,6 +4,8 @@
 
 using namespace L;
 
+static const Symbol wav_symbol("wav");
+
 inline static uint32_t wav_read_int(const uint8_t* data, size_t size = 4) {
   uint32_t wtr(0), offset(0);
   switch(size) {
@@ -21,6 +23,10 @@ inline static uint32_t wav_read_int(const uint8_t* data, size_t size = 4) {
   return wtr;
 }
 bool wav_loader(ResourceSlot& slot, AudioStream*& intermediate) {
+  if(slot.ext != wav_symbol) {
+    return false;
+  }
+
   Buffer buffer(slot.read_source_file());
   const uint8_t* data((uint8_t*)buffer.data());
   const size_t size(buffer.size());
@@ -50,5 +56,5 @@ bool wav_loader(ResourceSlot& slot, AudioStream*& intermediate) {
 }
 
 void wav_module_init() {
-  ResourceLoading<AudioStream>::add_loader("wav", wav_loader);
+  ResourceLoading<AudioStream>::add_loader(wav_loader);
 }

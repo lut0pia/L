@@ -5,6 +5,8 @@
 
 using namespace L;
 
+static const Symbol blue_noise_symbol("blue_noise");
+
 struct Cell {
   uint32_t i : 1, b : 1, rank : (sizeof(float)*8-2);
 };
@@ -106,6 +108,10 @@ static float* void_and_cluster(uint32_t width, uint32_t height, float* raw_matri
 }
 
 static bool blue_noise_loader(ResourceSlot& slot, Texture::Intermediate& intermediate) {
+  if(slot.ext != blue_noise_symbol) {
+    return false;
+  }
+
   uint32_t width(32), height(32);
 
   slot.parameter("width", width);
@@ -132,5 +138,5 @@ static bool blue_noise_loader(ResourceSlot& slot, Texture::Intermediate& interme
 }
 
 void blue_noise_module_init() {
-  ResourceLoading<Texture>::add_loader("blue_noise", blue_noise_loader);
+  ResourceLoading<Texture>::add_loader(blue_noise_loader);
 }
