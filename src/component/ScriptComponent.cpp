@@ -42,14 +42,20 @@ void ScriptComponent::script_registration() {
     }});
   });
   ScriptContext::global("engine_clear_and_read") = (ScriptNativeFunction)([](ScriptContext& c) {
-    L_ASSERT(c.param_count()==1);
+    L_ASSERT(c.param_count() == 1);
+    const Resource<ScriptFunction> script(c.param(0).get<String>());
+    script.load();
     Engine::add_deferred_action({[](void* p) {
-      String* str((String*)p);
+      Resource<ScriptFunction>* script = (Resource<ScriptFunction>*)p;
       Engine::clear();
-      ScriptContext context;
-      context.execute(*Resource<ScriptFunction>(*str));
-      Memory::delete_type(str);
-    }, Memory::new_type<String>(c.param(0).get<String>())});
+      script->flush();
+      if(script->is_loaded()) {
+        ScriptContext().execute(**script);
+      } else {
+        warning("Could not load script %s for engine_clear_and_read", script->slot()->id);
+      }
+      Memory::delete_type(script);
+    }, Memory::new_type<Resource<ScriptFunction>>(script)});
   });
   L_FUNCTION("read", {
     L_ASSERT(c.param_count()==1);
