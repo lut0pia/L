@@ -70,7 +70,6 @@ namespace L {
           return true;
         }
       }
-      warning("Unable to load resource with extension: %s", slot.ext);
       return false;
     }
   };
