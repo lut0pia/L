@@ -143,6 +143,10 @@ Var ScriptContext::execute(const ScriptFunction& function, const Var* params, si
           current_script = _frames.back().script = script_function.script;
           ip = current_script->bytecode.begin()+script_function.offset;
           continue; // Avoid ip increment
+        } else {
+          warning("Trying to call non-callable type: %s", new_func.type()->name);
+          _current_stack_start = _frames.back().stack_start;
+          _current_param_count = uint32_t(_frames.back().param_count);
         }
         break;
       }
