@@ -14,7 +14,7 @@ static inline bool is_horizontal_space(char c) {
 static const char* ordinals[] {"", "first", "second", "third", "fourth"};
 
 enum class LasmLexerState {
-  Space, Literal, StartString, String, EndOfLine,
+  Space, Literal, StartString, String,
 };
 
 #define IS_OPCODE(name) !strcmp(words[0], #name)
@@ -106,7 +106,8 @@ static bool lasm_script_loader(ResourceSlot& slot, ScriptFunction& intermediate)
     { // Parse words
       LasmLexerState state = LasmLexerState::Space;
       uintptr_t offset = 0;
-      while(state != LasmLexerState::EndOfLine) {
+      bool abort = false;
+      while(!abort) {
         if(*cur == '\n' || *cur == '\r' || *cur == ';') {
           break;
         }
@@ -116,7 +117,7 @@ static bool lasm_script_loader(ResourceSlot& slot, ScriptFunction& intermediate)
               state = *cur == '"' ? LasmLexerState::StartString : LasmLexerState::Literal;
               words[word_count++] = cur;
               if(word_count == L_COUNT_OF(words)) {
-                state = LasmLexerState::EndOfLine;
+                abort = true;
               }
             } else {
               *cur = '\0';
