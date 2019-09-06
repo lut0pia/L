@@ -58,8 +58,13 @@ int main(int, const char*[]) {
   }
 
   {
-    ScriptContext ini_context;
-    ini_context.execute(*Resource<ScriptFunction>("ini.ls"));
+    Resource<ScriptFunction> ini_script = "ini.ls";
+    ini_script.flush();
+    if(ini_script.is_loaded()) {
+      ScriptContext().execute(*ini_script);
+    } else {
+      error("Could not load init script");
+    }
   }
 
   const char* window_name(Settings::get_string("window_name", "L Engine Sample"));
