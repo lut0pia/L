@@ -63,6 +63,15 @@
     </Expand>
   </Type>
 
+  <Type Name="L::ScriptInstruction">
+    <DisplayString Condition="opcode == LoadFun || opcode == Jump || opcode == CondJump || opcode == CondNotJump">
+      {opcode} {(unsigned int)a} {bc16}
+    </DisplayString>
+    <DisplayString>
+      {opcode} {(unsigned int)a} {(unsigned int)bc8.b} {(unsigned int)bc8.c}
+    </DisplayString>
+  </Type>
+
   <Type Name="L::StaticStack&lt;*,*&gt;">
     <DisplayString>{{size={_size}}}</DisplayString>
     <Expand>
