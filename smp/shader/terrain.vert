@@ -1,4 +1,4 @@
-layout(location = 0) out vec2 ftexcoords;
+layout(location = 0) out vec3 ftexcoords;
 layout(location = 1) out vec3 fnormal;
 
 layout(binding = 2) uniform sampler2D height_tex;
@@ -8,8 +8,8 @@ layout(binding = 3) uniform Parameters {
 };
 
 const ivec2[] vert = ivec2[](
-  ivec2(0,0),ivec2(1,0),ivec2(0,1),
-  ivec2(1,0),ivec2(1,1),ivec2(0,1)
+  ivec2(0,0), ivec2(1,0), ivec2(0,1),
+  ivec2(1,0), ivec2(1,1), ivec2(0,1)
 );
 
 float height_at(ivec2 icoords) {
@@ -23,7 +23,7 @@ void main() {
   int vert_id = gl_VertexIndex%6;
 
   ivec2 icoords = ivec2(quad_id%size_int, quad_id/size_int)+vert[vert_id];
-  
+
   ivec2 offsetx = ivec2(1,0);
   ivec2 offsety = ivec2(0,1);
   float height = height_at(icoords);
@@ -37,7 +37,8 @@ void main() {
   vec3 normal = normalize(cross(p1, p2));
 
   vec2 fcoords = vec2(icoords/size);
-  ftexcoords = fcoords;
+  ftexcoords.xy = fcoords;
+  ftexcoords.z = height;
   fnormal = normalize(mat3(model) * normal);
   vec4 position = model * vec4(fcoords*2.f-1.f,height,1.0);
   gl_Position = viewProj * position;

@@ -92,7 +92,7 @@
   (local terrain_size 32)
   (local terrain_entity (entity_make))
   (terrain_entity.require_transform|.move (vec -20 0 0))
-  (terrain_entity.require_primitive|.scale (vec 10 10 2))
+  (terrain_entity.require_primitive|.scale (vec 10 10 4))
   (terrain_entity.require_primitive|.material|.parent "material/terrain.ls")
 
   (make_cage)
