@@ -1,0 +1,3 @@
+loadglobal 2 engine_clear_and_read
+loadconst 4 "startup.ls"
+call 2 1

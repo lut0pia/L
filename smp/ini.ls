@@ -3,4 +3,4 @@
 (setting 'resolution_y 768)
 (setting 'resizable_window 1)
 (setting 'render_collider 0)
-(engine_clear_and_read "startup.ls")
+(engine_clear_and_read "proxy.lasm")
