@@ -24,6 +24,7 @@ namespace L {
     ResourceSlot(const char* url);
 
     Symbol parameter(const Symbol& key) const;
+    bool parameter(const Symbol& key, Symbol& value) const;
     bool parameter(const Symbol& key, uint32_t& value) const;
     bool parameter(const Symbol& key, float& value) const;
 

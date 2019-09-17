@@ -42,6 +42,13 @@ persistent(false), state(Unloaded), value(nullptr) {
 Symbol ResourceSlot::parameter(const Symbol& key) const {
   return parameters.get(key, Symbol());
 }
+bool ResourceSlot::parameter(const Symbol& key, Symbol& param_value) const {
+  if(const Symbol param = parameter(key)) {
+    param_value = param;
+    return true;
+  }
+  return false;
+}
 bool ResourceSlot::parameter(const Symbol& key, uint32_t& param_value) const {
   if(const Symbol param = parameter(key)) {
     param_value = atoi(param);
