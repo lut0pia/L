@@ -336,7 +336,8 @@ void LSCompiler::compile(Function& func, const Var& v, uint8_t offset) {
     if(uint8_t* found = func.local_table.find(v.as<Symbol>())) {
       func.bytecode.push(ScriptInstruction {CopyLocal, offset, *found});
     } else {
-      func.bytecode.push(ScriptInstruction {LoadGlobal, offset, _script->global(v.as<Symbol>())});
+      func.bytecode.push(ScriptInstruction {LoadGlobal, offset});
+      func.bytecode.back().bcu16 = _script->global(v.as<Symbol>());
     }
   } else {
     Var cst(v);
@@ -344,7 +345,8 @@ void LSCompiler::compile(Function& func, const Var& v, uint8_t offset) {
       const Symbol sym(v.as<RawSymbol>().sym);
       cst = sym;
     }
-    func.bytecode.push(ScriptInstruction {LoadConst, offset, _script->constant(cst)});
+    func.bytecode.push(ScriptInstruction {LoadConst, offset});
+    func.bytecode.back().bcu16 = _script->constant(cst);
   }
 }
 void LSCompiler::compile_function(Function& func) {
@@ -385,7 +387,8 @@ void LSCompiler::compile_assignment(Function& func, const L::Var& dst, uint8_t s
     if(uint8_t* found = func.local_table.find(dst.as<Symbol>())) {
       func.bytecode.push(ScriptInstruction {CopyLocal, *found, src});
     } else {
-      func.bytecode.push(ScriptInstruction {StoreGlobal, _script->global(dst.as<Symbol>()), src});
+      func.bytecode.push(ScriptInstruction {StoreGlobal, src});
+      func.bytecode.back().bcu16 = _script->global(dst.as<Symbol>());
     }
   } else if(dst.is<AccessChain>()) {
     const Array<Var>& access_chain(dst.as<AccessChain>().array);

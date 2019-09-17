@@ -89,11 +89,9 @@ Var ScriptContext::execute(const ScriptFunction& function, const Var* params, si
     L_ASSERT(ip>=current_script->bytecode.begin() && ip<current_script->bytecode.end());
     switch(ip->opcode) {
       case CopyLocal: local(ip->a) = local(ip->bc8.b); break;
-      case LoadConst: local(ip->a) = current_script->constants[ip->bc8.b]; break;
-      case LoadBool: local(ip->a) = (ip->bc8.b!=0); break;
-      case LoadInt: local(ip->a) = float(ip->bc16); break;
-      case LoadGlobal: local(ip->a) = current_script->globals[ip->bc8.b].value(); break;
-      case StoreGlobal: current_script->globals[ip->a].value() = local(ip->bc8.b); break;
+      case LoadConst: local(ip->a) = current_script->constants[ip->bcu16]; break;
+      case LoadGlobal: local(ip->a) = current_script->globals[ip->bcu16].value(); break;
+      case StoreGlobal: current_script->globals[ip->bcu16].value() = local(ip->a); break;
       case LoadFun: local(ip->a) = ScriptFunction {current_script, uintptr_t(ip->bc16)}; break;
 
       case MakeObject: local(ip->a) = ref<Table<Var, Var>>(); break;
@@ -162,6 +160,10 @@ Var ScriptContext::execute(const ScriptFunction& function, const Var* params, si
           ip = _frames.back().ip;
         }
         break;
+
+      // Optimization opcodes
+      case LoadBool: local(ip->a) = (ip->bc8.b != 0); break;
+      case LoadInt: local(ip->a) = float(ip->bc16); break;
       default:
         error("Unhandled script instruction");
         break;

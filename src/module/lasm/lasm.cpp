@@ -40,7 +40,7 @@ enum class LasmLexerState {
     return false; \
   } \
 }
-#define REQ_ARG_CONST(n, name) uint8_t name = script.constant(get_value(words[n]));
+#define REQ_ARG_CONST(n, name) uint16_t name = script.constant(get_value(words[n]));
 
 #define REQ_ARG_OFF(n, absolute) \
   label_references.push(LabelReference {words[0], words[n], script.bytecode.size(), current_line_index, absolute})
@@ -179,13 +179,16 @@ static bool lasm_script_loader(ResourceSlot& slot, ScriptFunction& intermediate)
         script.bytecode.push(ScriptInstruction {CopyLocal, dst, src});
       } else if(IS_OPCODE(loadconst)) {
         REQ_ARG_CNT(2); REQ_ARG_BYTE(1, dst); REQ_ARG_CONST(2, src);
-        script.bytecode.push(ScriptInstruction {LoadConst, dst, src});
+        script.bytecode.push(ScriptInstruction {LoadConst, dst});
+        script.bytecode.back().bcu16 = src;
       } else if(IS_OPCODE(loadglobal)) {
         REQ_ARG_CNT(2); REQ_ARG_BYTE(1, dst);
-        script.bytecode.push(ScriptInstruction {LoadGlobal, dst, script.global(Symbol(words[2]))});
+        script.bytecode.push(ScriptInstruction {LoadGlobal, dst});
+        script.bytecode.back().bcu16 = script.global(Symbol(words[2]));
       } else if(IS_OPCODE(storeglobal)) {
         REQ_ARG_CNT(2); REQ_ARG_BYTE(2, src);
-        script.bytecode.push(ScriptInstruction {StoreGlobal, script.global(Symbol(words[1])), src});
+        script.bytecode.push(ScriptInstruction {StoreGlobal, src});
+        script.bytecode.back().bcu16 = script.global(Symbol(words[1]));
       } else if(IS_OPCODE(loadfun)) {
         REQ_ARG_CNT(2); REQ_ARG_BYTE(1, dst); REQ_ARG_ABSOFF(2);
         script.bytecode.push(ScriptInstruction {LoadFun, dst});
@@ -197,12 +200,6 @@ static bool lasm_script_loader(ResourceSlot& slot, ScriptFunction& intermediate)
         script.bytecode.push(ScriptInstruction {GetItem, object, index, dst});
       } else if(IS_OPCODE(setitem)) {
         REQ_ARG_CNT(3); REQ_ARG_BYTE(1, object); REQ_ARG_BYTE(2, index); REQ_ARG_BYTE(3, src);
-        script.bytecode.push(ScriptInstruction {SetItem, object, index, src});
-      } else if(IS_OPCODE(getitemconst)) {
-        REQ_ARG_CNT(3); REQ_ARG_BYTE(1, object); REQ_ARG_CONST(2, index); REQ_ARG_BYTE(3, dst);
-        script.bytecode.push(ScriptInstruction {GetItem, object, index, dst});
-      } else if(IS_OPCODE(setitemconst)) {
-        REQ_ARG_CNT(3); REQ_ARG_BYTE(1, object); REQ_ARG_CONST(2, index); REQ_ARG_BYTE(3, src);
         script.bytecode.push(ScriptInstruction {SetItem, object, index, src});
       } else if(IS_OPCODE(makeiterator)) {
         REQ_ARG_CNT(2); REQ_ARG_BYTE(1, dst); REQ_ARG_BYTE(2, object);

@@ -12,16 +12,14 @@ namespace L {
 
   enum ScriptOpCode : uint8_t {
     CopyLocal, // Copy local b to local a
-    LoadConst, // Copy constant b to local a
-    LoadGlobal, // Copy global with index constant b to local a
-    StoreGlobal, // Set global with index constant a to local b
+    LoadConst, // Copy constant bcu16 to local a
+    LoadGlobal, // Copy global with index constant bcu16 to local a
+    StoreGlobal, // Set global with index constant bcu16 to local a
     LoadFun, // Creates new ScriptFunction in local a from current script and offset bc
 
     MakeObject, // Creates an associative array at local a
     GetItem, // Copy item from local a at index local b to local c
     SetItem, // Set item from local a at index local b to local c
-    GetItemConst, // Copy item from local a at index const b to local c
-    SetItemConst, // Set item from local a at index const b to local c
 
     MakeIterator, // Create an array iterator at local a from object at local b
     Iterate, // Put next key from iterator at local c to local a and next value to local b
@@ -47,12 +45,13 @@ namespace L {
     Return, // Return from current function
 
     // Optimization opcodes
-    LoadBool, // Load boolean b to local a
-    LoadInt, // Load integer bc (as float) to local a
     CondCopyLocal, // Copy local b to local a if local c is true
     CondLoadConst, // Copy constant b to local a if local c is true
     CondLoadGlobal, // Copy global b to local a if local c is true
-
+    LoadBool, // Load boolean b to local a
+    LoadInt, // Load integer bc (as float) to local a
+    GetItemConst, // Copy item from local a at index const b to local c
+    SetItemConst, // Set item from local a at index const b to local c
   };
   struct ScriptInstruction {
     ScriptOpCode opcode;
@@ -62,6 +61,7 @@ namespace L {
         uint8_t b, c;
       } bc8;
       int16_t bc16;
+      uint16_t bcu16;
     };
   };
   struct Script {
@@ -69,8 +69,8 @@ namespace L {
     Array<ScriptGlobal> globals;
     Array<ScriptInstruction> bytecode;
 
-    uint8_t constant(const Var&);
-    uint8_t global(Symbol);
+    uint16_t constant(const Var&);
+    uint16_t global(Symbol);
   };
   struct ScriptFunction {
     typedef ScriptFunction Intermediate;
