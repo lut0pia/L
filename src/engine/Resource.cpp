@@ -66,13 +66,14 @@ bool ResourceSlot::parameter(const Symbol& key, float& param_value) const {
 
 void ResourceSlot::load() {
   if(state==ResourceSlot::Unloaded && cas((uint32_t*)&state, ResourceSlot::Unloaded, ResourceSlot::Loading)==ResourceSlot::Unloaded) {
+    const uint32_t thread_mask = TaskSystem::thread_count() > 1 ? uint32_t(-2) : uint32_t(-1);
     TaskSystem::push([](void* p) {
       ResourceSlot& slot(*(ResourceSlot*)p);
       L_SCOPE_MARKERF("Resource load (%s)", (const char*)slot.id);
       slot.load_function(slot);
       slot.mtime = Date::now();
       slot.state = ResourceSlot::Loaded;
-    }, this, uint32_t(-1), TaskSystem::NoParent);
+    }, this, thread_mask, TaskSystem::NoParent);
   }
 }
 bool ResourceSlot::flush() {
