@@ -101,6 +101,10 @@ void thread_func(void* arg) {
          && slot.check_condition()) {
         switch_to_fiber(slot.handle);
         starve_count = 0;
+      } else if(local_thread_index == 0 && (slot.thread_mask & 1) == 0) {
+        // The fiber does not want to execute on the main thread
+        // and the other threads may be asleep, wake them
+        semaphore.put();
       }
       slot.state = (slot.func==nullptr ? Empty : Ready);
     }
