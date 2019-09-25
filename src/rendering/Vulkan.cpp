@@ -597,10 +597,10 @@ void Vulkan::end_command_buffer(VkCommandBuffer commandBuffer) {
   submitInfo.pCommandBuffers = &commandBuffer;
 
   {
+    L_SCOPE_MARKER("Command buffer fence");
     L_SCOPED_LOCK(queue_lock);
     VkFence fence(command_fence[TaskSystem::fiber_id()]);
     vkQueueSubmit(queue, 1, &submitInfo, fence);
-    L_SCOPE_MARKER("Command buffer fence");
     TaskSystem::yield_until([](void* fence) {
       return vkGetFenceStatus(Vulkan::device(), *(VkFence*)fence)==VK_SUCCESS;
     }, &fence);
