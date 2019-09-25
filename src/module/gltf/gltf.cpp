@@ -93,14 +93,14 @@ bool gltf_material_loader(ResourceSlot& slot, Material::Intermediate& intermedia
 }
 
 inline static void convert_vector(const Quatf& rotation, Vector3f& v) {
+  v = rotation.rotate(v);
+  
   // GLTF defines +X Left, +Y Up, +Z Forward
   // L defines +X Right, +Y Forward, +Z Up
   const float y = v.y();
   v.x() = -v.x();
   v.y() = v.z();
   v.z() = y;
-
-  v = rotation.rotate(v);
 }
 
 bool gltf_mesh_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
@@ -189,7 +189,7 @@ bool gltf_mesh_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
   Quatf node_rotation;
 
   if(node->has_rotation) {
-    node_rotation = Quatf(node->rotation[0], node->rotation[1], node->rotation[2], node->rotation[3]).inverse();
+    node_rotation = Quatf(node->rotation[0], node->rotation[1], node->rotation[2], node->rotation[3]);
   }
 
   for(uintptr_t i(0); i < ind_acc->count; i++) {
