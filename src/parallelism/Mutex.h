@@ -1,13 +1,12 @@
 #pragma once
 
-#include "../container/Raw.h"
 #include "../macros.h"
 
 namespace L {
   class Mutex {
     L_NOCOPY(Mutex)
   protected:
-    Raw<40> _data;
+    void* _data;
   public:
     Mutex();
     ~Mutex();

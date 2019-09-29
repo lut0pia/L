@@ -1,9 +1,10 @@
 #include "AsyncFileStream.h"
 
 #include <windows.h>
+#include "CFileStream.h"
 #include "../dev/debug.h"
 #include "../parallelism/TaskSystem.h"
-#include "CFileStream.h"
+#include "../system/Memory.h"
 
 using namespace L;
 
@@ -11,11 +12,12 @@ struct DataStruct {
   HANDLE _handle;
   DWORD _pos;
 };
-#define _dataStruct (_data.as<DataStruct>())
-#define _handle (_dataStruct._handle)
-#define _pos (_dataStruct._pos)
+#define _data_struct ((DataStruct*)_data)
+#define _handle (_data_struct->_handle)
+#define _pos (_data_struct->_pos)
 
 AsyncFileStream::AsyncFileStream(const char* filepath, const char* mode) {
+  _data = Memory::new_type<DataStruct>();
   // We're setting access and creation according to mode by mimicking fopen
   DWORD access(0);
   DWORD creation(OPEN_ALWAYS);
@@ -42,6 +44,7 @@ AsyncFileStream::AsyncFileStream(const char* filepath, const char* mode) {
 }
 AsyncFileStream::~AsyncFileStream() {
   if(*this) CloseHandle(_handle);
+  Memory::delete_type<DataStruct>(_data_struct);
 }
 
 size_t AsyncFileStream::write(const void* data, size_t size) {

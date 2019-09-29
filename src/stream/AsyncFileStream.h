@@ -1,13 +1,12 @@
 #pragma once
 
-#include "../container/Raw.h"
 #include "DirectStream.h"
 #include "../macros.h"
 
 namespace L {
   class AsyncFileStream : public DirectStream {
   protected:
-    Raw<16> _data;
+    void* _data;
   public:
     AsyncFileStream(const char* filepath, const char* mode);
     ~AsyncFileStream();

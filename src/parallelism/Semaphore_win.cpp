@@ -5,7 +5,7 @@
 
 using namespace L;
 
-#define _handle (_data.as<HANDLE>())
+#define _handle _data
 
 Semaphore::Semaphore(uint32_t initial_count) {
   _handle = CreateSemaphore(NULL, initial_count, 1 << 30, NULL);
