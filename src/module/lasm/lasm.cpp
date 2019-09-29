@@ -192,6 +192,18 @@ static bool lasm_script_loader(ResourceSlot& slot, ScriptFunction& intermediate)
       } else if(IS_OPCODE(loadfun)) {
         REQ_ARG_CNT(2); REQ_ARG_BYTE(1, dst); REQ_ARG_ABSOFF(2);
         script.bytecode.push(ScriptInstruction {LoadFun, dst});
+      } else if(IS_OPCODE(loadouter)) {
+        REQ_ARG_CNT(2); REQ_ARG_BYTE(1, dst); REQ_ARG_BYTE(2, src);
+        script.bytecode.push(ScriptInstruction {LoadOuter, dst, src});
+      } else if(IS_OPCODE(storeouter)) {
+        REQ_ARG_CNT(2); REQ_ARG_BYTE(1, dst); REQ_ARG_BYTE(2, src);
+        script.bytecode.push(ScriptInstruction {StoreOuter, dst, src});
+      } else if(IS_OPCODE(captlocal)) {
+        REQ_ARG_CNT(2); REQ_ARG_BYTE(1, dst); REQ_ARG_BYTE(2, src);
+        script.bytecode.push(ScriptInstruction {CaptLocal, dst, src});
+      } else if(IS_OPCODE(captouter)) {
+        REQ_ARG_CNT(2); REQ_ARG_BYTE(1, dst); REQ_ARG_BYTE(2, src);
+        script.bytecode.push(ScriptInstruction {CaptOuter, dst, src});
       } else if(IS_OPCODE(makeobject)) {
         REQ_ARG_CNT(1); REQ_ARG_BYTE(1, dst);
         script.bytecode.push(ScriptInstruction {MakeObject, dst});
