@@ -21,15 +21,15 @@ using namespace L;
 
 static const Symbol glb_symbol("glb");
 
-static void read_accessor(const cgltf_data* data, const cgltf_accessor* acc, intptr_t i, void* dst, size_t size) {
+static void read_accessor(const cgltf_accessor* acc, intptr_t i, void* dst, size_t size) {
   const uint8_t* src = (const uint8_t*)acc->buffer_view->buffer->data;
   const uintptr_t offset = acc->offset + acc->buffer_view->offset + acc->stride * i;
   memcpy(dst, src + offset, size);
 }
 
-template <class T> T read_accessor(const cgltf_data* data, const cgltf_accessor* acc, intptr_t i) {
+template <class T> T read_accessor(const cgltf_accessor* acc, intptr_t i) {
   T v;
-  read_accessor(data, acc, i, &v, sizeof(v));
+  read_accessor(acc, i, &v, sizeof(v));
   return v;
 }
 
@@ -195,17 +195,17 @@ bool gltf_mesh_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
   for(uintptr_t i(0); i < ind_acc->count; i++) {
     Vertex vertex {};
 
-    const uint16_t index = read_accessor<uint16_t>(data, ind_acc, i);
+    const uint16_t index = read_accessor<uint16_t>(ind_acc, i);
 
-    vertex.position = read_accessor<Vector3f>(data, pos_acc, index);
-    vertex.uv = read_accessor<Vector2f>(data, tex_acc, index);
+    vertex.position = read_accessor<Vector3f>(pos_acc, index);
+    vertex.uv = read_accessor<Vector2f>(tex_acc, index);
 
     if(nor_acc) {
-      vertex.normal = read_accessor<Vector3f>(data, nor_acc, index);
+      vertex.normal = read_accessor<Vector3f>(nor_acc, index);
     }
 
     if(tan_acc) {
-      vertex.tangent = read_accessor<Vector3f>(data, tan_acc, index);
+      vertex.tangent = read_accessor<Vector3f>(tan_acc, index);
     }
 
     // Coordinate system conversion
