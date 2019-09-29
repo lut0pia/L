@@ -74,7 +74,7 @@ bool LSCompiler::find_outer(Function& func, const Symbol& symbol, uint8_t& outer
     if(outer_index != UINTPTR_MAX) {
       outer = uint8_t(outer_index);
       return true;
-    } else if(const uint8_t* local = func.parent->local_table.find(symbol)) {
+    } else if(func.parent->local_table.find(symbol)) {
       outer = uint8_t(func.outers.size());
       func.outers.push(symbol);
       return true;
