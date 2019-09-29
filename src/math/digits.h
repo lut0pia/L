@@ -10,6 +10,11 @@ namespace L {
   template <> struct inttype<uint32_t> { typedef uint32_t type; };
   template <> struct inttype<uint64_t> { typedef uint64_t type; };
 
+  template <class T> inline void digits_negate(T& v) { v = -v; }
+  inline void digits_negate(unsigned int&) {}
+  inline void digits_negate(unsigned long&) {}
+  inline void digits_negate(unsigned __int64&) {}
+
   inline char* ntos_buffer() {
     static char buffer[128] = {0};
     return buffer+127;
@@ -34,7 +39,7 @@ namespace L {
     if(!ntos_valid(v)) return "NaN"; // Check validity
     char* wtr(ntos_buffer()); // Get buffer (backwards writing)
     const bool negative(v<0); // Check negativity
-    if(negative) v = -v;
+    if(negative) digits_negate(v);
 
     int point(ntos_point<base>(v)); // Check for point
     auto i((typename inttype<T>::type)v); // Convert to int
@@ -72,6 +77,7 @@ namespace L {
       if(fract) fract *= base;
     }
     if(fract) wtr /= fract;
-    return (negative) ? -wtr : wtr;
+    if(negative) digits_negate(wtr);
+    return wtr;
   }
 }
