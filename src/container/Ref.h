@@ -89,7 +89,7 @@ namespace L {
   }
   template <class T>
   inline Stream& operator>=(Stream& s, Ref<T>& v) {
-    bool is_null;
+    bool is_null = true;
     s >= is_null;
     if(is_null) {
       v = nullptr;
