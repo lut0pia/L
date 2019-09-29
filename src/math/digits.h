@@ -11,9 +11,8 @@ namespace L {
   template <> struct inttype<uint64_t> { typedef uint64_t type; };
 
   template <class T> inline void digits_negate(T& v) { v = -v; }
-  inline void digits_negate(unsigned int&) {}
-  inline void digits_negate(unsigned long&) {}
-  inline void digits_negate(unsigned __int64&) {}
+  inline void digits_negate(uint32_t&) {}
+  inline void digits_negate(uint64_t&) {}
 
   inline char* ntos_buffer() {
     static char buffer[128] = {0};
