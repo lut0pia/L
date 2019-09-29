@@ -5,7 +5,6 @@
 #include <L/src/engine/Engine.h>
 #include <L/src/engine/Settings.h>
 #include "LSCompiler.h"
-#include "LSServer.h"
 
 using namespace L;
 
@@ -29,14 +28,4 @@ bool ls_script_loader(ResourceSlot& slot, ScriptFunction& intermediate) {
 }
 void ls_module_init() {
   ResourceLoading<ScriptFunction>::add_loader(ls_script_loader);
-
-#ifdef L_DEBUG
-  static LSServer* server(nullptr);
-  if(Settings::get_int("script_server", 0)) {
-    server = Memory::new_type<LSServer>(short(Settings::get_int("server_port", 1993)));
-    Engine::add_update([]() {
-      server->update();
-    });
-  }
-#endif
 }
