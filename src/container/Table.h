@@ -13,30 +13,16 @@ namespace L {
   public:
     class Slot{
     private:
-      struct Layout{
-        uint32_t _hash;
-        K _key;
-        V _value;
-      };
-      uint8_t _data[sizeof(Layout)];
-      inline Layout& layout() { return *(Layout*)&_data; }
-      inline const Layout& layout() const { return *(Layout*)&_data; }
+      uint32_t _hash;
+      K _key;
+      V _value;
     public:
-      inline Slot(uint32_t h,const K& key) {
-        new(&layout()._hash)uint32_t(h);
-        new(&layout()._key)K(key);
-        new(&layout()._value)V();
-      }
-      inline ~Slot() {
-        if(!empty())
-          layout().~Layout();
-      }
+      inline Slot(uint32_t h, const K& key) : _hash(h), _key(key) {}
       inline bool empty() const { return !hash(); }
-      inline uint32_t hash() const { return layout()._hash; }
-      inline const K& key() const { return layout()._key; }
-      inline const V& value() const { return layout()._value; }
-      inline V& value() { return layout()._value; }
-      friend Table;
+      inline uint32_t hash() const { return _hash; }
+      inline const K& key() const { return _key; }
+      inline const V& value() const { return _value; }
+      inline V& value() { return _value; }
     };
   protected:
     Slot* _slots;
