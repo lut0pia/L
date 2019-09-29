@@ -94,11 +94,11 @@ void ScriptTools::print_disassembly(const Script& script, Stream& s) {
     s << ntos<10>(addr, 4) << ' ';
     switch(i.opcode) {
       case CopyLocal:    s << "CopyLocal:    " << i.a << " := " << i.bc8.b << "\n"; break;
-      case LoadConst:    s << "LoadConst:    " << i.a << " := " << script.constants[i.bc8.b] << "\n"; break;
+      case LoadConst:    s << "LoadConst:    " << i.a << " := " << script.constants[i.bcu16] << "\n"; break;
       case LoadBool:     s << "LoadBool:     " << i.a << " := " << (i.bc8.b!=0) << "\n"; break;
       case LoadInt:      s << "LoadInt:      " << i.a << " := " << i.bc16 << "\n"; break;
-      case LoadGlobal:   s << "LoadGlobal:   " << i.a << " := " << script.globals[i.bc8.b].name() << "\n"; break;
-      case StoreGlobal:  s << "StoreGlobal:  " << script.globals[i.a].name() << " := " << i.bc8.b << "\n"; break;
+      case LoadGlobal:   s << "LoadGlobal:   " << i.a << " := " << script.globals[i.bcu16].name() << "\n"; break;
+      case StoreGlobal:  s << "StoreGlobal:  " << script.globals[i.bcu16].name() << " := " << i.a << "\n"; break;
       case LoadFun:      s << "LoadFun:      " << i.a << " := " << i.bc16 << "\n"; break;
 
       case MakeObject:   s << "MakeObject:   " << i.a << " := {}\n"; break;
