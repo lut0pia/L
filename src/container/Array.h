@@ -152,7 +152,7 @@ namespace L {
       for(uintptr_t i(0); i<_size; i++)
         if(_data[i]==e)
           return i;
-      return uintptr_t(-1);
+      return UINTPTR_MAX;
     }
 
     friend Stream& operator<<(Stream& s, const Array& v) {
