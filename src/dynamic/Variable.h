@@ -56,21 +56,20 @@ namespace L {
     template <class T> T& cast() {
       if(is<T>()) return as<T>(); // It's already the right type: return as-is
       else if(Cast cast = _td->casts.get(Type<T>::description(), nullptr)) { // Try to find cast
-        uint8_t tmp[sizeof(T)]; // Temporary buffer
-        cast(tmp,value()); // Cast current value to temporary buffer
-        *this = static_cast<T&&>(*(T*)tmp); // Move casted value to this
-        ((T*)tmp)->~T(); // Destruct temporary value
+        T tmp;
+        tmp.~T(); // Cast will construct over, we have to destruct, hopefully not too slow
+        cast(&tmp, value()); // Cast current value to temporary variable
+        *this = tmp; // Move casted value to this
         return as<T>();
       } else return make<T>(); // There's no cast available: default construct it
     }
     template <class T> T get() const {
       if(is<T>()) return as<T>(); // It's already the right type: return as-is
       else if(Cast cast = _td->casts.get(Type<T>::description(), nullptr)) { // Try to find cast
-        uint8_t tmp[sizeof(T)]; // Temporary buffer
-        cast(tmp,value()); // Cast current value to temporary buffer
-        T wtr(static_cast<T&&>(*(T*)tmp)); // Move casted value to return object
-        ((T*)tmp)->~T(); // Destruct temporary value
-        return wtr; // Returns temporary casted value
+        T tmp;
+        tmp.~T(); // Cast will construct over, we have to destruct, hopefully not too slow
+        cast(&tmp,value()); // Cast current value to temporary variable
+        return tmp; // Returns temporary casted value
       } else return T(); // Returns default constructed type
     }
 
