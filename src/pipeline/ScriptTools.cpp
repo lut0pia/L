@@ -101,6 +101,11 @@ void ScriptTools::print_disassembly(const Script& script, Stream& s) {
       case StoreGlobal:  s << "StoreGlobal:  " << script.globals[i.bcu16].name() << " := " << i.a << "\n"; break;
       case LoadFun:      s << "LoadFun:      " << i.a << " := " << i.bc16 << "\n"; break;
 
+      case LoadOuter:    s << "LoadOuter:    " << i.a << " := " << i.bc8.b << "\n"; break;
+      case StoreOuter:   s << "StoreOuter:   " << i.a << " := " << i.bc8.b << "\n"; break;
+      case CaptLocal:    s << "CaptLocal:    " << i.a << " := " << i.bc8.b << "\n"; break;
+      case CaptOuter:    s << "CaptOuter:    " << i.a << " := " << i.bc8.b << "\n"; break;
+
       case MakeObject:   s << "MakeObject:   " << i.a << " := {}\n"; break;
       case GetItem:      s << "GetItem:      " << i.bc8.c << " := " << i.a << "[" << i.bc8.b << "]\n"; break;
       case SetItem:      s << "SetItem:      " << i.a << "[" << i.bc8.b << "] := " << i.bc8.c << "\n"; break;

@@ -61,7 +61,7 @@ int main(int, const char*[]) {
     Resource<ScriptFunction> ini_script = "ini.ls";
     ini_script.flush();
     if(ini_script.is_loaded()) {
-      ScriptContext().execute(*ini_script);
+      ScriptContext().execute(ref<ScriptFunction>(*ini_script));
     } else {
       error("Could not load init script");
     }

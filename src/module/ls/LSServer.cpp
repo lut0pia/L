@@ -28,7 +28,7 @@ void LSServer::update() {
           ScriptFunction script_function(client.compiler.compile());
 
           // Execute command
-          const Var result(client.context.execute(script_function));
+          const Var result(client.context.execute(ref<ScriptFunction>(script_function)));
 
           // Send back result
           {

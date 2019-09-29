@@ -56,20 +56,20 @@ static inline void set_item(Var& object, const Var& index, const Var& value) {
 bool ScriptContext::try_execute_method(const Symbol& sym, std::initializer_list<Var> parameters) {
   if(_self.is<Ref<Table<Var, Var>>>()) {
     if(const Var* method = _self.as<Ref<Table<Var, Var>>>()->find(sym)) {
-      if(method->is<ScriptFunction>()) {
-        execute(method->as<ScriptFunction>(), parameters);
+      if(method->is<Ref<ScriptFunction>>()) {
+        execute(method->as<Ref<ScriptFunction>>(), parameters);
         return true;
       }
     }
   }
   return false;
 }
-Var ScriptContext::execute(const ScriptFunction& function, const Var* params, size_t param_count) {
+Var ScriptContext::execute(const Ref<ScriptFunction>& function, const Var* params, size_t param_count) {
   L_SCOPE_MARKER("Script execution");
   L_ASSERT(_frames.empty());
-  _stack.size(1<<12);
+  _stack.size(1 << 12);
   _frames.push();
-  _frames.back().script = function.script;
+  _frames.back().script = function->script;
   _frames.back().stack_start = _current_stack_start = 0;
   _frames.back().param_count = param_count;
   _current_param_count = uint32_t(param_count);
@@ -77,22 +77,45 @@ Var ScriptContext::execute(const ScriptFunction& function, const Var* params, si
   current_self() = _self;
 
   { // Put parameters on the stack
-    for(uintptr_t i(0); i<param_count; i++) {
+    for(uintptr_t i(0); i < param_count; i++) {
       param(i) = params[i];
     }
   }
 
-  Ref<Script> current_script(function.script);
-  const ScriptInstruction* ip(function.script->bytecode.begin()+function.offset);
+  Ref<ScriptFunction> current_function = function;
+  Ref<Script> current_script = function->script;
+  const ScriptInstruction* ip = function->script->bytecode.begin() + function->offset;
 
   while(true) {
-    L_ASSERT(ip>=current_script->bytecode.begin() && ip<current_script->bytecode.end());
+    L_ASSERT(ip >= current_script->bytecode.begin() && ip < current_script->bytecode.end());
     switch(ip->opcode) {
       case CopyLocal: local(ip->a) = local(ip->bc8.b); break;
       case LoadConst: local(ip->a) = current_script->constants[ip->bcu16]; break;
       case LoadGlobal: local(ip->a) = current_script->globals[ip->bcu16].value(); break;
       case StoreGlobal: current_script->globals[ip->bcu16].value() = local(ip->a); break;
-      case LoadFun: local(ip->a) = ScriptFunction {current_script, uintptr_t(ip->bc16)}; break;
+      case LoadFun: local(ip->a) = ref<ScriptFunction>(ScriptFunction {current_script, uintptr_t(ip->bc16)}); break;
+
+      case LoadOuter:
+      {
+        Ref<ScriptOuter> outer = current_function->outers[ip->bc8.b];
+        local(ip->a) = (outer->offset > 0) ? _stack[outer->offset] : outer->value;
+        break;
+      }
+      case StoreOuter:
+      {
+        Ref<ScriptOuter> outer = current_function->outers[ip->a];
+        ((outer->offset > 0) ? _stack[outer->offset] : outer->value) = local(ip->bc8.b);
+        break;
+      }
+      case CaptLocal:
+      {
+        L_ASSERT(local(ip->a).is<Ref<ScriptFunction>>());
+        Ref<ScriptOuter> outer = ref<ScriptOuter>(ScriptOuter {ip->bc8.b + _current_stack_start});
+        local(ip->a).as<Ref<ScriptFunction>>()->outers.push(outer);
+        _outers.push(outer);
+        break;
+      }
+      case CaptOuter: local(ip->a).as<Ref<ScriptFunction>>()->outers.push(current_function->outers[ip->bc8.b]); break;
 
       case MakeObject: local(ip->a) = ref<Table<Var, Var>>(); break;
       case GetItem: get_item(local(ip->a), local(ip->bc8.b), local(ip->bc8.c)); break;
@@ -129,17 +152,18 @@ Var ScriptContext::execute(const ScriptFunction& function, const Var* params, si
           return_value().as<ScriptNativeFunction>()(*this);
           _current_stack_start = _frames.back().stack_start;
           _current_param_count = uint32_t(_frames.back().param_count);
-        } else if(new_func.is<ScriptFunction>()) {
-          const ScriptFunction& script_function(new_func.as<ScriptFunction>());
-          L_ASSERT(script_function.offset<script_function.script->bytecode.size());
+        } else if(new_func.is<Ref<ScriptFunction>>()) {
+          const Ref<ScriptFunction>& script_function(new_func.as<Ref<ScriptFunction>>());
+          L_ASSERT(script_function->offset < script_function->script->bytecode.size());
 
           _frames.back().ip = ip; // Save instruction pointer
           _frames.push();
           _frames.back().stack_start = _current_stack_start;
           _frames.back().param_count = _current_param_count;
 
-          current_script = _frames.back().script = script_function.script;
-          ip = current_script->bytecode.begin()+script_function.offset;
+          current_function = script_function;
+          current_script = _frames.back().script = script_function->script;
+          ip = current_script->bytecode.begin() + script_function->offset;
           continue; // Avoid ip increment
         } else {
           warning("Trying to call non-callable type: %s", new_func.type()->name);
@@ -149,6 +173,16 @@ Var ScriptContext::execute(const ScriptFunction& function, const Var* params, si
         break;
       }
       case Return:
+        // Unlink outers
+        for(uintptr_t i = 0; i < _outers.size(); i++) {
+          if(_outers[i]->offset >= _current_stack_start) {
+            _outers[i]->value = _stack[_outers[i]->offset];
+            _outers[i]->offset = 0;
+            _outers.erase_fast(i);
+            i -= 1;
+          }
+        }
+
         _frames.pop();
         if(_frames.empty()) {
           return _stack[0];
@@ -161,7 +195,7 @@ Var ScriptContext::execute(const ScriptFunction& function, const Var* params, si
         }
         break;
 
-      // Optimization opcodes
+        // Optimization opcodes
       case LoadBool: local(ip->a) = (ip->bc8.b != 0); break;
       case LoadInt: local(ip->a) = float(ip->bc16); break;
       default:

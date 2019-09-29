@@ -17,6 +17,11 @@ namespace L {
     StoreGlobal, // Set global with index constant bcu16 to local a
     LoadFun, // Creates new ScriptFunction in local a from current script and offset bc
 
+    LoadOuter, // Copy outer b to local a
+    StoreOuter, // Copy local b to outer a
+    CaptLocal, // Captures local b as next outer in function at local a
+    CaptOuter, // Captures outer b as next outer in function at local a
+
     MakeObject, // Creates an associative array at local a
     GetItem, // Copy item from local a at index local b to local c
     SetItem, // Set item from local a at index local b to local c
@@ -72,10 +77,15 @@ namespace L {
     uint16_t constant(const Var&);
     uint16_t global(Symbol);
   };
+  struct ScriptOuter {
+    uintptr_t offset;
+    Var value;
+  };
   struct ScriptFunction {
     typedef ScriptFunction Intermediate;
     Ref<Script> script;
     uintptr_t offset;
+    Array<Ref<ScriptOuter>> outers;
   };
 
   inline Stream& operator<=(Stream& s, const Script& v) { return s <= v.constants <= v.globals <= v.bytecode; }

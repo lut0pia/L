@@ -50,7 +50,7 @@ void ScriptComponent::script_registration() {
       Engine::clear();
       script->flush();
       if(script->is_loaded()) {
-        ScriptContext().execute(**script);
+        ScriptContext().execute(ref<ScriptFunction>(**script));
       } else {
         warning("Could not load script %s for engine_clear_and_read", script->slot()->id);
       }
@@ -112,7 +112,7 @@ void ScriptComponent::load(const char* filename) {
 void ScriptComponent::start() {
   L_ASSERT(_script);
   _started = true;
-  _context.execute(*_script);
+  _context.execute(ref<ScriptFunction>(*_script));
   _context.try_execute_method(start_symbol);
 }
 void ScriptComponent::update() {
