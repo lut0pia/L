@@ -120,7 +120,8 @@ namespace L {
 
     // Operator default setters
     template <class dummy = void> static inline void canall(){ cancmp<>(); canmath<>(); canmod<>(); }
-    template <class dummy = void> static inline void canmath(){ canadd<>(); cansub<>(); canmul<>(); candiv<>(); caninv<>(); }
+    template <class dummy = void> static inline void canumath(){ canadd<>(); cansub<>(); canmul<>(); candiv<>(); }
+    template <class dummy = void> static inline void canmath(){ canumath<>(); caninv<>(); }
     template <class dummy = void> static inline void canadd(){ useadd([](void* a,const void* b) { *((T*)a) += *((T*)b); }); }
     template <class dummy = void> static inline void cansub(){ usesub([](void* a,const void* b) { *((T*)a) -= *((T*)b); }); }
     template <class dummy = void> static inline void canmul(){ usemul([](void* a,const void* b) { *((T*)a) *= *((T*)b); }); }

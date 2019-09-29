@@ -14,13 +14,9 @@ Table<Symbol, const TypeDescription*> L::types;
 
 void L::TypeInit() {
   // Operators
-  Type<uint8_t>::canall<>();
   Type<int8_t>::canall<>();
-  Type<uint16_t>::canall<>();
   Type<int16_t>::canall<>();
-  Type<uint32_t>::canall<>();
   Type<int32_t>::canall<>();
-  Type<uint64_t>::canall<>();
   Type<int64_t>::canall<>();
   Type<float>::canmath<>();
   Type<float>::cancmp<>();
@@ -35,6 +31,20 @@ void L::TypeInit() {
   Type<Time>::cancmp<>();
   Type<Vector3f>::canmath();
   Type<float>::usemod([](void* a, const void* b) {*((float*)a) = pmod(*((float*)a), *((float*)b)); });
+
+  // Unsigned types
+  Type<uint8_t>::cancmp<>();
+  Type<uint8_t>::canumath<>();
+  Type<uint8_t>::canmod<>();
+  Type<uint16_t>::cancmp<>();
+  Type<uint16_t>::canumath<>();
+  Type<uint16_t>::canmod<>();
+  Type<uint32_t>::cancmp<>();
+  Type<uint32_t>::canumath<>();
+  Type<uint32_t>::canmod<>();
+  Type<uint64_t>::cancmp<>();
+  Type<uint64_t>::canumath<>();
+  Type<uint64_t>::canmod<>();
 
   // Casts
   Type<void>::addcast<bool>([](void* dst, const void*) {new(dst)bool(false); });
