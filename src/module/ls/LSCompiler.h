@@ -14,7 +14,9 @@ class LSCompiler {
 protected:
   LSParser _parser;
   struct Function {
+    Function* parent;
     L::Table<L::Symbol, uint8_t> local_table;
+    L::Array<L::Symbol> outers;
     L::Var code;
     L::Array<L::ScriptInstruction> bytecode;
     uint8_t local_count;
@@ -35,7 +37,8 @@ public:
   L::ScriptFunction compile();
 
 protected:
-  Function& make_function(const L::Var&);
+  Function& make_function(const L::Var& code, Function* parent = nullptr);
+  bool find_outer(Function&, const L::Symbol& symbol, uint8_t& outer);
   void resolve_locals(Function&, const L::Var&);
   void compile(Function&, const L::Var&, uint8_t offset = 0);
   void compile_function(Function&);

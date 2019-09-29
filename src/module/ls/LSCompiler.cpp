@@ -58,14 +58,33 @@ ScriptFunction LSCompiler::compile() {
   script_function.offset = 0;
   return script_function;
 }
-LSCompiler::Function& LSCompiler::make_function(const Var& code) {
+LSCompiler::Function& LSCompiler::make_function(const Var& code, Function* parent) {
   _functions.push();
   Function*& function(_functions.back());
   function = Memory::new_type<Function>();
+  function->parent = parent;
   function->code = code;
   function->local_count = 2; // Account for return value and self
   function->local_table[self_symbol] = 1; // Self is always at offset 1
   return *function;
+}
+bool LSCompiler::find_outer(Function& func, const Symbol& symbol, uint8_t& outer) {
+  if(func.parent) {
+    const uintptr_t outer_index = func.outers.find(symbol);
+    if(outer_index != UINTPTR_MAX) {
+      outer = uint8_t(outer_index);
+      return true;
+    } else if(const uint8_t* local = func.parent->local_table.find(symbol)) {
+      outer = uint8_t(func.outers.size());
+      func.outers.push(symbol);
+      return true;
+    } else if(find_outer(*func.parent, symbol, outer)) {
+      outer = uint8_t(func.outers.size());
+      func.outers.push(symbol);
+      return true;
+    }
+  }
+  return false;
 }
 void LSCompiler::resolve_locals(Function& func, const L::Var& v) {
   if(v.is<Array<Var>>()) {
@@ -264,7 +283,7 @@ void LSCompiler::compile(Function& func, const Var& v, uint8_t offset) {
         if(array.size() > 1) {
           // Make a new function from the last item of the array
           // because the last part is always the code
-          Function& new_function(make_function(array.back()));
+          Function& new_function(make_function(array.back(), &func));
 
           { // Deal with potential parameters
             if(array.size() > 2 && array[1].is<Array<Var>>()) { // There's a list of parameter symbols
@@ -281,6 +300,18 @@ void LSCompiler::compile(Function& func, const Var& v, uint8_t offset) {
 
           resolve_locals(new_function, new_function.code);
           compile_function(new_function);
+
+          // Capture outers
+          for(const Symbol& symbol : new_function.outers) {
+            if(const uint8_t* local = func.local_table.find(symbol)) {
+              func.bytecode.push(ScriptInstruction {CaptLocal, offset, *local});
+            } else {
+              const uintptr_t outer_index = func.outers.find(symbol);
+              if(outer_index != UINTPTR_MAX) {
+                func.bytecode.push(ScriptInstruction {CaptOuter, offset, uint8_t(outer_index)});
+              }
+            }
+          }
         }
         return;
       } else if(sym == add_assign_symbol) {
@@ -333,8 +364,11 @@ void LSCompiler::compile(Function& func, const Var& v, uint8_t offset) {
   } else if(v.is<AccessChain>()) {
     compile_access_chain(func, v.as<AccessChain>().array, offset, true);
   } else if(v.is<Symbol>()) {
-    if(uint8_t* found = func.local_table.find(v.as<Symbol>())) {
-      func.bytecode.push(ScriptInstruction {CopyLocal, offset, *found});
+    uint8_t outer;
+    if(const uint8_t* local = func.local_table.find(v.as<Symbol>())) {
+      func.bytecode.push(ScriptInstruction {CopyLocal, offset, *local});
+    } else if(find_outer(func, v.as<Symbol>(), outer)) {
+      func.bytecode.push(ScriptInstruction {LoadOuter, offset, outer});
     } else {
       func.bytecode.push(ScriptInstruction {LoadGlobal, offset});
       func.bytecode.back().bcu16 = _script->global(v.as<Symbol>());
@@ -384,8 +418,11 @@ void LSCompiler::compile_function_call(Function& func, const Array<Var>& array, 
 }
 void LSCompiler::compile_assignment(Function& func, const L::Var& dst, uint8_t src, uint8_t offset) {
   if(dst.is<Symbol>()) {
-    if(uint8_t* found = func.local_table.find(dst.as<Symbol>())) {
-      func.bytecode.push(ScriptInstruction {CopyLocal, *found, src});
+    uint8_t outer;
+    if(const uint8_t* local = func.local_table.find(dst.as<Symbol>())) {
+      func.bytecode.push(ScriptInstruction {CopyLocal, *local, src});
+    } else if(find_outer(func, dst.as<Symbol>(), outer)) {
+      func.bytecode.push(ScriptInstruction {StoreOuter, outer, src});
     } else {
       func.bytecode.push(ScriptInstruction {StoreGlobal, src});
       func.bytecode.back().bcu16 = _script->global(dst.as<Symbol>());
