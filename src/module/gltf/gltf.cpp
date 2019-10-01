@@ -154,14 +154,11 @@ bool gltf_mesh_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
 
   for(uintptr_t i = 0; i < primitive->attributes_count; i++) {
     const cgltf_attribute& attribute = primitive->attributes[i];
-    if(!strcmp(attribute.name, "POSITION")) {
-      pos_acc = attribute.data;
-    } else if(!strcmp(attribute.name, "NORMAL")) {
-      nor_acc = attribute.data;
-    } else if(!strcmp(attribute.name, "TEXCOORD_0")) {
-      tex_acc = attribute.data;
-    } else if(!strcmp(attribute.name, "TANGENT")) {
-      tan_acc = attribute.data;
+    switch(attribute.type) {
+      case cgltf_attribute_type_position: pos_acc = attribute.data; break;
+      case cgltf_attribute_type_normal: nor_acc = attribute.data; break;
+      case cgltf_attribute_type_texcoord: tex_acc = attribute.data; break;
+      case cgltf_attribute_type_tangent: tan_acc = attribute.data; break;
     }
   }
 
