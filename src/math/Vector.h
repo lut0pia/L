@@ -19,6 +19,11 @@ namespace L {
       for(uintptr_t i(0); i<d; i++)
         _c[i] = T(other[i]);
     }
+    inline Vector(const T c[d]) {
+      for(uintptr_t i(0); i < d; i++) {
+        _c[i] = c[i];
+      }
+    }
     inline Vector(const T& v) {
       for(uintptr_t i(0); i<d; i++)
         _c[i] = v;
@@ -137,17 +142,6 @@ namespace L {
       return wtr;
     }
     inline Vector reflect(const Vector& v) const { return ((*this*(dot(v)*T(2)))-v); }
-    bool increment(const Vector& min,const Vector& max,const Vector& delta = 1) {
-      for(uintptr_t i(0); i<d; i++) {
-        _c[i] += delta[i];
-        if(_c[i]>=max._c[i]) {
-          _c[i] = min._c[i];
-          if(i==d-1)
-            return false;
-        } else break;
-      }
-      return true;
-    }
 
     inline const T& operator[](uintptr_t i) const { return _c[i]; }
     inline const T& x() const { return _c[0]; }
