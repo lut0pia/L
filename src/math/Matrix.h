@@ -26,13 +26,14 @@ namespace L {
     }
     Matrix(const T a[c*l]) {
       for(uintptr_t i(0); i < c*l; i++) {
-        _m[0][i] = a[i];
+        _m[i/c][i%l] = a[i];
       }
     }
     Matrix(const std::initializer_list<T>& il) {
       uintptr_t i(0);
       for(const T& s : il) {
-        _m[0][i++] = s;
+        _m[i/c][i%l] = s;
+        i++;
       }
     }
     template<int ol, int oc>
