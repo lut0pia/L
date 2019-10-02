@@ -75,13 +75,11 @@ bool gltf_material_loader(ResourceSlot& slot, Material::Intermediate& intermedia
 
   // Find mesh node
   const cgltf_mesh* mesh = nullptr;
-  const cgltf_primitive* primitive;
   uintptr_t node_index;
   for(uintptr_t i = 0; i < data->nodes_count; i++) {
     const cgltf_node* node = data->nodes + i;
     if(node->mesh && node->mesh->primitives_count == 1 && node->mesh->primitives->material == &material) {
       mesh = node->mesh;
-      primitive = mesh->primitives;
       node_index = i;
       break;
     }
@@ -122,7 +120,7 @@ static void compute_node_matrix(const cgltf_node* node, Matrix44f& matrix) {
     compute_node_matrix(node->parent, matrix);
   }
   if(node->has_rotation) {
-    float scale = scale = node->scale[0];
+    float scale = node->scale[0];
     Vector3f translation = node->translation;
     matrix = matrix * sqt_to_mat(Quatf(node->rotation[0], node->rotation[1], node->rotation[2], node->rotation[3]), translation, scale);
   }
@@ -197,6 +195,7 @@ bool gltf_mesh_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
       case cgltf_attribute_type_normal: nor_acc = attribute.data; break;
       case cgltf_attribute_type_texcoord: tex_acc = attribute.data; break;
       case cgltf_attribute_type_tangent: tan_acc = attribute.data; break;
+      default: break;
     }
   }
 
