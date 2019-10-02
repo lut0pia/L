@@ -24,6 +24,11 @@ namespace L {
         for(int j(0); j<l; j++)
           _m[i][j] = (i==j) ? s : 0;
     }
+    Matrix(const T a[c*l]) {
+      for(uintptr_t i(0); i < c*l; i++) {
+        _m[0][i] = a[i];
+      }
+    }
     Matrix(const std::initializer_list<T>& il) {
       uintptr_t i(0);
       for(const T& s : il) {
