@@ -1,5 +1,6 @@
 #include <L/src/container/Buffer.h>
 #include <L/src/engine/Resource.inl>
+#include <L/src/math/geometry.h>
 #include <L/src/math/Quaternion.h>
 #include <L/src/pipeline/ShaderTools.h>
 #include <L/src/pipeline/MeshBuilder.h>
@@ -116,8 +117,21 @@ if(cgltf_texture* texture = texpath.texture) { \
   return true;
 }
 
-inline static void convert_vector(const Quatf& rotation, Vector3f& v) {
-  v = rotation.rotate(v);
+static void compute_node_matrix(const cgltf_node* node, Matrix44f& matrix) {
+  if(node->parent) {
+    compute_node_matrix(node->parent, matrix);
+  }
+  if(node->has_rotation) {
+    float scale = scale = node->scale[0];
+    Vector3f translation = node->translation;
+    matrix = matrix * sqt_to_mat(Quatf(node->rotation[0], node->rotation[1], node->rotation[2], node->rotation[3]), translation, scale);
+  }
+  if(node->has_matrix) {
+    matrix = matrix * Matrix44f(node->matrix);
+  }
+}
+inline static void convert_vector(const Matrix44f& matrix, Vector3f& v) {
+  v = Vector4f(matrix * v);
 
   // GLTF defines +X Left, +Y Up, +Z Forward
   // L defines +X Right, +Y Forward, +Z Up
@@ -202,11 +216,8 @@ bool gltf_mesh_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
   mesh_builder.tangent_offset = sizeof(Vector3f) * 2;
   mesh_builder.uv_offset = sizeof(Vector3f) * 3;
 
-  Quatf node_rotation;
-
-  if(node->has_rotation) {
-    node_rotation = Quatf(node->rotation[0], node->rotation[1], node->rotation[2], node->rotation[3]);
-  }
+  Matrix44f node_matrix(1.f);
+  compute_node_matrix(node, node_matrix);
 
   for(uintptr_t i(0); i < ind_acc->count; i++) {
     Vertex vertex {};
@@ -214,6 +225,7 @@ bool gltf_mesh_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
     const uint16_t index = read_accessor<uint16_t>(ind_acc, i);
 
     vertex.position = read_accessor<Vector3f>(pos_acc, index);
+    convert_vector(node_matrix, vertex.position);
 
     if(tex_acc) {
       vertex.uv = read_accessor<Vector2f>(tex_acc, index);
@@ -221,16 +233,13 @@ bool gltf_mesh_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
 
     if(nor_acc) {
       vertex.normal = read_accessor<Vector3f>(nor_acc, index);
+      convert_vector(node_matrix, vertex.normal);
     }
 
     if(tan_acc) {
       vertex.tangent = read_accessor<Vector3f>(tan_acc, index);
+      convert_vector(node_matrix, vertex.tangent);
     }
-
-    // Coordinate system conversion
-    convert_vector(node_rotation, vertex.position);
-    convert_vector(node_rotation, vertex.normal);
-    convert_vector(node_rotation, vertex.tangent);
 
     mesh_builder.add_vertex(&vertex);
   }
