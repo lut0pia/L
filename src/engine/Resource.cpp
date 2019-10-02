@@ -29,13 +29,19 @@ persistent(false), state(Unloaded), value(nullptr) {
   while(pair && *pair) {
     pair += 1;
     const char* equal = strchr(pair, '=');
-    if(!equal) break;
-
-    const char* val = equal + 1;
-    const uintptr_t val_len = strcspn(val, "&\0");
-    parameters[Symbol(pair, equal - pair)] = Symbol(val, val_len);
-
-    pair = val + val_len;
+    const char* amp = strchr(pair, '&');
+    if(equal && (!amp || equal < amp)) {
+      const char* val = equal + 1;
+      const uintptr_t val_len = strcspn(val, "&\0");
+      parameters[Symbol(pair, equal - pair)] = Symbol(val, val_len);
+      pair = val + val_len;
+    } else if(amp) {
+      parameters[Symbol(pair, amp - pair)] = Symbol("");
+      pair = amp;
+    } else {
+      parameters[Symbol(pair)] = Symbol("");
+      break;
+    }
   }
 }
 
