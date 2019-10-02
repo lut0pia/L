@@ -25,10 +25,9 @@ namespace L {
           _m[i][j] = (i==j) ? s : 0;
     }
     Matrix(const std::initializer_list<T>& il) {
-      int i(0);
+      uintptr_t i(0);
       for(const T& s : il) {
-        _m[i%c][i/l] = s;
-        i++;
+        _m[0][i++] = s;
       }
     }
     template<int ol, int oc>
