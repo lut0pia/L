@@ -72,29 +72,53 @@ bool gltf_material_loader(ResourceSlot& slot, Material::Intermediate& intermedia
 
   const cgltf_material& material = data->materials[material_index];
 
-  if(!material.pbr_metallic_roughness.base_color_texture.texture
-    || !material.normal_texture.texture
-    || !material.pbr_metallic_roughness.metallic_roughness_texture.texture) {
-    warning("GLTF: Could not find all textures in %s", slot.path);
+  // Find mesh node
+  const cgltf_mesh* mesh = nullptr;
+  const cgltf_primitive* primitive;
+  uintptr_t node_index;
+  for(uintptr_t i = 0; i < data->nodes_count; i++) {
+    const cgltf_node* node = data->nodes + i;
+    if(node->mesh && node->mesh->primitives_count == 1 && node->mesh->primitives->material == &material) {
+      mesh = node->mesh;
+      primitive = mesh->primitives;
+      node_index = i;
+      break;
+    }
+  }
+  if(mesh) {
+    intermediate.mesh(String(slot.path) + "?node=" + to_string(node_index));
+  } else {
+    warning("GLTF: Could not find mesh node with material %s in %s", material.name, slot.path);
     return false;
   }
 
-  const uintptr_t base_color_texture = material.pbr_metallic_roughness.base_color_texture.texture - data->textures;
-  const uintptr_t normal_texture = material.normal_texture.texture - data->textures;
-  const uintptr_t metal_rough_texture = material.pbr_metallic_roughness.metallic_roughness_texture.texture - data->textures;
+  String shader_options;
 
-  intermediate.mesh(String(slot.path) + "?node=0");
-  intermediate.shader(VK_SHADER_STAGE_FRAGMENT_BIT, ".glb?stage=frag");
-  intermediate.shader(VK_SHADER_STAGE_VERTEX_BIT, ".glb?stage=vert");
-  intermediate.texture("base_color_texture", String(slot.path) + "?comp=bc1&texture=" + to_string(base_color_texture));
-  intermediate.texture("normal_texture", String(slot.path) + "?comp=bc1&texture=" + to_string(normal_texture));
-  intermediate.texture("metal_rough_texture", String(slot.path) + "?comp=bc1&texture=" + to_string(metal_rough_texture));
+#define TEXTURE(name, texpath) \
+if(cgltf_texture* texture = texpath.texture) { \
+  const uintptr_t texture_index = texture - data->textures; \
+  intermediate.texture(name, String(slot.path) + "?comp=bc1&texture=" + to_string(texture_index)); \
+  shader_options += "&" name; \
+}
+
+  TEXTURE("color_texture", material.pbr_metallic_roughness.base_color_texture);
+  TEXTURE("normal_texture", material.normal_texture);
+  TEXTURE("metal_rough_texture", material.pbr_metallic_roughness.metallic_roughness_texture);
+
+  intermediate.shader(VK_SHADER_STAGE_FRAGMENT_BIT, ".glb?stage=frag" + shader_options);
+  intermediate.shader(VK_SHADER_STAGE_VERTEX_BIT, ".glb?stage=vert" + shader_options);
+  intermediate.vector("color_factor", Vector4f(material.pbr_metallic_roughness.base_color_factor));
+  intermediate.vector("metal_rough_factor", Vector4f(
+    0.f,
+    material.pbr_metallic_roughness.roughness_factor,
+    material.pbr_metallic_roughness.metallic_factor
+  ));
   return true;
 }
 
 inline static void convert_vector(const Quatf& rotation, Vector3f& v) {
   v = rotation.rotate(v);
-  
+
   // GLTF defines +X Left, +Y Up, +Z Forward
   // L defines +X Right, +Y Forward, +Z Up
   const float y = v.y();
@@ -167,11 +191,6 @@ bool gltf_mesh_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
     return false;
   }
 
-  if(tex_acc == nullptr) {
-    warning("GLTF: Missing texture coordinates attribute for mesh %d in %s", node_index, slot.path);
-    return false;
-  }
-
   struct Vertex {
     Vector3f position, normal, tangent;
     Vector2f uv;
@@ -195,7 +214,10 @@ bool gltf_mesh_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
     const uint16_t index = read_accessor<uint16_t>(ind_acc, i);
 
     vertex.position = read_accessor<Vector3f>(pos_acc, index);
-    vertex.uv = read_accessor<Vector2f>(tex_acc, index);
+
+    if(tex_acc) {
+      vertex.uv = read_accessor<Vector2f>(tex_acc, index);
+    }
 
     if(nor_acc) {
       vertex.normal = read_accessor<Vector3f>(nor_acc, index);
@@ -232,6 +254,7 @@ bool gltf_mesh_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
   return true;
 }
 
+static const Symbol frag_symbol("frag"), vert_symbol("vert");
 bool gltf_shader_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) {
   if(slot.ext != glb_symbol) {
     return false;
@@ -239,50 +262,95 @@ bool gltf_shader_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) 
 
   String source;
 
-  if(slot.parameter("stage") == Symbol("frag")) {
-    slot.ext = "frag";
-    source =
-      "layout(location = 0) in vec3 fposition;\n\
-layout(location = 1) in vec3 fnormal;\n\
-layout(location = 2) in vec3 ftangent;\n\
-layout(location = 3) in vec2 ftexcoords;\n\
-\n\
-layout(location = 0) out vec4 ocolor;\n\
-layout(location = 1) out vec4 onormal;\n\
-\n\
-layout(binding = 1) uniform sampler2D base_color_texture;\n\
-layout(binding = 2) uniform sampler2D normal_texture;\n\
-layout(binding = 3) uniform sampler2D metal_rough_texture;\n\
-\n\
-void main() {\
-  vec4 color = texture(base_color_texture, ftexcoords);\n\
-  vec3 normal_sample = (texture(normal_texture, ftexcoords).xyz * 2.f) - 1.f;\n\
-  vec4 metal_rough = texture(metal_rough_texture, ftexcoords);\n\
-  vec3 bitangent = cross(fnormal, ftangent);\n\
-  mat3 tangent_space = mat3(ftangent, -bitangent, fnormal);\n\
-  vec3 normal = normalize(tangent_space * normal_sample);\n\
-\n\
-  if(alpha(color.a)) discard;\n\
-  ocolor.rgb = linearize(color.rgb);\n\
-  ocolor.a = metal_rough.b; // Metalness\n\
-  onormal.xy = encodeNormal(normal);\n\
-  onormal.z = metal_rough.g; // Roughness\n\
-  onormal.w = 0.f; // Emission\n\
-}\n";
-  } else if(slot.parameter("stage") == Symbol("vert")) {
-    slot.ext = "vert";
-    source =
-      "layout(location = 0) in vec3 vposition;\n\
-layout(location = 1) in vec3 vnormal;\n\
-layout(location = 2) in vec3 vtangent;\n\
-layout(location = 3) in vec2 vtexcoords;\n\
-\n\
-layout(location = 0) out vec3 fposition;\n\
-layout(location = 1) out vec3 fnormal;\n\
-layout(location = 2) out vec3 ftangent;\n\
-layout(location = 3) out vec2 ftexcoords;\n\
-\n\
-void main() {\n\
+  Array<String> vert_attributes;
+  vert_attributes.push("vec3 vposition");
+  vert_attributes.push("vec3 vnormal");
+  vert_attributes.push("vec3 vtangent");
+  vert_attributes.push("vec2 vtexcoords");
+
+  Array<String> frag_attributes;
+  frag_attributes.push("vec3 fposition");
+  frag_attributes.push("vec3 fnormal");
+  frag_attributes.push("vec3 ftangent");
+  frag_attributes.push("vec2 ftexcoords");
+
+  Array<String> render_targets;
+  render_targets.push("vec4 ocolor");
+  render_targets.push("vec4 onormal");
+
+  Array<String> samplers;
+  if(slot.parameter("color_texture")) {
+    samplers.push("sampler2D color_texture");
+  }
+  if(slot.parameter("normal_texture")) {
+    samplers.push("sampler2D normal_texture");
+  }
+  if(slot.parameter("metal_rough_texture")) {
+    samplers.push("sampler2D metal_rough_texture");
+  }
+
+  const char* frag_dir = (slot.parameter("stage") == frag_symbol) ? "in" : "out";
+  for(uintptr_t i = 0; i < frag_attributes.size(); i++) {
+    source += "layout(location = " + to_string(i) + ") " + frag_dir + " " + frag_attributes[i] + ";\n";
+  }
+
+  slot.ext = slot.parameter("stage");
+  if(slot.ext == frag_symbol) {
+
+    for(uintptr_t i = 0; i < render_targets.size(); i++) {
+      source += "layout(location = " + to_string(i) + ") out " + render_targets[i] + ";\n";
+    }
+
+    source += "layout(binding = 1) uniform Parameters {\n\
+      vec4 color_factor;\n\
+      vec4 metal_rough_factor;\n\
+    };\n";
+
+    for(uintptr_t i = 0; i < samplers.size(); i++) {
+      source += "layout(binding = " + to_string(i + 2) + ") uniform " + samplers[i] + ";\n";
+    }
+
+    source += "void main() {\n";
+
+    if(slot.parameter("color_texture")) {
+      source += "vec4 color = texture(color_texture, ftexcoords);\n";
+    } else {
+      source += "vec4 color = vec4(1,1,1,1);\n";
+    }
+    source += "color.rgb = linearize(color.rgb);\n";
+    source += "color *= color_factor;\n";
+
+    if(slot.parameter("normal_texture")) {
+      source += "vec3 normal_sample = (texture(normal_texture, ftexcoords).xyz * 2.f) - 1.f;\n";
+      source += "vec3 bitangent = cross(fnormal, ftangent);\n";
+      source += "mat3 tangent_space = mat3(ftangent, -bitangent, fnormal);\n";
+      source += "vec3 normal = normalize(tangent_space * normal_sample);\n";
+    } else {
+      source += "vec3 normal = fnormal;\n";
+    }
+
+    if(slot.parameter("metal_rough_texture")) {
+      source += "vec4 metal_rough = texture(metal_rough_texture, ftexcoords);\n";
+    } else {
+      source += "vec4 metal_rough = vec4(1,1,1,1);\n";
+    }
+    source += "metal_rough *= metal_rough_factor;\n";
+
+    source += "if(alpha(color.a)) discard;\n";
+    source += "ocolor.rgb = linearize(color.rgb);\n";
+    source += "ocolor.a = metal_rough.b;\n"; // Metalness
+    source += "onormal.xy = encodeNormal(normal);\n";
+    source += "onormal.z = metal_rough.g;\n"; // Roughness
+    source += "onormal.w = 0.f; // Emission\n";
+    source += "}\n";
+  } else if(slot.ext == vert_symbol) {
+
+    for(uintptr_t i = 0; i < vert_attributes.size(); i++) {
+      source += "layout(location = " + to_string(i) + ") in " + vert_attributes[i] + ";\n";
+    }
+
+    source +=
+      "void main() {\n\
   ftexcoords = vtexcoords;\n\
   fnormal = normalize(mat3(model) * vnormal);\n\
   ftangent = normalize(mat3(model) * vtangent);\n\
