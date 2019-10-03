@@ -109,10 +109,10 @@ bool obj_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
 
   intermediate.vertices = Buffer(mesh_builder.vertices(), mesh_builder.vertices_size());
   intermediate.indices = Buffer(mesh_builder.indices(), mesh_builder.index_count() * sizeof(uint16_t));
-  intermediate.formats = {
-    VK_FORMAT_R32G32B32_SFLOAT,
-    VK_FORMAT_R32G32_SFLOAT,
-    VK_FORMAT_R32G32B32_SFLOAT,
+  intermediate.attributes = {
+    {VK_FORMAT_R32G32B32_SFLOAT, MeshAttributeType::Position},
+    {VK_FORMAT_R32G32_SFLOAT, MeshAttributeType::TexCoord},
+    {VK_FORMAT_R32G32B32_SFLOAT, MeshAttributeType::Normal},
   };
   return true;
 }

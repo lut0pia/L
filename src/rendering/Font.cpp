@@ -70,11 +70,11 @@ const Font::TextMesh& Font::text_mesh(const char* str) const {
         vector.y() = vector.y()*inv_height-1.f;
       }
     }
-    static const VkFormat formats[] {
-      VK_FORMAT_R32G32_SFLOAT,
-      VK_FORMAT_R32G32_SFLOAT,
+    static const MeshAttribute attributes[] {
+      {VK_FORMAT_R32G32_SFLOAT, MeshAttributeType::Undefined},
+      {VK_FORMAT_R32G32_SFLOAT, MeshAttributeType::Undefined},
     };
-    wtr.mesh.load(buffer.size(), &buffer[0], sizeof(Vector4f)*buffer.size(), formats, L_COUNT_OF(formats));
+    wtr.mesh.load(buffer.size(), &buffer[0], sizeof(Vector4f)*buffer.size(), attributes, L_COUNT_OF(attributes));
     return wtr;
   }
 }

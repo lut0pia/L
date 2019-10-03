@@ -2,21 +2,21 @@
 
 using namespace L;
 
-Mesh::Mesh(size_t count, const void* data, size_t size, const VkFormat* formats, size_t fcount, const uint16_t* iarray, size_t icount)
+Mesh::Mesh(size_t count, const void* data, size_t size, const MeshAttribute* attributes, size_t acount, const uint16_t* iarray, size_t icount)
   : Mesh() {
-  load(count, data, size, formats, fcount, iarray, icount);
+  load(count, data, size, attributes, acount, iarray, icount);
 }
 Mesh::Mesh(const Intermediate& intermediate) : Mesh() {
   size_t vertex_size = 0;
-  for(const VkFormat& format : intermediate.formats) {
-    vertex_size += Vulkan::format_size(format);
+  for(const MeshAttribute& attribute : intermediate.attributes) {
+    vertex_size += Vulkan::format_size(attribute.format);
   }
   load(
     intermediate.vertices.size() / vertex_size,
     intermediate.vertices,
     intermediate.vertices.size(),
-    intermediate.formats.begin(),
-    intermediate.formats.size(),
+    intermediate.attributes.begin(),
+    intermediate.attributes.size(),
     (const uint16_t*)(const void*)intermediate.indices,
     intermediate.indices.size() / 2);
 }
@@ -25,7 +25,7 @@ Mesh::~Mesh() {
   if(_index_buffer) Memory::delete_type(_index_buffer);
 }
 
-void Mesh::load(size_t count, const void* data, size_t size, const VkFormat* formats, size_t fcount, const uint16_t* iarray, size_t icount) {
+void Mesh::load(size_t count, const void* data, size_t size, const MeshAttribute* attributes, size_t acount, const uint16_t* iarray, size_t icount) {
   if(_vertex_buffer) {
     Memory::delete_type(_vertex_buffer);
     _vertex_buffer = nullptr;
@@ -34,7 +34,7 @@ void Mesh::load(size_t count, const void* data, size_t size, const VkFormat* for
     Memory::delete_type(_index_buffer);
     _index_buffer = nullptr;
   }
-  _formats = Array<VkFormat>(formats, fcount);
+  _attributes = Array<MeshAttribute>(attributes, acount);
 
   _vertex_buffer = Memory::new_type<GPUBuffer>(size, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
   _vertex_buffer->load(data);
@@ -73,8 +73,8 @@ const Mesh& Mesh::quad() {
     -1,1,0,
     1,1,0,
   };
-  static const VkFormat formats[] {VK_FORMAT_R32G32B32_SFLOAT};
-  static Mesh mesh(4, quad, sizeof(quad), formats, L_COUNT_OF(formats));
+  static const MeshAttribute attributes[] {{VK_FORMAT_R32G32B32_SFLOAT, MeshAttributeType::Position}};
+  static Mesh mesh(4, quad, sizeof(quad), attributes, L_COUNT_OF(attributes));
   return mesh;
 }
 const Mesh& Mesh::wire_cube() {
@@ -95,8 +95,8 @@ const Mesh& Mesh::wire_cube() {
     1,-1,-1,  1,-1,1,
     1,1,-1,   1,1,1,
   };
-  static const VkFormat formats[] {VK_FORMAT_R32G32B32_SFLOAT};
-  static Mesh mesh(12 * 2, wireCube, sizeof(wireCube), formats, L_COUNT_OF(formats));
+  static const MeshAttribute attributes[] {{VK_FORMAT_R32G32B32_SFLOAT, MeshAttributeType::Position}};
+  static Mesh mesh(12 * 2, wireCube, sizeof(wireCube), attributes, L_COUNT_OF(attributes));
   return mesh;
 }
 const Mesh& Mesh::wire_sphere() {
@@ -118,7 +118,7 @@ const Mesh& Mesh::wire_sphere() {
     0,1,0,  d,d,0,   d,d,0,   1,0,0,
     1,0,0, d,-d,0,   d,-d,0,  0,-1,0,
   };
-  static const VkFormat formats[] {VK_FORMAT_R32G32B32_SFLOAT};
-  static Mesh mesh(24 * 2, wireSphere, sizeof(wireSphere), formats, L_COUNT_OF(formats));
+  static const MeshAttribute attributes[] {{VK_FORMAT_R32G32B32_SFLOAT, MeshAttributeType::Position}};
+  static Mesh mesh(24 * 2, wireSphere, sizeof(wireSphere), attributes, L_COUNT_OF(attributes));
   return mesh;
 }
