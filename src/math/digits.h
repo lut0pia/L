@@ -1,6 +1,7 @@
 #pragma once
 
-#include <math.h>
+#include <cmath>
+#include <cstdint>
 
 namespace L {
   // Describes the best integer type to convert T to (used for stringification)
