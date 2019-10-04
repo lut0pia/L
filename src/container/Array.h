@@ -148,12 +148,16 @@ namespace L {
       _size -= count; // Decrease size
     }
 
-    uintptr_t find(const T& e){
-      for(uintptr_t i(0); i<_size; i++)
-        if(_data[i]==e)
-          return i;
-      return UINTPTR_MAX;
+    template <typename P>
+    const T* find(P p) const {
+      for(const T& e : *this) {
+        if(p(e)) {
+          return &e;
+        }
+      }
+      return nullptr;
     }
+    inline const T* find(const T& k) const { return find([&k](const T& e) {return e == k; }); }
 
     friend Stream& operator<<(Stream& s, const Array& v) {
       s << '[';

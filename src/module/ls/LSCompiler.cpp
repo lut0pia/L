@@ -70,9 +70,8 @@ LSCompiler::Function& LSCompiler::make_function(const Var& code, Function* paren
 }
 bool LSCompiler::find_outer(Function& func, const Symbol& symbol, uint8_t& outer) {
   if(func.parent) {
-    const uintptr_t outer_index = func.outers.find(symbol);
-    if(outer_index != UINTPTR_MAX) {
-      outer = uint8_t(outer_index);
+    if(const Symbol* outer_ptr = func.outers.find(symbol)) {
+      outer = uint8_t(outer_ptr - func.outers.begin());
       return true;
     } else if(func.parent->local_table.find(symbol)) {
       outer = uint8_t(func.outers.size());
@@ -305,11 +304,8 @@ void LSCompiler::compile(Function& func, const Var& v, uint8_t offset) {
           for(const Symbol& symbol : new_function.outers) {
             if(const uint8_t* local = func.local_table.find(symbol)) {
               func.bytecode.push(ScriptInstruction {CaptLocal, offset, *local});
-            } else {
-              const uintptr_t outer_index = func.outers.find(symbol);
-              if(outer_index != UINTPTR_MAX) {
-                func.bytecode.push(ScriptInstruction {CaptOuter, offset, uint8_t(outer_index)});
-              }
+            } else if(const Symbol* outer_ptr = func.outers.find(symbol)) {
+              func.bytecode.push(ScriptInstruction {CaptOuter, offset, uint8_t(outer_ptr - func.outers.begin())});
             }
           }
         }

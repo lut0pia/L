@@ -18,9 +18,9 @@ namespace L {
     }
     void deallocate(T* p) {
       _pool.deallocate(p);
-      const uintptr_t i = _objects.find(p);
-      if(i != uintptr_t(-1))
-        _objects.erase_fast(i);
+      if(const T* const * o = _objects.find(p)) {
+        _objects.erase_fast(o - _objects.begin());
+      }
     }
     const Array<T*>& objects() const { return _objects; }
   };
