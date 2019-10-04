@@ -1,5 +1,5 @@
 (self.shader 'fragment "shader/staticmesh.frag")
 (self.shader 'vertex "shader/staticmesh.vert")
-(self.mesh "mesh/bush.obj")
+(self.mesh "mesh/bush.obj?fmt=pnu")
 (self.texture 'tex "texture/bush.png?comp=bc3")
 (self.texture 'mat_tex "texture/default_mat.png")
