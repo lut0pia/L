@@ -3,7 +3,6 @@
 #include <L/src/math/geometry.h>
 #include <L/src/math/Quaternion.h>
 #include <L/src/pipeline/ShaderTools.h>
-#include <L/src/pipeline/MeshBuilder.h>
 #include <L/src/rendering/Material.h>
 #include <L/src/rendering/Mesh.h>
 #include <L/src/rendering/Shader.h>
@@ -85,7 +84,7 @@ bool gltf_material_loader(ResourceSlot& slot, Material::Intermediate& intermedia
     }
   }
   if(mesh) {
-    intermediate.mesh(String(slot.path) + "?node=" + to_string(node_index));
+    intermediate.mesh(String(slot.path) + "?fmt=pntu&node=" + to_string(node_index));
   } else {
     warning("GLTF: Could not find mesh node with material %s in %s", material.name, slot.path);
     return false;
@@ -174,91 +173,82 @@ bool gltf_mesh_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
 
   const cgltf_primitive* primitive = mesh->primitives;
 
-  if(primitive->indices == nullptr) {
-    warning("GLTF: No support for non-indexed vertices");
-    return false;
-  }
+  if(primitive->indices) {
+    const cgltf_accessor* ind_acc = primitive->indices;
 
-  const cgltf_accessor* ind_acc = primitive->indices;
-
-  if(ind_acc->component_type != cgltf_component_type_r_16u) {
-    warning("GLTF: No support for non-uint16 indices");
-    return false;
-  }
-
-  cgltf_accessor *pos_acc = nullptr, *nor_acc = nullptr, *tan_acc = nullptr, *tex_acc = nullptr;
-
-  for(uintptr_t i = 0; i < primitive->attributes_count; i++) {
-    const cgltf_attribute& attribute = primitive->attributes[i];
-    switch(attribute.type) {
-      case cgltf_attribute_type_position: pos_acc = attribute.data; break;
-      case cgltf_attribute_type_normal: nor_acc = attribute.data; break;
-      case cgltf_attribute_type_texcoord: tex_acc = attribute.data; break;
-      case cgltf_attribute_type_tangent: tan_acc = attribute.data; break;
-      default: break;
+    if(ind_acc->component_type == cgltf_component_type_r_16u) {
+      intermediate.indices = Buffer(ind_acc->count * sizeof(uint16_t));
+      read_accessor(ind_acc, 0, intermediate.indices.data(), intermediate.indices.size());
+    } else {
+      warning("GLTF: No support for non-uint16 indices");
+      return false;
     }
   }
-
-  if(pos_acc == nullptr) {
-    warning("GLTF: Missing position attribute for mesh %d in %s", node_index, slot.path);
-    return false;
-  }
-
-  struct Vertex {
-    Vector3f position, normal, tangent;
-    Vector2f uv;
-  };
-
-  MeshBuilder mesh_builder(sizeof(Vertex));
-  mesh_builder.position_offset = 0;
-  mesh_builder.normal_offset = sizeof(Vector3f);
-  mesh_builder.tangent_offset = sizeof(Vector3f) * 2;
-  mesh_builder.uv_offset = sizeof(Vector3f) * 3;
 
   Matrix44f node_matrix(1.f);
   compute_node_matrix(node, node_matrix);
 
-  for(uintptr_t i(0); i < ind_acc->count; i++) {
-    Vertex vertex {};
+  size_t vertex_size = 0;
 
-    const uint16_t index = read_accessor<uint16_t>(ind_acc, i);
-
-    vertex.position = read_accessor<Vector3f>(pos_acc, index);
-    convert_vector(node_matrix, vertex.position);
-
-    if(tex_acc) {
-      vertex.uv = read_accessor<Vector2f>(tex_acc, index);
+  for(uintptr_t i = 0; i < primitive->attributes_count; i++) {
+    const cgltf_attribute& attribute = primitive->attributes[i];
+    MeshAttribute mesh_attribute;
+    switch(attribute.type) {
+      case cgltf_attribute_type_position: mesh_attribute.type = MeshAttributeType::Position; break;
+      case cgltf_attribute_type_normal: mesh_attribute.type = MeshAttributeType::Normal; break;
+      case cgltf_attribute_type_tangent: mesh_attribute.type = MeshAttributeType::Tangent; break;
+      case cgltf_attribute_type_texcoord: mesh_attribute.type = MeshAttributeType::TexCoord; break;
+      case cgltf_attribute_type_color: mesh_attribute.type = MeshAttributeType::Color; break;
+      case cgltf_attribute_type_joints: mesh_attribute.type = MeshAttributeType::Joints; break;
+      case cgltf_attribute_type_weights: mesh_attribute.type = MeshAttributeType::Weights; break;
+      default: warning("GLTF: Unknown attribute type in '%s'", slot.id); return false;
+    }
+    switch(attribute.data->type) {
+      case cgltf_type_vec2:
+        switch(attribute.data->component_type) {
+          case cgltf_component_type_r_32f: mesh_attribute.format = VK_FORMAT_R32G32_SFLOAT; break;
+          default: warning("GLTF: Unknown attribute format in '%s'", slot.id); return false;
+        }
+        break;
+      case cgltf_type_vec3:
+        switch(attribute.data->component_type) {
+          case cgltf_component_type_r_32f: mesh_attribute.format = VK_FORMAT_R32G32B32_SFLOAT; break;
+          default: warning("GLTF: Unknown attribute format in '%s'", slot.id); return false;
+        }
+        break;
+      case cgltf_type_vec4:
+        switch(attribute.data->component_type) {
+          case cgltf_component_type_r_32u: mesh_attribute.format = VK_FORMAT_R32G32B32A32_UINT; break;
+          case cgltf_component_type_r_32f: mesh_attribute.format = VK_FORMAT_R32G32B32A32_SFLOAT; break;
+          default: warning("GLTF: Unknown attribute format in '%s'", slot.id); return false;
+        }
+        break;
+      default: warning("GLTF: Unknown attribute format in '%s'", slot.id); return false;
     }
 
-    if(nor_acc) {
-      vertex.normal = read_accessor<Vector3f>(nor_acc, index);
-      convert_vector(node_matrix, vertex.normal);
+    intermediate.attributes.push(mesh_attribute);
+    vertex_size += attribute.data->stride;
+    L_ASSERT(attribute.data->stride == Vulkan::format_size(mesh_attribute.format));
+  }
+
+  intermediate.vertices = Buffer(primitive->attributes->data->count * vertex_size);
+
+  size_t offset = 0;
+  for(uintptr_t i = 0; i < primitive->attributes_count; i++) {
+    const cgltf_attribute& attribute = primitive->attributes[i];
+    for(uintptr_t j = 0; j < attribute.data->count; j++) {
+      void* dst = intermediate.vertices.data(j * vertex_size + offset);
+      read_accessor(attribute.data, j, dst, attribute.data->stride);
+
+      if(attribute.type == cgltf_attribute_type_position
+        || attribute.type == cgltf_attribute_type_normal
+        || attribute.type == cgltf_attribute_type_tangent) {
+        convert_vector(node_matrix, *(Vector3f*)dst);
+      }
     }
-
-    if(tan_acc) {
-      vertex.tangent = read_accessor<Vector3f>(tan_acc, index);
-      convert_vector(node_matrix, vertex.tangent);
-    }
-
-    mesh_builder.add_vertex(&vertex);
+    offset += attribute.data->stride;
   }
 
-  if(nor_acc == nullptr) {
-    mesh_builder.compute_normals();
-  }
-
-  if(tan_acc == nullptr) {
-    mesh_builder.compute_tangents();
-  }
-
-  intermediate.vertices = Buffer(mesh_builder.vertices(), mesh_builder.vertices_size());
-  intermediate.indices = Buffer(mesh_builder.indices(), mesh_builder.index_count() * sizeof(uint16_t));
-  intermediate.attributes = {
-    {VK_FORMAT_R32G32B32_SFLOAT, MeshAttributeType::Position},
-    {VK_FORMAT_R32G32B32_SFLOAT, MeshAttributeType::Normal},
-    {VK_FORMAT_R32G32B32_SFLOAT, MeshAttributeType::Tangent},
-    {VK_FORMAT_R32G32_SFLOAT, MeshAttributeType::TexCoord},
-  };
   return true;
 }
 
