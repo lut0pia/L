@@ -18,8 +18,8 @@ static inline void read_scalars(const char*& c, Vector3f& scalars) {
     while(!Stream::isspace(*c)) c++;
   }
 }
-static inline bool read_indices(const char*& c, Vector3i& indices) {
-  indices = 0;
+static inline bool read_indices(const char*& c, Vector3ui& indices) {
+  indices = 0u;
   while(Stream::isspace(*c)) c++;
   for(uintptr_t i(0); i < 3; i++) {
     indices[i] = atoi(c);
@@ -47,7 +47,7 @@ bool obj_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
   Array<Vector3f> positions, normals;
   Array<Vector2f> texcoords;
   Vector3f scalars;
-  Vector3i indices;
+  Vector3ui indices;
   const char *cur((const char*)buffer.data()), *end(cur + buffer.size());
   while(cur < end) {
     switch(*cur) { // Line start
