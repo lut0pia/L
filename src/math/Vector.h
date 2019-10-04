@@ -181,13 +181,16 @@ namespace L {
   };
   template <size_t d,class T> inline Vector<d,T> operator*(const T& a,const Vector<d,T>& b) { return b*a; }
 
-  typedef Vector<4,uint8_t> Vector4b;
-  typedef Vector<2,int> Vector2i;
-  typedef Vector<3,int> Vector3i;
-  typedef Vector<4,int> Vector4i;
-  typedef Vector<2,float> Vector2f;
-  typedef Vector<3,float> Vector3f;
-  typedef Vector<4,float> Vector4f;
+  typedef Vector<4, uint8_t> Vector4b;
+  typedef Vector<2, int32_t> Vector2i;
+  typedef Vector<3, int32_t> Vector3i;
+  typedef Vector<4, int32_t> Vector4i;
+  typedef Vector<2, uint32_t> Vector2ui;
+  typedef Vector<3, uint32_t> Vector3ui;
+  typedef Vector<4, uint32_t> Vector4ui;
+  typedef Vector<2, float> Vector2f;
+  typedef Vector<3, float> Vector3f;
+  typedef Vector<4, float> Vector4f;
 
   template <size_t d,class T>
   Vector<d,T> clamp(const Vector<d,T>& v,const Vector<d,T>& min,const Vector<d,T>& max) {
