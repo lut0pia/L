@@ -30,7 +30,7 @@ namespace L {
       other._size = 0;
       return *this;
     }
-    inline void* data() { return _data; }
+    inline void* data(uintptr_t offset = 0) { return ((uint8_t*)_data) + offset; }
     inline const void* data(uintptr_t offset = 0) const { return ((uint8_t*)_data) + offset; }
     inline void size(size_t new_size) { _data = Memory::realloc(_data, _size, new_size); _size = new_size; }
     inline size_t size() const { return _size; }
