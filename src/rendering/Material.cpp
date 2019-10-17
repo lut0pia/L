@@ -6,6 +6,8 @@
 
 using namespace L;
 
+static Table<uint32_t, Ref<Pipeline>> pipeline_cache;
+
 template <class K, class V>
 static void patch_array(Array<KeyValue<K, V>>& dst_array, const Array<KeyValue<K, V>>& src_array) {
   for(const auto& src_pair : src_array) {
@@ -133,11 +135,11 @@ void Material::update() {
   const uint32_t pipeline_h = _final_state.pipeline_hash();
   if(pipeline_h != _last_pipeline_hash) {
     _last_pipeline_hash = pipeline_h;
+    _pipeline = nullptr;
 
-    // Destroy pipeline
-    if(_pipeline) {
-      Memory::delete_type(_pipeline);
-      _pipeline = nullptr;
+    if(Ref<Pipeline>* pipeline = pipeline_cache.find(pipeline_h)) {
+      _pipeline = *pipeline;
+      return;
     }
 
     // Clear all existing desc sets as they're no longer valid
@@ -162,7 +164,7 @@ void Material::update() {
     pip_int.blend_override = _final_state.blend_mode;
     pip_int.cull_mode = _final_state.cull_mode;
     pip_int.render_pass = _final_state.render_pass;
-    _pipeline = Memory::new_type<Pipeline>(pip_int);
+    pipeline_cache[pipeline_h] = _pipeline = ref<Pipeline>(pip_int);
   }
 }
 bool Material::valid_for_render_pass(const class RenderPass& render_pass) const {

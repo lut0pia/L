@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../container/KeyValue.h"
+#include "../container/Ref.h"
 #include "../engine/Resource.h"
 #include "../image/Color.h"
 #include "Font.h"
@@ -43,7 +44,7 @@ namespace L {
       bool valid;
     };
     State _partial_state, _final_state;
-    Pipeline* _pipeline = nullptr;
+    Ref<Pipeline> _pipeline;
     Array<DescSetPairing> _desc_set_pairings;
     uint32_t _last_chain_hash = 0;
     uint32_t _last_pipeline_hash = 0;
