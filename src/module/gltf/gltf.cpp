@@ -192,15 +192,15 @@ bool gltf_mesh_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
 
   for(uintptr_t i = 0; i < primitive->attributes_count; i++) {
     const cgltf_attribute& attribute = primitive->attributes[i];
-    MeshAttribute mesh_attribute;
+    VertexAttribute mesh_attribute;
     switch(attribute.type) {
-      case cgltf_attribute_type_position: mesh_attribute.type = MeshAttributeType::Position; break;
-      case cgltf_attribute_type_normal: mesh_attribute.type = MeshAttributeType::Normal; break;
-      case cgltf_attribute_type_tangent: mesh_attribute.type = MeshAttributeType::Tangent; break;
-      case cgltf_attribute_type_texcoord: mesh_attribute.type = MeshAttributeType::TexCoord; break;
-      case cgltf_attribute_type_color: mesh_attribute.type = MeshAttributeType::Color; break;
-      case cgltf_attribute_type_joints: mesh_attribute.type = MeshAttributeType::Joints; break;
-      case cgltf_attribute_type_weights: mesh_attribute.type = MeshAttributeType::Weights; break;
+      case cgltf_attribute_type_position: mesh_attribute.type = VertexAttributeType::Position; break;
+      case cgltf_attribute_type_normal: mesh_attribute.type = VertexAttributeType::Normal; break;
+      case cgltf_attribute_type_tangent: mesh_attribute.type = VertexAttributeType::Tangent; break;
+      case cgltf_attribute_type_texcoord: mesh_attribute.type = VertexAttributeType::TexCoord; break;
+      case cgltf_attribute_type_color: mesh_attribute.type = VertexAttributeType::Color; break;
+      case cgltf_attribute_type_joints: mesh_attribute.type = VertexAttributeType::Joints; break;
+      case cgltf_attribute_type_weights: mesh_attribute.type = VertexAttributeType::Weights; break;
       default: warning("GLTF: Unknown attribute type in '%s'", slot.id); return false;
     }
     switch(attribute.data->type) {

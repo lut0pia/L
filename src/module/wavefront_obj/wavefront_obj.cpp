@@ -106,12 +106,12 @@ bool obj_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
   intermediate.vertices = Buffer(vertices.begin(), vertices.size() * sizeof(float));
   intermediate.indices = Buffer();
   intermediate.attributes.clear();
-  intermediate.attributes.push(MeshAttribute {VK_FORMAT_R32G32B32_SFLOAT, MeshAttributeType::Position});
+  intermediate.attributes.push(VertexAttribute {VK_FORMAT_R32G32B32_SFLOAT, VertexAttributeType::Position});
   if(!texcoords.empty()) {
-    intermediate.attributes.push(MeshAttribute {VK_FORMAT_R32G32_SFLOAT, MeshAttributeType::TexCoord});
+    intermediate.attributes.push(VertexAttribute {VK_FORMAT_R32G32_SFLOAT, VertexAttributeType::TexCoord});
   }
   if(!normals.empty()) {
-    intermediate.attributes.push(MeshAttribute {VK_FORMAT_R32G32B32_SFLOAT, MeshAttributeType::Normal});
+    intermediate.attributes.push(VertexAttribute {VK_FORMAT_R32G32B32_SFLOAT, VertexAttributeType::Normal});
   }
   return true;
 }

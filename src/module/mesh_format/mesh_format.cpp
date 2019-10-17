@@ -7,21 +7,21 @@ using namespace L;
 
 static Symbol fmt_symbol("fmt");
 
-static size_t vertex_size(const Array<MeshAttribute>& attributes) {
+static size_t vertex_size(const Array<VertexAttribute>& attributes) {
   size_t size = 0;
-  for(const MeshAttribute& attribute : attributes) {
+  for(const VertexAttribute& attribute : attributes) {
     size += Vulkan::format_size(attribute.format);
   }
   return size;
 }
-static const MeshAttribute* find_attr(const Array<MeshAttribute>& attributes, MeshAttributeType type) {
-  return attributes.find([&type](const MeshAttribute& attribute) {
+static const VertexAttribute* find_attr(const Array<VertexAttribute>& attributes, VertexAttributeType type) {
+  return attributes.find([&type](const VertexAttribute& attribute) {
     return type == attribute.type;
   });
 }
-static uintptr_t attr_offset(const Array<MeshAttribute>& attributes, MeshAttributeType type) {
+static uintptr_t attr_offset(const Array<VertexAttribute>& attributes, VertexAttributeType type) {
   uintptr_t offset = 0;
-  for(const MeshAttribute& attribute : attributes) {
+  for(const VertexAttribute& attribute : attributes) {
     if(attribute.type == type) {
       return offset;
     } else {
@@ -65,15 +65,15 @@ static void compute_indices(const ResourceSlot& slot, Mesh::Intermediate& interm
   intermediate.indices = Buffer(indices.begin(), indices.size() * sizeof(uint16_t));
 }
 
-static void transfer_vertices(const Mesh::Intermediate& intermediate, const Array<MeshAttribute>& new_attributes, Buffer& new_vertices) {
+static void transfer_vertices(const Mesh::Intermediate& intermediate, const Array<VertexAttribute>& new_attributes, Buffer& new_vertices) {
   L_SCOPE_MARKER("Transfer vertices");
 
   const size_t old_vertex_size = vertex_size(intermediate.attributes);
   const size_t new_vertex_size = vertex_size(new_attributes);
   const size_t vertex_count = intermediate.vertices.size() / old_vertex_size;
 
-  for(const MeshAttribute& old_attribute : intermediate.attributes) {
-    if(const MeshAttribute* new_attribute = find_attr(new_attributes, old_attribute.type)) {
+  for(const VertexAttribute& old_attribute : intermediate.attributes) {
+    if(const VertexAttribute* new_attribute = find_attr(new_attributes, old_attribute.type)) {
       const size_t attribute_size = Vulkan::format_size(old_attribute.format);
       const uintptr_t old_offset = attr_offset(intermediate.attributes, old_attribute.type);
       const uintptr_t new_offset = attr_offset(new_attributes, new_attribute->type);
@@ -89,12 +89,12 @@ static void transfer_vertices(const Mesh::Intermediate& intermediate, const Arra
   }
 }
 
-static void compute_normals(const Mesh::Intermediate& intermediate, const Array<MeshAttribute>& new_attributes, Buffer& new_vertices) {
+static void compute_normals(const Mesh::Intermediate& intermediate, const Array<VertexAttribute>& new_attributes, Buffer& new_vertices) {
   L_SCOPE_MARKER("Compute normals");
 
   const uint16_t* indices = (const uint16_t*)intermediate.indices.data();
-  const void* normals = new_vertices.data(attr_offset(new_attributes, MeshAttributeType::Normal));
-  const void* positions = intermediate.vertices.data(attr_offset(intermediate.attributes, MeshAttributeType::Position));
+  const void* normals = new_vertices.data(attr_offset(new_attributes, VertexAttributeType::Normal));
+  const void* positions = intermediate.vertices.data(attr_offset(intermediate.attributes, VertexAttributeType::Position));
   const size_t old_vertex_size = vertex_size(intermediate.attributes);
   const size_t new_vertex_size = vertex_size(new_attributes);
   const size_t vertex_count = intermediate.vertices.size() / old_vertex_size;
@@ -131,13 +131,13 @@ static void compute_normals(const Mesh::Intermediate& intermediate, const Array<
 #undef POSITION
 }
 
-static void compute_tangents(const Mesh::Intermediate& intermediate, const Array<MeshAttribute>& new_attributes, Buffer& new_vertices) {
+static void compute_tangents(const Mesh::Intermediate& intermediate, const Array<VertexAttribute>& new_attributes, Buffer& new_vertices) {
   L_SCOPE_MARKER("Compute tangents");
 
   const uint16_t* indices = (const uint16_t*)intermediate.indices.data();
-  const void* tangents = new_vertices.data(attr_offset(new_attributes, MeshAttributeType::Tangent));
-  const void* positions = intermediate.vertices.data(attr_offset(intermediate.attributes, MeshAttributeType::Position));
-  const void* texcoords = intermediate.vertices.data(attr_offset(intermediate.attributes, MeshAttributeType::TexCoord));
+  const void* tangents = new_vertices.data(attr_offset(new_attributes, VertexAttributeType::Tangent));
+  const void* positions = intermediate.vertices.data(attr_offset(intermediate.attributes, VertexAttributeType::Position));
+  const void* texcoords = intermediate.vertices.data(attr_offset(intermediate.attributes, VertexAttributeType::TexCoord));
   const size_t old_vertex_size = vertex_size(intermediate.attributes);
   const size_t new_vertex_size = vertex_size(new_attributes);
   const size_t vertex_count = intermediate.vertices.size() / old_vertex_size;
@@ -199,17 +199,17 @@ void mesh_format_transformer(const ResourceSlot& slot, Mesh::Intermediate& inter
 
   const char* format = slot.parameter(fmt_symbol);
   if(format) {
-    Array<MeshAttribute> new_attributes;
+    Array<VertexAttribute> new_attributes;
 
     while(*format) {
       switch(*format) {
-        case 'p': new_attributes.push(MeshAttribute {VK_FORMAT_R32G32B32_SFLOAT, MeshAttributeType::Position}); break;
-        case 'n': new_attributes.push(MeshAttribute {VK_FORMAT_R32G32B32_SFLOAT, MeshAttributeType::Normal}); break;
-        case 't': new_attributes.push(MeshAttribute {VK_FORMAT_R32G32B32_SFLOAT, MeshAttributeType::Tangent}); break;
-        case 'u': new_attributes.push(MeshAttribute {VK_FORMAT_R32G32_SFLOAT, MeshAttributeType::TexCoord}); break;
-        case 'c': new_attributes.push(MeshAttribute {VK_FORMAT_R8G8B8A8_UINT, MeshAttributeType::Color}); break;
-        case 'j': new_attributes.push(MeshAttribute {VK_FORMAT_R32G32B32A32_UINT, MeshAttributeType::Joints}); break;
-        case 'w': new_attributes.push(MeshAttribute {VK_FORMAT_R32G32B32A32_SFLOAT, MeshAttributeType::Weights}); break;
+        case 'p': new_attributes.push(VertexAttribute {VK_FORMAT_R32G32B32_SFLOAT, VertexAttributeType::Position}); break;
+        case 'n': new_attributes.push(VertexAttribute {VK_FORMAT_R32G32B32_SFLOAT, VertexAttributeType::Normal}); break;
+        case 't': new_attributes.push(VertexAttribute {VK_FORMAT_R32G32B32_SFLOAT, VertexAttributeType::Tangent}); break;
+        case 'u': new_attributes.push(VertexAttribute {VK_FORMAT_R32G32_SFLOAT, VertexAttributeType::TexCoord}); break;
+        case 'c': new_attributes.push(VertexAttribute {VK_FORMAT_R8G8B8A8_UINT, VertexAttributeType::Color}); break;
+        case 'j': new_attributes.push(VertexAttribute {VK_FORMAT_R32G32B32A32_UINT, VertexAttributeType::Joints}); break;
+        case 'w': new_attributes.push(VertexAttribute {VK_FORMAT_R32G32B32A32_SFLOAT, VertexAttributeType::Weights}); break;
         default: warning("mesh_format: unrecognized attribute '%c'", *format); break;
       }
       format++;
@@ -223,15 +223,15 @@ void mesh_format_transformer(const ResourceSlot& slot, Mesh::Intermediate& inter
     transfer_vertices(intermediate, new_attributes, new_vertices);
 
     if(intermediate.indices
-      && find_attr(intermediate.attributes, MeshAttributeType::Normal) == nullptr
-      && find_attr(new_attributes, MeshAttributeType::Normal) != nullptr) {
+      && find_attr(intermediate.attributes, VertexAttributeType::Normal) == nullptr
+      && find_attr(new_attributes, VertexAttributeType::Normal) != nullptr) {
       compute_normals(intermediate, new_attributes, new_vertices);
     }
 
     if(intermediate.indices
-      && find_attr(intermediate.attributes, MeshAttributeType::Tangent) == nullptr
-      && find_attr(intermediate.attributes, MeshAttributeType::TexCoord) != nullptr
-      && find_attr(new_attributes, MeshAttributeType::Tangent) != nullptr) {
+      && find_attr(intermediate.attributes, VertexAttributeType::Tangent) == nullptr
+      && find_attr(intermediate.attributes, VertexAttributeType::TexCoord) != nullptr
+      && find_attr(new_attributes, VertexAttributeType::Tangent) != nullptr) {
       compute_tangents(intermediate, new_attributes, new_vertices);
     }
 
