@@ -88,14 +88,26 @@ Pipeline::Pipeline(const Intermediate& intermediate) {
 
   uint32_t vertex_size(0);
   Array<VkVertexInputAttributeDescription> vertex_attributes;
-  for(const Shader::Binding& binding : _bindings) {
-    if(binding.stage==VK_SHADER_STAGE_VERTEX_BIT && binding.type==Shader::BindingType::Input) {
+  if(intermediate.vertex_attributes.empty()) {
+    for(const Shader::Binding& binding : _bindings) {
+      if(binding.stage == VK_SHADER_STAGE_VERTEX_BIT && binding.type == Shader::BindingType::Input) {
+        VkVertexInputAttributeDescription vertex_attribute {};
+        vertex_size = max<uint32_t>(vertex_size, binding.offset + binding.size);
+        vertex_attribute.binding = binding.binding;
+        vertex_attribute.location = binding.index;
+        vertex_attribute.format = binding.format;
+        vertex_attribute.offset = binding.offset;
+        vertex_attributes.push(vertex_attribute);
+      }
+    }
+  } else {
+    uint32_t location = 0;
+    for(const VertexAttribute& attribute : intermediate.vertex_attributes) {
       VkVertexInputAttributeDescription vertex_attribute {};
-      vertex_size = max<uint32_t>(vertex_size, binding.offset+binding.size);
-      vertex_attribute.binding = binding.binding;
-      vertex_attribute.location = binding.index;
-      vertex_attribute.format = binding.format;
-      vertex_attribute.offset = binding.offset;
+      vertex_attribute.location = location++;
+      vertex_attribute.format = attribute.format;
+      vertex_attribute.offset = vertex_size;
+      vertex_size += Vulkan::format_size(attribute.format);
       vertex_attributes.push(vertex_attribute);
     }
   }

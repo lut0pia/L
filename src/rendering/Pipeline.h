@@ -3,6 +3,7 @@
 #include "../engine/Resource.h"
 #include "RenderPass.h"
 #include "Shader.h"
+#include "Mesh.h"
 
 namespace L {
   enum class BlendMode {
@@ -19,6 +20,7 @@ namespace L {
   public:
     struct Intermediate {
       Array<Resource<Shader>> shaders;
+      Array<VertexAttribute> vertex_attributes;
       Symbol render_pass;
       VkCullModeFlags cull_mode = VK_CULL_MODE_BACK_BIT;
       BlendMode blend_override = BlendMode::None;
