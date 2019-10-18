@@ -83,6 +83,9 @@ uint32_t Material::State::pipeline_hash() const {
   hash_combine(h, render_pass);
   hash_combine(h, cull_mode);
   hash_combine(h, blend_mode);
+  if(mesh) {
+    hash_combine(h, mesh->attributes());
+  }
   return h;
 }
 uint32_t Material::State::descriptor_hash() const {
@@ -160,6 +163,9 @@ void Material::update() {
       } else {
         return; // Abort because some shaders aren't loaded yet
       }
+    }
+    if(_final_state.mesh) {
+      pip_int.vertex_attributes = _final_state.mesh->attributes();
     }
     pip_int.blend_override = _final_state.blend_mode;
     pip_int.cull_mode = _final_state.cull_mode;
