@@ -236,6 +236,7 @@ void mesh_format_transformer(const ResourceSlot& slot, Mesh::Intermediate& inter
     }
 
     swap(intermediate.vertices, new_vertices);
+    intermediate.attributes = new_attributes;
   }
 }
 
