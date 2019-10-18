@@ -35,6 +35,7 @@ namespace L {
     void load(size_t count, const void* data, size_t size, const VertexAttribute* attributes, size_t acount, const uint16_t* indices = nullptr, size_t icount = 0);
     void draw(VkCommandBuffer) const;
 
+    inline const Array<VertexAttribute>& attributes() const { return _attributes; }
     inline const Interval3f& bounds() const { return _bounds; }
 
     static const Mesh& quad();
