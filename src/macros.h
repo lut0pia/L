@@ -23,6 +23,12 @@
   __pragma(warning(disable: 4701))
 #define L_POP_NO_WARNINGS __pragma(warning(pop))
 #else
+#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 7)
+#define L_GCC4_7_IGNORE_WARNINGS \
+  _Pragma("GCC diagnostic ignored \"-Wmaybe-uninitialized\"")
+#else
+#define L_GCC4_7_IGNORE_WARNINGS
+#endif
 #if __GNUC__ >= 7
 #define L_GCC7_IGNORE_WARNINGS \
   _Pragma("GCC diagnostic ignored \"-Wimplicit-fallthrough\"")
@@ -38,7 +44,7 @@
   _Pragma("GCC diagnostic ignored \"-Wunused-function\"") \
   _Pragma("GCC diagnostic ignored \"-Wunused-value\"") \
   _Pragma("GCC diagnostic ignored \"-Wunused-parameter\"") \
-  _Pragma("GCC diagnostic ignored \"-Wmaybe-uninitialized\"") \
+  L_GCC4_7_IGNORE_WARNINGS \
   L_GCC7_IGNORE_WARNINGS
 #define L_POP_NO_WARNINGS _Pragma("GCC diagnostic pop")
 #endif
