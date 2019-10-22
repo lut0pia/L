@@ -1,6 +1,6 @@
 sudo: required
 dist: xenial
-language: c++
+language: cpp
 env: VERBOSE=1
 
 addons:
