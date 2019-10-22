@@ -247,7 +247,7 @@ String Integer::toString(long lbase) const {
       } while(n.size()!=0);
       break;
   }
-  if(negative()) wtr = '-' + wtr;
+  if(negative()) wtr = "-" + wtr;
   return wtr;
 }
 
