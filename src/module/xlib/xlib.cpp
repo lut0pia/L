@@ -9,12 +9,9 @@
 #include <X11/X.h>
 #include <X11/Xlib.h>
 
-using namespace L;
-using L::Window;
-
 static class XWindow* instance(nullptr);
 
-class XWindow : public Window {
+class XWindow : public L::Window {
 protected:
   ::Display* _xdisplay;
   ::Window _xwindow;
@@ -57,8 +54,9 @@ public:
     _height = height;
     _flags = flags;
 
-    if((_xdisplay = XOpenDisplay(nullptr)) == nullptr)
-      error("Cannot open X server display.");
+    if((_xdisplay = XOpenDisplay(nullptr)) == nullptr) {
+      L::error("Cannot open X server display.");
+    }
 
     { // Create window
       ::Window root = DefaultRootWindow(_xdisplay);
@@ -76,7 +74,7 @@ public:
     XMapWindow(_xdisplay, _xwindow);
     XStoreName(_xdisplay, _xwindow, title);
 
-    if(flags&nocursor) {
+    if(flags & nocursor) {
       const char pixmap_data(0);
       Pixmap pixmap(XCreateBitmapFromData(_xdisplay, _xwindow, &pixmap_data, 1, 1));
       XColor color;
@@ -85,7 +83,7 @@ public:
     }
     _opened = true;
 
-    Vulkan::init();
+    L::Vulkan::init();
   }
   void close() override {
     L_ASSERT(_opened);
@@ -95,10 +93,10 @@ public:
   }
 
   void title(const char*) override {
-    warning("Setting window title is unsupported for X windows");
+    L::warning("Setting window title is unsupported for X windows");
   }
   void resize(uint32_t, uint32_t) override {
-    warning("Resizing window is unsupported for X windows");
+    L::warning("Resizing window is unsupported for X windows");
   }
   void create_vulkan_surface(VkInstance instance, VkSurfaceKHR* surface) override {
     VkXlibSurfaceCreateInfoKHR create_info {};
@@ -113,8 +111,8 @@ public:
 };
 
 void xlib_module_init() {
-  instance = Memory::new_type<XWindow>();
-  Engine::add_parallel_update([]() {
+  instance = L::Memory::new_type<XWindow>();
+  L::Engine::add_parallel_update([]() {
     instance->update();
   });
 }
