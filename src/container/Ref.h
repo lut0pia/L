@@ -20,7 +20,7 @@ namespace L {
 
   public:
     constexpr Ref() : _p(nullptr) {}
-    constexpr Ref(nullptr_t) : _p(nullptr) {}
+    constexpr Ref(std::nullptr_t) : _p(nullptr) {}
     inline Ref(const Ref& other) {
       _p = other._p;
       if(_p) counter()++;
