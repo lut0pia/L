@@ -4,7 +4,7 @@
 
 mode=${1:-build}
 configuration=${2:-dev} # Configuration is development by default
-(uname -s | grep -iqE "mingw|cygwin") && windows=true || windows=false
+(uname -s | grep -iqE "mingw|cygwin|msys|windows") && windows=true || windows=false
 
 # Functions
 
