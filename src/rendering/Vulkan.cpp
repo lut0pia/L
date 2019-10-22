@@ -151,7 +151,7 @@ void Vulkan::init() {
     vkGetPhysicalDeviceMemoryProperties(physical_device, &physical_device_memory_properties);
     vkGetPhysicalDeviceFeatures(physical_device, &physical_device_features);
     out << "GPU: " << physical_device_properties.deviceName << '\n'
-      << "GPU memory: " << (best_physical_device_memory/(1<<20)) << "MB\n";
+      << "GPU memory: " << (best_physical_device_memory >> 20) << "MB\n";
   }
 
   { // Create surface
