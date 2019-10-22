@@ -140,6 +140,7 @@ bool glsl_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) {
     shader_language = EShLanguage::EShLangVertex;
   } else {
     error("No shader language");
+    return false;
   }
 
   const char frag_intro[] = L_GLSL_INTRO L_SHAREDUNIFORM L_PUSH_CONSTANTS L_SHADER_LIB "\n";
