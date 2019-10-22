@@ -17,13 +17,19 @@ cache:
   directories:
     - pmk # Avoid downloading premake everytime
 
-script: ./run.sh build dbg && ./run.sh build dev
+env:
+    - CONFIGURATION=dbg
+    - CONFIGURATION=dev
+    - CONFIGURATION=rls
+
+script: ./run.sh build ${CONFIGURATION}
 
 os:
   - linux
 
 compiler:
   - gcc
+  - clang
 
 git:
   depth: 1
