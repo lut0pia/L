@@ -17,21 +17,40 @@ cache:
   directories:
     - pmk # Avoid downloading premake everytime
 
-env:
-    - CONFIGURATION=dbg
-    - CONFIGURATION=dev
-    - CONFIGURATION=rls
-
-script: ./run.sh build ${CONFIGURATION}
-
-os:
-  - linux
-  - windows
-
-compiler:
-  - gcc
-  - clang
-
 git:
   depth: 1
   quiet: true
+
+script: ./run.sh build ${CONFIGURATION}
+
+jobs:
+  include:
+    # Linux GCC
+    - os: linux
+      compiler: gcc
+      env: CONFIGURATION=dbg
+    - os: linux
+      compiler: gcc
+      env: CONFIGURATION=dev
+    - os: linux
+      compiler: gcc
+      env: CONFIGURATION=rls
+
+    # Linux Clang
+    - os: linux
+      compiler: clang
+      env: CONFIGURATION=dbg
+    - os: linux
+      compiler: clang
+      env: CONFIGURATION=dev
+    - os: linux
+      compiler: clang
+      env: CONFIGURATION=rls
+
+    # Windows MSVC
+    - os: windows
+      env: CONFIGURATION=dbg
+    - os: windows
+      env: CONFIGURATION=dev
+    - os: windows
+      env: CONFIGURATION=rls
