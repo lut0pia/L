@@ -40,7 +40,7 @@ solution "L"
   -- GMake
   configuration {"gmake2"}
     buildoptions {"-fno-operator-names"}
-    disablewarnings {"missing-field-initializers", "type-limits"}
+    disablewarnings {"missing-field-initializers", "type-limits", "missing-braces"}
     links {"vulkan","X11","pthread"}
 
   -- Main project (startup)
