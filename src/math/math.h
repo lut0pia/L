@@ -6,7 +6,6 @@
 
 namespace L {
   // Logs
-  template <class T> T log2(const T& x) {}
   template <class T> inline constexpr T log(const T& x, const T& base) { return log2(x)/log2(base); }
   inline uint32_t log2(uint32_t x) { return bsr(x); }
   inline uint64_t log2(uint64_t x) { return bsr(x); }
