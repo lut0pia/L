@@ -1,5 +1,7 @@
 #include "FontPacker.h"
 
+#include <cfloat>
+
 #include "../math/math.h"
 
 using namespace L;
