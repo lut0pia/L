@@ -26,6 +26,7 @@ script: ./run.sh build ${CONFIGURATION}
 
 os:
   - linux
+  - windows
 
 compiler:
   - gcc
