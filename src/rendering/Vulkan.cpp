@@ -187,6 +187,7 @@ void Vulkan::init() {
     };
 
     VkPhysicalDeviceFeatures enabled_features {};
+    enabled_features.fillModeNonSolid = true;
     enabled_features.samplerAnisotropy = true;
     enabled_features.textureCompressionBC = true;
 
