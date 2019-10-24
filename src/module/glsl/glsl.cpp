@@ -167,9 +167,12 @@ bool glsl_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) {
   shader.setEnvInput(glslang::EShSource::EShSourceGlsl, shader_language, glslang::EShClient::EShClientVulkan, 450);
   shader.setEnvClient(glslang::EShClient::EShClientVulkan, glslang::EShTargetClientVersion::EShTargetVulkan_1_0);
   shader.setEnvTarget(glslang::EShTargetLanguage::EShTargetSpv, glslang::EShTargetLanguageVersion::EShTargetSpv_1_0);
-  if(!shader.parse(&builtin_resources, 450, EProfile::ENoProfile, true, true, message_flags)) {
-    err << shader.getInfoLog();
-    return false;
+  {
+    L_SCOPE_MARKER("glslang parsing");
+    if(!shader.parse(&builtin_resources, 450, EProfile::ENoProfile, true, true, message_flags)) {
+      err << shader.getInfoLog();
+      return false;
+    }
   }
 
   glslang::TProgram program;
