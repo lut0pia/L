@@ -25,10 +25,6 @@ const vec3 normals[] = vec3[](
   vec3(-1,0,0),
   vec3(1,0,0));
 
-out gl_PerVertex {
-    vec4 gl_Position;
-};
-
 layout(location = 0) out vec3 fnormal;
 
 void main() {
