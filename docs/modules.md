@@ -7,7 +7,7 @@ Modules can register loading functions to the resource mechanism to create resou
 - `glsl`: Load shaders from `.vert` and `.frag` files using `glslang`
 - `gltf`: Load materials, meshes, textures and shaders from `.glb` files
 - `lasm`: Load scripts from `.lasm` files
-- `ls`: Load scripts from `.ls` files
+- [`ls`](module/ls.md): Load scripts from `.ls` files
 - `mid`: Load midi sequences from `.mid` and `.midi` files
 - `pixel_font`: Generate a very simple debug font
 - `script_material`: Load materials from any script file
