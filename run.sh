@@ -6,24 +6,6 @@ mode=${1:-build}
 configuration=${2:-dev} # Configuration is development by default
 (uname -s | grep -iqE "mingw|cygwin|msys|windows") && windows=true || windows=false
 
-# Functions
-
-download () {
-  if $windows ; then
-    powershell -command "iwr -outf $1 $2"
-  else
-    wget -O $1 $2
-  fi
-}
-
-extract () {
-  if $windows ; then
-    unzip -oq $1
-  else
-    tar xvzf $1
-  fi
-}
-
 # Stats action
 
 if [ $mode = "stats" ] ; then
@@ -88,26 +70,11 @@ fi
 mkdir -p pmk
 
 if $windows ; then
-  premake_url="https://github.com/premake/premake-core/releases/download/v5.0.0-alpha14/premake-5.0.0-alpha14-windows.zip"
-  premake_bin=premake5.exe
+  premake_bin=ext/bin/premake5.exe
   premake_action=vs$vsver
 else
-  premake_url="https://github.com/premake/premake-core/releases/download/v5.0.0-alpha14/premake-5.0.0-alpha14-linux.tar.gz"
-  premake_bin=premake5
+  premake_bin=ext/bin/premake5
   premake_action=gmake2
-fi
-
-premake_ar=pmk/$(basename $premake_url)
-
-if [ ! -f $premake_ar ] ; then
-  echo Downloading premake archive: $premake_ar
-  download $premake_ar $premake_url
-fi
-
-if [ ! -f $premake_bin ] || [ $premake_bin -ot $premake_ar ] ; then
-  echo Extracting premake binary from: $premake_ar
-  extract $premake_ar
-  touch $premake_bin # Update mtime
 fi
 
 if ./$premake_bin $premake_action ; then # Run premake
