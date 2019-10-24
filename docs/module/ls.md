@@ -1,10 +1,10 @@
-# Script reference
+# LScript reference
 
 ## Syntax
-L-script's syntax is inspired from Lisp. Everything looks like `(command parameter...)`. Occasionally it looks like `(object'method | parameter...)`. The `|` symbol is really just syntactic sugar to mean "put everything before in parentheses", so the previous example actually extends to `((object'method) parameter...)`. The `'` symbol means that the next word should be returned as a token, not a value.
+LScript's syntax is inspired from Lisp. Everything looks like `(command parameter...)`. Occasionally it looks like `(object'method | parameter...)`. The `|` symbol is really just syntactic sugar to mean "put everything before in parentheses", so the previous example actually extends to `((object'method) parameter...)`. The `'` symbol means that the next word should be returned as a token, not a value.
 
 ## Variables
-L-script uses local and global variables. Local variables are only accessible in the current scope (the body of a function or a script file). By default, variables are global, you can define local variables with the keyword `local`. You're advised to work only in your local scope to avoid collisions between scripts (although referring to the same variable from different scripts may be intended, in which case use global scope).
+LScript uses local and global variables. Local variables are only accessible in the current scope (the body of a function or a script file). By default, variables are global, you can define local variables with the keyword `local`. You're advised to work only in your local scope to avoid collisions between scripts (although referring to the same variable from different scripts may be intended, in which case use global scope).
 
 * `local` can be used to define a local variable on the stack (the second parameter is the initial value and can be omitted).
 ```clojure
