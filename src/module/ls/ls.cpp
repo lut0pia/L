@@ -1,9 +1,5 @@
 #include <L/src/container/Buffer.h>
 #include <L/src/engine/Resource.inl>
-#include <L/src/rendering/Material.h>
-#include <L/src/script/ScriptContext.h>
-#include <L/src/engine/Engine.h>
-#include <L/src/engine/Settings.h>
 #include "LSCompiler.h"
 
 using namespace L;
