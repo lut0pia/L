@@ -123,6 +123,8 @@ static const TBuiltInResource builtin_resources = {
 
 static const Symbol stage_symbol("stage"), frag_symbol("frag"), vert_symbol("vert");
 
+#define L_GLSL_INTRO "#version 450\n#extension GL_ARB_separate_shader_objects : require\n"
+
 bool glsl_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) {
   if(slot.ext != frag_symbol && slot.ext != vert_symbol) {
     return false;
@@ -143,8 +145,8 @@ bool glsl_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) {
     return false;
   }
 
-  const char frag_intro[] = L_GLSL_INTRO L_SHAREDUNIFORM L_PUSH_CONSTANTS L_SHADER_LIB "\n";
-  const char vert_intro[] = L_GLSL_INTRO L_SHAREDUNIFORM L_PUSH_CONSTANTS "\n";
+  static const char frag_intro[] = L_GLSL_INTRO L_SHAREDUNIFORM L_PUSH_CONSTANTS L_SHADER_LIB "\n";
+  static const char vert_intro[] = L_GLSL_INTRO L_SHAREDUNIFORM L_PUSH_CONSTANTS "\n";
   const Buffer source_buffer = slot.read_source_file();
 
   const char* shader_strings[] = {

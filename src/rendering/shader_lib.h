@@ -1,6 +1,5 @@
 #pragma once
 
-#define L_GLSL_INTRO "#version 450\n#extension GL_ARB_separate_shader_objects : require\n"
 #define L_SHAREDUNIFORM_VIEW 0
 #define L_SHAREDUNIFORM_INVVIEW (L_SHAREDUNIFORM_VIEW+sizeof(Matrix44f))
 #define L_SHAREDUNIFORM_PROJECTION (L_SHAREDUNIFORM_INVVIEW+sizeof(Matrix44f))
