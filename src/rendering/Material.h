@@ -15,10 +15,7 @@ namespace L {
     Resource<Material> _parent;
     struct State {
       // Pipeline state
-      Array<KeyValue<VkShaderStageFlags, Resource<Shader>>> shaders;
-      Symbol render_pass;
-      VkCullModeFlags cull_mode = VK_CULL_MODE_BACK_BIT;
-      BlendMode blend_mode = BlendMode::None;
+      Pipeline::Parameters pipeline;
 
       // Descriptor state
       Array<KeyValue<Symbol, Resource<Texture>>> textures;
@@ -66,15 +63,17 @@ namespace L {
     inline void parent(const Resource<Material>& parent) { _parent = parent; mark_state_dirty(); }
 
     // Pipeline state
-    void shader(VkShaderStageFlags stage, const Resource<Shader>& shader, bool override = true);
-    void render_pass(const Symbol& name) { _partial_state.render_pass = name; mark_state_dirty(); }
-    void cull_mode(VkCullModeFlags cull_mode) { _partial_state.cull_mode = cull_mode; mark_state_dirty(); }
-    void blend_mode(BlendMode blend_mode) { _partial_state.blend_mode = blend_mode; mark_state_dirty(); }
+    void shader(VkShaderStageFlags stage, const Resource<Shader>& shader);
+    void render_pass(const Symbol& name) { _partial_state.pipeline.render_pass = name; mark_state_dirty(); }
+    void polygon_mode(VkPolygonMode polygon_mode) { _partial_state.pipeline.polygon_mode = polygon_mode; mark_state_dirty(); }
+    void cull_mode(VkCullModeFlags cull_mode) { _partial_state.pipeline.cull_mode = cull_mode; mark_state_dirty(); }
+    void topology(VkPrimitiveTopology topology) { _partial_state.pipeline.topology = topology; mark_state_dirty(); }
+    void blend_mode(BlendMode blend_mode) { _partial_state.pipeline.blend_mode = blend_mode; mark_state_dirty(); }
 
     // Descriptor state
-    void texture(const Symbol& name, const Resource<Texture>& texture, bool override = true);
-    void vector(const Symbol& name, const Vector4f& vector, bool override = true);
-    void scalar(const Symbol& name, float scalar, bool override = true);
+    void texture(const Symbol& name, const Resource<Texture>& texture);
+    void vector(const Symbol& name, const Vector4f& vector);
+    void scalar(const Symbol& name, float scalar);
     inline void color(const Symbol& name, const Color& color) { vector(name, Color::to_float_vector(color)); }
     inline void font(const Resource<Font>& font) { _partial_state.font = font; mark_state_dirty(); }
 
@@ -91,7 +90,7 @@ namespace L {
     friend inline Stream& operator>=(Stream& s, Material& v) { return s >= v._parent >= v._partial_state; }
     friend inline Stream& operator<=(Stream& s, const Material::State& v) {
       // Pipeline state
-      s <= v.shaders <= v.render_pass <= v.cull_mode <= v.blend_mode;
+      s <= v.pipeline;
       // Descriptor state
       s <= v.textures <= v.vectors <= v.scalars <= v.font;
       // Dynamic state
@@ -99,7 +98,7 @@ namespace L {
     }
     friend inline Stream& operator>=(Stream& s, Material::State& v) {
       // Pipeline state
-      s >= v.shaders >= v.render_pass >= v.cull_mode >= v.blend_mode;
+      s >= v.pipeline;
       // Descriptor state
       s >= v.textures >= v.vectors >= v.scalars >= v.font;
       // Dynamic state

@@ -21,16 +21,19 @@ static void patch_array(Array<KeyValue<K, V>>& dst_array, const Array<KeyValue<K
 }
 void Material::State::apply(const State& patch) {
   // Pipeline state
-  patch_array(shaders, patch.shaders);
-  if(!render_pass && patch.render_pass) {
-    render_pass = patch.render_pass;
+  patch_array(pipeline.shaders, patch.pipeline.shaders);
+  if(!pipeline.render_pass && patch.pipeline.render_pass) {
+    pipeline.render_pass = patch.pipeline.render_pass;
   }
-  if(cull_mode == VK_CULL_MODE_BACK_BIT && patch.cull_mode != VK_CULL_MODE_BACK_BIT) {
-    cull_mode = patch.cull_mode;
+#define PATCH_VALUE(name, default_value) \
+  if(pipeline.name == default_value && patch.pipeline.name != default_value){ \
+    pipeline.name = patch.pipeline.name; \
   }
-  if(blend_mode == BlendMode::None && patch.blend_mode != BlendMode::None) {
-    blend_mode = patch.blend_mode;
-  }
+  PATCH_VALUE(polygon_mode, VK_POLYGON_MODE_MAX_ENUM);
+  PATCH_VALUE(cull_mode, VK_CULL_MODE_FLAG_BITS_MAX_ENUM);
+  PATCH_VALUE(topology, VK_PRIMITIVE_TOPOLOGY_MAX_ENUM);
+  PATCH_VALUE(blend_mode, BlendMode::None);
+#undef PATCH_VALUE
 
   // Descriptor state
   patch_array(scalars, patch.scalars);
@@ -79,10 +82,12 @@ bool Material::State::fill_desc_set(class DescriptorSet& desc_set) const {
 
 uint32_t Material::State::pipeline_hash() const {
   uint32_t h = 0;
-  hash_combine(h, shaders);
-  hash_combine(h, render_pass);
-  hash_combine(h, cull_mode);
-  hash_combine(h, blend_mode);
+  hash_combine(h, pipeline.shaders);
+  hash_combine(h, pipeline.render_pass);
+  hash_combine(h, pipeline.polygon_mode);
+  hash_combine(h, pipeline.cull_mode);
+  hash_combine(h, pipeline.topology);
+  hash_combine(h, pipeline.blend_mode);
   if(mesh) {
     hash_combine(h, mesh->attributes());
   }
@@ -152,25 +157,18 @@ void Material::update() {
     _desc_set_pairings.clear();
 
     // Create pipeline
-    Pipeline::Intermediate pip_int;
-
-    if(_final_state.shaders.empty()) {
+    if(_final_state.pipeline.shaders.empty()) {
       return; // Abort because there aren't any shaders
     }
-    for(const auto& shader : _final_state.shaders) {
-      if(shader.value().is_loaded()) {
-        pip_int.shaders.push(shader.value());
-      } else {
+    for(const auto& shader : _final_state.pipeline.shaders) {
+      if(!shader.value().is_loaded()) {
         return; // Abort because some shaders aren't loaded yet
       }
     }
     if(_final_state.mesh) {
-      pip_int.vertex_attributes = _final_state.mesh->attributes();
+      _final_state.pipeline.vertex_attributes = _final_state.mesh->attributes();
     }
-    pip_int.blend_override = _final_state.blend_mode;
-    pip_int.cull_mode = _final_state.cull_mode;
-    pip_int.render_pass = _final_state.render_pass;
-    pipeline_cache[pipeline_h] = _pipeline = ref<Pipeline>(pip_int);
+    pipeline_cache[pipeline_h] = _pipeline = ref<Pipeline>(_final_state.pipeline);
   }
 }
 bool Material::valid_for_render_pass(const class RenderPass& render_pass) const {
@@ -284,37 +282,33 @@ void Material::mark_state_dirty() {
   _state_dirty = true;
 }
 
-template <class K, class V> static bool set_parameter(Array<KeyValue<K, V>>& array, const K& name, const V& value, bool override = true) {
-  for(auto& pair : array)
+template <class K, class V> static void set_parameter(Array<KeyValue<K, V>>& array, const K& name, const V& value) {
+  for(auto& pair : array) {
     if(pair.key() == name) {
-      if(override) {
-        pair.value() = value;
-        return true;
-      } else {
-        return false;
-      }
+      pair.value() = value;
+      return;
     }
+  }
   array.push(name, value);
-  return true;
 }
-void Material::shader(VkShaderStageFlags stage, const Resource<Shader>& shader, bool override) {
-  set_parameter(_partial_state.shaders, stage, shader, override);
+void Material::shader(VkShaderStageFlags stage, const Resource<Shader>& shader) {
+  set_parameter(_partial_state.pipeline.shaders, stage, shader);
   mark_state_dirty();
 }
-void Material::scalar(const Symbol& name, float scalar, bool override) {
-  set_parameter(_partial_state.scalars, name, scalar, override);
+void Material::scalar(const Symbol& name, float scalar) {
+  set_parameter(_partial_state.scalars, name, scalar);
   mark_state_dirty();
 }
-void Material::texture(const Symbol& name, const Resource<Texture>& texture, bool override) {
-  set_parameter(_partial_state.textures, name, texture, override);
+void Material::texture(const Symbol& name, const Resource<Texture>& texture) {
+  set_parameter(_partial_state.textures, name, texture);
   mark_state_dirty();
 }
-void Material::vector(const Symbol& name, const Vector4f& vector, bool override) {
-  set_parameter(_partial_state.vectors, name, vector, override);
+void Material::vector(const Symbol& name, const Vector4f& vector) {
+  set_parameter(_partial_state.vectors, name, vector);
   mark_state_dirty();
 }
 
-static Symbol frag_symbol("frag"), fragment_symbol("fragment"), vert_symbol("vert"), vertex_symbol("vertex");
+static const Symbol frag_symbol("frag"), fragment_symbol("fragment"), vert_symbol("vert"), vertex_symbol("vertex");
 static VkShaderStageFlags symbol_to_stage(const Symbol& sym) {
   if(sym == frag_symbol || sym == fragment_symbol) {
     return VK_SHADER_STAGE_FRAGMENT_BIT;
@@ -325,18 +319,50 @@ static VkShaderStageFlags symbol_to_stage(const Symbol& sym) {
   }
 }
 
-static Symbol back_symbol("back"), front_symbol("front");
+static const Symbol fill_symbol("fill"), line_symbol("line");
+static VkPolygonMode symbol_to_polygon_mode(const Symbol& sym) {
+  if(sym == fill_symbol) {
+    return VK_POLYGON_MODE_FILL;
+  } else if(sym == line_symbol) {
+    return VK_POLYGON_MODE_LINE;
+  } else {
+    return VK_POLYGON_MODE_MAX_ENUM;
+  }
+}
+
+static const Symbol back_symbol("back"), front_symbol("front"), none_symbol("none");
 static VkCullModeFlags symbol_to_cull_mode(const Symbol& sym) {
   if(sym == back_symbol) {
     return VK_CULL_MODE_BACK_BIT;
   } else if(sym == front_symbol) {
     return VK_CULL_MODE_FRONT_BIT;
-  } else {
+  } else if(sym == none_symbol) {
     return VK_CULL_MODE_NONE;
+  } else {
+    return VK_CULL_MODE_FLAG_BITS_MAX_ENUM;
   }
 }
 
-static Symbol mult_symbol("mult");
+static const Symbol
+point_list_symbol("point_list"),
+line_list_symbol("line_list"),
+line_strip_symbol("line_strip"),
+triangle_list_symbol("triangle_list");
+static VkPrimitiveTopology symbol_to_topology(const Symbol& sym) {
+  if(sym == point_list_symbol) {
+    return VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
+  } else if(sym == line_list_symbol) {
+    return VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
+  } else if(sym == line_strip_symbol) {
+    return VK_PRIMITIVE_TOPOLOGY_LINE_STRIP;
+  } else if(sym == triangle_list_symbol) {
+    return VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+  } else {
+    return VK_PRIMITIVE_TOPOLOGY_MAX_ENUM;
+  }
+}
+
+static const Symbol mult_symbol("mult");
 static BlendMode symbol_to_blend_mode(const Symbol& sym) {
   if(sym == mult_symbol) {
     return BlendMode::Mult;
@@ -353,7 +379,9 @@ void Material::script_registration() {
   // Pipeline state
   L_METHOD(Material, "shader", 2, shader(symbol_to_stage(c.param(0)), c.param(1).get<String>()));
   L_METHOD(Material, "render_pass", 1, render_pass(c.param(0)));
+  L_METHOD(Material, "polygon_mode", 1, polygon_mode(symbol_to_polygon_mode(c.param(0))));
   L_METHOD(Material, "cull_mode", 1, cull_mode(symbol_to_cull_mode(c.param(0))));
+  L_METHOD(Material, "topology", 1, topology(symbol_to_topology(c.param(0))));
   L_METHOD(Material, "blend_mode", 1, blend_mode(symbol_to_blend_mode(c.param(0))));
   // Descriptor state
   L_METHOD(Material, "texture", 2, texture(c.param(0), c.param(1).get<String>()));
