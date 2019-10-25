@@ -40,6 +40,7 @@ namespace L {
     static void add_deferred_action(const DeferredAction& la) { _deferred_actions.push(la); }
     static void add_parallel_update(void(*update)()) { _parallel_updates.push(update); }
     static void add_update(void(*update)()) { _updates.push(update); }
+    static void add_render(void(*render)(const class Camera&, const class RenderPass&)) { _renders.push(render); }
     template <class T> inline static void register_component() {
       if(T::update_all != Component::update_all) _updates.push(T::update_all);
       if(T::late_update_all != Component::late_update_all) _late_updates.push(T::late_update_all);
