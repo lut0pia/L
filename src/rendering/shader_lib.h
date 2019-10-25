@@ -38,9 +38,6 @@
 "bool alpha(float a){" \
 "return a<clamp(frag_noise(), 0.01f, 0.99f);" \
 "}" \
-"vec3 deband(vec3 v){" \
-"return v+frag_noise()*0.005f;" \
-"}" \
 "vec3 linearize(vec3 c){" \
 "return pow(c, vec3(2.2f));" \
 "}" \
