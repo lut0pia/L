@@ -109,6 +109,9 @@ uint32_t Material::chain_hash() const {
   return h;
 }
 
+Material::~Material() {
+  clear_desc_set_pairings();
+}
 void Material::update() {
   bool update_state = false;
 
@@ -151,10 +154,7 @@ void Material::update() {
     }
 
     // Clear all existing desc sets as they're no longer valid
-    for(const auto& pairing : _desc_set_pairings) {
-      Memory::delete_type(pairing.desc_set);
-    }
-    _desc_set_pairings.clear();
+    clear_desc_set_pairings();
 
     // Create pipeline
     if(_final_state.pipeline.shaders.empty()) {
@@ -170,6 +170,12 @@ void Material::update() {
     }
     pipeline_cache[pipeline_h] = _pipeline = ref<Pipeline>(_final_state.pipeline);
   }
+}
+void Material::clear_desc_set_pairings() {
+  for(const auto& pairing : _desc_set_pairings) {
+    Memory::delete_type(pairing.desc_set);
+  }
+  _desc_set_pairings.clear();
 }
 bool Material::valid_for_render_pass(const class RenderPass& render_pass) const {
   return _pipeline && &_pipeline->render_pass() == &render_pass;

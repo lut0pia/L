@@ -51,7 +51,9 @@ namespace L {
     uint32_t chain_hash() const;
   public:
     typedef Material Intermediate;
+    ~Material();
     void update();
+    void clear_desc_set_pairings();
     bool valid_for_render_pass(const class RenderPass&) const;
     void draw(const class Camera&, const class RenderPass&, const Matrix44f& model = Matrix44f(1.f));
     Interval3f bounds() const;
