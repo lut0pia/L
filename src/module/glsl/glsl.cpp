@@ -121,12 +121,12 @@ static const TBuiltInResource builtin_resources = {
     },
 };
 
-static const Symbol stage_symbol("stage"), frag_symbol("frag"), vert_symbol("vert");
+static const Symbol glsl_symbol("glsl"), stage_symbol("stage"), frag_symbol("frag"), vert_symbol("vert");
 
 #define L_GLSL_INTRO "#version 450\n#extension GL_ARB_separate_shader_objects : require\n"
 
 bool glsl_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) {
-  if(slot.ext != frag_symbol && slot.ext != vert_symbol) {
+  if(slot.ext != glsl_symbol && slot.ext != frag_symbol && slot.ext != vert_symbol) {
     return false;
   }
 
