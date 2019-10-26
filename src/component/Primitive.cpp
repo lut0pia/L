@@ -20,8 +20,8 @@ void Primitive::unpack(const Map<Symbol, Var>& data) {
 }
 void Primitive::script_registration() {
   L_COMPONENT_BIND(Primitive, "primitive");
-  L_COMPONENT_RETURN_METHOD(Primitive, "material", 0, material());
-  L_COMPONENT_METHOD(Primitive, "scale", 1, scale(c.param(0).get<Vector3f>()));
+  L_SCRIPT_RETURN_METHOD(Primitive, "material", 0, material());
+  L_SCRIPT_METHOD(Primitive, "scale", 1, scale(c.param(0).get<Vector3f>()));
 }
 
 void Primitive::render(const Camera& camera, const RenderPass& render_pass) {

@@ -34,13 +34,13 @@ namespace L {
     }
 
     template <class CompType>
-    CompType* component() const {
+    CompType* get_component() const {
       for(auto&& pair : _components)
         if(pair.key()==Type<CompType>::description())
           return (CompType*)pair.value();
       return 0;
     }
-    Component* component(const char* name) const {
+    Component* get_component(const char* name) const {
       for(uint32_t i(0); i<_components.size(); i++)
         if(!strcmp(_components[i].key()->name,name))
           return _components[i].value();
@@ -48,12 +48,12 @@ namespace L {
     }
     template <class CompType>
     CompType* require_component() {
-      CompType* wtr(component<CompType>());
+      CompType* wtr(get_component<CompType>());
       if(wtr) return wtr;
-      else return add<CompType>();
+      else return add_component<CompType>();
     }
     template <class CompType>
-    CompType* add() {
+    CompType* add_component() {
       CompType* component(new CompType());
       component->entity(this);
       _components.push(keyValue(Type<CompType>::description(),(Component*)component)); // Link the entity to the component

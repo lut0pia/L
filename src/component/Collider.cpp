@@ -18,8 +18,8 @@ Collider::~Collider(){
 
 void Collider::update_components(){
   _transform = entity()->require_component<Transform>();
-  _rigidbody = entity()->component<RigidBody>();
-  _script = entity()->component<ScriptComponent>();
+  _rigidbody = entity()->get_component<RigidBody>();
+  _script = entity()->get_component<ScriptComponent>();
   if(!_node) {
     update_bounding_box();
     _node = tree.insert(_bounding_box,this);
@@ -46,9 +46,9 @@ void Collider::unpack(const Map<Symbol, Var>& data) {
 }
 void Collider::script_registration() {
   L_COMPONENT_BIND(Collider, "collider");
-  L_COMPONENT_METHOD(Collider, "center", 1, center(c.param(0).get<Vector3f>()));
-  L_COMPONENT_METHOD(Collider, "box", 1, box(c.param(0).get<Vector3f>()));
-  L_COMPONENT_METHOD(Collider, "sphere", 1, sphere(c.param(0)));
+  L_SCRIPT_METHOD(Collider, "center", 1, center(c.param(0).get<Vector3f>()));
+  L_SCRIPT_METHOD(Collider, "box", 1, box(c.param(0).get<Vector3f>()));
+  L_SCRIPT_METHOD(Collider, "sphere", 1, sphere(c.param(0)));
   ScriptContext::global(Symbol("raycast")) = (ScriptNativeFunction)([](ScriptContext& c) {
     if(c.param_count()==2 && c.param(0).is<Vector3f>() && c.param(1).is<Vector3f>()) {
       auto wtr(ref<Table<Var, Var>>());

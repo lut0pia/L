@@ -14,7 +14,7 @@ void PostProcessComponent::unpack(const Map<Symbol, Var>& data) {
 }
 void PostProcessComponent::script_registration() {
   L_COMPONENT_BIND(PostProcessComponent, "post_process");
-  L_COMPONENT_RETURN_METHOD(PostProcessComponent, "material", 0, material());
+  L_SCRIPT_RETURN_METHOD(PostProcessComponent, "material", 0, material());
 }
 
 void PostProcessComponent::render(const Camera& camera, const RenderPass& render_pass) {

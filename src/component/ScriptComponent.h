@@ -23,6 +23,7 @@ namespace L {
     static void script_registration();
 
     void load(const char* filename);
+    Var call(const Ref<ScriptFunction>& function, const Var* params = nullptr, size_t param_count = 0);
     void start();
     void update();
     void late_update();

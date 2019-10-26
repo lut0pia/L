@@ -372,25 +372,22 @@ static BlendMode symbol_to_blend_mode(const Symbol& sym) {
 }
 
 void Material::script_registration() {
-#define L_FUNCTION(name,...) ScriptContext::global(Symbol(name)) = (ScriptNativeFunction)([](ScriptContext& c) {__VA_ARGS__})
-#define L_METHOD(type,name,n,...) ScriptContext::type_value(Type<type*>::description(),Symbol(name)) = (ScriptNativeFunction)([](ScriptContext& c) {L_ASSERT(c.param_count()>=n && c.current_self().is<type*>());c.current_self().as<type*>()->__VA_ARGS__;})
-#define L_RETURN_METHOD(type,name,n,...) ScriptContext::type_value(Type<type*>::description(),Symbol(name)) = (ScriptNativeFunction)([](ScriptContext& c) {L_ASSERT(c.param_count()>=n && c.current_self().is<type*>());c.return_value() = c.current_self().as<type*>()->__VA_ARGS__;})
-  L_METHOD(Material, "parent", 1, parent(c.param(0).get<String>()));
+  L_SCRIPT_METHOD(Material, "parent", 1, parent(c.param(0).get<String>()));
   // Pipeline state
-  L_METHOD(Material, "shader", 2, shader(symbol_to_stage(c.param(0)), c.param(1).get<String>()));
-  L_METHOD(Material, "render_pass", 1, render_pass(c.param(0)));
-  L_METHOD(Material, "polygon_mode", 1, polygon_mode(symbol_to_polygon_mode(c.param(0))));
-  L_METHOD(Material, "cull_mode", 1, cull_mode(symbol_to_cull_mode(c.param(0))));
-  L_METHOD(Material, "topology", 1, topology(symbol_to_topology(c.param(0))));
-  L_METHOD(Material, "blend_mode", 1, blend_mode(symbol_to_blend_mode(c.param(0))));
+  L_SCRIPT_METHOD(Material, "shader", 2, shader(symbol_to_stage(c.param(0)), c.param(1).get<String>()));
+  L_SCRIPT_METHOD(Material, "render_pass", 1, render_pass(c.param(0)));
+  L_SCRIPT_METHOD(Material, "polygon_mode", 1, polygon_mode(symbol_to_polygon_mode(c.param(0))));
+  L_SCRIPT_METHOD(Material, "cull_mode", 1, cull_mode(symbol_to_cull_mode(c.param(0))));
+  L_SCRIPT_METHOD(Material, "topology", 1, topology(symbol_to_topology(c.param(0))));
+  L_SCRIPT_METHOD(Material, "blend_mode", 1, blend_mode(symbol_to_blend_mode(c.param(0))));
   // Descriptor state
-  L_METHOD(Material, "texture", 2, texture(c.param(0), c.param(1).get<String>()));
-  L_METHOD(Material, "vector", 2, vector(c.param(0), c.param(1)));
-  L_METHOD(Material, "scalar", 2, scalar(c.param(0), c.param(1)));
-  L_METHOD(Material, "color", 2, color(c.param(0), c.param(1).get<Color>()));
-  L_METHOD(Material, "font", 1, font(c.param(0).get<String>()));
+  L_SCRIPT_METHOD(Material, "texture", 2, texture(c.param(0), c.param(1).get<String>()));
+  L_SCRIPT_METHOD(Material, "vector", 2, vector(c.param(0), c.param(1)));
+  L_SCRIPT_METHOD(Material, "scalar", 2, scalar(c.param(0), c.param(1)));
+  L_SCRIPT_METHOD(Material, "color", 2, color(c.param(0), c.param(1).get<Color>()));
+  L_SCRIPT_METHOD(Material, "font", 1, font(c.param(0).get<String>()));
   // Dynamic state
-  L_METHOD(Material, "mesh", 1, mesh(c.param(0).get<String>()));
-  L_METHOD(Material, "text", 1, text(c.param(0).get<String>()));
-  L_METHOD(Material, "vertex_count", 1, vertex_count(uint32_t(c.param(0).get<float>())));
+  L_SCRIPT_METHOD(Material, "mesh", 1, mesh(c.param(0).get<String>()));
+  L_SCRIPT_METHOD(Material, "text", 1, text(c.param(0).get<String>()));
+  L_SCRIPT_METHOD(Material, "vertex_count", 1, vertex_count(uint32_t(c.param(0).get<float>())));
 }

@@ -27,11 +27,8 @@ void ScriptComponent::unpack(const Map<Symbol, Var>& data) {
   unpack_item(data, "script", _script);
 }
 void ScriptComponent::script_registration() {
-#define L_FUNCTION(name,...) ScriptContext::global(Symbol(name)) = (ScriptNativeFunction)([](ScriptContext& c) {__VA_ARGS__})
-#define L_METHOD(type,name,n,...) ScriptContext::type_value(Type<type*>::description(),Symbol(name)) = (ScriptNativeFunction)([](ScriptContext& c) {L_ASSERT(c.param_count()>=n && c.current_self().is<type*>());c.current_self().as<type*>()->__VA_ARGS__;})
-#define L_RETURN_METHOD(type,name,n,...) ScriptContext::type_value(Type<type*>::description(),Symbol(name)) = (ScriptNativeFunction)([](ScriptContext& c) {L_ASSERT(c.param_count()>=n && c.current_self().is<type*>());c.return_value() = c.current_self().as<type*>()->__VA_ARGS__;})
   // Engine ///////////////////////////////////////////////////////////////////
-  L_FUNCTION("engine_timescale", {
+  ScriptContext::global("engine_timescale") = (ScriptNativeFunction)([](ScriptContext& c) {
     if(c.param_count()>0)
       Engine::timescale(c.param(0).get<float>());
     c.return_value() = Engine::timescale();
@@ -57,11 +54,11 @@ void ScriptComponent::script_registration() {
       Memory::delete_type(script);
     }, Memory::new_type<Resource<ScriptFunction>>(script)});
   });
-  L_FUNCTION("read", {
+  ScriptContext::global("read") = (ScriptNativeFunction)([](ScriptContext& c) {
     L_ASSERT(c.param_count()==1);
     c.return_value() = *Resource<ScriptFunction>(c.param(0).get<String>());
   });
-  L_FUNCTION("setting", {
+  ScriptContext::global("setting") = (ScriptNativeFunction)([](ScriptContext& c) {
     L_ASSERT(c.param_count()==2);
     Settings::set(c.param(0), c.param(1));
   });
@@ -87,27 +84,27 @@ void ScriptComponent::script_registration() {
   // Material ///////////////////////////////////////////////////////////////////
   Material::script_registration();
   // Devices ///////////////////////////////////////////////////////////////////
-  L_FUNCTION("get_devices", {
+  ScriptContext::global("get_devices") = (ScriptNativeFunction)([](ScriptContext& c) {
     auto wtr(ref<Table<Var,Var>>());
     for(const Device* device : Device::devices())
       (*wtr)[device] = true;
     c.return_value() = wtr;
   });
-  L_COMPONENT_RETURN_METHOD(const Device, "get_axis", 1, axis(Device::symbol_to_axis(c.param(0))));
-  L_COMPONENT_RETURN_METHOD(const Device, "get_button", 1, button(Device::symbol_to_button(c.param(0))));
+  L_SCRIPT_RETURN_METHOD(const Device, "get_axis", 1, axis(Device::symbol_to_axis(c.param(0))));
+  L_SCRIPT_RETURN_METHOD(const Device, "get_button", 1, button(Device::symbol_to_button(c.param(0))));
   // Script ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(ScriptComponent, "script");
-  L_COMPONENT_METHOD(ScriptComponent, "load", 1, load(c.param(0).get<String>()));
-  L_COMPONENT_FUNCTION(ScriptComponent, "call", 1, {
-    ScriptContext& context(c.current_self().as<ScriptComponent*>()->_context);
-    c.return_value() = context.execute(c.param(0), &c.param(1), c.param_count()-1);
-  });
+  L_SCRIPT_METHOD(ScriptComponent, "load", 1, load(c.param(0).get<String>()));
+  L_SCRIPT_RETURN_METHOD(ScriptComponent, "call", 1, call(c.param(0), &c.param(1), c.param_count() - 1));
 }
 
 void ScriptComponent::load(const char* filename) {
   _script = filename;
   _script.flush();
   start();
+}
+Var ScriptComponent::call(const Ref<ScriptFunction>& function, const Var* params, size_t param_count) {
+  return _context.execute(function, params, param_count);
 }
 void ScriptComponent::start() {
   L_ASSERT(_script);

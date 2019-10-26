@@ -2,15 +2,13 @@
 
 #include "ComponentPool.h"
 #include "../container/Map.h"
-#include "../script/ScriptContext.h"
+#include "../script/script_binding.h"
 #include "Entity.h"
 
 #include "../system/Device.h"
 #include "../system/Window.h"
 
-
 namespace L {
-  class Entity;
   class Component {
   private:
     Entity* _entity;
@@ -24,7 +22,7 @@ namespace L {
 
     virtual void update_components() {}
     virtual Map<Symbol, Var> pack() const { return Map<Symbol, Var>(); }
-    virtual void unpack(const Map<Symbol, Var>&) { }
+    virtual void unpack(const Map<Symbol, Var>&) {}
 
     template <class T>
     void unpack_item(const Map<Symbol, Var>& data, const Symbol& symbol, T& value) {
@@ -69,10 +67,11 @@ namespace L {
   template <class T> void dev_event_all_impl(const Device::Event& e) { ComponentPool<T>::iterate([&](T& c) { c.event(e); }); }
 }
 
-#define L_COMPONENT(name)\
-  public:\
-  inline void* operator new(size_t) { return ComponentPool<name>::allocate(); }\
-  inline void operator delete(void* p) { ComponentPool<name>::deallocate((name*)p); }
+#define L_COMPONENT(name) \
+  public: \
+    inline void* operator new(size_t) { return ComponentPool<name>::allocate(); } \
+    inline void operator delete(void* p) { ComponentPool<name>::deallocate((name*)p); } \
+    inline void copy(const name* other) { *this = *other; }
 #define L_COMPONENT_HAS_UPDATE(name) static inline void update_all() { update_all_impl<name>(); }
 #define L_COMPONENT_HAS_ASYNC_UPDATE(name) static inline void update_all() { update_all_async_impl<name>(); }
 #define L_COMPONENT_HAS_SUB_UPDATE(name) static inline void sub_update_all() { sub_update_all_impl<name>(); }
@@ -85,18 +84,15 @@ namespace L {
 #define L_COMPONENT_HAS_WIN_EVENT(name) static inline void win_event_all(const Window::Event& e) { win_event_all_impl<name>(e); }
 #define L_COMPONENT_HAS_DEV_EVENT(name) static inline void dev_event_all(const Device::Event& e) { dev_event_all_impl<name>(e); }
 
-#define L_COMPONENT_FUNCTION(cname,fname,n,...) ScriptContext::type_value(Type<cname*>::description(),Symbol(fname)) = (ScriptNativeFunction)([](ScriptContext& c) {L_ASSERT(c.param_count()>=n && c.current_self().is<cname*>());__VA_ARGS__})
-#define L_COMPONENT_METHOD(cname,fname,n,...) L_COMPONENT_FUNCTION(cname,fname,n,c.current_self().as<cname*>()->__VA_ARGS__;)
-#define L_COMPONENT_RETURN_METHOD(cname,fname,n,...) L_COMPONENT_FUNCTION(cname,fname,n,c.return_value() = c.current_self().as<cname*>()->__VA_ARGS__;)
-#define L_COMPONENT_ADD(cname,fname) L_COMPONENT_FUNCTION(Entity,fname,0,c.return_value() = c.current_self().as<Entity*>()->add<cname>();)
-#define L_COMPONENT_GET(cname,fname) L_COMPONENT_FUNCTION(Entity,fname,0,c.return_value() = c.current_self().as<Entity*>()->component<cname>();)
-#define L_COMPONENT_REQUIRE(cname,fname) L_COMPONENT_FUNCTION(Entity,fname,0,c.return_value() = c.current_self().as<Entity*>()->require_component<cname>();)
-#define L_COMPONENT_COPY(cname) L_COMPONENT_FUNCTION(cname,"copy",1,if(c.param(0).is<cname*>())*(c.current_self().as<cname*>()) = *(c.param(0).as<cname*>());)
-#define L_COMPONENT_ENTITY(cname) L_COMPONENT_RETURN_METHOD(cname,"entity",0,entity())
-#define L_COMPONENT_BIND(cname,name)\
-  L_COMPONENT_ADD(cname,"add_" name);\
-  L_COMPONENT_GET(cname,"get_" name);\
-  L_COMPONENT_REQUIRE(cname,"require_" name);\
-  L_COMPONENT_ENTITY(cname);\
-  L_COMPONENT_COPY(cname);\
+#define L_COMPONENT_ADD(cname, fname) L_SCRIPT_RETURN_METHOD(Entity, fname, 0, add_component<cname>())
+#define L_COMPONENT_GET(cname, fname) L_SCRIPT_RETURN_METHOD(Entity, fname, 0, get_component<cname>())
+#define L_COMPONENT_REQUIRE(cname, fname) L_SCRIPT_RETURN_METHOD(Entity, fname, 0, require_component<cname>())
+#define L_COMPONENT_ENTITY(cname) L_SCRIPT_RETURN_METHOD(cname, "entity", 0, entity())
+#define L_COMPONENT_COPY(cname) L_SCRIPT_METHOD(cname, "copy" , 1, copy(c.param(0).as<cname*>());)
+#define L_COMPONENT_BIND(cname,name) \
+  L_COMPONENT_ADD(cname,"add_" name); \
+  L_COMPONENT_GET(cname,"get_" name); \
+  L_COMPONENT_REQUIRE(cname,"require_" name); \
+  L_COMPONENT_ENTITY(cname); \
+  L_COMPONENT_COPY(cname); \
   Type<cname*>::cancmp<>();

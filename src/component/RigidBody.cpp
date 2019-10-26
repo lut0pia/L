@@ -36,20 +36,20 @@ void RigidBody::unpack(const Map<Symbol, Var>& data) {
 }
 void RigidBody::script_registration() {
   L_COMPONENT_BIND(RigidBody, "rigidbody");
-  L_COMPONENT_METHOD(RigidBody, "kinematic", 1, kinematic(c.param(0).get<bool>()));
-  L_COMPONENT_METHOD(RigidBody, "mass", 1, mass(c.param(0).get<float>()));
-  L_COMPONENT_METHOD(RigidBody, "restitution", 1, restitution(c.param(0).get<float>()));
-  L_COMPONENT_METHOD(RigidBody, "drag", 1, drag(c.param(0).get<float>()));
-  L_COMPONENT_METHOD(RigidBody, "angular_drag", 1, angular_drag(c.param(0).get<float>()));
-  L_COMPONENT_RETURN_METHOD(RigidBody, "get_speed", 0, velocity());
-  L_COMPONENT_RETURN_METHOD(RigidBody, "get_relative_speed", 0, relative_velocity());
-  L_COMPONENT_RETURN_METHOD(RigidBody, "get_velocity_at", 1, velocity_at(c.param(0).get<Vector3f>()));
-  L_COMPONENT_METHOD(RigidBody, "add_velocity", 1, add_velocity(c.param(0).get<Vector3f>()));
-  L_COMPONENT_METHOD(RigidBody, "add_force", 1, add_force(c.param(0).get<Vector3f>()));
-  L_COMPONENT_METHOD(RigidBody, "add_relative_force", 1, add_relative_force(c.param(0).get<Vector3f>()));
-  L_COMPONENT_METHOD(RigidBody, "add_torque", 1, add_torque(c.param(0).get<Vector3f>()));
-  L_COMPONENT_METHOD(RigidBody, "add_relative_torque", 1, add_relative_torque(c.param(0).get<Vector3f>()));
-  L_COMPONENT_METHOD(RigidBody, "apply_impulse", 2, apply_impulse(c.param(0).get<Vector3f>(), c.param(0).get<Vector3f>()));
+  L_SCRIPT_METHOD(RigidBody, "kinematic", 1, kinematic(c.param(0).get<bool>()));
+  L_SCRIPT_METHOD(RigidBody, "mass", 1, mass(c.param(0).get<float>()));
+  L_SCRIPT_METHOD(RigidBody, "restitution", 1, restitution(c.param(0).get<float>()));
+  L_SCRIPT_METHOD(RigidBody, "drag", 1, drag(c.param(0).get<float>()));
+  L_SCRIPT_METHOD(RigidBody, "angular_drag", 1, angular_drag(c.param(0).get<float>()));
+  L_SCRIPT_RETURN_METHOD(RigidBody, "get_speed", 0, velocity());
+  L_SCRIPT_RETURN_METHOD(RigidBody, "get_relative_speed", 0, relative_velocity());
+  L_SCRIPT_RETURN_METHOD(RigidBody, "get_velocity_at", 1, velocity_at(c.param(0).get<Vector3f>()));
+  L_SCRIPT_METHOD(RigidBody, "add_velocity", 1, add_velocity(c.param(0).get<Vector3f>()));
+  L_SCRIPT_METHOD(RigidBody, "add_force", 1, add_force(c.param(0).get<Vector3f>()));
+  L_SCRIPT_METHOD(RigidBody, "add_relative_force", 1, add_relative_force(c.param(0).get<Vector3f>()));
+  L_SCRIPT_METHOD(RigidBody, "add_torque", 1, add_torque(c.param(0).get<Vector3f>()));
+  L_SCRIPT_METHOD(RigidBody, "add_relative_torque", 1, add_relative_torque(c.param(0).get<Vector3f>()));
+  L_SCRIPT_METHOD(RigidBody, "apply_impulse", 2, apply_impulse(c.param(0).get<Vector3f>(), c.param(0).get<Vector3f>()));
   ScriptContext::global(Symbol("engine_gravity")) = (ScriptNativeFunction)([](ScriptContext& c) {
     if(c.param_count()>0)
       RigidBody::gravity(c.param(0).get<Vector3f>());

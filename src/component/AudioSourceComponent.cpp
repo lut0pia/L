@@ -8,7 +8,7 @@ using namespace L;
 
 void AudioSourceComponent::update_components() {
   _transform = entity()->require_component<Transform>();
-  _script = entity()->component<ScriptComponent>();
+  _script = entity()->get_component<ScriptComponent>();
 }
 
 Map<Symbol, Var> AudioSourceComponent::pack() const {
@@ -25,12 +25,12 @@ void AudioSourceComponent::unpack(const Map<Symbol, Var>& data) {
 }
 void AudioSourceComponent::script_registration() {
   L_COMPONENT_BIND(AudioSourceComponent, "audio_source");
-  L_COMPONENT_METHOD(AudioSourceComponent, "stream", 1, stream(c.param(0).get<String>()));
-  L_COMPONENT_METHOD(AudioSourceComponent, "volume", 1, volume(c.param(0).get<float>()));
-  L_COMPONENT_METHOD(AudioSourceComponent, "looping", 1, looping(c.param(0).get<bool>()));
-  L_COMPONENT_METHOD(AudioSourceComponent, "play", 0, play());
-  L_COMPONENT_METHOD(AudioSourceComponent, "stop", 0, stop());
-  L_COMPONENT_RETURN_METHOD(AudioSourceComponent, "is_playing", 0, playing());
+  L_SCRIPT_METHOD(AudioSourceComponent, "stream", 1, stream(c.param(0).get<String>()));
+  L_SCRIPT_METHOD(AudioSourceComponent, "volume", 1, volume(c.param(0).get<float>()));
+  L_SCRIPT_METHOD(AudioSourceComponent, "looping", 1, looping(c.param(0).get<bool>()));
+  L_SCRIPT_METHOD(AudioSourceComponent, "play", 0, play());
+  L_SCRIPT_METHOD(AudioSourceComponent, "stop", 0, stop());
+  L_SCRIPT_RETURN_METHOD(AudioSourceComponent, "is_playing", 0, playing());
 }
 
 void AudioSourceComponent::audio_render(void* frames, uint32_t frame_count) {
