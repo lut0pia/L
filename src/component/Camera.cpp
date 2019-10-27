@@ -6,7 +6,6 @@
 #include "../system/Window.h"
 #include "../engine/Engine.h"
 #include "../engine/Settings.h"
-#include "../rendering/DescriptorSet.h"
 #include "../rendering/shader_lib.h"
 
 using namespace L;
