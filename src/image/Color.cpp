@@ -57,8 +57,8 @@ Color Color::from_hsv(float h, float s, float v) {
   if(s <= 0.f) // No saturation is greyscale
     return Color::from(v, v, v);
 
-  if(h >= 360.f) h = 0.f;
-  h /= 60.f;
+  if(h >= 1.f) h = 0.f;
+  h *= 6.f;
   const uint32_t i((uint32_t)h);
   const float ff(h - i);
   const float p(v * (1.f - s));
