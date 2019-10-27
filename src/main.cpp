@@ -84,7 +84,7 @@ int main(int, const char*[]) {
 }
 
 #if !defined(L_DEBUG) && defined(L_WINDOWS)
-int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
+int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int) {
   main(0, nullptr);
 }
 #endif
