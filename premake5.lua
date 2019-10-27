@@ -61,10 +61,10 @@ solution "L"
       excludes {"src/pipeline/**"}
 
     do -- Modules
-      configuration {}
+      filter {}
       removefiles {"src/module/**"} -- Start by exluding all modules
       local modules = os.matchdirs("src/module/*")
-      local moduleinit = io.open("src/module/init.gen","w")
+      local module_init_str = ""
       for _,modulepath in pairs(modules) do
         local module = path.getname(modulepath)
         local moduleswitch = "L_USE_MODULE_" .. module
@@ -72,16 +72,21 @@ solution "L"
         if moduleconf then
           moduleconf()
         else
-          configuration {}
+          filter {}
         end
         defines {moduleswitch}
         files {modulepath .. "/**.cpp"}
-        moduleinit:write("#if " .. moduleswitch .. "\n"
+        module_init_str = module_init_str .. ("#if " .. moduleswitch .. "\n"
         .. "{\n"
         .. "L_SCOPE_MARKER(\"" .. module .. "\");\n"
         .. "extern void " .. module .. "_module_init();" .. module .. "_module_init();\n"
         .. "}\n"
         .. "#endif\n")
+      end
+      local module_init_file_name = "src/module/init.gen"
+      local previous_module_init_str = io.readfile(module_init_file_name)
+      if module_init_str ~= previous_module_init_str then
+        io.writefile(module_init_file_name, module_init_str)
       end
     end
 
