@@ -74,6 +74,9 @@ Color Color::from_hsv(float h, float s, float v) {
     case 5: default: return Color::from(v, p, q);
   }
 }
+Color Color::from_index(uintptr_t index) {
+  return from_hsv(fmod(float(index) * 0.618033988749895f, 1.f), 0.5f, 1.f);
+}
 Color Color::lerp(Color a, Color b, float w) {
   const float nw(1.f-w);
   return Color(uint8_t(nw*a.r() + w*b.r()), uint8_t(nw*a.g() + w*b.g()), uint8_t(nw*a.b() + w*b.b()), uint8_t(nw*a.a() + w*b.a()));
