@@ -149,7 +149,7 @@ Pipeline::Pipeline(const Parameters& parameters) {
   rasterizer.rasterizerDiscardEnable = VK_FALSE;
   rasterizer.polygonMode = parameters.polygon_mode == VK_POLYGON_MODE_MAX_ENUM ? VK_POLYGON_MODE_FILL : parameters.polygon_mode;
   rasterizer.lineWidth = 1.0f;
-  rasterizer.cullMode = parameters.cull_mode == VK_CULL_MODE_FLAG_BITS_MAX_ENUM ? VK_CULL_MODE_BACK_BIT : parameters.cull_mode;
+  rasterizer.cullMode = parameters.cull_mode == VK_CULL_MODE_FLAG_BITS_MAX_ENUM ? VkCullModeFlags(VK_CULL_MODE_BACK_BIT) : parameters.cull_mode;
   rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 
   VkPipelineMultisampleStateCreateInfo multisampling = {};
