@@ -72,7 +72,6 @@ namespace L {
     inline size_t size() const { return _size; }
     inline size_t capacity() const { return _capacity; }
     inline bool empty() const { return size()==0; }
-    inline void clear() { size(0); }
     inline T& operator[](uintptr_t i) { return _data[i]; }
     inline const T& operator[](uintptr_t i) const { return _data[i]; }
     inline T& front() { return operator[](0); }
@@ -99,6 +98,12 @@ namespace L {
         for(uintptr_t i(n); i<_size; i++)
           (_data+i)->~T();
       _size = n;
+    }
+    void clear() {
+      for(uintptr_t i(0); i < _size; i++) {
+        (_data + i)->~T();
+      }
+      _size = 0;
     }
     void capacity(size_t n) {
       if(n!=capacity()) {
