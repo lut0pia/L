@@ -53,7 +53,7 @@ Vector4f Color::to_float_vector(const Color& color) {
 Color Color::from(float r, float g, float b, float a) {
   return Color(uint8_t(r*255.f), uint8_t(g*255.f), uint8_t(b*255.f), uint8_t(a*255.f));
 }
-Color Color::fromHSV(float h, float s, float v) {
+Color Color::from_hsv(float h, float s, float v) {
   if(s <= 0.f) // No saturation is greyscale
     return Color::from(v, v, v);
 
