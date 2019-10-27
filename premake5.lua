@@ -100,6 +100,10 @@ solution "L"
       pchheader "src/pc.h"
     end
 
+    -- Workaround gmake2 generation bug
+    filter {"configurations:not Release"}
+      removefiles {"src/dummy.cpp"}
+
     configuration {"Debug"}
       targetname "Ldbg"
       kind "ConsoleApp"

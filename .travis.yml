@@ -54,3 +54,7 @@ jobs:
       env: CONFIGURATION=dev
     - os: windows
       env: CONFIGURATION=rls
+  
+  # Windows build doesn't work yet
+  allow_failures:
+    - os: windows
