@@ -84,8 +84,6 @@ namespace L {
     inline void text(const String& text) { _partial_state.text = text; mark_state_dirty(); }
     inline void vertex_count(uint32_t count) { _partial_state.vertex_count = count; mark_state_dirty(); }
 
-    inline const State& final_state() const { return _final_state; }
-
     static void script_registration();
 
     friend inline Stream& operator<=(Stream& s, const Material& v) { return s <= v._parent <= v._partial_state; }
