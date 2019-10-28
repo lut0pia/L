@@ -2,7 +2,6 @@
 
 #include "../engine/Resource.inl"
 #include "../component/Camera.h"
-#include "DescriptorSet.h"
 
 using namespace L;
 
@@ -54,31 +53,6 @@ void Material::State::apply(const State& patch) {
     vertex_count = patch.vertex_count;
   }
 }
-bool Material::State::fill_desc_set(class DescriptorSet& desc_set) const {
-  for(const auto& pair : scalars) {
-    desc_set.set_value(pair.key(), pair.value());
-  }
-  for(const auto& pair : textures) {
-    if(pair.value().is_loaded()) {
-      desc_set.set_descriptor(pair.key(), VkDescriptorImageInfo {Vulkan::sampler(), *pair.value(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
-    } else {
-      return false;
-    }
-  }
-  for(const auto& pair : vectors) {
-    desc_set.set_value(pair.key(), pair.value());
-  }
-
-  if(font.is_set()) {
-    if(font.is_loaded()) {
-      desc_set.set_descriptor("atlas", VkDescriptorImageInfo {Vulkan::sampler(), font->atlas(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
-    } else {
-      return false;
-    }
-  }
-
-  return true;
-}
 
 uint32_t Material::State::pipeline_hash() const {
   uint32_t h = 0;
@@ -107,6 +81,131 @@ uint32_t Material::chain_hash() const {
   uint32_t h = 0;
   hash_combine(h, _parent);
   return h;
+}
+
+VkDescriptorSet Material::descriptor_set(const Camera& camera, const Pipeline& pipeline) {
+  DescSetPairing* working_pairing(nullptr);
+  for(DescSetPairing& pairing : _desc_set_pairings) {
+    if(pairing.camera == &camera) {
+      working_pairing = &pairing;
+      break;
+    }
+  }
+  if(!working_pairing) {
+    { // Create new pairing
+      L_SCOPE_MARKER("DescriptorSet creation");
+
+      _desc_set_pairings.push();
+      working_pairing = &_desc_set_pairings.back();
+      working_pairing->camera = &camera;
+      working_pairing->pipeline = pipeline;
+      working_pairing->last_framebuffer_update = 0;
+
+      if(!Vulkan::find_desc_set(pipeline, working_pairing->desc_set)) {
+        VkDescriptorSetLayout layouts[] = {pipeline.desc_set_layout()};
+        VkDescriptorSetAllocateInfo allocInfo = {};
+        allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+        allocInfo.descriptorPool = Vulkan::descriptor_pool();
+        allocInfo.descriptorSetCount = 1;
+        allocInfo.pSetLayouts = layouts;
+
+        L_VK_CHECKED(vkAllocateDescriptorSets(Vulkan::device(), &allocInfo, &working_pairing->desc_set));
+      }
+    }
+
+    // Bind uniform buffers
+    pipeline.set_descriptor("Shared", working_pairing->desc_set, camera.shared_uniform().descriptor_info());
+    for(uint32_t i = 0; i < _buffers.size(); i++) {
+      if(_buffers[i]) {
+        pipeline.set_descriptor(i, working_pairing->desc_set, _buffers[i]->descriptor_info());
+      }
+    }
+
+    // Set other descriptor set state
+    working_pairing->valid = fill_desc_set(pipeline, working_pairing->desc_set);
+  } else {
+    // Check hash of the final descriptor state
+    const uint32_t descriptor_h = _final_state.descriptor_hash();
+
+    if(_last_descriptor_hash != descriptor_h) {
+      _last_descriptor_hash = descriptor_h;
+      // Update all descriptor sets
+      for(const DescSetPairing& pairing : _desc_set_pairings) {
+        working_pairing->valid = fill_desc_set(pipeline, pairing.desc_set);
+      }
+    }
+  }
+
+  if(!working_pairing->valid) {
+    return nullptr; // Desc set is invalid if some resources are unloaded
+  }
+
+  if(&pipeline.render_pass() == &RenderPass::light_pass()
+    && working_pairing->last_framebuffer_update < camera.framebuffer_mtime()) {
+    pipeline.set_descriptor("color_buffer", working_pairing->desc_set, VkDescriptorImageInfo {Vulkan::sampler(), camera.geometry_buffer().image_view(0), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
+    pipeline.set_descriptor("normal_buffer", working_pairing->desc_set, VkDescriptorImageInfo {Vulkan::sampler(), camera.geometry_buffer().image_view(1), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
+    pipeline.set_descriptor("depth_buffer", working_pairing->desc_set, VkDescriptorImageInfo {Vulkan::sampler(), camera.geometry_buffer().image_view(2), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
+    working_pairing->last_framebuffer_update = camera.framebuffer_mtime();
+  } else if(&pipeline.render_pass() == &RenderPass::present_pass()
+    && working_pairing->last_framebuffer_update < camera.framebuffer_mtime()) {
+    pipeline.set_descriptor("light_buffer", working_pairing->desc_set, VkDescriptorImageInfo {Vulkan::sampler(), camera.light_buffer().image_view(0), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
+    working_pairing->last_framebuffer_update = camera.framebuffer_mtime();
+  }
+  return working_pairing->desc_set;
+}
+bool Material::fill_desc_set(const Pipeline& pip, VkDescriptorSet desc_set) const {
+  for(const auto& pair : _final_state.scalars) {
+    if(const Shader::Binding* binding = pip.find_binding(pair.key())) {
+      _buffers[binding->binding]->load_item(pair.value(), binding->offset);
+    }
+  }
+  for(const auto& pair : _final_state.textures) {
+    if(pair.value().is_loaded()) {
+      pip.set_descriptor(pair.key(), desc_set, VkDescriptorImageInfo {Vulkan::sampler(), *pair.value(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
+    } else {
+      return false;
+    }
+  }
+  for(const auto& pair : _final_state.vectors) {
+    if(const Shader::Binding* binding = pip.find_binding(pair.key())) {
+      _buffers[binding->binding]->load_item(pair.value(), binding->offset);
+    }
+  }
+
+  if(_final_state.font.is_set()) {
+    if(_final_state.font.is_loaded()) {
+      pip.set_descriptor("atlas", desc_set, VkDescriptorImageInfo {Vulkan::sampler(), _final_state.font->atlas(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
+    } else {
+      return false;
+    }
+  }
+
+  return true;
+}
+void Material::create_uniform_buffers(const Pipeline& pipeline) {
+  for(const Shader::Binding& binding : pipeline.bindings()) {
+    // Binding 0 is reserved for Shared uniform buffer
+    if(binding.binding > 0 && binding.type == Shader::BindingType::Uniform) {
+      while(_buffers.size() <= binding.binding) {
+        _buffers.push(nullptr);
+      }
+      if(binding.size > 0) {
+        _buffers[binding.binding] = Memory::new_type<GPUBuffer>(binding.size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+      }
+    }
+  }
+}
+void Material::clear_desc_set_pairings() {
+  for(const auto& pairing : _desc_set_pairings) {
+    Vulkan::destroy_desc_set(pairing.pipeline, pairing.desc_set);
+  }
+  for(GPUBuffer* buffer : _buffers) {
+    if(buffer) {
+      Memory::delete_type(buffer);
+    }
+  }
+  _desc_set_pairings.clear();
+  _buffers.clear();
 }
 
 Material::~Material() {
@@ -150,13 +249,14 @@ void Material::update() {
 
     if(Ref<Pipeline>* pipeline = pipeline_cache.find(pipeline_h)) {
       _pipeline = *pipeline;
+      create_uniform_buffers(*_pipeline);
       return;
     }
 
     // Clear all existing desc sets as they're no longer valid
     clear_desc_set_pairings();
 
-    // Create pipeline
+    // Check shaders
     if(_final_state.pipeline.shaders.empty()) {
       return; // Abort because there aren't any shaders
     }
@@ -165,20 +265,17 @@ void Material::update() {
         return; // Abort because some shaders aren't loaded yet
       }
     }
+
+    // Apply vertex attributes to pipeline parameters
     if(_final_state.mesh) {
       _final_state.pipeline.vertex_attributes = _final_state.mesh->attributes();
     }
+
+    // Create pipeline
     pipeline_cache[pipeline_h] = _pipeline = ref<Pipeline>(_final_state.pipeline);
+
+    create_uniform_buffers(*_pipeline);
   }
-}
-void Material::clear_desc_set_pairings() {
-  for(const auto& pairing : _desc_set_pairings) {
-    Memory::delete_type(pairing.desc_set);
-  }
-  _desc_set_pairings.clear();
-}
-bool Material::valid_for_render_pass(const class RenderPass& render_pass) const {
-  return _pipeline && &_pipeline->render_pass() == &render_pass;
 }
 void Material::draw(const Camera& camera, const RenderPass& render_pass, const Matrix44f& model) {
   if(!_pipeline) {
@@ -186,9 +283,9 @@ void Material::draw(const Camera& camera, const RenderPass& render_pass, const M
   }
 
   L_ASSERT(&_pipeline->render_pass() == &render_pass);
-  const DescriptorSet* desc_set(descriptor_set(camera, *_pipeline));
+  const VkDescriptorSet desc_set = descriptor_set(camera, *_pipeline);
 
-  if(!desc_set) {
+  if(desc_set == VK_NULL_HANDLE) {
     return;
   }
 
@@ -202,7 +299,7 @@ void Material::draw(const Camera& camera, const RenderPass& render_pass, const M
     }
   }
   VkCommandBuffer cmd_buffer(camera.cmd_buffer());
-  vkCmdBindDescriptorSets(cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *_pipeline, 0, 1, &desc_set->set(), 0, nullptr);
+  vkCmdBindDescriptorSets(cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *_pipeline, 0, 1, &desc_set, 0, nullptr);
   if(const Shader::Binding* constants_binding = _pipeline->find_binding("Constants")) {
     vkCmdPushConstants(cmd_buffer, *_pipeline, constants_binding->stage, 0, sizeof(model), &model);
   }
@@ -213,7 +310,26 @@ void Material::draw(const Camera& camera, const RenderPass& render_pass, const M
     vkCmdDraw(cmd_buffer, vertex_count, 1, 0, 0);
   }
 }
+void Material::set_buffer(const Symbol& name, const void* data, size_t size) {
+  if(_pipeline) {
+    if(const Shader::Binding* binding = _pipeline->find_binding(name)) {
+      if(binding->type == Shader::BindingType::Uniform) {
+        if(_buffers[binding->binding] && _buffers[binding->binding]->size() != size) {
+          Memory::delete_type(_buffers[binding->binding]);
+          _buffers[binding->binding] = nullptr;
+        }
+        if(!_buffers[binding->binding]) {
+          _buffers[binding->binding] = Memory::new_type<GPUBuffer>(size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+        }
+        _buffers[binding->binding]->load(data, size);
+      }
+    }
+  }
+}
 
+bool Material::valid_for_render_pass(const class RenderPass& render_pass) const {
+  return _pipeline && &_pipeline->render_pass() == &render_pass;
+}
 Interval3f Material::bounds() const {
   if(_final_state.mesh)
     return _final_state.mesh->bounds();
@@ -234,59 +350,6 @@ Vector2f Material::gui_size() const {
   }
   return Vector2f(0.f, 0.f);
 }
-const DescriptorSet* Material::descriptor_set(const Camera& camera, const Pipeline& pipeline) {
-  DescSetPairing* working_pairing(nullptr);
-  for(DescSetPairing& pairing : _desc_set_pairings) {
-    if(pairing.camera == &camera) {
-      working_pairing = &pairing;
-      break;
-    }
-  }
-  if(!working_pairing) {
-    { // Create new pairing
-      DescSetPairing new_pairing;
-      new_pairing.camera = &camera;
-      new_pairing.desc_set = Memory::new_type<DescriptorSet>(pipeline);
-      new_pairing.last_framebuffer_update = 0;
-      _desc_set_pairings.push(new_pairing);
-    }
-    working_pairing = &_desc_set_pairings.back();
-    working_pairing->desc_set->set_descriptor("Shared", camera.shared_uniform().descriptor_info());
-    working_pairing->valid = _final_state.fill_desc_set(*working_pairing->desc_set);
-  } else {
-    // Check hash of the final descriptor state
-    const uint32_t descriptor_h = _final_state.descriptor_hash();
-
-    if(_last_descriptor_hash != descriptor_h) {
-      _last_descriptor_hash = descriptor_h;
-      // Update all descriptor sets
-      for(const DescSetPairing& pairing : _desc_set_pairings) {
-        working_pairing->valid = _final_state.fill_desc_set(*pairing.desc_set);
-      }
-    }
-  }
-
-  if(!working_pairing->valid) {
-    return nullptr; // Desc set is invalid if some resources are unloaded
-  }
-
-  if(&pipeline.render_pass() == &RenderPass::light_pass()
-    && working_pairing->last_framebuffer_update < camera.framebuffer_mtime()) {
-    working_pairing->desc_set->set_descriptor("color_buffer", VkDescriptorImageInfo {Vulkan::sampler(), camera.geometry_buffer().image_view(0), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
-    working_pairing->desc_set->set_descriptor("normal_buffer", VkDescriptorImageInfo {Vulkan::sampler(), camera.geometry_buffer().image_view(1), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
-    working_pairing->desc_set->set_descriptor("depth_buffer", VkDescriptorImageInfo {Vulkan::sampler(), camera.geometry_buffer().image_view(2), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
-    working_pairing->last_framebuffer_update = camera.framebuffer_mtime();
-  } else if(&pipeline.render_pass() == &RenderPass::present_pass()
-    && working_pairing->last_framebuffer_update < camera.framebuffer_mtime()) {
-    working_pairing->desc_set->set_descriptor("light_buffer", VkDescriptorImageInfo {Vulkan::sampler(), camera.light_buffer().image_view(0), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
-    working_pairing->last_framebuffer_update = camera.framebuffer_mtime();
-  }
-  L_ASSERT(pipeline.desc_set_layout() == working_pairing->desc_set->layout());
-  return working_pairing->desc_set;
-}
-void Material::mark_state_dirty() {
-  _state_dirty = true;
-}
 
 template <class K, class V> static void set_parameter(Array<KeyValue<K, V>>& array, const K& name, const V& value) {
   for(auto& pair : array) {
@@ -299,19 +362,19 @@ template <class K, class V> static void set_parameter(Array<KeyValue<K, V>>& arr
 }
 void Material::shader(VkShaderStageFlags stage, const Resource<Shader>& shader) {
   set_parameter(_partial_state.pipeline.shaders, stage, shader);
-  mark_state_dirty();
+  _state_dirty = true;
 }
 void Material::scalar(const Symbol& name, float scalar) {
   set_parameter(_partial_state.scalars, name, scalar);
-  mark_state_dirty();
+  _state_dirty = true;
 }
 void Material::texture(const Symbol& name, const Resource<Texture>& texture) {
   set_parameter(_partial_state.textures, name, texture);
-  mark_state_dirty();
+  _state_dirty = true;
 }
 void Material::vector(const Symbol& name, const Vector4f& vector) {
   set_parameter(_partial_state.vectors, name, vector);
-  mark_state_dirty();
+  _state_dirty = true;
 }
 
 static const Symbol frag_symbol("frag"), fragment_symbol("fragment"), vert_symbol("vert"), vertex_symbol("vertex");

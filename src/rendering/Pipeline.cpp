@@ -243,3 +243,43 @@ const Shader::Binding* Pipeline::find_binding(const Symbol& name) const {
       return &binding;
   return nullptr;
 }
+void Pipeline::set_descriptor(uint32_t binding, VkDescriptorSet desc_set, VkDescriptorBufferInfo buffer_info) const {
+  VkWriteDescriptorSet desc_write {};
+  desc_write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+  desc_write.dstSet = desc_set;
+  desc_write.dstBinding = binding;
+  desc_write.dstArrayElement = 0;
+  desc_write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  desc_write.descriptorCount = 1;
+  desc_write.pBufferInfo = &buffer_info;
+
+  vkUpdateDescriptorSets(Vulkan::device(), 1, &desc_write, 0, nullptr);
+}
+void Pipeline::set_descriptor(uint32_t binding, VkDescriptorSet desc_set, VkDescriptorImageInfo image_info) const {
+  VkWriteDescriptorSet desc_write {};
+  desc_write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+  desc_write.dstSet = desc_set;
+  desc_write.dstBinding = binding;
+  desc_write.dstArrayElement = 0;
+  desc_write.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+  desc_write.descriptorCount = 1;
+  desc_write.pImageInfo = &image_info;
+
+  vkUpdateDescriptorSets(Vulkan::device(), 1, &desc_write, 0, nullptr);
+}
+bool Pipeline::set_descriptor(const Symbol& name, VkDescriptorSet desc_set, VkDescriptorBufferInfo buffer_info) const {
+  if(const Shader::Binding* binding = find_binding(name)) {
+    set_descriptor(binding->binding, desc_set, buffer_info);
+    return true;
+  } else {
+    return false;
+  }
+}
+bool Pipeline::set_descriptor(const Symbol& name, VkDescriptorSet desc_set, VkDescriptorImageInfo image_info) const {
+  if(const Shader::Binding* binding = find_binding(name)) {
+    set_descriptor(binding->binding, desc_set, image_info);
+    return true;
+  } else {
+    return false;
+  }
+}

@@ -32,6 +32,10 @@ namespace L {
     ~Pipeline();
 
     const Shader::Binding* find_binding(const Symbol& name) const;
+    void set_descriptor(uint32_t binding, VkDescriptorSet desc_set, VkDescriptorBufferInfo buffer_info) const;
+    void set_descriptor(uint32_t binding, VkDescriptorSet desc_set, VkDescriptorImageInfo image_info) const;
+    bool set_descriptor(const Symbol& name, VkDescriptorSet desc_set, VkDescriptorBufferInfo buffer_info) const;
+    bool set_descriptor(const Symbol& name, VkDescriptorSet desc_set, VkDescriptorImageInfo image_info) const;
 
     operator VkPipeline() const { return _pipeline; }
     operator VkPipelineLayout() const { return _layout; }
