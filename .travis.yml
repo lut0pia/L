@@ -21,7 +21,9 @@ git:
   depth: 1
   quiet: true
 
-script: ./run.sh build ${CONFIGURATION}
+script:
+  - ./run.sh stats
+  - ./run.sh build ${CONFIGURATION}
 
 jobs:
   include:
