@@ -16,6 +16,7 @@
 #include "component/Primitive.h"
 #include "component/RigidBody.h"
 #include "component/ScriptComponent.h"
+#include "component/SkeletalAnimatorComponent.h"
 #include "component/Transform.h"
 
 using namespace L;
@@ -53,6 +54,7 @@ int main(int, const char*[]) {
   Engine::register_component<PostProcessComponent>();
   Engine::register_component<Primitive>();
   Engine::register_component<GUIComponent>();
+  Engine::register_component<SkeletalAnimatorComponent>();
 
   {
     L_SCOPE_MARKER("Initializing modules");
