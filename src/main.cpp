@@ -1,4 +1,5 @@
 #include "engine/Engine.h"
+#include "engine/debug_draw.h"
 #include "engine/Resource.inl"
 #include "engine/Settings.h"
 #include "network/Network.h"
@@ -35,6 +36,7 @@ int main(int, const char*[]) {
   TypeInit();
 
 #if L_DEBUG
+  init_debug_draw();
   Engine::add_parallel_update(ResourceSlot::update);
 #endif
 
