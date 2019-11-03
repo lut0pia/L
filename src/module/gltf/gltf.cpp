@@ -3,6 +3,7 @@
 #include <L/src/math/geometry.h>
 #include <L/src/math/Quaternion.h>
 #include <L/src/pipeline/ShaderTools.h>
+#include <L/src/rendering/Animation.h>
 #include <L/src/rendering/Material.h>
 #include <L/src/rendering/Mesh.h>
 #include <L/src/rendering/Shader.h>
@@ -27,13 +28,20 @@ static void read_accessor(const cgltf_accessor* acc, intptr_t i, void* dst, size
   memcpy(dst, src + offset, size);
 }
 
-template <class T> T read_accessor(const cgltf_accessor* acc, intptr_t i) {
+template <class T> static T read_accessor(const cgltf_accessor* acc, intptr_t i = 0) {
   T v;
   read_accessor(acc, i, &v, sizeof(v));
   return v;
 }
 
-bool gltf_load_data(ResourceSlot& slot, const Buffer& source, cgltf_data*& data) {
+static Matrix44f gltf_to_l = {
+  -1.f, 0.f, 0.f, 0.f,
+  0.f,  0.f, 1.f, 0.f,
+  0.f,  1.f, 0.f, 0.f,
+  0.f,  0.f, 0.f, 1.f,
+};
+
+static bool gltf_load_data(ResourceSlot& slot, const Buffer& source, cgltf_data*& data) {
   cgltf_result result;
   {
     L_SCOPE_MARKER("cgltf load");
@@ -51,7 +59,193 @@ bool gltf_load_data(ResourceSlot& slot, const Buffer& source, cgltf_data*& data)
   return result == cgltf_result_success;
 }
 
-bool gltf_material_loader(ResourceSlot& slot, Material::Intermediate& intermediate) {
+static void gltf_compute_node_matrix(const cgltf_node* node, Matrix44f& matrix) {
+  if(node->parent) {
+    gltf_compute_node_matrix(node->parent, matrix);
+  }
+  if(node->has_rotation) {
+    float scale = node->scale[0];
+    Vector3f translation = node->translation;
+    matrix = matrix * sqt_to_mat(Quatf(node->rotation[0], node->rotation[1], node->rotation[2], node->rotation[3]), translation, scale);
+  }
+  if(node->has_matrix) {
+    matrix = matrix * Matrix44f(node->matrix);
+  }
+}
+
+static Matrix44f gltf_node_matrix(const cgltf_data* data, const cgltf_node* node = nullptr) {
+  if(node == nullptr) {
+    for(uintptr_t i = 0; i < data->nodes_count; i++) {
+      node = data->nodes + i;
+      if(node->skin) {
+        break;
+      }
+    }
+  }
+
+  Matrix44f node_matrix = gltf_to_l;
+  gltf_compute_node_matrix(node, node_matrix);
+  return node_matrix;
+}
+
+static uintptr_t gltf_find_skeleton_joint_index(const cgltf_data* data, const cgltf_node* node) {
+  const cgltf_skin* skin = data->skins;
+  for(uintptr_t i = 0; i < skin->joints_count; i++) {
+    if(skin->joints[i] == node) {
+      return i;
+    }
+  }
+  return UINTPTR_MAX;
+}
+static bool gltf_animation_loader(ResourceSlot& slot, Animation::Intermediate& intermediate) {
+  if(slot.ext != glb_symbol) {
+    return false;
+  }
+
+  cgltf_data* data;
+  const Buffer source = slot.read_source_file();
+  if(!gltf_load_data(slot, source, data)) {
+    return false;
+  }
+
+  Symbol animation_name = slot.parameter("animation");
+
+  const cgltf_animation* animation = nullptr;
+
+  for(uintptr_t i = 0; i < data->animations_count; i++) {
+    if((data->animations[i].name && Symbol(data->animations[i].name) == animation_name)
+      || (!data->animations[i].name && !animation_name)) {
+      animation = data->animations + i;
+      break;
+    }
+  }
+
+  if(animation == nullptr) {
+    warning("GLTF: Could not find animation %s in %s", animation_name, slot.path);
+    return false;
+  }
+
+  const Matrix44f node_matrix = gltf_node_matrix(data);
+  const Quatf node_quat = mat_to_quat(node_matrix);
+
+  for(uintptr_t i = 0; i < animation->channels_count; i++) {
+    const cgltf_animation_channel& channel = animation->channels[i];
+    const cgltf_animation_sampler* sampler = channel.sampler;
+    const uintptr_t joint_index = gltf_find_skeleton_joint_index(data, channel.target_node);
+    const Symbol joint_name = channel.target_node->name ? Symbol(channel.target_node->name) : Symbol();
+    Array<Animation::Channel> channels;
+    {
+      Animation::Channel tmp_channel;
+      tmp_channel.joint_index = joint_index;
+      tmp_channel.joint_name = joint_name;
+      switch(channel.target_path) {
+        case cgltf_animation_path_type_translation:
+          tmp_channel.type = Animation::ChannelType::TransX;
+          channels.push(tmp_channel);
+          tmp_channel.type = Animation::ChannelType::TransY;
+          channels.push(tmp_channel);
+          tmp_channel.type = Animation::ChannelType::TransZ;
+          channels.push(tmp_channel);
+          break;
+        case cgltf_animation_path_type_rotation:
+          tmp_channel.type = Animation::ChannelType::RotX;
+          channels.push(tmp_channel);
+          tmp_channel.type = Animation::ChannelType::RotY;
+          channels.push(tmp_channel);
+          tmp_channel.type = Animation::ChannelType::RotZ;
+          channels.push(tmp_channel);
+          tmp_channel.type = Animation::ChannelType::RotW;
+          channels.push(tmp_channel);
+          break;
+#if 0
+        case cgltf_animation_path_type_scale:
+          tmp_channel.type = Animation::ChannelType::ScaleX;
+          channels.push(tmp_channel);
+          tmp_channel.type = Animation::ChannelType::ScaleY;
+          channels.push(tmp_channel);
+          tmp_channel.type = Animation::ChannelType::ScaleZ;
+          channels.push(tmp_channel);
+          break;
+#endif
+        default:
+          continue;
+      }
+    }
+    for(uintptr_t j = 0; j < sampler->input->count; j++) {
+      float input = read_accessor<float>(sampler->input, j);
+      Vector4f output = read_accessor<Vector4f>(sampler->output, j);
+
+      // Transform first joint to account for node transform and L coordinates
+      if(joint_index == 0) {
+        if(channel.target_path == cgltf_animation_path_type_rotation) {
+          output = node_quat * Quatf(output.x(), output.y(), output.z(), output.w());
+        } else {
+          const Vector4f transformed = node_matrix * Vector4f(output.x(), output.y(), output.z(), 0.f);
+          output.x() = transformed.x();
+          output.y() = transformed.y();
+          output.z() = transformed.z();
+        }
+      }
+
+      for(uintptr_t k = 0; k < channels.size(); k++) {
+        channels[k].samples.push(Animation::Sample {input, output[k]});
+      }
+    }
+    intermediate.channels += channels;
+  }
+
+  return true;
+}
+
+static bool gltf_skeleton_loader(ResourceSlot& slot, Skeleton::Intermediate& intermediate) {
+  if(slot.ext != glb_symbol) {
+    return false;
+  }
+
+  cgltf_data* data;
+  const Buffer source = slot.read_source_file();
+  if(!gltf_load_data(slot, source, data)) {
+    return false;
+  }
+
+  uint32_t skin_index = 0;
+  slot.parameter("skin", skin_index);
+
+  if(data->skins_count <= skin_index) {
+    warning("GLTF: Could not find skin %d in %s", skin_index, slot.path);
+    return false;
+  }
+
+  const Matrix44f node_matrix = gltf_node_matrix(data);
+  const cgltf_skin* skin = data->skins + skin_index;
+
+  for(uintptr_t i = 0; i < skin->joints_count; i++) {
+    Skeleton::Joint joint;
+    joint.inv_bind_pose = read_accessor<Matrix44f>(skin->inverse_bind_matrices, i);
+    joint.inv_bind_pose = joint.inv_bind_pose * node_matrix;
+    if(skin->joints[i]->name) {
+      joint.name = skin->joints[i]->name;
+    }
+    joint.parent = -1;
+    intermediate.joints.push(joint);
+  }
+
+  // Recreate index hierarchy
+  for(uintptr_t i = 0; i < skin->joints_count; i++) {
+    if(skin->joints[i]->parent) {
+      for(uintptr_t j = 0; j < skin->joints_count; j++) {
+        if(skin->joints[j] == skin->joints[i]->parent) {
+          intermediate.joints[i].parent = j;
+          break;
+        }
+      }
+    }
+  }
+
+  return true;
+}
+
+static bool gltf_material_loader(ResourceSlot& slot, Material::Intermediate& intermediate) {
   if(slot.ext != glb_symbol) {
     return false;
   }
@@ -74,23 +268,31 @@ bool gltf_material_loader(ResourceSlot& slot, Material::Intermediate& intermedia
 
   // Find mesh node
   const cgltf_mesh* mesh = nullptr;
+  const cgltf_node* node = nullptr;
   uintptr_t node_index;
   for(uintptr_t i = 0; i < data->nodes_count; i++) {
-    const cgltf_node* node = data->nodes + i;
+    node = data->nodes + i;
     if(node->mesh && node->mesh->primitives_count == 1 && node->mesh->primitives->material == &material) {
       mesh = node->mesh;
       node_index = i;
       break;
     }
   }
+
+  String shader_options;
+  const char* mesh_format = "pntu";
+
+  if(node->skin) {
+    shader_options += "&skinned";
+    mesh_format = "pntujw";
+  }
+
   if(mesh) {
-    intermediate.mesh(String(slot.path) + "?fmt=pntu&node=" + to_string(node_index));
+    intermediate.mesh(String(slot.path) + "?fmt=" + mesh_format + "&node=" + to_string(node_index));
   } else {
     warning("GLTF: Could not find mesh node with material %s in %s", material.name, slot.path);
     return false;
   }
-
-  String shader_options;
 
 #define TEXTURE(name, texpath) \
 if(cgltf_texture* texture = texpath.texture) { \
@@ -114,31 +316,7 @@ if(cgltf_texture* texture = texpath.texture) { \
   return true;
 }
 
-static void compute_node_matrix(const cgltf_node* node, Matrix44f& matrix) {
-  if(node->parent) {
-    compute_node_matrix(node->parent, matrix);
-  }
-  if(node->has_rotation) {
-    float scale = node->scale[0];
-    Vector3f translation = node->translation;
-    matrix = matrix * sqt_to_mat(Quatf(node->rotation[0], node->rotation[1], node->rotation[2], node->rotation[3]), translation, scale);
-  }
-  if(node->has_matrix) {
-    matrix = matrix * Matrix44f(node->matrix);
-  }
-}
-inline static void convert_vector(const Matrix44f& matrix, Vector3f& v) {
-  v = Vector4f(matrix * v);
-
-  // GLTF defines +X Left, +Y Up, +Z Forward
-  // L defines +X Right, +Y Forward, +Z Up
-  const float y = v.y();
-  v.x() = -v.x();
-  v.y() = v.z();
-  v.z() = y;
-}
-
-bool gltf_mesh_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
+static bool gltf_mesh_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
   if(slot.ext != glb_symbol) {
     return false;
   }
@@ -185,8 +363,7 @@ bool gltf_mesh_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
     }
   }
 
-  Matrix44f node_matrix(1.f);
-  compute_node_matrix(node, node_matrix);
+  const Matrix44f node_matrix = gltf_node_matrix(data, node);
 
   size_t vertex_size = 0;
 
@@ -218,6 +395,7 @@ bool gltf_mesh_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
         break;
       case cgltf_type_vec4:
         switch(attribute.data->component_type) {
+          case cgltf_component_type_r_16u: mesh_attribute.format = VK_FORMAT_R16G16B16A16_UINT; break;
           case cgltf_component_type_r_32u: mesh_attribute.format = VK_FORMAT_R32G32B32A32_UINT; break;
           case cgltf_component_type_r_32f: mesh_attribute.format = VK_FORMAT_R32G32B32A32_SFLOAT; break;
           default: warning("GLTF: Unknown attribute format in '%s'", slot.id); return false;
@@ -240,10 +418,11 @@ bool gltf_mesh_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
       void* dst = intermediate.vertices.data(j * vertex_size + offset);
       read_accessor(attribute.data, j, dst, attribute.data->stride);
 
-      if(attribute.type == cgltf_attribute_type_position
-        || attribute.type == cgltf_attribute_type_normal
+      if(attribute.type == cgltf_attribute_type_position) {
+        *(Vector3f*)dst = Vector4f(node_matrix * Vector4f(*(Vector3f*)dst, 1.f));
+      } else if(attribute.type == cgltf_attribute_type_normal
         || attribute.type == cgltf_attribute_type_tangent) {
-        convert_vector(node_matrix, *(Vector3f*)dst);
+        *(Vector3f*)dst = Vector4f(node_matrix * Vector4f(*(Vector3f*)dst, 0.f));
       }
     }
     offset += attribute.data->stride;
@@ -253,7 +432,7 @@ bool gltf_mesh_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
 }
 
 static const Symbol frag_symbol("frag"), vert_symbol("vert");
-bool gltf_shader_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) {
+static bool gltf_shader_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) {
   if(slot.ext != glb_symbol) {
     return false;
   }
@@ -265,9 +444,12 @@ bool gltf_shader_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) 
   vert_attributes.push("vec3 vnormal");
   vert_attributes.push("vec3 vtangent");
   vert_attributes.push("vec2 vtexcoords");
+  if(slot.parameter("skinned")) {
+    vert_attributes.push("uvec4 vjoints");
+    vert_attributes.push("vec4 vweights");
+  }
 
   Array<String> frag_attributes;
-  frag_attributes.push("vec3 fposition");
   frag_attributes.push("vec3 fnormal");
   frag_attributes.push("vec3 ftangent");
   frag_attributes.push("vec2 ftexcoords");
@@ -294,7 +476,6 @@ bool gltf_shader_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) 
 
   slot.ext = slot.parameter("stage");
   if(slot.ext == frag_symbol) {
-
     for(uintptr_t i = 0; i < render_targets.size(); i++) {
       source += "layout(location = " + to_string(i) + ") out " + render_targets[i] + ";\n";
     }
@@ -342,20 +523,37 @@ bool gltf_shader_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) 
     source += "onormal.w = 0.f; // Emission\n";
     source += "}\n";
   } else if(slot.ext == vert_symbol) {
-
     for(uintptr_t i = 0; i < vert_attributes.size(); i++) {
       source += "layout(location = " + to_string(i) + ") in " + vert_attributes[i] + ";\n";
     }
 
-    source +=
-      "void main() {\n\
-  ftexcoords = vtexcoords;\n\
-  fnormal = normalize(mat3(model) * vnormal);\n\
-  ftangent = normalize(mat3(model) * vtangent);\n\
-  vec4 position = model * vec4(vposition, 1.0);\n\
-  fposition = position.xyz;\n\
-  gl_Position = viewProj * position;\n\
-}\n";
+    if(slot.parameter("skinned")) {
+      source += "layout(binding = 2) uniform Pose {\n\
+        mat4 joints[1024];\n\
+      };\n";
+    }
+
+    source += "void main() {\n";
+
+    source += "vec4 position = vec4(vposition, 1.f);\n";
+    source += "vec4 normal = vec4(vnormal, 0.f);\n";
+    source += "vec4 tangent = vec4(vtangent, 0.f);\n";
+    if(slot.parameter("skinned")) {
+#define SKIN(vector) \
+      source += vector " = " \
+        "(joints[vjoints[0]] * " vector ") * vweights[0]" \
+        "+ (joints[vjoints[1]] * " vector ") * vweights[1]" \
+        "+ (joints[vjoints[2]] * " vector ") * vweights[2]" \
+        "+ (joints[vjoints[3]] * " vector ") * vweights[3];\n"
+      SKIN("position");
+      SKIN("normal");
+      SKIN("tangent");
+    }
+    source += "fnormal = normalize((model * normal).xyz);\n";
+    source += "ftangent = normalize((model * tangent).xyz);\n";
+    source += "ftexcoords = vtexcoords;\n";
+    source += "gl_Position = viewProj * model * position;\n";
+    source += "}\n";
   } else {
     return false;
   }
@@ -365,7 +563,7 @@ bool gltf_shader_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) 
   return ResourceLoading<Shader>::load_internal(slot, intermediate);
 }
 
-bool gltf_texture_loader(ResourceSlot& slot, Texture::Intermediate& intermediate) {
+static bool gltf_texture_loader(ResourceSlot& slot, Texture::Intermediate& intermediate) {
   if(slot.ext != glb_symbol) {
     return false;
   }
@@ -393,6 +591,8 @@ bool gltf_texture_loader(ResourceSlot& slot, Texture::Intermediate& intermediate
 }
 
 void gltf_module_init() {
+  ResourceLoading<Animation>::add_loader(gltf_animation_loader);
+  ResourceLoading<Skeleton>::add_loader(gltf_skeleton_loader);
   ResourceLoading<Material>::add_loader(gltf_material_loader);
   ResourceLoading<Mesh>::add_loader(gltf_mesh_loader);
   ResourceLoading<Shader>::add_loader(gltf_shader_loader);
