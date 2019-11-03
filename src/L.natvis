@@ -146,4 +146,10 @@
       <ExpandedItem Optional="true" Condition="_td == &amp;L::Type&lt;L::Ref&lt;L::Table&lt;L::Variable,L::Variable&gt; &gt; &gt;::td">*(L::Ref&lt;L::Table&lt;L::Variable,L::Variable&gt; &gt;*)&amp;_data</ExpandedItem>
     </Expand>
   </Type>
+
+  <Type Name="L::Vector&lt;*,*&gt;">
+    <DisplayString Condition="$T1 == 2">({_c[0],g}; {_c[1],g})</DisplayString>
+    <DisplayString Condition="$T1 == 3">({_c[0],g}; {_c[1],g}; {_c[2],g})</DisplayString>
+    <DisplayString Condition="$T1 == 4">({_c[0],g}; {_c[1],g}; {_c[2],g}; {_c[3],g})</DisplayString>
+  </Type>
 </AutoVisualizer>
