@@ -9,14 +9,14 @@ configuration=${2:-dev} # Configuration is development by default
 # Stats action
 
 if [ $mode = "stats" ] ; then
-  echo "Core file count:"
-  git ls-files src | grep -v module/ | wc -l
-  echo "Core line count:"
-  git ls-files src | grep -v module/ | xargs cat | wc -l
-  echo "Module count:"
-  find src/module/* -maxdepth 1 -type d | wc -l
-  echo "Module line count:"
-  git ls-files src | grep module/ | xargs cat | wc -l
+  printf "Core file count: "
+  find src/* -type f | grep -v module/ | grep -E "\.(h|hpp|cpp|inl|def)$" | wc -l
+  printf "Core line count: "
+  find src/* -type f | grep -v module/ | grep -E "\.(h|hpp|cpp|inl|def)$" | xargs cat | wc -l
+  printf "Module count: "
+  find src/module/* -maxdepth 0 -type d | wc -l
+  printf "Module line count: "
+  find src/module/* -type f | grep -E "\.(h|hpp|cpp|inl|def)$" | xargs cat | wc -l
   exit 0
 fi
 
