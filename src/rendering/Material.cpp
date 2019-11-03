@@ -186,7 +186,7 @@ void Material::create_uniform_buffers(const Pipeline& pipeline) {
   for(const Shader::Binding& binding : pipeline.bindings()) {
     // Binding 0 is reserved for Shared uniform buffer
     if(binding.binding > 0 && binding.type == Shader::BindingType::Uniform) {
-      while(_buffers.size() <= binding.binding) {
+      while(int32_t(_buffers.size()) <= binding.binding) {
         _buffers.push(nullptr);
       }
       if(binding.size > 0) {
