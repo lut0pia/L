@@ -13,10 +13,6 @@ addons:
       - libasound2-dev
       - libxi-dev
 
-cache:
-  directories:
-    - pmk # Avoid downloading premake everytime
-
 git:
   depth: 1
   quiet: true
