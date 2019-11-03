@@ -1,6 +1,7 @@
-#include "ShaderTools.h"
-
-#include "../dev/profiling.h"
+#include <L/src/container/Buffer.h>
+#include <L/src/engine/Resource.inl>
+#include <L/src/rendering/Shader.h>
+#include <L/src/dev/profiling.h>
 
 using namespace L;
 
@@ -23,20 +24,20 @@ DeIndex(32),
 DeBinding(33),
 DeOffset(35);
 
-static uint32_t read_opcode(const uint32_t* ptr) { return *ptr&0xffff; }
-static uint32_t read_word_count(const uint32_t* ptr) { return (*ptr>>16)&0xffff; }
+static uint32_t read_opcode(const uint32_t* ptr) { return *ptr & 0xffff; }
+static uint32_t read_word_count(const uint32_t* ptr) { return (*ptr >> 16) & 0xffff; }
 static const uint32_t* find_opcode(const uint32_t* binary, uint32_t opcode) {
   binary += 5; // Skip header
-  while(read_opcode(binary)!=opcode) {
+  while(read_opcode(binary) != opcode) {
     binary += read_word_count(binary);
   }
   return binary;
 }
 static const uint32_t* find_id(const uint32_t* binary, size_t size, uint32_t id) {
-  const uint32_t* end(binary+(size/4));
+  const uint32_t* end(binary + (size / 4));
   binary += 5; // Skip header
   uint32_t current_id(~0u);
-  while(binary<end) {
+  while(binary < end) {
     switch(read_opcode(binary)) {
       case OpTypeStruct:
       case OpTypeInt:
@@ -45,7 +46,7 @@ static const uint32_t* find_id(const uint32_t* binary, size_t size, uint32_t id)
       case OpTypePointer: current_id = binary[1]; break;
       case OpVariable: current_id = binary[2]; break;
     }
-    if(current_id==id) {
+    if(current_id == id) {
       return binary;
     }
     binary += read_word_count(binary);
@@ -54,10 +55,10 @@ static const uint32_t* find_id(const uint32_t* binary, size_t size, uint32_t id)
 }
 template <class F>
 static void for_opcodes(const uint32_t* binary, size_t size, uint32_t opcode, F callback) {
-  const uint32_t* end(binary+(size/4));
+  const uint32_t* end(binary + (size / 4));
   binary += 5; // Skip header
-  while(binary<end) {
-    if(read_opcode(binary)==opcode) {
+  while(binary < end) {
+    if(read_opcode(binary) == opcode) {
       callback(binary);
     }
     binary += read_word_count(binary);
@@ -148,23 +149,23 @@ static size_t find_type_size(const uint32_t* binary, size_t size, uint32_t type_
     switch(read_opcode(type)) {
       case OpTypeStruct:
       {
-        const uint32_t struct_member_count(read_word_count(type)-2);
-        const uint32_t last_member_type_id(type[struct_member_count+1]);
+        const uint32_t struct_member_count(read_word_count(type) - 2);
+        const uint32_t last_member_type_id(type[struct_member_count + 1]);
         const size_t last_member_size(find_type_size(binary, size, last_member_type_id));
         uint32_t last_member_offset(0);
         for_opcodes(binary, size, OpMemberDecorate, [&](const uint32_t* decoration) {
-          if(decoration[1]==type_id && decoration[2]==struct_member_count-1 && decoration[3]==DeOffset) {
+          if(decoration[1] == type_id && decoration[2] == struct_member_count - 1 && decoration[3] == DeOffset) {
             last_member_offset = decoration[4];
           }
         });
-        return last_member_offset+last_member_size;
+        return last_member_offset + last_member_size;
       }
       break;
     }
   }
   return 0;
 }
-void ShaderTools::reflect(Shader::Intermediate& intermediate) {
+static void shader_reflect(const ResourceSlot&, Shader::Intermediate& intermediate) {
   L_SCOPE_MARKER("SPIR-V reflection");
   const uint32_t* binary((const uint32_t*)intermediate.binary.data());
   const size_t size(intermediate.binary.size());
@@ -183,8 +184,8 @@ void ShaderTools::reflect(Shader::Intermediate& intermediate) {
     Shader::Binding binding {};
 
     for_opcodes(binary, size, OpName, [&](const uint32_t* name) {
-      if((!binding.name && name[1]==variable_id) || name[1]==type_id) {
-        binding.name = (const char*)(name+2);
+      if((!binding.name && name[1] == variable_id) || name[1] == type_id) {
+        binding.name = (const char*)(name + 2);
       }
     });
 
@@ -201,7 +202,7 @@ void ShaderTools::reflect(Shader::Intermediate& intermediate) {
     binding.size = int32_t(find_type_size(binary, size, type_id));
 
     for_opcodes(binary, size, OpDecorate, [&](const uint32_t* decoration) {
-      if(decoration[1]==variable_id) {
+      if(decoration[1] == variable_id) {
         switch(decoration[2]) {
           case DeIndex:
           case DeLocation: binding.index = decoration[3]; break;
@@ -211,18 +212,18 @@ void ShaderTools::reflect(Shader::Intermediate& intermediate) {
       }
     });
     intermediate.bindings.push(binding);
-    if(binding.type==Shader::Uniform) { // Create bindings for every member of block
+    if(binding.type == Shader::Uniform) { // Create bindings for every member of block
       binding.type = Shader::None;
       for_opcodes(binary, size, OpMemberDecorate, [&](const uint32_t* decoration) {
-        if(decoration[1]==type_id) {
+        if(decoration[1] == type_id) {
           binding.index = decoration[2];
           switch(decoration[3]) {
             case DeOffset: binding.offset = decoration[4]; break;
             default: return;
           }
           for_opcodes(binary, size, OpMemberName, [&](const uint32_t* name) {
-            if(name[1]==type_id && int32_t(name[2])==binding.index) {
-              binding.name = (const char*)(name+3);
+            if(name[1] == type_id && int32_t(name[2]) == binding.index) {
+              binding.name = (const char*)(name + 3);
             }
           });
           intermediate.bindings.push(binding);
@@ -231,18 +232,22 @@ void ShaderTools::reflect(Shader::Intermediate& intermediate) {
     }
   });
 
-  for(uintptr_t i(0); i<intermediate.bindings.size(); i++) {
-    if(intermediate.bindings[i].name==Symbol("gl_FragCoord") ||
-      intermediate.bindings[i].name==Symbol("gl_VertexIndex")) {
+  for(uintptr_t i(0); i < intermediate.bindings.size(); i++) {
+    if(intermediate.bindings[i].name == Symbol("gl_FragCoord") ||
+      intermediate.bindings[i].name == Symbol("gl_VertexIndex")) {
       intermediate.bindings.erase_fast(i--);
-    } else if(intermediate.bindings[i].type==Shader::Input) {
+    } else if(intermediate.bindings[i].type == Shader::Input) {
       // Compute Input offset by checking all Input with lesser index
       Shader::Binding& binding(intermediate.bindings[i]);
       for(const Shader::Binding& other_binding : intermediate.bindings) {
-        if(other_binding.type==Shader::Input && other_binding.index<binding.index) {
+        if(other_binding.type == Shader::Input && other_binding.index < binding.index) {
           binding.offset += other_binding.size;
         }
       }
     }
   }
+}
+
+void shader_reflect_module_init() {
+  ResourceLoading<Shader>::add_transformer(shader_reflect);
 }

@@ -1,6 +1,5 @@
 #include <L/src/container/Buffer.h>
 #include <L/src/engine/Resource.inl>
-#include <L/src/pipeline/ShaderTools.h>
 #include <L/src/rendering/Shader.h>
 #include <L/src/rendering/shader_lib.h>
 #include <L/src/stream/CFileStream.h>
@@ -189,7 +188,6 @@ bool glsl_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) {
   glslang::GlslangToSpv(*program.getIntermediate(shader_language), spirv, &logger);
 
   intermediate.binary = Buffer(spirv.data(), spirv.size() * sizeof(unsigned int));
-  ShaderTools::reflect(intermediate);
   return true;
 }
 

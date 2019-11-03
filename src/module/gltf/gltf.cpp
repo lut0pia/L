@@ -2,7 +2,6 @@
 #include <L/src/engine/Resource.inl>
 #include <L/src/math/geometry.h>
 #include <L/src/math/Quaternion.h>
-#include <L/src/pipeline/ShaderTools.h>
 #include <L/src/rendering/Animation.h>
 #include <L/src/rendering/Material.h>
 #include <L/src/rendering/Mesh.h>
