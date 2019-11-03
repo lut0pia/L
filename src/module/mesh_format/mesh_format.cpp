@@ -208,7 +208,7 @@ void mesh_format_transformer(const ResourceSlot& slot, Mesh::Intermediate& inter
         case 't': new_attributes.push(VertexAttribute {VK_FORMAT_R32G32B32_SFLOAT, VertexAttributeType::Tangent}); break;
         case 'u': new_attributes.push(VertexAttribute {VK_FORMAT_R32G32_SFLOAT, VertexAttributeType::TexCoord}); break;
         case 'c': new_attributes.push(VertexAttribute {VK_FORMAT_R8G8B8A8_UINT, VertexAttributeType::Color}); break;
-        case 'j': new_attributes.push(VertexAttribute {VK_FORMAT_R32G32B32A32_UINT, VertexAttributeType::Joints}); break;
+        case 'j': new_attributes.push(VertexAttribute {VK_FORMAT_R16G16B16A16_UINT, VertexAttributeType::Joints}); break;
         case 'w': new_attributes.push(VertexAttribute {VK_FORMAT_R32G32B32A32_SFLOAT, VertexAttributeType::Weights}); break;
         default: warning("mesh_format: unrecognized attribute '%c'", *format); break;
       }
