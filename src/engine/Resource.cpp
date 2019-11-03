@@ -17,7 +17,7 @@ static Pool<ResourceSlot> _pool;
 static Array<ResourceSlot*> _slots;
 static Table<Symbol, ResourceSlot*> _table;
 
-ResourceSlot::ResourceSlot(const char* url) : id(url),
+ResourceSlot::ResourceSlot(const Symbol& type, const char* url) : type(type), id(url),
 path(url, min<size_t>(strlen(url), strchr(url, '?') - url)),
 persistent(false), state(Unloaded), value(nullptr) {
   // Extract file extension from path
@@ -25,7 +25,7 @@ persistent(false), state(Unloaded), value(nullptr) {
   ext = dot ? dot + 1 : (const char*)path;
 
   // Extract parameters from url
-  const char* pair = strchr(id, '?');
+  const char* pair = strchr(url, '?');
   while(pair && *pair) {
     pair += 1;
     const char* equal = strchr(pair, '=');
@@ -71,7 +71,7 @@ bool ResourceSlot::parameter(const Symbol& key, float& param_value) const {
 }
 
 void ResourceSlot::load() {
-  if(state==ResourceSlot::Unloaded && cas((uint32_t*)&state, ResourceSlot::Unloaded, ResourceSlot::Loading)==ResourceSlot::Unloaded) {
+  if(state == ResourceSlot::Unloaded && cas((uint32_t*)&state, ResourceSlot::Unloaded, ResourceSlot::Loading) == ResourceSlot::Unloaded) {
     const uint32_t thread_mask = TaskSystem::thread_count() > 1 ? uint32_t(-2) : uint32_t(-1);
     TaskSystem::push([](void* p) {
       ResourceSlot& slot(*(ResourceSlot*)p);
@@ -99,9 +99,9 @@ Buffer ResourceSlot::read_source_file() {
     return Buffer(source_buffer, source_buffer.size());
   }
   // Try to find the source file in the archive
-  if(Archive::Entry entry = archive.find("file:"+String(id))) {
+  if(Archive::Entry entry = archive.find("file:" + String(path))) {
     Date file_mtime;
-    if(!File::mtime(path, file_mtime) || file_mtime<entry.date) {
+    if(!File::mtime(path, file_mtime) || file_mtime < entry.date) {
       Buffer buffer(entry.size);
       archive.load(entry, buffer);
       return buffer;
@@ -121,11 +121,11 @@ Buffer ResourceSlot::read_source_file() {
 void ResourceSlot::store_source_file_to_archive() {
   if(persistent) return;
   // Try to find the source file in the archive
-  const String key("file:"+String(id));
+  const String key("file:" + String(path));
   if(Archive::Entry entry = archive.find(key)) {
     Date file_mtime;
     if(!File::mtime(path, file_mtime)) return; // Source file doesn't exist
-    if(file_mtime<entry.date) return; // Source file already up-to-date in archive
+    if(file_mtime < entry.date) return; // Source file already up-to-date in archive
   }
   // Store actual source file to archive
   if(CFileStream stream = CFileStream(path, "rb")) {
@@ -137,9 +137,10 @@ void ResourceSlot::store_source_file_to_archive() {
 }
 Buffer ResourceSlot::read_archive() {
   L_SCOPE_MARKER("Resource read archive");
-  if(Archive::Entry entry = archive.find(id)) {
+  const Symbol typed_id = make_typed_id(type, id);
+  if(Archive::Entry entry = archive.find(typed_id)) {
     Date file_mtime;
-    if(!File::mtime(path, file_mtime) || file_mtime<entry.date) {
+    if(!File::mtime(path, file_mtime) || file_mtime < entry.date) {
       Buffer buffer(entry.size);
       archive.load(entry, buffer);
       return buffer;
@@ -149,19 +150,23 @@ Buffer ResourceSlot::read_archive() {
 }
 void ResourceSlot::write_archive(const void* data, size_t size) {
   L_SCOPE_MARKER("Resource write archive");
-  archive.store(id, data, size);
+  const Symbol typed_id = make_typed_id(type, id);
+  archive.store(typed_id, data, size);
 }
 
-ResourceSlot* ResourceSlot::find(const char* url) {
+Symbol ResourceSlot::make_typed_id(const Symbol& type, const char* url) {
+  return Symbol(type + ":" + url);
+}
+ResourceSlot* ResourceSlot::find(const Symbol& type, const char* url) {
   static Lock lock;
   L_SCOPED_LOCK(lock);
 
-  const Symbol id(url);
-  if(ResourceSlot** found = _table.find(id))
+  const Symbol typed_id = make_typed_id(type, url);
+  if(ResourceSlot** found = _table.find(typed_id))
     return *found;
   else {
-    ResourceSlot* slot(new(_pool.allocate())ResourceSlot(url));
-    _table[id] = slot;
+    ResourceSlot* slot(new(_pool.allocate())ResourceSlot(type, url));
+    _table[typed_id] = slot;
     _slots.push(slot);
     return slot;
   }
@@ -174,7 +179,7 @@ void ResourceSlot::update() {
     if(!slot.persistent // Persistent resources don't hot reload
       && slot.state == Loaded) { // No reload if it hasn't been loaded in the first place
       Date file_mtime;
-      if(File::mtime(slot.path, file_mtime) && slot.mtime<file_mtime) {
+      if(File::mtime(slot.path, file_mtime) && slot.mtime < file_mtime) {
         slot.state = Unloaded;
         slot.mtime = Date::now();
       }

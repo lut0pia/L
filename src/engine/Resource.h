@@ -2,6 +2,7 @@
 
 #include "../container/Buffer.h"
 #include "../container/Table.h"
+#include "../dynamic/Type.h"
 #include "../math/math.h"
 #include "../text/String.h"
 #include "../text/Symbol.h"
@@ -11,7 +12,7 @@ namespace L {
   class Buffer;
   struct ResourceSlot {
     Table<Symbol, Symbol> parameters;
-    Symbol id, path, ext;
+    Symbol type, id, path, ext;
     Buffer source_buffer;
     Date mtime;
     bool persistent : 1;
@@ -21,7 +22,7 @@ namespace L {
     void(*load_function)(ResourceSlot&);
     void* value;
 
-    ResourceSlot(const char* url);
+    ResourceSlot(const Symbol& type, const char* url);
 
     Symbol parameter(const Symbol& key) const;
     bool parameter(const Symbol& key, Symbol& value) const;
@@ -35,7 +36,8 @@ namespace L {
     void store_source_file_to_archive();
     Buffer read_archive();
     void write_archive(const void* data, size_t size);
-    static ResourceSlot* find(const char* url);
+    static Symbol make_typed_id(const Symbol& type, const char* url);
+    static ResourceSlot* find(const Symbol& type, const char* url);
     static void update();
   };
 
@@ -47,7 +49,7 @@ namespace L {
   public:
     constexpr Resource() : _slot(nullptr) {}
     inline Resource(const String& url) : Resource((const char*)url) {}
-    inline Resource(const char* url) : _slot(ResourceSlot::find(url)) {
+    inline Resource(const char* url) : _slot(ResourceSlot::find(type_name<T>(), url)) {
       _slot->load_function = load_function;
     }
     inline const T& operator*() const { flush(); return *(T*)_slot->value; }
