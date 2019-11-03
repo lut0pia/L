@@ -11,6 +11,7 @@ namespace L{
                          Vector3f* a,Vector3f* b);
   Matrix44f sqt_to_mat(const Quatf& q,const Vector3f& t = 0.f,float scale = 1.f);
   Matrix33f quat_to_mat(const Quatf& q);
+  Quatf mat_to_quat(const Matrix44f& m);
   bool ray_sphere_intersect(const Vector3f& center,float radius,const Vector3f& origin,const Vector3f& direction,float& t);
   bool ray_box_intersect(const Interval3f& box,const Vector3f& origin,const Vector3f& direction,float& t,const Vector3f& inv_dir);
   inline bool ray_box_intersect(const Interval3f& box,const Vector3f& origin,const Vector3f& direction,float& t){

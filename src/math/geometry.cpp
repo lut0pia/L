@@ -74,6 +74,29 @@ Matrix33f L::quat_to_mat(const Quatf& q) {
   wtr(2, 2) = 1.f - 2.f*x2 - 2.f*y2;
   return wtr;
 }
+Quatf L::mat_to_quat(const Matrix44f& m) {
+  Quatf q;
+  float t;
+  if(m(2, 2) < 0) {
+    if(m(0, 0) > m(1, 1)) {
+      t = 1.f + m(0, 0) - m(1, 1) - m(2, 2);
+      q = Quatf(t, m(0, 1) + m(1, 0), m(2, 0) + m(0, 2), m(1, 2) - m(2, 1));
+    } else {
+      t = 1.f - m(0, 0) + m(1, 1) - m(2, 2);
+      q = Quatf(m(0, 1) + m(1, 0), t, m(1, 2) + m(2, 1), m(2, 0) - m(0, 2));
+    }
+  } else {
+    if(m(0, 0) < -m(1, 1)) {
+      t = 1.f - m(0, 0) - m(1, 1) + m(2, 2);
+      q = Quatf(m(2, 0) + m(0, 2), m(1, 2) + m(2, 1), t, m(0, 1) - m(1, 0));
+    } else {
+      t = 1.f + m(0, 0) + m(1, 1) + m(2, 2);
+      q = Quatf(m(1, 2) - m(2, 1), m(2, 0) - m(0, 2), m(0, 1) - m(1, 0), t);
+    }
+  }
+  q *= 0.5f / sqrtf(t);
+  return q;
+}
 bool L::ray_sphere_intersect(const Vector3f& c, float r, const Vector3f& o, const Vector3f& d, float& t) {
   const float radiusSqr(sqr(r));
   const Vector3f oc(o - c);
