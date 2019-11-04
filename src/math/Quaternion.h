@@ -10,6 +10,7 @@ namespace L {
     inline Quaternion() : Vector<4, T>(T(0), T(0), T(0), T(1)) {}
     inline Quaternion(const T& x,const T& y,const T& z,const T& w) : Vector<4,T>(x,y,z,w) {}
     inline Quaternion(const Vector<3, T>& v) : Vector<4, T>(v.x(), v.y(), v.z(), 0) {}
+    inline Quaternion(const Vector<4, T>& v) : Vector<4, T>(v) {}
     Quaternion(const Vector<3,T>& axis,const T& angle) {
       this->w() = cos(angle/2);
       const float sa2(sin(angle/2));
