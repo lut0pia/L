@@ -74,6 +74,10 @@ static void transfer_vertices(const Mesh::Intermediate& intermediate, const Arra
 
   for(const VertexAttribute& old_attribute : intermediate.attributes) {
     if(const VertexAttribute* new_attribute = find_attr(new_attributes, old_attribute.type)) {
+      if(old_attribute.format != new_attribute->format) {
+        warning("mesh_format: Couldn't transfer vertex attribute %d", old_attribute.format);
+        continue;
+      }
       const size_t attribute_size = Vulkan::format_size(old_attribute.format);
       const uintptr_t old_offset = attr_offset(intermediate.attributes, old_attribute.type);
       const uintptr_t new_offset = attr_offset(new_attributes, new_attribute->type);
