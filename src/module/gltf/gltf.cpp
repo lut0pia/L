@@ -72,16 +72,10 @@ static void gltf_compute_node_matrix(const cgltf_node* node, Matrix44f& matrix) 
   }
 }
 
-static Matrix44f gltf_node_matrix(const cgltf_data* data, const cgltf_node* node = nullptr) {
-  if(node == nullptr) {
-    for(uintptr_t i = 0; i < data->nodes_count; i++) {
-      node = data->nodes + i;
-      if(node->skin) {
-        break;
-      }
-    }
-  }
-
+static const cgltf_node* gltf_root_node(const cgltf_data* data) {
+  return data->skins->joints[0]->parent;
+}
+static Matrix44f gltf_node_matrix(const cgltf_node* node) {
   Matrix44f node_matrix = gltf_to_l;
   gltf_compute_node_matrix(node, node_matrix);
   return node_matrix;
@@ -124,73 +118,88 @@ static bool gltf_animation_loader(ResourceSlot& slot, Animation::Intermediate& i
     return false;
   }
 
-  const Matrix44f node_matrix = gltf_node_matrix(data);
+  const cgltf_node* root_node = gltf_root_node(data);
+  const Matrix44f node_matrix = gltf_node_matrix(root_node);
   const Quatf node_quat = mat_to_quat(node_matrix);
 
   for(uintptr_t i = 0; i < animation->channels_count; i++) {
     const cgltf_animation_channel& channel = animation->channels[i];
     const cgltf_animation_sampler* sampler = channel.sampler;
-    const uintptr_t joint_index = gltf_find_skeleton_joint_index(data, channel.target_node);
-    const Symbol joint_name = channel.target_node->name ? Symbol(channel.target_node->name) : Symbol();
-    Array<Animation::Channel> channels;
-    {
-      Animation::Channel tmp_channel;
-      tmp_channel.joint_index = joint_index;
-      tmp_channel.joint_name = joint_name;
-      switch(channel.target_path) {
-        case cgltf_animation_path_type_translation:
-          tmp_channel.type = Animation::ChannelType::TransX;
-          channels.push(tmp_channel);
-          tmp_channel.type = Animation::ChannelType::TransY;
-          channels.push(tmp_channel);
-          tmp_channel.type = Animation::ChannelType::TransZ;
-          channels.push(tmp_channel);
-          break;
-        case cgltf_animation_path_type_rotation:
-          tmp_channel.type = Animation::ChannelType::RotX;
-          channels.push(tmp_channel);
-          tmp_channel.type = Animation::ChannelType::RotY;
-          channels.push(tmp_channel);
-          tmp_channel.type = Animation::ChannelType::RotZ;
-          channels.push(tmp_channel);
-          tmp_channel.type = Animation::ChannelType::RotW;
-          channels.push(tmp_channel);
-          break;
-#if 0
-        case cgltf_animation_path_type_scale:
-          tmp_channel.type = Animation::ChannelType::ScaleX;
-          channels.push(tmp_channel);
-          tmp_channel.type = Animation::ChannelType::ScaleY;
-          channels.push(tmp_channel);
-          tmp_channel.type = Animation::ChannelType::ScaleZ;
-          channels.push(tmp_channel);
-          break;
-#endif
-        default:
-          continue;
-      }
-    }
-    for(uintptr_t j = 0; j < sampler->input->count; j++) {
-      float input = read_accessor<float>(sampler->input, j);
-      Vector4f output = read_accessor<Vector4f>(sampler->output, j);
+    const bool root_joint = channel.target_node->parent == root_node;
+    L_ASSERT(sampler->input->component_type == cgltf_component_type_r_32f);
+    L_ASSERT(sampler->output->component_type == cgltf_component_type_r_32f);
 
-      // Transform first joint to account for node transform and L coordinates
-      if(joint_index == 0) {
-        if(channel.target_path == cgltf_animation_path_type_rotation) {
-          output = node_quat * Quatf(output.x(), output.y(), output.z(), output.w());
-        } else {
-          const Vector4f transformed = node_matrix * Vector4f(output.x(), output.y(), output.z(), 0.f);
-          output.x() = transformed.x();
-          output.y() = transformed.y();
-          output.z() = transformed.z();
+    intermediate.channels.push();
+    AnimationChannel& new_channel = intermediate.channels.back();
+    new_channel.joint_index = gltf_find_skeleton_joint_index(data, channel.target_node);
+    new_channel.joint_name = channel.target_node->name ? Symbol(channel.target_node->name) : Symbol();
+
+    uintptr_t outputs_per_input = 1;
+    switch(sampler->interpolation) {
+      case cgltf_interpolation_type_linear:
+        new_channel.interpolation = AnimationInterpolationType::Linear;
+        break;
+      case cgltf_interpolation_type_step:
+        new_channel.interpolation = AnimationInterpolationType::Step;
+        break;
+      case cgltf_interpolation_type_cubic_spline:
+        new_channel.interpolation = AnimationInterpolationType::CubicSpline;
+        outputs_per_input = 3;
+        break;
+      default:
+        warning("GLTF: Unhandled interpolation type %d in %s", sampler->interpolation, slot.path);
+        return false;
+    }
+
+    uintptr_t components_per_output = 3;
+    switch(channel.target_path) {
+      case cgltf_animation_path_type_translation:
+        L_ASSERT(sampler->output->type == cgltf_type_vec3);
+        new_channel.type = AnimationChannelType::Translation;
+        break;
+      case cgltf_animation_path_type_rotation:
+        L_ASSERT(sampler->output->type == cgltf_type_vec4);
+        new_channel.type = AnimationChannelType::Rotation;
+        components_per_output = 4;
+        break;
+      case cgltf_animation_path_type_scale:
+        L_ASSERT(sampler->output->type == cgltf_type_vec3);
+        new_channel.type = AnimationChannelType::Scale;
+        components_per_output = 1;
+        break;
+      default:
+        warning("GLTF: Unhandled animation path %d in %s", channel.target_path, slot.path);
+        return false;
+    }
+
+    for(uintptr_t j = 0; j < sampler->input->count; j++) {
+      const float input = read_accessor<float>(sampler->input, j);
+      new_channel.times.push(input);
+
+      for(uintptr_t k = 0; k < outputs_per_input; k++) {
+        Vector4f output = read_accessor<Vector4f>(sampler->output, j * outputs_per_input + k);
+
+        // Transform root joints to account for node transform and L coordinates
+        if(root_joint) {
+          if(channel.target_path == cgltf_animation_path_type_translation) {
+            const Vector4f transformed = node_matrix * Vector4f(output.x(), output.y(), output.z(), 0.f);
+            output.x() = transformed.x();
+            output.y() = transformed.y();
+            output.z() = transformed.z();
+          } else if(channel.target_path == cgltf_animation_path_type_rotation) {
+            output = node_quat * Quatf(output.x(), output.y(), output.z(), output.w());
+          }
+        }
+        if(channel.target_path == cgltf_animation_path_type_scale) {
+          // We only support uniform scale so an average will do
+          output.x() = (output.x() + output.y() + output.z()) / 3.f;
+        }
+
+        for(uintptr_t l = 0; l < components_per_output; l++) {
+          new_channel.values.push(output[l]);
         }
       }
-
-      for(uintptr_t k = 0; k < channels.size(); k++) {
-        channels[k].samples.push(Animation::Sample {input, output[k]});
-      }
     }
-    intermediate.channels += channels;
   }
 
   return true;
@@ -215,11 +224,12 @@ static bool gltf_skeleton_loader(ResourceSlot& slot, Skeleton::Intermediate& int
     return false;
   }
 
-  const Matrix44f node_matrix = gltf_node_matrix(data);
+  const cgltf_node* root_node = gltf_root_node(data);
+  const Matrix44f node_matrix = gltf_node_matrix(root_node);
   const cgltf_skin* skin = data->skins + skin_index;
 
   for(uintptr_t i = 0; i < skin->joints_count; i++) {
-    Skeleton::Joint joint;
+    SkeletonJoint joint;
     joint.inv_bind_pose = read_accessor<Matrix44f>(skin->inverse_bind_matrices, i);
     joint.inv_bind_pose = joint.inv_bind_pose * node_matrix;
     if(skin->joints[i]->name) {
@@ -256,23 +266,44 @@ static bool gltf_material_loader(ResourceSlot& slot, Material::Intermediate& int
   }
 
   uint32_t material_index = 0;
-  slot.parameter("material", material_index);
+  if(slot.parameter("material", material_index)) {
+    if(data->materials_count <= material_index) {
+      warning("GLTF: Could not find material %d in %s", material_index, slot.path);
+      return false;
+    }
+  }
 
-  if(data->materials_count <= material_index) {
-    warning("GLTF: Could not find material %d in %s", material_index, slot.path);
+  const cgltf_material* material = data->materials + material_index;
+
+  static cgltf_material default_material = {};
+  if(material == nullptr) {
+    default_material.pbr_metallic_roughness.base_color_factor[0] = 1.f;
+    default_material.pbr_metallic_roughness.base_color_factor[1] = 1.f;
+    default_material.pbr_metallic_roughness.base_color_factor[2] = 1.f;
+    default_material.pbr_metallic_roughness.base_color_factor[3] = 1.f;
+    material = &default_material;
+  }
+
+  // Find mesh
+  const cgltf_mesh* mesh = data->meshes;
+  for(uintptr_t i = 0; i < data->meshes_count; i++) {
+    if(data->meshes[i].primitives_count == 1 && data->meshes[i].primitives->material == material) {
+      mesh = data->meshes + i;
+      break;
+    }
+  }
+
+  if(mesh == nullptr) {
+    warning("GLTF: Could not find mesh node with material %s in %s", material->name, slot.path);
     return false;
   }
 
-  const cgltf_material& material = data->materials[material_index];
-
-  // Find mesh node
-  const cgltf_mesh* mesh = nullptr;
-  const cgltf_node* node = nullptr;
+  // Find node
+  const cgltf_node* node = data->nodes;
   uintptr_t node_index;
   for(uintptr_t i = 0; i < data->nodes_count; i++) {
     node = data->nodes + i;
-    if(node->mesh && node->mesh->primitives_count == 1 && node->mesh->primitives->material == &material) {
-      mesh = node->mesh;
+    if(node->mesh == mesh) {
       node_index = i;
       break;
     }
@@ -286,12 +317,7 @@ static bool gltf_material_loader(ResourceSlot& slot, Material::Intermediate& int
     mesh_format = "pntujw";
   }
 
-  if(mesh) {
-    intermediate.mesh(String(slot.path) + "?fmt=" + mesh_format + "&node=" + to_string(node_index));
-  } else {
-    warning("GLTF: Could not find mesh node with material %s in %s", material.name, slot.path);
-    return false;
-  }
+  intermediate.mesh(String(slot.path) + "?fmt=" + mesh_format + "&node=" + to_string(node_index));
 
 #define TEXTURE(name, texpath) \
 if(cgltf_texture* texture = texpath.texture) { \
@@ -300,17 +326,17 @@ if(cgltf_texture* texture = texpath.texture) { \
   shader_options += "&" name; \
 }
 
-  TEXTURE("color_texture", material.pbr_metallic_roughness.base_color_texture);
-  TEXTURE("normal_texture", material.normal_texture);
-  TEXTURE("metal_rough_texture", material.pbr_metallic_roughness.metallic_roughness_texture);
+  TEXTURE("color_texture", material->pbr_metallic_roughness.base_color_texture);
+  TEXTURE("normal_texture", material->normal_texture);
+  TEXTURE("metal_rough_texture", material->pbr_metallic_roughness.metallic_roughness_texture);
 
   intermediate.shader(VK_SHADER_STAGE_FRAGMENT_BIT, ".glb?stage=frag" + shader_options);
   intermediate.shader(VK_SHADER_STAGE_VERTEX_BIT, ".glb?stage=vert" + shader_options);
-  intermediate.vector("color_factor", Vector4f(material.pbr_metallic_roughness.base_color_factor));
+  intermediate.vector("color_factor", Vector4f(material->pbr_metallic_roughness.base_color_factor));
   intermediate.vector("metal_rough_factor", Vector4f(
     0.f,
-    material.pbr_metallic_roughness.roughness_factor,
-    material.pbr_metallic_roughness.metallic_factor
+    material->pbr_metallic_roughness.roughness_factor,
+    material->pbr_metallic_roughness.metallic_factor
   ));
   return true;
 }
@@ -362,7 +388,7 @@ static bool gltf_mesh_loader(ResourceSlot& slot, Mesh::Intermediate& intermediat
     }
   }
 
-  const Matrix44f node_matrix = gltf_node_matrix(data, node);
+  const Matrix44f node_matrix = gltf_node_matrix(node);
 
   size_t vertex_size = 0;
 

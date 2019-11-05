@@ -12,9 +12,15 @@ void SkeletalAnimatorComponent::late_update() {
     const Skeleton& skeleton(*_skeleton);
     const Animation& animation(*_animation);
 
-    // Compute local pose
-    _local_pose.clear();
+    // Reset local pose
     _local_pose.size(skeleton.joints.size());
+    for(JointPose& local_pose : _local_pose) {
+      local_pose.translation = 0.f;
+      local_pose.rotation = Quatf();
+      local_pose.scale = 1.f;
+    }
+
+    // Compute local pose
     animation.pose_at(_time, _local_pose.begin());
 
     // Compute global pose
@@ -22,7 +28,7 @@ void SkeletalAnimatorComponent::late_update() {
     for(uintptr_t i = 0; i < _global_pose.size(); i++) {
       const uintptr_t parent = skeleton.joints[i].parent;
       const JointPose& local_pose = _local_pose[i];
-      const Matrix44f matrix = sqt_to_mat(local_pose.rotation, local_pose.translation);
+      const Matrix44f matrix = sqt_to_mat(local_pose.rotation, local_pose.translation, local_pose.scale);
       L_ASSERT(parent < i || parent == UINTPTR_MAX);
       if(parent == UINTPTR_MAX) { // Parent is root
         _global_pose[i] = matrix;
@@ -42,9 +48,10 @@ void SkeletalAnimatorComponent::late_update() {
 #if L_DEBUG
     if(Settings::get_int("render_skeletal_animator", 0)) {
       for(uintptr_t i = 0; i < skeleton.joints.size(); i++) {
-        const Skeleton::Joint& joint = skeleton.joints[i];
-        const Vector3f offset = Vector3f(0.f, 1.f, 0.f);
-        const float debug_scale = _primitive->material()->bounds().size().length() / 32.f;
+        const SkeletonJoint& joint = skeleton.joints[i];
+        const float bounds_length = _primitive->material()->bounds().size().length();
+        const Vector3f offset = Vector3f(0.f, bounds_length, 0.f);
+        const float debug_scale = bounds_length / 32.f;
         const Vector3f joint_pos = _global_pose[i].vector<3>(3) + offset;
         const Vector3f joint_x = _global_pose[i].vector<3>(0) * debug_scale;
         const Vector3f joint_y = _global_pose[i].vector<3>(1) * debug_scale;
