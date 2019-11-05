@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../image/Color.h"
 #include "../math/Vector.h"
+#include "../rendering/Color.h"
 #include "../time/Time.h"
 
 namespace L {

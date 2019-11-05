@@ -1,7 +1,7 @@
 #include "Type.h"
 
-#include "../image/Color.h"
 #include "../macros.h"
+#include "../rendering/Color.h"
 #include "../text/String.h"
 #include "../math/Vector.h"
 #include "../stream/StringStream.h"
