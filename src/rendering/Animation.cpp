@@ -30,7 +30,7 @@ void Animation::pose_at(float time, JointPose* joints) const {
     float& scale = joints[channel.joint_index].scale;
 
     uintptr_t i;
-    float t, span;
+    float t = 0.f, span = 0.f;
     find_sample(channel, time, i, t, span);
 
     switch(channel.interpolation) {
