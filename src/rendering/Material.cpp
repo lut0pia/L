@@ -322,6 +322,11 @@ void Material::set_buffer(const Symbol& name, const void* data, size_t size) {
           _buffers[binding->binding] = Memory::new_type<GPUBuffer>(size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
         }
         _buffers[binding->binding]->load(data, size);
+
+        // Update live descriptor sets
+        for(DescSetPairing& desc_set_pairing : _desc_set_pairings) {
+          _pipeline->set_descriptor(binding->binding, desc_set_pairing.desc_set, _buffers[binding->binding]->descriptor_info());
+        }
       }
     }
   }
