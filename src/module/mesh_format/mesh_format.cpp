@@ -1,5 +1,6 @@
 #include <L/src/container/Buffer.h>
 #include <L/src/engine/Resource.inl>
+#include <L/src/rendering/Color.h>
 #include <L/src/rendering/Mesh.h>
 #include <L/src/stream/CFileStream.h>
 
@@ -74,20 +75,27 @@ static void transfer_vertices(const Mesh::Intermediate& intermediate, const Arra
 
   for(const VertexAttribute& old_attribute : intermediate.attributes) {
     if(const VertexAttribute* new_attribute = find_attr(new_attributes, old_attribute.type)) {
-      if(old_attribute.format != new_attribute->format) {
-        warning("mesh_format: Couldn't transfer vertex attribute %d", old_attribute.format);
-        continue;
-      }
-      const size_t attribute_size = Vulkan::format_size(old_attribute.format);
       const uintptr_t old_offset = attr_offset(intermediate.attributes, old_attribute.type);
       const uintptr_t new_offset = attr_offset(new_attributes, new_attribute->type);
       const uint8_t* src = (uint8_t*)intermediate.vertices.data(old_offset);
       uint8_t* dst = (uint8_t*)new_vertices.data(new_offset);
 
-      for(uintptr_t i = 0; i < vertex_count; i++) {
-        memcpy(dst, src, attribute_size);
-        dst += new_vertex_size;
-        src += old_vertex_size;
+      if(old_attribute.format == new_attribute->format) {
+        const size_t attribute_size = Vulkan::format_size(old_attribute.format);
+        for(uintptr_t i = 0; i < vertex_count; i++) {
+          memcpy(dst, src, attribute_size);
+          dst += new_vertex_size;
+          src += old_vertex_size;
+        }
+      } else if(old_attribute.format == VK_FORMAT_R32G32B32A32_SFLOAT && new_attribute->format == VK_FORMAT_R8G8B8A8_UNORM) {
+        for(uintptr_t i = 0; i < vertex_count; i++) {
+          *(Color*)dst = Color::from(*(Vector4f*)src);
+          dst += new_vertex_size;
+          src += old_vertex_size;
+        }
+      } else {
+        warning("mesh_format: Couldn't transfer vertex attribute %d", old_attribute.format);
+        continue;
       }
     }
   }
@@ -211,7 +219,7 @@ void mesh_format_transformer(const ResourceSlot& slot, Mesh::Intermediate& inter
         case 'n': new_attributes.push(VertexAttribute {VK_FORMAT_R32G32B32_SFLOAT, VertexAttributeType::Normal}); break;
         case 't': new_attributes.push(VertexAttribute {VK_FORMAT_R32G32B32_SFLOAT, VertexAttributeType::Tangent}); break;
         case 'u': new_attributes.push(VertexAttribute {VK_FORMAT_R32G32_SFLOAT, VertexAttributeType::TexCoord}); break;
-        case 'c': new_attributes.push(VertexAttribute {VK_FORMAT_R8G8B8A8_UINT, VertexAttributeType::Color}); break;
+        case 'c': new_attributes.push(VertexAttribute {VK_FORMAT_R8G8B8A8_UNORM, VertexAttributeType::Color}); break;
         case 'j': new_attributes.push(VertexAttribute {VK_FORMAT_R16G16B16A16_UINT, VertexAttributeType::Joints}); break;
         case 'w': new_attributes.push(VertexAttribute {VK_FORMAT_R32G32B32A32_SFLOAT, VertexAttributeType::Weights}); break;
         default: warning("mesh_format: unrecognized attribute '%c'", *format); break;
