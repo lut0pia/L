@@ -76,6 +76,7 @@ namespace L {
 
     uint16_t constant(const Var&);
     uint16_t global(Symbol);
+    void print(Stream&);
   };
   struct ScriptOuter {
     uintptr_t offset;

@@ -1,6 +1,5 @@
 #include "LSCompiler.h"
 
-#include <L/src/pipeline/ScriptTools.h>
 #include <L/src/stream/CFileStream.h>
 #include "ls.h"
 
@@ -48,10 +47,8 @@ ScriptFunction LSCompiler::compile() {
     }
   }
 
-  ScriptTools::optimize(*_script);
-
   // Use for debugging
-  //ScriptTools::print_disassembly(*_script, out);
+  //_script->print(out);
 
   ScriptFunction script_function;
   script_function.script = _script;
