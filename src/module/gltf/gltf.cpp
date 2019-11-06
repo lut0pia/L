@@ -310,26 +310,39 @@ static bool gltf_material_loader(ResourceSlot& slot, Material::Intermediate& int
   }
 
   String shader_options;
-  const char* mesh_format = "pntu";
-
-  if(node->skin) {
-    shader_options += "&skinned";
-    mesh_format = "pntujw";
-  }
-
-  intermediate.mesh(String(slot.path) + "?fmt=" + mesh_format + "&node=" + to_string(node_index));
+  String mesh_format = "pn";
+  bool textured = false;
 
 #define TEXTURE(name, texpath) \
 if(cgltf_texture* texture = texpath.texture) { \
   const uintptr_t texture_index = texture - data->textures; \
   intermediate.texture(name, String(slot.path) + "?comp=bc1&texture=" + to_string(texture_index)); \
   shader_options += "&" name; \
+  textured = true; \
 }
 
   TEXTURE("color_texture", material->pbr_metallic_roughness.base_color_texture);
   TEXTURE("normal_texture", material->normal_texture);
   TEXTURE("metal_rough_texture", material->pbr_metallic_roughness.metallic_roughness_texture);
 
+  if(material->normal_texture.texture) {
+    mesh_format += "t"; // Need tangents
+  }
+  if(textured) {
+    mesh_format += "u"; // Need texcoords
+  }
+  for(uintptr_t i = 0; i < node->mesh->primitives->attributes_count; i++) {
+    if(node->mesh->primitives->attributes[i].type == cgltf_attribute_type_color) {
+      mesh_format += "c";
+      break;
+    }
+  }
+  if(node->skin) {
+    mesh_format += "jw";
+  }
+
+  shader_options += "&fmt=" + mesh_format;
+  intermediate.mesh(String(slot.path) + "?fmt=" + mesh_format + "&node=" + to_string(node_index));
   intermediate.shader(VK_SHADER_STAGE_FRAGMENT_BIT, ".glb?stage=frag" + shader_options);
   intermediate.shader(VK_SHADER_STAGE_VERTEX_BIT, ".glb?stage=vert" + shader_options);
   intermediate.vector("color_factor", Vector4f(material->pbr_metallic_roughness.base_color_factor));
@@ -463,21 +476,34 @@ static bool gltf_shader_loader(ResourceSlot& slot, Shader::Intermediate& interme
   }
 
   String source;
+  const bool skinned = strchr(slot.parameter("fmt"), 'j') && strchr(slot.parameter("fmt"), 'w');
 
+  const char* mesh_format = slot.parameter("fmt");
   Array<String> vert_attributes;
-  vert_attributes.push("vec3 vposition");
-  vert_attributes.push("vec3 vnormal");
-  vert_attributes.push("vec3 vtangent");
-  vert_attributes.push("vec2 vtexcoords");
-  if(slot.parameter("skinned")) {
-    vert_attributes.push("uvec4 vjoints");
-    vert_attributes.push("vec4 vweights");
+  while(*mesh_format) {
+    switch(*mesh_format) {
+      case 'p': vert_attributes.push("vec3 vposition"); break;
+      case 'n': vert_attributes.push("vec3 vnormal"); break;
+      case 't': vert_attributes.push("vec3 vtangent"); break;
+      case 'u': vert_attributes.push("vec2 vtexcoords"); break;
+      case 'c': vert_attributes.push("vec4 vcolor"); break;
+      case 'j': vert_attributes.push("uvec4 vjoints"); break;
+      case 'w': vert_attributes.push("vec4 vweights"); break;
+    }
+    mesh_format++;
   }
 
+  mesh_format = slot.parameter("fmt");
   Array<String> frag_attributes;
-  frag_attributes.push("vec3 fnormal");
-  frag_attributes.push("vec3 ftangent");
-  frag_attributes.push("vec2 ftexcoords");
+  while(*mesh_format) {
+    switch(*mesh_format) {
+      case 'n': frag_attributes.push("vec3 fnormal"); break;
+      case 't': frag_attributes.push("vec3 ftangent"); break;
+      case 'u': frag_attributes.push("vec2 ftexcoords"); break;
+      case 'c': frag_attributes.push("vec4 fcolor"); break;
+    }
+    mesh_format++;
+  }
 
   Array<String> render_targets;
   render_targets.push("vec4 ocolor");
@@ -516,12 +542,14 @@ static bool gltf_shader_loader(ResourceSlot& slot, Shader::Intermediate& interme
 
     source += "void main() {\n";
 
+    source += "vec4 color = vec4(1,1,1,1);\n";
     if(slot.parameter("color_texture")) {
-      source += "vec4 color = texture(color_texture, ftexcoords);\n";
-    } else {
-      source += "vec4 color = vec4(1,1,1,1);\n";
+      source += "color *= texture(color_texture, ftexcoords);\n";
     }
     source += "color.rgb = linearize(color.rgb);\n";
+    if(strchr(slot.parameter("fmt"), 'c')) {
+      source += "color *= fcolor;\n";
+    }
     source += "color *= color_factor;\n";
 
     if(slot.parameter("normal_texture")) {
@@ -552,7 +580,7 @@ static bool gltf_shader_loader(ResourceSlot& slot, Shader::Intermediate& interme
       source += "layout(location = " + to_string(i) + ") in " + vert_attributes[i] + ";\n";
     }
 
-    if(slot.parameter("skinned")) {
+    if(skinned) {
       source += "layout(binding = 2) uniform Pose {\n\
         mat4 joints[1024];\n\
       };\n";
@@ -562,8 +590,10 @@ static bool gltf_shader_loader(ResourceSlot& slot, Shader::Intermediate& interme
 
     source += "vec4 position = vec4(vposition, 1.f);\n";
     source += "vec4 normal = vec4(vnormal, 0.f);\n";
-    source += "vec4 tangent = vec4(vtangent, 0.f);\n";
-    if(slot.parameter("skinned")) {
+    if(strchr(slot.parameter("fmt"), 't')) {
+      source += "vec4 tangent = vec4(vtangent, 0.f);\n";
+    }
+    if(skinned) {
 #define SKIN(vector) \
       source += vector " = " \
         "(joints[vjoints[0]] * " vector ") * vweights[0]" \
@@ -572,11 +602,20 @@ static bool gltf_shader_loader(ResourceSlot& slot, Shader::Intermediate& interme
         "+ (joints[vjoints[3]] * " vector ") * vweights[3];\n"
       SKIN("position");
       SKIN("normal");
-      SKIN("tangent");
+      if(strchr(slot.parameter("fmt"), 't')) {
+        SKIN("tangent");
+      }
     }
     source += "fnormal = normalize((model * normal).xyz);\n";
-    source += "ftangent = normalize((model * tangent).xyz);\n";
-    source += "ftexcoords = vtexcoords;\n";
+    if(strchr(slot.parameter("fmt"), 't')) {
+      source += "ftangent = normalize((model * tangent).xyz);\n";
+    }
+    if(strchr(slot.parameter("fmt"), 'u')) {
+      source += "ftexcoords = vtexcoords;\n";
+    }
+    if(strchr(slot.parameter("fmt"), 'c')) {
+      source += "fcolor = vcolor;\n";
+    }
     source += "gl_Position = viewProj * model * position;\n";
     source += "}\n";
   } else {
