@@ -28,6 +28,7 @@ namespace L {
     inline uint8_t& a() { return _c[3]; }
 
     static Vector4f to_float_vector(const Color&);
+    inline static Color from(const Vector4f& v) { return from(v.x(), v.y(), v.z(), v.w()); }
     static Color from(float r, float g, float b, float a = 1);
     static Color from_hsv(float h, float s, float v);
     static Color from_index(uintptr_t index);
