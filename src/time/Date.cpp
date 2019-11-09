@@ -3,8 +3,7 @@
 using namespace L;
 
 Stream& L::operator<<(Stream& s, const Date& v) {
-  struct tm* tm;
-  tm = localtime(&v._time);
+  struct tm* tm = localtime(&v._time);
 
   s << (tm->tm_year+1900);
   s << '-' << ntos(tm->tm_mon, 2);
