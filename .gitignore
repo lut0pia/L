@@ -23,5 +23,7 @@ smp/trace.json
 /premake5.exe
 # Generated source
 *.gen
+# Generated logs
+*.log
 # Visual Studio
 *.aps

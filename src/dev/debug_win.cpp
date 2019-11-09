@@ -1,7 +1,6 @@
 #include "debug.h"
 
 #include "../macros.h"
-#include "../stream/CFileStream.h"
 
 L_PUSH_NO_WARNINGS
 #include <Windows.h>
@@ -10,7 +9,7 @@ L_POP_NO_WARNINGS
 
 using namespace L;
 
-void L::dump_stack() {
+void L::dump_stack(FILE* stream) {
 #ifdef L_DEBUG
   HANDLE current_process(GetCurrentProcess());
   HANDLE current_thread(GetCurrentThread());
@@ -55,7 +54,7 @@ void L::dump_stack() {
     DWORD disp_line;
     SymFromAddr(current_process, stackframe.AddrPC.Offset, &disp, symbol_info);
     SymGetLineFromAddr(current_process, stackframe.AddrPC.Offset, &disp_line, &line);
-    err << symbol_info->Name << '@' << (strrchr(line.FileName, '\\')+1) << ':' << (line.LineNumber-1) << '\n';
+    fprintf(stream, "%s@%s:%d\n", symbol_info->Name, (strrchr(line.FileName, '\\') + 1), (line.LineNumber - 1));
   }
 #endif
 }
