@@ -5,7 +5,6 @@
 #include "../macros.h"
 #include "../parallelism/Lock.h"
 #include "RenderPass.h"
-#include "../stream/CFileStream.h"
 #include "../system/Window.h"
 
 using namespace L;
@@ -65,7 +64,7 @@ namespace L {
 
 #ifdef L_DEBUG
 static VKAPI_ATTR VkBool32 VKAPI_CALL debug_callback(VkDebugReportFlagsEXT, VkDebugReportObjectTypeEXT, uint64_t, size_t, int32_t, const char*, const char* msg, void*) {
-  err << "Vulkan debug: " << msg << '\n';
+  warning("Vulkan: %s", msg);
   return VK_FALSE;
 }
 #endif
@@ -150,8 +149,8 @@ void Vulkan::init() {
     vkGetPhysicalDeviceProperties(physical_device, &physical_device_properties);
     vkGetPhysicalDeviceMemoryProperties(physical_device, &physical_device_memory_properties);
     vkGetPhysicalDeviceFeatures(physical_device, &physical_device_features);
-    out << "GPU: " << physical_device_properties.deviceName << '\n'
-      << "GPU memory: " << (best_physical_device_memory >> 20) << "MB\n";
+    log("GPU: %s", physical_device_properties.deviceName);
+    log("GPU memory: %dMB", (best_physical_device_memory >> 20));
   }
 
   { // Create surface
