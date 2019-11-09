@@ -34,13 +34,13 @@ void mainjob(void*) {
 #endif
 }
 int main(int, const char*[]) {
-  TypeInit();
-
 #if L_DEBUG
   init_log_file();
   init_debug_draw();
   Engine::add_parallel_update(ResourceSlot::update);
 #endif
+
+  TypeInit();
 
   Engine::register_component<Transform>();
   Engine::register_component<Camera>();
