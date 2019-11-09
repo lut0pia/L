@@ -33,5 +33,5 @@ namespace L {
 
     operator bool() const { return _fd != nullptr; }
   };
-  static CFileStream tmpfile, in(stdin), out(stdout), err(stderr);
+  static CFileStream in(stdin), out(stdout), err(stderr);
 }
