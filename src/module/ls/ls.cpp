@@ -12,12 +12,11 @@ bool ls_script_loader(ResourceSlot& slot, ScriptFunction& intermediate) {
   }
 
   if(Buffer buffer = slot.read_source_file()) {
-    intermediate.offset = 0;
-    intermediate.script = ref<Script>();
     LSCompiler compiler;
-    if(compiler.read((const char*)buffer.data(), buffer.size(), true)) {
-      intermediate = compiler.compile();
-      return true;
+    if(compiler.read(slot.id, (const char*)buffer.data(), buffer.size())) {
+      if(compiler.compile(intermediate)) {
+        return true;
+      }
     }
   }
   return false;

@@ -11,17 +11,14 @@ protected:
   LSLexer _lexer;
   L::Var _ast;
   L::StaticStack<128, L::Var*> _stack;
-  enum {
-    Usual, PostQuote, Parsed,
-  } _state;
 public:
   inline LSParser() { reset(); } // Allows
   //! Read new portion of text
+  //! @param context Small debug string to give context to warnings
   //! @param text Text to read tokens from
   //! @param size Char count of the text parameter
-  //! @param last_read True if there is no more text after this one
-  //! @return true if AST is ready
-  bool read(const char* text, size_t size, bool last_read = false);
+  //! @return true if successful
+  bool read(const char* context, const char* text, size_t size);
   //! Reset state of the parser
   void reset();
   //! Get AST and reset parser

@@ -27,14 +27,15 @@ protected:
 
 public:
   //! Read new portion of text
+  //! @param context Small debug string to give context to warnings
   //! @param text Text to read tokens from
   //! @param size Char count of the text parameter
-  //! @param last_read True if there is no more text after this one
-  bool read(const char* text, size_t size, bool last_read = false);
+  //! @return true if successful
+  bool read(const char* context, const char* text, size_t size);
 
   //! Compile function from everything parsed earlier
   //! Resets parser state
-  L::ScriptFunction compile();
+  bool compile(L::ScriptFunction&);
 
 protected:
   Function& make_function(const L::Var& code, Function* parent = nullptr);

@@ -12,11 +12,11 @@ add_symbol("+"), sub_symbol("-"), mul_symbol("*"), div_symbol("/"), mod_symbol("
 add_assign_symbol("+="), sub_assign_symbol("-="), mul_assign_symbol("*="), div_assign_symbol("/="), mod_assign_symbol("%="),
 less_symbol("<"), less_equal_symbol("<="), equal_symbol("="), greater_symbol(">"), greater_equal_symbol(">="), not_equal_symbol("<>");
 
-bool LSCompiler::read(const char* text, size_t size, bool last_read) {
-  return _parser.read(text, size, last_read);
+bool LSCompiler::read(const char* context, const char* text, size_t size) {
+  return _parser.read(context, text, size);
 }
 
-ScriptFunction LSCompiler::compile() {
+bool LSCompiler::compile(ScriptFunction& script_function) {
   { // Clean previous state
     for(Function* function : _functions) {
       Memory::delete_type(function);
@@ -50,10 +50,9 @@ ScriptFunction LSCompiler::compile() {
   // Use for debugging
   //_script->print(out);
 
-  ScriptFunction script_function;
   script_function.script = _script;
   script_function.offset = 0;
-  return script_function;
+  return true;
 }
 LSCompiler::Function& LSCompiler::make_function(const Var& code, Function* parent) {
   _functions.push();
