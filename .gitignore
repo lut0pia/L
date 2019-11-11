@@ -17,9 +17,6 @@ smp/*.ilk
 smp/*.lib
 smp/*.manifest
 smp/trace.json
-# Premake
-/premake5
-/premake5.exe
 # Generated source
 *.gen
 # Generated logs
