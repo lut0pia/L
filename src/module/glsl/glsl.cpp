@@ -171,7 +171,7 @@ bool glsl_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) {
   {
     L_SCOPE_MARKER("glslang parsing");
     if(!shader.parse(&builtin_resources, 450, EProfile::ENoProfile, true, true, message_flags)) {
-      err << shader.getInfoLog();
+      warning("glslang: %s", shader.getInfoLog());
       return false;
     }
   }
