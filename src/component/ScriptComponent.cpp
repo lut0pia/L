@@ -55,8 +55,10 @@ void ScriptComponent::script_registration() {
     }, Memory::new_type<Resource<ScriptFunction>>(script)});
   });
   ScriptContext::global("read") = (ScriptNativeFunction)([](ScriptContext& c) {
-    L_ASSERT(c.param_count()==1);
-    c.return_value() = *Resource<ScriptFunction>(c.param(0).get<String>());
+    L_ASSERT(c.param_count() == 1);
+    Resource<ScriptFunction> script_resource = c.param(0).get<String>();
+    script_resource.flush();
+    c.return_value() = script_resource.is_loaded() ? Var(ref<ScriptFunction>(*script_resource)) : Var();
   });
   ScriptContext::global("setting") = (ScriptNativeFunction)([](ScriptContext& c) {
     L_ASSERT(c.param_count()==2);
