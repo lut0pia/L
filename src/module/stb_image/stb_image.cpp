@@ -35,7 +35,7 @@ bool stb_image_loader(ResourceSlot& slot, Texture::Intermediate& intermediate) {
     stbi_image_free(img);
     return true;
   } else {
-    out << stbi_failure_reason() << '\n';
+    warning("stb_image: %s: %s", slot.id, stbi_failure_reason());
     return false;
   }
 }
