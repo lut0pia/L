@@ -24,11 +24,13 @@ String& String::operator+=(const String& other) {
   return *this;
 }
 
-int String::find_first(const String& str) const {
-  for(uint32_t i(0); i<size(); i++)
-    if(strncmp(&operator[](i),str,str.size())==0)
+uintptr_t String::find_first(const String& str) const {
+  for(uintptr_t i = 0; i < _size - 1; i++) {
+    if(strncmp(_data + i, str, str._size - 1) == 0) {
       return i;
-  return -1;
+    }
+  }
+  return UINTPTR_MAX;
 }
 int String::count(char search) const {
   int wtr(0);

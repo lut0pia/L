@@ -32,7 +32,7 @@ namespace L {
 
       // Search methods
       inline intptr_t find_first(char c) const {return strchr(*this,c)-operator const char*();}
-      int find_first(const String&) const;
+      uintptr_t find_first(const String&) const;
       inline intptr_t find_last(char c) const {return strrchr(*this,c)-operator const char*();}
       inline String substr(size_t pos, size_t length = -1) const { return String(*this, pos, min(length, size()-pos)); }
       int count(char) const;
