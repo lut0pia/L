@@ -10,7 +10,7 @@
 namespace L {
   template <class T>
   class Array {
-  private:
+  protected:
     T* _data;
     size_t _size,_capacity;
 
