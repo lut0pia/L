@@ -388,16 +388,18 @@ void LSCompiler::compile_function(Function& func) {
 void LSCompiler::compile_access_chain(Function& func, const Array<Var>& array, uint8_t offset, bool get) {
   L_ASSERT(array.size() >= 2);
   compile(func, array[0], offset + 1); // Object
-  compile(func, array[1], offset); // Index
+  compile(func, array[1], offset + 2); // Index
   for(uint32_t i(2); i < array.size(); i++) {
     // Put Object[Index] where Object was
-    func.bytecode.push(ScriptInstruction {GetItem, uint8_t(offset + 1), offset, uint8_t(offset + 1)});
+    func.bytecode.push(ScriptInstruction {GetItem, uint8_t(offset + 1), uint8_t(offset + 2), uint8_t(offset + 1)});
     // Replace Index with next index in array
-    compile(func, array[i], offset);
+    compile(func, array[i], offset + 2);
   }
   if(get) {
     // Do final access
-    func.bytecode.push(ScriptInstruction {GetItem, uint8_t(offset + 1), offset, offset});
+    func.bytecode.push(ScriptInstruction {GetItem, uint8_t(offset + 1), uint8_t(offset + 2), offset});
+  } else {
+    func.bytecode.push(ScriptInstruction {CopyLocal, offset, uint8_t(offset + 2)});
   }
 }
 void LSCompiler::compile_function_call(Function& func, const Array<Var>& array, uint8_t offset) {
