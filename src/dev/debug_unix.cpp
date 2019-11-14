@@ -4,7 +4,7 @@
 
 using namespace L;
 
-void L::dump_stack(FILE* stream) {
+void L::dump_stack(FILE*) {
 
 }
 
