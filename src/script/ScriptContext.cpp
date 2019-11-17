@@ -69,6 +69,7 @@ Var ScriptContext::execute(const Ref<ScriptFunction>& function, const Var* param
   L_ASSERT(_frames.empty());
   _stack.size(1 << 12);
   _frames.push();
+  _frames.back().function = function;
   _frames.back().script = function->script;
   _frames.back().stack_start = _current_stack_start = 0;
   _frames.back().param_count = param_count;
@@ -160,9 +161,9 @@ Var ScriptContext::execute(const Ref<ScriptFunction>& function, const Var* param
           _frames.push();
           _frames.back().stack_start = _current_stack_start;
           _frames.back().param_count = _current_param_count;
+          _frames.back().function = current_function = script_function;
+          _frames.back().script = current_script = script_function->script;
 
-          current_function = script_function;
-          current_script = _frames.back().script = script_function->script;
           ip = current_script->bytecode.begin() + script_function->offset;
           continue; // Avoid ip increment
         } else {
@@ -190,6 +191,7 @@ Var ScriptContext::execute(const Ref<ScriptFunction>& function, const Var* param
           _current_stack_start = _frames.back().stack_start;
           _current_param_count = uint32_t(_frames.back().param_count);
 
+          current_function = _frames.back().function;
           current_script = _frames.back().script;
           ip = _frames.back().ip;
         }

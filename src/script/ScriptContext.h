@@ -13,6 +13,7 @@ namespace L {
     static Table<const TypeDescription*, Var> _type_tables;
     Array<Var> _stack;
     struct Frame {
+      Ref<ScriptFunction> function;
       Ref<Script> script;
       const ScriptInstruction* ip;
       uintptr_t stack_start;
