@@ -13,7 +13,8 @@ bool ls_script_loader(ResourceSlot& slot, ScriptFunction& intermediate) {
 
   if(Buffer buffer = slot.read_source_file()) {
     LSCompiler compiler;
-    if(compiler.read(slot.id, (const char*)buffer.data(), buffer.size())) {
+    compiler.set_context(slot.id);
+    if(compiler.read((const char*)buffer.data(), buffer.size())) {
       if(compiler.compile(intermediate)) {
         return true;
       }

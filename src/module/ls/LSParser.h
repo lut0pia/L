@@ -1,6 +1,7 @@
 #pragma once
 
 #include <L/src/container/StaticStack.h>
+#include <L/src/container/Table.h>
 #include <L/src/dynamic/Variable.h>
 #include "LSLexer.h"
 
@@ -11,6 +12,7 @@ protected:
   LSLexer _lexer;
   L::Var _ast;
   L::StaticStack<128, L::Var*> _stack;
+  L::Table<L::Var*, uint32_t> _lines;
 public:
   inline LSParser() { reset(); } // Allows
   //! Read new portion of text
@@ -23,5 +25,5 @@ public:
   void reset();
   //! Get AST and reset parser
   //! @return AST
-  L::Var finish();
+  const L::Var& finish();
 };

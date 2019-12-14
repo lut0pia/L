@@ -38,7 +38,7 @@ bool LSParser::read(const char* context, const char* text, size_t size) {
       _stack.pop();
     } else if(_lexer.is_token(".") || _lexer.is_token(":")) {
       top_array.pop(); // Remove current value
-      Var& previous_var(top_array.end()[-1]);
+      Var& previous_var(top_array.back());
       if(previous_var.is<AccessChain>()) {
         previous_var.as<AccessChain>().array.push();
       } else {
@@ -105,7 +105,7 @@ void LSParser::reset() {
   _stack.push(&_ast);
   _stack.push(&var_array.back());
 }
-Var LSParser::finish() {
+const Var& LSParser::finish() {
   // Can only finish if the stack size is 2
   // Which means the first element is the do sequence
   // and the second is a void element we are going
@@ -115,10 +115,7 @@ Var LSParser::finish() {
   // Remove void element
   _ast.as<Array<Var>>().pop();
 
-  // Make a copy of the ast before resetting
-  const Var sanitized_ast(_ast);
+  _stack.clear();
 
-  reset();
-
-  return sanitized_ast;
+  return _ast;
 }

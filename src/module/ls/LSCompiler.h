@@ -24,25 +24,28 @@ protected:
   };
   L::Array<Function*> _functions;
   L::Ref<L::Script> _script;
+  L::String _context;
 
 public:
   //! Read new portion of text
-  //! @param context Small debug string to give context to warnings
   //! @param text Text to read tokens from
   //! @param size Char count of the text parameter
   //! @return true if successful
-  bool read(const char* context, const char* text, size_t size);
+  bool read(const char* text, size_t size);
 
   //! Compile function from everything parsed earlier
   //! Resets parser state
   bool compile(L::ScriptFunction&);
 
+  //! Sets context debug string to give context to warnings
+  inline void set_context(const char* context) { _context = context; }
+
 protected:
   Function& make_function(const L::Var& code, Function* parent = nullptr);
   bool find_outer(Function&, const L::Symbol& symbol, uint8_t& outer);
   void resolve_locals(Function&, const L::Var&);
-  void compile(Function&, const L::Var&, uint8_t offset = 0);
-  void compile_function(Function&);
+  bool compile(Function&, const L::Var&, uint8_t offset = 0);
+  bool compile_function(Function&);
   //! Puts object at offset+1 and last index at offset
   //! If get is true, does the final access to put the value at offset
   void compile_access_chain(Function&, const L::Array<L::Var>& array, uint8_t offset, bool get);

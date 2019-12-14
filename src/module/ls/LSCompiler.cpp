@@ -12,8 +12,8 @@ add_symbol("+"), sub_symbol("-"), mul_symbol("*"), div_symbol("/"), mod_symbol("
 add_assign_symbol("+="), sub_assign_symbol("-="), mul_assign_symbol("*="), div_assign_symbol("/="), mod_assign_symbol("%="),
 less_symbol("<"), less_equal_symbol("<="), equal_symbol("="), greater_symbol(">"), greater_equal_symbol(">="), not_equal_symbol("<>");
 
-bool LSCompiler::read(const char* context, const char* text, size_t size) {
-  return _parser.read(context, text, size);
+bool LSCompiler::read(const char* text, size_t size) {
+  return _parser.read(_context, text, size);
 }
 
 bool LSCompiler::compile(ScriptFunction& script_function) {
@@ -28,7 +28,9 @@ bool LSCompiler::compile(ScriptFunction& script_function) {
   { // Compiling
     Function& main_function(make_function(_parser.finish()));
     resolve_locals(main_function, main_function.code);
-    compile_function(main_function);
+    if(!compile_function(main_function)) {
+      return false;
+    }
   }
 
   { // Bundling functions together
@@ -104,7 +106,7 @@ void LSCompiler::resolve_locals(Function& func, const L::Var& v) {
       resolve_locals(func, e);
   }
 }
-void LSCompiler::compile(Function& func, const Var& v, uint8_t offset) {
+bool LSCompiler::compile(Function& func, const Var& v, uint8_t offset) {
   if(v.is<Array<Var>>()) {
     const Array<Var>& array(v.as<Array<Var>>());
     L_ASSERT(array.size() > 0);
@@ -281,10 +283,12 @@ void LSCompiler::compile(Function& func, const Var& v, uint8_t offset) {
           Function& new_function(make_function(array.back(), &func));
 
           { // Deal with potential parameters
-            if(array.size() > 2 && array[1].is<Array<Var>>()) { // There's a list of parameter symbols
-              for(const Var& param_name : array[1].as<Array<Var>>()) {
-                L_ASSERT(param_name.is<Symbol>());
-                new_function.local_table[param_name.as<Symbol>()] = new_function.local_count++;
+            for(uintptr_t i = 1; i < array.size() - 1; i++) {
+              if(array[i].is<Symbol>()) {
+                new_function.local_table[array[i].as<Symbol>()] = new_function.local_count++;
+              } else {
+                warning("ls: %s:%d: Function parameter names must be symbols", _context.begin(), 0);
+                return false;
               }
             }
           }
@@ -305,7 +309,7 @@ void LSCompiler::compile(Function& func, const Var& v, uint8_t offset) {
             }
           }
         }
-        return;
+        return true;
       } else if(sym == add_assign_symbol) {
         compile_op_assign(func, array, offset, Add);
       } else if(sym == sub_assign_symbol) {
@@ -374,16 +378,22 @@ void LSCompiler::compile(Function& func, const Var& v, uint8_t offset) {
     func.bytecode.push(ScriptInstruction {LoadConst, offset});
     func.bytecode.back().bcu16 = _script->constant(cst);
   }
+
+  return true;
 }
-void LSCompiler::compile_function(Function& func) {
+bool LSCompiler::compile_function(Function& func) {
   // Use local_count as start offset to avoid overwriting parameters
   const uint8_t func_offset(func.local_count);
 
-  compile(func, func.code, func_offset);
+  if(!compile(func, func.code, func_offset)) {
+    return false;
+  }
 
   // We're compiling to target func_offset as a return value,
   // copy that to the actual return value (0)
   func.bytecode.push(ScriptInstruction {CopyLocal, 0, func_offset});
+
+  return true;
 }
 void LSCompiler::compile_access_chain(Function& func, const Array<Var>& array, uint8_t offset, bool get) {
   L_ASSERT(array.size() >= 2);
