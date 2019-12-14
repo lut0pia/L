@@ -5,6 +5,6 @@
   (self.entity.require_collider|.box (vec 4096 4096 64))
 )))
 
-(set self.event (fun (e) (do
+(set self.event (fun e (do
   (if (= e.type 'COLLISION) (entity_destroy (e.other.entity)))
 )))

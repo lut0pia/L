@@ -1,4 +1,4 @@
-(set rand_range (fun (min max) (+ min (* (- max min) (rand)))))
+(set rand_range (fun min max (+ min (* (- max min) (rand)))))
 (set rand_color (fun (color (rand) (rand) (rand))))
 (set make_box (fun (do
   (local entity (entity_make))
@@ -46,14 +46,14 @@
   (make_static_box (vec 0 half half) (vec half 0.5 half))
   (make_static_box (vec 0 nhalf 1) (vec half 0.5 1))
 )))
-(set make_static_box (fun (position size) (do
+(set make_static_box (fun position size (do
   (local entity (entity_make))
   (entity.require_transform|.move position)
   (entity.require_collider|.box size)
   (entity.require_primitive|.scale size)
   (entity.require_primitive|.material|.parent "material/box.ls")
 )))
-(set make_mesh (fun (mat pos) (do
+(set make_mesh (fun mat pos (do
   (local entity (entity_make))
   (set last_mesh entity)
   (local transform (entity.require_transform))

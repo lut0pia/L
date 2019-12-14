@@ -86,7 +86,7 @@
     (+ "FPS: " (/ 1.0 delta) "\n"
     "Frame: " avg_frame_work_duration "\n"))
 )))
-(set self.event (fun (e) (do
+(set self.event (fun e (do
   (if e.pressed (switch e.button
     'Space (if (music_entity.require_midi_source|.is_playing)
       (music_entity.require_midi_source|.stop)
