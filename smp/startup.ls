@@ -124,8 +124,11 @@
 
 (scene_default)
 
-(set music_entity (entity_make))
-(music_entity.require_midi_source|.sequence "audio/mozart.mid")
+(set mozart_source (entity_make|.require_midi_source))
+(mozart_source.sequence "audio/mozart.mid")
 
-(set sound_entity (entity_make))
-(sound_entity.require_audio_source|.stream "audio/guitar.wav")
+(set guitar_source (entity_make|.require_audio_source))
+(guitar_source.stream "audio/guitar.wav")
+
+(set bach_source (entity_make|.require_audio_source))
+(bach_source.stream "audio/bach.ogg")
