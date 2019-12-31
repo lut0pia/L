@@ -98,15 +98,6 @@ Buffer ResourceSlot::read_source_file() {
   if(source_buffer) {
     return Buffer(source_buffer, source_buffer.size());
   }
-  // Try to find the source file in the archive
-  if(Archive::Entry entry = archive.find("file:" + String(path))) {
-    Date file_mtime;
-    if(!File::mtime(path, file_mtime) || file_mtime < entry.date) {
-      Buffer buffer(entry.size);
-      archive.load(entry, buffer);
-      return buffer;
-    }
-  }
   // Otherwise read actual source file
   if(CFileStream stream = CFileStream(path, "rb")) {
     const size_t size(stream.size());
@@ -117,23 +108,6 @@ Buffer ResourceSlot::read_source_file() {
     warning("Couldn't read source file: %s", (const char*)path);
   }
   return Buffer();
-}
-void ResourceSlot::store_source_file_to_archive() {
-  if(persistent) return;
-  // Try to find the source file in the archive
-  const String key("file:" + String(path));
-  if(Archive::Entry entry = archive.find(key)) {
-    Date file_mtime;
-    if(!File::mtime(path, file_mtime)) return; // Source file doesn't exist
-    if(file_mtime < entry.date) return; // Source file already up-to-date in archive
-  }
-  // Store actual source file to archive
-  if(CFileStream stream = CFileStream(path, "rb")) {
-    const size_t size(stream.size());
-    Buffer buffer(size);
-    stream.read(buffer, size);
-    archive.store(key, buffer.data(), buffer.size());
-  }
 }
 Buffer ResourceSlot::read_archive() {
   L_SCOPE_MARKER("Resource read archive");

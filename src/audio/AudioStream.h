@@ -1,14 +1,19 @@
 #pragma once
 
 #include "Audio.h"
+#include "../container/Buffer.h"
+#include "../text/Symbol.h"
 
 namespace L {
-  class AudioStream {
-  public:
-    typedef AudioStream* Intermediate;
-    virtual ~AudioStream() {}
-    virtual void render(void* buffer, uint32_t frame_start, uint32_t frame_count, float volume[2]) const = 0;
-    virtual uint32_t sample_count() const = 0;
-    virtual Audio::SampleFormat format() const = 0;
+  struct AudioStream {
+    typedef AudioStream Intermediate;
+
+    Symbol format;
+    Buffer samples;
+    uint32_t sample_count;
+    Audio::SampleFormat sample_format;
+
+    friend inline Stream& operator<=(Stream& s, const Intermediate& v) { return s <= v.format <= v.samples <= v.sample_count <= v.sample_format; }
+    friend inline Stream& operator>=(Stream& s, Intermediate& v) { return s >= v.format >= v.samples >= v.sample_count >= v.sample_format; }
   };
 }

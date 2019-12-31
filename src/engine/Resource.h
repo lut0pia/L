@@ -33,7 +33,6 @@ namespace L {
     bool flush();
 
     Buffer read_source_file();
-    void store_source_file_to_archive();
     Buffer read_archive();
     void write_archive(const void* data, size_t size);
     static Symbol make_typed_id(const Symbol& type, const char* url);

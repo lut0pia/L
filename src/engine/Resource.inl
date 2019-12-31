@@ -9,22 +9,6 @@
 #include "../text/compression.h"
 
 namespace L {
-  template <class T> void store_intermediate(ResourceSlot& slot, T*) {
-    slot.store_source_file_to_archive();
-  }
-  template <class T> void store_intermediate(ResourceSlot& slot, const T& intermediate) {
-    StringStream uncompressed_stream, compressed_stream;
-    {
-      L_SCOPE_MARKER("Resource serialize");
-      uncompressed_stream <= intermediate;
-    }
-    {
-      L_SCOPE_MARKER("Resource compress");
-      lz_compress(uncompressed_stream.string().begin(), uncompressed_stream.string().size(), compressed_stream);
-    }
-    slot.write_archive(compressed_stream.string().begin(), compressed_stream.string().size());
-  }
-
   template <class T>
   class ResourceLoading {
     typedef bool(*Loader)(ResourceSlot&, typename T::Intermediate&);
@@ -56,7 +40,17 @@ namespace L {
           for(Transformer transformer : _transformers) {
             transformer(slot, intermediate);
           }
-          store_intermediate(slot, intermediate);
+
+          StringStream uncompressed_stream, compressed_stream;
+          {
+            L_SCOPE_MARKER("Resource serialize");
+            uncompressed_stream <= intermediate;
+          }
+          {
+            L_SCOPE_MARKER("Resource compress");
+            lz_compress(uncompressed_stream.string().begin(), uncompressed_stream.string().size(), compressed_stream);
+          }
+          slot.write_archive(compressed_stream.string().begin(), compressed_stream.string().size());
           return true;
         } else {
           warning("Unable to load resource: %s", slot.id);
@@ -95,20 +89,6 @@ namespace L {
       if(ResourceLoading<T>::load(slot, *intermediate)) {
         slot.value = intermediate;
       } else {
-        Memory::delete_type(intermediate);
-      }
-    }
-  };
-
-  // Specific case where the intermediate type is a pointer to the type
-  // (legacy codepath, should be removed at some point)
-  template <class T>
-  struct ResourceLoader<T, T*> {
-    static void load(ResourceSlot& slot) {
-      T* intermediate(nullptr);
-      if(ResourceLoading<T>::load(slot, intermediate)) {
-        slot.value = intermediate;
-      } else if(intermediate) {
         Memory::delete_type(intermediate);
       }
     }

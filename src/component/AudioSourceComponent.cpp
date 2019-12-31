@@ -35,12 +35,18 @@ void AudioSourceComponent::script_registration() {
 
 void AudioSourceComponent::audio_render(void* frames, uint32_t frame_count) {
   if(_playing && _stream) {
-    if(_current_frame>=_stream->sample_count()) {
-      if(_looping) // Restart playing
-        _current_frame = 0;
-      else { // Stop playing
+    // Make sure we have a decoder
+    if(!_decoder && !(_decoder = AudioDecoder::make(_stream))) {
+      return;
+    }
+
+    if(!_decoder->playing()) {
+      if(_looping) { // Restart playing
+        _decoder = AudioDecoder::make(_stream);
+      } else { // Stop playing
         _playing = false;
-        if(_script){ // Tell script about it
+        _decoder = nullptr;
+        if(_script) { // Tell script about it
           auto e(ref<Table<Var, Var>>());
           (*e)[Symbol("type")] = Symbol("AudioStop");
           _script->event(e);
@@ -48,14 +54,13 @@ void AudioSourceComponent::audio_render(void* frames, uint32_t frame_count) {
         return;
       }
     }
-    float volumes[2]{_volume,_volume};
-    if(Audio::sample_format_channels(_stream->format())==1) { // Mono sounds are spatialized
+    float volumes[2] {_volume, _volume};
+    if(Audio::sample_format_channels(_stream->sample_format) == 1) { // Mono sounds are spatialized
       const Vector3f position(_transform->position());
-      const Vector3f direction((position-AudioListenerComponent::position()).normalize());
-      volumes[0] *= 1.f-max(0.f, direction.dot(AudioListenerComponent::right()));
-      volumes[1] *= 1.f-max(0.f, -direction.dot(AudioListenerComponent::right()));
+      const Vector3f direction((position - AudioListenerComponent::position()).normalize());
+      volumes[0] *= 1.f - max(0.f, direction.dot(AudioListenerComponent::right()));
+      volumes[1] *= 1.f - max(0.f, -direction.dot(AudioListenerComponent::right()));
     }
-    _stream->render(frames, _current_frame, frame_count, volumes);
-    _current_frame += frame_count;
+    _decoder->render(frames, frame_count, volumes);
   }
 }

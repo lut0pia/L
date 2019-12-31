@@ -1,24 +1,23 @@
 #pragma once
 
-#include "../audio/AudioBuffer.h"
+#include "../audio/AudioDecoder.h"
+#include "../audio/AudioStream.h"
 #include "Component.h"
 #include "../engine/Resource.h"
 
 namespace L {
-  class ScriptComponent;
-  class Transform;
   class AudioSourceComponent : public Component {
     L_COMPONENT(AudioSourceComponent)
       L_COMPONENT_HAS_AUDIO_RENDER(AudioSourceComponent)
   protected:
-    Transform* _transform;
-    ScriptComponent* _script;
+    class Transform* _transform;
+    class ScriptComponent* _script;
     Resource<AudioStream> _stream;
-    float _volume;
-    uint32_t _current_frame;
-    bool _playing, _looping;
+    Ref<AudioDecoder> _decoder;
+    float _volume = 1.f;
+    bool _playing = false, _looping = false;
+
   public:
-    inline AudioSourceComponent() : _volume(1.f), _playing(false), _looping(false) {}
     void audio_render(void* frames, uint32_t frame_count);
 
     void update_components() override;
@@ -29,7 +28,7 @@ namespace L {
     inline void stream(const char* filepath) { _stream = filepath; }
     inline void looping(bool should_loop) { _looping = should_loop; }
     inline void volume(float v) { _volume = v; }
-    inline void play() { _current_frame = 0; _playing = true; }
+    inline void play() { _decoder = nullptr; _playing = true; }
     inline void stop() { _playing = false; }
     inline bool playing() const { return _playing; }
   };
