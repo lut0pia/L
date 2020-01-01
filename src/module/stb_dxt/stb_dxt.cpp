@@ -3,8 +3,6 @@
 #include <L/src/rendering/Texture.h>
 #include <L/src/stream/CFileStream.h>
 
-#include <utility>
-
 L_PUSH_NO_WARNINGS
 
 #define STB_DXT_IMPLEMENTATION
@@ -42,7 +40,7 @@ void stb_dxt_transformer(const ResourceSlot& slot, Texture::Intermediate& interm
         }
       }
 
-      intermediate.binary = std::move(compressed);
+      intermediate.binary = static_cast<Buffer&&>(compressed);
     } else {
       warning("Attempting BC compression on texture with incompatible dimensions: %s is %dx%d, dimensions should be multiples of 4.",
         (const char*)slot.id, intermediate.width, intermediate.height);

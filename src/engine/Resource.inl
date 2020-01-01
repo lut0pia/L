@@ -76,7 +76,7 @@ namespace L {
       return false;
     }
     static void store(ResourceSlot& slot, typename T::Intermediate& intermediate) {
-      slot.value = Memory::new_type<T>(std::move(intermediate));
+      slot.value = Memory::new_type<T>(static_cast<typename T::Intermediate&&>(intermediate));
       slot.mtime = Date::now();
       slot.state = ResourceSlot::Loaded;
     }

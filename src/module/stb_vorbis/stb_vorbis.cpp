@@ -34,7 +34,7 @@ static bool stb_vorbis_loader(ResourceSlot& slot, AudioStream& intermediate) {
     }
 
     intermediate.format = vorbis_symbol;
-    intermediate.samples = Buffer(buffer.data(), buffer.size());
+    intermediate.samples = static_cast<Buffer&&>(buffer);
     intermediate.sample_count = stb_vorbis_stream_length_in_samples(handle);
     intermediate.sample_format = info.channels == 1 ? Audio::Mono16 : Audio::Stereo16;
 
