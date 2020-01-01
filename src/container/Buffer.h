@@ -11,6 +11,13 @@ namespace L {
     size_t _size;
   public:
     constexpr Buffer() : _data(nullptr), _size(0) {}
+    inline Buffer(const Buffer& other) : _data(nullptr), _size(0) {
+      if(other.size() > 0) {
+        _data = Memory::alloc(other.size());
+        _size = other.size();
+        memcpy(_data, other.data(), other.size());
+      }
+    }
     inline Buffer(Buffer&& other) : _data(other._data), _size(other._size) {
       other._data = nullptr;
       other._size = 0;
