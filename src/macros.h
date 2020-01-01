@@ -20,7 +20,8 @@
 #if defined _MSC_VER
 #define L_PUSH_NO_WARNINGS __pragma(warning(push, 0)) \
   __pragma(warning(disable: 4577)) \
-  __pragma(warning(disable: 4701))
+  __pragma(warning(disable: 4701)) \
+  __pragma(warning(disable: 4702))
 #define L_POP_NO_WARNINGS __pragma(warning(pop))
 #else
 #if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 7)
