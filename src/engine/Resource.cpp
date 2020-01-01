@@ -77,8 +77,6 @@ void ResourceSlot::load() {
       ResourceSlot& slot(*(ResourceSlot*)p);
       L_SCOPE_MARKERF("Resource load (%s)", (const char*)slot.id);
       slot.load_function(slot);
-      slot.mtime = Date::now();
-      slot.state = ResourceSlot::Loaded;
     }, this, thread_mask, TaskSystem::NoParent);
   }
 }

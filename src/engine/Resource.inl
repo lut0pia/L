@@ -22,7 +22,14 @@ namespace L {
     static void add_transformer(Transformer transformer) {
       _transformers.push(transformer);
     }
-    static bool load(ResourceSlot& slot, typename T::Intermediate& intermediate) {
+    static bool load(ResourceSlot& slot) {
+      if(slot.value) {
+        Memory::delete_type<T>((T*)slot.value);
+        slot.value = nullptr;
+      }
+
+      typename T::Intermediate intermediate {};
+
       if(Buffer compressed_buffer = slot.read_archive()) { // Look in the archive for that resource
         Buffer buffer;
         {
@@ -34,6 +41,7 @@ namespace L {
           BufferStream stream((char*)buffer.data(), buffer.size());
           stream >= intermediate;
         }
+        store(slot, intermediate);
         return true;
       } else { // Try to load it from source
         if(load_internal(slot, intermediate)) {
@@ -46,6 +54,7 @@ namespace L {
             L_SCOPE_MARKER("Resource serialize");
             uncompressed_stream <= intermediate;
           }
+          store(slot, intermediate);
           {
             L_SCOPE_MARKER("Resource compress");
             lz_compress(uncompressed_stream.string().begin(), uncompressed_stream.string().size(), compressed_stream);
@@ -66,39 +75,16 @@ namespace L {
       }
       return false;
     }
+    static void store(ResourceSlot& slot, typename T::Intermediate& intermediate) {
+      slot.value = Memory::new_type<T>(std::move(intermediate));
+      slot.mtime = Date::now();
+      slot.state = ResourceSlot::Loaded;
+    }
   };
   template <class T> Array<typename ResourceLoading<T>::Loader> ResourceLoading<T>::_loaders;
   template <class T> Array<typename ResourceLoading<T>::Transformer> ResourceLoading<T>::_transformers;
 
-  // General case where the intermediate type can be anything
-  template <class T, class Inter>
-  struct ResourceLoader {
-    static void load(ResourceSlot& slot) {
-      typename T::Intermediate intermediate {};
-      if(ResourceLoading<T>::load(slot, intermediate)) {
-        slot.value = Memory::new_type<T>(intermediate);
-      }
-    }
-  };
-
-  // Specific case where the intermediate type is the actual type
-  template <class T>
-  struct ResourceLoader<T, T> {
-    static void load(ResourceSlot& slot) {
-      typename T::Intermediate* intermediate(Memory::new_type<typename T::Intermediate>());
-      if(ResourceLoading<T>::load(slot, *intermediate)) {
-        slot.value = intermediate;
-      } else {
-        Memory::delete_type(intermediate);
-      }
-    }
-  };
-
   template <class T> void Resource<T>::load_function(ResourceSlot& slot) {
-    if(slot.value) {
-      Memory::delete_type<T>((T*)slot.value);
-      slot.value = nullptr;
-    }
-    ResourceLoader<T, typename T::Intermediate>::load(slot);
+    ResourceLoading<T>::load(slot);
   }
 }
