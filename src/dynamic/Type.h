@@ -15,7 +15,7 @@ namespace L {
 
     void(*ctr)(void*);
     void* (*ctrnew)();
-    void* (*cpy)(void*);
+    void* (*cpy)(const void*);
     void(*cpyto)(void*,const void*);
     void(*assign)(void*,const void*);
     void(*dtr)(void*);
@@ -88,7 +88,7 @@ namespace L {
     }
     static void ctr(void* p) { ::new(p)T(); }
     static void* ctrnew() { return new T; }
-    static void* cpy(void* p) { return new T(*(T*)p); }
+    static void* cpy(const void* p) { return new T(*(const T*)p); }
     static void cpyto(void* dst,const void* src) { ::new((T*)dst) T(*(const T*)src); }
     static void assign(void* dst,const void* src) { *(T*)dst = *(const T*)src; }
     static void dtr(void* p) { (void)p; ((T*)p)->~T(); }
@@ -142,7 +142,7 @@ namespace L {
       "void",0,
       [](void*) {},
       []() -> void* { return nullptr; },
-      [](void*) -> void* { return nullptr; },
+      [](const void*) -> void* { return nullptr; },
       [](void*, const void*) {},
       [](void*, const void*) {},
       [](void*) {},
