@@ -88,12 +88,12 @@ void ScriptComponent::script_registration() {
   // Devices ///////////////////////////////////////////////////////////////////
   ScriptContext::global("get_devices") = (ScriptNativeFunction)([](ScriptContext& c) {
     auto wtr(ref<Table<Var,Var>>());
-    for(const Device* device : Device::devices())
-      (*wtr)[device] = true;
+    for(Device* device : Device::devices())
+      (*wtr)[device->handle()] = true;
     c.return_value() = wtr;
   });
-  L_SCRIPT_RETURN_METHOD(const Device, "get_axis", 1, axis(Device::symbol_to_axis(c.param(0))));
-  L_SCRIPT_RETURN_METHOD(const Device, "get_button", 1, button(Device::symbol_to_button(c.param(0))));
+  L_SCRIPT_RETURN_METHOD(Device, "get_axis", 1, axis(Device::symbol_to_axis(c.param(0))));
+  L_SCRIPT_RETURN_METHOD(Device, "get_button", 1, button(Device::symbol_to_button(c.param(0))));
   // Script ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(ScriptComponent, "script");
   L_SCRIPT_METHOD(ScriptComponent, "load", 1, load(c.param(0).get<String>()));
@@ -122,7 +122,7 @@ void ScriptComponent::late_update() {
 }
 void ScriptComponent::event(const Device::Event& e) {
   auto table(ref<Table<Var, Var>>());
-  (*table)[Symbol("device")] = e.device;
+  (*table)[Symbol("device")] = e.device->handle();
   (*table)[Symbol("button")] = Device::button_to_symbol(e.button);
   (*table)[Symbol("pressed")] = bool(e.pressed);
   event(table);

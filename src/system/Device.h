@@ -1,10 +1,11 @@
 #pragma once
 
 #include "../container/Array.h"
+#include "../container/Handle.h"
 #include "../text/Symbol.h"
 
 namespace L {
-  class Device {
+  class Device : public Handled<Device> {
   public:
     enum class Button : uint8_t {
 #define DB(button) button,
@@ -35,7 +36,7 @@ namespace L {
     static void add_device(Device*);
     static void add_event(Event);
   public:
-    inline Device() : _buttons {}, _axes {}, _rumble(0.f), _active(false) {
+    inline Device() : Handled<Device>(this), _buttons {}, _axes {}, _rumble(0.f), _active(false) {
       add_device(this);
     }
     inline float axis(Axis axis) const { return _axes[size_t(axis)]; }
