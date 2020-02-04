@@ -23,7 +23,7 @@ namespace L {
     void render(const Camera& camera, const RenderPass& render_pass);
 
     inline void material(const char* filename) { _material.parent(filename); }
-    inline Material* material() { return &_material; }
+    inline Material& material() { return _material; }
     inline void scale(const Vector3f& s) { _scale = s; }
 
     static void custom_late_update_all();

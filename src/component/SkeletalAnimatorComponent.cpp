@@ -43,13 +43,13 @@ void SkeletalAnimatorComponent::late_update() {
       _skin[i] = _global_pose[i] * skeleton.joints[i].inv_bind_pose;
     }
 
-    _primitive->material()->set_buffer("Pose", _skin.begin(), sizeof(Matrix44f) * _skin.size());
+    _primitive->material().set_buffer("Pose", _skin.begin(), sizeof(Matrix44f) * _skin.size());
 
 #if L_DEBUG
     if(Settings::get_int("render_skeletal_animator", 0)) {
       for(uintptr_t i = 0; i < skeleton.joints.size(); i++) {
         const SkeletonJoint& joint = skeleton.joints[i];
-        const float bounds_length = _primitive->material()->bounds().size().length();
+        const float bounds_length = _primitive->material().bounds().size().length();
         const Vector3f offset = Vector3f(0.f, bounds_length, 0.f);
         const float debug_scale = bounds_length / 32.f;
         const Vector3f joint_pos = _global_pose[i].vector<3>(3) + offset;

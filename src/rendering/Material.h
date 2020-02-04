@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Color.h"
+#include "../container/Handle.h"
 #include "../container/KeyValue.h"
 #include "../container/Ref.h"
 #include "../engine/Resource.h"
@@ -11,7 +12,7 @@
 #include "Mesh.h"
 
 namespace L {
-  class Material {
+  class Material : public Handled<Material> {
   protected:
     Resource<Material> _parent;
     struct State {
@@ -58,8 +59,8 @@ namespace L {
 
   public:
     typedef Material Intermediate;
-    inline Material() {}
-    inline Material(const Material& other) : _partial_state(other._partial_state) {}
+    inline Material() : Handled<Material>(this) {}
+    inline Material(const Material& other) : Handled<Material>(this), _partial_state(other._partial_state) {}
     ~Material();
 
     void update();

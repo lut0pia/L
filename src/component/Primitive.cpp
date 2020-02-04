@@ -21,7 +21,7 @@ void Primitive::unpack(const Map<Symbol, Var>& data) {
 }
 void Primitive::script_registration() {
   L_COMPONENT_BIND(Primitive, "primitive");
-  L_SCRIPT_RETURN_METHOD(Primitive, "material", 0, material());
+  L_SCRIPT_RETURN_METHOD(Primitive, "material", 0, material().handle());
   L_SCRIPT_METHOD(Primitive, "scale", 1, scale(c.param(0).get<Vector3f>()));
 
   Engine::add_late_update(custom_late_update_all);

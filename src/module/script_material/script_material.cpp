@@ -7,7 +7,7 @@ using namespace L;
 bool script_material_loader(ResourceSlot& slot, Material& intermediate) {
   ScriptFunction::Intermediate script_intermediate;
   if(ResourceLoading<ScriptFunction>::load_internal(slot, script_intermediate)) {
-    ScriptContext context(&intermediate);
+    ScriptContext context(intermediate.handle());
     context.execute(ref<ScriptFunction>(script_intermediate));
     return true;
   }
