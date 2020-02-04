@@ -18,6 +18,15 @@
     </Expand>
   </Type>
 
+  <Type Name="L::Handle&lt;*&gt;">
+    <DisplayString Condition="_ver_index == -1">null</DisplayString>
+    <DisplayString Condition="(_ver_index >> 48) != (handle_objects[(_ver_index&amp;0xffffffffffff)] >> 48)">stale</DisplayString>
+    <DisplayString>{($T1*)(handle_objects[(_ver_index&amp;0xffffffffffff)]&amp;0xffffffffffff)}</DisplayString>
+    <Expand>
+      <ExpandedItem>($T1*)(handle_objects[(_ver_index&amp;0xffffffffffff)]&amp;0xffffffffffff)</ExpandedItem>
+    </Expand>
+  </Type>
+
   <Type Name="L::KeyValue&lt;*,*&gt;">
     <DisplayString>{_key}: {_value}</DisplayString>
     <Expand>
