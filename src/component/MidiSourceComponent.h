@@ -5,9 +5,8 @@
 #include "Component.h"
 
 namespace L {
-  class MidiSourceComponent : public Component {
-    L_COMPONENT(MidiSourceComponent)
-      L_COMPONENT_HAS_UPDATE(MidiSourceComponent)
+  class MidiSourceComponent : public TComponent<MidiSourceComponent, 
+    ComponentFlag::Update> {
   protected:
     Resource<MidiSequence> _sequence;
     uintptr_t _play_index;

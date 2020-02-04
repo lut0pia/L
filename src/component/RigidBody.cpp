@@ -60,11 +60,12 @@ void RigidBody::script_registration() {
 void RigidBody::update_inertia_tensor() {
   Matrix33f inertia_tensor(0.f);
   int count(0);
-  for(auto&& c : entity()->components())
-    if(c.key()==Type<Collider>::description()) {
-      inertia_tensor += ((Collider*)c.value())->inertia_tensor();
+  for(const auto& c : entity()->components()) {
+    if(c.key() == Type<Collider>::description()) {
+      inertia_tensor += ((Collider*)c.value().pointer())->inertia_tensor();
       count++;
     }
+  }
   inertia_tensor *= mass()/count;
   _inv_inertia_tensor = inertia_tensor.inverse();
 }

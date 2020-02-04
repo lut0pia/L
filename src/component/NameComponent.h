@@ -5,8 +5,7 @@
 #include "../text/Symbol.h"
 
 namespace L {
-  class NameComponent : public Component {
-    L_COMPONENT(NameComponent)
+  class NameComponent : public TComponent<NameComponent> {
   protected:
     static Table<Symbol, NameComponent*> _components;
     Symbol _name;

@@ -6,9 +6,8 @@
 #include "../engine/Resource.h"
 
 namespace L {
-  class AudioSourceComponent : public Component {
-    L_COMPONENT(AudioSourceComponent)
-      L_COMPONENT_HAS_AUDIO_RENDER(AudioSourceComponent)
+  class AudioSourceComponent : public TComponent<AudioSourceComponent, 
+    ComponentFlag::AudioRender> {
   protected:
     class Transform* _transform;
     class ScriptComponent* _script;

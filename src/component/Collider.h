@@ -4,8 +4,7 @@
 #include "../container/IntervalTree.h"
 
 namespace L {
-  class Collider : public Component {
-    L_COMPONENT(Collider)
+  class Collider : public TComponent<Collider> {
   public:
     static Interval3fTree<Collider*> tree;
     Interval3fTree<Collider*>::Node* _node;
@@ -31,7 +30,7 @@ namespace L {
     virtual void unpack(const Map<Symbol, Var>&) override;
     static void script_registration();
 
-    static void sub_update_all();
+    static void custom_sub_update_all();
     void center(const Vector3f& center);
     void box(const Vector3f& radius);
     void sphere(float radius);

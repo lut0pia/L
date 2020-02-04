@@ -5,8 +5,7 @@
 #include "../engine/Resource.h"
 
 namespace L {
-  class PostProcessComponent : public Component {
-    L_COMPONENT(PostProcessComponent)
+  class PostProcessComponent : public TComponent<PostProcessComponent> {
   protected:
     Material _material;
   public:

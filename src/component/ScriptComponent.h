@@ -6,11 +6,8 @@
 #include "../engine/Resource.h"
 
 namespace L {
-  class ScriptComponent : public Component {
-    L_COMPONENT(ScriptComponent)
-      L_COMPONENT_HAS_UPDATE(ScriptComponent)
-      L_COMPONENT_HAS_LATE_UPDATE(ScriptComponent)
-      L_COMPONENT_HAS_DEV_EVENT(ScriptComponent)
+  class ScriptComponent : public TComponent<ScriptComponent,
+    ComponentFlag::Update | ComponentFlag::LateUpdate | ComponentFlag::DeviceEvent> {
   protected:
     ScriptContext _context;
     Resource<ScriptFunction> _script;

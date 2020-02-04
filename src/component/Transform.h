@@ -7,8 +7,7 @@
 #include "../math/Vector.h"
 
 namespace L {
-  class Transform : public Component {
-    L_COMPONENT(Transform)
+  class Transform : public TComponent<Transform> {
   private:
     Vector3f _position;
     Quatf _rotation;

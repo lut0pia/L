@@ -3,9 +3,8 @@
 #include "Transform.h"
 
 namespace L {
-  class HierarchyComponent : public Component {
-    L_COMPONENT(HierarchyComponent)
-      L_COMPONENT_HAS_LATE_UPDATE(HierarchyComponent)
+  class HierarchyComponent : public TComponent<HierarchyComponent,
+    ComponentFlag::LateUpdate> {
   protected:
     Transform *_parent, *_transform;
     Vector3f _translation;

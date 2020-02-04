@@ -5,9 +5,8 @@
 #include "../engine/Resource.h"
 
 namespace L {
-  class GUIComponent : public Component {
-    L_COMPONENT(GUIComponent)
-      L_COMPONENT_HAS_GUI(GUIComponent)
+  class GUIComponent : public TComponent<GUIComponent,
+    ComponentFlag::GUI> {
   protected:
     Camera* _camera;
     Material _material;

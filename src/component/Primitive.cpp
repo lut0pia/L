@@ -1,6 +1,7 @@
 #include "Primitive.h"
 
 #include "../component/Camera.h"
+#include "../engine/Engine.h"
 #include "../engine/Resource.inl"
 
 using namespace L;
@@ -22,6 +23,8 @@ void Primitive::script_registration() {
   L_COMPONENT_BIND(Primitive, "primitive");
   L_SCRIPT_RETURN_METHOD(Primitive, "material", 0, material());
   L_SCRIPT_METHOD(Primitive, "scale", 1, scale(c.param(0).get<Vector3f>()));
+
+  Engine::add_late_update(custom_late_update_all);
 }
 
 void Primitive::render(const Camera& camera, const RenderPass& render_pass) {
@@ -30,7 +33,7 @@ void Primitive::render(const Camera& camera, const RenderPass& render_pass) {
   }
 }
 
-void Primitive::late_update_all() {
+void Primitive::custom_late_update_all() {
   {
     L_SCOPE_MARKER("Primitive material update");
     ComponentPool<Primitive>::iterate([](Primitive& c) {

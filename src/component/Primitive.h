@@ -6,9 +6,8 @@
 #include "../engine/Resource.h"
 
 namespace L {
-  class Primitive : public Component {
-    L_COMPONENT(Primitive)
-      L_COMPONENT_HAS_RENDER(Primitive)
+  class Primitive : public TComponent<Primitive,
+    ComponentFlag::Render> {
   protected:
     Transform* _transform;
     CullVolume _cull_volume;
@@ -27,6 +26,6 @@ namespace L {
     inline Material* material() { return &_material; }
     inline void scale(const Vector3f& s) { _scale = s; }
 
-    static void late_update_all();
+    static void custom_late_update_all();
   };
 }

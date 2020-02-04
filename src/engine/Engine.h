@@ -40,16 +40,21 @@ namespace L {
     static void add_deferred_action(const DeferredAction& la) { _deferred_actions.push(la); }
     static void add_parallel_update(void(*update)()) { _parallel_updates.push(update); }
     static void add_update(void(*update)()) { _updates.push(update); }
+    static void add_sub_update(void(*sub_update)()) { _sub_updates.push(sub_update); }
+    static void add_late_update(void(*late_update)()) { _late_updates.push(late_update); }
     static void add_render(void(*render)(const class Camera&, const class RenderPass&)) { _renders.push(render); }
     template <class T> inline static void register_component() {
-      if(T::update_all != Component::update_all) _updates.push(T::update_all);
-      if(T::late_update_all != Component::late_update_all) _late_updates.push(T::late_update_all);
-      if(T::sub_update_all != Component::sub_update_all) _sub_updates.push(T::sub_update_all);
-      if(T::render_all != Component::render_all) _renders.push(T::render_all);
-      if(T::audio_render_all != Component::audio_render_all) _audio_renders.push(T::audio_render_all);
-      if(T::gui_all != Component::gui_all) _guis.push(T::gui_all);
-      if(T::win_event_all != Component::win_event_all) _win_events.push(T::win_event_all);
-      if(T::dev_event_all != Component::dev_event_all) _dev_events.push(T::dev_event_all);
+      if(T::flags & ComponentFlag::Update) _updates.push(T::update_all<>);
+      if(T::flags & ComponentFlag::UpdateAsync) _updates.push(T::update_all_async<>);
+      if(T::flags & ComponentFlag::SubUpdate) _sub_updates.push(T::sub_update_all<>);
+      if(T::flags & ComponentFlag::SubUpdateAsync) _sub_updates.push(T::sub_update_all_async<>);
+      if(T::flags & ComponentFlag::LateUpdate) _late_updates.push(T::late_update_all<>);
+      if(T::flags & ComponentFlag::LateUpdateAsync) _late_updates.push(T::late_update_all_async<>);
+      if(T::flags & ComponentFlag::Render) _renders.push(T::render_all<>);
+      if(T::flags & ComponentFlag::AudioRender) _audio_renders.push(T::audio_render_all<>);
+      if(T::flags & ComponentFlag::GUI) _guis.push(T::gui_all<>);
+      if(T::flags & ComponentFlag::WindowEvent) _win_events.push(T::win_event_all<>);
+      if(T::flags & ComponentFlag::DeviceEvent) _dev_events.push(T::dev_event_all<>);
       T::script_registration();
     }
   };

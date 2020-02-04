@@ -9,12 +9,9 @@
 #include "../time/Time.h"
 
 namespace L {
-  class Camera : public Component {
-    L_COMPONENT(Camera)
-      L_COMPONENT_HAS_WIN_EVENT(Camera)
-  private:
-    Transform* _transform;
+  class Camera : public TComponent<Camera, ComponentFlag::WindowEvent> {
   protected:
+    Transform* _transform;
     Matrix44f _view, _projection, _viewProjection, _prevViewProjection, _ray;
     Interval2f _viewport;
     enum {

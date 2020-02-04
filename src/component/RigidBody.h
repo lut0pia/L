@@ -3,10 +3,8 @@
 #include "Transform.h"
 
 namespace L {
-  class RigidBody : public Component {
-    L_COMPONENT(RigidBody)
-      L_COMPONENT_HAS_ASYNC_UPDATE(RigidBody)
-      L_COMPONENT_HAS_ASYNC_SUB_UPDATE(RigidBody)
+  class RigidBody : public TComponent<RigidBody,
+    ComponentFlag::UpdateAsync | ComponentFlag::SubUpdateAsync> {
   protected:
     static Vector3f _gravity;
     Transform* _transform;

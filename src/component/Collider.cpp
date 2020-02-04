@@ -1,5 +1,6 @@
 #include "Collider.h"
 
+#include "../engine/Engine.h"
 #include "../math/geometry.h"
 #include "../parallelism/TaskSystem.h"
 #include "RigidBody.h"
@@ -59,9 +60,11 @@ void Collider::script_registration() {
       c.return_value() = wtr;
     }
   });
+
+  Engine::add_sub_update(custom_sub_update_all);
 }
 
-void Collider::sub_update_all() {
+void Collider::custom_sub_update_all() {
   const uintptr_t thread_count = TaskSystem::thread_count();
   // Update tree nodes
   {

@@ -4,9 +4,8 @@
 #include "../rendering/Animation.h"
 
 namespace L {
-  class SkeletalAnimatorComponent : public Component {
-    L_COMPONENT(SkeletalAnimatorComponent)
-      L_COMPONENT_HAS_ASYNC_LATE_UPDATE(SkeletalAnimatorComponent)
+  class SkeletalAnimatorComponent : public TComponent<SkeletalAnimatorComponent,
+    ComponentFlag::LateUpdateAsync> {
   protected:
     Transform* _transform = nullptr;
     Primitive* _primitive = nullptr;

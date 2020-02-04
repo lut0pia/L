@@ -5,9 +5,7 @@
 #include "Transform.h"
 
 namespace L {
-  class AudioListenerComponent : public Component {
-    L_COMPONENT(AudioListenerComponent)
-      L_COMPONENT_HAS_UPDATE(AudioListenerComponent)
+  class AudioListenerComponent : public TComponent < AudioListenerComponent, ComponentFlag::Update> {
   protected:
     static Vector3f _position, _right, _forward, _up, _velocity, _last_position;
     Transform* _transform;

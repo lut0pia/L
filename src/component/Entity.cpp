@@ -6,101 +6,69 @@
 
 using namespace L;
 
-IterablePool<Entity> Entity::_pool;
-Array<Entity*> Entity::_destroy_queue;
+static IterablePool<Entity> entity_pool;
+static Array<Handle<Entity>> entity_destroy_queue;
 
-void Entity::set_component_entity(Component* c) {
-  c->_entity = this;
-}
-
-Entity::Entity(const Entity* other) : Entity() {
-  for(auto p : other->_components){
-    p.value() = (Component*)p.key()->cpy(p.value());
-    p.value()->entity(this);
-    _components.push(p);
-    p.value()->update_components();
+Entity::~Entity() {
+  _destroyed = true;
+  for(auto& component : _components) {
+    component.key()->del(component.value().pointer());
   }
 }
-Entity::~Entity() {
-  // Components remove themselves from entity on destruction
-  _destroyed = true;
-  while(!_components.empty())
-    _components[0].key()->del(_components[0].value());
-}
 
-void Entity::update_components(){
-  for(auto&& c : _components)
-    c.value()->update_components();
+void Entity::update_components() {
+  for(auto& p : _components) {
+    if(Component* component = (Component*)p.value().pointer()) {
+      component->update_components();
+    }
+  }
 }
-void Entity::remove(Component* c){
-  for(uint32_t i(0); i<_components.size(); i++)
-    if(_components[i].value()==c){
+void Entity::remove(Handle<Component> c) {
+  for(uint32_t i(0); i < _components.size(); i++)
+    if(_components[i].value() == c) {
       _components.erase(i);
       break;
     }
-  if(!_destroyed)
+  if(!_destroyed) {
     update_components();
-}
-
-void Entity::save(const char* path) {
-  CFileStream file(path, "w");
-  for(Entity* entity : _pool.objects()) {
-    if(entity->_persistent) {
-      file << "-\n";
-      file < *entity;
-    }
-  }
-  file << ".\n";
-}
-void Entity::load(const char* path) {
-  CFileStream file(path, "r");
-  while(true) {
-    if(strcmp(file.word(), "-")) // No more entities
-      break;
-    Entity* entity(new Entity());
-    file > *entity;
   }
 }
 
-void Entity::destroy(Entity* e) {
-  if(_destroy_queue.find(e) == nullptr)
-    _destroy_queue.push(e);
+Handle<Entity> Entity::create() {
+  Entity* entity_ptr = new(entity_pool.allocate())Entity();
+  Handle<Entity> entity = entity_ptr->handle();
+  return entity;
+}
+Handle<Entity> Entity::copy(Handle<Entity> other) {
+  Handle<Entity> entity = create();
+  Entity* entity_ptr = entity;
+  for(const auto& p : other->_components) {
+    Component* new_component = (Component*)p.key()->cpy(p.value().pointer());
+    new_component->_entity = entity;
+    entity_ptr->_components.push(p.key(), *(Handle<Component>*)&new_component->generic_handle());
+  }
+  entity_ptr->update_components();
+  return entity;
+}
+
+void Entity::destroy(Handle<Entity> e) {
+  if(entity_destroy_queue.find(e) == nullptr) {
+    entity_destroy_queue.push(e);
+  }
 }
 void Entity::flush_destroy_queue() {
-  for(Entity* entity : _destroy_queue)
-    delete entity;
-  _destroy_queue.clear();
-}
-void Entity::clear() {
-  Array<Entity*> entities(_pool.objects());
-  for(Entity* entity : entities)
-    delete entity;
-}
-
-Stream& L::operator<(Stream& s, const Entity& e) {
-  for(const auto& component : e._components) {
-    s << "-\n";
-    s < component.key()->name < *component.value();
-  }
-  s << ".\n";
-  return s;
-}
-Stream& L::operator>(Stream& s, Entity& e) {
-  e._persistent = true;
-  while(true) {
-    if(strcmp(s.word(), "-")) // No more components
-      break;
-    Symbol component_type_name;
-    s > component_type_name;
-    if(const TypeDescription** component_type = types.find(component_type_name)) {
-      Component* component((Component*)(*component_type)->ctrnew());
-      e.set_component_entity(component);
-      e._components.push(*component_type, component);
-      s > *component;
-    } else {
-      error("Unknown component type name %s", (const char*)component_type_name);
+  for(Handle<Entity> entity : entity_destroy_queue) {
+    if(Entity* entity_ptr = entity) {
+      entity_ptr->~Entity();
+      entity_pool.deallocate(entity_ptr);
     }
   }
-  e.update_components();
-  return s;
+  entity_destroy_queue.clear();
+}
+void Entity::clear() {
+  Array<Entity*> entities = entity_pool.objects();
+  for(Entity* entity : entities) {
+    entity->~Entity();
+    entity_pool.deallocate(entity);
+  }
 }

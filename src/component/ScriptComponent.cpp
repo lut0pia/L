@@ -66,15 +66,15 @@ void ScriptComponent::script_registration() {
   });
   // Entity ///////////////////////////////////////////////////////////////////
   ScriptContext::global("entity_make") = (ScriptNativeFunction)([](ScriptContext& c) {
-    c.return_value() = new Entity();
+    c.return_value() = Entity::create();
   });
   ScriptContext::global("entity_copy") = (ScriptNativeFunction)([](ScriptContext& c) {
-    if(c.param_count() && c.param(0).is<Entity*>())
-      c.return_value() = new Entity(c.param(0).as<Entity*>());
+    if(c.param_count() && c.param(0).is<Handle<Entity>>())
+      c.return_value() = Entity::copy(c.param(0).as<Handle<Entity>>());
   });
   ScriptContext::global("entity_destroy") = (ScriptNativeFunction)([](ScriptContext& c) {
-    if(c.param_count() && c.param(0).is<Entity*>())
-      Entity::destroy(c.param(0).as<Entity*>());
+    if(c.param_count() && c.param(0).is<Handle<Entity>>())
+      Entity::destroy(c.param(0).as<Handle<Entity>>());
   });
   ScriptContext::global("entity_get") = (ScriptNativeFunction)([](ScriptContext& c) {
     if(c.param_count()) {
