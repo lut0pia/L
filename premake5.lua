@@ -62,8 +62,7 @@ solution "L"
 
     do -- Modules
       filter {}
-      removefiles {"src/module/**"} -- Start by exluding all modules
-      local modules = os.matchdirs("src/module/*")
+      local modules = os.matchdirs("mod/*")
       local module_init_str = ""
       for _,modulepath in pairs(modules) do
         local module = path.getname(modulepath)
@@ -83,7 +82,7 @@ solution "L"
         .. "}\n"
         .. "#endif\n")
       end
-      local module_init_file_name = "src/module/init.gen"
+      local module_init_file_name = "src/mod_init.gen"
       local previous_module_init_str = io.readfile(module_init_file_name)
       if module_init_str ~= previous_module_init_str then
         io.writefile(module_init_file_name, module_init_str)
