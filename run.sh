@@ -38,7 +38,7 @@ case $configuration in
 esac
 
 mkdir -p bld
-if cmake -S . -B bld ; then # Run CMake
+if (cd bld && cmake ..) ; then # Run CMake
   if [ $mode = "open" ] ; then
     if $windows; then
       start ./bld/L.sln
