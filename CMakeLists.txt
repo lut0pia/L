@@ -35,12 +35,15 @@ if(MSVC)
     /fp:fast
   )
 else()
+  add_compile_definitions(
+    L_UNIX
+  )
   add_compile_options(
     -fno-operator-names
     -fno-exceptions
     -fno-rtti
     -Werror -Wall
-    --ffast-math
+    -ffast-math
   )
 endif()
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/..)
