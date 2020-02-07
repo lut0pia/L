@@ -15,8 +15,8 @@ using namespace L;
 #if L_USE_MALLOC
 void* Memory::alloc(size_t size) { return malloc(size); }
 void* Memory::alloc_zero(size_t size) { return ::calloc(size, 1); }
-void* Memory::realloc(void* ptr, size_t oldsize, size_t newsize) { return ::realloc(ptr, newsize); }
-void Memory::free(void* ptr, size_t size) { ::free(ptr); }
+void* Memory::realloc(void* ptr, size_t, size_t newsize) { return ::realloc(ptr, newsize); }
+void Memory::free(void* ptr, size_t) { ::free(ptr); }
 #else
 const size_t block_size = 1024*1024u;
 static void* freelists[128] = {};
