@@ -9,8 +9,8 @@ L_POP_NO_WARNINGS
 
 using namespace L;
 
-void L::dump_stack(FILE* stream) {
 #ifdef L_DEBUG
+void L::dump_stack(FILE* stream) {
   HANDLE current_process(GetCurrentProcess());
   HANDLE current_thread(GetCurrentThread());
   CONTEXT context;
@@ -56,8 +56,10 @@ void L::dump_stack(FILE* stream) {
     SymGetLineFromAddr(current_process, stackframe.AddrPC.Offset, &disp_line, &line);
     fprintf(stream, "%s@%s:%d\n", symbol_info->Name, (strrchr(line.FileName, '\\') + 1), (line.LineNumber - 1));
   }
-#endif
 }
+#else
+void L::dump_stack(FILE*) {}
+#endif
 
 void L::debugbreak() {
   __debugbreak();
