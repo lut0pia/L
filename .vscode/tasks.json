@@ -4,7 +4,11 @@
         {
             "label": "build-dbg",
             "type": "shell",
-            "command": "./run.sh build dbg"
+            "command": "./run.sh build dbg",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
         },
         {
             "label": "build-dev",
