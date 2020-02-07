@@ -10,13 +10,13 @@ configuration=${2:-dev} # Configuration is development by default
 
 if [ $mode = "stats" ] ; then
   printf "Core file count: "
-  find src/* -type f | grep -v module/ | grep -E "\.(h|hpp|cpp|inl|def)$" | wc -l
+  find src/* -type f | grep -E "\.(h|hpp|cpp|inl|def)$" | wc -l
   printf "Core line count: "
-  find src/* -type f | grep -v module/ | grep -E "\.(h|hpp|cpp|inl|def)$" | xargs cat | wc -l
+  find src/* -type f | grep -E "\.(h|hpp|cpp|inl|def)$" | xargs cat | wc -l
   printf "Module count: "
-  find src/module/* -maxdepth 0 -type d | wc -l
+  find mod/* -maxdepth 0 -type d | wc -l
   printf "Module line count: "
-  find src/module/* -type f | grep -E "\.(h|hpp|cpp|inl|def)$" | xargs cat | wc -l
+  find mod/* -type f | grep -E "\.(h|hpp|cpp|inl|def)$" | xargs cat | wc -l
   exit 0
 fi
 
