@@ -6,7 +6,7 @@ L_PUSH_NO_WARNINGS
 
 #define STB_TRUETYPE_IMPLEMENTATION
 #define STBTT_STATIC
-#include <stb_truetype.h>
+#include "stb_truetype.h"
 
 L_POP_NO_WARNINGS
 

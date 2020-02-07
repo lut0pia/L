@@ -1,1 +1,0 @@
-filter {"configurations:not Release"}

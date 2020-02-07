@@ -1,2 +1,0 @@
-configuration {"windows"}
-  links {"winmm"}

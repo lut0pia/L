@@ -1,6 +1,7 @@
 #pragma once
 
-#include <cstdint> 
+#include <cstdint>
+#include <cstring>
 
 class LSLexer {
 private:

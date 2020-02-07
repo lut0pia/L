@@ -25,70 +25,27 @@ fi
 case $configuration in
   "dbg")
     exe="Ldbg"
-    configuration=debug
+    configuration=Debug
   ;;
   "dev")
     exe="Ldev"
-    configuration=development
+    configuration=Development
   ;;
   "rls")
     exe="L"
-    configuration=release
+    configuration=Release
   ;;
 esac
 
-# Detect Visual Studio version
-
-if $windows ; then
-  #for ver in 2019 2017 ; do
-  #  for flavor in Enterprise Professional Community ; do
-  #    if [ -e "$SYSTEMDRIVE/Program Files (x86)/Microsoft Visual Studio/$ver/$flavor" ] ; then
-  #      vsver=$ver
-  #      vsvars="$SYSTEMDRIVE/Program Files (x86)/Microsoft Visual Studio/$ver/$flavor/Common7/Tools/VsDevCmd.bat"
-  #      break 2
-  #    fi
-  #  done
-  #done
-
-  if [ "$vsver" == "" ] ; then
-    if [ "$VS140COMNTOOLS" != "" ] ; then
-      vsver=2015
-      vsvars="$VS140COMNTOOLS/vsvars32.bat"
-    fi
-  fi
-
-  if [ "$vsver" == "" ] ; then
-    echo "Could not detect any Visual Studio installation"
-    exit 1
-  fi
-
-  echo "Detected Visual Studio version: $vsver"
-fi
-
-# Premake
-
-mkdir -p pmk
-
-if $windows ; then
-  premake_bin=ext/bin/premake5.exe
-  premake_action=vs$vsver
-else
-  premake_bin=ext/bin/premake5
-  premake_action=gmake2
-fi
-
-if ./$premake_bin $premake_action ; then # Run premake
+if cmake -S . -B bld ; then # Run CMake
   if [ $mode = "open" ] ; then
     if $windows; then
-      start ./prj/$premake_action/L.sln
+      start ./bld/L.sln
       exit 0
     fi
   fi
-  if $windows ; then
-    cmd.exe /C "\"$vsvars\" && MSBuild /NOLOGO prj/$premake_action/L.sln /p:configuration=$configuration"
-  else
-    (cd prj/$premake_action && make config=$configuration -j 4) # Run make
-  fi
+
+  cmake --build bld --config $configuration
 
   success=$?
 

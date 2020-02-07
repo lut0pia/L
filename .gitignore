@@ -4,6 +4,8 @@
 /obj
 # Projects folder
 /prj
+# Build folder
+/bld
 # Sample folder
 smp/Ldev
 smp/Ldbg
