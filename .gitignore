@@ -1,9 +1,5 @@
 # Binaries folder
 /bin
-# Object files folder
-/obj
-# Projects folder
-/prj
 # Build folder
 /bld
 # Sample folder
