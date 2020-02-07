@@ -130,9 +130,12 @@ namespace L {
     template <class dummy = void> static inline void caninv(){ useinv([](void* a) { *((T*)a) = -*((T*)a); }); }
     template <class dummy = void> static inline void cancmp(){
       usecmp([](const void* a,const void* b)->int {
-        if((*(T*)a)<(*(T*)b))       return -1;
-        else if((*(T*)b)<(*(T*)a))  return 1;
-        else                        return 0;
+        if((*(T*)a)<(*(T*)b)) {
+          return -1;
+        } else if((*(T*)b)<(*(T*)a)) {
+          return 1;
+        }
+        return 0;
       });
     }
   };
