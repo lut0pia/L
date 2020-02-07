@@ -37,6 +37,7 @@ case $configuration in
   ;;
 esac
 
+mkdir -p bld
 if cmake -S . -B bld ; then # Run CMake
   if [ $mode = "open" ] ; then
     if $windows; then
