@@ -2,6 +2,8 @@
 /bin
 # Build folder
 /bld
+# External project folder
+/ext
 # Sample folder
 smp/Ldev
 smp/Ldbg

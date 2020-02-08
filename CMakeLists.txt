@@ -125,22 +125,20 @@ function(add_module NAME)
     EXCLUDE_FROM_DEFAULT_BUILD TRUE
   )
 
-  # Core definition, link and directories
+  # Core definition and link
   target_compile_definitions(core PRIVATE $<${M_CONDITION}:L_USE_MODULE_${NAME}>)
   target_link_libraries(core PRIVATE $<${M_CONDITION}:mod_${NAME}>)
-  target_link_directories(core PRIVATE $<${M_CONDITION}:${M_LINK_DIRS}>)
 
   # Module directories
   target_include_directories(mod_${NAME} PRIVATE ${M_INCLUDE_DIRS})
-  target_link_directories(mod_${NAME} PRIVATE ${M_LINK_DIRS})
 
   # Libraries
-  target_link_libraries(mod_${NAME} $<${M_CONDITION}:${M_LIBRARIES}>)
+  target_link_libraries(mod_${NAME} ${M_LIBRARIES})
   foreach(LIB ${M_DBG_LIBRARIES})
-    target_link_libraries(mod_${NAME} debug $<${M_CONDITION}:${LIB}>)
+    target_link_libraries(mod_${NAME} debug ${LIB})
   endforeach()
   foreach(LIB ${M_RLS_LIBRARIES})
-    target_link_libraries(mod_${NAME} optimized $<${M_CONDITION}:${LIB}>)
+    target_link_libraries(mod_${NAME} optimized ${LIB})
   endforeach()
 
   # Dependencies
