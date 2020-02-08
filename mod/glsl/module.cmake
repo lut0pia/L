@@ -7,7 +7,7 @@ ExternalProject_Add(
   GIT_SHALLOW true
   CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${GLSLANG_INSTALL_DIR}
   BUILD_COMMAND ${CMAKE_COMMAND} --build . --config $<IF:$<CONFIG:Debug>,Debug,Release>
-  INSTALL_COMMAND ${CMAKE_COMMAND} --install . --config $<IF:$<CONFIG:Debug>,Debug,Release>
+  INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install --config $<IF:$<CONFIG:Debug>,Debug,Release>
 )
 ExternalProject_Get_Property(ext_glslang SOURCE_DIR)
 ExternalProject_Get_Property(ext_glslang BINARY_DIR)
