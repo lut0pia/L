@@ -3,6 +3,13 @@ set(CMAKE_SUPPRESS_REGENERATION true)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+# Override platform if generating for Visual Studio
+
+string(REGEX MATCH "Visual Studio" IS_VISUAL_STUDIO ${CMAKE_GENERATOR})
+if(IS_VISUAL_STUDIO)
+  set(CMAKE_GENERATOR_PLATFORM x64)
+endif()
+
 include(ExternalProject)
 
 project(L)
@@ -17,7 +24,6 @@ set(CMAKE_EXE_LINKER_FLAGS_DEVELOPMENT ${CMAKE_EXE_LINKER_FLAGS_DEBUG} CACHE STR
 # Compiler options
 
 if(MSVC)
-  set(CMAKE_GENERATOR_PLATFORM x64)
   add_compile_definitions(
     L_WINDOWS
     WIN32_LEAN_AND_MEAN
