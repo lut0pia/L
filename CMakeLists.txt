@@ -26,7 +26,6 @@ set(CMAKE_EXE_LINKER_FLAGS_DEVELOPMENT ${CMAKE_EXE_LINKER_FLAGS_DEBUG} CACHE STR
 
 function(add_compile_options_safe)
   foreach(OPT ${ARGV})
-    message(STATUS OPT)
     check_cxx_compiler_flag(${OPT} HAS_COMPILER_OPTION_${OPT})
     if(HAS_COMPILER_OPTION_${OPT})
       add_compile_options(${OPT})
