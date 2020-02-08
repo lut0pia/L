@@ -149,6 +149,11 @@ function(add_module NAME)
   target_include_directories(mod_${NAME} PRIVATE ${M_INCLUDE_DIRS})
 
   # Libraries
+  set(MOD_LIB_PATTERN "^(.*/)(.*)$")
+  set(MOD_LIB_REPLACE "\\1${CMAKE_STATIC_LIBRARY_PREFIX}\\2${CMAKE_STATIC_LIBRARY_SUFFIX}")
+  list(TRANSFORM M_LIBRARIES REPLACE ${MOD_LIB_PATTERN} ${MOD_LIB_REPLACE})
+  list(TRANSFORM M_DBG_LIBRARIES REPLACE ${MOD_LIB_PATTERN} ${MOD_LIB_REPLACE})
+  list(TRANSFORM M_RLS_LIBRARIES REPLACE ${MOD_LIB_PATTERN} ${MOD_LIB_REPLACE})
   target_link_libraries(mod_${NAME} ${M_LIBRARIES})
   foreach(LIB ${M_DBG_LIBRARIES})
     target_link_libraries(mod_${NAME} debug ${LIB})
