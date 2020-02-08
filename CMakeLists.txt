@@ -10,6 +10,7 @@ if(IS_VISUAL_STUDIO)
   set(CMAKE_GENERATOR_PLATFORM x64)
 endif()
 
+include(CheckCXXCompilerFlag)
 include(ExternalProject)
 
 project(L)
@@ -22,6 +23,16 @@ add_compile_definitions($<${DEV_DBG}:L_DEBUG>)
 set(CMAKE_EXE_LINKER_FLAGS_DEVELOPMENT ${CMAKE_EXE_LINKER_FLAGS_DEBUG} CACHE STRING "Configs")
 
 # Compiler options
+
+function(add_compile_options_safe)
+  foreach(OPT ${ARGV})
+    message(STATUS OPT)
+    check_cxx_compiler_flag(${OPT} HAS_COMPILER_OPTION_${OPT})
+    if(HAS_COMPILER_OPTION_${OPT})
+      add_compile_options(${OPT})
+    endif()
+  endforeach()
+endfunction()
 
 if(MSVC)
   add_compile_definitions(
@@ -50,6 +61,8 @@ else()
     -fno-rtti
     -ffast-math
     -Werror -Wall
+  )
+  add_compile_options_safe(
     -Wno-class-memaccess
     -Wno-missing-braces
     -Wno-missing-field-initializers
