@@ -37,8 +37,8 @@ if(MSVC)
   string(REPLACE "/EHsc" "/EHs-c-" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
   add_compile_options(
     /GR-
-    /WX /W4
     /fp:fast
+    /WX /W4
   )
 else()
   add_compile_definitions(
@@ -48,8 +48,12 @@ else()
     -fno-operator-names
     -fno-exceptions
     -fno-rtti
-    -Werror -Wall
     -ffast-math
+    -Werror -Wall
+    -Wno-class-memaccess
+    -Wno-missing-braces
+    -Wno-missing-field-initializers
+    -Wno-type-limits
   )
 endif()
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/..)
