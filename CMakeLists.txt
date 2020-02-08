@@ -170,11 +170,7 @@ file(WRITE ${MOD_INIT_GEN_PATH} "")
 file(GLOB MOD_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/mod/*)
 foreach(MOD_DIR ${MOD_DIRS})
   get_filename_component(MOD_NAME ${MOD_DIR} NAME)
-  if(EXISTS ${MOD_DIR}/module.cmake)
-    include(${MOD_DIR}/module.cmake)
-  else()
-    message(SEND_ERROR "Module ${MOD_NAME} is missing a module.cmake file")
-  endif()
+  include(${MOD_DIR}/module.cmake)
   file(APPEND ${MOD_INIT_GEN_PATH}
     "#if L_USE_MODULE_${MOD_NAME}\n"
     "{\n"
