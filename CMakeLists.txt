@@ -122,7 +122,6 @@ function(add_module NAME)
   set_target_properties(
     mod_${NAME} PROPERTIES
     EXCLUDE_FROM_ALL TRUE
-    EXCLUDE_FROM_DEFAULT_BUILD TRUE
   )
 
   # Core definition and link
