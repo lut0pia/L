@@ -18,6 +18,8 @@ namespace L {
 
     inline bool operator==(const GenericHandle& other) const { return _ver_index == other._ver_index; }
     inline bool operator!=(const GenericHandle& other) const { return _ver_index != other._ver_index; }
+    inline bool operator>(const GenericHandle& other) const { return _ver_index > other._ver_index; }
+    inline bool operator<(const GenericHandle& other) const { return _ver_index < other._ver_index; }
 
     inline bool is_valid() const { return pointer() != nullptr; }
 
