@@ -6,7 +6,7 @@
 L_PUSH_NO_WARNINGS
 
 #define STB_PERLIN_IMPLEMENTATION
-#include "stb_perlin.h"
+#include <stb_perlin.h>
 
 L_POP_NO_WARNINGS
 

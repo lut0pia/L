@@ -8,7 +8,7 @@
 
 L_PUSH_NO_WARNINGS
 
-#include "stb_vorbis.c"
+#include <stb_vorbis.c>
 #undef L // Defined by stb_vorbis.c
 
 L_POP_NO_WARNINGS
