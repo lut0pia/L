@@ -12,6 +12,9 @@ addons:
       - libasound2-dev
       - libxi-dev
 
+install:
+  - if [ $TRAVIS_OS_NAME = windows ]; then choco install vulkan-sdk; fi
+
 git:
   depth: 1
   quiet: true
