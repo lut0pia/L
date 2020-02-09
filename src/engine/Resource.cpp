@@ -1,5 +1,7 @@
 #include "Resource.h"
 
+#include <cstdlib>
+
 #include "../container/Archive.h"
 #include "../container/Array.h"
 #include "../container/Buffer.h"
