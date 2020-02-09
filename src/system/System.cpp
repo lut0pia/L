@@ -1,6 +1,7 @@
 #include "System.h"
 
-#include <stdio.h>
+#include <cstdio>
+#include <cstdlib>
 
 using namespace L;
 using namespace System;
