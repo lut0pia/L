@@ -3,7 +3,7 @@
 # Environment and parameters
 
 mode=${1:-build}
-configuration=${2:-dev} # Configuration is development by default
+config=${2:-dev} # Configuration is development by default
 (uname -s | grep -iqE "mingw|cygwin|msys|windows") && windows=true || windows=false
 
 # Stats action
@@ -22,23 +22,23 @@ fi
 
 # Configuration
 
-case $configuration in
+case $config in
   "dbg")
     exe="Ldbg"
-    configuration=Debug
+    config=Debug
   ;;
   "dev")
     exe="Ldev"
-    configuration=Development
+    config=Development
   ;;
   "rls")
     exe="L"
-    configuration=Release
+    config=Release
   ;;
 esac
 
 mkdir -p bld
-if (cd bld && cmake ..) ; then # Run CMake
+if (cd bld && cmake -DCMAKE_BUILD_TYPE=$config ..) ; then # Run CMake
   if [ $mode = "open" ] ; then
     if $windows; then
       start ./bld/L.sln
@@ -46,7 +46,7 @@ if (cd bld && cmake ..) ; then # Run CMake
     fi
   fi
 
-  cmake --build bld --config $configuration
+  cmake --build bld --config $config
 
   success=$?
 
