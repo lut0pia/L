@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <L/src/container/Buffer.h>
 #include <L/src/engine/Resource.inl>
 #include <L/src/script/script.h>
