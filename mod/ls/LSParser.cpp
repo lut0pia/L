@@ -1,5 +1,6 @@
 #include "LSParser.h"
 
+#include <cstdlib>
 #include "ls.h"
 
 using namespace L;
