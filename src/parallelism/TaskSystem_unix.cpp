@@ -3,6 +3,7 @@
 #include "../system/Memory.h"
 #include "../system/System.h"
 
+#include <cstdlib>
 #include <pthread.h>
 #include <ucontext.h>
 
