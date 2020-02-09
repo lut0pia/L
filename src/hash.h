@@ -1,6 +1,7 @@
 #pragma once
 
-#include <cstdint> 
+#include <cstddef>
+#include <cstdint>
 
 namespace L {
   inline uint32_t fnv1a(const char* str) {
