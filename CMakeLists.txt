@@ -123,11 +123,8 @@ function(add_module NAME)
   set(SINGLEARGS CONDITION)
   set(MULTIARGS
     SOURCES
-    LINK_DIRS
-    INCLUDE_DIRS
-    LIBRARIES
-    DBG_LIBRARIES
-    RLS_LIBRARIES
+    LINK_DIRS INCLUDE_DIRS SYSTEM_INCLUDE_DIRS
+    LIBRARIES DBG_LIBRARIES RLS_LIBRARIES
     DEPENDENCIES
   )
   cmake_parse_arguments(M "${OPTARGS}" "${SINGLEARGS}" "${MULTIARGS}" ${ARGN})
@@ -147,6 +144,7 @@ function(add_module NAME)
 
   # Module directories
   target_include_directories(mod_${NAME} PRIVATE ${M_INCLUDE_DIRS})
+  target_include_directories(mod_${NAME} SYSTEM PRIVATE ${M_SYSTEM_INCLUDE_DIRS})
 
   # Libraries
   set(MOD_LIB_PATTERN "^(.*/)(.*)$")
