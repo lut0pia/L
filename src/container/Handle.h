@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <type_traits>
 
 namespace L {
   template<class T> class Handled;
@@ -51,6 +52,10 @@ namespace L {
   public:
     constexpr Handle() : GenericHandle() {}
     inline explicit Handle(GenericHandle gen_handle) : GenericHandle(gen_handle) {}
+    template <class R> inline Handle(const Handle<R>& other) {
+      static_assert(std::is_base_of<T, R>::value, "Cannot convert to a non-base class");
+      _ver_index = other._ver_index;
+    }
 
     inline const T* operator->() const { return (const T*)pointer(); }
     inline T* operator->() { return (T*)pointer(); }
@@ -61,6 +66,7 @@ namespace L {
     inline operator bool() const { return is_valid(); }
 
     friend Handled<T>;
+    template <class R> friend class Handle;
   };
 
   template<class T>
