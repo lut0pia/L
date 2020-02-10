@@ -177,7 +177,9 @@ foreach(MOD_DIR ${MOD_DIRS})
   file(APPEND ${MOD_INIT_GEN_PATH}
     "#if L_USE_MODULE_${MOD_NAME}\n"
     "{\n"
+    "#if L_PROFILING\n"
     "ScopeMarker marker_${MOD_NAME}(\"${MOD_NAME}\");\n"
+    "#endif\n"
     "extern void ${MOD_NAME}_module_init();\n"
     "${MOD_NAME}_module_init();\n"
     "}\n"
