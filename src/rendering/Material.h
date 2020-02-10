@@ -60,7 +60,7 @@ namespace L {
   public:
     typedef Material Intermediate;
     inline Material() : Handled<Material>(this) {}
-    inline Material(const Material& other) : Handled<Material>(this), _partial_state(other._partial_state) {}
+    inline Material(const Material& other) : Handled<Material>(this), _parent(other._parent), _partial_state(other._partial_state) {}
     ~Material();
 
     void update();
