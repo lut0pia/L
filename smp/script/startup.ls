@@ -67,8 +67,8 @@
   (engine_gravity (vec 0 0 -9.8))
   ;(engine_gravity (vec 0 0 0))
   ;(engine_timescale 0.1)
-  (entity_make|.add_script|.load "camera.ls")
-  (entity_make|.add_script|.load "sink.ls")
+  (entity_make|.add_script|.load "script/camera.ls")
+  (entity_make|.add_script|.load "script/sink.ls")
 
   ; Make ambient light
   (local amblight_entity (entity_make))

@@ -4,4 +4,4 @@
 (setting 'resizable_window 1)
 (setting 'render_collider 0)
 (setting 'render_skeletal_animator 0)
-(engine_clear_and_read "proxy.lasm")
+(engine_clear_and_read "script/proxy.lasm")

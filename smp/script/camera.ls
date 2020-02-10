@@ -97,7 +97,7 @@
     'M (if (mozart_source.is_playing)
       (mozart_source.stop)
       (mozart_source.play))
-    'R (engine_clear_and_read "startup.ls")
+    'R (engine_clear_and_read "script/startup.ls")
   ))
 )))
 (set self.shoot (fun (do
