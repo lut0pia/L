@@ -9,6 +9,7 @@
 #include "component/Camera.h"
 #include "component/Collider.h"
 #include "component/GUIComponent.h"
+#include "component/GroupComponent.h"
 #include "component/HierarchyComponent.h"
 #include "component/MidiSourceComponent.h"
 #include "component/NameComponent.h"
@@ -51,6 +52,7 @@ int main(int, const char*[]) {
   Engine::register_component<AudioListenerComponent>();
   Engine::register_component<MidiSourceComponent>();
   Engine::register_component<NameComponent>();
+  Engine::register_component<GroupComponent>();
   Engine::register_component<HierarchyComponent>();
   Engine::register_component<PostProcessComponent>();
   Engine::register_component<Primitive>();
