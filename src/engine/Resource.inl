@@ -62,6 +62,8 @@ namespace L {
           slot.write_archive(compressed_stream.string().begin(), compressed_stream.string().size());
           return true;
         } else {
+          slot.mtime = Date::now();
+          slot.state = ResourceSlot::Unloaded;
           warning("Unable to load resource: %s", slot.id);
         }
         return false;
