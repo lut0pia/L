@@ -9,7 +9,7 @@ namespace L {
   protected:
     Array<Handle<Entity>> _entities;
     Resource<ScriptFunction> _level_script;
-    Date _level_script_time = 0;
+    void* _level_script_value = nullptr;
 
   public:
     ~GroupComponent();
@@ -22,5 +22,7 @@ namespace L {
 
     inline const Array<Handle<Entity>>& entities() const { return _entities; }
     inline void level_script(const char* filepath) { _level_script = filepath; }
+
+    static Handle<Entity> entity_create();
   };
 }
