@@ -61,6 +61,8 @@ static void script_optimize(Script& script) {
     Table<uintptr_t, bool> used_constants;
     for(uintptr_t i(0); i < script.bytecode.size(); i++) {
       if(script.bytecode[i].opcode == LoadConst) {
+        used_constants[script.bytecode[i].bcu16] = true;
+      } else if(script.bytecode[i].opcode == GetItemConst || script.bytecode[i].opcode == SetItemConst) {
         used_constants[script.bytecode[i].bc8.b] = true;
       }
     }

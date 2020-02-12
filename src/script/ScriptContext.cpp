@@ -200,6 +200,8 @@ Var ScriptContext::execute(const Ref<ScriptFunction>& function, const Var* param
         // Optimization opcodes
       case LoadBool: local(ip->a) = (ip->bc8.b != 0); break;
       case LoadInt: local(ip->a) = float(ip->bc16); break;
+      case GetItemConst: get_item(local(ip->a), current_script->constants[ip->bc8.b], local(ip->bc8.c)); break;
+      case SetItemConst: set_item(local(ip->a), current_script->constants[ip->bc8.b], local(ip->bc8.c)); break;
       default:
         error("Unhandled script instruction");
         break;
