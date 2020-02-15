@@ -151,7 +151,7 @@ void ResourceSlot::update() {
     static uintptr_t index(0);
     ResourceSlot& slot(*_slots[index%_slots.size()]);
     if(!slot.persistent // Persistent resources don't hot reload
-      && slot.state == Loaded) { // No reload if it hasn't been loaded in the first place
+      && (slot.state == Loaded || slot.state == Failed)) { // No reload if it hasn't been loaded in the first place
       Date file_mtime;
       if(File::mtime(slot.path, file_mtime) && slot.mtime < file_mtime) {
         slot.state = Unloaded;

@@ -63,7 +63,7 @@ namespace L {
           return true;
         } else {
           slot.mtime = Date::now();
-          slot.state = ResourceSlot::Unloaded;
+          slot.state = ResourceSlot::Failed;
           warning("Unable to load resource: %s", slot.id);
         }
         return false;

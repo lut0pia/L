@@ -17,7 +17,7 @@ namespace L {
     Date mtime;
     bool persistent : 1;
     enum : uint32_t { // 32bits because of atomic operations
-      Unloaded, Loading, Loaded,
+      Unloaded, Loading, Loaded, Failed,
     } state;
     void(*load_function)(ResourceSlot&);
     void* value;
