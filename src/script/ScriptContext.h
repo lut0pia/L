@@ -22,11 +22,11 @@ namespace L {
     Array<Frame> _frames;
     Array<Ref<ScriptOuter>> _outers;
     Var _self;
-    uintptr_t _current_stack_start;
-    uint32_t _current_param_count;
+    uintptr_t _current_stack_start = 0;
+    uint32_t _current_param_count = 0;
 
   public:
-    ScriptContext(const Var& self = ref<Table<Var, Var>>());
+    inline ScriptContext(const Var& self = ref<Table<Var, Var>>()) : _self(self) {}
 
     inline Var& local(uintptr_t i) { return _stack[i+_current_stack_start]; }
     inline Var& return_value() { return local(0); }

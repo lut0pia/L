@@ -23,8 +23,10 @@ namespace L {
     CaptOuter, // Captures outer b as next outer in function at local a
 
     MakeObject, // Creates an associative array at local a
+    MakeArray, // Creates an array at local a
     GetItem, // Copy item from local a at index local b to local c
     SetItem, // Set item from local a at index local b to local c
+    PushItem, // Push item from local b to array at local a
 
     MakeIterator, // Create an array iterator at local a from object at local b
     Iterate, // Put next key from iterator at local c to local a and next value to local b

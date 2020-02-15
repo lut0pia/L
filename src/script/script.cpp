@@ -41,8 +41,10 @@ void Script::print(Stream& s) {
       case CaptOuter:    s << "CaptOuter:    " << i.a << " := " << i.bc8.b << "\n"; break;
 
       case MakeObject:   s << "MakeObject:   " << i.a << " := {}\n"; break;
+      case MakeArray:    s << "MakeArray:    " << i.a << " := []\n"; break;
       case GetItem:      s << "GetItem:      " << i.bc8.c << " := " << i.a << "[" << i.bc8.b << "]\n"; break;
       case SetItem:      s << "SetItem:      " << i.a << "[" << i.bc8.b << "] := " << i.bc8.c << "\n"; break;
+      case PushItem:     s << "PushItem:     " << i.a << "[] := " << i.bc8.b << "\n"; break;
 
       case MakeIterator: s << "MakeIterator: " << i.a << " := it(" << i.bc8.b << ")\n"; break;
       case Iterate:      s << "Iterate:      (" << i.a << "," << i.bc8.b << ") := iter(" << i.bc8.c << ")\n"; break;

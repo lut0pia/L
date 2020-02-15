@@ -8,10 +8,6 @@ using namespace L;
 
 Table<const TypeDescription*, Var> ScriptContext::_type_tables;
 
-ScriptContext::ScriptContext(const Var& self)
-  : _self(self), _current_stack_start(0), _current_param_count(0) {
-}
-
 struct ObjectIterator {
   Table<Var, Var>::Iterator begin, end;
   // Default ctor necessary for Type
@@ -38,19 +34,49 @@ static Ref<Table<Var, Var>> get_table(const Var& object) {
     && !object.is<ScriptNativeFunction>()
     && !object.is<void>()) {
     table = ScriptContext::type_table(object.type());
-  } else {
-    warning("Trying to index from non-indexable type: %s", object.type()->name);
   }
   return table;
 }
+static Ref<Array<Var>> get_array(const Var& object) {
+  Ref<Array<Var>> arr;
+  if(object.is<Ref<Array<Var>>>()) { // First is a regular table
+    arr = object.as<Ref<Array<Var>>>();
+  }
+  return arr;
+}
 static inline void get_item(const Var& object, const Var& index, Var& res) {
-  if(Ref<Table<Var, Var>> table = get_table(object)) {
+  if(Ref<Array<Var>> arr = get_array(object)) {
+    int int_index = index.get<int>();
+    if(int_index >= 0 && int_index < arr->size()) {
+      res = (*arr)[int_index];
+    } else {
+      warning("Trying to index out-of-bounds");
+    }
+  } else if(Ref<Table<Var, Var>> table = get_table(object)) {
     res = (*table)[index];
+  } else {
+    warning("Trying to index from non-indexable type: %s", object.type()->name);
   }
 }
 static inline void set_item(Var& object, const Var& index, const Var& value) {
-  if(Ref<Table<Var, Var>> table = get_table(object)) {
+  if(Ref<Array<Var>> arr = get_array(object)) {
+    int int_index = index.get<int>();
+    if(int_index >= 0 && int_index < arr->size()) {
+      (*arr)[int_index] = value;
+    } else {
+      warning("Trying to index out-of-bounds");
+    }
+  } else if(Ref<Table<Var, Var>> table = get_table(object)) {
     (*table)[index] = value;
+  } else {
+    warning("Trying to index from non-indexable type: %s", object.type()->name);
+  }
+}
+static inline void push_item(Var& object, const Var& value) {
+  if(Ref<Array<Var>> arr = get_array(object)) {
+    arr->push(value);
+  } else {
+    warning("Trying to push to non-pushable type: %s", object.type()->name);
   }
 }
 bool ScriptContext::try_execute_method(const Symbol& sym, std::initializer_list<Var> parameters) {
@@ -119,8 +145,10 @@ Var ScriptContext::execute(const Ref<ScriptFunction>& function, const Var* param
       case CaptOuter: local(ip->a).as<Ref<ScriptFunction>>()->outers.push(current_function->outers[ip->bc8.b]); break;
 
       case MakeObject: local(ip->a) = ref<Table<Var, Var>>(); break;
+      case MakeArray: local(ip->a) = ref<Array<Var>>(); break;
       case GetItem: get_item(local(ip->a), local(ip->bc8.b), local(ip->bc8.c)); break;
       case SetItem: set_item(local(ip->a), local(ip->bc8.b), local(ip->bc8.c)); break;
+      case PushItem: push_item(local(ip->a), local(ip->bc8.b)); break;
 
       case MakeIterator: local(ip->a) = ObjectIterator(get_table(local(ip->bc8.b))); break;
       case Iterate: local(ip->bc8.c).as<ObjectIterator>().iterate(local(ip->a), local(ip->bc8.b)); break;
