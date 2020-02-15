@@ -181,7 +181,10 @@ bool glsl_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) {
   const bool link_success = program.link(message_flags);
   const bool map_success = program.mapIO();
 
-  L_ASSERT(link_success && map_success);
+  if(!link_success || !map_success) {
+    warning("glslang: %s", program.getInfoLog());
+    return false;
+  }
 
   std::vector<unsigned int> spirv;
   spv::SpvBuildLogger logger;
