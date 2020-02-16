@@ -8,22 +8,41 @@ using namespace L;
 
 Table<const TypeDescription*, Var> ScriptContext::_type_tables;
 
-struct ObjectIterator {
-  Table<Var, Var>::Iterator begin, end;
-  // Default ctor necessary for Type
-  inline ObjectIterator() : begin(nullptr), end(nullptr) {}
-  inline ObjectIterator(const Ref<Table<Var, Var>>& table)
-    : begin(table ? table->begin() : nullptr), end(table ? table->end() : nullptr) {
+class TableIterator {
+private:
+  Ref<Table<Var, Var>> _table;
+  Table<Var, Var>::Iterator _begin, _end;
+public:
+  inline TableIterator() : _begin(nullptr), _end(nullptr) {}
+  inline TableIterator(const Ref<Table<Var, Var>>& table)
+    : _table(table), _begin(table->begin()), _end(table->end()) {
   }
   inline void iterate(Var& key, Var& value) {
-    const Table<Var, Var>::Slot& slot(*begin);
+    const Table<Var, Var>::Slot& slot(*_begin);
     key = slot.key();
     value = slot.value();
-    ++begin;
+    ++_begin;
   }
-  inline bool has_ended() {
-    return !(begin != end);
+  inline bool has_ended() { return !(_begin != _end); }
+};
+
+class ArrayIterator {
+private:
+  Ref<Array<Var>> _array;
+  Var* _begin;
+  Var* _cur;
+  Var* _end;
+public:
+  inline ArrayIterator() : _begin(nullptr), _cur(nullptr), _end(nullptr) {}
+  inline ArrayIterator(const Ref<Array<Var>>& array)
+    : _array(array), _begin(array->begin()), _cur(_begin), _end(array->end()) {
   }
+  inline void iterate(Var& key, Var& value) {
+    key = float(_cur - _begin);
+    value = *_cur;
+    ++_cur;
+  }
+  inline bool has_ended() const { return _cur == _end; }
 };
 
 static Ref<Table<Var, Var>> get_table(const Var& object) {
@@ -43,6 +62,34 @@ static Ref<Array<Var>> get_array(const Var& object) {
     arr = object.as<Ref<Array<Var>>>();
   }
   return arr;
+}
+static Var make_iterator(const Var& object) {
+  if(Ref<Array<Var>> arr = get_array(object)) {
+    return ArrayIterator(arr);
+  } else if(Ref<Table<Var, Var>> table = get_table(object)) {
+    return TableIterator(table);
+  } else {
+    warning("Trying to create iterator for non-iterable type: %s", object.type()->name);
+    return Var();
+  }
+}
+static void iterate(Var& object, Var& key, Var& value) {
+  if(TableIterator* table_iterator = object.try_as<TableIterator>()) {
+    table_iterator->iterate(key, value);
+  } else if(ArrayIterator* array_iterator = object.try_as<ArrayIterator>()) {
+    array_iterator->iterate(key, value);
+  } else {
+    warning("Trying to iterate non-iterator type: %s", object.type()->name);
+  }
+}
+static bool iterator_has_ended(Var& object) {
+  if(TableIterator* table_iterator = object.try_as<TableIterator>()) {
+    return table_iterator->has_ended();
+  } else if(ArrayIterator* array_iterator = object.try_as<ArrayIterator>()) {
+    return array_iterator->has_ended();
+  } else {
+    return true;
+  }
 }
 static inline void get_item(const Var& object, const Var& index, Var& res) {
   if(Ref<Array<Var>> arr = get_array(object)) {
@@ -150,9 +197,9 @@ Var ScriptContext::execute(const Ref<ScriptFunction>& function, const Var* param
       case SetItem: set_item(local(ip->a), local(ip->bc8.b), local(ip->bc8.c)); break;
       case PushItem: push_item(local(ip->a), local(ip->bc8.b)); break;
 
-      case MakeIterator: local(ip->a) = ObjectIterator(get_table(local(ip->bc8.b))); break;
-      case Iterate: local(ip->bc8.c).as<ObjectIterator>().iterate(local(ip->a), local(ip->bc8.b)); break;
-      case IterEndJump: if(local(ip->a).as<ObjectIterator>().has_ended()) ip += intptr_t(ip->bc16); break;
+      case MakeIterator: local(ip->a) = make_iterator(local(ip->bc8.b)); break;
+      case Iterate: iterate(local(ip->bc8.c), local(ip->a), local(ip->bc8.b)); break;
+      case IterEndJump: if(iterator_has_ended(local(ip->a))) ip += intptr_t(ip->bc16); break;
 
       case Jump: ip += intptr_t(ip->bc16); break;
       case CondJump: if(local(ip->a).get<bool>()) ip += intptr_t(ip->bc16); break;
