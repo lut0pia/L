@@ -5,7 +5,7 @@
 
 using namespace L;
 
-static const Symbol object_symbol("object"), do_symbol("do");
+static const Symbol object_symbol("{object}"), array_symbol("[array]"), do_symbol("do");
 
 static bool valid_symbol(const char* token) {
   while(*token) {
@@ -29,9 +29,21 @@ bool LSParser::read(const char* context, const char* text, size_t size) {
       _stack.top()->make<Array<Var>>();
     } else if(_lexer.is_token("{")) {
       _stack.top()->make<Array<Var>>().push(object_symbol);
-    } else if(_lexer.is_token(")") || _lexer.is_token("}")) {
+    } else if(_lexer.is_token("[")) {
+      _stack.top()->make<Array<Var>>().push(array_symbol);
+    } else if(_lexer.is_token(")") || _lexer.is_token("}") || _lexer.is_token("]")) {
       if(_stack.size() <= 2) {
         warning("ls: %s:%d: Unexpected token '%s'", context, _lexer.line(), _lexer.token());
+        return false;
+      }
+      const char* expected_token = ")";
+      if(top_array[0] == object_symbol) {
+        expected_token = "}";
+      } else if(top_array[0] == array_symbol) {
+        expected_token = "]";
+      } 
+      if(!_lexer.is_token(expected_token)) {
+        warning("ls: %s:%d: Unexpected token '%s', was expecting '%s'", context, _lexer.line(), _lexer.token(), expected_token);
         return false;
       }
       top_array.pop();

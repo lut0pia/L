@@ -5,7 +5,7 @@
 
 using namespace L;
 
-static const Symbol local_symbol("local"), set_symbol("set"), object_symbol("object"),
+static const Symbol local_symbol("local"), set_symbol("set"), object_symbol("{object}"), array_symbol("[array]"),
 fun_symbol("fun"), foreach_symbol("foreach"), do_symbol("do"), if_symbol("if"), self_symbol("self"),
 switch_symbol("switch"), while_symbol("while"), and_symbol("and"), or_symbol("or"), not_symbol("not"),
 add_symbol("+"), sub_symbol("-"), mul_symbol("*"), div_symbol("/"), mod_symbol("%"),
@@ -120,10 +120,16 @@ bool LSCompiler::compile(Function& func, const Var& v, uint8_t offset) {
         }
       } else if(sym == object_symbol) {
         func.bytecode.push(ScriptInstruction {MakeObject, offset});
-        for(uint32_t i(1); i < array.size(); i += 2) {
+        for(uintptr_t i = 1; i < array.size(); i += 2) {
           compile(func, array[i], offset + 1); // Key
           compile(func, array[i + 1], offset + 2); // Value
           func.bytecode.push(ScriptInstruction {SetItem, offset, uint8_t(offset + 1), uint8_t(offset + 2)});
+        }
+      } else if(sym == array_symbol) {
+        func.bytecode.push(ScriptInstruction {MakeArray, offset});
+        for(uintptr_t i = 1; i < array.size(); i++) {
+          compile(func, array[i], offset + 1); // Value
+          func.bytecode.push(ScriptInstruction {PushItem, offset, uint8_t(offset + 1)});
         }
       } else if(sym == if_symbol) { // If
         for(uintptr_t i(1); i < array.size() - 1; i += 2) {
