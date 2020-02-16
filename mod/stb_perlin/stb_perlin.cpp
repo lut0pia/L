@@ -1,4 +1,3 @@
-#include <L/src/constants.h>
 #include <L/src/engine/Resource.inl>
 #include <L/src/math/Rand.h>
 #include <L/src/rendering/Texture.h>

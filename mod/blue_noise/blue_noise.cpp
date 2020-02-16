@@ -1,4 +1,3 @@
-#include <L/src/constants.h>
 #include <L/src/engine/Resource.inl>
 #include <L/src/math/Rand.h>
 #include <L/src/rendering/Texture.h>
@@ -6,6 +5,8 @@
 using namespace L;
 
 static const Symbol blue_noise_symbol("blue_noise");
+static const float pi = 3.14159265358979323846f;
+static const float e = 2.71828182845904523536f;
 
 struct Cell {
   uint32_t i : 1, b : 1, rank : (sizeof(float)*8-2);
@@ -16,10 +17,10 @@ static float k_pixel_dist(1.5f);
 static float* gaussian_kernel() {
   static float kernel[k_width][k_height];
   const float o2(2.f*k_pixel_dist*k_pixel_dist);
-  const float lin(1.f/(PI<float>()*o2));
+  const float lin(1.f/(pi*o2));
   for(int32_t i(0); i<k_width; i++)
     for(int32_t j(0); j<k_height; j++)
-      kernel[i][j] = lin*pow(E<float>(), -(sqr(i-k_width_h)+sqr(j-k_height_h))/o2);
+      kernel[i][j] = lin*pow(e, -(sqr(i-k_width_h)+sqr(j-k_height_h))/o2);
   return &kernel[0][0];
 }
 static float* kernel(gaussian_kernel());

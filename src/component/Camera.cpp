@@ -1,6 +1,5 @@
 #include "Camera.h"
 
-#include "../constants.h"
 #include "../engine/Resource.inl"
 #include "../rendering/Material.h"
 #include "../system/Window.h"
@@ -126,13 +125,14 @@ void Camera::pixels() {
   ortho(0.f, (float)Window::width(), (float)Window::height(), 0.f);
 }
 void Camera::update_projection() {
+  static const float pi = 3.14159265358979323846f;
   switch(_projectionType) {
     case L::Camera::Perspective:
     {
       _projection = Matrix44f(1.f);
       const Vector2f viewportSize(_viewport.size());
       const float aspect((viewportSize.x()*Window::width())/(viewportSize.y()*Window::height())),
-        top(_near*tan(_fovy*(PI<float>()/360.f))),
+        top(_near*tan(_fovy*(pi / 360.f))),
         right(top*aspect);
       _projection(0, 0) = _near/right;
       _projection(1, 1) = -_near/top;
