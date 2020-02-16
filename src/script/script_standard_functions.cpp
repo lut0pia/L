@@ -110,11 +110,15 @@ L_SCRIPT_NATIVE("left_pad",[](ScriptContext& c) {
     str = append + str;
   }
 });
-L_SCRIPT_NATIVE("count",[](ScriptContext& c) {
-  L_ASSERT(c.param_count()==1);
-  if(c.param(0).is<Ref<Table<Var, Var>>>())
-    c.return_value() = float(c.param(0).as<Ref<Table<Var, Var>>>()->count());
-  else c.return_value() = 0;
+L_SCRIPT_NATIVE("count", [](ScriptContext& c) {
+  L_ASSERT(c.param_count() == 1);
+  if(Ref<Table<Var, Var>>* table = c.param(0).try_as<Ref<Table<Var, Var>>>()) {
+    c.return_value() = float((*table)->count());
+  } else if(Ref<Array<Var>>* array = c.param(0).try_as<Ref<Array<Var>>>()) {
+    c.return_value() = float((*array)->size());
+  } else {
+    c.return_value() = 0;
+  }
 });
 
 template<class T>
