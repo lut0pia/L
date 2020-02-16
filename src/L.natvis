@@ -110,13 +110,6 @@
   </Type>
 
   <Type Name="L::Table&lt;*,*&gt;::Slot">
-    <DisplayString>{*(Layout*)&amp;_data}</DisplayString>
-    <Expand>
-      <ExpandedItem>*(Layout*)&amp;_data</ExpandedItem>
-    </Expand>
-  </Type>
-
-  <Type Name="L::Table&lt;*,*&gt;::Slot::Layout">
     <DisplayString Condition="_hash!=0">{_key}: {_value}</DisplayString>
     <DisplayString Condition="_hash==0">Empty slot</DisplayString>
   </Type>
