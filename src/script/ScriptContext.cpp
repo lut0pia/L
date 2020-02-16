@@ -47,7 +47,7 @@ static Ref<Array<Var>> get_array(const Var& object) {
 static inline void get_item(const Var& object, const Var& index, Var& res) {
   if(Ref<Array<Var>> arr = get_array(object)) {
     int int_index = index.get<int>();
-    if(int_index >= 0 && int_index < arr->size()) {
+    if(int_index >= 0 && size_t(int_index) < arr->size()) {
       res = (*arr)[int_index];
     } else {
       warning("Trying to index out-of-bounds");
@@ -61,7 +61,7 @@ static inline void get_item(const Var& object, const Var& index, Var& res) {
 static inline void set_item(Var& object, const Var& index, const Var& value) {
   if(Ref<Array<Var>> arr = get_array(object)) {
     int int_index = index.get<int>();
-    if(int_index >= 0 && int_index < arr->size()) {
+    if(int_index >= 0 && size_t(int_index) < arr->size()) {
       (*arr)[int_index] = value;
     } else {
       warning("Trying to index out-of-bounds");
