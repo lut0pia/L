@@ -27,6 +27,27 @@ bool L::line_line_intersect(const Vector3f& p1, const Vector3f& p2,
   *b = p3 + p43*mub;
   return true;
 }
+bool L::ray_sphere_intersect(const Vector3f& c, float r, const Vector3f& o, const Vector3f& d, float& t) {
+  const float radiusSqr(sqr(r));
+  const Vector3f oc(o - c);
+  const float ddotoc(d.dot(oc));
+  const float delta(ddotoc*ddotoc-oc.lengthSquared()+radiusSqr);
+  t = -ddotoc-sqrt(delta);
+  return t>=0;
+}
+bool L::ray_box_intersect(const Interval3f& b, const Vector3f& o, const Vector3f&, float& t, const Vector3f& id) {
+  const float xmin = (b.min().x() - o.x())*id.x();
+  const float xmax = (b.max().x() - o.x())*id.x();
+  const float ymin = (b.min().y() - o.y())*id.y();
+  const float ymax = (b.max().y() - o.y())*id.y();
+  const float zmin = (b.min().z() - o.z())*id.z();
+  const float zmax = (b.max().z() - o.z())*id.z();
+  const float tmin = max(max(min(xmin, xmax), min(ymin, ymax)), min(zmin, zmax));
+  const float tmax = min(min(max(xmin, xmax), max(ymin, ymax)), max(zmin, zmax));
+  t = max(0.f, tmin);
+  return (tmin<tmax && tmax>0.f);
+}
+
 Matrix44f L::sqt_to_mat(const Quatf& q, const Vector3f& t, float s) {
   Matrix44f wtr;
   const float& x(q.x());
@@ -74,50 +95,6 @@ Matrix33f L::quat_to_mat(const Quatf& q) {
   wtr(2, 2) = 1.f - 2.f*x2 - 2.f*y2;
   return wtr;
 }
-Quatf L::mat_to_quat(const Matrix44f& m) {
-  Quatf q;
-  float t;
-  if(m(2, 2) < 0) {
-    if(m(0, 0) > m(1, 1)) {
-      t = 1.f + m(0, 0) - m(1, 1) - m(2, 2);
-      q = Quatf(t, m(0, 1) + m(1, 0), m(2, 0) + m(0, 2), m(1, 2) - m(2, 1));
-    } else {
-      t = 1.f - m(0, 0) + m(1, 1) - m(2, 2);
-      q = Quatf(m(0, 1) + m(1, 0), t, m(1, 2) + m(2, 1), m(2, 0) - m(0, 2));
-    }
-  } else {
-    if(m(0, 0) < -m(1, 1)) {
-      t = 1.f - m(0, 0) - m(1, 1) + m(2, 2);
-      q = Quatf(m(2, 0) + m(0, 2), m(1, 2) + m(2, 1), t, m(0, 1) - m(1, 0));
-    } else {
-      t = 1.f + m(0, 0) + m(1, 1) + m(2, 2);
-      q = Quatf(m(1, 2) - m(2, 1), m(2, 0) - m(0, 2), m(0, 1) - m(1, 0), t);
-    }
-  }
-  q *= 0.5f / sqrtf(t);
-  return q;
-}
-bool L::ray_sphere_intersect(const Vector3f& c, float r, const Vector3f& o, const Vector3f& d, float& t) {
-  const float radiusSqr(sqr(r));
-  const Vector3f oc(o - c);
-  const float ddotoc(d.dot(oc));
-  const float delta(ddotoc*ddotoc-oc.lengthSquared()+radiusSqr);
-  t = -ddotoc-sqrt(delta);
-  return t>=0;
-}
-bool L::ray_box_intersect(const Interval3f& b, const Vector3f& o, const Vector3f&, float& t, const Vector3f& id) {
-  const float xmin = (b.min().x() - o.x())*id.x();
-  const float xmax = (b.max().x() - o.x())*id.x();
-  const float ymin = (b.min().y() - o.y())*id.y();
-  const float ymax = (b.max().y() - o.y())*id.y();
-  const float zmin = (b.min().z() - o.z())*id.z();
-  const float zmax = (b.max().z() - o.z())*id.z();
-  const float tmin = max(max(min(xmin, xmax), min(ymin, ymax)), min(zmin, zmax));
-  const float tmax = min(min(max(xmin, xmax), max(ymin, ymax)), max(zmin, zmax));
-  t = max(0.f, tmin);
-  return (tmin<tmax && tmax>0.f);
-}
-
 Matrix44f L::rotation_matrix(const Vector3f& axis, float angle) {
   Matrix44f wtr(1.f);
   if(abs(angle) < 0.000001f)
@@ -166,4 +143,46 @@ Matrix44f L::scale_matrix(const Vector3f& axes) {
   for(int i(0); i<3; i++)
     wtr(i, i) = axes[i];
   return wtr;
+}
+
+Quatf L::mat_to_quat(const Matrix44f& m) {
+  Quatf q;
+  float t;
+  if(m(2, 2) < 0) {
+    if(m(0, 0) > m(1, 1)) {
+      t = 1.f + m(0, 0) - m(1, 1) - m(2, 2);
+      q = Quatf(t, m(0, 1) + m(1, 0), m(2, 0) + m(0, 2), m(1, 2) - m(2, 1));
+    } else {
+      t = 1.f - m(0, 0) + m(1, 1) - m(2, 2);
+      q = Quatf(m(0, 1) + m(1, 0), t, m(1, 2) + m(2, 1), m(2, 0) - m(0, 2));
+    }
+  } else {
+    if(m(0, 0) < -m(1, 1)) {
+      t = 1.f - m(0, 0) - m(1, 1) + m(2, 2);
+      q = Quatf(m(2, 0) + m(0, 2), m(1, 2) + m(2, 1), t, m(0, 1) - m(1, 0));
+    } else {
+      t = 1.f + m(0, 0) + m(1, 1) + m(2, 2);
+      q = Quatf(m(1, 2) - m(2, 1), m(2, 0) - m(0, 2), m(0, 1) - m(1, 0), t);
+    }
+  }
+  q *= 0.5f / sqrtf(t);
+  return q;
+}
+Quatf L::euler_radians(float x, float y, float z) {
+  const float cy = cos(z * 0.5f);
+  const float sy = sin(z * 0.5f);
+  const float cp = cos(y * 0.5f);
+  const float sp = sin(y * 0.5f);
+  const float cr = cos(x * 0.5f);
+  const float sr = sin(x * 0.5f);
+
+  return Quatf(
+    cy * cp * sr - sy * sp * cr,
+    sy * cp * sr + cy * sp * cr,
+    sy * cp * cr - cy * sp * sr,
+    cy * cp * cr + sy * sp * sr);
+}
+Quatf L::euler_degrees(float x, float y, float z) {
+  static const float deg_to_rad = 3.14159265358979323846f / 180.f;
+  return euler_radians(x * deg_to_rad, y * deg_to_rad, z * deg_to_rad);
 }

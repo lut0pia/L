@@ -67,8 +67,8 @@
   ; Execute input
   (transform.move (vec (* axis_x movement) 0 0))
   (transform.move (vec 0 (* axis_y movement) 0))
-  (transform.rotate (vec 0 0 1) (* axis_rot_x rotation))
-  (transform.rotate (vec 1 0 0) (* axis_rot_y rotation))
+  (transform.rotate (euler_radians 0 0 (* axis_rot_x rotation)))
+  (transform.rotate (euler_radians (* axis_rot_y rotation) 0 0))
   (if should_shoot (self.shoot))
 
   ; Cursor placing

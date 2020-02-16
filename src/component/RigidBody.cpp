@@ -103,11 +103,12 @@ void RigidBody::sub_update() {
     const Vector3f old_velocity(_velocity), oldRotation(_rotation);
     _velocity += (_inv_mass*_force)*delta;
     _rotation += (_inv_inertia_tensor_world*_torque)*delta;
-    _transform->move_absolute((_velocity+old_velocity)*(delta*.5f));
-    const Vector3f rotation_avg((_rotation+oldRotation)*.5f);
+    _transform->move_absolute((_velocity + old_velocity)*(delta*.5f));
+    const Vector3f rotation_avg((_rotation + oldRotation)*.5f);
     const float rotation_length(rotation_avg.length());
-    if(rotation_length>.0f)
-      _transform->rotate_absolute(rotation_avg*(1.f/rotation_length), rotation_length*delta);
+    if(rotation_length > .0f) {
+      _transform->rotate_absolute(Quatf(rotation_avg*(1.f / rotation_length), rotation_length*delta));
+    }
   }
 }
 

@@ -4,6 +4,7 @@
 #include "../engine/Resource.h"
 #include "../engine/Resource.inl"
 #include "../macros.h"
+#include "../math/geometry.h"
 #include "../math/Rand.h"
 #include "../rendering/Color.h"
 #include "../stream/CFileStream.h"
@@ -43,6 +44,9 @@ L_SCRIPT_NATIVE_RETURN("tan", 1, tanf(c.param(0)));
 L_SCRIPT_NATIVE_RETURN("abs", 1, abs(c.param(0).get<float>()));
 L_SCRIPT_NATIVE_RETURN("floor", 1, floorf(c.param(0)));
 L_SCRIPT_NATIVE_RETURN("ceil", 1, ceilf(c.param(0)));
+
+L_SCRIPT_NATIVE_RETURN("euler_degrees", 3, euler_degrees(c.param(0), c.param(1), c.param(2)));
+L_SCRIPT_NATIVE_RETURN("euler_radians", 3, euler_radians(c.param(0), c.param(1), c.param(2)));
 
 L_SCRIPT_NATIVE("max",[](ScriptContext& c) {
   L_ASSERT(c.param_count()>=1);

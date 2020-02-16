@@ -8,7 +8,7 @@
       (rand_range -8 8)
       (rand_range -8 8)
       (rand_range 2 8)))
-  (transform.rotate (vec 0 1 0) (* (- (rand) 0.5) 5))
+  (transform.rotate (euler_radians 0 (* (- (rand) 0.5) 5) 0))
   ; Add rigid body
   (entity.require_rigidbody|.add_velocity (vec (rand_range -2 2) (rand_range -2 2) (rand_range 1 2)))
   ; Add collider
@@ -73,7 +73,7 @@
 
 ; Make directional light
 (local dirlight_entity (group_entity_create))
-(dirlight_entity.require_transform|.rotate (vec -1 0 1) 1)
+(dirlight_entity.require_transform|.rotate (euler_degrees -40 0 90))
 (dirlight_entity.require_primitive|.material|.parent "material/dirlight.ls")
 (dirlight_entity.require_primitive|.scale 99999)
 (dirlight_entity.require_primitive|.material|.scalar 'intensity 2)
@@ -97,11 +97,11 @@
 
 (make_mesh "material/DamagedHelmet.glb" (vec 20 0 10))
 (last_mesh.require_primitive|.scale 10)
-(last_mesh.require_transform|.rotate_absolute (vec 0 0 1) 3.14)
+(last_mesh.require_transform|.rotate_absolute (euler_degrees 0 0 180))
 
 (local sprite (group_entity_create))
 (sprite.require_transform|.move (vec -9.4 0 5))
-(sprite.require_transform|.rotate (vec 0 0 1) 1.57)
+(sprite.require_transform|.rotate (euler_degrees 0 0 90))
 (sprite.require_primitive|.material|.parent "material/sprite.ls")
 (sprite.require_primitive|.material|.texture 'tex "texture/bush.png?comp=bc3")
 (sprite.require_primitive|.scale (vec 5))
