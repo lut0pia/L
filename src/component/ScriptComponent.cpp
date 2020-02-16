@@ -97,16 +97,13 @@ void ScriptComponent::script_registration() {
   // Script ///////////////////////////////////////////////////////////////////
   L_COMPONENT_BIND(ScriptComponent, "script");
   L_SCRIPT_METHOD(ScriptComponent, "load", 1, load(c.param(0).get<String>()));
-  L_SCRIPT_RETURN_METHOD(ScriptComponent, "call", 1, call(c.param(0), &c.param(1), c.param_count() - 1));
+  L_SCRIPT_RETURN_METHOD(ScriptComponent, "object", 0, _context.self());
 }
 
 void ScriptComponent::load(const char* filename) {
   _script = filename;
   _script.flush();
   start();
-}
-Var ScriptComponent::call(const Ref<ScriptFunction>& function, const Var* params, size_t param_count) {
-  return _context.execute(function, params, param_count);
 }
 void ScriptComponent::start() {
   L_ASSERT(_script);

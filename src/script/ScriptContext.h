@@ -33,6 +33,7 @@ namespace L {
     inline Var& current_self() { return local(1); }
     inline Var& param(uintptr_t i) { return local(i+2); } // Parameters start after return value and self
 
+    inline Var& self() { return _self; }
     inline Table<Var, Var>& self_table() { return *_self.as<Ref<Table<Var, Var>>>(); }
     inline uint32_t local_count() const { return uint32_t(_stack.size()-_current_stack_start); }
     inline uint32_t param_count() const { return _current_param_count; }
