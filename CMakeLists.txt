@@ -17,10 +17,10 @@ project(L)
 
 # Configuration types
 
-set(CMAKE_CONFIGURATION_TYPES "Debug;Development;Release" CACHE STRING "Configs" FORCE)
+set(CMAKE_CONFIGURATION_TYPES "Debug;Development;Release" CACHE INTERNAL "Configs" FORCE)
 set(DEV_DBG $<NOT:$<CONFIG:Release>>)
 add_compile_definitions($<${DEV_DBG}:L_DEBUG>)
-set(CMAKE_EXE_LINKER_FLAGS_DEVELOPMENT ${CMAKE_EXE_LINKER_FLAGS_DEBUG} CACHE STRING "Configs")
+set(CMAKE_EXE_LINKER_FLAGS_DEVELOPMENT ${CMAKE_EXE_LINKER_FLAGS_DEBUG} CACHE INTERNAL "Configs")
 
 # Compiler options
 
