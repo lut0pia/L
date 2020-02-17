@@ -186,9 +186,18 @@ bool LSCompiler::compile(Function& func, const Var& v, uint8_t offset) {
         // This is where we jump if the condition hasn't been met before
         func.bytecode[if_not_jump].bc16 = int16_t(func.bytecode.size() - if_not_jump) - 1;
       } else if(sym == foreach_symbol) {
-        L_ASSERT(array.size() == 5);
+        if(array.size() < 4) {
+          warning("ls: %s:%d: foreach is missing parameters: (foreach [key] value iterable statement)", _context.begin(), 0);
+          return false;
+        }
+
+        const Var& key = array.size() == 4 ? array[1] : array[1];
+        const Var& value = array.size() == 4 ? array[1] : array[2];
+        const Var& iterable = array.size() == 4 ? array[2] : array[3];
+        const Var& statement = array.size() == 4 ? array[3] : array[4];
+
         // Compute object at offset
-        compile(func, array[3], offset);
+        compile(func, iterable, offset);
         func.bytecode.push(ScriptInstruction {MakeIterator, uint8_t(offset + 1), offset});
 
         // If the iteration has ended, jump after the loop
@@ -196,12 +205,12 @@ bool LSCompiler::compile(Function& func, const Var& v, uint8_t offset) {
         const uintptr_t end_jump(func.bytecode.size() - 1);
 
         // Get next key/value pair
-        const uint8_t key_local(*func.local_table.find(array[1].as<Symbol>()));
-        const uint8_t value_local(*func.local_table.find(array[2].as<Symbol>()));
+        const uint8_t key_local(*func.local_table.find(key.as<Symbol>()));
+        const uint8_t value_local(*func.local_table.find(value.as<Symbol>()));
         func.bytecode.push(ScriptInstruction {Iterate, key_local, value_local, uint8_t(offset + 1)});
 
         // Execute loop body
-        compile(func, array[4], offset + 2);
+        compile(func, statement, offset + 2);
 
         // Jump back to beginning of loop
         func.bytecode.push(ScriptInstruction {Jump});
