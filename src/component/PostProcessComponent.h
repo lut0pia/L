@@ -15,6 +15,6 @@ namespace L {
 
     void render(const Camera& camera, const RenderPass& render_pass);
 
-    inline Material* material() { return &_material; }
+    inline Material& material() { return _material; }
   };
 }

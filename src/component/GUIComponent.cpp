@@ -23,7 +23,7 @@ void GUIComponent::unpack(const Map<Symbol, Var>& data) {
 }
 void GUIComponent::script_registration() {
   L_COMPONENT_BIND(GUIComponent, "gui");
-  L_SCRIPT_RETURN_METHOD(GUIComponent, "material", 0, material());
+  L_SCRIPT_RETURN_METHOD(GUIComponent, "material", 0, material().handle());
   L_SCRIPT_METHOD(GUIComponent, "offset", 2, offset(Vector2i(c.param(0).get<int>(), c.param(1).get<int>())));
   L_SCRIPT_METHOD(GUIComponent, "viewport_anchor", 2, viewport_anchor(Vector2f(c.param(0).get<float>(), c.param(1).get<float>())));
   L_SCRIPT_METHOD(GUIComponent, "anchor", 2, anchor(Vector2f(c.param(0).get<float>(), c.param(1).get<float>())));

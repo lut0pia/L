@@ -3,15 +3,12 @@
 #include "ScriptContext.h"
 
 #define L_SCRIPT_METHOD_INTERNAL(PREFIX, TYPE, NAME, NARGS, ...) \
-  ScriptContext::type_value(Type<TYPE*>::description(), Symbol(NAME)) = \
   ScriptContext::type_value(Type<Handle<TYPE>>::description(), Symbol(NAME)) = \
   (ScriptNativeFunction)([](ScriptContext& c) { \
     if(c.param_count() < NARGS) { \
       warning("Too few arguments in method call '%s.%s'", #TYPE, NAME); \
     } \
-    if(TYPE** ptr = c.current_self().try_as<TYPE*>()) { \
-      PREFIX (*ptr)->__VA_ARGS__; \
-    } else if(Handle<TYPE>* handle = c.current_self().try_as<Handle<TYPE>>()) { \
+    if(Handle<TYPE>* handle = c.current_self().try_as<Handle<TYPE>>()) { \
       if(handle->is_valid()) { \
         PREFIX (*handle)->__VA_ARGS__; \
       } else { \

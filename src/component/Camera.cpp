@@ -52,7 +52,7 @@ void Camera::unpack(const Map<Symbol, Var>& data) {
 }
 void Camera::script_registration() {
   L_COMPONENT_BIND(Camera, "camera");
-  L_SCRIPT_RETURN_METHOD(Camera, "present_material", 0, present_material());
+  L_SCRIPT_RETURN_METHOD(Camera, "present_material", 0, present_material().handle());
   L_SCRIPT_METHOD(Camera, "perspective", 3, perspective(c.param(0), c.param(1), c.param(2)));
   L_SCRIPT_METHOD(Camera, "ortho", 4, ortho(c.param(0), c.param(1), c.param(2), c.param(3)));
   L_SCRIPT_METHOD(Camera, "viewport", 4, viewport(Interval2f(Vector2f(c.param(0).get<float>(), c.param(1).get<float>()), Vector2f(c.param(2).get<float>(), c.param(3).get<float>()))));

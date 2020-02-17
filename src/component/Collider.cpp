@@ -54,7 +54,8 @@ void Collider::script_registration() {
     if(c.param_count()==2 && c.param(0).is<Vector3f>() && c.param(1).is<Vector3f>()) {
       auto wtr(ref<Table<Var, Var>>());
       float t;
-      (*wtr)[Symbol("collider")] = Collider::raycast(c.param(0).as<Vector3f>(), c.param(1).as<Vector3f>(), t);
+      Collider* collider = Collider::raycast(c.param(0).as<Vector3f>(), c.param(1).as<Vector3f>(), t);
+      (*wtr)[Symbol("collider")] = collider ? collider->handle() : Handle<Collider>();
       (*wtr)[Symbol("t")] = t;
       (*wtr)[Symbol("position")] = c.param(0).as<Vector3f>()+c.param(1).as<Vector3f>()*t;
       c.return_value() = wtr;
@@ -130,12 +131,12 @@ void Collider::custom_sub_update_all() {
           (*e)[Symbol("point")] = collision.point;
           (*e)[Symbol("overlap")] = collision.overlap;
           if(a->_script) {
-            (*e)[Symbol("other")] = b;
+            (*e)[Symbol("other")] = b->handle();
             (*e)[Symbol("normal")] = collision.normal;
             a->_script->event(e);
           }
           if(b->_script) {
-            (*e)[Symbol("other")] = a;
+            (*e)[Symbol("other")] = a->handle();
             (*e)[Symbol("normal")] = -collision.normal;
             b->_script->event(e);
           }

@@ -22,7 +22,7 @@ namespace L {
 
     void gui(const Camera&);
 
-    inline Material* material() { return &_material; }
+    inline Material& material() { return _material; }
     inline void offset(const Vector2i& offset) { _offset = offset; }
     inline void viewport_anchor(const Vector2f& viewport_anchor) { _viewport_anchor = viewport_anchor; }
     inline void anchor(const Vector2f& anchor) { _anchor = anchor; }
