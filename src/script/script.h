@@ -95,4 +95,6 @@ namespace L {
   inline Stream& operator>=(Stream& s, Script& v) { return s >= v.constants >= v.globals >= v.bytecode; }
   inline Stream& operator<=(Stream& s, const ScriptFunction& v) { return s <= v.script <= v.offset; }
   inline Stream& operator>=(Stream& s, ScriptFunction& v) { return s >= v.script >= v.offset; }
+
+  void init_script_standard_functions();
 }

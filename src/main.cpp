@@ -42,6 +42,7 @@ int main(int, const char*[]) {
 #endif
 
   TypeInit();
+  init_script_standard_functions();
 
   Engine::register_component<Transform>();
   Engine::register_component<Camera>();
