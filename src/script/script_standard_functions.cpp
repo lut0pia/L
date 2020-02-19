@@ -63,21 +63,21 @@ void L::init_script_standard_functions() {
     for(uintptr_t i(1); i < c.param_count(); i++)
       if(c.param(i) > c.return_value())
         c.return_value() = c.param(i);
-    });
+  });
   L_SCRIPT_NATIVE("min", [](ScriptContext& c) {
     L_ASSERT(c.param_count() >= 1);
     c.return_value() = c.param(0);
     for(uintptr_t i(1); i < c.param_count(); i++)
       if(c.param(i) < c.return_value())
         c.return_value() = c.param(i);
-    });
+  });
   L_SCRIPT_NATIVE("print", [](ScriptContext& c) {
     for(uintptr_t i(0); i < c.param_count(); i++)
       out << c.param(i);
-    });
+  });
   L_SCRIPT_NATIVE("break", [](ScriptContext&) {
     debugbreak();
-    });
+  });
   L_SCRIPT_NATIVE("vec", [](ScriptContext& c) {
     const uint32_t param_count(c.param_count());
     Vector3f& vector(c.return_value().make<Vector3f>());
@@ -85,7 +85,7 @@ void L::init_script_standard_functions() {
       for(uint32_t i(0); i < 3; i++)
         vector[i] = c.param(min(param_count - 1, i));
     else vector = 0.f;
-    });
+  });
   L_SCRIPT_NATIVE("vec4", [](ScriptContext& c) {
     const uint32_t param_count(c.param_count());
     Vector4f& vector(c.return_value().make<Vector4f>());
@@ -93,12 +93,12 @@ void L::init_script_standard_functions() {
       for(uint32_t i(0); i < 4; i++)
         vector[i] = c.param(min(param_count - 1, i));
     else vector = 0.f;
-    });
+  });
   L_SCRIPT_NATIVE("lerp", [](ScriptContext& c) {
     L_ASSERT(c.param_count() == 3);
     const float a(c.param(0).get<float>()), b(c.param(1).get<float>()), alpha(c.param(2).get<float>());
     c.return_value() = (a * (1.f - alpha) + b * alpha);
-    });
+  });
   L_SCRIPT_NATIVE("color", [](ScriptContext& c) {
     if(c.param(0).is<String>()) {
       c.return_value() = Color(c.param(0).as<String>());
@@ -108,7 +108,7 @@ void L::init_script_standard_functions() {
       for(uint32_t i(0); i < params; i++)
         color[i] = uint8_t(c.param(i).is<float>() ? (c.param(i).as<float>() * 255) : c.param(i).get<int>());
     }
-    });
+  });
   L_SCRIPT_NATIVE("left_pad", [](ScriptContext& c) {
     L_ASSERT(c.param_count() == 3);
     c.return_value() = c.param(0).get<String>();
@@ -118,7 +118,7 @@ void L::init_script_standard_functions() {
     while(str.size() < wanted_size) {
       str = append + str;
     }
-    });
+  });
   L_SCRIPT_NATIVE("count", [](ScriptContext& c) {
     L_ASSERT(c.param_count() == 1);
     if(Ref<Table<Var, Var>>* table = c.param(0).try_as<Ref<Table<Var, Var>>>()) {
@@ -128,7 +128,7 @@ void L::init_script_standard_functions() {
     } else {
       c.return_value() = 0;
     }
-    });
+  });
 
   L_SCRIPT_NATIVE_ACCESS_METHOD(Vector3f, x);
   L_SCRIPT_NATIVE_ACCESS_METHOD(Vector3f, y);
