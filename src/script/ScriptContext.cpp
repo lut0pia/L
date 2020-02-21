@@ -56,16 +56,9 @@ static Ref<Table<Var, Var>> get_table(const Var& object) {
   }
   return table;
 }
-static Ref<Array<Var>> get_array(const Var& object) {
-  Ref<Array<Var>> arr;
-  if(object.is<Ref<Array<Var>>>()) { // First is a regular table
-    arr = object.as<Ref<Array<Var>>>();
-  }
-  return arr;
-}
 static Var make_iterator(const Var& object) {
-  if(Ref<Array<Var>> arr = get_array(object)) {
-    return ArrayIterator(arr);
+  if(const Ref<Array<Var>>* array = object.try_as<Ref<Array<Var>>>()) {
+    return ArrayIterator(*array);
   } else if(Ref<Table<Var, Var>> table = get_table(object)) {
     return TableIterator(table);
   } else {
@@ -92,10 +85,11 @@ static bool iterator_has_ended(Var& object) {
   }
 }
 static inline void get_item(const Var& object, const Var& index, Var& res) {
-  if(Ref<Array<Var>> arr = get_array(object)) {
-    int int_index = index.get<int>();
-    if(int_index >= 0 && size_t(int_index) < arr->size()) {
-      res = (*arr)[int_index];
+  const Ref<Array<Var>>* array = object.try_as<Ref<Array<Var>>>();
+  if(array && index.is<float>()) {
+    const int int_index = index.get<int>();
+    if(int_index >= 0 && size_t(int_index) < (*array)->size()) {
+      res = (**array)[int_index];
     } else {
       warning("Trying to index out-of-bounds");
     }
@@ -106,10 +100,10 @@ static inline void get_item(const Var& object, const Var& index, Var& res) {
   }
 }
 static inline void set_item(Var& object, const Var& index, const Var& value) {
-  if(Ref<Array<Var>> arr = get_array(object)) {
-    int int_index = index.get<int>();
-    if(int_index >= 0 && size_t(int_index) < arr->size()) {
-      (*arr)[int_index] = value;
+  if(Ref<Array<Var>>* array = object.try_as<Ref<Array<Var>>>()) {
+    const int int_index = index.get<int>();
+    if(int_index >= 0 && size_t(int_index) < (*array)->size()) {
+      (**array)[int_index] = value;
     } else {
       warning("Trying to index out-of-bounds");
     }
@@ -120,8 +114,8 @@ static inline void set_item(Var& object, const Var& index, const Var& value) {
   }
 }
 static inline void push_item(Var& object, const Var& value) {
-  if(Ref<Array<Var>> arr = get_array(object)) {
-    arr->push(value);
+  if(Ref<Array<Var>>* array = object.try_as<Ref<Array<Var>>>()) {
+    (*array)->push(value);
   } else {
     warning("Trying to push to non-pushable type: %s", object.type()->name);
   }
