@@ -133,8 +133,8 @@ bool ScriptContext::try_execute_method(const Symbol& sym, std::initializer_list<
 }
 Var ScriptContext::execute(const Ref<ScriptFunction>& function, const Var* params, size_t param_count) {
   L_SCOPE_MARKER("Script execution");
-  L_ASSERT(_frames.empty());
-  _stack.size(1 << 12);
+  L_ASSERT(_stack.empty() && _frames.empty());
+  _stack.size(256);
   _frames.push();
   _frames.back().function = function;
   _frames.back().script = function->script;
@@ -213,15 +213,16 @@ Var ScriptContext::execute(const Ref<ScriptFunction>& function, const Var* param
 
       case Call:
       {
-        const Var& new_func(local(ip->a));
-
         _current_stack_start += ip->a;
         _current_param_count = ip->bc8.b;
+        _stack.size(_current_stack_start + 256);
 
+        const Var& new_func(local(0));
         if(new_func.is<ScriptNativeFunction>()) {
           return_value().as<ScriptNativeFunction>()(*this);
           _current_stack_start = _frames.back().stack_start;
           _current_param_count = uint32_t(_frames.back().param_count);
+          _stack.size(_current_stack_start + 256);
         } else if(new_func.is<Ref<ScriptFunction>>()) {
           const Ref<ScriptFunction>& script_function(new_func.as<Ref<ScriptFunction>>());
           L_ASSERT(script_function->offset < script_function->script->bytecode.size());
@@ -239,6 +240,7 @@ Var ScriptContext::execute(const Ref<ScriptFunction>& function, const Var* param
           warning("Trying to call non-callable type: %s", new_func.type()->name);
           _current_stack_start = _frames.back().stack_start;
           _current_param_count = uint32_t(_frames.back().param_count);
+          _stack.size(_current_stack_start + 256);
         }
         break;
       }
@@ -255,10 +257,13 @@ Var ScriptContext::execute(const Ref<ScriptFunction>& function, const Var* param
 
         _frames.pop();
         if(_frames.empty()) {
-          return _stack[0];
+          Var value = _stack[0];
+          _stack.clear();
+          return value;
         } else {
           _current_stack_start = _frames.back().stack_start;
           _current_param_count = uint32_t(_frames.back().param_count);
+          _stack.size(_current_stack_start + 256);
 
           current_function = _frames.back().function;
           current_script = _frames.back().script;
