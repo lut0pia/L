@@ -46,6 +46,10 @@ bool LSParser::read(const char* context, const char* text, size_t size) {
         warning("ls: %s:%d: Unexpected token '%s', was expecting '%s'", context, _lexer.line(), _lexer.token(), expected_token);
         return false;
       }
+      if(top_array.size() == 1) {
+        warning("ls: %s:%d: Invalid '()' statement", context, _lexer.line());
+        return false;
+      }
       top_array.pop();
       _stack.pop();
       _stack.pop();
