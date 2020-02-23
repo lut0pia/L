@@ -28,6 +28,11 @@ using namespace L;
     c.return_value() = c.current_self().as<type>().name(); \
   })
 
+template <class T>
+static void register_script_method(const char* name, ScriptNativeFunction func) {
+  ScriptContext::type_value(Type<T>::description(), Symbol(name)) = func;
+}
+
 void L::init_script_standard_functions() {
   L_SCRIPT_NATIVE_RETURN("rand", 0, Rand::nextFloat());
   L_SCRIPT_NATIVE_RETURN("now", 0, Time::now());
@@ -133,4 +138,37 @@ void L::init_script_standard_functions() {
   L_SCRIPT_NATIVE_ACCESS_METHOD(Vector3f, x);
   L_SCRIPT_NATIVE_ACCESS_METHOD(Vector3f, y);
   L_SCRIPT_NATIVE_ACCESS_METHOD(Vector3f, z);
+
+  Type<Ref<Table<Var, Var>>>::cancmp<>();
+  Type<Ref<Array<Var>>>::cancmp<>();
+
+  register_script_method<Ref<Array<Var>>>("push", [](ScriptContext& c) {
+    if(Ref<Array<Var>>* array = c.current_self().try_as<Ref<Array<Var>>>()) {
+      for(uint32_t i = 0; i < c.param_count(); i++) {
+        (*array)->push(c.param(i));
+      }
+    }
+  });
+  register_script_method<Ref<Array<Var>>>("shift", [](ScriptContext& c) {
+    if(Ref<Array<Var>>* array = c.current_self().try_as<Ref<Array<Var>>>()) {
+      if((*array)->size() > 0) {
+        c.return_value() = (*array)[0];
+        (*array)->erase(0);
+      }
+    }
+  });
+  register_script_method<Ref<Array<Var>>>("contains", [](ScriptContext& c) {
+    if(Ref<Array<Var>>* array = c.current_self().try_as<Ref<Array<Var>>>()) {
+      if(c.param_count() > 0) {
+        const Var& search = c.param(0);
+        c.return_value() = false;
+        for(const Var& v : **array) {
+          if(v == search) {
+            c.return_value() = true;
+            return;
+          }
+        }
+      }
+    }
+  });
 }
