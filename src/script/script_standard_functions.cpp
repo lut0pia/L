@@ -32,6 +32,9 @@ template <class T>
 static void register_script_method(const char* name, ScriptNativeFunction func) {
   ScriptContext::type_value(Type<T>::description(), Symbol(name)) = func;
 }
+static void register_script_function(const char* name, ScriptNativeFunction func) {
+  ScriptGlobal(Symbol(name)).value() = func;
+}
 
 void L::init_script_standard_functions() {
   L_SCRIPT_NATIVE_RETURN("rand", 0, Rand::nextFloat());
@@ -83,21 +86,13 @@ void L::init_script_standard_functions() {
   L_SCRIPT_NATIVE("break", [](ScriptContext&) {
     debugbreak();
   });
-  L_SCRIPT_NATIVE("vec", [](ScriptContext& c) {
-    const uint32_t param_count(c.param_count());
-    Vector3f& vector(c.return_value().make<Vector3f>());
-    if(param_count)
-      for(uint32_t i(0); i < 3; i++)
-        vector[i] = c.param(min(param_count - 1, i));
-    else vector = 0.f;
-  });
-  L_SCRIPT_NATIVE("vec4", [](ScriptContext& c) {
-    const uint32_t param_count(c.param_count());
-    Vector4f& vector(c.return_value().make<Vector4f>());
-    if(param_count)
-      for(uint32_t i(0); i < 4; i++)
-        vector[i] = c.param(min(param_count - 1, i));
-    else vector = 0.f;
+  register_script_function("vec", [](ScriptContext& c) {
+    switch(c.param_count()) {
+      case 2: c.return_value() = Vector2f(c.param(0).get<float>(), c.param(1).get<float>()); break;
+      case 3: c.return_value() = Vector3f(c.param(0), c.param(1).get<float>(), c.param(2).get<float>()); break;
+      case 4: c.return_value() = Vector4f(c.param(0), c.param(1).get<float>(), c.param(2).get<float>(), c.param(3).get<float>()); break;
+      default: warning("Cannot create vector from %d components", c.param_count()); break;
+    }
   });
   L_SCRIPT_NATIVE("lerp", [](ScriptContext& c) {
     L_ASSERT(c.param_count() == 3);

@@ -13,7 +13,7 @@
   (set self.cursor (entity_make))
   (set self.cursor_transform (self.cursor.require_transform))
   (self.cursor.require_primitive|.material|.parent "material/sphere.ls")
-  (self.cursor.require_primitive|.scale (vec 0.1))
+  (self.cursor.require_primitive|.scale 0.1)
   (self.entity.require_collider|.sphere 0.5)
   (self.entity.require_rigidbody|.kinematic true)
   ; Create debug text

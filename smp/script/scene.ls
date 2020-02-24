@@ -104,7 +104,7 @@
 (sprite.require_transform|.rotate (euler_degrees 0 0 90))
 (sprite.require_primitive|.material|.parent "material/sprite.ls")
 (sprite.require_primitive|.material|.texture 'tex "texture/bush.png?comp=bc3")
-(sprite.require_primitive|.scale (vec 5))
+(sprite.require_primitive|.scale 5)
 
 ; Create all boxes
 (local box_count 16)
