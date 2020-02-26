@@ -65,25 +65,25 @@ void L::init_script_standard_functions() {
   L_SCRIPT_NATIVE_RETURN("euler_degrees", 3, euler_degrees(c.param(0), c.param(1), c.param(2)));
   L_SCRIPT_NATIVE_RETURN("euler_radians", 3, euler_radians(c.param(0), c.param(1), c.param(2)));
 
-  L_SCRIPT_NATIVE("max", [](ScriptContext& c) {
+  register_script_function("max", [](ScriptContext& c) {
     L_ASSERT(c.param_count() >= 1);
     c.return_value() = c.param(0);
     for(uintptr_t i(1); i < c.param_count(); i++)
       if(c.param(i) > c.return_value())
         c.return_value() = c.param(i);
   });
-  L_SCRIPT_NATIVE("min", [](ScriptContext& c) {
+  register_script_function("min", [](ScriptContext& c) {
     L_ASSERT(c.param_count() >= 1);
     c.return_value() = c.param(0);
     for(uintptr_t i(1); i < c.param_count(); i++)
       if(c.param(i) < c.return_value())
         c.return_value() = c.param(i);
   });
-  L_SCRIPT_NATIVE("print", [](ScriptContext& c) {
+  register_script_function("print", [](ScriptContext& c) {
     for(uintptr_t i(0); i < c.param_count(); i++)
       out << c.param(i);
   });
-  L_SCRIPT_NATIVE("break", [](ScriptContext&) {
+  register_script_function("break", [](ScriptContext&) {
     debugbreak();
   });
   register_script_function("vec", [](ScriptContext& c) {
@@ -94,12 +94,12 @@ void L::init_script_standard_functions() {
       default: warning("Cannot create vector from %d components", c.param_count()); break;
     }
   });
-  L_SCRIPT_NATIVE("lerp", [](ScriptContext& c) {
+  register_script_function("lerp", [](ScriptContext& c) {
     L_ASSERT(c.param_count() == 3);
     const float a(c.param(0).get<float>()), b(c.param(1).get<float>()), alpha(c.param(2).get<float>());
     c.return_value() = (a * (1.f - alpha) + b * alpha);
   });
-  L_SCRIPT_NATIVE("color", [](ScriptContext& c) {
+  register_script_function("color", [](ScriptContext& c) {
     if(c.param(0).is<String>()) {
       c.return_value() = Color(c.param(0).as<String>());
     } else {
@@ -109,7 +109,7 @@ void L::init_script_standard_functions() {
         color[i] = uint8_t(c.param(i).is<float>() ? (c.param(i).as<float>() * 255) : c.param(i).get<int>());
     }
   });
-  L_SCRIPT_NATIVE("left_pad", [](ScriptContext& c) {
+  register_script_function("left_pad", [](ScriptContext& c) {
     L_ASSERT(c.param_count() == 3);
     c.return_value() = c.param(0).get<String>();
     String& str(c.return_value().as<String>());
@@ -119,7 +119,7 @@ void L::init_script_standard_functions() {
       str = append + str;
     }
   });
-  L_SCRIPT_NATIVE("count", [](ScriptContext& c) {
+  register_script_function("count", [](ScriptContext& c) {
     L_ASSERT(c.param_count() == 1);
     if(Ref<Table<Var, Var>>* table = c.param(0).try_as<Ref<Table<Var, Var>>>()) {
       c.return_value() = float((*table)->count());
