@@ -21,7 +21,7 @@ using namespace L;
   L_SCRIPT_NATIVE(name,[](ScriptContext& c) { L_ASSERT(c.param_count()==p_count); c.return_value() = __VA_ARGS__; })
 
 #define L_SCRIPT_NATIVE_METHOD(type,name,...) \
-  ScriptContext::type_value(Type<type>::description(), name) = (ScriptNativeFunction)(__VA_ARGS__);
+  ScriptContext::type_value(Type<type>::description(), Symbol(name)) = (ScriptNativeFunction)(__VA_ARGS__);
 #define L_SCRIPT_NATIVE_ACCESS_METHOD(type,name) \
   L_SCRIPT_NATIVE_METHOD(type,#name,[](ScriptContext& c) { \
     L_ASSERT(c.param_count()==0 && c.current_self().is<type>()); \
