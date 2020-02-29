@@ -29,7 +29,6 @@ void L::TypeInit() {
   Type<Symbol>::cancmp<>();
   Type<Time>::canmath<>();
   Type<Time>::cancmp<>();
-  Type<Vector3f>::canmath();
   Type<float>::usemod([](void* a, const void* b) {*((float*)a) = pmod(*((float*)a), *((float*)b)); });
 
   // Unsigned types
@@ -55,7 +54,6 @@ void L::TypeInit() {
   Type<float>::addcast<int>();
   Type<float>::addcast<uint64_t>();
   Type<float>::addcast<String>([](void* dst, const void* src) {new(dst)String(ntos(*(float*)src)); });
-  Type<float>::addcast<Vector3f>();
   Type<String>::addcast<bool>([](void* dst, const void* src) {new(dst)bool(!((String*)src)->empty()); });
   Type<String>::addcast<Color>([](void* dst, const void* src) {new(dst)Color(*(String*)src); });
   Type<String>::addcast<Symbol>([](void* dst, const void* src) {new(dst)Symbol((const char*)(*(String*)src)); });

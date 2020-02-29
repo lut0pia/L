@@ -156,6 +156,13 @@ void L::init_script_standard_functions() {
   }
 
   { // Vector
+    Type<Vector2f>::canmath();
+    Type<Vector3f>::canmath();
+    Type<Vector4f>::canmath();
+    Type<float>::addcast<Vector2f>();
+    Type<float>::addcast<Vector3f>();
+    Type<float>::addcast<Vector4f>();
+
     register_script_function("vec", [](ScriptContext& c) {
       switch(c.param_count()) {
         case 2: c.return_value() = Vector2f(c.param(0).get<float>(), c.param(1).get<float>()); break;
