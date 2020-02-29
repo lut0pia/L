@@ -38,7 +38,6 @@ static void register_script_function(const char* name, ScriptNativeFunction func
 
 void L::init_script_standard_functions() {
   L_SCRIPT_NATIVE_RETURN("rand", 0, Rand::nextFloat());
-  L_SCRIPT_NATIVE_RETURN("now", 0, Time::now());
   L_SCRIPT_NATIVE_RETURN("window_width", 0, float(Window::width()));
   L_SCRIPT_NATIVE_RETURN("window_height", 0, float(Window::height()));
   L_SCRIPT_NATIVE_RETURN("mouse_x", 0, float(Window::cursor_x()));
@@ -46,7 +45,6 @@ void L::init_script_standard_functions() {
   L_SCRIPT_NATIVE_RETURN("non_null", 1, !c.param(0).is<void>() && c.param(0).as<void*>() != nullptr);
   L_SCRIPT_NATIVE_RETURN("clamp", 3, clamp(c.param(0), c.param(1), c.param(2)));
   L_SCRIPT_NATIVE_RETURN("typename", 1, c.param(0).type()->name);
-  L_SCRIPT_NATIVE_RETURN("time", 1, Time(int64_t(c.param(0).get<float>() * 1000000.f)));
   L_SCRIPT_NATIVE_RETURN("button_pressed", 1, Device::any_button(Device::symbol_to_button(c.param(0))));
   L_SCRIPT_NATIVE_RETURN("sqrt", 1, sqrtf(c.param(0)));
   L_SCRIPT_NATIVE_RETURN("pow", 2, powf(c.param(0), c.param(1)));
@@ -150,6 +148,11 @@ void L::init_script_standard_functions() {
         }
       }
     });
+  }
+
+  { // Time
+    L_SCRIPT_NATIVE_RETURN("now", 0, Time::now());
+    L_SCRIPT_NATIVE_RETURN("time", 1, Time(int64_t(c.param(0).get<float>() * 1000000.f)));
   }
 
   { // Vector
