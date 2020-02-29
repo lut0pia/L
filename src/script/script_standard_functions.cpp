@@ -48,11 +48,6 @@ void L::init_script_standard_functions() {
   L_SCRIPT_NATIVE_RETURN("typename", 1, c.param(0).type()->name);
   L_SCRIPT_NATIVE_RETURN("time", 1, Time(int64_t(c.param(0).get<float>() * 1000000.f)));
   L_SCRIPT_NATIVE_RETURN("button_pressed", 1, Device::any_button(Device::symbol_to_button(c.param(0))));
-  L_SCRIPT_NATIVE_RETURN("normalize", 1, c.param(0).get<Vector3f>().normalized());
-  L_SCRIPT_NATIVE_RETURN("cross", 2, c.param(0).get<Vector3f>().cross(c.param(1).get<Vector3f>()));
-  L_SCRIPT_NATIVE_RETURN("length", 1, c.param(0).get<Vector3f>().length());
-  L_SCRIPT_NATIVE_RETURN("distance", 2, c.param(0).get<Vector3f>().dist(c.param(1).get<Vector3f>()));
-  L_SCRIPT_NATIVE_RETURN("dot", 2, c.param(0).get<Vector3f>().dot(c.param(1).get<Vector3f>()));
   L_SCRIPT_NATIVE_RETURN("sqrt", 1, sqrtf(c.param(0)));
   L_SCRIPT_NATIVE_RETURN("pow", 2, powf(c.param(0), c.param(1)));
   L_SCRIPT_NATIVE_RETURN("sin", 1, sinf(c.param(0)));
@@ -85,14 +80,6 @@ void L::init_script_standard_functions() {
   });
   register_script_function("break", [](ScriptContext&) {
     debugbreak();
-  });
-  register_script_function("vec", [](ScriptContext& c) {
-    switch(c.param_count()) {
-      case 2: c.return_value() = Vector2f(c.param(0).get<float>(), c.param(1).get<float>()); break;
-      case 3: c.return_value() = Vector3f(c.param(0), c.param(1).get<float>(), c.param(2).get<float>()); break;
-      case 4: c.return_value() = Vector4f(c.param(0), c.param(1).get<float>(), c.param(2).get<float>(), c.param(3).get<float>()); break;
-      default: warning("Cannot create vector from %d components", c.param_count()); break;
-    }
   });
   register_script_function("lerp", [](ScriptContext& c) {
     L_ASSERT(c.param_count() == 3);
@@ -130,40 +117,95 @@ void L::init_script_standard_functions() {
     }
   });
 
-  L_SCRIPT_NATIVE_ACCESS_METHOD(Vector3f, x);
-  L_SCRIPT_NATIVE_ACCESS_METHOD(Vector3f, y);
-  L_SCRIPT_NATIVE_ACCESS_METHOD(Vector3f, z);
-
   Type<Ref<Table<Var, Var>>>::cancmp<>();
-  Type<Ref<Array<Var>>>::cancmp<>();
 
-  register_script_method<Ref<Array<Var>>>("push", [](ScriptContext& c) {
-    if(Ref<Array<Var>>* array = c.current_self().try_as<Ref<Array<Var>>>()) {
-      for(uint32_t i = 0; i < c.param_count(); i++) {
-        (*array)->push(c.param(i));
+  { // Array
+    Type<Ref<Array<Var>>>::cancmp<>();
+    register_script_method<Ref<Array<Var>>>("push", [](ScriptContext& c) {
+      if(Ref<Array<Var>>* array = c.current_self().try_as<Ref<Array<Var>>>()) {
+        for(uint32_t i = 0; i < c.param_count(); i++) {
+          (*array)->push(c.param(i));
+        }
       }
-    }
-  });
-  register_script_method<Ref<Array<Var>>>("shift", [](ScriptContext& c) {
-    if(Ref<Array<Var>>* array = c.current_self().try_as<Ref<Array<Var>>>()) {
-      if((*array)->size() > 0) {
-        c.return_value() = (*array)[0];
-        (*array)->erase(0);
+    });
+    register_script_method<Ref<Array<Var>>>("shift", [](ScriptContext& c) {
+      if(Ref<Array<Var>>* array = c.current_self().try_as<Ref<Array<Var>>>()) {
+        if((*array)->size() > 0) {
+          c.return_value() = (*array)[0];
+          (*array)->erase(0);
+        }
       }
-    }
-  });
-  register_script_method<Ref<Array<Var>>>("contains", [](ScriptContext& c) {
-    if(Ref<Array<Var>>* array = c.current_self().try_as<Ref<Array<Var>>>()) {
-      if(c.param_count() > 0) {
-        const Var& search = c.param(0);
-        c.return_value() = false;
-        for(const Var& v : **array) {
-          if(v == search) {
-            c.return_value() = true;
-            return;
+    });
+    register_script_method<Ref<Array<Var>>>("contains", [](ScriptContext& c) {
+      if(Ref<Array<Var>>* array = c.current_self().try_as<Ref<Array<Var>>>()) {
+        if(c.param_count() > 0) {
+          const Var& search = c.param(0);
+          c.return_value() = false;
+          for(const Var& v : **array) {
+            if(v == search) {
+              c.return_value() = true;
+              return;
+            }
           }
         }
       }
-    }
-  });
+    });
+  }
+
+  { // Vector
+    register_script_function("vec", [](ScriptContext& c) {
+      switch(c.param_count()) {
+        case 2: c.return_value() = Vector2f(c.param(0).get<float>(), c.param(1).get<float>()); break;
+        case 3: c.return_value() = Vector3f(c.param(0), c.param(1).get<float>(), c.param(2).get<float>()); break;
+        case 4: c.return_value() = Vector4f(c.param(0), c.param(1).get<float>(), c.param(2).get<float>(), c.param(3).get<float>()); break;
+        default: warning("Cannot create vector from %d components", c.param_count()); break;
+      }
+    });
+    register_script_function("normalize", [](ScriptContext& c) {
+      if(Vector2f* vec2 = c.param(0).try_as<Vector2f>()) {
+        c.return_value() = vec2->normalized();
+      } else if(Vector3f* vec3 = c.param(0).try_as<Vector3f>()) {
+        c.return_value() = vec3->normalized();
+      } else if(Vector4f* vec4 = c.param(0).try_as<Vector4f>()) {
+        c.return_value() = vec4->normalized();
+      }
+    });
+    register_script_function("length", [](ScriptContext& c) {
+      if(Vector2f* vec2 = c.param(0).try_as<Vector2f>()) {
+        c.return_value() = vec2->length();
+      } else if(Vector3f* vec3 = c.param(0).try_as<Vector3f>()) {
+        c.return_value() = vec3->length();
+      } else if(Vector4f* vec4 = c.param(0).try_as<Vector4f>()) {
+        c.return_value() = vec4->length();
+      }
+    });
+    register_script_function("dist", [](ScriptContext& c) {
+      if(Vector2f* vec2 = c.param(0).try_as<Vector2f>()) {
+        c.return_value() = vec2->dist(c.param(1).get<Vector2f>());
+      } else if(Vector3f* vec3 = c.param(0).try_as<Vector3f>()) {
+        c.return_value() = vec3->dist(c.param(1).get<Vector3f>());
+      } else if(Vector4f* vec4 = c.param(0).try_as<Vector4f>()) {
+        c.return_value() = vec4->dist(c.param(1).get<Vector4f>());
+      }
+    });
+    register_script_function("dot", [](ScriptContext& c) {
+      if(Vector2f* vec2 = c.param(0).try_as<Vector2f>()) {
+        c.return_value() = vec2->dot(c.param(1).get<Vector2f>());
+      } else if(Vector3f* vec3 = c.param(0).try_as<Vector3f>()) {
+        c.return_value() = vec3->dot(c.param(1).get<Vector3f>());
+      } else if(Vector4f* vec4 = c.param(0).try_as<Vector4f>()) {
+        c.return_value() = vec4->dot(c.param(1).get<Vector4f>());
+      }
+    });
+    register_script_function("cross", [](ScriptContext& c) {
+      c.return_value() = c.param(0).get<Vector3f>().cross(c.param(1).get<Vector3f>());
+    });
+
+    L_SCRIPT_NATIVE_ACCESS_METHOD(Vector2f, x);
+    L_SCRIPT_NATIVE_ACCESS_METHOD(Vector2f, y);
+
+    L_SCRIPT_NATIVE_ACCESS_METHOD(Vector3f, x);
+    L_SCRIPT_NATIVE_ACCESS_METHOD(Vector3f, y);
+    L_SCRIPT_NATIVE_ACCESS_METHOD(Vector3f, z);
+  }
 }

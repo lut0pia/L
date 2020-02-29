@@ -9,12 +9,12 @@
 
 ### Vectors
 
+- `vec(x, y, [z], [w])` returns a vector from its [2-4] parameters
+- `normalize(v)` returns the normalized vector `v`
+- `length(v)` returns the length of vector `v`
+- `dist(a, b)` returns the distance between vectors `a` and `b`
+- `dot(a, b)` returns the dot product of vectors `a` and `b`
 - `cross(a, b)` returns the cross product of 3-float vectors `a` and `b`
-- `distance(a, b)` returns the distance between 3-float vectors `a` and `b`
-- `dot(a, b)` returns the dot product of 3-float vectors `a` and `b`
-- `length(v)` returns the length of 3-float vector `v`
-- `normalize(v)` returns the normalized 3-float vector `v`
-- `vec(x, y, z)` returns a 3-float vector from its 3 parameters
 
 ### Scalars
 
