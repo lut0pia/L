@@ -1,5 +1,6 @@
 (set self.start (fun (do
   (self.entity.require_name|.set "camera")
+  (set self.last_shoot (time 0))
   (set self.transform (self.entity.require_transform))
   (self.transform.move (vec 0 -20 10))
   (local camera (self.entity.require_camera))
