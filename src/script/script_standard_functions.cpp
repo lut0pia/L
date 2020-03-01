@@ -212,6 +212,70 @@ void L::init_script_standard_functions() {
     Type<float>::addcast<Vector3f>();
     Type<float>::addcast<Vector4f>();
 
+    static const Symbol x_symbol("x"), y_symbol("y"), z_symbol("z"), w_symbol("w");
+    ScriptContext::type_get_item(Type<Vector2f>::description()) = [](const Var& object, const Var& index, Var& value) {
+      if(const Vector2f* vector = object.try_as<Vector2f>()) {
+        if(const Symbol* index_symbol = index.try_as<Symbol>()) {
+          if(*index_symbol == x_symbol) {
+            value = vector->x();
+            return true;
+          } else if(*index_symbol == y_symbol) {
+            value = vector->y();
+            return true;
+          }
+        }
+      }
+      return false;
+    };
+    ScriptContext::type_get_item(Type<Vector3f>::description()) = [](const Var& object, const Var& index, Var& value) {
+      if(const Vector3f* vector = object.try_as<Vector3f>()) {
+        if(const Symbol* index_symbol = index.try_as<Symbol>()) {
+          if(*index_symbol == x_symbol) {
+            value = vector->x();
+            return true;
+          } else if(*index_symbol == y_symbol) {
+            value = vector->y();
+            return true;
+          } else if(*index_symbol == z_symbol) {
+            value = vector->z();
+            return true;
+          }
+        }
+      }
+      return false;
+    };
+    ScriptContext::type_set_item(Type<Vector2f>::description()) = [](Var& object, const Var& index, const Var& value) {
+      if(Vector2f* vector = object.try_as<Vector2f>()) {
+        if(const Symbol* index_symbol = index.try_as<Symbol>()) {
+          if(*index_symbol == x_symbol) {
+            vector->x() = value.get<float>();
+            return true;
+          } else if(*index_symbol == y_symbol) {
+            vector->y() = value.get<float>();
+            return true;
+          }
+        }
+      }
+      return false;
+    };
+    ScriptContext::type_set_item(Type<Vector3f>::description()) = [](Var& object, const Var& index, const Var& value) {
+      if(Vector3f* vector = object.try_as<Vector3f>()) {
+        if(const Symbol* index_symbol = index.try_as<Symbol>()) {
+          if(*index_symbol == x_symbol) {
+            vector->x() = value.get<float>();
+            return true;
+          } else if(*index_symbol == y_symbol) {
+            vector->y() = value.get<float>();
+            return true;
+          } else if(*index_symbol == z_symbol) {
+            vector->z() = value.get<float>();
+            return true;
+          }
+        }
+      }
+      return false;
+    };
+
     register_script_function("vec", [](ScriptContext& c) {
       switch(c.param_count()) {
         case 2: c.return_value() = Vector2f(c.param(0).get<float>(), c.param(1).get<float>()); break;
@@ -259,12 +323,5 @@ void L::init_script_standard_functions() {
     register_script_function("cross", [](ScriptContext& c) {
       c.return_value() = c.param(0).get<Vector3f>().cross(c.param(1).get<Vector3f>());
     });
-
-    L_SCRIPT_NATIVE_ACCESS_METHOD(Vector2f, x);
-    L_SCRIPT_NATIVE_ACCESS_METHOD(Vector2f, y);
-
-    L_SCRIPT_NATIVE_ACCESS_METHOD(Vector3f, x);
-    L_SCRIPT_NATIVE_ACCESS_METHOD(Vector3f, y);
-    L_SCRIPT_NATIVE_ACCESS_METHOD(Vector3f, z);
   }
 }
