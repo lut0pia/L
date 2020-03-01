@@ -115,10 +115,38 @@ void L::init_script_standard_functions() {
     }
   });
 
-  Type<Ref<Table<Var, Var>>>::cancmp<>();
-
   { // Array
     Type<Ref<Array<Var>>>::cancmp<>();
+
+    ScriptContext::type_get_item(Type<Ref<Array<Var>>>::description()) = [](const Var& object, const Var& index, Var& value) {
+      if(const Ref<Array<Var>>* array = object.try_as<Ref<Array<Var>>>()) {
+        if(const float* index_float = index.try_as<float>()) {
+          const uintptr_t index_integer = uintptr_t(*index_float);
+          if(*index_float >= 0.f && index_integer < (**array).size()) {
+            value = (**array)[index_integer];
+            return true;
+          } else {
+            warning("Trying to index out-of-bounds");
+          }
+        }
+      }
+      return false;
+    };
+    ScriptContext::type_set_item(Type<Ref<Table<Var, Var>>>::description()) = [](Var& object, const Var& index, const Var& value) {
+      if(Ref<Array<Var>>* array = object.try_as<Ref<Array<Var>>>()) {
+        if(const float* index_float = index.try_as<float>()) {
+          const uintptr_t index_integer = uintptr_t(*index_float);
+          if(*index_float >= 0.f && index_integer < (**array).size()) {
+            (**array)[index_integer] = value;
+            return true;
+          } else {
+            warning("Trying to index out-of-bounds");
+          }
+        }
+      }
+      return false;
+    };
+
     register_script_method<Ref<Array<Var>>>("push", [](ScriptContext& c) {
       if(Ref<Array<Var>>* array = c.current_self().try_as<Ref<Array<Var>>>()) {
         for(uint32_t i = 0; i < c.param_count(); i++) {
@@ -148,6 +176,27 @@ void L::init_script_standard_functions() {
         }
       }
     });
+  }
+
+  { // Table
+    Type<Ref<Table<Var, Var>>>::cancmp<>();
+
+    ScriptContext::type_get_item(Type<Ref<Table<Var, Var>>>::description()) = [](const Var& object, const Var& index, Var& value) {
+      if(const Ref<Table<Var, Var>>* table = object.try_as<Ref<Table<Var, Var>>>()) {
+        if(Var* object_value = (*table)->find(index)) {
+          value = *object_value;
+          return true;
+        }
+      }
+      return false;
+    };
+    ScriptContext::type_set_item(Type<Ref<Table<Var, Var>>>::description()) = [](Var& object, const Var& index, const Var& value) {
+      if(Ref<Table<Var, Var>>* table = object.try_as<Ref<Table<Var, Var>>>()) {
+        (**table)[index] = value;
+        return true;
+      }
+      return false;
+    };
   }
 
   { // Time

@@ -10,7 +10,6 @@
 namespace L {
   class ScriptContext {
   private:
-    static Table<const TypeDescription*, Var> _type_tables;
     Array<Var> _stack;
     struct Frame {
       Ref<ScriptFunction> function;
@@ -44,7 +43,8 @@ namespace L {
     }
     Var execute(const Ref<ScriptFunction>& function, const Var* params = nullptr, size_t param_count = 0);
 
-    static Ref<Table<Var, Var>> type_table(const TypeDescription*);
-    static inline Var& type_value(const TypeDescription* td, const Var& k) { return (*type_table(td))[k]; }
+    static Var& type_value(const TypeDescription* type, const Var& index);
+    static ScriptGetItemFunction& type_get_item(const TypeDescription* type);
+    static ScriptSetItemFunction& type_set_item(const TypeDescription* type);
   };
 }

@@ -6,7 +6,9 @@
 
 using namespace L;
 
-Table<const TypeDescription*, Var> ScriptContext::_type_tables;
+static Table<const TypeDescription*, Table<Var, Var>> type_tables;
+static Table<const TypeDescription*, ScriptGetItemFunction> type_get_items;
+static Table<const TypeDescription*, ScriptSetItemFunction> type_set_items;
 
 class TableIterator {
 private:
@@ -45,22 +47,11 @@ public:
   inline bool has_ended() const { return _cur == _end; }
 };
 
-static Ref<Table<Var, Var>> get_table(const Var& object) {
-  Ref<Table<Var, Var>> table;
-  if(object.is<Ref<Table<Var, Var>>>()) { // First is a regular table
-    table = object.as<Ref<Table<Var, Var>>>();
-  } else if(!object.is<ScriptFunction>() // First is not any kind of function or void
-    && !object.is<ScriptNativeFunction>()
-    && !object.is<void>()) {
-    table = ScriptContext::type_table(object.type());
-  }
-  return table;
-}
 static Var make_iterator(const Var& object) {
   if(const Ref<Array<Var>>* array = object.try_as<Ref<Array<Var>>>()) {
     return ArrayIterator(*array);
-  } else if(Ref<Table<Var, Var>> table = get_table(object)) {
-    return TableIterator(table);
+  } else if(const Ref<Table<Var, Var>>* table = object.try_as<Ref<Table<Var, Var>>>()) {
+    return TableIterator(*table);
   } else {
     warning("Trying to create iterator for non-iterable type: %s", object.type()->name);
     return Var();
@@ -84,33 +75,20 @@ static bool iterator_has_ended(Var& object) {
     return true;
   }
 }
-static inline void get_item(const Var& object, const Var& index, Var& res) {
-  const Ref<Array<Var>>* array = object.try_as<Ref<Array<Var>>>();
-  if(array && index.is<float>()) {
-    const int int_index = index.get<int>();
-    if(int_index >= 0 && size_t(int_index) < (*array)->size()) {
-      res = (**array)[int_index];
+static inline void get_item(const Var& object, const Var& index, Var& value) {
+  ScriptGetItemFunction* func = type_get_items.find(object.type());
+  if(!func || !(*func)(object, index, value)) {
+    if(Var* type_value = type_tables[object.type()].find(index)) {
+      value = *type_value;
     } else {
-      warning("Trying to index out-of-bounds");
+      warning("Couldn't get item from object of type %s with index: %s", object.type()->name, (const char*)to_string(index));
     }
-  } else if(Ref<Table<Var, Var>> table = get_table(object)) {
-    res = (*table)[index];
-  } else {
-    warning("Trying to index from non-indexable type: %s", object.type()->name);
   }
 }
 static inline void set_item(Var& object, const Var& index, const Var& value) {
-  if(Ref<Array<Var>>* array = object.try_as<Ref<Array<Var>>>()) {
-    const int int_index = index.get<int>();
-    if(int_index >= 0 && size_t(int_index) < (*array)->size()) {
-      (**array)[int_index] = value;
-    } else {
-      warning("Trying to index out-of-bounds");
-    }
-  } else if(Ref<Table<Var, Var>> table = get_table(object)) {
-    (*table)[index] = value;
-  } else {
-    warning("Trying to index from non-indexable type: %s", object.type()->name);
+  ScriptSetItemFunction* func = type_set_items.find(object.type());
+  if(!func || !(*func)(object, index, value)) {
+    warning("Couldn't set item of object of type %s with index: %s", object.type()->name, (const char*)to_string(index));
   }
 }
 static inline void push_item(Var& object, const Var& value) {
@@ -283,10 +261,12 @@ Var ScriptContext::execute(const Ref<ScriptFunction>& function, const Var* param
     ip++;
   }
 }
-
-Ref<Table<Var, Var>> ScriptContext::type_table(const TypeDescription* td) {
-  Var& tt(_type_tables[td]);
-  if(!tt.is<Ref<Table<Var, Var>>>())
-    tt = ref<Table<Var, Var>>();
-  return tt.as<Ref<Table<Var, Var>>>();
+Var& ScriptContext::type_value(const TypeDescription* type, const Var& index) {
+  return type_tables[type][index];
+}
+ScriptGetItemFunction& ScriptContext::type_get_item(const TypeDescription* type) {
+  return type_get_items[type];
+}
+ScriptSetItemFunction& ScriptContext::type_set_item(const TypeDescription* type) {
+  return type_set_items[type];
 }

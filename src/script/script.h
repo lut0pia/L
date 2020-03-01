@@ -9,6 +9,8 @@
 
 namespace L {
   typedef void(*ScriptNativeFunction)(class ScriptContext&);
+  typedef bool(*ScriptGetItemFunction)(const Var& object, const Var& index, Var& value);
+  typedef bool(*ScriptSetItemFunction)(Var& object, const Var& index, const Var& value);
 
   enum ScriptOpCode : uint8_t {
     CopyLocal, // Copy local b to local a
