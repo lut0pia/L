@@ -50,7 +50,7 @@ void RigidBody::script_registration() {
   L_SCRIPT_METHOD(RigidBody, "add_torque", 1, add_torque(c.param(0).get<Vector3f>()));
   L_SCRIPT_METHOD(RigidBody, "add_relative_torque", 1, add_relative_torque(c.param(0).get<Vector3f>()));
   L_SCRIPT_METHOD(RigidBody, "apply_impulse", 2, apply_impulse(c.param(0).get<Vector3f>(), c.param(0).get<Vector3f>()));
-  ScriptContext::global(Symbol("engine_gravity")) = (ScriptNativeFunction)([](ScriptContext& c) {
+  ScriptGlobal(Symbol("engine_gravity")) = (ScriptNativeFunction)([](ScriptContext& c) {
     if(c.param_count()>0)
       RigidBody::gravity(c.param(0).get<Vector3f>());
     c.return_value() = RigidBody::gravity();

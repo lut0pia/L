@@ -17,10 +17,10 @@ namespace L {
   public:
     constexpr ScriptGlobal() : _slot(nullptr) {}
     ScriptGlobal(const Symbol& name);
-    ScriptGlobal(const Symbol& name, const Var& value);
 
     inline const Symbol& name() const { return _slot->name; }
     inline Var& value() { return _slot->value; }
+    inline Var& operator=(const Var& value) { return _slot->value = value; }
 
     friend Stream& operator<=(Stream&, const ScriptGlobal&);
     friend Stream& operator>=(Stream&, ScriptGlobal&);

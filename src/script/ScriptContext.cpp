@@ -160,7 +160,7 @@ Var ScriptContext::execute(const Ref<ScriptFunction>& function, const Var* param
       case CopyLocal: local(ip->a) = local(ip->bc8.b); break;
       case LoadConst: local(ip->a) = current_script->constants[ip->bcu16]; break;
       case LoadGlobal: local(ip->a) = current_script->globals[ip->bcu16].value(); break;
-      case StoreGlobal: current_script->globals[ip->bcu16].value() = local(ip->a); break;
+      case StoreGlobal: current_script->globals[ip->bcu16] = local(ip->a); break;
       case LoadFun: local(ip->a) = ref<ScriptFunction>(ScriptFunction {current_script, uintptr_t(ip->bc16)}); break;
 
       case LoadOuter:

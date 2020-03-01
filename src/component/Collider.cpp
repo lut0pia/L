@@ -50,7 +50,7 @@ void Collider::script_registration() {
   L_SCRIPT_METHOD(Collider, "center", 1, center(c.param(0).get<Vector3f>()));
   L_SCRIPT_METHOD(Collider, "box", 1, box(c.param(0).get<Vector3f>()));
   L_SCRIPT_METHOD(Collider, "sphere", 1, sphere(c.param(0)));
-  ScriptContext::global(Symbol("raycast")) = (ScriptNativeFunction)([](ScriptContext& c) {
+  ScriptGlobal(Symbol("raycast")) = (ScriptNativeFunction)([](ScriptContext& c) {
     if(c.param_count()==2 && c.param(0).is<Vector3f>() && c.param(1).is<Vector3f>()) {
       auto wtr(ref<Table<Var, Var>>());
       float t;

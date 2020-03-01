@@ -31,9 +31,9 @@ void GroupComponent::script_registration() {
   L_SCRIPT_METHOD(GroupComponent, "unlink", 1, unlink(c.param(0).get<Handle<Entity>>()));
   L_SCRIPT_METHOD(GroupComponent, "unlink_all", 1, unlink_all());
   L_SCRIPT_METHOD(GroupComponent, "level_script", 1, level_script(c.param(0).get<String>()));
-  ScriptGlobal("group_entity_create", (ScriptNativeFunction)([](ScriptContext& c) {
+  ScriptGlobal("group_entity_create") = (ScriptNativeFunction)([](ScriptContext& c) {
     c.return_value() = entity_create();
-  }));
+  });
 }
 
 void GroupComponent::link(Handle<Entity> entity) {

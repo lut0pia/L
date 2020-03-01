@@ -19,9 +19,6 @@ ScriptGlobal::ScriptGlobal(const Symbol& name) {
     _slot->name = name;
   }
 }
-ScriptGlobal::ScriptGlobal(const Symbol& name, const Var& v) : ScriptGlobal(name) {
-  value() = v;
-}
 Stream& L::operator<=(Stream& s, const ScriptGlobal& v) {
   return s <= v._slot->name;
 }

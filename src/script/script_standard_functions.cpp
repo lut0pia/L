@@ -16,7 +16,7 @@
 using namespace L;
 
 #define L_SCRIPT_NATIVE(name,...) \
-  ScriptGlobal(name).value() = (ScriptNativeFunction)(__VA_ARGS__)
+  ScriptGlobal(name) = (ScriptNativeFunction)(__VA_ARGS__)
 #define L_SCRIPT_NATIVE_RETURN(name,p_count,...) \
   L_SCRIPT_NATIVE(name,[](ScriptContext& c) { L_ASSERT(c.param_count()==p_count); c.return_value() = __VA_ARGS__; })
 
@@ -33,7 +33,7 @@ static void register_script_method(const char* name, ScriptNativeFunction func) 
   ScriptContext::type_value(Type<T>::description(), Symbol(name)) = func;
 }
 static void register_script_function(const char* name, ScriptNativeFunction func) {
-  ScriptGlobal(Symbol(name)).value() = func;
+  ScriptGlobal(Symbol(name)) = func;
 }
 
 void L::init_script_standard_functions() {

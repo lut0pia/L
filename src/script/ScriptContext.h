@@ -44,7 +44,6 @@ namespace L {
     }
     Var execute(const Ref<ScriptFunction>& function, const Var* params = nullptr, size_t param_count = 0);
 
-    static inline Var& global(Symbol s) { return ScriptGlobal(s).value(); }
     static Ref<Table<Var, Var>> type_table(const TypeDescription*);
     static inline Var& type_value(const TypeDescription* td, const Var& k) { return (*type_table(td))[k]; }
   };
