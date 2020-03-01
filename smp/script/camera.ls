@@ -88,7 +88,7 @@
     "Frame: " avg_frame_work_duration "\n"))
 )))
 (set self.event (fun e (do
-  (if e.pressed (switch e.button
+  (if (and (= e.type 'Device) e.pressed) (switch e.button
     'B (if (bach_source.is_playing)
       (bach_source.stop)
       (bach_source.play))
