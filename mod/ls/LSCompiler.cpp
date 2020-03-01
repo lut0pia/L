@@ -6,7 +6,7 @@
 using namespace L;
 
 static const Symbol local_symbol("local"), set_symbol("set"), object_symbol("{object}"), array_symbol("[array]"),
-fun_symbol("fun"), foreach_symbol("foreach"), do_symbol("do"), if_symbol("if"), self_symbol("self"),
+fun_symbol("fun"), return_symbol("return"), foreach_symbol("foreach"), do_symbol("do"), if_symbol("if"), self_symbol("self"),
 switch_symbol("switch"), while_symbol("while"), and_symbol("and"), or_symbol("or"), not_symbol("not"),
 add_symbol("+"), sub_symbol("-"), mul_symbol("*"), div_symbol("/"), mod_symbol("%"),
 add_assign_symbol("+="), sub_assign_symbol("-="), mul_assign_symbol("*="), div_assign_symbol("/="), mod_assign_symbol("%="),
@@ -325,6 +325,14 @@ bool LSCompiler::compile(Function& func, const Var& v, uint8_t offset) {
           }
         }
         return true;
+      } else if(sym == return_symbol) {
+        for(uintptr_t i = 1; i < array.size(); i++) {
+          compile(func, array[i], uint8_t(offset + i - 1));
+        }
+        for(uintptr_t i = 1; i < array.size(); i++) {
+          func.bytecode.push(ScriptInstruction {CopyLocal, uint8_t(i - 1), uint8_t(offset + i - 1)});
+        }
+        func.bytecode.push(ScriptInstruction {Return});
       } else if(sym == add_assign_symbol) {
         compile_op_assign(func, array, offset, Add);
       } else if(sym == sub_assign_symbol) {
