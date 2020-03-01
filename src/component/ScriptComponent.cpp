@@ -119,6 +119,7 @@ void ScriptComponent::late_update() {
 }
 void ScriptComponent::event(const Device::Event& e) {
   auto table(ref<Table<Var, Var>>());
+  (*table)[Symbol("type")] = Symbol("Device");
   (*table)[Symbol("device")] = e.device->handle();
   (*table)[Symbol("button")] = Device::button_to_symbol(e.button);
   (*table)[Symbol("pressed")] = bool(e.pressed);
