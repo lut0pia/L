@@ -25,6 +25,6 @@ Stream& L::operator<=(Stream& s, const ScriptGlobal& v) {
 Stream& L::operator>=(Stream& s, ScriptGlobal& v) {
   Symbol name;
   s >= name;
-  v = name;
+  v = ScriptGlobal(name);
   return s;
 }
