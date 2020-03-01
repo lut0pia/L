@@ -127,7 +127,7 @@ void Collider::custom_sub_update_all() {
         // Send collision events to scripts
         if(a->_script || b->_script) {
           auto e(ref<Table<Var, Var>>());
-          (*e)[Symbol("type")] = Symbol("COLLISION");
+          (*e)[Symbol("type")] = Symbol("Collision");
           (*e)[Symbol("point")] = collision.point;
           (*e)[Symbol("overlap")] = collision.overlap;
           if(a->_script) {

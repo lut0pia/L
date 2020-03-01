@@ -6,5 +6,5 @@
 )))
 
 (set self.event (fun e (do
-  (if (= e.type 'COLLISION) (entity_destroy (e.other.entity)))
+  (if (= e.type 'Collision) (entity_destroy (e.other.entity)))
 )))
