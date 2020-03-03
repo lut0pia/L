@@ -47,10 +47,11 @@ void L::TypeInit() {
 
   // Casts
   Type<void>::addcast<bool>([](void* dst, const void*) {new(dst)bool(false); });
-  Type<int>::addcast<bool>([](void* dst, const void* src) {new(dst)bool((*(int*)src)!=0); });
+  Type<int>::addcast<bool>([](void* dst, const void* src) {new(dst)bool((*(int*)src) != 0); });
   Type<int>::addcast<float>();
   Type<int>::addcast<String>([](void* dst, const void* src) {new(dst)String(ntos(*(int*)src)); });
   Type<unsigned int>::addcast<float>();
+  Type<float>::addcast<bool>([](void* dst, const void* src) {new(dst)bool(*(float*)src != 0.f); });
   Type<float>::addcast<int>();
   Type<float>::addcast<uint64_t>();
   Type<float>::addcast<String>([](void* dst, const void* src) {new(dst)String(ntos(*(float*)src)); });
