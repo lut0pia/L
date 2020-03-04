@@ -154,11 +154,26 @@ void L::init_script_standard_functions() {
         }
       }
     });
+    register_script_method<Ref<Array<Var>>>("pop", [](ScriptContext& c) {
+      if(Ref<Array<Var>>* array = c.current_self().try_as<Ref<Array<Var>>>()) {
+        if((*array)->size() > 0) {
+          c.return_value() = (*array)->back();
+          (*array)->pop();
+        }
+      }
+    });
     register_script_method<Ref<Array<Var>>>("shift", [](ScriptContext& c) {
       if(Ref<Array<Var>>* array = c.current_self().try_as<Ref<Array<Var>>>()) {
         if((*array)->size() > 0) {
           c.return_value() = (*array)[0];
           (*array)->erase(0);
+        }
+      }
+    });
+    register_script_method<Ref<Array<Var>>>("unshift", [](ScriptContext& c) {
+      if(Ref<Array<Var>>* array = c.current_self().try_as<Ref<Array<Var>>>()) {
+        for(uint32_t i = 0; i < c.param_count(); i++) {
+          (*array)->insert(0, c.param(i));
         }
       }
     });
