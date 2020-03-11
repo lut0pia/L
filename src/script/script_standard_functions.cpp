@@ -220,6 +220,9 @@ void L::init_script_standard_functions() {
   }
 
   { // Vector
+    Type<Vector2f>::cancmp();
+    Type<Vector3f>::cancmp();
+    Type<Vector4f>::cancmp();
     Type<Vector2f>::canmath();
     Type<Vector3f>::canmath();
     Type<Vector4f>::canmath();
