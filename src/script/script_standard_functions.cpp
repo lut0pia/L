@@ -191,6 +191,21 @@ void L::init_script_standard_functions() {
         }
       }
     });
+    register_script_method<Ref<Array<Var>>>("filter", [](ScriptContext& c) {
+      Ref<Array<Var>>* array_ptr = c.current_self().try_as<Ref<Array<Var>>>();
+      Ref<ScriptFunction>* filter_func_ptr = c.param(0).try_as<Ref<ScriptFunction>>();
+      if(array_ptr && filter_func_ptr && c.param_count() > 0) {
+        Ref<Array<Var>> old_array = *array_ptr;
+        Ref<ScriptFunction> filter_func = *filter_func_ptr;
+        Ref<Array<Var>> new_array = ref<Array<Var>>();
+        for(const Var& v : *old_array) {
+          if(c.execute(filter_func, &v, 1).get<bool>()) {
+            new_array->push(v);
+          }
+        }
+        c.return_value() = new_array;
+      }
+    });
   }
 
   { // Table
