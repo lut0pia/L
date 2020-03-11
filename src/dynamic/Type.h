@@ -132,10 +132,10 @@ namespace L {
       usecmp([](const void* a,const void* b)->int {
         if((*(T*)a)<(*(T*)b)) {
           return -1;
-        } else if((*(T*)b)<(*(T*)a)) {
-          return 1;
+        } else if((*(T*)b)==(*(T*)a)) {
+          return 0;
         }
-        return 0;
+        return 1;
       });
     }
   };
