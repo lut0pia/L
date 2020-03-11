@@ -111,14 +111,17 @@ bool ScriptContext::try_execute_method(const Symbol& sym, std::initializer_list<
 }
 Var ScriptContext::execute(const Ref<ScriptFunction>& function, const Var* params, size_t param_count) {
   L_SCOPE_MARKER("Script execution");
-  L_ASSERT(_stack.empty() && _frames.empty());
-  _stack.size(256);
+
+  const uintptr_t start_frame_count = _frames.size();
+  const uintptr_t start_stack_start = _current_stack_start;
+  const uint32_t start_param_count = _current_param_count;
+
+  _stack.size(_current_stack_start + 256);
   _frames.push();
   _frames.back().function = function;
   _frames.back().script = function->script;
-  _frames.back().stack_start = _current_stack_start = 0;
-  _frames.back().param_count = param_count;
-  _current_param_count = uint32_t(param_count);
+  _frames.back().stack_start = _current_stack_start;
+  _frames.back().param_count = _current_param_count = uint32_t(param_count);
 
   current_self() = _self;
 
@@ -234,13 +237,15 @@ Var ScriptContext::execute(const Ref<ScriptFunction>& function, const Var* param
         }
 
         _frames.pop();
-        if(_frames.empty()) {
-          Var value = _stack[0];
-          _stack.clear();
+        if(_frames.size() == start_frame_count) {
+          Var value = _stack[_current_stack_start];
+          _current_stack_start = start_stack_start;
+          _current_param_count = start_param_count;
+          _stack.size(_current_stack_start + 256);
           return value;
         } else {
           _current_stack_start = _frames.back().stack_start;
-          _current_param_count = uint32_t(_frames.back().param_count);
+          _current_param_count = _frames.back().param_count;
           _stack.size(_current_stack_start + 256);
 
           current_function = _frames.back().function;

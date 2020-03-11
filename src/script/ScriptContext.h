@@ -16,7 +16,7 @@ namespace L {
       Ref<Script> script;
       const ScriptInstruction* ip;
       uintptr_t stack_start;
-      uintptr_t param_count;
+      uint32_t param_count;
     };
     Array<Frame> _frames;
     Array<Ref<ScriptOuter>> _outers;
