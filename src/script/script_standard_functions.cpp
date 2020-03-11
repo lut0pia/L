@@ -212,6 +212,22 @@ void L::init_script_standard_functions() {
       }
       return false;
     };
+
+    register_script_method<Ref<Table<Var, Var>>>("remove", [](ScriptContext& c) {
+      if(Ref<Table<Var, Var>>* table = c.current_self().try_as<Ref<Table<Var, Var>>>()) {
+        if(c.param_count() > 0) {
+          (*table)->remove(c.param(0));
+        }
+      }
+    });
+    register_script_method<Ref<Table<Var, Var>>>("contains", [](ScriptContext& c) {
+      if(Ref<Table<Var, Var>>* table = c.current_self().try_as<Ref<Table<Var, Var>>>()) {
+        if(c.param_count() > 0) {
+          Var* value = (*table)->find(c.param(0));
+          c.return_value() = value != nullptr && (c.param_count() < 2 || *value == c.param(1));
+        }
+      }
+    });
   }
 
   { // Time
