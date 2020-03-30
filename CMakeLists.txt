@@ -126,7 +126,7 @@ function(add_module NAME)
     SOURCES
     LINK_DIRS INCLUDE_DIRS SYSTEM_INCLUDE_DIRS
     LIBRARIES DBG_LIBRARIES RLS_LIBRARIES
-    DEPENDENCIES
+    DEPENDENCIES MOD_DEPENDENCIES
   )
   cmake_parse_arguments(M "${OPTARGS}" "${SINGLEARGS}" "${MULTIARGS}" ${ARGN})
   if(NOT DEFINED M_CONDITION)
@@ -165,6 +165,9 @@ function(add_module NAME)
   if(DEFINED M_DEPENDENCIES)
     add_dependencies(mod_${NAME} ${M_DEPENDENCIES})
   endif()
+  foreach(MOD_DEP ${M_MOD_DEPENDENCIES})
+    target_include_directories(mod_${NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/mod/${MOD_DEP}/include)
+  endforeach()
 endfunction()
 
 # Modules - iterate
