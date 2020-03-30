@@ -1,0 +1,5 @@
+(self.create 64 64)
+(local c (color "#ccc"))
+(self.rect 0 0 16 64 c)
+(self.rect 0 48 64 16 c)
+(self.rect 32 0 32 32 c)
