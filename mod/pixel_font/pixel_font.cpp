@@ -1,6 +1,7 @@
 #include <L/src/engine/Resource.inl>
-#include <L/src/pipeline/FontPacker.h>
 #include <L/src/rendering/Font.h>
+
+#include <FontPacker.h>
 
 using namespace L;
 

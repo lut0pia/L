@@ -1,6 +1,7 @@
 #include <L/src/engine/Resource.inl>
-#include <L/src/pipeline/FontPacker.h>
 #include <L/src/rendering/Font.h>
+
+#include <FontPacker.h>
 
 L_PUSH_NO_WARNINGS
 
