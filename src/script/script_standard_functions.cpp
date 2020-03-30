@@ -86,7 +86,7 @@ void L::init_script_standard_functions() {
   });
   register_script_function("color", [](ScriptContext& c) {
     if(c.param(0).is<String>()) {
-      c.return_value() = Color(c.param(0).as<String>());
+      c.return_value() = Color::from(c.param(0).as<String>());
     } else {
       Color& color(c.return_value().make<Color>() = Color::white);
       const uint32_t params(min(c.param_count(), 4u));

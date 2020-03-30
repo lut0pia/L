@@ -1,7 +1,6 @@
 #include "Color.h"
 
 #include "../macros.h"
-#include "../text/String.h"
 
 using namespace L;
 
@@ -17,38 +16,38 @@ const Color Color::transparent(0, 0, 0, 0);
 const Color Color::white(255, 255, 255);
 const Color Color::yellow(255, 255, 0);
 
-Color::Color(const char* s) {
-  String str(s);
-  str.toLower();
-  if(str.empty()) {}
-  else if(str[0]=='#') { // Hexa color
-    if(str.size()==7) { // #RRBBGG
-      uint32_t rgb(ston<16,uint32_t>(str.substr(1)));
-      new(this)Color(uint8_t(rgb>>16), uint8_t(rgb>>8), uint8_t(rgb));
-      return;
-    } else if(str.size()==9) { // #RRGGBBAA
-      uint32_t rgba(ston<16,uint32_t>(str.substr(1)));
-      new(this)Color(uint8_t(rgba>>24), uint8_t(rgba>>16), uint8_t(rgba>>8), uint8_t(rgba));
-      return;
+Vector4f Color::to_float_vector(const Color& color) {
+  return Vector4f(color.r() / 255.f, color.g() / 255.f, color.b() / 255.f, color.a() / 255.f);
+}
+Color Color::from(const char* str) {
+  const size_t len = strlen(str);
+  if(len > 0 && str[0] == '#') { // Hexadecimal color
+    const uint32_t hex = ston<16, uint32_t>(str + 1);
+    if(len == 4) { // #RGB
+      const uint8_t r = (hex >> 8) & 0xf;
+      const uint8_t g = (hex >> 4) & 0xf;
+      const uint8_t b = hex & 0xf;
+      return Color(r + (r << 4), g + (g << 4), b + (b << 4));
+    } else if(len == 7) { // #RRGGBB
+      return Color(uint8_t(hex >> 16), uint8_t(hex >> 8), uint8_t(hex));
+    } else if(len == 9) { // #RRGGBBAA
+      return Color(uint8_t(hex >> 24), uint8_t(hex >> 16), uint8_t(hex >> 8), uint8_t(hex));
     }
   }
-#define TMP(name) else if(str==#name){*this = name; return;}
-  TMP(black)
-  TMP(blue)
-  TMP(cyan)
-  TMP(green)
-  TMP(grey)
-  TMP(lightgrey)
-  TMP(magenta)
-  TMP(red)
-  TMP(white)
-  TMP(yellow)
-#undef TMP
-  error("Unknown color: %s",(const char*)str);
-}
-
-Vector4f Color::to_float_vector(const Color& color) {
-  return Vector4f(color.r()/255.f, color.g()/255.f, color.b()/255.f, color.a()/255.f);
+#define COLOR_NAME(name) else if(!strcmp(str, #name)) return name
+  COLOR_NAME(black);
+  COLOR_NAME(blue);
+  COLOR_NAME(cyan);
+  COLOR_NAME(green);
+  COLOR_NAME(grey);
+  COLOR_NAME(lightgrey);
+  COLOR_NAME(magenta);
+  COLOR_NAME(red);
+  COLOR_NAME(white);
+  COLOR_NAME(yellow);
+#undef COLOR_NAME
+  warning("Cannot derive color from string: '%s'", str);
+  return transparent;
 }
 Color Color::from(float r, float g, float b, float a) {
   return Color(uint8_t(r*255.f), uint8_t(g*255.f), uint8_t(b*255.f), uint8_t(a*255.f));
@@ -78,7 +77,7 @@ Color Color::from_index(uintptr_t index) {
   return from_hsv(fmod(float(index) * 0.618033988749895f, 1.f), 0.5f, 1.f);
 }
 Color Color::lerp(Color a, Color b, float w) {
-  const float nw(1.f-w);
+  const float nw(1.f - w);
   return Color(uint8_t(nw*a.r() + w*b.r()), uint8_t(nw*a.g() + w*b.g()), uint8_t(nw*a.b() + w*b.b()), uint8_t(nw*a.a() + w*b.a()));
 }
 
