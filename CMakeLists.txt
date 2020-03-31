@@ -167,6 +167,7 @@ function(add_module NAME)
   endif()
   foreach(MOD_DEP ${M_MOD_DEPENDENCIES})
     target_include_directories(mod_${NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/mod/${MOD_DEP}/include)
+    target_link_libraries(mod_${NAME} mod_${MOD_DEP})
   endforeach()
 endfunction()
 
