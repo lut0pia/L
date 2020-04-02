@@ -165,7 +165,7 @@ void L::init_script_standard_functions() {
     register_script_method<Ref<Array<Var>>>("shift", [](ScriptContext& c) {
       if(Ref<Array<Var>>* array = c.current_self().try_as<Ref<Array<Var>>>()) {
         if((*array)->size() > 0) {
-          c.return_value() = (*array)[0];
+          c.return_value() = (**array)[0];
           (*array)->erase(0);
         }
       }
