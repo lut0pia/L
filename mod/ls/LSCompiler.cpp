@@ -1,7 +1,6 @@
 #include "LSCompiler.h"
 
 #include <L/src/stream/CFileStream.h>
-#include "ls.h"
 
 using namespace L;
 
@@ -13,6 +12,16 @@ add_assign_symbol("+="), sub_assign_symbol("-="), mul_assign_symbol("*="), div_a
 less_symbol("<"), less_equal_symbol("<="), equal_symbol("="), greater_symbol(">"), greater_equal_symbol(">="), not_equal_symbol("<>");
 
 bool LSCompiler::read(const char* text, size_t size) {
+  _source_lines.clear();
+  _source_lines.push();
+  for(uintptr_t i = 0; i < size; i++) {
+    const char c = text[i];
+    if(c == '\n') {
+      _source_lines.push();
+    } else if(c != '\r' && !(_source_lines.back().size() == 0 && Stream::isspace(c))) {
+      _source_lines.back().push(c);
+    }
+  }
   return _parser.read(_context, text, size);
 }
 
@@ -23,6 +32,8 @@ bool LSCompiler::compile(ScriptFunction& script_function) {
     }
     _functions.clear();
     _script = ref<Script>();
+    _script->source_id = _context;
+    _script->source_lines = _source_lines;
   }
 
   { // Compiling
@@ -35,9 +46,10 @@ bool LSCompiler::compile(ScriptFunction& script_function) {
 
   { // Bundling functions together
     for(Function* function : _functions) {
-      function->bytecode.push(ScriptInstruction {Return}); // Better safe than sorry
+      function->push(function->code, ScriptInstruction {Return}); // Better safe than sorry
       function->bytecode_offset = uint32_t(_script->bytecode.size());
       _script->bytecode.insertArray(_script->bytecode.size(), function->bytecode);
+      _script->bytecode_line.insertArray(_script->bytecode_line.size(), function->bytecode_line);
     }
   }
 
@@ -56,7 +68,7 @@ bool LSCompiler::compile(ScriptFunction& script_function) {
   script_function.offset = 0;
   return true;
 }
-LSCompiler::Function& LSCompiler::make_function(const Var& code, Function* parent) {
+LSCompiler::Function& LSCompiler::make_function(const LSParser::Node& code, Function* parent) {
   _functions.push();
   Function*& function(_functions.back());
   function = Memory::new_type<Function>();
@@ -83,79 +95,78 @@ bool LSCompiler::find_outer(Function& func, const Symbol& symbol, uint8_t& outer
   }
   return false;
 }
-void LSCompiler::resolve_locals(Function& func, const L::Var& v) {
-  if(v.is<Array<Var>>()) {
-    const Array<Var>& array(v.as<Array<Var>>());
-    L_ASSERT(array.size() > 0);
-    if(array[0].is<Symbol>()) { // May be a special construct or a function call
-      Symbol sym(array[0].as<Symbol>());
+void LSCompiler::resolve_locals(Function& func, const LSParser::Node& code) {
+  if(code.children.size() > 0 && code.children[0].value.is<Symbol>()) { // May be a special construct or a function call
+    Symbol sym(code.children[0].value.as<Symbol>());
 
-      if(sym == local_symbol) { // Local var declaration
-        L_ASSERT(array[1].is<Symbol>());
-        func.local_table[array[1].as<Symbol>()] = func.local_count++;
-      } else if(sym == foreach_symbol) {
-        if(array.size() >= 4) // Value only
-          func.local_table[array[1].as<Symbol>()] = func.local_count++;
-        if(array.size() >= 5) // Key value
-          func.local_table[array[2].as<Symbol>()] = func.local_count++;
-      } else if(sym == fun_symbol) {
-        return;
-      }
+    if(sym == local_symbol) { // Local var declaration
+      L_ASSERT(code.children[1].value.is<Symbol>());
+      func.local_table[code.children[1].value.as<Symbol>()] = func.local_count++;
+    } else if(sym == foreach_symbol) {
+      if(code.children.size() >= 4) // Value only
+        func.local_table[code.children[1].value.as<Symbol>()] = func.local_count++;
+      if(code.children.size() >= 5) // Key value
+        func.local_table[code.children[2].value.as<Symbol>()] = func.local_count++;
+    } else if(sym == fun_symbol) {
+      return;
     }
-    for(const Var& e : array)
-      resolve_locals(func, e);
+  }
+  for(const LSParser::Node& node : code.children) {
+    resolve_locals(func, node);
   }
 }
-bool LSCompiler::compile(Function& func, const Var& v, uint8_t offset) {
-  if(v.is<Array<Var>>()) {
-    const Array<Var>& array(v.as<Array<Var>>());
-    L_ASSERT(array.size() > 0);
-    if(array[0].is<Symbol>()) { // May be a special construct or a function call
-      const Symbol sym(array[0].as<Symbol>());
+bool LSCompiler::compile(Function& func, const LSParser::Node& node, uint8_t offset) {
+  if(node.children.size() > 0) {
+    const Array<LSParser::Node>& children = node.children;
+    L_ASSERT(children.size() > 0);
+    if(node.type == LSParser::NodeType::Access) {
+      compile_access_chain(func, node.children, offset, true);
+    } else if(children[0].value.is<Symbol>()) { // May be a special construct or a function call
+      const Symbol sym = children[0].value.as<Symbol>();
 
       if(sym == set_symbol || sym == local_symbol) {
-        if(array.size() >= 3) {
-          compile(func, array[2], offset);
-          compile_assignment(func, array[1], offset, offset + 1);
+        if(children.size() >= 3) {
+          compile(func, children[2], offset);
+          compile_assignment(func, children[1], offset, offset + 1);
         }
       } else if(sym == object_symbol) {
-        func.bytecode.push(ScriptInstruction {MakeObject, offset});
-        for(uintptr_t i = 1; i < array.size(); i += 2) {
-          compile(func, array[i], offset + 1); // Key
-          compile(func, array[i + 1], offset + 2); // Value
-          func.bytecode.push(ScriptInstruction {SetItem, offset, uint8_t(offset + 1), uint8_t(offset + 2)});
+        func.push(node, ScriptInstruction {MakeObject, offset});
+        for(uintptr_t i = 1; i < children.size(); i += 2) {
+          compile(func, children[i], offset + 1); // Key
+          compile(func, children[i + 1], offset + 2); // Value
+          func.push(node, ScriptInstruction {SetItem, offset, uint8_t(offset + 1), uint8_t(offset + 2)});
         }
       } else if(sym == array_symbol) {
-        func.bytecode.push(ScriptInstruction {MakeArray, offset});
-        for(uintptr_t i = 1; i < array.size(); i++) {
-          compile(func, array[i], offset + 1); // Value
-          func.bytecode.push(ScriptInstruction {PushItem, offset, uint8_t(offset + 1)});
+        func.push(node, ScriptInstruction {MakeArray, offset});
+        for(uintptr_t i = 1; i < children.size(); i++) {
+          compile(func, children[i], offset + 1); // Value
+          func.push(node, ScriptInstruction {PushItem, offset, uint8_t(offset + 1)});
         }
       } else if(sym == if_symbol) { // If
-        for(uintptr_t i(1); i < array.size() - 1; i += 2) {
-          compile(func, array[i], offset); // Put condition result at offset
+        for(uintptr_t i(1); i < children.size() - 1; i += 2) {
+          compile(func, children[i], offset); // Put condition result at offset
 
           // If the result is true, jump right afterwards
-          func.bytecode.push(ScriptInstruction {CondJump, offset});
+          func.push(node, ScriptInstruction {CondJump, offset});
           func.bytecode.back().bc16 = 1;
 
           // If the result is false, jump after the execution block (will get updated after compilation)
-          func.bytecode.push(ScriptInstruction {Jump});
+          func.push(node, ScriptInstruction {Jump});
           const uintptr_t if_not_jump(func.bytecode.size() - 1);
 
-          compile(func, array[i + 1], offset);
+          compile(func, children[i + 1], offset);
 
           // Handle else branch
-          const bool else_branch(!(array.size() & 1) && i == array.size() - 3);
+          const bool else_branch(!(children.size() & 1) && i == children.size() - 3);
           if(else_branch) {
             // If the result is false, jump after the execution block (will get updated after compilation)
-            func.bytecode.push(ScriptInstruction {Jump});
+            func.push(node, ScriptInstruction {Jump});
             const uintptr_t else_avoid_jump(func.bytecode.size() - 1);
 
             // This is where we jump if the condition hasn't been met before
             func.bytecode[if_not_jump].bc16 = int16_t(func.bytecode.size() - if_not_jump) - 1;
 
-            compile(func, array.back(), offset);
+            compile(func, children.back(), offset);
 
             // This is where we jump to avoid the else branch (condition was met before)
             func.bytecode[else_avoid_jump].bc16 = int16_t(func.bytecode.size() - else_avoid_jump) - 1;
@@ -167,96 +178,96 @@ bool LSCompiler::compile(Function& func, const Var& v, uint8_t offset) {
       } else if(sym == while_symbol) { // While
         const uintptr_t start_index(func.bytecode.size());
         // Compute condition at offset
-        compile(func, array[1], offset);
+        compile(func, children[1], offset);
 
         // If the result is true, jump right afterwards
-        func.bytecode.push(ScriptInstruction {CondJump, offset});
+        func.push(node, ScriptInstruction {CondJump, offset});
         func.bytecode.back().bc16 = 1;
 
         // If the result is false, jump after the execution block (will get updated after compilation)
-        func.bytecode.push(ScriptInstruction {Jump});
+        func.push(node, ScriptInstruction {Jump});
         const uintptr_t if_not_jump(func.bytecode.size() - 1);
 
-        compile(func, array[2], offset);
+        compile(func, children[2], offset);
 
         // Jump back to the start
-        func.bytecode.push(ScriptInstruction {Jump});
+        func.push(node, ScriptInstruction {Jump});
         func.bytecode.back().bc16 = int16_t(start_index) - int16_t(func.bytecode.size());
 
         // This is where we jump if the condition hasn't been met before
         func.bytecode[if_not_jump].bc16 = int16_t(func.bytecode.size() - if_not_jump) - 1;
       } else if(sym == foreach_symbol) {
-        if(array.size() < 4) {
+        if(children.size() < 4) {
           warning("ls: %s:%d: foreach is missing parameters: (foreach [key] value iterable statement)", _context.begin(), 0);
           return false;
         }
 
-        const Var& key = array.size() == 4 ? array[1] : array[1];
-        const Var& value = array.size() == 4 ? array[1] : array[2];
-        const Var& iterable = array.size() == 4 ? array[2] : array[3];
-        const Var& statement = array.size() == 4 ? array[3] : array[4];
+        const LSParser::Node& key = children.size() == 4 ? children[1] : children[1];
+        const LSParser::Node& value = children.size() == 4 ? children[1] : children[2];
+        const LSParser::Node& iterable = children.size() == 4 ? children[2] : children[3];
+        const LSParser::Node& statement = children.size() == 4 ? children[3] : children[4];
 
         // Compute object at offset
         compile(func, iterable, offset);
-        func.bytecode.push(ScriptInstruction {MakeIterator, uint8_t(offset + 1), offset});
+        func.push(node, ScriptInstruction {MakeIterator, uint8_t(offset + 1), offset});
 
         // If the iteration has ended, jump after the loop
-        func.bytecode.push(ScriptInstruction {IterEndJump, uint8_t(offset + 1)});
+        func.push(node, ScriptInstruction {IterEndJump, uint8_t(offset + 1)});
         const uintptr_t end_jump(func.bytecode.size() - 1);
 
         // Get next key/value pair
-        const uint8_t key_local(*func.local_table.find(key.as<Symbol>()));
-        const uint8_t value_local(*func.local_table.find(value.as<Symbol>()));
-        func.bytecode.push(ScriptInstruction {Iterate, key_local, value_local, uint8_t(offset + 1)});
+        const uint8_t key_local(*func.local_table.find(key.value.as<Symbol>()));
+        const uint8_t value_local(*func.local_table.find(value.value.as<Symbol>()));
+        func.push(node, ScriptInstruction {Iterate, key_local, value_local, uint8_t(offset + 1)});
 
         // Execute loop body
         compile(func, statement, offset + 2);
 
         // Jump back to beginning of loop
-        func.bytecode.push(ScriptInstruction {Jump});
+        func.push(node, ScriptInstruction {Jump});
         func.bytecode.back().bc16 = int16_t(end_jump) - int16_t(func.bytecode.size());
 
         // This is where we jump if the iterator has reached the end
         func.bytecode[end_jump].bc16 = int16_t(func.bytecode.size() - end_jump) - 1;
       } else if(sym == switch_symbol) { // Switch
         // Put first compare value at offset
-        compile(func, array[1], offset);
+        compile(func, children[1], offset);
         Array<uintptr_t> cond_jumps; // Will jump to appropriate code block if condition was met
         Array<uintptr_t> end_jumps; // Will jump *after* the switch
 
         // Start by doing comparisons until one matches
-        for(uintptr_t i(2); i < array.size() - 1; i += 2) {
+        for(uintptr_t i(2); i < children.size() - 1; i += 2) {
           // Put second compare value at offset+1
-          compile(func, array[i], offset + 1);
+          compile(func, children[i], offset + 1);
           // Replace second compare value by comparison result
-          func.bytecode.push(ScriptInstruction {Equal, uint8_t(offset + 1), offset, uint8_t(offset + 1)});
+          func.push(node, ScriptInstruction {Equal, uint8_t(offset + 1), offset, uint8_t(offset + 1)});
           // Use result to jump conditionally
-          func.bytecode.push(ScriptInstruction {CondJump, uint8_t(offset + 1)});
+          func.push(node, ScriptInstruction {CondJump, uint8_t(offset + 1)});
           cond_jumps.push(func.bytecode.size() - 1);
         }
 
         // Compile the default case if there's one
         // We'll fallthrough here if none of the conditions were met
-        if((array.size() & 1) != 0) {
+        if((children.size() & 1) != 0) {
           // Default case is always at the end of the switch
-          compile(func, array.back(), offset);
+          compile(func, children.back(), offset);
         }
 
         // Jump to after the switch
-        func.bytecode.push(ScriptInstruction {Jump});
+        func.push(node, ScriptInstruction {Jump});
         end_jumps.push(func.bytecode.size() - 1);
 
         // Compile other cases
-        for(uintptr_t i(2); i < array.size() - 1; i += 2) {
+        for(uintptr_t i(2); i < children.size() - 1; i += 2) {
           // Update corresponding conditional jump to jump here
           const uintptr_t cond_jump(cond_jumps[(i - 2) / 2]);
           func.bytecode[cond_jump].bc16 = int16_t(func.bytecode.size() - cond_jump) - 1;
 
           // Compile the code
-          compile(func, array[i + 1], offset);
+          compile(func, children[i + 1], offset);
 
           // Jump to after the switch
-          func.bytecode.push(ScriptInstruction {Jump});
+          func.push(node, ScriptInstruction {Jump});
           end_jumps.push(func.bytecode.size() - 1);
         }
 
@@ -266,9 +277,9 @@ bool LSCompiler::compile(Function& func, const Var& v, uint8_t offset) {
         }
       } else if(sym == and_symbol) { // And
         Array<uintptr_t> end_jumps; // Will jump *after* the and
-        for(uintptr_t i(1); i < array.size(); i++) {
-          compile(func, array[i], offset);
-          func.bytecode.push(ScriptInstruction {CondNotJump, offset});
+        for(uintptr_t i(1); i < children.size(); i++) {
+          compile(func, children[i], offset);
+          func.push(node, ScriptInstruction {CondNotJump, offset});
           end_jumps.push(func.bytecode.size() - 1);
         }
 
@@ -278,9 +289,9 @@ bool LSCompiler::compile(Function& func, const Var& v, uint8_t offset) {
         }
       } else if(sym == or_symbol) { // Or
         Array<uintptr_t> end_jumps; // Will jump *after* the or
-        for(uintptr_t i(1); i < array.size(); i++) {
-          compile(func, array[i], offset);
-          func.bytecode.push(ScriptInstruction {CondJump, offset});
+        for(uintptr_t i = 1; i < children.size(); i++) {
+          compile(func, children[i], offset);
+          func.push(node, ScriptInstruction {CondJump, offset});
           end_jumps.push(func.bytecode.size() - 1);
         }
 
@@ -289,27 +300,27 @@ bool LSCompiler::compile(Function& func, const Var& v, uint8_t offset) {
           func.bytecode[end_jump].bc16 = int16_t(func.bytecode.size() - end_jump) - 1;
         }
       } else if(sym == not_symbol) { // Not
-        compile(func, array[1], offset);
-        func.bytecode.push(ScriptInstruction {Not, offset});
+        compile(func, children[1], offset);
+        func.push(node, ScriptInstruction {Not, offset});
       } else if(sym == fun_symbol) { // Function
-        if(array.size() > 1) {
+        if(children.size() > 1) {
           // Make a new function from the last item of the array
           // because the last part is always the code
-          Function& new_function(make_function(array.back(), &func));
+          Function& new_function(make_function(children.back(), &func));
 
           { // Deal with potential parameters
-            for(uintptr_t i = 1; i < array.size() - 1; i++) {
-              if(array[i].is<Symbol>()) {
-                new_function.local_table[array[i].as<Symbol>()] = new_function.local_count++;
+            for(uintptr_t i = 1; i < children.size() - 1; i++) {
+              if(children[i].value.is<Symbol>()) {
+                new_function.local_table[children[i].value.as<Symbol>()] = new_function.local_count++;
               } else {
-                warning("ls: %s:%d: Function parameter names must be symbols", _context.begin(), 0);
+                warning("ls: %s:%d: Function parameter names must be symbols", _context.begin(), children[i].line);
                 return false;
               }
             }
           }
 
           // Save index of function in LoadFun to allow linking later
-          func.bytecode.push(ScriptInstruction {LoadFun, offset});
+          func.push(node, ScriptInstruction {LoadFun, offset});
           func.bytecode.back().bc16 = int16_t(_functions.size() - 1);
 
           resolve_locals(new_function, new_function.code);
@@ -318,88 +329,81 @@ bool LSCompiler::compile(Function& func, const Var& v, uint8_t offset) {
           // Capture outers
           for(const Symbol& symbol : new_function.outers) {
             if(const uint8_t* local = func.local_table.find(symbol)) {
-              func.bytecode.push(ScriptInstruction {CaptLocal, offset, *local});
+              func.push(node, ScriptInstruction {CaptLocal, offset, *local});
             } else if(const Symbol* outer_ptr = func.outers.find(symbol)) {
-              func.bytecode.push(ScriptInstruction {CaptOuter, offset, uint8_t(outer_ptr - func.outers.begin())});
+              func.push(node, ScriptInstruction {CaptOuter, offset, uint8_t(outer_ptr - func.outers.begin())});
             }
           }
         }
         return true;
       } else if(sym == return_symbol) {
-        for(uintptr_t i = 1; i < array.size(); i++) {
-          compile(func, array[i], uint8_t(offset + i - 1));
+        for(uintptr_t i = 1; i < children.size(); i++) {
+          compile(func, children[i], uint8_t(offset + i - 1));
         }
-        for(uintptr_t i = 1; i < array.size(); i++) {
-          func.bytecode.push(ScriptInstruction {CopyLocal, uint8_t(i - 1), uint8_t(offset + i - 1)});
+        for(uintptr_t i = 1; i < children.size(); i++) {
+          func.push(node, ScriptInstruction {CopyLocal, uint8_t(i - 1), uint8_t(offset + i - 1)});
         }
-        func.bytecode.push(ScriptInstruction {Return});
+        func.push(node, ScriptInstruction {Return});
       } else if(sym == add_assign_symbol) {
-        compile_op_assign(func, array, offset, Add);
+        compile_op_assign(func, children, offset, Add);
       } else if(sym == sub_assign_symbol) {
-        compile_op_assign(func, array, offset, Sub);
+        compile_op_assign(func, children, offset, Sub);
       } else if(sym == mul_assign_symbol) {
-        compile_op_assign(func, array, offset, Mul);
+        compile_op_assign(func, children, offset, Mul);
       } else if(sym == div_assign_symbol) {
-        compile_op_assign(func, array, offset, Div);
+        compile_op_assign(func, children, offset, Div);
       } else if(sym == mod_assign_symbol) {
-        compile_op_assign(func, array, offset, Mod);
+        compile_op_assign(func, children, offset, Mod);
       } else if(sym == add_symbol) { // Addition
-        compile_operator(func, array, offset, Add);
+        compile_operator(func, children, offset, Add);
       } else if(sym == sub_symbol) { // Subtraction and invert
-        if(array.size() > 2) {
-          compile_operator(func, array, offset, Sub);
+        if(children.size() > 2) {
+          compile_operator(func, children, offset, Sub);
         } else {
-          compile(func, array[1], offset);
-          func.bytecode.push(ScriptInstruction {Inv, offset});
+          compile(func, children[1], offset);
+          func.push(node, ScriptInstruction {Inv, offset});
         }
       } else if(sym == mul_symbol) { // Multiplication
-        compile_operator(func, array, offset, Mul);
+        compile_operator(func, children, offset, Mul);
       } else if(sym == div_symbol) { // Division
-        compile_operator(func, array, offset, Div);
+        compile_operator(func, children, offset, Div);
       } else if(sym == mod_symbol) { // Modulo
-        compile_operator(func, array, offset, Mod);
+        compile_operator(func, children, offset, Mod);
       } else if(sym == less_symbol) { // Less
-        compile_comparison(func, array, offset, LessThan);
+        compile_comparison(func, children, offset, LessThan);
       } else if(sym == less_equal_symbol) { // Less equal
-        compile_comparison(func, array, offset, LessEqual);
+        compile_comparison(func, children, offset, LessEqual);
       } else if(sym == equal_symbol) { // Equal
-        compile_comparison(func, array, offset, Equal);
+        compile_comparison(func, children, offset, Equal);
       } else if(sym == greater_symbol) { // Greater
-        compile_comparison(func, array, offset, LessEqual, true);
+        compile_comparison(func, children, offset, LessEqual, true);
       } else if(sym == greater_equal_symbol) { // Greater equal
-        compile_comparison(func, array, offset, LessThan, true);
+        compile_comparison(func, children, offset, LessThan, true);
       } else if(sym == not_equal_symbol) { // Not equal
-        compile_comparison(func, array, offset, Equal, true);
+        compile_comparison(func, children, offset, Equal, true);
       } else if(sym == do_symbol) {
-        for(uint32_t i(1); i < array.size(); i++) {
-          compile(func, array[i], offset);
+        for(uint32_t i(1); i < children.size(); i++) {
+          compile(func, children[i], offset);
         }
       } else { // It's a function call
-        compile_function_call(func, array, offset);
+        compile_function_call(func, children, offset);
       }
     } else { // It's also a function call
-      compile_function_call(func, array, offset);
+      compile_function_call(func, children, offset);
     }
-  } else if(v.is<AccessChain>()) {
-    compile_access_chain(func, v.as<AccessChain>().array, offset, true);
-  } else if(v.is<Symbol>()) {
+  } else if(node.type == LSParser::NodeType::Value && node.value.is<Symbol>()) {
     uint8_t outer;
-    if(const uint8_t* local = func.local_table.find(v.as<Symbol>())) {
-      func.bytecode.push(ScriptInstruction {CopyLocal, offset, *local});
-    } else if(find_outer(func, v.as<Symbol>(), outer)) {
-      func.bytecode.push(ScriptInstruction {LoadOuter, offset, outer});
+    if(const uint8_t* local = func.local_table.find(node.value.as<Symbol>())) {
+      func.push(node, ScriptInstruction {CopyLocal, offset, *local});
+    } else if(find_outer(func, node.value.as<Symbol>(), outer)) {
+      func.push(node, ScriptInstruction {LoadOuter, offset, outer});
     } else {
-      func.bytecode.push(ScriptInstruction {LoadGlobal, offset});
-      func.bytecode.back().bcu16 = _script->global(v.as<Symbol>());
+      func.push(node, ScriptInstruction {LoadGlobal, offset});
+      func.bytecode.back().bcu16 = _script->global(node.value.as<Symbol>());
     }
   } else {
-    Var cst(v);
-    if(v.is<RawSymbol>()) {
-      const Symbol sym(v.as<RawSymbol>().sym);
-      cst = sym;
-    }
-    func.bytecode.push(ScriptInstruction {LoadConst, offset});
-    func.bytecode.back().bcu16 = _script->constant(cst);
+    func.push(node, ScriptInstruction {LoadConst, offset});
+    func.bytecode.back().bcu16 = _script->constant(node.value);
   }
 
   return true;
@@ -414,71 +418,70 @@ bool LSCompiler::compile_function(Function& func) {
 
   // We're compiling to target func_offset as a return value,
   // copy that to the actual return value (0)
-  func.bytecode.push(ScriptInstruction {CopyLocal, 0, func_offset});
+  func.push(func.code, ScriptInstruction {CopyLocal, 0, func_offset});
 
   return true;
 }
-void LSCompiler::compile_access_chain(Function& func, const Array<Var>& array, uint8_t offset, bool get) {
+void LSCompiler::compile_access_chain(Function& func, const Array<LSParser::Node>& array, uint8_t offset, bool get) {
   L_ASSERT(array.size() >= 2);
   compile(func, array[0], offset + 1); // Object
   compile(func, array[1], offset + 2); // Index
   for(uint32_t i(2); i < array.size(); i++) {
     // Put Object[Index] where Object was
-    func.bytecode.push(ScriptInstruction {GetItem, uint8_t(offset + 1), uint8_t(offset + 2), uint8_t(offset + 1)});
+    func.push(array[i], ScriptInstruction {GetItem, uint8_t(offset + 1), uint8_t(offset + 2), uint8_t(offset + 1)});
     // Replace Index with next index in array
     compile(func, array[i], offset + 2);
   }
   if(get) {
     // Do final access
-    func.bytecode.push(ScriptInstruction {GetItem, uint8_t(offset + 1), uint8_t(offset + 2), offset});
+    func.push(array.back(), ScriptInstruction {GetItem, uint8_t(offset + 1), uint8_t(offset + 2), offset});
   } else {
-    func.bytecode.push(ScriptInstruction {CopyLocal, offset, uint8_t(offset + 2)});
+    func.push(array.back(), ScriptInstruction {CopyLocal, offset, uint8_t(offset + 2)});
   }
 }
-void LSCompiler::compile_function_call(Function& func, const Array<Var>& array, uint8_t offset) {
+void LSCompiler::compile_function_call(Function& func, const Array<LSParser::Node>& array, uint8_t offset) {
   compile(func, array[0], offset);
   // Self should already be at offset+1 if specified
   for(uint32_t i(1); i < array.size(); i++) {
     compile(func, array[i], uint8_t(offset + i + 1));
   }
-  func.bytecode.push(ScriptInstruction {Call, offset, uint8_t(array.size() - 1)});
+  func.push(array[0], ScriptInstruction {Call, offset, uint8_t(array.size() - 1)});
 }
-void LSCompiler::compile_assignment(Function& func, const L::Var& dst, uint8_t src, uint8_t offset) {
-  if(dst.is<Symbol>()) {
+void LSCompiler::compile_assignment(Function& func, const LSParser::Node& dst, uint8_t src, uint8_t offset) {
+  if(const Symbol* dst_symbol = dst.value.try_as<Symbol>()) {
     uint8_t outer;
-    if(const uint8_t* local = func.local_table.find(dst.as<Symbol>())) {
-      func.bytecode.push(ScriptInstruction {CopyLocal, *local, src});
-    } else if(find_outer(func, dst.as<Symbol>(), outer)) {
-      func.bytecode.push(ScriptInstruction {StoreOuter, outer, src});
+    if(const uint8_t* local = func.local_table.find(*dst_symbol)) {
+      func.push(dst, ScriptInstruction {CopyLocal, *local, src});
+    } else if(find_outer(func, *dst_symbol, outer)) {
+      func.push(dst, ScriptInstruction {StoreOuter, outer, src});
     } else {
-      func.bytecode.push(ScriptInstruction {StoreGlobal, src});
-      func.bytecode.back().bcu16 = _script->global(dst.as<Symbol>());
+      func.push(dst, ScriptInstruction {StoreGlobal, src});
+      func.bytecode.back().bcu16 = _script->global(*dst_symbol);
     }
-  } else if(dst.is<AccessChain>()) {
-    const Array<Var>& access_chain(dst.as<AccessChain>().array);
-    compile_access_chain(func, access_chain, offset, false);
-    func.bytecode.push(ScriptInstruction {SetItem, uint8_t(offset + 1), offset, src});
+  } else if(dst.type == LSParser::NodeType::Access) {
+    compile_access_chain(func, dst.children, offset, false);
+    func.push(dst, ScriptInstruction {SetItem, uint8_t(offset + 1), offset, src});
   } else {
     error("Trying to set a literal value or something?");
   }
 }
-void LSCompiler::compile_operator(Function& func, const L::Array<L::Var>& array, uint8_t offset, ScriptOpCode opcode) {
+void LSCompiler::compile_operator(Function& func, const L::Array<LSParser::Node>& array, uint8_t offset, ScriptOpCode opcode) {
   L_ASSERT(array.size() > 1);
   compile(func, array[1], offset);
   for(uint32_t i(2); i < array.size(); i++) {
     compile(func, array[i], offset + 1);
-    func.bytecode.push(ScriptInstruction {opcode, offset, uint8_t(offset + 1)});
+    func.push(array[i], ScriptInstruction {opcode, offset, uint8_t(offset + 1)});
   }
 }
-void LSCompiler::compile_op_assign(Function& func, const Array<Var>& array, uint8_t offset, ScriptOpCode opcode) {
+void LSCompiler::compile_op_assign(Function& func, const Array<LSParser::Node>& array, uint8_t offset, ScriptOpCode opcode) {
   L_ASSERT(array.size() >= 3);
   // There's a special case for local targets but otherwise we'll do a copy, operate on it, then assign it back
   // To be honest this special case could be dealt with during optimization later
-  if(array[1].is<Symbol>()) {
-    if(uint8_t* found = func.local_table.find(array[1].as<Symbol>())) {
+  if(array[1].value.is<Symbol>()) {
+    if(uint8_t* found = func.local_table.find(array[1].value.as<Symbol>())) {
       for(uintptr_t i(2); i < array.size(); i++) {
         compile(func, array[i], offset);
-        func.bytecode.push(ScriptInstruction {opcode, *found, offset});
+        func.push(array[i], ScriptInstruction {opcode, *found, offset});
       }
       return;
     }
@@ -486,22 +489,22 @@ void LSCompiler::compile_op_assign(Function& func, const Array<Var>& array, uint
   compile(func, array[1], offset);
   for(uintptr_t i(2); i < array.size(); i++) {
     compile(func, array[i], offset + 1);
-    func.bytecode.push(ScriptInstruction {opcode, offset, uint8_t(offset + 1)});
+    func.push(array[i], ScriptInstruction {opcode, offset, uint8_t(offset + 1)});
   }
   compile_assignment(func, array[1], offset, offset + 1);
 }
-void LSCompiler::compile_comparison(Function& func, const L::Array<L::Var>& array, uint8_t offset, ScriptOpCode cmp, bool not) {
+void LSCompiler::compile_comparison(Function& func, const L::Array<LSParser::Node>& array, uint8_t offset, ScriptOpCode cmp, bool not) {
   L_ASSERT(array.size() >= 3);
   if(array.size() >= 3) {
     Array<uintptr_t> end_jumps; // Will jump *after* the comparison
     compile(func, array[1], offset + 1);
     for(uintptr_t i(2); i < array.size(); i++) {
       compile(func, array[i], uint8_t(offset + i));
-      func.bytecode.push(ScriptInstruction {cmp, offset, uint8_t(offset + i - 1), uint8_t(offset + i)});
+      func.push(array[i], ScriptInstruction {cmp, offset, uint8_t(offset + i - 1), uint8_t(offset + i)});
       if(not) {
-        func.bytecode.push(ScriptInstruction {Not, offset});
+        func.push(array[i], ScriptInstruction {Not, offset});
       }
-      func.bytecode.push(ScriptInstruction {CondNotJump, offset});
+      func.push(array[i], ScriptInstruction {CondNotJump, offset});
       end_jumps.push(func.bytecode.size() - 1);
     }
 
