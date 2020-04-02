@@ -7,9 +7,15 @@
 
 namespace L {
   void init_log_file();
+
   void error(const char* msg, ...); // Fatal, dumps callstack
   void warning(const char* msg, ...); // Non-fatal, no callstack
   void log(const char* msg, ...);
+
+  // va_list versions
+  void verror(const char* msg, va_list);
+  void vwarning(const char* msg, va_list);
+  void vlog(const char* msg, va_list);
 
   // System-dependent
   void debugbreak();
