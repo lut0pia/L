@@ -1,5 +1,7 @@
 #include "ScriptContext.h"
 
+#include <stdarg.h>
+
 #include "../container/Ref.h"
 #include "../engine/Resource.h"
 #include "../engine/Resource.inl"
