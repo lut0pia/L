@@ -23,8 +23,12 @@ uint16_t Script::global(Symbol sym) {
   return uint8_t(globals.size() - 1);
 }
 void Script::print(Stream& s) {
-  uintptr_t addr(0);
+  uintptr_t addr = 0, line = 0;
   for(const ScriptInstruction& i : bytecode) {
+    if(addr < bytecode_line.size() && line != bytecode_line[addr]) {
+      line = bytecode_line[addr];
+      s << '\t' << source_lines[line - 1] << '\n';
+    }
     s << ntos<10>(addr, 4) << ' ';
     switch(i.opcode) {
       case CopyLocal:    s << "CopyLocal:    " << i.a << " := " << i.bc8.b << "\n"; break;

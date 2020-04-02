@@ -26,6 +26,9 @@ static void remove_instruction(Script& script, uintptr_t index) {
     }
   }
   script.bytecode.erase(index);
+  if(index < script.bytecode_line.size()) {
+    script.bytecode_line.erase(index);
+  }
 }
 static void script_optimize(Script& script) {
   L_SCOPE_MARKER("script_optimize");

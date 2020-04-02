@@ -5,6 +5,7 @@
 #include "../dynamic/Variable.h"
 #include "ScriptGlobal.h"
 #include "../stream/Stream.h"
+#include "../text/String.h"
 #include "../text/Symbol.h"
 
 namespace L {
@@ -78,6 +79,11 @@ namespace L {
     Array<ScriptGlobal> globals;
     Array<ScriptInstruction> bytecode;
 
+    // Debug information
+    String source_id;
+    Array<uint32_t> bytecode_line;
+    Array<String> source_lines;
+
     uint16_t constant(const Var&);
     uint16_t global(Symbol);
     void print(Stream&);
@@ -93,8 +99,8 @@ namespace L {
     Array<Ref<ScriptOuter>> outers;
   };
 
-  inline Stream& operator<=(Stream& s, const Script& v) { return s <= v.constants <= v.globals <= v.bytecode; }
-  inline Stream& operator>=(Stream& s, Script& v) { return s >= v.constants >= v.globals >= v.bytecode; }
+  inline Stream& operator<=(Stream& s, const Script& v) { return s <= v.constants <= v.globals <= v.bytecode <= v.source_id <= v.bytecode_line <= v.source_lines; }
+  inline Stream& operator>=(Stream& s, Script& v) { return s >= v.constants >= v.globals >= v.bytecode >= v.source_id >= v.bytecode_line >= v.source_lines; }
   inline Stream& operator<=(Stream& s, const ScriptFunction& v) { return s <= v.script <= v.offset; }
   inline Stream& operator>=(Stream& s, ScriptFunction& v) { return s >= v.script >= v.offset; }
 
