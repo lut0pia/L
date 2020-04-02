@@ -13,7 +13,6 @@ namespace L {
     Array<Var> _stack;
     struct Frame {
       Ref<ScriptFunction> function;
-      Ref<Script> script;
       const ScriptInstruction* ip;
       uintptr_t stack_start;
       uint32_t param_count;
@@ -42,6 +41,9 @@ namespace L {
       return execute(function, il.begin(), il.size());
     }
     Var execute(const Ref<ScriptFunction>& function, const Var* params = nullptr, size_t param_count = 0);
+
+    void warning(const char* msg, ...) const;
+    void print_callstack() const;
 
     static Var& type_value(const TypeDescription* type, const Var& index);
     static ScriptGetItemFunction& type_get_item(const TypeDescription* type);

@@ -47,23 +47,23 @@ public:
   inline bool has_ended() const { return _cur == _end; }
 };
 
-static Var make_iterator(const Var& object) {
+static Var make_iterator(const ScriptContext& c, const Var& object) {
   if(const Ref<Array<Var>>* array = object.try_as<Ref<Array<Var>>>()) {
     return ArrayIterator(*array);
   } else if(const Ref<Table<Var, Var>>* table = object.try_as<Ref<Table<Var, Var>>>()) {
     return TableIterator(*table);
   } else {
-    warning("Trying to create iterator for non-iterable type: %s", object.type()->name);
+    c.warning("Trying to create iterator for non-iterable type: %s", object.type()->name);
     return Var();
   }
 }
-static void iterate(Var& object, Var& key, Var& value) {
+static void iterate(const ScriptContext& c, Var& object, Var& key, Var& value) {
   if(TableIterator* table_iterator = object.try_as<TableIterator>()) {
     table_iterator->iterate(key, value);
   } else if(ArrayIterator* array_iterator = object.try_as<ArrayIterator>()) {
     array_iterator->iterate(key, value);
   } else {
-    warning("Trying to iterate non-iterator type: %s", object.type()->name);
+    c.warning("Trying to iterate non-iterator type: %s", object.type()->name);
   }
 }
 static bool iterator_has_ended(Var& object) {
@@ -75,27 +75,27 @@ static bool iterator_has_ended(Var& object) {
     return true;
   }
 }
-static inline void get_item(const Var& object, const Var& index, Var& value) {
+static inline void get_item(const ScriptContext& c, const Var& object, const Var& index, Var& value) {
   ScriptGetItemFunction* func = type_get_items.find(object.type());
-  if(!func || !(*func)(object, index, value)) {
+  if(!func || !(*func)(c, object, index, value)) {
     if(Var* type_value = type_tables[object.type()].find(index)) {
       value = *type_value;
     } else {
-      warning("Couldn't get item from object of type %s with index: %s", object.type()->name, (const char*)to_string(index));
+      c.warning("Couldn't get item from object of type %s with index: %s", object.type()->name, (const char*)to_string(index));
     }
   }
 }
-static inline void set_item(Var& object, const Var& index, const Var& value) {
+static inline void set_item(const ScriptContext& c, Var& object, const Var& index, const Var& value) {
   ScriptSetItemFunction* func = type_set_items.find(object.type());
-  if(!func || !(*func)(object, index, value)) {
-    warning("Couldn't set item of object of type %s with index: %s", object.type()->name, (const char*)to_string(index));
+  if(!func || !(*func)(c, object, index, value)) {
+    c.warning("Couldn't set item of object of type %s with index: %s", object.type()->name, (const char*)to_string(index));
   }
 }
-static inline void push_item(Var& object, const Var& value) {
+static inline void push_item(const ScriptContext& c, Var& object, const Var& value) {
   if(Ref<Array<Var>>* array = object.try_as<Ref<Array<Var>>>()) {
     (*array)->push(value);
   } else {
-    warning("Trying to push to non-pushable type: %s", object.type()->name);
+    c.warning("Trying to push to non-pushable type: %s", object.type()->name);
   }
 }
 bool ScriptContext::try_execute_method(const Symbol& sym, std::initializer_list<Var> parameters) {
@@ -119,7 +119,7 @@ Var ScriptContext::execute(const Ref<ScriptFunction>& function, const Var* param
   _stack.size(_current_stack_start + 256);
   _frames.push();
   _frames.back().function = function;
-  _frames.back().script = function->script;
+  _frames.back().ip = function->script->bytecode.begin() + function->offset;
   _frames.back().stack_start = _current_stack_start;
   _frames.back().param_count = _current_param_count = uint32_t(param_count);
 
@@ -133,69 +133,68 @@ Var ScriptContext::execute(const Ref<ScriptFunction>& function, const Var* param
 
   Ref<ScriptFunction> current_function = function;
   Ref<Script> current_script = function->script;
-  const ScriptInstruction* ip = function->script->bytecode.begin() + function->offset;
 
   while(true) {
-    L_ASSERT(ip >= current_script->bytecode.begin() && ip < current_script->bytecode.end());
-    switch(ip->opcode) {
-      case CopyLocal: local(ip->a) = local(ip->bc8.b); break;
-      case LoadConst: local(ip->a) = current_script->constants[ip->bcu16]; break;
-      case LoadGlobal: local(ip->a) = current_script->globals[ip->bcu16].value(); break;
-      case StoreGlobal: current_script->globals[ip->bcu16] = local(ip->a); break;
-      case LoadFun: local(ip->a) = ref<ScriptFunction>(ScriptFunction {current_script, uintptr_t(ip->bc16)}); break;
+    const ScriptInstruction ip = *_frames.back().ip;
+    switch(ip.opcode) {
+      case CopyLocal: local(ip.a) = local(ip.bc8.b); break;
+      case LoadConst: local(ip.a) = current_script->constants[ip.bcu16]; break;
+      case LoadGlobal: local(ip.a) = current_script->globals[ip.bcu16].value(); break;
+      case StoreGlobal: current_script->globals[ip.bcu16] = local(ip.a); break;
+      case LoadFun: local(ip.a) = ref<ScriptFunction>(ScriptFunction {current_script, uintptr_t(ip.bc16)}); break;
 
       case LoadOuter:
       {
-        Ref<ScriptOuter> outer = current_function->outers[ip->bc8.b];
-        local(ip->a) = (outer->offset > 0) ? _stack[outer->offset] : outer->value;
+        Ref<ScriptOuter> outer = current_function->outers[ip.bc8.b];
+        local(ip.a) = (outer->offset > 0) ? _stack[outer->offset] : outer->value;
         break;
       }
       case StoreOuter:
       {
-        Ref<ScriptOuter> outer = current_function->outers[ip->a];
-        ((outer->offset > 0) ? _stack[outer->offset] : outer->value) = local(ip->bc8.b);
+        Ref<ScriptOuter> outer = current_function->outers[ip.a];
+        ((outer->offset > 0) ? _stack[outer->offset] : outer->value) = local(ip.bc8.b);
         break;
       }
       case CaptLocal:
       {
-        L_ASSERT(local(ip->a).is<Ref<ScriptFunction>>());
-        Ref<ScriptOuter> outer = ref<ScriptOuter>(ScriptOuter {ip->bc8.b + _current_stack_start});
-        local(ip->a).as<Ref<ScriptFunction>>()->outers.push(outer);
+        L_ASSERT(local(ip.a).is<Ref<ScriptFunction>>());
+        Ref<ScriptOuter> outer = ref<ScriptOuter>(ScriptOuter {ip.bc8.b + _current_stack_start});
+        local(ip.a).as<Ref<ScriptFunction>>()->outers.push(outer);
         _outers.push(outer);
         break;
       }
-      case CaptOuter: local(ip->a).as<Ref<ScriptFunction>>()->outers.push(current_function->outers[ip->bc8.b]); break;
+      case CaptOuter: local(ip.a).as<Ref<ScriptFunction>>()->outers.push(current_function->outers[ip.bc8.b]); break;
 
-      case MakeObject: local(ip->a) = ref<Table<Var, Var>>(); break;
-      case MakeArray: local(ip->a) = ref<Array<Var>>(); break;
-      case GetItem: get_item(local(ip->a), local(ip->bc8.b), local(ip->bc8.c)); break;
-      case SetItem: set_item(local(ip->a), local(ip->bc8.b), local(ip->bc8.c)); break;
-      case PushItem: push_item(local(ip->a), local(ip->bc8.b)); break;
+      case MakeObject: local(ip.a) = ref<Table<Var, Var>>(); break;
+      case MakeArray: local(ip.a) = ref<Array<Var>>(); break;
+      case GetItem: get_item(*this, local(ip.a), local(ip.bc8.b), local(ip.bc8.c)); break;
+      case SetItem: set_item(*this, local(ip.a), local(ip.bc8.b), local(ip.bc8.c)); break;
+      case PushItem: push_item(*this, local(ip.a), local(ip.bc8.b)); break;
 
-      case MakeIterator: local(ip->a) = make_iterator(local(ip->bc8.b)); break;
-      case Iterate: iterate(local(ip->bc8.c), local(ip->a), local(ip->bc8.b)); break;
-      case IterEndJump: if(iterator_has_ended(local(ip->a))) ip += intptr_t(ip->bc16); break;
+      case MakeIterator: local(ip.a) = make_iterator(*this, local(ip.bc8.b)); break;
+      case Iterate: iterate(*this, local(ip.bc8.c), local(ip.a), local(ip.bc8.b)); break;
+      case IterEndJump: if(iterator_has_ended(local(ip.a))) _frames.back().ip += intptr_t(ip.bc16); break;
 
-      case Jump: ip += intptr_t(ip->bc16); break;
-      case CondJump: if(local(ip->a).get<bool>()) ip += intptr_t(ip->bc16); break;
-      case CondNotJump: if(!local(ip->a).get<bool>()) ip += intptr_t(ip->bc16); break;
+      case Jump: _frames.back().ip += intptr_t(ip.bc16); break;
+      case CondJump: if(local(ip.a).get<bool>()) _frames.back().ip += intptr_t(ip.bc16); break;
+      case CondNotJump: if(!local(ip.a).get<bool>()) _frames.back().ip += intptr_t(ip.bc16); break;
 
-      case Add: local(ip->a) += local(ip->bc8.b); break;
-      case Sub: local(ip->a) -= local(ip->bc8.b); break;
-      case Mul: local(ip->a) *= local(ip->bc8.b); break;
-      case Div: local(ip->a) /= local(ip->bc8.b); break;
-      case Mod: local(ip->a) %= local(ip->bc8.b); break;
-      case Inv: local(ip->a).invert(); break;
-      case Not: local(ip->a) = !local(ip->a).get<bool>(); break;
+      case Add: local(ip.a) += local(ip.bc8.b); break;
+      case Sub: local(ip.a) -= local(ip.bc8.b); break;
+      case Mul: local(ip.a) *= local(ip.bc8.b); break;
+      case Div: local(ip.a) /= local(ip.bc8.b); break;
+      case Mod: local(ip.a) %= local(ip.bc8.b); break;
+      case Inv: local(ip.a).invert(); break;
+      case Not: local(ip.a) = !local(ip.a).get<bool>(); break;
 
-      case LessThan: local(ip->a) = (local(ip->bc8.b) < local(ip->bc8.c)); break;
-      case LessEqual: local(ip->a) = (local(ip->bc8.b) <= local(ip->bc8.c)); break;
-      case Equal: local(ip->a) = (local(ip->bc8.b) == local(ip->bc8.c)); break;
+      case LessThan: local(ip.a) = (local(ip.bc8.b) < local(ip.bc8.c)); break;
+      case LessEqual: local(ip.a) = (local(ip.bc8.b) <= local(ip.bc8.c)); break;
+      case Equal: local(ip.a) = (local(ip.bc8.b) == local(ip.bc8.c)); break;
 
       case Call:
       {
-        _current_stack_start += ip->a;
-        _current_param_count = ip->bc8.b;
+        _current_stack_start += ip.a;
+        _current_param_count = ip.bc8.b;
         _stack.size(_current_stack_start + 256);
 
         const Var& new_func(local(0));
@@ -208,17 +207,16 @@ Var ScriptContext::execute(const Ref<ScriptFunction>& function, const Var* param
           const Ref<ScriptFunction>& script_function(new_func.as<Ref<ScriptFunction>>());
           L_ASSERT(script_function->offset < script_function->script->bytecode.size());
 
-          _frames.back().ip = ip; // Save instruction pointer
           _frames.push();
           _frames.back().stack_start = _current_stack_start;
           _frames.back().param_count = _current_param_count;
           _frames.back().function = current_function = script_function;
-          _frames.back().script = current_script = script_function->script;
-
-          ip = current_script->bytecode.begin() + script_function->offset;
+          current_script = current_function->script;
+          _frames.back().ip = current_script->bytecode.begin() + current_function->offset;
           continue; // Avoid ip increment
         } else {
           warning("Trying to call non-callable type: %s", new_func.type()->name);
+          print_callstack();
           _current_stack_start = _frames.back().stack_start;
           _current_param_count = uint32_t(_frames.back().param_count);
           _stack.size(_current_stack_start + 256);
@@ -249,23 +247,45 @@ Var ScriptContext::execute(const Ref<ScriptFunction>& function, const Var* param
           _stack.size(_current_stack_start + 256);
 
           current_function = _frames.back().function;
-          current_script = _frames.back().script;
-          ip = _frames.back().ip;
+          current_script = current_function->script;
         }
         break;
 
         // Optimization opcodes
-      case LoadBool: local(ip->a) = (ip->bc8.b != 0); break;
-      case LoadInt: local(ip->a) = float(ip->bc16); break;
-      case GetItemConst: get_item(local(ip->a), current_script->constants[ip->bc8.b], local(ip->bc8.c)); break;
-      case SetItemConst: set_item(local(ip->a), current_script->constants[ip->bc8.b], local(ip->bc8.c)); break;
+      case LoadBool: local(ip.a) = (ip.bc8.b != 0); break;
+      case LoadInt: local(ip.a) = float(ip.bc16); break;
+      case GetItemConst: get_item(*this, local(ip.a), current_script->constants[ip.bc8.b], local(ip.bc8.c)); break;
+      case SetItemConst: set_item(*this, local(ip.a), current_script->constants[ip.bc8.b], local(ip.bc8.c)); break;
       default:
         error("Unhandled script instruction");
         break;
     }
-    ip++;
+    _frames.back().ip++;
   }
 }
+
+void ScriptContext::warning(const char* msg, ...) const {
+  va_list args;
+  va_start(args, msg);
+  vwarning(msg, args);
+  va_end(args);
+  print_callstack();
+}
+void ScriptContext::print_callstack() const {
+  log("Script callstack:");
+  for(intptr_t i = _frames.size() - 1; i >= 0; i--) {
+    const Frame& frame = _frames[i];
+    Ref<Script> script = frame.function->script;
+    uintptr_t ins_index = frame.ip - script->bytecode.begin();
+    if(ins_index < script->bytecode_line.size()) {
+      uintptr_t line = script->bytecode_line[ins_index];
+      log(" %s:%03d: %s", script->source_id.begin(), line, script->source_lines[line - 1].begin());
+    } else {
+      log(" %s:???", script->source_id.begin());
+    }
+  }
+}
+
 Var& ScriptContext::type_value(const TypeDescription* type, const Var& index) {
   return type_tables[type][index];
 }

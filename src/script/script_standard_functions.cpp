@@ -118,7 +118,7 @@ void L::init_script_standard_functions() {
   { // Array
     Type<Ref<Array<Var>>>::cancmp<>();
 
-    ScriptContext::type_get_item(Type<Ref<Array<Var>>>::description()) = [](const Var& object, const Var& index, Var& value) {
+    ScriptContext::type_get_item(Type<Ref<Array<Var>>>::description()) = [](const ScriptContext& c, const Var& object, const Var& index, Var& value) {
       if(const Ref<Array<Var>>* array = object.try_as<Ref<Array<Var>>>()) {
         if(const float* index_float = index.try_as<float>()) {
           const uintptr_t index_integer = uintptr_t(*index_float);
@@ -126,13 +126,13 @@ void L::init_script_standard_functions() {
             value = (**array)[index_integer];
             return true;
           } else {
-            warning("Trying to index out-of-bounds");
+            c.warning("Trying to index out-of-bounds");
           }
         }
       }
       return false;
     };
-    ScriptContext::type_set_item(Type<Ref<Table<Var, Var>>>::description()) = [](Var& object, const Var& index, const Var& value) {
+    ScriptContext::type_set_item(Type<Ref<Table<Var, Var>>>::description()) = [](const ScriptContext& c, Var& object, const Var& index, const Var& value) {
       if(Ref<Array<Var>>* array = object.try_as<Ref<Array<Var>>>()) {
         if(const float* index_float = index.try_as<float>()) {
           const uintptr_t index_integer = uintptr_t(*index_float);
@@ -140,7 +140,7 @@ void L::init_script_standard_functions() {
             (**array)[index_integer] = value;
             return true;
           } else {
-            warning("Trying to index out-of-bounds");
+            c.warning("Trying to index out-of-bounds");
           }
         }
       }
@@ -211,7 +211,7 @@ void L::init_script_standard_functions() {
   { // Table
     Type<Ref<Table<Var, Var>>>::cancmp<>();
 
-    ScriptContext::type_get_item(Type<Ref<Table<Var, Var>>>::description()) = [](const Var& object, const Var& index, Var& value) {
+    ScriptContext::type_get_item(Type<Ref<Table<Var, Var>>>::description()) = [](const ScriptContext&, const Var& object, const Var& index, Var& value) {
       if(const Ref<Table<Var, Var>>* table = object.try_as<Ref<Table<Var, Var>>>()) {
         if(Var* object_value = (*table)->find(index)) {
           value = *object_value;
@@ -220,7 +220,7 @@ void L::init_script_standard_functions() {
       }
       return false;
     };
-    ScriptContext::type_set_item(Type<Ref<Table<Var, Var>>>::description()) = [](Var& object, const Var& index, const Var& value) {
+    ScriptContext::type_set_item(Type<Ref<Table<Var, Var>>>::description()) = [](const ScriptContext&, Var& object, const Var& index, const Var& value) {
       if(Ref<Table<Var, Var>>* table = object.try_as<Ref<Table<Var, Var>>>()) {
         (**table)[index] = value;
         return true;
@@ -262,7 +262,7 @@ void L::init_script_standard_functions() {
     Type<float>::addcast<Vector4f>();
 
     static const Symbol x_symbol("x"), y_symbol("y"), z_symbol("z"), w_symbol("w");
-    ScriptContext::type_get_item(Type<Vector2f>::description()) = [](const Var& object, const Var& index, Var& value) {
+    ScriptContext::type_get_item(Type<Vector2f>::description()) = [](const ScriptContext&, const Var& object, const Var& index, Var& value) {
       if(const Vector2f* vector = object.try_as<Vector2f>()) {
         if(const Symbol* index_symbol = index.try_as<Symbol>()) {
           if(*index_symbol == x_symbol) {
@@ -276,7 +276,7 @@ void L::init_script_standard_functions() {
       }
       return false;
     };
-    ScriptContext::type_get_item(Type<Vector3f>::description()) = [](const Var& object, const Var& index, Var& value) {
+    ScriptContext::type_get_item(Type<Vector3f>::description()) = [](const ScriptContext&, const Var& object, const Var& index, Var& value) {
       if(const Vector3f* vector = object.try_as<Vector3f>()) {
         if(const Symbol* index_symbol = index.try_as<Symbol>()) {
           if(*index_symbol == x_symbol) {
@@ -293,7 +293,7 @@ void L::init_script_standard_functions() {
       }
       return false;
     };
-    ScriptContext::type_set_item(Type<Vector2f>::description()) = [](Var& object, const Var& index, const Var& value) {
+    ScriptContext::type_set_item(Type<Vector2f>::description()) = [](const ScriptContext&, Var& object, const Var& index, const Var& value) {
       if(Vector2f* vector = object.try_as<Vector2f>()) {
         if(const Symbol* index_symbol = index.try_as<Symbol>()) {
           if(*index_symbol == x_symbol) {
@@ -307,7 +307,7 @@ void L::init_script_standard_functions() {
       }
       return false;
     };
-    ScriptContext::type_set_item(Type<Vector3f>::description()) = [](Var& object, const Var& index, const Var& value) {
+    ScriptContext::type_set_item(Type<Vector3f>::description()) = [](const ScriptContext&, Var& object, const Var& index, const Var& value) {
       if(Vector3f* vector = object.try_as<Vector3f>()) {
         if(const Symbol* index_symbol = index.try_as<Symbol>()) {
           if(*index_symbol == x_symbol) {
@@ -330,7 +330,7 @@ void L::init_script_standard_functions() {
         case 2: c.return_value() = Vector2f(c.param(0).get<float>(), c.param(1).get<float>()); break;
         case 3: c.return_value() = Vector3f(c.param(0), c.param(1).get<float>(), c.param(2).get<float>()); break;
         case 4: c.return_value() = Vector4f(c.param(0), c.param(1).get<float>(), c.param(2).get<float>(), c.param(3).get<float>()); break;
-        default: warning("Cannot create vector from %d components", c.param_count()); break;
+        default: c.warning("Cannot create vector from %d components", c.param_count()); break;
       }
     });
     register_script_function("normalize", [](ScriptContext& c) {
