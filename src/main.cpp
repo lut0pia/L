@@ -30,12 +30,12 @@ void mainjob(void*) {
   }
   Engine::clear();
   TaskSystem::join_all();
-#ifdef L_DEBUG
+#if !L_RLS
   flush_profiling();
 #endif
 }
 int main(int, const char*[]) {
-#if L_DEBUG
+#if !L_RLS
   init_log_file();
   init_debug_draw();
   Engine::add_parallel_update(ResourceSlot::update);
@@ -91,7 +91,7 @@ int main(int, const char*[]) {
   return 0;
 }
 
-#if !defined(L_DEBUG) && defined(L_WINDOWS)
+#if L_RLS && L_WINDOWS
 int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int) {
   main(0, nullptr);
 }

@@ -56,13 +56,13 @@ namespace L {
     static Array<VkFramebuffer> garbage_framebuffers;
     static Array<GarbageImage> garbage_images;
 
-#ifdef L_DEBUG
+#if !L_RLS
     VkDebugReportCallbackEXT debug_report_callback;
 #endif
   }
 }
 
-#ifdef L_DEBUG
+#if !L_RLS
 static VKAPI_ATTR VkBool32 VKAPI_CALL debug_callback(VkDebugReportFlagsEXT, VkDebugReportObjectTypeEXT, uint64_t, size_t, int32_t, const char*, const char* msg, void*) {
   warning("Vulkan: %s", msg);
   return VK_FALSE;
@@ -70,7 +70,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debug_callback(VkDebugReportFlagsEXT, VkDe
 #endif
 
 void Vulkan::init() {
-#ifdef L_WINDOWS
+#if L_WINDOWS
   _putenv("DISABLE_VK_LAYER_VALVE_steam_overlay_1=1");
 #endif
   L_SCOPE_MARKER("Vulkan::init");
@@ -88,14 +88,14 @@ void Vulkan::init() {
     const char* required_extensions[] = {
       VK_KHR_SURFACE_EXTENSION_NAME,
       Window::instance()->extra_vulkan_extension(),
-#ifdef L_DEBUG
+#if !L_RLS
       VK_EXT_DEBUG_REPORT_EXTENSION_NAME,
 #endif
     };
     create_info.enabledExtensionCount = L_COUNT_OF(required_extensions);
     create_info.ppEnabledExtensionNames = required_extensions;
 
-#ifdef L_DEBUG
+#if !L_RLS
     const char* validation_layers[] = {
       "VK_LAYER_LUNARG_standard_validation",
       //"VK_LAYER_RENDERDOC_Capture",
@@ -107,7 +107,7 @@ void Vulkan::init() {
     L_VK_CHECKED(vkCreateInstance(&create_info, nullptr, &instance));
   }
 
-#ifdef L_DEBUG
+#if !L_RLS
   { // Create debug report callback
     VkDebugReportCallbackCreateInfoEXT createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;

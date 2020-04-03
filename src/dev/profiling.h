@@ -1,11 +1,7 @@
 #pragma once
 
 #ifndef L_PROFILING
-#ifdef L_DEBUG
-#define L_PROFILING 1
-#else
-#define L_PROFILING 0
-#endif
+#define L_PROFILING !L_RLS
 #endif
 
 #if L_PROFILING

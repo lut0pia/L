@@ -6,7 +6,7 @@ using namespace Network;
 #include "../stream/NetStream.h"
 #include "../stream/CFileStream.h"
 
-#ifdef L_WINDOWS
+#if L_WINDOWS
 #include <WS2tcpip.h>
 #endif
 

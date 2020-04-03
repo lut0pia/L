@@ -21,16 +21,16 @@ namespace L {
     void* alloc(size_t);
     void dealloc(void*);
 
-#if defined L_WINDOWS
+#if L_WINDOWS
     const char slash = '\\';
-#elif defined L_UNIX
+#elif L_LINUX
     const char slash = '/';
 #endif
 
     inline void openURL(const String& url) {
-#if defined L_WINDOWS
+#if L_WINDOWS
       call("start "+url);
-#elif defined L_UNIX
+#elif L_LINUX
       call("xdg-open "+url);
 #endif
     }

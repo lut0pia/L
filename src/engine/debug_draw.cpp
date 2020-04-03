@@ -7,7 +7,7 @@
 
 using namespace L;
 
-#ifdef L_DEBUG
+#if !L_RLS
 
 struct DebugDrawing {
   Material material;

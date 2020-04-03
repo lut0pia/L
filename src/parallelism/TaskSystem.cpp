@@ -5,7 +5,7 @@
 #include "Semaphore.h"
 #include "../system/System.h"
 
-#ifdef _WIN32
+#if L_WINDOWS
 #include <Windows.h>
 #endif
 

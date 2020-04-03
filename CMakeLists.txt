@@ -19,7 +19,13 @@ project(L)
 
 set(CMAKE_CONFIGURATION_TYPES "Debug;Development;Release" CACHE INTERNAL "Configs" FORCE)
 set(DEV_DBG $<NOT:$<CONFIG:Release>>)
-add_compile_definitions($<${DEV_DBG}:L_DEBUG>)
+add_compile_definitions(
+  L_DBG=$<CONFIG:Debug>
+  L_DEV=$<CONFIG:Development>
+  L_RLS=$<CONFIG:Release>
+  L_LINUX=$<PLATFORM_ID:Linux>
+  L_WINDOWS=$<PLATFORM_ID:Windows>
+)
 set(CMAKE_EXE_LINKER_FLAGS_DEVELOPMENT ${CMAKE_EXE_LINKER_FLAGS_DEBUG} CACHE INTERNAL "Configs")
 
 # Compiler options
@@ -35,7 +41,6 @@ endfunction()
 
 if(MSVC)
   add_compile_definitions(
-    L_WINDOWS
     WIN32_LEAN_AND_MEAN
     NOMINMAX
     NOCRYPT
@@ -51,9 +56,6 @@ if(MSVC)
     /WX /W4
   )
 else()
-  add_compile_definitions(
-    L_UNIX
-  )
   add_compile_options(
     -fno-operator-names
     -fno-exceptions

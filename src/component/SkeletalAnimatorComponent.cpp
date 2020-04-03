@@ -45,7 +45,7 @@ void SkeletalAnimatorComponent::late_update() {
 
     _primitive->material().set_buffer("Pose", _skin.begin(), sizeof(Matrix44f) * _skin.size());
 
-#if L_DEBUG
+#if !L_RLS
     if(Settings::get_int("render_skeletal_animator", 0)) {
       for(uintptr_t i = 0; i < skeleton.joints.size(); i++) {
         const SkeletonJoint& joint = skeleton.joints[i];

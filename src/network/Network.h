@@ -7,11 +7,11 @@
 #include "../text/String.h"
 
 #include "../macros.h"
-#if defined L_WINDOWS
+#if L_WINDOWS
 typedef int socklen_t;
 #include <stdio.h>
 #include <WinSock2.h>
-#elif defined L_UNIX
+#elif L_LINUX
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>

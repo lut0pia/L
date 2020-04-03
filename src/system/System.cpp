@@ -6,7 +6,7 @@
 using namespace L;
 using namespace System;
 
-#ifdef L_WINDOWS
+#if L_WINDOWS
 #define popen _popen
 #define pclose _pclose
 #endif

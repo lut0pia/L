@@ -9,7 +9,7 @@ L_POP_NO_WARNINGS
 
 using namespace L;
 
-#ifdef L_DEBUG
+#if !L_RLS
 void L::dump_stack(FILE* stream) {
   HANDLE current_process(GetCurrentProcess());
   HANDLE current_thread(GetCurrentThread());
