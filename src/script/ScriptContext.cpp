@@ -218,7 +218,6 @@ Var ScriptContext::execute(const Ref<ScriptFunction>& function, const Var* param
           continue; // Avoid ip increment
         } else {
           warning("Trying to call non-callable type: %s", new_func.type()->name);
-          print_callstack();
           _current_stack_start = _frames.back().stack_start;
           _current_param_count = uint32_t(_frames.back().param_count);
           _stack.size(_current_stack_start + 256);
