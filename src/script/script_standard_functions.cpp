@@ -22,11 +22,6 @@ using namespace L;
 
 #define L_SCRIPT_NATIVE_METHOD(type,name,...) \
   ScriptContext::type_value(Type<type>::description(), Symbol(name)) = (ScriptNativeFunction)(__VA_ARGS__);
-#define L_SCRIPT_NATIVE_ACCESS_METHOD(type,name) \
-  L_SCRIPT_NATIVE_METHOD(type,#name,[](ScriptContext& c) { \
-    L_ASSERT(c.param_count()==0 && c.current_self().is<type>()); \
-    c.return_value() = c.current_self().as<type>().name(); \
-  })
 
 template <class T>
 static void register_script_method(const char* name, ScriptNativeFunction func) {
