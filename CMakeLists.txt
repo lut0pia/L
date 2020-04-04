@@ -55,6 +55,9 @@ if(MSVC)
     /fp:fast
     /WX /W4
   )
+  add_link_options(
+    $<$<CONFIG:Release>:/SUBSYSTEM:WINDOWS>
+  )
 else()
   add_compile_options(
     -fno-operator-names
