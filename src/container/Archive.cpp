@@ -42,7 +42,6 @@ void Archive::store(const char* key, const void* data, size_t size) {
     e.position = uint32_t(file_stream.size());
   }
 
-  e.date = Date::now();
   e.hash = key_hash;
   e.size = uint32_t(size);
   file_stream.seek(uintptr_t(&e)-uintptr_t(_entries));

@@ -9,14 +9,13 @@ namespace L {
   class Archive {
   public:
     struct Entry {
-      Date date;
       uint32_t hash;
       uint32_t position;
       uint32_t size;
-      inline operator bool() const { return size>0; }
+      inline operator bool() const { return size > 0; }
     };
-    static const size_t table_size_bytes = 1<<16; // 64KB
-    static const size_t table_entry_count = table_size_bytes/sizeof(Entry);
+    static const size_t table_size_bytes = 1 << 16; // 64KB
+    static const size_t table_entry_count = table_size_bytes / sizeof(Entry);
   protected:
     String _path;
     Entry* _entries;
