@@ -28,7 +28,6 @@ bool pixel_font_loader(ResourceSlot& slot, Font::Intermediate& intermediate) {
 #include "glyphs.def"
 #undef MAKE_GLYPH
 
-  slot.persistent = true;
   return true;
 }
 

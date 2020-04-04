@@ -9,19 +9,23 @@
 #include "../container/Table.h"
 #include "../dev/profiling.h"
 #include "../parallelism/Lock.h"
+#include "../stream/BufferStream.h"
 #include "../stream/CFileStream.h"
+#include "../stream/StringStream.h"
 #include "../system/File.h"
 
 using namespace L;
 
 static Archive archive("data.bin");
+#if !L_RLS
+static Archive archive_dev("dev.bin");
+#endif
 static Pool<ResourceSlot> _pool;
 static Array<ResourceSlot*> _slots;
 static Table<Symbol, ResourceSlot*> _table;
 
-ResourceSlot::ResourceSlot(const Symbol& type, const char* url) : type(type), id(url),
-path(url, min<size_t>(strlen(url), strchr(url, '?') - url)),
-persistent(false), state(Unloaded), value(nullptr) {
+ResourceSlot::ResourceSlot(const Symbol& type, const char* url)
+  : type(type), id(url), path(url, min<size_t>(strlen(url), strchr(url, '?') - url)) {
   // Extract file extension from path
   const char* dot = strrchr(path, '.');
   ext = dot ? dot + 1 : (const char*)path;
@@ -98,8 +102,12 @@ Buffer ResourceSlot::read_source_file() {
   if(source_buffer) {
     return Buffer(source_buffer, source_buffer.size());
   }
-  // Otherwise read actual source file
+  // Otherwise read source file from path
   if(CFileStream stream = CFileStream(path, "rb")) {
+    // Add it to source files
+    if(!source_files.find(String(path))) {
+      source_files.push(path);
+    }
     const size_t size(stream.size());
     Buffer wtr(size);
     stream.read(wtr, size);
@@ -112,20 +120,51 @@ Buffer ResourceSlot::read_source_file() {
 Buffer ResourceSlot::read_archive() {
   L_SCOPE_MARKER("Resource read archive");
   const Symbol typed_id = make_typed_id(type, id);
-  if(Archive::Entry entry = archive.find(typed_id)) {
-    Date file_mtime;
-    if(!File::mtime(path, file_mtime) || file_mtime < entry.date) {
-      Buffer buffer(entry.size);
-      archive.load(entry, buffer);
-      return buffer;
+
+#if !L_RLS
+  if(Archive::Entry entry = archive_dev.find(typed_id)) {
+    Buffer buffer(entry.size);
+    archive_dev.load(entry, buffer);
+    BufferStream stream((char*)buffer.data(), buffer.size());
+    stream >= source_files >= mtime;
+
+    if(is_out_of_date()) {
+      return Buffer(); // Force loading from source if entry is out of date
     }
   }
+#endif
+
+  if(Archive::Entry entry = archive.find(typed_id)) {
+    Buffer buffer(entry.size);
+    archive.load(entry, buffer);
+    return buffer;
+  }
+
   return Buffer();
 }
 void ResourceSlot::write_archive(const void* data, size_t size) {
   L_SCOPE_MARKER("Resource write archive");
   const Symbol typed_id = make_typed_id(type, id);
+
+#if !L_RLS
+  {
+    StringStream stream;
+    stream <= source_files <= mtime;
+    archive_dev.store(typed_id, stream.string().begin(), stream.string().size());
+  }
+#endif
+
   archive.store(typed_id, data, size);
+}
+
+bool ResourceSlot::is_out_of_date() const {
+  for(const String& source_file : source_files) {
+    Date file_mtime;
+    if(File::mtime(source_file, file_mtime) && mtime < file_mtime) {
+      return true;
+    }
+  }
+  return false;
 }
 
 Symbol ResourceSlot::make_typed_id(const Symbol& type, const char* url) {
@@ -148,15 +187,12 @@ ResourceSlot* ResourceSlot::find(const Symbol& type, const char* url) {
 void ResourceSlot::update() {
   if(!_slots.empty()) {
     L_SCOPE_MARKER("Resource update");
-    static uintptr_t index(0);
+    static uintptr_t index = 0;
     ResourceSlot& slot(*_slots[index%_slots.size()]);
-    if(!slot.persistent // Persistent resources don't hot reload
-      && (slot.state == Loaded || slot.state == Failed)) { // No reload if it hasn't been loaded in the first place
-      Date file_mtime;
-      if(File::mtime(slot.path, file_mtime) && slot.mtime < file_mtime) {
-        slot.state = Unloaded;
-        slot.mtime = Date::now();
-      }
+    if((slot.state == Loaded || slot.state == Failed) // No reload if it hasn't been loaded in the first place
+      && slot.is_out_of_date()) {
+      slot.state = Unloaded;
+      slot.mtime = Date::now();
     }
     index++;
   }

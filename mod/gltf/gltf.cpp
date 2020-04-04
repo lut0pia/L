@@ -622,7 +622,6 @@ static bool gltf_shader_loader(ResourceSlot& slot, Shader::Intermediate& interme
     return false;
   }
   slot.source_buffer = Buffer(source.begin(), source.size());
-  slot.persistent = true;
 
   return ResourceLoading<Shader>::load_internal(slot, intermediate);
 }

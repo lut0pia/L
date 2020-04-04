@@ -14,13 +14,15 @@ namespace L {
     Table<Symbol, Symbol> parameters;
     Symbol type, id, path, ext;
     Buffer source_buffer;
+
+    Array<String> source_files;
     Date mtime;
-    bool persistent : 1;
+
     enum : uint32_t { // 32bits because of atomic operations
       Unloaded, Loading, Loaded, Failed,
-    } state;
+    } state = Unloaded;
     void(*load_function)(ResourceSlot&);
-    void* value;
+    void* value = nullptr;
 
     ResourceSlot(const Symbol& type, const char* url);
 
@@ -35,6 +37,9 @@ namespace L {
     Buffer read_source_file();
     Buffer read_archive();
     void write_archive(const void* data, size_t size);
+
+    bool is_out_of_date() const;
+
     static Symbol make_typed_id(const Symbol& type, const char* url);
     static ResourceSlot* find(const Symbol& type, const char* url);
     static void update();
@@ -54,7 +59,7 @@ namespace L {
     inline const T& operator*() const { flush(); return *(T*)_slot->value; }
     inline const T* operator->() const { flush(); return (T*)_slot->value; }
     inline const ResourceSlot* slot() const { return _slot; }
-    inline bool is_set() const { return _slot!=nullptr; }
+    inline bool is_set() const { return _slot != nullptr; }
     inline bool is_loaded() const {
       if(_slot) {
         load();
@@ -62,7 +67,7 @@ namespace L {
       } else return false;
     }
     inline operator bool() const { return is_loaded(); }
-    inline bool operator==(const Resource& other) { return slot()==other.slot(); }
+    inline bool operator==(const Resource& other) { return slot() == other.slot(); }
     inline bool operator!=(const Resource& other) { return !operator==(other); }
     inline void load() const { if(_slot) _slot->load(); }
     inline void flush() const { if(_slot) _slot->flush(); }

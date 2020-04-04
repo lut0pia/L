@@ -121,7 +121,6 @@ static bool blue_noise_loader(ResourceSlot& slot, Texture::Intermediate& interme
   float* matrix(Memory::alloc_type<float>(width*height));
   void_and_cluster(width, height, matrix);
 
-  slot.persistent = true;
   intermediate.width = width;
   intermediate.height = height;
   intermediate.format = VK_FORMAT_R8_UNORM;

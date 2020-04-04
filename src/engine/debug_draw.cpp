@@ -54,7 +54,6 @@ static bool debug_shader_loader(ResourceSlot& slot, Shader::Intermediate& interm
 
   slot.source_buffer = Buffer(source.begin(), source.size());
   slot.ext = "glsl";
-  slot.persistent = true;
   return ResourceLoading<Shader>::load_internal(slot, intermediate);
 }
 

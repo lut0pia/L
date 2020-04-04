@@ -63,7 +63,6 @@ static bool perlin_noise_loader(ResourceSlot& slot, Texture::Intermediate& inter
   slot.parameter("persistence", gain);
   slot.parameter("lacunarity", lacunarity);
 
-  slot.persistent = true;
   intermediate.width = size;
   intermediate.height = size;
   intermediate.format = VK_FORMAT_R8_UNORM;
