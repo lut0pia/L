@@ -15,10 +15,23 @@
 
 using namespace L;
 
+static bool check_param_count(ScriptContext& c, uint32_t count) {
+  if(c.param_count() < count) {
+    c.warning("Too few parameters, expected at least %d, got %d", count, c.param_count());
+    return false;
+  } else {
+    return true;
+  }
+}
+
 #define L_SCRIPT_NATIVE(name,...) \
   ScriptGlobal(name) = (ScriptNativeFunction)(__VA_ARGS__)
 #define L_SCRIPT_NATIVE_RETURN(name,p_count,...) \
-  L_SCRIPT_NATIVE(name,[](ScriptContext& c) { L_ASSERT(c.param_count()==p_count); c.return_value() = __VA_ARGS__; })
+  L_SCRIPT_NATIVE(name,[](ScriptContext& c) { \
+    if(check_param_count(c, p_count)) { \
+      c.return_value() = __VA_ARGS__; \
+    } \
+  })
 
 #define L_SCRIPT_NATIVE_METHOD(type,name,...) \
   ScriptContext::type_value(Type<type>::description(), Symbol(name)) = (ScriptNativeFunction)(__VA_ARGS__);
@@ -54,18 +67,20 @@ void L::init_script_standard_functions() {
   L_SCRIPT_NATIVE_RETURN("euler_radians", 3, euler_radians(c.param(0), c.param(1), c.param(2)));
 
   register_script_function("max", [](ScriptContext& c) {
-    L_ASSERT(c.param_count() >= 1);
-    c.return_value() = c.param(0);
-    for(uintptr_t i(1); i < c.param_count(); i++)
-      if(c.param(i) > c.return_value())
-        c.return_value() = c.param(i);
+    if(check_param_count(c, 1)) {
+      c.return_value() = c.param(0);
+      for(uintptr_t i(1); i < c.param_count(); i++)
+        if(c.param(i) > c.return_value())
+          c.return_value() = c.param(i);
+    }
   });
   register_script_function("min", [](ScriptContext& c) {
-    L_ASSERT(c.param_count() >= 1);
-    c.return_value() = c.param(0);
-    for(uintptr_t i(1); i < c.param_count(); i++)
-      if(c.param(i) < c.return_value())
-        c.return_value() = c.param(i);
+    if(check_param_count(c, 1)) {
+      c.return_value() = c.param(0);
+      for(uintptr_t i(1); i < c.param_count(); i++)
+        if(c.param(i) < c.return_value())
+          c.return_value() = c.param(i);
+    }
   });
   register_script_function("print", [](ScriptContext& c) {
     for(uintptr_t i(0); i < c.param_count(); i++)
@@ -75,9 +90,10 @@ void L::init_script_standard_functions() {
     debugbreak();
   });
   register_script_function("lerp", [](ScriptContext& c) {
-    L_ASSERT(c.param_count() == 3);
-    const float a(c.param(0).get<float>()), b(c.param(1).get<float>()), alpha(c.param(2).get<float>());
-    c.return_value() = (a * (1.f - alpha) + b * alpha);
+    if(check_param_count(c, 3)) {
+      const float a(c.param(0).get<float>()), b(c.param(1).get<float>()), alpha(c.param(2).get<float>());
+      c.return_value() = (a * (1.f - alpha) + b * alpha);
+    }
   });
   register_script_function("color", [](ScriptContext& c) {
     if(c.param(0).is<String>()) {
@@ -90,23 +106,25 @@ void L::init_script_standard_functions() {
     }
   });
   register_script_function("left_pad", [](ScriptContext& c) {
-    L_ASSERT(c.param_count() == 3);
-    c.return_value() = c.param(0).get<String>();
-    String& str(c.return_value().as<String>());
-    const uint32_t wanted_size(uint32_t(c.param(1).get<float>()));
-    const String append(c.param(2).get<String>());
-    while(str.size() < wanted_size) {
-      str = append + str;
+    if(check_param_count(c, 3)) {
+      c.return_value() = c.param(0).get<String>();
+      String& str(c.return_value().as<String>());
+      const uint32_t wanted_size(uint32_t(c.param(1).get<float>()));
+      const String append(c.param(2).get<String>());
+      while(str.size() < wanted_size) {
+        str = append + str;
+      }
     }
   });
   register_script_function("count", [](ScriptContext& c) {
-    L_ASSERT(c.param_count() == 1);
-    if(Ref<Table<Var, Var>>* table = c.param(0).try_as<Ref<Table<Var, Var>>>()) {
-      c.return_value() = float((*table)->count());
-    } else if(Ref<Array<Var>>* array = c.param(0).try_as<Ref<Array<Var>>>()) {
-      c.return_value() = float((*array)->size());
-    } else {
-      c.return_value() = 0;
+    if(check_param_count(c, 1)) {
+      if(Ref<Table<Var, Var>>* table = c.param(0).try_as<Ref<Table<Var, Var>>>()) {
+        c.return_value() = float((*table)->count());
+      } else if(Ref<Array<Var>>* array = c.param(0).try_as<Ref<Array<Var>>>()) {
+        c.return_value() = float((*array)->size());
+      } else {
+        c.return_value() = 0;
+      }
     }
   });
 
