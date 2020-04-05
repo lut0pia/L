@@ -130,6 +130,7 @@ void L::init_script_standard_functions() {
 
   { // Array
     Type<Ref<Array<Var>>>::cancmp<>();
+    Type<Ref<Array<Var>>>::addcast<bool>([](void* dst, const void*) {new(dst)bool(true); });
 
     ScriptContext::type_get_item(Type<Ref<Array<Var>>>::description()) = [](const ScriptContext& c, const Var& object, const Var& index, Var& value) {
       if(const Ref<Array<Var>>* array = object.try_as<Ref<Array<Var>>>()) {
@@ -223,6 +224,7 @@ void L::init_script_standard_functions() {
 
   { // Table
     Type<Ref<Table<Var, Var>>>::cancmp<>();
+    Type<Ref<Table<Var, Var>>>::addcast<bool>([](void* dst, const void*) {new(dst)bool(true); });
 
     ScriptContext::type_get_item(Type<Ref<Table<Var, Var>>>::description()) = [](const ScriptContext&, const Var& object, const Var& index, Var& value) {
       if(const Ref<Table<Var, Var>>* table = object.try_as<Ref<Table<Var, Var>>>()) {
