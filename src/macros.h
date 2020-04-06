@@ -12,8 +12,6 @@
 #define L_CONCAT(a,b) L_CONCAT_(a,b)
 #define L_CONCAT_(a,b) a##b
 
-#define L_ONCE do{static bool DONE_ONCE(false);if(DONE_ONCE) return;DONE_ONCE = true;}while(false)
-
 #define L_COUNT_OF(a) (sizeof(a)/sizeof(*a))
 
 // Compiler-specific pragmas

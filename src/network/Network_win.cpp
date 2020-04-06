@@ -3,7 +3,6 @@
 using namespace L;
 
 void Network::init() {
-  L_ONCE;
   static WSADATA WSAData;
   WSAStartup(MAKEWORD(2, 0), &WSAData);
 }
