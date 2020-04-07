@@ -79,10 +79,11 @@ namespace L {
     Array<ScriptGlobal> globals;
     Array<ScriptInstruction> bytecode;
 
-    // Debug information
+#if !L_RLS
     String source_id;
     Array<uint32_t> bytecode_line;
     Array<String> source_lines;
+#endif
 
     uint16_t constant(const Var&);
     uint16_t global(Symbol);
@@ -99,10 +100,29 @@ namespace L {
     Array<Ref<ScriptOuter>> outers;
   };
 
-  inline Stream& operator<=(Stream& s, const Script& v) { return s <= v.constants <= v.globals <= v.bytecode <= v.source_id <= v.bytecode_line <= v.source_lines; }
-  inline Stream& operator>=(Stream& s, Script& v) { return s >= v.constants >= v.globals >= v.bytecode >= v.source_id >= v.bytecode_line >= v.source_lines; }
-  inline void resource_write(Stream& s, const ScriptFunction& v) { s <= v.script <= v.offset; }
-  inline void resource_read(Stream& s, ScriptFunction& v) { s >= v.script >= v.offset; }
+  inline void script_write(Stream& s, const Script& v) { s <= v.constants <= v.globals <= v.bytecode; }
+  inline void script_read(Stream& s, Script& v) { s >= v.constants >= v.globals >= v.bytecode; }
+  inline void resource_write(Stream& s, const ScriptFunction& v) {
+    script_write(s, *v.script);
+  }
+  inline void resource_read(Stream& s, ScriptFunction& v) {
+    v.script = ref<Script>();
+    script_read(s, *v.script);
+    v.offset = 0;
+  }
+
+#if !L_RLS
+  inline void script_write_dev(Stream& s, const Script& v) { s <= v.source_id <= v.bytecode_line <= v.source_lines; }
+  inline void script_read_dev(Stream& s, Script& v) { s >= v.source_id >= v.bytecode_line >= v.source_lines; }
+  inline void resource_write_dev(Stream& s, const ScriptFunction& v) {
+    script_write_dev(s, *v.script);
+  }
+  inline void resource_read_dev(Stream& s, ScriptFunction& v) {
+    v.script = ref<Script>();
+    script_read_dev(s, *v.script);
+    v.offset = 0;
+  }
+#endif
 
   void init_script_standard_functions();
 }

@@ -32,8 +32,10 @@ bool LSCompiler::compile(ScriptFunction& script_function) {
     }
     _functions.clear();
     _script = ref<Script>();
+#if !L_RLS
     _script->source_id = _context;
     _script->source_lines = _source_lines;
+#endif
   }
 
   { // Compiling
@@ -49,7 +51,9 @@ bool LSCompiler::compile(ScriptFunction& script_function) {
       function->push(function->code, ScriptInstruction {Return}); // Better safe than sorry
       function->bytecode_offset = uint32_t(_script->bytecode.size());
       _script->bytecode.insertArray(_script->bytecode.size(), function->bytecode);
+#if !L_RLS
       _script->bytecode_line.insertArray(_script->bytecode_line.size(), function->bytecode_line);
+#endif
     }
   }
 

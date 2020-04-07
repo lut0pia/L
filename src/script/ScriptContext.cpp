@@ -273,6 +273,7 @@ void ScriptContext::warning(const char* msg, ...) const {
   print_callstack();
 }
 void ScriptContext::print_callstack() const {
+#if !L_RLS
   log("Script callstack:");
   for(intptr_t i = _frames.size() - 1; i >= 0; i--) {
     const Frame& frame = _frames[i];
@@ -285,6 +286,7 @@ void ScriptContext::print_callstack() const {
       log(" %s:???", script->source_id.begin());
     }
   }
+#endif
 }
 
 Var& ScriptContext::type_value(const TypeDescription* type, const Var& index) {
