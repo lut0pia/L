@@ -9,7 +9,6 @@
 #include "../time/Date.h"
 
 namespace L {
-  class Buffer;
   struct ResourceSlot {
     Table<Symbol, Symbol> parameters;
     Symbol type, id, path, ext;
