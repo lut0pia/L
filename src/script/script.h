@@ -101,8 +101,8 @@ namespace L {
 
   inline Stream& operator<=(Stream& s, const Script& v) { return s <= v.constants <= v.globals <= v.bytecode <= v.source_id <= v.bytecode_line <= v.source_lines; }
   inline Stream& operator>=(Stream& s, Script& v) { return s >= v.constants >= v.globals >= v.bytecode >= v.source_id >= v.bytecode_line >= v.source_lines; }
-  inline Stream& operator<=(Stream& s, const ScriptFunction& v) { return s <= v.script <= v.offset; }
-  inline Stream& operator>=(Stream& s, ScriptFunction& v) { return s >= v.script >= v.offset; }
+  inline void resource_write(Stream& s, const ScriptFunction& v) { s <= v.script <= v.offset; }
+  inline void resource_read(Stream& s, ScriptFunction& v) { s >= v.script >= v.offset; }
 
   void init_script_standard_functions();
 }

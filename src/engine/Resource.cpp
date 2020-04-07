@@ -121,19 +121,6 @@ Buffer ResourceSlot::read_archive() {
   L_SCOPE_MARKER("Resource read archive");
   const Symbol typed_id = make_typed_id(type, id);
 
-#if !L_RLS
-  if(Archive::Entry entry = archive_dev.find(typed_id)) {
-    Buffer buffer(entry.size);
-    archive_dev.load(entry, buffer);
-    BufferStream stream((char*)buffer.data(), buffer.size());
-    stream >= source_files >= mtime;
-
-    if(is_out_of_date()) {
-      return Buffer(); // Force loading from source if entry is out of date
-    }
-  }
-#endif
-
   if(Archive::Entry entry = archive.find(typed_id)) {
     Buffer buffer(entry.size);
     archive.load(entry, buffer);
@@ -145,17 +132,32 @@ Buffer ResourceSlot::read_archive() {
 void ResourceSlot::write_archive(const void* data, size_t size) {
   L_SCOPE_MARKER("Resource write archive");
   const Symbol typed_id = make_typed_id(type, id);
-
-#if !L_RLS
-  {
-    StringStream stream;
-    stream <= source_files <= mtime;
-    archive_dev.store(typed_id, stream.string().begin(), stream.string().size());
-  }
-#endif
-
   archive.store(typed_id, data, size);
 }
+
+#if !L_RLS
+void ResourceSlot::read(Stream& stream) {
+  stream >= source_files >= mtime;
+}
+void ResourceSlot::write(Stream& stream) const {
+  stream <= source_files <= mtime;
+}
+Buffer ResourceSlot::read_archive_dev() {
+  L_SCOPE_MARKER("Resource read dev archive");
+  const Symbol typed_id = make_typed_id(type, id);
+  if(Archive::Entry entry = archive_dev.find(typed_id)) {
+    Buffer buffer(entry.size);
+    archive_dev.load(entry, buffer);
+    return buffer;
+  }
+  return Buffer();
+}
+void ResourceSlot::write_archive_dev(const void* data, size_t size) {
+  L_SCOPE_MARKER("Resource write dev archive");
+  const Symbol typed_id = make_typed_id(type, id);
+  archive_dev.store(typed_id, data, size);
+}
+#endif
 
 bool ResourceSlot::is_out_of_date() const {
   for(const String& source_file : source_files) {

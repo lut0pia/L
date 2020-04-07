@@ -40,7 +40,13 @@ namespace L {
 
     inline const Texture& atlas() const { return _atlas; }
 
-    friend inline Stream& operator<=(Stream& s, const Intermediate& v) { return s <= v.texture_intermediate <= v.glyphs <= v.line_height; }
-    friend inline Stream& operator>=(Stream& s, Intermediate& v) { return s >= v.texture_intermediate >= v.glyphs >= v.line_height; }
+    friend inline void resource_write(Stream& s, const Intermediate& v) {
+      resource_write(s, v.texture_intermediate);
+      s <= v.glyphs <= v.line_height;
+    }
+    friend inline void resource_read(Stream& s, Intermediate& v) {
+      resource_read(s, v.texture_intermediate);
+      s >= v.glyphs >= v.line_height;
+    }
   };
 }

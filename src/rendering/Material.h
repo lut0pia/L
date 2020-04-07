@@ -96,8 +96,8 @@ namespace L {
 
     static void script_registration();
 
-    friend inline Stream& operator<=(Stream& s, const Material& v) { return s <= v._parent <= v._partial_state; }
-    friend inline Stream& operator>=(Stream& s, Material& v) { return s >= v._parent >= v._partial_state; }
+    friend inline void resource_write(Stream& s, const Material& v) { s <= v._parent <= v._partial_state; }
+    friend inline void resource_read(Stream& s, Material& v) { s >= v._parent >= v._partial_state; }
     friend inline Stream& operator<=(Stream& s, const Material::State& v) {
       // Pipeline state
       s <= v.pipeline;

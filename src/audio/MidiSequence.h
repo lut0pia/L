@@ -16,7 +16,7 @@ namespace L {
 
     void play(uintptr_t& index, Time& time) const; // Play from index for time
 
-    friend inline Stream& operator<=(Stream& s, const Intermediate& v) { return s <= v.events; }
-    friend inline Stream& operator>=(Stream& s, Intermediate& v) { return s >= v.events; }
+    friend inline void resource_write(Stream& s, const Intermediate& v) { s <= v.events; }
+    friend inline void resource_read(Stream& s, Intermediate& v) { s >= v.events; }
   };
 }

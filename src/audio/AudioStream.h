@@ -13,7 +13,7 @@ namespace L {
     uint32_t sample_count;
     Audio::SampleFormat sample_format;
 
-    friend inline Stream& operator<=(Stream& s, const Intermediate& v) { return s <= v.format <= v.samples <= v.sample_count <= v.sample_format; }
-    friend inline Stream& operator>=(Stream& s, Intermediate& v) { return s >= v.format >= v.samples >= v.sample_count >= v.sample_format; }
+    friend inline void resource_write(Stream& s, const Intermediate& v) { s <= v.format <= v.samples <= v.sample_count <= v.sample_format; }
+    friend inline void resource_read(Stream& s, Intermediate& v) { s >= v.format >= v.samples >= v.sample_count >= v.sample_format; }
   };
 }

@@ -37,6 +37,13 @@ namespace L {
     Buffer read_archive();
     void write_archive(const void* data, size_t size);
 
+#if !L_RLS
+    void read(Stream&);
+    void write(Stream&) const;
+    Buffer read_archive_dev();
+    void write_archive_dev(const void* data, size_t size);
+#endif
+
     bool is_out_of_date() const;
 
     static Symbol make_typed_id(const Symbol& type, const char* url);

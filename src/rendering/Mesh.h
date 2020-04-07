@@ -42,7 +42,7 @@ namespace L {
     static const Mesh& wire_cube();
     static const Mesh& wire_sphere();
 
-    friend inline Stream& operator<=(Stream& s, const Intermediate& v) { return s <= v.vertices <= v.indices <= v.attributes; }
-    friend inline Stream& operator>=(Stream& s, Intermediate& v) { return s >= v.vertices >= v.indices >= v.attributes; }
+    friend inline void resource_write(Stream& s, const Intermediate& v) { s <= v.vertices <= v.indices <= v.attributes; }
+    friend inline void resource_read(Stream& s, Intermediate& v) { s >= v.vertices >= v.indices >= v.attributes; }
   };
 }

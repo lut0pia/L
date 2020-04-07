@@ -9,6 +9,8 @@
 #include "../text/compression.h"
 
 namespace L {
+  template <class T> inline void resource_write_dev(Stream&, const T&) {}
+  template <class T> inline void resource_read_dev(Stream&, T&) {}
   template <class T>
   class ResourceLoading {
     typedef bool(*Loader)(ResourceSlot&, typename T::Intermediate&);
@@ -30,6 +32,17 @@ namespace L {
 
       typename T::Intermediate intermediate {};
 
+#if !L_RLS
+      if(Buffer dev_buffer = slot.read_archive_dev()) { // Look in the dev archive for that resource
+        BufferStream dev_stream((char*)dev_buffer.data(), dev_buffer.size());
+        {
+          L_SCOPE_MARKER("Resource serialize dev");
+          slot.read(dev_stream);
+          resource_read_dev(dev_stream, intermediate);
+        }
+      }
+#endif
+
       if(Buffer compressed_buffer = slot.read_archive()) { // Look in the archive for that resource
         Buffer buffer;
         {
@@ -39,7 +52,7 @@ namespace L {
         {
           L_SCOPE_MARKER("Resource unserialize");
           BufferStream stream((char*)buffer.data(), buffer.size());
-          stream >= intermediate;
+          resource_read(stream, intermediate);
         }
         store(slot, intermediate);
         return true;
@@ -52,8 +65,17 @@ namespace L {
           StringStream uncompressed_stream, compressed_stream;
           {
             L_SCOPE_MARKER("Resource serialize");
-            uncompressed_stream <= intermediate;
+            resource_write(uncompressed_stream, intermediate);
           }
+#if !L_RLS
+          StringStream dev_stream;
+          {
+            L_SCOPE_MARKER("Resource serialize dev");
+            slot.write(dev_stream);
+            resource_write_dev(dev_stream, intermediate);
+          }
+          slot.write_archive_dev(dev_stream.string().begin(), dev_stream.string().size());
+#endif
           store(slot, intermediate);
           {
             L_SCOPE_MARKER("Resource compress");

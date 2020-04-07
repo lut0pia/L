@@ -38,7 +38,7 @@ namespace L {
 
     static const Texture& black();
 
-    friend inline Stream& operator<=(Stream& s, const Intermediate& v) { return s <= v.binary <= v.width <= v.height <= v.format; }
-    friend inline Stream& operator>=(Stream& s, Intermediate& v) { return s >= v.binary >= v.width >= v.height >= v.format; }
+    friend inline void resource_write(Stream& s, const Intermediate& v) { s <= v.binary <= v.width <= v.height <= v.format; }
+    friend inline void resource_read(Stream& s, Intermediate& v) { s >= v.binary >= v.width >= v.height >= v.format; }
   };
 }

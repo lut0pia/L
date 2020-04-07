@@ -53,10 +53,10 @@ namespace L {
 
   inline Stream& operator<=(Stream& s, const AnimationChannel& v) { return s <= v.times <= v.values <= v.joint_name <= v.joint_index <= v.type <= v.interpolation; }
   inline Stream& operator>=(Stream& s, AnimationChannel& v) { return s >= v.times >= v.values >= v.joint_name >= v.joint_index >= v.type >= v.interpolation; }
-  inline Stream& operator<=(Stream& s, const Animation& v) { return s <= v.channels; }
-  inline Stream& operator>=(Stream& s, Animation& v) { return s >= v.channels; }
+  inline void resource_write(Stream& s, const Animation& v) { s <= v.channels; }
+  inline void resource_read(Stream& s, Animation& v) { s >= v.channels; }
   inline Stream& operator<=(Stream& s, const SkeletonJoint& v) { return s <= v.inv_bind_pose <= v.name <= v.parent; }
   inline Stream& operator>=(Stream& s, SkeletonJoint& v) { return s >= v.inv_bind_pose >= v.name >= v.parent; }
-  inline Stream& operator<=(Stream& s, const Skeleton& v) { return s <= v.joints; }
-  inline Stream& operator>=(Stream& s, Skeleton& v) { return s >= v.joints; }
+  inline void resource_write(Stream& s, const Skeleton& v) { s <= v.joints; }
+  inline void resource_read(Stream& s, Skeleton& v) { s >= v.joints; }
 }
