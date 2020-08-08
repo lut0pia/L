@@ -8,9 +8,8 @@
 using namespace L;
 
 void SkeletalAnimatorComponent::late_update() {
-  if(_skeleton && _animation) {
+  if(_skeleton) {
     const Skeleton& skeleton(*_skeleton);
-    const Animation& animation(*_animation);
 
     // Reset local pose
     _local_pose.size(skeleton.joints.size());
@@ -20,20 +19,27 @@ void SkeletalAnimatorComponent::late_update() {
       local_pose.scale = 1.f;
     }
 
-    // Compute local pose
-    animation.pose_at(_time, _local_pose.begin());
+    if(_animation) {
+      // Compute local pose
+      _animation->pose_at(_time, _local_pose.begin());
 
-    // Compute global pose
-    _global_pose.size(_local_pose.size());
-    for(uintptr_t i = 0; i < _global_pose.size(); i++) {
-      const uintptr_t parent = skeleton.joints[i].parent;
-      const JointPose& local_pose = _local_pose[i];
-      const Matrix44f matrix = sqt_to_mat(local_pose.rotation, local_pose.translation, local_pose.scale);
-      L_ASSERT(parent < i || parent == UINTPTR_MAX);
-      if(parent == UINTPTR_MAX) { // Parent is root
-        _global_pose[i] = matrix;
-      } else {
-        _global_pose[i] = _global_pose[parent] * matrix;
+      // Compute global pose
+      _global_pose.size(_local_pose.size());
+      for(uintptr_t i = 0; i < _global_pose.size(); i++) {
+        const uintptr_t parent = skeleton.joints[i].parent;
+        const JointPose& local_pose = _local_pose[i];
+        const Matrix44f matrix = sqt_to_mat(local_pose.rotation, local_pose.translation, local_pose.scale);
+        L_ASSERT(parent < i || parent == UINTPTR_MAX);
+        if(parent == UINTPTR_MAX) { // Parent is root
+          _global_pose[i] = matrix;
+        } else {
+          _global_pose[i] = _global_pose[parent] * matrix;
+        }
+      }
+    } else { // Default global pose
+      _global_pose.size(_local_pose.size());
+      for(uintptr_t i = 0; i < _global_pose.size(); i++) {
+        _global_pose[i] = skeleton.joints[i].inv_bind_pose.inverse();
       }
     }
 
