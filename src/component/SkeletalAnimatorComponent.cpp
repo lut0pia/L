@@ -47,11 +47,11 @@ void SkeletalAnimatorComponent::late_update() {
 
 #if !L_RLS
     if(Settings::get_int("render_skeletal_animator", 0)) {
+      const float bounds_length = _primitive->material().bounds().size().length();
+      const Vector3f offset = Vector3f(0.f, bounds_length, 0.f);
+      const float debug_scale = bounds_length / 32.f;
       for(uintptr_t i = 0; i < skeleton.joints.size(); i++) {
         const SkeletonJoint& joint = skeleton.joints[i];
-        const float bounds_length = _primitive->material().bounds().size().length();
-        const Vector3f offset = Vector3f(0.f, bounds_length, 0.f);
-        const float debug_scale = bounds_length / 32.f;
         const Vector3f joint_pos = _global_pose[i].vector<3>(3) + offset;
         const Vector3f joint_x = _global_pose[i].vector<3>(0) * debug_scale;
         const Vector3f joint_y = _global_pose[i].vector<3>(1) * debug_scale;
