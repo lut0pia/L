@@ -114,3 +114,9 @@
 ))
 
 ;(group_entity_create|.add_group|.level_script "scene/test.glb")
+
+(local fox "material/Fox.glb")
+(make_mesh fox (vec -20 0 1))
+(last_mesh.require_primitive|.scale 0.1)
+(last_mesh.require_skeletal_animator|.skeleton fox)
+(last_mesh.require_skeletal_animator|.animation fox)
