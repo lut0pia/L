@@ -48,6 +48,8 @@ bool assimp_animation_loader(ResourceSlot& slot, Animation::Intermediate& interm
   const bool is_gltf = slot.ext == Symbol("glb") || slot.ext == Symbol("gltf");
   const float ticks_per_second = is_gltf ? 1000.f : float(animation->mTicksPerSecond);
 
+  intermediate.duration = float(animation->mDuration) / ticks_per_second;
+
   for(uintptr_t i = 0; i < animation->mNumChannels; i++) {
     const aiNodeAnim* channel = animation->mChannels[i];
     uintptr_t joint = 0;

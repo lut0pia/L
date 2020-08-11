@@ -36,6 +36,9 @@ void SkeletalAnimatorComponent::late_update() {
           _global_pose[i] = _global_pose[parent] * matrix;
         }
       }
+
+      // Increase time
+      _time = fmod(_time + Engine::delta_seconds(), _animation->duration);
     } else { // Default global pose
       _global_pose.size(_local_pose.size());
       for(uintptr_t i = 0; i < _global_pose.size(); i++) {
@@ -90,7 +93,6 @@ void SkeletalAnimatorComponent::late_update() {
     }
 #endif
   }
-  _time = fmod(_time + Engine::delta_seconds(), 3.f);
 }
 void SkeletalAnimatorComponent::update_components() {
   _transform = entity()->require_component<Transform>();

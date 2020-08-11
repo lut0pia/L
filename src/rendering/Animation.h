@@ -34,6 +34,7 @@ namespace L {
     typedef Animation Intermediate;
 
     Array<AnimationChannel> channels;
+    float duration;
 
     void pose_at(float time, JointPose* joints) const;
   };
@@ -53,8 +54,8 @@ namespace L {
 
   inline Stream& operator<=(Stream& s, const AnimationChannel& v) { return s <= v.times <= v.values <= v.joint_name <= v.joint_index <= v.type <= v.interpolation; }
   inline Stream& operator>=(Stream& s, AnimationChannel& v) { return s >= v.times >= v.values >= v.joint_name >= v.joint_index >= v.type >= v.interpolation; }
-  inline void resource_write(Stream& s, const Animation& v) { s <= v.channels; }
-  inline void resource_read(Stream& s, Animation& v) { s >= v.channels; }
+  inline void resource_write(Stream& s, const Animation& v) { s <= v.channels <= v.duration; }
+  inline void resource_read(Stream& s, Animation& v) { s >= v.channels >= v.duration; }
   inline Stream& operator<=(Stream& s, const SkeletonJoint& v) { return s <= v.inv_bind_pose <= v.name <= v.parent; }
   inline Stream& operator>=(Stream& s, SkeletonJoint& v) { return s >= v.inv_bind_pose >= v.name >= v.parent; }
   inline void resource_write(Stream& s, const Skeleton& v) { s <= v.joints; }
