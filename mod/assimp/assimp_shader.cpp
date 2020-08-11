@@ -59,20 +59,30 @@ bool assimp_shader_loader(ResourceSlot& slot, Shader::Intermediate& intermediate
     source += "layout(location = " + to_string(i) + ") " + frag_dir + " " + frag_attributes[i] + ";\n";
   }
 
+  String bindings;
+  uint32_t binding_index = 1;
+  bindings += "layout(binding = " + to_string(binding_index++) + ") uniform Parameters {\n\
+      vec4 color_factor;\n\
+      vec4 metal_rough_factor;\n\
+    };\n";
+
+  if(skinned) {
+    source += "layout(binding = " + to_string(binding_index++) + ") uniform Pose {\n\
+        mat4 joints[1024];\n\
+      };\n";
+  }
+
+  for(uintptr_t i = 0; i < samplers.size(); i++) {
+    bindings += "layout(binding = " + to_string(binding_index++) + ") uniform " + samplers[i] + ";\n";
+  }
+
   slot.ext = slot.parameter("stage");
   if(slot.ext == frag_symbol) {
     for(uintptr_t i = 0; i < render_targets.size(); i++) {
       source += "layout(location = " + to_string(i) + ") out " + render_targets[i] + ";\n";
     }
 
-    source += "layout(binding = 1) uniform Parameters {\n\
-      vec4 color_factor;\n\
-      vec4 metal_rough_factor;\n\
-    };\n";
-
-    for(uintptr_t i = 0; i < samplers.size(); i++) {
-      source += "layout(binding = " + to_string(i + 2) + ") uniform " + samplers[i] + ";\n";
-    }
+    source += bindings;
 
     source += "void main() {\n";
 
@@ -114,11 +124,7 @@ bool assimp_shader_loader(ResourceSlot& slot, Shader::Intermediate& intermediate
       source += "layout(location = " + to_string(i) + ") in " + vert_attributes[i] + ";\n";
     }
 
-    if(skinned) {
-      source += "layout(binding = 2) uniform Pose {\n\
-        mat4 joints[1024];\n\
-      };\n";
-    }
+    source += bindings;
 
     source += "void main() {\n";
 
