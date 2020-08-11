@@ -97,7 +97,7 @@
 
 (make_mesh "material/DamagedHelmet.glb" (vec 20 0 10))
 (last_mesh.require_primitive|.scale 10)
-(last_mesh.require_transform|.rotate_absolute (euler_degrees 0 0 180))
+(last_mesh.require_transform|.rotate_absolute (euler_degrees 180 0 0))
 
 (local sprite (group_entity_create))
 (sprite.require_transform|.move (vec -9.4 0 5))
