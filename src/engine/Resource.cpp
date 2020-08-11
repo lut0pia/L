@@ -160,12 +160,14 @@ void ResourceSlot::write_archive_dev(const void* data, size_t size) {
 #endif
 
 bool ResourceSlot::is_out_of_date() const {
+#if !L_RLS
   for(const String& source_file : source_files) {
     Date file_mtime;
     if(File::mtime(source_file, file_mtime) && mtime < file_mtime) {
       return true;
     }
   }
+#endif
   return false;
 }
 
