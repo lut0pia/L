@@ -31,6 +31,7 @@ namespace L {
       }
 
       typename T::Intermediate intermediate {};
+      bool look_in_archive = true;
 
 #if !L_RLS
       if(Buffer dev_buffer = slot.read_archive_dev()) { // Look in the dev archive for that resource
@@ -40,56 +41,65 @@ namespace L {
           slot.read(dev_stream);
           resource_read_dev(dev_stream, intermediate);
         }
+        look_in_archive = !slot.is_out_of_date();
+      } else {
+        look_in_archive = false; // No dev info on resource, assume reload needed
       }
 #endif
 
-      if(Buffer compressed_buffer = slot.read_archive()) { // Look in the archive for that resource
-        Buffer buffer;
-        {
-          L_SCOPE_MARKER("Resource decompress");
-          buffer = lz_decompress(compressed_buffer.data(), compressed_buffer.size());
-        }
-        {
-          L_SCOPE_MARKER("Resource unserialize");
-          BufferStream stream((char*)buffer.data(), buffer.size());
-          resource_read(stream, intermediate);
-        }
-        store(slot, intermediate);
-        return true;
-      } else { // Try to load it from source
-        if(load_internal(slot, intermediate)) {
-          for(Transformer transformer : _transformers) {
-            transformer(slot, intermediate);
-          }
-
-          StringStream uncompressed_stream, compressed_stream;
+      if(look_in_archive) {
+        if(Buffer compressed_buffer = slot.read_archive()) { // Look in the archive for that resource
+          Buffer buffer;
           {
-            L_SCOPE_MARKER("Resource serialize");
-            resource_write(uncompressed_stream, intermediate);
+            L_SCOPE_MARKER("Resource decompress");
+            buffer = lz_decompress(compressed_buffer.data(), compressed_buffer.size());
           }
-#if !L_RLS
-          StringStream dev_stream;
           {
-            L_SCOPE_MARKER("Resource serialize dev");
-            slot.write(dev_stream);
-            resource_write_dev(dev_stream, intermediate);
+            L_SCOPE_MARKER("Resource unserialize");
+            BufferStream stream((char*)buffer.data(), buffer.size());
+            resource_read(stream, intermediate);
           }
-          slot.write_archive_dev(dev_stream.string().begin(), dev_stream.string().size());
-#endif
           store(slot, intermediate);
-          {
-            L_SCOPE_MARKER("Resource compress");
-            lz_compress(uncompressed_stream.string().begin(), uncompressed_stream.string().size(), compressed_stream);
-          }
-          slot.write_archive(compressed_stream.string().begin(), compressed_stream.string().size());
           return true;
-        } else {
-          slot.mtime = Date::now();
-          slot.state = ResourceSlot::Failed;
-          warning("Unable to load %s from: %s", slot.type, slot.id);
         }
-        return false;
       }
+
+      // Try to load it from source
+      if(load_internal(slot, intermediate)) {
+        for(Transformer transformer : _transformers) {
+          transformer(slot, intermediate);
+        }
+
+        StringStream uncompressed_stream, compressed_stream;
+        {
+          L_SCOPE_MARKER("Resource serialize");
+          resource_write(uncompressed_stream, intermediate);
+        }
+
+        slot.mtime = Date::now();
+
+#if !L_RLS
+        StringStream dev_stream;
+        {
+          L_SCOPE_MARKER("Resource serialize dev");
+          slot.write(dev_stream);
+          resource_write_dev(dev_stream, intermediate);
+        }
+        slot.write_archive_dev(dev_stream.string().begin(), dev_stream.string().size());
+#endif
+        store(slot, intermediate);
+        {
+          L_SCOPE_MARKER("Resource compress");
+          lz_compress(uncompressed_stream.string().begin(), uncompressed_stream.string().size(), compressed_stream);
+        }
+        slot.write_archive(compressed_stream.string().begin(), compressed_stream.string().size());
+        return true;
+      } else {
+        slot.mtime = Date::now();
+        slot.state = ResourceSlot::Failed;
+        warning("Unable to load %s from: %s", slot.type, slot.id);
+      }
+      return false;
     }
     static bool load_internal(ResourceSlot& slot, typename T::Intermediate& intermediate) {
       for(Loader loader : _loaders) {
@@ -101,7 +111,6 @@ namespace L {
     }
     static void store(ResourceSlot& slot, typename T::Intermediate& intermediate) {
       slot.value = Memory::new_type<T>(static_cast<typename T::Intermediate&&>(intermediate));
-      slot.mtime = Date::now();
       slot.state = ResourceSlot::Loaded;
     }
   };
