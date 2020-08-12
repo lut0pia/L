@@ -43,6 +43,7 @@ namespace L {
     static void add_sub_update(void(*sub_update)()) { _sub_updates.push(sub_update); }
     static void add_late_update(void(*late_update)()) { _late_updates.push(late_update); }
     static void add_render(void(*render)(const class Camera&, const class RenderPass&)) { _renders.push(render); }
+    static void add_window_event(void(*win_event)(const struct Window::Event&)) { _win_events.push((void(*)(const struct Window::Event&))win_event); }
     template <class T> inline static void register_component() {
       if(T::flags & ComponentFlag::Update) _updates.push((void(*)())T::update_all);
       if(T::flags & ComponentFlag::UpdateAsync) _updates.push((void(*)())T::update_all_async);
