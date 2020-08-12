@@ -3,6 +3,7 @@
 #include "engine/Resource.inl"
 #include "engine/Settings.h"
 #include "network/Network.h"
+#include "system/File.h"
 
 #include "component/AudioListenerComponent.h"
 #include "component/AudioSourceComponent.h"
@@ -34,12 +35,17 @@ void mainjob(void*) {
   flush_profiling();
 #endif
 }
-int main(int, const char*[]) {
+int main(int argc, const char* argv[]) {
 #if !L_RLS
   init_log_file();
   init_debug_draw();
   Engine::add_parallel_update(ResourceSlot::update);
 #endif
+
+  Date program_mtime;
+  if(argc > 0 && File::mtime(argv[0], program_mtime)) {
+    ResourceSlot::set_program_mtime(program_mtime);
+  }
 
   TypeInit();
   init_script_standard_functions();

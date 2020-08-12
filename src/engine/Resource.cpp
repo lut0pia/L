@@ -23,6 +23,7 @@ static Archive archive_dev("dev.bin");
 static Pool<ResourceSlot> _pool;
 static Array<ResourceSlot*> _slots;
 static Table<Symbol, ResourceSlot*> _table;
+static Date program_mtime = 0;
 
 ResourceSlot::ResourceSlot(const Symbol& type, const char* url)
   : type(type), id(url), path(url, min<size_t>(strlen(url), strchr(url, '?') - url)) {
@@ -161,6 +162,9 @@ void ResourceSlot::write_archive_dev(const void* data, size_t size) {
 
 bool ResourceSlot::is_out_of_date() const {
 #if !L_RLS
+  if(mtime < program_mtime) {
+    return true;
+  }
   for(const String& source_file : source_files) {
     Date file_mtime;
     if(File::mtime(source_file, file_mtime) && mtime < file_mtime) {
@@ -187,6 +191,9 @@ ResourceSlot* ResourceSlot::find(const Symbol& type, const char* url) {
     _slots.push(slot);
     return slot;
   }
+}
+void ResourceSlot::set_program_mtime(Date mtime) {
+  program_mtime = mtime;
 }
 void ResourceSlot::update() {
   if(!_slots.empty()) {

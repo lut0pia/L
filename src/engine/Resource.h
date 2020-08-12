@@ -48,6 +48,7 @@ namespace L {
 
     static Symbol make_typed_id(const Symbol& type, const char* url);
     static ResourceSlot* find(const Symbol& type, const char* url);
+    static void set_program_mtime(Date mtime);
     static void update();
   };
 
