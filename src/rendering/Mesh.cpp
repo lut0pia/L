@@ -52,16 +52,19 @@ void Mesh::load(size_t count, const void* data, size_t size, const VertexAttribu
   for(uintptr_t i(1); i < count; i++)
     _bounds.add(*(Vector3f*)((uint8_t*)data + vertex_size*i));
 }
-void Mesh::draw(VkCommandBuffer cmd_buffer) const {
+void Mesh::draw(VkCommandBuffer cmd_buffer, uint32_t vertex_count, uint32_t index_offset, uint32_t vertex_offset) const {
   if(_vertex_buffer) {
     const VkBuffer buffers[] {*_vertex_buffer};
     const VkDeviceSize offsets[] {0};
     vkCmdBindVertexBuffers(cmd_buffer, 0, 1, buffers, offsets);
+    if(vertex_count == 0) {
+      vertex_count = _count;
+    }
     if(_index_buffer) {
       vkCmdBindIndexBuffer(cmd_buffer, *_index_buffer, 0, VK_INDEX_TYPE_UINT16);
-      vkCmdDrawIndexed(cmd_buffer, _count, 1, 0, 0, 0);
+      vkCmdDrawIndexed(cmd_buffer, vertex_count, 1, index_offset, vertex_offset, 0);
     } else {
-      vkCmdDraw(cmd_buffer, _count, 1, 0, 0);
+      vkCmdDraw(cmd_buffer, vertex_count, 1, vertex_offset, 0);
     }
   }
 }

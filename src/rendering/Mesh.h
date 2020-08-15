@@ -33,7 +33,7 @@ namespace L {
     ~Mesh();
 
     void load(size_t count, const void* data, size_t size, const VertexAttribute* attributes, size_t acount, const uint16_t* indices = nullptr, size_t icount = 0);
-    void draw(VkCommandBuffer) const;
+    void draw(VkCommandBuffer, uint32_t vertex_count = 0, uint32_t index_offset = 0, uint32_t vertex_offset = 0) const;
 
     inline const Array<VertexAttribute>& attributes() const { return _attributes; }
     inline const Interval3f& bounds() const { return _bounds; }
