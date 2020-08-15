@@ -29,6 +29,8 @@ namespace L {
       Resource<Mesh> mesh;
       String text;
       uint32_t vertex_count = 0;
+      uint32_t index_offset = 0;
+      uint32_t vertex_offset = 0;
 
       void apply(const State&);
 
@@ -93,6 +95,8 @@ namespace L {
     inline void mesh(const Resource<Mesh>& mesh) { _partial_state.mesh = mesh; _state_dirty = true; }
     inline void text(const String& text) { _partial_state.text = text; _state_dirty = true; }
     inline void vertex_count(uint32_t count) { _partial_state.vertex_count = count; _state_dirty = true; }
+    inline void index_offset(uint32_t offset) { _partial_state.index_offset = offset; _state_dirty = true; }
+    inline void vertex_offset(uint32_t offset) { _partial_state.vertex_offset = offset; _state_dirty = true; }
 
     static void script_registration();
 

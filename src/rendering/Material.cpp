@@ -46,12 +46,15 @@ void Material::State::apply(const State& patch) {
   if(!mesh.is_set() && patch.mesh.is_set()) {
     mesh = patch.mesh;
   }
-  if(text.empty() && !patch.text.empty()) {
-    text = patch.text;
+#define PATCH_VALUE(name, default_value) \
+  if(name == default_value && patch.name != default_value) { \
+    name = patch.name; \
   }
-  if(!vertex_count && patch.vertex_count) {
-    vertex_count = patch.vertex_count;
-  }
+  PATCH_VALUE(vertex_count, 0);
+  PATCH_VALUE(index_offset, 0);
+  PATCH_VALUE(vertex_offset, 0);
+  PATCH_VALUE(text, "");
+#undef PATCH_VALUE
 }
 
 uint32_t Material::State::pipeline_hash() const {
@@ -305,9 +308,9 @@ void Material::draw(const Camera& camera, const RenderPass& render_pass, const M
   }
   vkCmdBindPipeline(cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *_pipeline);
   if(mesh) {
-    mesh->draw(cmd_buffer);
+    mesh->draw(cmd_buffer, _final_state.vertex_count, _final_state.index_offset, _final_state.vertex_offset);
   } else if(uint32_t vertex_count = _final_state.vertex_count) {
-    vkCmdDraw(cmd_buffer, vertex_count, 1, 0, 0);
+    vkCmdDraw(cmd_buffer, vertex_count, 1, _final_state.vertex_offset, 0);
   }
 }
 void Material::set_buffer(const Symbol& name, const void* data, size_t size) {
