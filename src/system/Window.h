@@ -9,12 +9,13 @@ namespace L {
   public:
     struct Event {
       enum class Type {
-        None, Resize, Focus, Blur,
+        None, Resize, Focus, Blur, Character,
       };
       Type type;
       struct {
         int32_t x, y;
       } coords;
+      char character[4];
     };
   protected:
     static Window* _instance;
