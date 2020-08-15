@@ -58,6 +58,10 @@ else if(rawinput->data.mouse.usButtonFlags & RI_MOUSE_ ## rb ## _UP) set_button(
           KB(VK_ESCAPE, Escape);
           KB(VK_SPACE, Space);
           KB(VK_LEFT, Left); KB(VK_RIGHT, Right); KB(VK_UP, Up); KB(VK_DOWN, Down);
+          KB(VK_INSERT, Insert);
+          KB(VK_DELETE, Delete);
+          KB(VK_HOME, Home);
+          KB(VK_END, End);
           KB(VK_NUMLOCK, NumLock);
           KB(VK_NUMPAD1, Num1); KB(VK_NUMPAD2, Num2); KB(VK_NUMPAD3, Num3);
           KB(VK_NUMPAD4, Num4); KB(VK_NUMPAD5, Num5); KB(VK_NUMPAD6, Num6);
