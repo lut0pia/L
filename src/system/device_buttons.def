@@ -1,7 +1,7 @@
 // Keyboard buttons
 DB(A) DB(B) DB(C) DB(D) DB(E) DB(F) DB(G) DB(H) DB(I) DB(J) DB(K) DB(L) DB(M)
 DB(N) DB(O) DB(P) DB(Q) DB(R) DB(S) DB(T) DB(U) DB(V) DB(W) DB(X) DB(Y) DB(Z)
-DB(Backspace) DB(Tab) DB(Enter) DB(Pause) DB(Caps) DB(Escape) DB(Space) DB(Shift)
+DB(Backspace) DB(Tab) DB(Enter) DB(Pause) DB(Caps) DB(Escape) DB(Space)
 DB(LeftShift) DB(RightShift) DB(LeftCtrl) DB(RightCtrl) DB(LeftAlt) DB(RightAlt)
 DB(Left) DB(Right) DB(Up) DB(Down)
 DB(Insert) DB(Delete) DB(Home) DB(End) DB(PageUp) DB(PageDown)
