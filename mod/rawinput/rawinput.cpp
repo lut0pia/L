@@ -27,26 +27,36 @@ public:
   void frame_reset() {
     _axes[uintptr_t(Axis::MouseDX)] = 0.f;
     _axes[uintptr_t(Axis::MouseDY)] = 0.f;
+    _axes[uintptr_t(Axis::MouseWheel)] = 0.f;
   }
   void process_rawinput(const RAWINPUT* rawinput) {
     switch(rawinput->header.dwType) {
       case RIM_TYPEMOUSE:
+      {
+        const RAWMOUSE& mouse = rawinput->data.mouse;
         _name = mouse_symbol;
 #define MOUSE_BUTTON(rb,b) \
-if(rawinput->data.mouse.usButtonFlags & RI_MOUSE_ ## rb ## _DOWN) set_button(b,true); \
-else if(rawinput->data.mouse.usButtonFlags & RI_MOUSE_ ## rb ## _UP) set_button(b,false);
+if(mouse.usButtonFlags & RI_MOUSE_ ## rb ## _DOWN) set_button(b,true); \
+else if(mouse.usButtonFlags & RI_MOUSE_ ## rb ## _UP) set_button(b,false);
         MOUSE_BUTTON(LEFT_BUTTON, Button::MouseLeft);
         MOUSE_BUTTON(MIDDLE_BUTTON, Button::MouseMiddle);
         MOUSE_BUTTON(RIGHT_BUTTON, Button::MouseRight);
 #undef MOUSE_BUTTON
-        _axes[uintptr_t(Axis::MouseDX)] += rawinput->data.mouse.lLastX;
-        _axes[uintptr_t(Axis::MouseDY)] += rawinput->data.mouse.lLastY;
+        if(mouse.usFlags == MOUSE_MOVE_RELATIVE) {
+          _axes[uintptr_t(Axis::MouseDX)] += mouse.lLastX;
+          _axes[uintptr_t(Axis::MouseDY)] += mouse.lLastY;
+        }
+        if(mouse.usButtonFlags & RI_MOUSE_WHEEL) {
+          _axes[uintptr_t(Axis::MouseWheel)] += float(SHORT(mouse.usButtonData)) / float(WHEEL_DELTA);
+        }
         break;
-
+      }
       case RIM_TYPEKEYBOARD:
+      {
+        const RAWKEYBOARD& keyboard = rawinput->data.keyboard;
         _name = keyboard_symbol;
-        switch(rawinput->data.keyboard.VKey) {
-#define KB(rb,b) case rb: set_button(Button::b,rawinput->data.keyboard.Message==WM_KEYDOWN); break
+        switch(keyboard.VKey) {
+#define KB(rb,b) case rb: set_button(Button::b, keyboard.Message == WM_KEYDOWN); break
           KB(VK_BACK, Backspace);
           KB(VK_TAB, Tab);
           KB(VK_RETURN, Enter);
@@ -80,6 +90,7 @@ else if(rawinput->data.mouse.usButtonFlags & RI_MOUSE_ ## rb ## _UP) set_button(
 #undef KB
         }
         break;
+      }
     }
   }
 };
@@ -148,7 +159,7 @@ void rawinput_module_init() {
 
         rawinput_device->_preparsed = (PHIDP_PREPARSED_DATA)Memory::alloc(preparsed_data_size);
 
-        if(GetRawInputDeviceInfo(rawinput_device_list.hDevice, RIDI_PREPARSEDDATA, rawinput_device->_preparsed, &preparsed_data_size)==(UINT)-1)
+        if(GetRawInputDeviceInfo(rawinput_device_list.hDevice, RIDI_PREPARSEDDATA, rawinput_device->_preparsed, &preparsed_data_size) == (UINT)-1)
           error("GetRawInputDeviceInfo failed");
         if(!HidP_GetCaps(rawinput_device->_preparsed, &rawinput_device->_caps))
           error("Couldn't get caps");
@@ -184,5 +195,5 @@ void rawinput_module_init() {
       }
       Memory::free(rawinput_buffer, rawinput_buffer_size);
     }
-  });
+    });
 }
