@@ -4,6 +4,7 @@
 #include <L/src/parallelism/TaskSystem.h>
 #include <L/src/rendering/Vulkan.h>
 #include <L/src/system/Window.h>
+#include <L/src/text/encoding.h>
 
 #include <windows.h>
 #include <windowsx.h>
@@ -52,6 +53,10 @@ public:
         e.type = Event::Type::Resize;
         e.coords.x = _win_instance->_width = LOWORD(lParam);
         e.coords.y = _win_instance->_height = HIWORD(lParam);
+        break;
+      case WM_CHAR:
+        e.type = Event::Type::Character;
+        strcpy(e.character, utf16_to_utf8((uint16_t)wParam));
         break;
       default:
         return DefWindowProc(hwnd, uMsg, wParam, lParam);
