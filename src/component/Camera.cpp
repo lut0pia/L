@@ -98,6 +98,8 @@ void Camera::prerender(VkCommandBuffer cmd_buffer) {
   VkViewport viewport {0,0,float(_geometry_buffer.width()),float(_geometry_buffer.height()),0.f,1.f};
   vkCmdSetViewport(_cmd_buffer, 0, 1, &viewport);
 
+  Vulkan::reset_scissor(cmd_buffer);
+
   _present_material.update();
 }
 void Camera::present() {

@@ -205,6 +205,7 @@ Pipeline::Pipeline(const Parameters& parameters) {
 
   VkDynamicState dynamic_states[] = {
     VK_DYNAMIC_STATE_VIEWPORT,
+    VK_DYNAMIC_STATE_SCISSOR,
   };
 
   VkPipelineDynamicStateCreateInfo dynamic_state_create_info = {};
