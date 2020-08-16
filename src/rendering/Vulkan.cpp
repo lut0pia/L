@@ -652,6 +652,14 @@ void Vulkan::destroy_image(VkImage image, VkDeviceMemory memory) {
   garbage_images.push(GarbageImage {image, memory});
 }
 
+void Vulkan::reset_scissor(VkCommandBuffer cmd_buffer) {
+  static const VkRect2D vk_scissor = {
+    VkOffset2D {0, 0},
+    VkExtent2D {1 << 14, 1 << 14},
+  };
+  vkCmdSetScissor(cmd_buffer, 0, 1, &vk_scissor);
+}
+
 VkDevice Vulkan::device() { return _device; }
 VkDescriptorPool Vulkan::descriptor_pool() { return _descriptor_pool; }
 VkSampler Vulkan::sampler() { return _sampler; }

@@ -32,6 +32,8 @@ namespace L {
     void destroy_framebuffer(VkFramebuffer);
     void destroy_image(VkImage, VkDeviceMemory);
 
+    void reset_scissor(VkCommandBuffer);
+
     VkDevice device();
     VkDescriptorPool descriptor_pool();
     VkSampler sampler();
