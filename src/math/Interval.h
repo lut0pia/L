@@ -35,6 +35,10 @@ namespace L {
       }
       return wtr;
     }
+
+    inline bool operator==(const Interval& other) const { return _min == other._min && _max == other._max; }
+    inline bool operator!=(const Interval& other) const { return !(*this == other); }
+
     inline bool overlaps(const Interval& other) const {
       bool overlap(true);
       for(int i(0); i<d; i++)
