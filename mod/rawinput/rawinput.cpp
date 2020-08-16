@@ -28,6 +28,13 @@ public:
     _axes[uintptr_t(Axis::MouseDX)] = 0.f;
     _axes[uintptr_t(Axis::MouseDY)] = 0.f;
     _axes[uintptr_t(Axis::MouseWheel)] = 0.f;
+
+    set_button(Button::LeftShift, GetKeyState(VK_LSHIFT) >> 8);
+    set_button(Button::RightShift, GetKeyState(VK_RSHIFT) >> 8);
+    set_button(Button::LeftCtrl, GetKeyState(VK_LCONTROL) >> 8);
+    set_button(Button::RightCtrl, GetKeyState(VK_RCONTROL) >> 8);
+    set_button(Button::LeftAlt, GetKeyState(VK_LMENU) >> 8);
+    set_button(Button::RightAlt, GetKeyState(VK_RMENU) >> 8);
   }
   void process_rawinput(const RAWINPUT* rawinput) {
     switch(rawinput->header.dwType) {
@@ -60,9 +67,6 @@ else if(mouse.usButtonFlags & RI_MOUSE_ ## rb ## _UP) set_button(b,false);
           KB(VK_BACK, Backspace);
           KB(VK_TAB, Tab);
           KB(VK_RETURN, Enter);
-          KB(VK_LSHIFT, LeftShift); KB(VK_RSHIFT, RightShift);
-          KB(VK_LCONTROL, LeftCtrl); KB(VK_RCONTROL, RightCtrl);
-          KB(VK_LMENU, LeftAlt); KB(VK_RMENU, RightAlt);
           KB(VK_PAUSE, Pause);
           KB(VK_CAPITAL, Caps);
           KB(VK_ESCAPE, Escape);
