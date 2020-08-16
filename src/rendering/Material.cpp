@@ -6,6 +6,7 @@
 using namespace L;
 
 static Table<uint32_t, Ref<Pipeline>> pipeline_cache;
+static const Interval2i default_scissor = 0;
 
 template <class K, class V>
 static void patch_array(Array<KeyValue<K, V>>& dst_array, const Array<KeyValue<K, V>>& src_array) {
@@ -50,6 +51,7 @@ void Material::State::apply(const State& patch) {
   if(name == default_value && patch.name != default_value) { \
     name = patch.name; \
   }
+  PATCH_VALUE(scissor, default_scissor);
   PATCH_VALUE(vertex_count, 0);
   PATCH_VALUE(index_offset, 0);
   PATCH_VALUE(vertex_offset, 0);
@@ -306,11 +308,27 @@ void Material::draw(const Camera& camera, const RenderPass& render_pass, const M
   if(const Shader::Binding* constants_binding = _pipeline->find_binding("Constants")) {
     vkCmdPushConstants(cmd_buffer, *_pipeline, constants_binding->stage, 0, sizeof(model), &model);
   }
+
+  // Only set scissor if value is different from default
+  if(_final_state.scissor != default_scissor) {
+    const Vector2f scissor_size = _final_state.scissor.size();
+    VkRect2D vk_scissor = {
+      VkOffset2D {_final_state.scissor.min().x(), _final_state.scissor.min().y()},
+      VkExtent2D {uint32_t(scissor_size.x()), uint32_t(scissor_size.y())},
+    };
+    vkCmdSetScissor(cmd_buffer, 0, 1, &vk_scissor);
+  }
+
   vkCmdBindPipeline(cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *_pipeline);
   if(mesh) {
     mesh->draw(cmd_buffer, _final_state.vertex_count, _final_state.index_offset, _final_state.vertex_offset);
   } else if(uint32_t vertex_count = _final_state.vertex_count) {
     vkCmdDraw(cmd_buffer, vertex_count, 1, _final_state.vertex_offset, 0);
+  }
+
+  // Reset scissor if we set it earlier
+  if(_final_state.scissor != default_scissor) {
+    Vulkan::reset_scissor(cmd_buffer);
   }
 }
 void Material::set_buffer(const Symbol& name, const void* data, size_t size) {
