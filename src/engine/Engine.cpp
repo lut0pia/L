@@ -6,10 +6,10 @@
 #include "CullVolume.h"
 #include "../dev/profiling.h"
 #include "../hash.h"
+#include "../input/Device.h"
 #include "../rendering/Pipeline.h"
 #include "../rendering/shader_lib.h"
 #include "Resource.h"
-#include "../system/Device.h"
 #include "../system/Window.h"
 #include "../stream/CFileStream.h"
 

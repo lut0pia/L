@@ -7,7 +7,7 @@
 #include "../script/script_binding.h"
 #include "Entity.h"
 
-#include "../system/Device.h"
+#include "../input/Device.h"
 #include "../system/Window.h"
 
 namespace L {

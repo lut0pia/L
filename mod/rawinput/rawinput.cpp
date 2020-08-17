@@ -1,8 +1,8 @@
 #include <L/src/container/Queue.h>
 #include <L/src/dev/profiling.h>
 #include <L/src/engine/Engine.h>
+#include <L/src/input/Device.h>
 #include <L/src/parallelism/TaskSystem.h>
-#include <L/src/system/Device.h>
 
 #include <L/src/stream/CFileStream.h>
 

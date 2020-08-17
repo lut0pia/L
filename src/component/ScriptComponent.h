@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Component.h"
+#include "../input/Device.h"
 #include "../script/ScriptContext.h"
-#include "../system/Device.h"
 #include "../engine/Resource.h"
 
 namespace L {
