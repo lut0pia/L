@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../container/Array.h"
+#include "../container/Bitfield.h"
 #include "../container/Handle.h"
 #include "../text/Symbol.h"
 
@@ -26,7 +27,7 @@ namespace L {
     };
   protected:
     Symbol _name;
-    uint32_t _buttons[size_t(Button::Last)/32+1];
+    Bitfield<size_t(Button::Last)> _buttons;
     float _axes[size_t(Axis::Last)];
     float _rumble;
     bool _active;
@@ -36,11 +37,11 @@ namespace L {
     static void add_device(Device*);
     static void add_event(Event);
   public:
-    inline Device() : Handled<Device>(this), _buttons {}, _axes {}, _rumble(0.f), _active(false) {
+    inline Device() : Handled<Device>(this), _buttons(0), _axes {}, _rumble(0.f), _active(false) {
       add_device(this);
     }
     inline float axis(Axis axis) const { return _axes[size_t(axis)]; }
-    inline bool button(Button button) const { return (_buttons[size_t(button)/32] & (1<<(size_t(button)%32))) != 0; }
+    inline bool button(Button button) const { return _buttons[uintptr_t(button)]; }
     inline bool active() const { return _active; }
 
     static const Array<Device*>& devices();

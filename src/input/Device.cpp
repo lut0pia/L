@@ -13,9 +13,9 @@ namespace L {
 void Device::set_button(Button b, bool value) {
   const bool old_value(button(b));
   if(value) {
-    _buttons[size_t(b)/32] |= (1<<(size_t(b)%32));
+    _buttons.set(uintptr_t(b));
   } else {
-    _buttons[size_t(b)/32] &= ~(1<<(size_t(b)%32));
+    _buttons.unset(uintptr_t(b));
   }
   if(old_value != value) {
     add_event(Event {this, b, value});
