@@ -12,6 +12,7 @@
 #include "component/GUIComponent.h"
 #include "component/GroupComponent.h"
 #include "component/HierarchyComponent.h"
+#include "component/InputComponent.h"
 #include "component/MidiSourceComponent.h"
 #include "component/NameComponent.h"
 #include "component/PostProcessComponent.h"
@@ -54,6 +55,7 @@ int main(int argc, const char* argv[]) {
   Engine::register_component<Camera>();
   Engine::register_component<RigidBody>();
   Engine::register_component<Collider>();
+  Engine::register_component<InputComponent>();
   Engine::register_component<ScriptComponent>();
   Engine::register_component<AudioSourceComponent>();
   Engine::register_component<AudioListenerComponent>();

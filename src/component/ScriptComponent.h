@@ -7,7 +7,7 @@
 
 namespace L {
   class ScriptComponent : public TComponent<ScriptComponent,
-    ComponentFlag::Update | ComponentFlag::LateUpdate | ComponentFlag::DeviceEvent> {
+    ComponentFlag::Update | ComponentFlag::LateUpdate> {
   protected:
     ScriptContext _context;
     Resource<ScriptFunction> _script;
@@ -23,7 +23,6 @@ namespace L {
     void start();
     void update();
     void late_update();
-    void event(const Device::Event&);
     void event(const Ref<Table<Var, Var>>&);
   };
 }

@@ -5,6 +5,9 @@
   (self.transform.move (vec 0 -20 10))
   (local camera (self.entity.require_camera))
   (camera.perspective 70 0.1 4096)
+  ; Create input component, input context and input map
+  (set self.input (self.entity.require_input|.context))
+  (self.input.set_input_map ((read "script/input_map.ls")))
   ; Create present material
   (camera.present_material|.shader 'fragment "shader/present.frag")
   (camera.present_material|.shader 'vertex "shader/fullscreen.vert")
@@ -38,39 +41,21 @@
   (local transform self.transform)
   (local cursor self.cursor)
   (local cursor_transform self.cursor_transform)
+  (local input self.input)
   (local movement (* real_delta 16))
+  (if (input.get_button 'Slow) (/= movement 4))
   (local rotation (* real_delta 2))
-  (local axis_x 0)
-  (local axis_y 0)
-  (local axis_rot_x 0)
-  (local axis_rot_y 0)
-  (local should_shoot false)
-
-  ; Gather joystick input
-  (foreach device _ (get_devices) (do
-    (+= axis_x (device.get_axis 'GamepadLeftStickX))
-    (+= axis_y (device.get_axis 'GamepadLeftStickY))
-    (+= axis_rot_x (* -1 (device.get_axis 'GamepadRightStickX)))
-    (+= axis_rot_y (* 1 (device.get_axis 'GamepadRightStickY)))
-    (+= axis_rot_x (* -0.1 (device.get_axis 'MouseDX)))
-    (+= axis_rot_y (* -0.1 (device.get_axis 'MouseDY)))
-    (if (device.get_button 'GamepadFaceBottom) (set should_shoot true))
-  ))
-
-  ; Gather keyboard input
-  (if (button_pressed 'LeftShift) (/= movement 4))
-  (if (or (button_pressed 'Z) (button_pressed 'W)) (+= axis_y 1))
-  (if (or (button_pressed 'Q) (button_pressed 'A)) (-= axis_x 1))
-  (if (button_pressed 'S) (-= axis_y 1))
-  (if (button_pressed 'D) (+= axis_x 1))
-  (if (button_pressed 'MouseLeft) (set should_shoot true))
+  (local axis_x (input.get_axis 'XAxis))
+  (local axis_y (input.get_axis 'YAxis))
+  (local axis_rot_x (input.get_axis 'XAxisRot))
+  (local axis_rot_y (input.get_axis 'YAxisRot))
 
   ; Execute input
   (transform.move (vec (* axis_x movement) 0 0))
   (transform.move (vec 0 (* axis_y movement) 0))
   (transform.rotate (euler_radians 0 0 (* axis_rot_x rotation)))
   (transform.rotate (euler_radians (* axis_rot_y rotation) 0 0))
-  (if should_shoot (self.shoot))
+  (if (input.get_button 'Shoot) (self.shoot))
 
   ; Cursor placing
   (local hit (raycast (transform.get_position) (transform.forward)))
@@ -82,24 +67,26 @@
     (cursor.require_primitive|.material|.color 'color (color 0 0 0 0))
   )
 
+  ; Other actions
+  (if (input.get_button_pressed 'Bach)
+    (if (bach_source.is_playing)
+      (bach_source.stop)
+      (bach_source.play)))
+  (if (input.get_button_pressed 'Guitar)
+    (if (guitar_source.is_playing)
+      (guitar_source.stop)
+      (guitar_source.play)))
+  (if (input.get_button_pressed 'Mozart)
+    (if (mozart_source.is_playing)
+      (mozart_source.stop)
+      (mozart_source.play)))
+  (if (input.get_button_pressed 'Restart)
+    (engine_clear_and_read "script/startup.ls"))
+
   ; GUI
   (self.text_gui.material|.text
     (+ "FPS: " (/ 1.0 delta) "\n"
     "Frame: " avg_frame_work_duration "\n"))
-)))
-(set self.event (fun e (do
-  (if (and (= e.type 'Device) e.pressed) (switch e.button
-    'B (if (bach_source.is_playing)
-      (bach_source.stop)
-      (bach_source.play))
-    'G (if (guitar_source.is_playing)
-      (guitar_source.stop)
-      (guitar_source.play))
-    'M (if (mozart_source.is_playing)
-      (mozart_source.stop)
-      (mozart_source.play))
-    'R (engine_clear_and_read "script/startup.ls")
-  ))
 )))
 (set self.shoot (fun (do
   (if (> (- (now) self.last_shoot) (time 0.05)) (do

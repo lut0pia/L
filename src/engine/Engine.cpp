@@ -6,7 +6,7 @@
 #include "CullVolume.h"
 #include "../dev/profiling.h"
 #include "../hash.h"
-#include "../input/Device.h"
+#include "../input/InputContext.h"
 #include "../rendering/Pipeline.h"
 #include "../rendering/shader_lib.h"
 #include "Resource.h"
@@ -20,7 +20,6 @@ Array<void(*)(const Camera&, const RenderPass&)> Engine::_renders;
 Array<void(*)(void* frames, uint32_t frame_count)> Engine::_audio_renders;
 Array<void(*)(const Camera&)> Engine::_guis;
 Array<void(*)(const L::Window::Event&)> Engine::_win_events;
-Array<void(*)(const Device::Event&)> Engine::_dev_events;
 Array<Engine::DeferredAction> Engine::_deferred_actions;
 Timer Engine::_timer;
 const Time Engine::_sub_delta(0, 10);
@@ -57,11 +56,8 @@ void Engine::update() {
     Window::flush_events();
   }
   {
-    L_SCOPE_MARKER("Device events");
-    Device::Event e;
-    while(Device::new_event(e))
-      for(const auto& event : _dev_events)
-        event(e);
+    L_SCOPE_MARKER("InputContext update");
+    InputContext::update();
   }
   {
     L_SCOPE_MARKER("Updates");

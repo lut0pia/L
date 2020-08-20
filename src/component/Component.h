@@ -51,7 +51,7 @@ namespace L {
     None = 0,
     Update = 1 << 0, UpdateAsync = 1 << 1, SubUpdate = 1 << 2, SubUpdateAsync = 1 << 3,
     LateUpdate = 1 << 4, LateUpdateAsync = 1 << 5, Render = 1 << 6, AudioRender = 1 << 7,
-    GUI = 1 << 8, WindowEvent = 1 << 9, DeviceEvent = 1 << 10,
+    GUI = 1 << 8, WindowEvent = 1 << 9,
   };
   constexpr ComponentFlag operator|(ComponentFlag a, ComponentFlag b) { return ComponentFlag(uint32_t(a) | uint32_t(b)); }
   constexpr bool operator&(ComponentFlag a, ComponentFlag b) { return (uint32_t(a) & uint32_t(b)) != 0; }
@@ -83,7 +83,6 @@ namespace L {
     L_COMPONENT_OVERLOAD(ComponentFlag::AudioRender, audio_render_all, void*, uint32_t)(void* frames, uint32_t fc) { ComponentPool<T>::iterate([&](T& c) { c.audio_render(frames, fc); }); }
     L_COMPONENT_OVERLOAD(ComponentFlag::GUI, gui_all, const Camera&)(const Camera& cam) { ComponentPool<T>::iterate([&](T& c) { c.gui(cam); }); }
     L_COMPONENT_OVERLOAD(ComponentFlag::WindowEvent, win_event_all, const Window::Event&)(const Window::Event& e) { ComponentPool<T>::iterate([&](T& c) { c.event(e); }); }
-    L_COMPONENT_OVERLOAD(ComponentFlag::DeviceEvent, dev_event_all, const Device::Event&)(const Device::Event& e) { ComponentPool<T>::iterate([&](T& c) { c.event(e); }); }
   };
 }
 

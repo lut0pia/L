@@ -18,7 +18,6 @@ namespace L {
     static Array<void(*)(void* frames, uint32_t frame_count)> _audio_renders;
     static Array<void(*)(const class Camera&)> _guis;
     static Array<void(*)(const struct Window::Event&)> _win_events;
-    static Array<void(*)(const struct Device::Event&)> _dev_events;
     static Array<DeferredAction> _deferred_actions;
     static Timer _timer;
     static Time _real_delta_time, _delta_time, _accumulator, _average_frame_work_duration, _max_frame_work_duration;
@@ -56,7 +55,6 @@ namespace L {
       if(T::flags & ComponentFlag::AudioRender) _audio_renders.push((void(*)(void* frames, uint32_t frame_count))T::audio_render_all);
       if(T::flags & ComponentFlag::GUI) _guis.push((void(*)(const class Camera&))T::gui_all);
       if(T::flags & ComponentFlag::WindowEvent) _win_events.push((void(*)(const struct Window::Event&))T::win_event_all);
-      if(T::flags & ComponentFlag::DeviceEvent) _dev_events.push((void(*)(const struct Device::Event&))T::dev_event_all);
       T::script_registration();
     }
   };
