@@ -17,6 +17,7 @@ static Array<Material> materials;
 static const Symbol imgui_symbol = "imgui", frag_symbol = "frag", vert_symbol = "vert";
 static String text_input;
 static InputContext input_context;
+static bool demo_opened = false;
 
 static void imgui_new_frame() {
   ImGuiIO& io = ImGui::GetIO();
@@ -114,7 +115,18 @@ static void imgui_update() {
   }
 
   imgui_new_frame();
-  ImGui::ShowDemoWindow();
+
+  if(ImGui::BeginMainMenuBar()) {
+    if(ImGui::BeginMenu("Window")) {
+      ImGui::MenuItem("Demo", "", &demo_opened);
+      ImGui::EndMenu();
+    }
+    ImGui::EndMainMenuBar();
+  }
+
+  if(demo_opened) {
+    ImGui::ShowDemoWindow(&demo_opened);
+  }
 }
 
 static void imgui_gui(const Camera& cam) {
