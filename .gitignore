@@ -17,6 +17,7 @@ smp/*.ilk
 smp/*.lib
 smp/*.manifest
 smp/trace.json
+smp/imgui.ini
 # Generated source
 *.gen
 # Generated logs
