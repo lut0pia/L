@@ -85,15 +85,7 @@ namespace L {
       return Iterator(nullptr);
     }
     inline Iterator end() const { return (_count) ? _slots + _size : Iterator(nullptr); }
-    V& operator[](const K& k) {
-      const uint32_t h = hash(k);
-      Slot* slot = find_slot_or_create(h);
-      if(slot->empty()) {
-        new(slot)Slot(h, k);
-        _count++;
-      }
-      return slot->value();
-    }
+    inline V& operator[](const K& k) { return *find_or_create(k); }
     inline uintptr_t index_for(uint32_t h) const { return uintptr_t(h * (float(_size) / UINT32_MAX)); }
     Slot* find_slot_or_create(uint32_t h) {
       if(_count * 10 >= _size * 8) {
@@ -122,6 +114,20 @@ namespace L {
         }
       }
       return nullptr;
+    }
+    V* find_or_create(const K& key, bool* created = nullptr) {
+      const uint32_t h = hash(key);
+      Slot* slot = find_slot_or_create(h);
+      if(slot->empty()) {
+        if(created) {
+          *created = true;
+        }
+        new(slot)Slot(h, key);
+        _count++;
+      } else if(created) {
+        *created = false;
+      }
+      return &slot->value();
     }
     V* find(const K& key) const {
       Slot* slot = find_slot(key);
