@@ -65,7 +65,7 @@ static void script_server_update() {
           continue;
         }
 
-        ResourceSlot res_slot("", "");
+        ResourceSlot res_slot(type_name<ScriptFunction>(), "script_server");
         res_slot.source_buffer = Buffer(client.code_buffer.begin(), client.code_buffer.size());
         res_slot.ext = client.language;
 
