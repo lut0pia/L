@@ -20,6 +20,7 @@ static Archive archive("data.bin");
 #if !L_RLS
 static Archive archive_dev("dev.bin");
 #endif
+static Lock lock;
 static Pool<ResourceSlot> _pool;
 static Array<ResourceSlot*> _slots;
 static Table<Symbol, ResourceSlot*> _table;
@@ -179,7 +180,6 @@ Symbol ResourceSlot::make_typed_id(const Symbol& type, const char* url) {
   return Symbol(type + ":" + url);
 }
 ResourceSlot* ResourceSlot::find(const Symbol& type, const char* url) {
-  static Lock lock;
   L_SCOPED_LOCK(lock);
 
   const Symbol typed_id = make_typed_id(type, url);
@@ -208,3 +208,9 @@ void ResourceSlot::update() {
     index++;
   }
 }
+#if !L_RLS
+Array<ResourceSlot*> ResourceSlot::slots() {
+  L_SCOPED_LOCK(lock);
+  return _slots;
+}
+#endif

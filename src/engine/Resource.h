@@ -50,6 +50,9 @@ namespace L {
     static ResourceSlot* find(const Symbol& type, const char* url);
     static void set_program_mtime(Date mtime);
     static void update();
+#if !L_RLS
+    static Array<ResourceSlot*> slots();
+#endif
   };
 
   template <class T>
