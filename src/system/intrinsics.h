@@ -34,4 +34,12 @@ namespace L {
     return __sync_val_compare_and_swap(dst, cmp, exc);
 #endif
   }
+
+  inline void atomic_add(volatile int32_t* counter, int32_t value) {
+#if _MSC_VER
+    _InterlockedExchangeAdd((volatile long*)counter, value);
+#else
+    __sync_fetch_and_add(counter, value);
+#endif
+  }
 }

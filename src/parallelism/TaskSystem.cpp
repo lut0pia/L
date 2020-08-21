@@ -40,7 +40,8 @@ struct FiberSlot {
   void* cond_data;
   FiberSlot* parent;
   uint32_t state;
-  uint32_t counter, thread_mask;
+  uint32_t thread_mask;
+  int32_t counter;
 
   inline bool check_condition() {
     if(cond_func && cond_func(cond_data))
@@ -54,14 +55,6 @@ FiberHandle* original_thread_fibers(Memory::alloc_type_zero<FiberHandle>(actual_
 FiberSlot* fibers(Memory::alloc_type_zero<FiberSlot>(actual_fiber_count));
 thread_local uint32_t thread_index;
 thread_local uint32_t current_fiber;
-
-void atomic_add(uint32_t& counter, uint32_t value) {
-#if _MSC_VER
-  InterlockedAdd((LONG*)&counter, value);
-#else
-  __sync_fetch_and_add(&counter, value);
-#endif
-}
 
 #if _MSC_VER
 #pragma optimize("g", off)
@@ -79,7 +72,7 @@ void fiber_func(void* arg) {
   while(true) {
     if(slot.func) {
       slot.func(slot.data); // Execute task
-      if(slot.parent) atomic_add(slot.parent->counter, uint32_t(-1)); // Notify task done
+      if(slot.parent) atomic_add(&slot.parent->counter, -1); // Notify task done
       while(slot.counter) // Wait for child tasks
         yield_internal();
       slot.func = nullptr;
@@ -146,7 +139,7 @@ void TaskSystem::push(Func f, void* d, uint32_t thread_mask, uint32_t flags) {
   FiberSlot* parent;
   if(initialized && !(flags&NoParent)) {
     parent = fibers+current_fiber;
-    atomic_add(parent->counter, 1);
+    atomic_add(&parent->counter, 1);
   } else parent = nullptr;
   while(true) {
     for(uintptr_t i(0); i<actual_fiber_count; i++) {
