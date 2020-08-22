@@ -13,6 +13,7 @@ using namespace L;
 
 static Resource<Texture> font_tex;
 static Resource<Mesh> mesh;
+static Resource<Shader> shader_vert, shader_frag;
 static Array<Material> materials;
 static const Symbol imgui_symbol = "imgui", frag_symbol = "frag", vert_symbol = "vert";
 static String text_input;
@@ -70,8 +71,8 @@ static void imgui_update() {
     const ImDrawList* draw_list = draw_data->CmdLists[i];
     for(const ImDrawCmd& cmd : draw_list->CmdBuffer) {
       Material material;
-      material.shader(VK_SHADER_STAGE_VERTEX_BIT, ".imgui?stage=vert");
-      material.shader(VK_SHADER_STAGE_FRAGMENT_BIT, ".imgui?stage=frag");
+      material.shader(VK_SHADER_STAGE_VERTEX_BIT, shader_vert);
+      material.shader(VK_SHADER_STAGE_FRAGMENT_BIT, shader_frag);
       material.render_pass("present");
       material.mesh(mesh);
       material.texture("tex", font_tex);
@@ -262,6 +263,8 @@ void imgui_module_init() {
     [](void*) {
       font_tex = ".imgui";
       mesh = ".imgui";
+      shader_vert = ".imgui?stage=vert";
+      shader_frag = ".imgui?stage=frag";
       Engine::add_update(imgui_update);
       Engine::add_gui(imgui_gui);
       Engine::add_window_event(imgui_window_event);
