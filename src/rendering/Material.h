@@ -28,7 +28,7 @@ namespace L {
       // Dynamic state
       Resource<Mesh> mesh;
       String text;
-      Interval2i scissor = 0;
+      Interval2i scissor = Vector2i(0);
       uint32_t vertex_count = 0;
       uint32_t index_offset = 0;
       uint32_t vertex_offset = 0;
