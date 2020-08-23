@@ -9,8 +9,8 @@
 
 using namespace L;
 
-static const Symbol entity_symbol("entity"), update_components_symbol("update-components"),
-start_symbol("start"), update_symbol("update"), late_update_symbol("late-update"), event_symbol("event");
+static const Symbol entity_symbol("entity"), update_components_symbol("update_components"),
+start_symbol("start"), update_symbol("update"), late_update_symbol("late_update"), event_symbol("event");
 
 void ScriptComponent::update_components() {
   _context.self_table()[entity_symbol] = entity();
