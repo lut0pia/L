@@ -11,12 +11,16 @@ static const Interval2i default_scissor = Vector2i(0);
 template <class K, class V>
 static void patch_array(Array<KeyValue<K, V>>& dst_array, const Array<KeyValue<K, V>>& src_array) {
   for(const auto& src_pair : src_array) {
+    bool already_defined = false;
     for(const auto& dst_pair : dst_array) {
       if(src_pair.key() == dst_pair.key()) {
-        return;
+        already_defined = true;
+        break;
       }
     }
-    dst_array.push(src_pair);
+    if(!already_defined) {
+      dst_array.push(src_pair);
+    }
   }
 }
 void Material::State::apply(const State& patch) {
