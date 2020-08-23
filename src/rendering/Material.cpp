@@ -6,7 +6,7 @@
 using namespace L;
 
 static Table<uint32_t, Ref<Pipeline>> pipeline_cache;
-static const Interval2i default_scissor = 0;
+static const Interval2i default_scissor = Vector2i(0);
 
 template <class K, class V>
 static void patch_array(Array<KeyValue<K, V>>& dst_array, const Array<KeyValue<K, V>>& src_array) {

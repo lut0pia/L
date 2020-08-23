@@ -31,7 +31,7 @@ static int text_edit_callback(ImGuiInputTextCallbackData* data) {
 
       // Build a list of candidates
       candidates.clear();
-      for(int i = 0; i < commands.size(); i++)
+      for(uintptr_t i = 0; i < commands.size(); i++)
         if(strncmp(commands[i], word_start, (int)(word_end - word_start)) == 0)
           candidates.push(commands[i]);
 
@@ -50,7 +50,7 @@ static int text_edit_callback(ImGuiInputTextCallbackData* data) {
         for(;;) {
           int c = 0;
           bool all_candidates_matches = true;
-          for(int i = 0; i < candidates.size() && all_candidates_matches; i++) {
+          for(uintptr_t i = 0; i < candidates.size() && all_candidates_matches; i++) {
             if(i == 0) {
               c = toupper(candidates[i][match_len]);
             } else if(c == 0 || c != toupper(candidates[i][match_len])) {
@@ -87,7 +87,7 @@ static int text_edit_callback(ImGuiInputTextCallbackData* data) {
         }
       } else if(data->EventKey == ImGuiKey_DownArrow) {
         if(history_pos != -1) {
-          if(++history_pos >= history.size()) {
+          if(++history_pos >= int32_t(history.size())) {
             history_pos = -1;
           }
         }

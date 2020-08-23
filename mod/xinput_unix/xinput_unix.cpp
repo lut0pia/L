@@ -1,5 +1,5 @@
 #include <L/src/engine/Engine.h>
-#include <L/src/system/Device.h>
+#include <L/src/input/Device.h>
 #include <L/src/text/String.h>
 
 #include <dlfcn.h>

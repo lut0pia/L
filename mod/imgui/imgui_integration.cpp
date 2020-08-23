@@ -141,6 +141,7 @@ static void imgui_window_event(const Window::Event& e) {
     case Window::Event::Type::Character:
       text_input += e.character;
       break;
+    default: break;
   }
 }
 
