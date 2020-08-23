@@ -74,8 +74,10 @@ bool LSParser::read(const char* context, const char* text, size_t size) {
         warning("ls: %s:%d: Invalid ' after '", context, _lexer.line());
         return false;
       }
+      const uint32_t line = top_array.back().line;
       top_array.pop(); // Remove current value
       top_array = Array<Node> {top_array, Var()};
+      top_array[0].line = line;
       _stack.top() = &top_array[1];
     } else if(_lexer.is_token("'")) {
       if(!_lexer.next_token()) {
