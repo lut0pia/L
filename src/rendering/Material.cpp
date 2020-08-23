@@ -256,14 +256,14 @@ void Material::update() {
     _last_pipeline_hash = pipeline_h;
     _pipeline = nullptr;
 
+    // Clear all existing desc sets as they're no longer valid
+    clear_desc_set_pairings();
+
     if(Ref<Pipeline>* pipeline = pipeline_cache.find(pipeline_h)) {
       _pipeline = *pipeline;
       create_uniform_buffers(*_pipeline);
       return;
     }
-
-    // Clear all existing desc sets as they're no longer valid
-    clear_desc_set_pairings();
 
     // Check shaders
     if(_final_state.pipeline.shaders.empty()) {
