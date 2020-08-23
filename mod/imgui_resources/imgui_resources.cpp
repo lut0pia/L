@@ -7,6 +7,8 @@
 
 using namespace L;
 
+#if !L_RLS
+
 static bool opened = false;
 
 static Table<Symbol, Color> type_colors;
@@ -94,7 +96,11 @@ static void imgui_resources_update() {
 
   ImGui::End();
 }
+#endif
 
 void imgui_resources_module_init() {
+#if !L_RLS
   Engine::add_update(imgui_resources_update);
+#endif
 }
+
