@@ -81,13 +81,13 @@ static void imgui_resources_update() {
       case ResourceSlot::Failed: state = "Failed"; state_color = ImColor(1.f, 0.f, 0.f); break;
     }
 
-    ImGui::TextColored(im_type_color, slot->type);
+    ImGui::TextColored(im_type_color, "%s", (const char*)slot->type);
     ImGui::NextColumn();
 
-    ImGui::Text(slot->id);
+    ImGui::Text("%s", (const char*)slot->id);
     ImGui::NextColumn();
 
-    ImGui::TextColored(state_color, state);
+    ImGui::TextColored(state_color, "%s", state);
     ImGui::NextColumn();
   }
   ImGui::Columns(1);
