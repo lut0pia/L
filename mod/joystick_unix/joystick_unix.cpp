@@ -1,6 +1,6 @@
 #include <L/src/container/Array.h>
 #include <L/src/engine/Engine.h>
-#include <L/src/system/Device.h>
+#include <L/src/input/Device.h>
 #include <L/src/system/File.h>
 
 #include <stdio.h>
