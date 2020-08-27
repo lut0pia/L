@@ -124,7 +124,7 @@ static const Symbol glsl_symbol("glsl"), stage_symbol("stage"), frag_symbol("fra
 
 #define L_GLSL_INTRO "#version 450\n#extension GL_ARB_separate_shader_objects : require\n"
 
-bool glsl_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) {
+static bool glslang_shader_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) {
   if(slot.ext != glsl_symbol && slot.ext != frag_symbol && slot.ext != vert_symbol) {
     return false;
   }
@@ -194,8 +194,8 @@ bool glsl_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) {
   return true;
 }
 
-void glsl_module_init() {
+void glslang_module_init() {
   glslang::InitializeProcess();
 
-  ResourceLoading<Shader>::add_loader(glsl_loader);
+  ResourceLoading<Shader>::add_loader(glslang_shader_loader);
 }
