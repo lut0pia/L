@@ -46,6 +46,9 @@ void* GenericHandle::pointer() const {
 
   return nullptr;
 }
+uint64_t GenericHandle::index() const {
+  return _ver_index & address_mask;
+}
 void GenericHandle::release() {
   if(_ver_index != UINT64_MAX) {
     const uint64_t version = _ver_index >> address_bits;
