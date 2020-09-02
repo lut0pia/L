@@ -153,6 +153,7 @@ static void imgui_console_update() {
   ImGui::Separator();
 
   // Text input
+  ImGui::SetNextItemWidth(-1.f);
   ImGuiInputTextFlags input_text_flags = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory;
   if(ImGui::InputText("", input_buffer, IM_ARRAYSIZE(input_buffer), input_text_flags, &text_edit_callback) && *input_buffer) {
     items.push(String("> ") + input_buffer);
