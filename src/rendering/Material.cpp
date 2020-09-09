@@ -243,10 +243,12 @@ void Material::update() {
     while(true) {
       _final_state.apply(mat->_partial_state);
 
-      if(mat->_parent) {
-        mat = &*mat->_parent;
-      } else {
+      if(!mat->_parent.is_set()) {
         break; // No more parents
+      } else if(mat->_parent.is_loaded()) {
+        mat = &*mat->_parent;
+      } else { // Parent is not ready! Abort!
+        return;
       }
     }
   }
