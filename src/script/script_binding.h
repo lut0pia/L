@@ -2,6 +2,14 @@
 
 #include "ScriptContext.h"
 
+#define L_SCRIPT_FUNCTION(NAME, NARGS, ...) \
+  ScriptGlobal(NAME) = (ScriptNativeFunction)([](ScriptContext& c) { \
+    if(c.param_count() < NARGS) { \
+      c.warning("Too few arguments in function call '%s'", NAME); \
+    } \
+    __VA_ARGS__; \
+  })
+
 #define L_SCRIPT_METHOD_INTERNAL(PREFIX, TYPE, NAME, NARGS, ...) \
   ScriptContext::type_value(Type<Handle<TYPE>>::description(), Symbol(NAME)) = \
   (ScriptNativeFunction)([](ScriptContext& c) { \
