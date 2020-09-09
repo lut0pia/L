@@ -1,5 +1,6 @@
 #include "ScriptComponent.h"
 
+#include "../engine/debug_draw.h"
 #include "../engine/Engine.h"
 #include "../rendering/Material.h"
 #include "../engine/Resource.inl"
@@ -85,6 +86,8 @@ void ScriptComponent::script_registration() {
   });
   // Material ///////////////////////////////////////////////////////////////////
   Material::script_registration();
+  // Debug draw
+  L_SCRIPT_FUNCTION("debug_draw_line", 3, debug_draw_line(c.param(0), c.param(1), c.param(2)));
   // Devices ///////////////////////////////////////////////////////////////////
   ScriptGlobal("get_devices") = (ScriptNativeFunction)([](ScriptContext& c) {
     auto wtr(ref<Table<Var,Var>>());
