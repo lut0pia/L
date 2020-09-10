@@ -87,7 +87,9 @@ void ScriptComponent::script_registration() {
   // Material ///////////////////////////////////////////////////////////////////
   Material::script_registration();
   // Debug draw
+#if !L_RLS
   L_SCRIPT_FUNCTION("debug_draw_line", 3, debug_draw_line(c.param(0), c.param(1), c.param(2)));
+#endif
   // Devices ///////////////////////////////////////////////////////////////////
   ScriptGlobal("get_devices") = (ScriptNativeFunction)([](ScriptContext& c) {
     auto wtr(ref<Table<Var,Var>>());
