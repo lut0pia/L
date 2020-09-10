@@ -186,6 +186,10 @@ void imgui_module_init() {
     io.KeyMap[ImGuiKey_Z] = (int)Device::Button::Z;
   }
 
+  { // Configure input context
+    input_context.set_name("imgui");
+  }
+
   ResourceLoading<Mesh>::add_loader(
     [](ResourceSlot& slot, Mesh::Intermediate& intermediate) {
       if(slot.ext != imgui_symbol) {
