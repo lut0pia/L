@@ -48,6 +48,9 @@ namespace L {
     InputContext();
 
     String get_name() const { return _name; }
+    InputBlockMode get_block_mode() const { return _block_mode; }
+    const Table<Symbol, float>& get_inputs() const { return _inputs; }
+
     void set_name(const String&);
     void set_input_map(const Ref<InputMap>&);
     void set_block_mode(InputBlockMode);
@@ -60,6 +63,7 @@ namespace L {
     bool get_button_pressed(const Symbol&) const;
     float get_axis(const Symbol&) const;
 
+    static const Array<Handle<InputContext>>& contexts() { return _contexts; }
     static void update();
     static void script_registration();
   };
