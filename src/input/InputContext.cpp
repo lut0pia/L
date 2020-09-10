@@ -141,6 +141,17 @@ void InputContext::update() {
     }
   }
 }
+
+static Symbol none_symbol = "None", all_symbol = "All";
+static InputBlockMode symbol_to_block_mode(const Symbol& sym) {
+  if(sym == none_symbol) {
+    return InputBlockMode::None;
+  } else if(sym == all_symbol) {
+    return InputBlockMode::All;
+  } else {
+    return InputBlockMode::Used;
+  }
+}
 void InputContext::script_registration() {
   ScriptGlobal("input_map") = (ScriptNativeFunction)[](ScriptContext& c) {
     Ref<InputMap> input_map_ref = ref<InputMap>();
@@ -167,7 +178,9 @@ void InputContext::script_registration() {
 
     c.return_value() = input_map_ref;
   };
+  L_SCRIPT_METHOD(InputContext, "set_name", 1, set_name(c.param(0)));
   L_SCRIPT_METHOD(InputContext, "set_input_map", 1, set_input_map(c.param(0)));
+  L_SCRIPT_METHOD(InputContext, "set_block_mode", 1, set_block_mode(symbol_to_block_mode(c.param(0))));
   L_SCRIPT_RETURN_METHOD(InputContext, "get_raw_button", 1, get_raw_button(Device::symbol_to_button(c.param(0))));
   L_SCRIPT_RETURN_METHOD(InputContext, "get_raw_button_pressed", 1, get_raw_button_pressed(Device::symbol_to_button(c.param(0))));
   L_SCRIPT_RETURN_METHOD(InputContext, "get_raw_axis", 1, get_raw_axis(Device::symbol_to_axis(c.param(0))));
