@@ -5,6 +5,7 @@
 #include "../container/Ref.h"
 #include "../container/Table.h"
 #include "../input/Device.h"
+#include "../text/String.h"
 #include "../text/Symbol.h"
 
 namespace L {
