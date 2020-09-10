@@ -31,6 +31,7 @@ namespace L {
   protected:
     typedef Bitfield<size_t(Device::Button::Last) + size_t(Device::Axis::Last)> InputMask;
     static Array<Handle<InputContext>> _contexts;
+    String _name;
     Ref<InputMap> _input_map;
     Handle<Device> _device;
     InputBlockMode _block_mode = InputBlockMode::Used;
@@ -46,6 +47,8 @@ namespace L {
   public:
     InputContext();
 
+    String get_name() const { return _name; }
+    void set_name(const String&);
     void set_input_map(const Ref<InputMap>&);
     void set_block_mode(InputBlockMode);
 

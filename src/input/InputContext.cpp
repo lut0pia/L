@@ -8,9 +8,13 @@ using namespace L;
 Array<Handle<InputContext>> InputContext::_contexts;
 
 InputContext::InputContext() : Handled<InputContext>(this), _buttons(0), _axes {0.f}, _previous_buttons(0), _previous_axes {0.f} {
+  _name = ntos(handle().index());
   _contexts.push(handle());
 }
 
+void InputContext::set_name(const String& name) {
+  _name = name;
+}
 void InputContext::set_input_map(const Ref<InputMap>& input_map) {
   _input_map = input_map;
 }
