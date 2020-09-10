@@ -12,12 +12,12 @@ namespace L {
   class Camera : public TComponent<Camera, ComponentFlag::WindowEvent> {
   protected:
     Transform* _transform;
-    Matrix44f _view, _projection, _viewProjection, _prevViewProjection, _ray;
+    Matrix44f _view, _projection, _view_projection, _prev_view_projection, _ray;
     Interval2f _viewport;
     enum {
       Perspective,
       Ortho
-    } _projectionType;
+    } _projection_type;
     float _fovy, _near, _far, _left, _right, _bottom, _top;
     Material _present_material;
     VkCommandBuffer _cmd_buffer;
@@ -47,16 +47,16 @@ namespace L {
     void update_projection();
     void update_viewport();
 
-    bool worldToScreen(const Vector3f&, Vector2f&) const; // Finds the normalized screen position for that world space vector, returns false if behind camera
-    Vector3f screenToRay(const Vector2f&) const; // Returns direction vector from normalized screen position
-    Vector2f screenToPixel(const Vector2f&) const; // Returns pixel position from NDC
-    Interval2i viewportPixel() const;
+    bool world_to_screen(const Vector3f&, Vector2f&) const; // Finds the normalized screen position for that world space vector, returns false if behind camera
+    Vector3f screen_to_ray(const Vector2f&) const; // Returns direction vector from normalized screen position
+    Vector2f screen_to_pixel(const Vector2f&) const; // Returns pixel position from NDC
+    Interval2i viewport_pixel() const;
     bool sees(const Interval3f&) const; // Checks if an interval can currently be seen by camera
     void frustum_planes(Vector4f[6]) const; // In world-space
 
     inline const Matrix44f& view() const { return _view; }
     inline const Matrix44f& projection() const { return _projection; }
-    inline const Matrix44f& viewProjection() const { return _viewProjection; }
+    inline const Matrix44f& view_projection() const { return _view_projection; }
     inline Material& present_material() { return _present_material; }
     inline Framebuffer& geometry_buffer() { return _geometry_buffer; }
     inline const Framebuffer& geometry_buffer() const { return _geometry_buffer; }
