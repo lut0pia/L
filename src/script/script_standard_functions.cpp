@@ -83,8 +83,15 @@ void L::init_script_standard_functions() {
     }
   });
   register_script_function("print", [](ScriptContext& c) {
-    for(uintptr_t i(0); i < c.param_count(); i++)
+    for(uintptr_t i = 0; i < c.param_count(); i++) {
       out << c.param(i);
+    }
+  });
+  register_script_function("println", [](ScriptContext& c) {
+    for(uintptr_t i = 0; i < c.param_count(); i++) {
+      out << c.param(i);
+    }
+    out << '\n';
   });
   register_script_function("break", [](ScriptContext&) {
     debugbreak();
