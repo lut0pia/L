@@ -15,6 +15,8 @@
 
 using namespace L;
 
+static const Symbol hit_symbol("hit"), position_symbol("position"), t_symbol("t");
+
 static bool check_param_count(ScriptContext& c, uint32_t count) {
   if(c.param_count() < count) {
     c.warning("Too few parameters, expected at least %d, got %d", count, c.param_count());
@@ -393,6 +395,22 @@ void L::init_script_standard_functions() {
     });
     register_script_function("cross", [](ScriptContext& c) {
       c.return_value() = c.param(0).get<Vector3f>().cross(c.param(1).get<Vector3f>());
+    });
+  }
+
+  { // Geometry
+    register_script_function("ray_plane_intersect", [](ScriptContext& c) {
+      if(check_param_count(c, 4)) {
+        float t;
+        const Vector3f origin = c.param(2);
+        const Vector3f direction = c.param(3);
+        const bool hit = ray_plane_intersect(c.param(0), c.param(1), origin, direction, t);
+        auto table = ref<Table<Var, Var>>();
+        (*table)[hit_symbol] = hit;
+        (*table)[t_symbol] = t;
+        (*table)[position_symbol] = origin + direction * t;
+        c.return_value() = table;
+      }
     });
   }
 }
