@@ -56,6 +56,10 @@ void Camera::script_registration() {
   L_SCRIPT_METHOD(Camera, "perspective", 3, perspective(c.param(0), c.param(1), c.param(2)));
   L_SCRIPT_METHOD(Camera, "ortho", 4, ortho(c.param(0), c.param(1), c.param(2), c.param(3)));
   L_SCRIPT_METHOD(Camera, "viewport", 4, viewport(Interval2f(Vector2f(c.param(0).get<float>(), c.param(1).get<float>()), Vector2f(c.param(2).get<float>(), c.param(3).get<float>()))));
+  
+  L_SCRIPT_RETURN_METHOD(Camera, "screen_to_ray", 1, screen_to_ray(c.param(0)));
+  L_SCRIPT_RETURN_METHOD(Camera, "screen_to_pixel", 1, screen_to_pixel(c.param(0)));
+  L_SCRIPT_RETURN_METHOD(Camera, "pixel_to_screen", 1, pixel_to_screen(c.param(0)));
 }
 
 void Camera::resize_buffers() {
