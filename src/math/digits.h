@@ -22,40 +22,62 @@ namespace L {
 
   template <int base, class T>
   int ntos_point(T& v) {
-    int wtr(0);
-    while(T((typename inttype<T>::type)v)!=v) {
+    int wtr = 0;
+    while(T((typename inttype<T>::type)v) != v && !ntos_inf(v)) {
       v *= base;
       wtr++;
-      if(wtr<0) break;
+      if(wtr < 0) {
+        break;
+      }
     }
     return wtr;
   }
+
+  template <class T> inline bool ntos_inf(const T&) { return false; }
+  inline bool ntos_inf(float v) { return std::isinf(v); }
 
   template <class T> inline bool ntos_valid(const T&) { return true; }
   inline bool ntos_valid(float v) { return !std::isnan(v); }
 
   template <int base = 10, class T>
   const char* ntos(T v, int pad = 0) { // Converts a number to a string
-    if(!ntos_valid(v)) return "NaN"; // Check validity
-    char* wtr(ntos_buffer()); // Get buffer (backwards writing)
-    const bool negative(v<0); // Check negativity
-    if(negative) digits_negate(v);
+    if(!ntos_valid(v)) { // Check validity
+      return "NaN";
+    }
+    const bool negative = v < 0; // Check negativity
+    if(negative) {
+      digits_negate(v);
+    }
 
-    int point(ntos_point<base>(v)); // Check for point
-    auto i((typename inttype<T>::type)v); // Convert to int
+    int point = ntos_point<base>(v); // Check for point
+    if(ntos_inf(v)) { // Check infinity
+      return "inf";
+    }
+
+    auto i = (typename inttype<T>::type)v; // Convert to int
+    char* wtr = ntos_buffer(); // Get buffer (backwards writing)
 
     // Stringify
-    if(!i) do { *--wtr = '0'; } while(--pad>0);
-    else {
-      while(pad>0 || i>0 || point>0) {
-        char c('0'+(i%base));
-        if(c>'9') c += 'a'-'9'-1;
+    if(!i) {
+      do {
+        *--wtr = '0';
+      } while(--pad > 0);
+    } else {
+      while(pad > 0 || i > 0 || point > 0) {
+        char c = '0' + (i % base);
+        if(c > '9') {
+          c += 'a' - '9' - 1;
+        }
         *--wtr = c;
-        if(--point==0) *--wtr = '.';
+        if(--point == 0) {
+          *--wtr = '.';
+        }
         i /= base;
         pad--;
       }
-      if(negative) *--wtr = '-'; // Add minus sign if negative
+      if(negative) {
+        *--wtr = '-'; // Add minus sign if negative
+      }
     }
     return wtr;
   }
