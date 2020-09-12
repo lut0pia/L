@@ -9,6 +9,7 @@ namespace L{
   bool line_line_intersect(const Vector3f& p1,const Vector3f& p2,
                          const Vector3f& p3,const Vector3f& p4,
                          Vector3f* a,Vector3f* b);
+  bool ray_plane_intersect(const Vector3f& center, const Vector3f& normal, const Vector3f& origin, const Vector3f& direction, float& t);
   bool ray_sphere_intersect(const Vector3f& center,float radius,const Vector3f& origin,const Vector3f& direction,float& t);
   bool ray_box_intersect(const Interval3f& box,const Vector3f& origin,const Vector3f& direction,float& t,const Vector3f& inv_dir);
   inline bool ray_box_intersect(const Interval3f& box,const Vector3f& origin,const Vector3f& direction,float& t){

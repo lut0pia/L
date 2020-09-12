@@ -27,6 +27,14 @@ bool L::line_line_intersect(const Vector3f& p1, const Vector3f& p2,
   *b = p3 + p43*mub;
   return true;
 }
+bool L::ray_plane_intersect(const Vector3f& center, const Vector3f& normal, const Vector3f& origin, const Vector3f& direction, float& t) {
+  const float denom = normal.dot(direction);
+  if(abs(denom) > 0.0001f) {
+    t = (center - origin).dot(normal) / denom;
+    return t >= 0;
+  }
+  return false;
+}
 bool L::ray_sphere_intersect(const Vector3f& c, float r, const Vector3f& o, const Vector3f& d, float& t) {
   const float radiusSqr(sqr(r));
   const Vector3f oc(o - c);
