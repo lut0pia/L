@@ -75,12 +75,12 @@ void Camera::event(const Window::Event& e) {
 }
 void Camera::prerender(VkCommandBuffer cmd_buffer) {
   L_SCOPE_MARKER("Camera::prerender");
-  static Matrix44f camOrient(orientation_matrix(Vector3f(1.f, 0.f, 0.f), Vector3f(0.f, 0.f, 1.f), Vector3f(0.f, -1.f, 0.f)).inverse());
-  Matrix44f orientation(orientation_matrix(_transform->right(), _transform->forward(), _transform->up()));
-  _view = camOrient * _transform->matrix().inverse();
+  static const Matrix44f cam_nz2y = orientation_matrix(Vector3f(1.f, 0.f, 0.f), Vector3f(0.f, 0.f, 1.f), Vector3f(0.f, -1.f, 0.f)).transpose();
+  const Matrix44f orientation = orientation_matrix(_transform->right(), _transform->forward(), _transform->up());
+  _view = cam_nz2y * _transform->matrix().inverse();
   _prev_view_projection = _view_projection;
   _view_projection = _projection * _view;
-  _ray = orientation * _projection.inverse();
+  _ray = orientation * cam_nz2y.transpose() * _projection.inverse();
   _shared_uniform.load_item(Engine::frame(), L_SHAREDUNIFORM_FRAME);
   _shared_uniform.load_item(_view, L_SHAREDUNIFORM_VIEW);
   _shared_uniform.load_item(_view.inverse(), L_SHAREDUNIFORM_INVVIEW);
@@ -177,7 +177,7 @@ bool Camera::world_to_screen(const Vector3f& p, Vector2f& wtr) const {
   return true;
 }
 Vector3f Camera::screen_to_ray(const Vector2f& p) const {
-  return Vector3f(_ray * Vector4f(p.x(), p.y(), 0.f, 1.f));
+  return Vector3f(_ray * Vector4f(p.x(), p.y(), -1.f, 1.f)).normalize();
 }
 Vector2f Camera::screen_to_pixel(const Vector2f& v) const {
   const Vector2f viewport_size = _viewport.size() * Vector2f(float(Window::width()), float(Window::height()));
