@@ -180,8 +180,12 @@ Vector3f Camera::screen_to_ray(const Vector2f& p) const {
   return Vector3f(_ray * Vector4f(p.x(), p.y(), 0.f, 1.f));
 }
 Vector2f Camera::screen_to_pixel(const Vector2f& v) const {
-  const Vector2f viewport_size = _viewport.size();
-  return (v * Vector2f(.5f, -.5f) + .5f) * Vector2f(viewport_size.x() * Window::width(), viewport_size.y() * Window::height());
+  const Vector2f viewport_size = _viewport.size() * Vector2f(float(Window::width()), float(Window::height()));
+  return (v * Vector2f(.5f, -.5f) + .5f) * viewport_size;
+}
+Vector2f Camera::pixel_to_screen(const Vector2f& v) const {
+  const Vector2f viewport_size = _viewport.size() * Vector2f(float(Window::width()), float(Window::height()));
+  return (v / viewport_size) * 2.f - 1.f;
 }
 Interval2i Camera::viewport_pixel() const {
   const Vector2i window_size(Window::width(), Window::height());

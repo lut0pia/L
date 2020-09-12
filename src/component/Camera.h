@@ -49,7 +49,8 @@ namespace L {
 
     bool world_to_screen(const Vector3f&, Vector2f&) const; // Finds the normalized screen position for that world space vector, returns false if behind camera
     Vector3f screen_to_ray(const Vector2f&) const; // Returns direction vector from normalized screen position
-    Vector2f screen_to_pixel(const Vector2f&) const; // Returns pixel position from NDC
+    Vector2f screen_to_pixel(const Vector2f&) const; // Returns pixel position from screen
+    Vector2f pixel_to_screen(const Vector2f&) const; // Returns screen position from pixel
     Interval2i viewport_pixel() const;
     bool sees(const Interval3f&) const; // Checks if an interval can currently be seen by camera
     void frustum_planes(Vector4f[6]) const; // In world-space
