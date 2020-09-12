@@ -11,6 +11,12 @@ namespace L {
   template <> struct inttype<uint32_t> { typedef uint32_t type; };
   template <> struct inttype<uint64_t> { typedef uint64_t type; };
 
+  template <class T> inline bool ntos_inf(const T&) { return false; }
+  inline bool ntos_inf(float v) { return std::isinf(v); }
+
+  template <class T> inline bool ntos_valid(const T&) { return true; }
+  inline bool ntos_valid(float v) { return !std::isnan(v); }
+
   template <class T> inline void digits_negate(T& v) { v = -v; }
   inline void digits_negate(uint32_t&) {}
   inline void digits_negate(uint64_t&) {}
@@ -32,12 +38,6 @@ namespace L {
     }
     return wtr;
   }
-
-  template <class T> inline bool ntos_inf(const T&) { return false; }
-  inline bool ntos_inf(float v) { return std::isinf(v); }
-
-  template <class T> inline bool ntos_valid(const T&) { return true; }
-  inline bool ntos_valid(float v) { return !std::isnan(v); }
 
   template <int base = 10, class T>
   const char* ntos(T v, int pad = 0) { // Converts a number to a string
