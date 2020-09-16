@@ -28,6 +28,15 @@ L::Time Engine::_frame_work_durations[64];
 float Engine::_real_delta_seconds, Engine::_delta_seconds, Engine::_sub_delta_seconds(Engine::_sub_delta.fSeconds()), Engine::_timescale(1.f);
 uint32_t Engine::_frame(0);
 
+void Engine::init() {
+  Resource<ScriptFunction> ini_script = "ini.ls";
+  ini_script.flush();
+  if(ini_script.is_loaded()) {
+    ScriptContext().execute(ref<ScriptFunction>(*ini_script));
+  } else {
+    error("Could not load init script");
+  }
+}
 void Engine::update() {
   L_SCOPE_MARKER("Engine update");
   _real_delta_time = _timer.frame();

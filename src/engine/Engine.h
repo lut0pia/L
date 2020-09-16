@@ -34,6 +34,7 @@ namespace L {
     static inline void timescale(float ts) { _timescale = ts; }
     static inline uint32_t frame() { return _frame; }
 
+    static void init();
     static void update();
     static void clear();
     static void add_deferred_action(const DeferredAction& la) { _deferred_actions.push(la); }
