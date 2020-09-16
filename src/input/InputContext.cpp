@@ -49,11 +49,6 @@ float InputContext::get_axis(const Symbol& name) const {
 }
 
 void InputContext::update() {
-  Device::Event e;
-  while(Device::new_event(e)) {
-    // What are we doing here?
-  }
-
   InputMask global_mask;
   global_mask.clear(0xff);
   Table<Device*, InputMask> masks;

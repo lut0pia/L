@@ -65,6 +65,17 @@ void Engine::update() {
     Window::flush_events();
   }
   {
+    L_SCOPE_MARKER("Device events");
+    Device::Event e;
+    while(Device::new_event(e)) {
+      // Restart on CTRL+F5
+      if(e.pressed && e.button == Device::Button::F5 && e.device->button(Device::Button::LeftCtrl)) {
+        Engine::clear();
+        Engine::init();
+      }
+    }
+  }
+  {
     L_SCOPE_MARKER("InputContext update");
     InputContext::update();
   }
