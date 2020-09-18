@@ -8,6 +8,7 @@
   ; Create input component, input context and input map
   (set self.input (self.entity.require_input|.context))
   (self.input.set_input_map ((read "script/input_map.ls")))
+  (self.input.set_name "camera")
   ; Create present material
   (camera.present_material|.shader 'fragment "shader/present.frag")
   (camera.present_material|.shader 'vertex "shader/fullscreen.vert")
