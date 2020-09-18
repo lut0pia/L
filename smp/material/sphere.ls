@@ -1,4 +1,4 @@
 (self.shader 'fragment "shader/color.frag")
-(self.shader 'vertex "shader/sphere.vert")
-(self.vertex_count 96)
+(self.shader 'vertex "shader/color.vert")
+(self.mesh "mesh/sphere.ls?fmt=pn")
 (self.vector 'color "white")

@@ -1,4 +1,4 @@
 (self.shader 'fragment "shader/color.frag")
-(self.shader 'vertex "shader/box.vert")
-(self.vertex_count 36)
+(self.shader 'vertex "shader/color.vert")
+(self.mesh "mesh/cube.ls?fmt=pn")
 (self.color 'color "white")
