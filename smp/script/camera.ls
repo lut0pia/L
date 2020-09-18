@@ -80,8 +80,6 @@
     (if (mozart_source.is_playing)
       (mozart_source.stop)
       (mozart_source.play)))
-  (if (input.get_button_pressed 'Restart)
-    (engine_clear_and_read "script/startup.ls"))
 
   ; GUI
   (self.text_gui.material|.text

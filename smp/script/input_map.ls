@@ -81,10 +81,6 @@
 
   ; Keyboard misc
   {
-    'name 'Restart
-    'button 'R
-  }
-  {
     'name 'Bach
     'button 'B
   }
