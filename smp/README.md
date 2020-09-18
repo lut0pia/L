@@ -3,6 +3,7 @@
 ## Controls
 
 - WASD/ZQSD to move the camera
+- Left shift to slow movement
 - Mouse to rotate
 - Left click to throw cubes
 - B to play/stop Bach (ogg)
