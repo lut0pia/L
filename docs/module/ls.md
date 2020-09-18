@@ -1,7 +1,8 @@
 # LScript reference
 
-## Syntax
-LScript's syntax is inspired from Lisp. Everything looks like `(command parameter...)`. Occasionally it looks like `(object'method | parameter...)`. The `|` symbol is really just syntactic sugar to mean "put everything before in parentheses", so the previous example actually extends to `((object'method) parameter...)`. The `'` symbol means that the next word should be returned as a token, not a value.
+## Function calls
+
+LScript's syntax is inspired from Lisp. Functions calls look like `(function parameter...)`. The `|` symbol is syntactic sugar to mean "put everything before in parentheses", so this `(function parameter | other_parameter)` actually extends to `((function parameter) other_parameter)`. The `'` symbol means that the next word should be returned as a token, not a value.
 
 ## Variables
 LScript uses local and global variables. Local variables are only accessible in the current scope (the body of a function or a script file). By default, variables are global, you can define local variables with the keyword `local`. You're advised to work only in your local scope to avoid collisions between scripts (although referring to the same variable from different scripts may be intended, in which case use global scope).
@@ -23,29 +24,30 @@ In this example, if the first line were omitted, the value `42` would have been 
 * `do` can be used to make sequential instructions into one instruction.
 ```clojure
 (do
-	(print "I\n")
-	(print "am\n")
-	(print "leg\n")
+	(println "I")
+	(println "am")
+	(println "leg")
 )
 ```
 
 ## Objects
-When the first part of a list is not a command but an object (as in `(object something)`), the result of the expression is the attribute of the object that has the key `something`.
 
-* `object` can be used to create an object. Each pair of parameters is a key and a value. There also exists syntactic sugar for object creation in the form of `{}`
+You can access object fields with either `.token` or `:value`.
+
+* `{}` can be used to create an object. Each pair of parameters is a key and a value.
 ```clojure
 (do
-	(local o (object 1 "truc" 3 "machin"))
-	(print (o 3)) ; Prints machin
-	(local o2 {"lel" 32}) ; Alternative syntax
+	(local o {'hey "truc" 3 "machin"})
+	(print o:3) ; Prints machin
+	(print o.hey) ; Prints truc
 )
 ```
 
 ## Functions
-* `fun` can be used to create a function. It takes either a list of symbols (its parameters) and an instruction or just an instruction.
+* `fun` can be used to create a function. The last parameter is the function's instruction, all previous parameters must be symbols and are the function's parameter names.
 ```clojure
 (local fart (fun (print "PROUT!")))
-(local do_twice (fun (f) (do (f) (f))))
+(local do_twice (fun f (do (f) (f))))
 (do_twice fart) ; Prints PROUT!PROUT!
 ```
 
@@ -81,7 +83,7 @@ When the first part of a list is not a command but an object (as in `(object som
 ```clojure
 (local o {"test" 2 3 4})
 (foreach k v o (do
-	(print k ": " v "\n")
+	(println k ": " v)
 ))
 ; This example prints:
 ; test: 2
