@@ -53,7 +53,7 @@ static void imgui_input_update() {
         ImGui::Separator();
 
         for(const auto& input : context->get_inputs()) {
-          ImGui::Text("%s", input.key());
+          ImGui::Text("%s", (const char*)input.key());
           ImGui::NextColumn();
           ImGui::Text("%f", input.value());
           ImGui::NextColumn();
