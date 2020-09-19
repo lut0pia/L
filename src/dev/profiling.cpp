@@ -59,8 +59,8 @@ void L::flush_profiling() {
   for(uint32_t i(0); i < event_index; i++) {
     const ProfilingEvent& event(events[i]);
     const String escaped_event_name(String(event.name) // Need some escaping to put into json
-      .replaceAll("\n", "\\n")
-      .replaceAll("\"", "\\\""));
+      .replace_all("\n", "\\n")
+      .replace_all("\"", "\\\""));
     file_stream
       << (first ? ' ' : ',')
       << "{\"ph\":\"X\",\"tid\": " << event.fiber_id << ",\"pid\":" << 0 << ",\"name\":\"" << escaped_event_name
@@ -71,8 +71,8 @@ void L::flush_profiling() {
   for(uint32_t i(0); i < counter_event_index; i++) {
     const ProfilingCounterEvent& event(counter_events[i]);
     const String escaped_event_name(String(event.name) // Need some escaping to put into json
-      .replaceAll("\n", "\\n")
-      .replaceAll("\"", "\\\""));
+      .replace_all("\n", "\\n")
+      .replace_all("\"", "\\\""));
     if(event.time.microseconds() > 0) {
       file_stream
         << (first ? ' ' : ',')

@@ -51,7 +51,7 @@ namespace L {
     Handle<CompType> add_component() {
       Handle<CompType> component = (new CompType())->handle();
       component->_entity = _handle;
-      _components.push(keyValue(Type<CompType>::description(), Handle<Component>(component)));
+      _components.push(key_value(Type<CompType>::description(), Handle<Component>(component)));
       update_components();
       return component;
     }

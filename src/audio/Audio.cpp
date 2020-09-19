@@ -23,7 +23,7 @@ void Audio::acquire_buffer(void*& buffer, uint32_t& frame_count) {
   const uint32_t frame_count_ahead(convert_samples_required_count(working_frequency, output.frequency(), output.frame_count_ahead()));
 
   // How many frames of advance do we want?
-  const uint32_t ideal_frame_count_ahead(uint32_t(ideal_time_ahead.fSeconds()*working_frequency));
+  const uint32_t ideal_frame_count_ahead(uint32_t(ideal_time_ahead.seconds_float()*working_frequency));
   frame_count = requested_frame_count = (frame_count_ahead<ideal_frame_count_ahead) ? (ideal_frame_count_ahead-frame_count_ahead) : 0;
 
   memset(sample_buffer, 0, frame_count*sample_format_size(working_format));

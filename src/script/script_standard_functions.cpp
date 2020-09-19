@@ -47,7 +47,7 @@ static void register_script_function(const char* name, ScriptNativeFunction func
 }
 
 void L::init_script_standard_functions() {
-  L_SCRIPT_NATIVE_RETURN("rand", 0, Rand::nextFloat());
+  L_SCRIPT_NATIVE_RETURN("rand", 0, Rand::next_float());
   L_SCRIPT_NATIVE_RETURN("window_width", 0, float(Window::width()));
   L_SCRIPT_NATIVE_RETURN("window_height", 0, float(Window::height()));
   L_SCRIPT_NATIVE_RETURN("mouse_x", 0, float(Window::cursor_x()));

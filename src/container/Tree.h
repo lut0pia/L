@@ -79,7 +79,7 @@ namespace L {
             if(!nodes.empty()) {
               K distance(std::numeric_limits<K>::max());
               for(int i(0); i<nodes.size(); i++) { // Find node closest to the center of the current interval
-                K tmp(center.distSquared(nodes[i]->key()));
+                K tmp(center.dist_squared(nodes[i]->key()));
                 if(tmp<distance) {
                   node = nodes[i];
                   distance = tmp;

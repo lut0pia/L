@@ -50,9 +50,9 @@ bool LSCompiler::compile(ScriptFunction& script_function) {
     for(Function* function : _functions) {
       function->push(function->code, ScriptInstruction {Return}); // Better safe than sorry
       function->bytecode_offset = uint32_t(_script->bytecode.size());
-      _script->bytecode.insertArray(_script->bytecode.size(), function->bytecode);
+      _script->bytecode.insert_array(_script->bytecode.size(), function->bytecode);
 #if !L_RLS
-      _script->bytecode_line.insertArray(_script->bytecode_line.size(), function->bytecode_line);
+      _script->bytecode_line.insert_array(_script->bytecode_line.size(), function->bytecode_line);
 #endif
     }
   }

@@ -75,7 +75,7 @@ namespace L {
           return false;
       return true;
     }
-    Vector<d,T> closestTo(Vector<d,T> p) const {
+    Vector<d,T> closest_to(Vector<d,T> p) const {
       for(size_t i(0); i<d; i++) {
         if(p[i]<_min[i])
           p[i] = _min[i];

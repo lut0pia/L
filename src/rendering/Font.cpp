@@ -55,7 +55,7 @@ const Font::TextMesh& Font::text_mesh(const char* str) const {
           const Vector4f tr(tl.x()+g.size.x(), tl.y(), g.atlas_coords.max().x(), tl.w());
           const Vector4f bl(tl.x(), tl.y()+g.size.y(), tl.z(), g.atlas_coords.max().y());
           const Vector4f br(tr.x(), bl.y(), tr.z(), bl.w());
-          buffer.pushMultiple(tl, bl, br, tl, br, tr);
+          buffer.push_multiple(tl, bl, br, tl, br, tr);
         }
         x += g.advance;
         wtr.dimensions.x() = max(wtr.dimensions.x(), x);

@@ -8,10 +8,10 @@ bool L::line_line_intersect(const Vector3f& p1, const Vector3f& p2,
                           const Vector3f& p3, const Vector3f& p4,
                           Vector3f* a, Vector3f* b) {
   Vector3f p43(p4-p3);
-  float ls43(p43.lengthSquared());
+  float ls43(p43.length_squared());
   if(ls43<.0001f) return false;
   Vector3f p21(p2-p1);
-  float ls21(p21.lengthSquared());
+  float ls21(p21.length_squared());
   if(ls21<.0001f) return false;
   Vector3f p13(p1-p3);
   float d1343(p13.dot(p43)),
@@ -39,7 +39,7 @@ bool L::ray_sphere_intersect(const Vector3f& c, float r, const Vector3f& o, cons
   const float radiusSqr(sqr(r));
   const Vector3f oc(o - c);
   const float ddotoc(d.dot(oc));
-  const float delta(ddotoc*ddotoc-oc.lengthSquared()+radiusSqr);
+  const float delta(ddotoc*ddotoc-oc.length_squared()+radiusSqr);
   t = -ddotoc-sqrt(delta);
   return t>=0;
 }

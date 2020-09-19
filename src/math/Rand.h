@@ -11,9 +11,9 @@ namespace L {
 
     public:
       static uint64_t next();
-      static uint8_t nextByte();
-      static int nextInt();
-      static float nextFloat();
+      static uint8_t next_byte();
+      static int next_int();
+      static float next_float();
 
       static uint64_t next(uint64_t min, uint64_t max); // Returns a random unsigned integer between min and max
       static int next(int min, int max); // Returns a random integer between min and max

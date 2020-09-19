@@ -95,13 +95,13 @@ namespace L {
       return false;
     }
     inline bool operator>(const Vector& other) const { return other<*this; }
-    T lengthSquared() const {
+    T length_squared() const {
       T wtr(0);
       for(uintptr_t i(0); i<d; i++)
         wtr += _c[i]*_c[i];
       return wtr;
     }
-    inline T length() const { return std::sqrt(lengthSquared()); }
+    inline T length() const { return std::sqrt(length_squared()); }
     inline Vector& length(const T& s){ return this->operator*=(s/length()); }
     T manhattan() const {
       T wtr(0);
@@ -117,7 +117,7 @@ namespace L {
     }
     inline Vector normalized() const { return Vector(*this).normalize(); }
     inline T dist(const Vector& other) const { return (*this-other).length(); }
-    inline T distSquared(const Vector& other) const { return (*this-other).lengthSquared(); }
+    inline T dist_squared(const Vector& other) const { return (*this-other).length_squared(); }
     inline Vector cross(const Vector& other) const {
       return Vector(y()*other.z() - z()*other.y(),
                     z()*other.x() - x()*other.z(),
@@ -161,7 +161,7 @@ namespace L {
     static Vector random() {
       Vector wtr;
       for(uintptr_t i(0); i<d; i++)
-        wtr[i] = Rand::nextFloat()-.5f;
+        wtr[i] = Rand::next_float()-.5f;
       wtr.normalize();
       return wtr;
     }

@@ -34,7 +34,7 @@ class XInputDevice : public Device {
 public:
   XInputDevice(const XIDeviceInfo *devinfo)
   : _deviceid(devinfo->deviceid) {
-    _name = Symbol(String(devinfo->name).replaceAll(" ","_"));
+    _name = Symbol(String(devinfo->name).replace_all(" ","_"));
     _active = true;
     xinput_devices.push(this);
   }

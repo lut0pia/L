@@ -25,7 +25,7 @@ Timer Engine::_timer;
 const Time Engine::_sub_delta(0, 10);
 L::Time Engine::_real_delta_time, Engine::_delta_time, Engine::_accumulator(0), Engine::_average_frame_work_duration, Engine::_max_frame_work_duration;
 L::Time Engine::_frame_work_durations[64];
-float Engine::_real_delta_seconds, Engine::_delta_seconds, Engine::_sub_delta_seconds(Engine::_sub_delta.fSeconds()), Engine::_timescale(1.f);
+float Engine::_real_delta_seconds, Engine::_delta_seconds, Engine::_sub_delta_seconds(Engine::_sub_delta.seconds_float()), Engine::_timescale(1.f);
 uint32_t Engine::_frame(0);
 
 void Engine::init() {
@@ -41,8 +41,8 @@ void Engine::update() {
   L_SCOPE_MARKER("Engine update");
   _real_delta_time = _timer.frame();
   _delta_time = min(_real_delta_time*_timescale, Time(0, 100)); // Cap delta time to avoid weird behaviour
-  _real_delta_seconds = _real_delta_time.fSeconds();
-  _delta_seconds = _delta_time.fSeconds();
+  _real_delta_seconds = _real_delta_time.seconds_float();
+  _delta_seconds = _delta_time.seconds_float();
   ScriptGlobal("real_delta") = _real_delta_seconds;
   ScriptGlobal("delta") = _delta_seconds;
   ScriptGlobal("avg_frame_work_duration") = _average_frame_work_duration;
@@ -87,7 +87,7 @@ void Engine::update() {
   {
     L_SCOPE_MARKER("Sub updates");
     _accumulator += _delta_time;
-    _sub_delta_seconds = _sub_delta.fSeconds();
+    _sub_delta_seconds = _sub_delta.seconds_float();
     while(_sub_delta < _accumulator) {
       for(const auto& sub_update : _sub_updates)
         sub_update();

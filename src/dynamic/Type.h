@@ -76,7 +76,7 @@ namespace L {
   class Type {
   private:
     static TypeDescription td;
-    static TypeDescription makeDesc() {
+    static TypeDescription make_desc() {
       TypeDescription wtr = {
         type_name<T>(),sizeof(T),
         ctr,ctrnew,cpy,cpyto,assign,dtr,del,
@@ -140,7 +140,7 @@ namespace L {
     }
   };
   template <>
-  inline TypeDescription Type<void>::makeDesc() {
+  inline TypeDescription Type<void>::make_desc() {
     TypeDescription wtr = {
       "void",0,
       [](void*) {},
@@ -161,7 +161,7 @@ namespace L {
   }
 
   // Instantiate structures
-  template <class T> TypeDescription Type<T>::td(Type<T>::makeDesc());
+  template <class T> TypeDescription Type<T>::td(Type<T>::make_desc());
 
   void TypeInit();
 }

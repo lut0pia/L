@@ -54,7 +54,7 @@ static Var get_value(const char* word) {
     return (float)atof(word);
   } else if(*word == '"') { // String
     String str = word + 1;
-    str.trimRight();
+    str.trim_right();
     return str;
   } else if(*word == '\'') { // Symbol
     return Symbol(word + 1);

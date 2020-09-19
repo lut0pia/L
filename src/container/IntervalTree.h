@@ -54,11 +54,11 @@ namespace L {
         Node** cur(&_root);
         while((*cur)->branch()) {
           const Node *left((*cur)->_left), *right((*cur)->_right);
-          const Key& leftKey(left->_key), rightKey(right->_key);
-          const Key newLeft(leftKey+key), newRight(rightKey+key);
-          const K extentDiffLeft(newLeft.extent()-leftKey.extent()),
-            extentDiffRight(newRight.extent()-rightKey.extent());
-          cur = (extentDiffLeft<extentDiffRight) ? (&(*cur)->_left) : (&(*cur)->_right);
+          const Key& left_key(left->_key), rightKey(right->_key);
+          const Key new_left(left_key+key), newRight(rightKey+key);
+          const K extent_diff_left(new_left.extent()-left_key.extent()),
+            extent_diff_right(newRight.extent()-rightKey.extent());
+          cur = (extent_diff_left<extent_diff_right) ? (&(*cur)->_left) : (&(*cur)->_right);
         }
         *cur = _pool.construct((*cur)->_parent, *cur, node);
         sync(*cur);
@@ -111,12 +111,12 @@ namespace L {
       pairs.clear();
       if(_root && _root->branch()) {
         struct Pair { Node *a, *b; };
-        StaticStack<4096, Pair> candidatePairs;
-        candidatePairs.push(_root->_left, _root->_right);
-        while(!candidatePairs.empty()) {
-          Node* a(candidatePairs.top().a);
-          Node* b(candidatePairs.top().b);
-          candidatePairs.pop();
+        StaticStack<4096, Pair> candidate_pairs;
+        candidate_pairs.push(_root->_left, _root->_right);
+        while(!candidate_pairs.empty()) {
+          Node* a(candidate_pairs.top().a);
+          Node* b(candidate_pairs.top().b);
+          candidate_pairs.pop();
           const bool colliding(a->_key.overlaps(b->_key));
           if(colliding) {
             if(a->leaf()) {
@@ -124,26 +124,26 @@ namespace L {
                 pairs.push(a);
                 pairs.push(b);
               } else {
-                candidatePairs.push(a, b->_left);
-                candidatePairs.push(a, b->_right);
+                candidate_pairs.push(a, b->_left);
+                candidate_pairs.push(a, b->_right);
               }
             } else {
               if(b->leaf()) {
-                candidatePairs.push(a->_left, b);
-                candidatePairs.push(a->_right, b);
+                candidate_pairs.push(a->_left, b);
+                candidate_pairs.push(a->_right, b);
               } else {
-                candidatePairs.push(a->_left, b->_left);
-                candidatePairs.push(a->_left, b->_right);
-                candidatePairs.push(a->_right, b->_left);
-                candidatePairs.push(a->_right, b->_right);
+                candidate_pairs.push(a->_left, b->_left);
+                candidate_pairs.push(a->_left, b->_right);
+                candidate_pairs.push(a->_right, b->_left);
+                candidate_pairs.push(a->_right, b->_right);
               }
             }
           }
           if(a->sibling()==b) {
             if(a->branch())
-              candidatePairs.push(a->_left, a->_right);
+              candidate_pairs.push(a->_left, a->_right);
             if(b->branch())
-              candidatePairs.push(b->_left, b->_right);
+              candidate_pairs.push(b->_left, b->_right);
           }
         }
       }
@@ -198,13 +198,13 @@ namespace L {
     }
     static void swap(Node* a, Node* b) {
       L_ASSERT(a->_parent && b->_parent && a->_parent!=b->_parent);
-      Node *aParent(a->_parent), *bParent(b->_parent);
-      aParent->replace(a, b);
-      bParent->replace(b, a);
+      Node *a_parent(a->_parent), *b_parent(b->_parent);
+      a_parent->replace(a, b);
+      b_parent->replace(b, a);
       a->refit();
       b->refit();
-      aParent->refit();
-      bParent->refit();
+      a_parent->refit();
+      b_parent->refit();
     }
     inline void clear() { clear(_root); }
     void clear(Node* node){

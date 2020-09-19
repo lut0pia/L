@@ -54,7 +54,7 @@ Array<String> String::explode(char c, size_t limit) const {
   return wtr;
 }
 
-String& String::replaceAll(const String& search, const String& replace) {
+String& String::replace_all(const String& search, const String& replace) {
   for(uintptr_t i(0); i<size(); i++)
     if(strncmp(&operator[](i),search,search.size())==0) {
       this->replace(i,search.size(),replace);
@@ -62,35 +62,35 @@ String& String::replaceAll(const String& search, const String& replace) {
     }
   return *this;
 }
-String& String::trimLeft(size_t n) {
+String& String::trim_left(size_t n) {
   erase(0,n);
   return *this;
 }
-String& String::trimRight(size_t n) {
+String& String::trim_right(size_t n) {
   erase(size()-n,n);
   return *this;
 }
 String& String::trim(char c) {
   while(size()) {
-    if(operator[](0)==c) trimLeft();
-    else if(operator[](size()-1)==c) trimRight();
+    if(operator[](0)==c) trim_left();
+    else if(operator[](size()-1)==c) trim_right();
     else break;
   }
   return *this;
 }
 String& String::trim(const char* s) {
   while(size()) {
-    if(strchr(s,operator[](0))) trimLeft();
-    else if(strchr(s,operator[](size()-1))) trimRight();
+    if(strchr(s,operator[](0))) trim_left();
+    else if(strchr(s,operator[](size()-1))) trim_right();
     else break;
   }
   return *this;
 }
-String& String::padLeft(size_t n,char c) {
+String& String::pad_left(size_t n,char c) {
   if(size()<n) this->insert(0,String(n-size(),c));
   return *this;
 }
-String& String::toLower() {
+String& String::to_lower() {
   char* c(*this);
   while(*c!='\0') {
     *c = char(tolower(*c));

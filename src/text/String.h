@@ -40,21 +40,21 @@ namespace L {
       Array<String> explode(char c, size_t limit = 0) const; // Splits and returns an array of each part (limit is the max number of parts)
 
       // Self modifiers
-      String& replaceAll(const String& search, const String& replace); // Replaces search by replace
-      String& trimLeft(size_t=1); // Remove size_t left chars
-      String& trimRight(size_t=1); // Remove size_t right chars
+      String& replace_all(const String& search, const String& replace); // Replaces search by replace
+      String& trim_left(size_t=1); // Remove size_t left chars
+      String& trim_right(size_t=1); // Remove size_t right chars
       String& trim(char = ' '); // Remove all chars left and right that are char
       String& trim(const char*); // Remove all chars left and right that are in const char*
-      String& padLeft(size_t,char); // Add char to left until size==size_t
-      String& toLower(); // To lowercase
+      String& pad_left(size_t,char); // Add char to left until size==size_t
+      String& to_lower(); // To lowercase
       String& capitalize(); // Capitalize first letter of all words
 
       // Array redirections
       inline void pop() {erase(size()-1);}
       inline void push(char c) {insert(size(),c);}
       inline void insert(size_t i,char c) {Array<char>::insert(i,c);}
-      inline void insert(size_t i,const String& str) {Array<char>::insertArray(i,str,str.size());}
-      inline void replace(uintptr_t i, size_t len, const String& str) {Array<char>::replaceArray(i,len,str,str.size());}
+      inline void insert(size_t i,const String& str) {Array<char>::insert_array(i,str,str.size());}
+      inline void replace(uintptr_t i, size_t len, const String& str) {Array<char>::replace_array(i,len,str,str.size());}
       inline void erase(size_t i,size_t count=1) {Array<char>::erase(i,count);}
       inline void clear() {Array<char>::size(1); Array<char>::operator[](0)='\0';}
       inline void size(size_t s) {Array<char>::size(s+1); Array<char>::back()='\0';} // Add one because of '\0'

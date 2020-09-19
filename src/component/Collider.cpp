@@ -88,7 +88,7 @@ void Collider::custom_sub_update_all() {
     tree.query(c._bounding_box, tmp[t]);
     for(auto e : tmp[t])
       if(e!=c._node && e < c._node)
-        pairs[t].pushMultiple(c._node, e);
+        pairs[t].push_multiple(c._node, e);
   });
 
   // Collision: narrow phase
@@ -302,7 +302,7 @@ bool Collider::check_collision(const Collider& a,const Collider& b, Collision& c
     uintptr_t axis(sizeof(axes));
     collision.overlap = 0.f;
     for(uintptr_t i(0); i<sizeof(axes)/sizeof(Vector3f); i++) {
-      if(axes[i].lengthSquared()>0.00001f) { // The axis is not a null vector (caused by a cross product)
+      if(axes[i].length_squared()>0.00001f) { // The axis is not a null vector (caused by a cross product)
         Interval1f axis_a(project<8>(axes[i], apoints)), axis_b(project<8>(axes[i], bpoints)), intersection(axis_a, axis_b); // Compute projections and intersection
         const float overlap(intersection.size().x());
         if(overlap>0.f) {

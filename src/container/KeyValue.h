@@ -31,7 +31,7 @@ namespace L {
     friend inline uint32_t hash(const KeyValue& v) { uint32_t h = hash(v.key()); hash_combine(h, v.value()); return h; }
   };
   template <class K, class V>
-  inline KeyValue<K, V> keyValue(const K& k, const V& v) {
+  inline KeyValue<K, V> key_value(const K& k, const V& v) {
     return KeyValue<K, V>(k, v);
   }
 }

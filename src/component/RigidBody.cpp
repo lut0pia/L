@@ -82,12 +82,12 @@ void RigidBody::update() {
     add_force(_gravity/_inv_mass); // Apply gravity
     if(_velocity.length()>.0f) { // Apply linear drag
       Vector3f drag_force(_velocity);
-      drag_force.length(-_drag*_velocity.lengthSquared());
+      drag_force.length(-_drag*_velocity.length_squared());
       add_force(drag_force);
     }
     if(_rotation.length()>.0f) { // Apply angular drag
       Vector3f drag_torque(_rotation);
-      drag_torque.length(-_ang_drag*_rotation.lengthSquared());
+      drag_torque.length(-_ang_drag*_rotation.length_squared());
       add_torque(drag_torque);
     }
   }

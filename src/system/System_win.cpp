@@ -21,7 +21,7 @@ String System::formatPath(String path) {
   // TODO: All paths should use / (at least in frontend) for consistency
   if(path != "\\" && (path.size()<2 || path[1]!=':'))
     path = System::pwd()+path;
-  path.replaceAll("\\", "/");
+  path.replace_all("\\", "/");
   return path;
 }
 void* System::alloc(size_t size) {

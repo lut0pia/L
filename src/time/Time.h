@@ -40,7 +40,7 @@ namespace L {
     inline int64_t milliseconds() const { return usec/1000LL; }
     inline int64_t microseconds() const { return usec; }
 
-    inline float fSeconds() const { return float(seconds())+(float(microseconds()%1000000LL)/1000000.f); }
+    inline float seconds_float() const { return float(seconds())+(float(microseconds()%1000000LL)/1000000.f); }
 
     static Time now();
 
