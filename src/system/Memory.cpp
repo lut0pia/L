@@ -60,7 +60,7 @@ void* Memory::alloc(size_t size) {
   }
 
   // No free space available: make one
-  static uint8_t* next = (uint8_t*)Memory::virtual_alloc(1ull << 32);
+  static uint8_t* next = (uint8_t*)Memory::virtual_alloc(1ull << 29);
   return (void*)atomic_add((intptr_t*)&next, padded_size);
 }
 void* Memory::alloc_zero(size_t size) {
