@@ -12,53 +12,53 @@ namespace L {
   class Array {
   protected:
     T* _data;
-    size_t _size,_capacity;
+    size_t _size, _capacity;
 
-    inline void shift(uintptr_t i,intptr_t offset) {
-      memmove((void*)(_data+i+offset), _data+i, (_size-i)*sizeof(T));
+    inline void shift(uintptr_t i, intptr_t offset) {
+      memmove((void*)(_data + i + offset), _data + i, (_size - i) * sizeof(T));
     }
 
   public:
-    constexpr Array() : _data(nullptr),_size(0),_capacity(0) {}
-    inline Array(const std::initializer_list<T>& il) : _data(nullptr),_size(0),_capacity(0){
+    constexpr Array() : _data(nullptr), _size(0), _capacity(0) {}
+    inline Array(const std::initializer_list<T>& il) : _data(nullptr), _size(0), _capacity(0) {
       grow_to(il.size());
-      for(auto && e : il)
+      for(auto&& e : il)
         push(e);
     }
-    inline Array(const T* a,size_t size) : _data(nullptr),_size(0),_capacity(0) {
+    inline Array(const T* a, size_t size) : _data(nullptr), _size(0), _capacity(0) {
       grow_to(size);
-      while(_size<size)
+      while(_size < size)
         push(*a++);
     }
     template <typename... Args>
-    inline Array(size_t s,Args&&... args) : _data(nullptr),_size(0),_capacity(0) {
-      size(s,args...);
+    inline Array(size_t s, Args&&... args) : _data(nullptr), _size(0), _capacity(0) {
+      size(s, args...);
     }
-    inline Array(const Array& other) : _size(other._size),_capacity(other._capacity) {
-      if(!other.empty()){
-        _data = (T*)Memory::alloc(_capacity*sizeof(T));
-        copy(_data,other._data,_size);
+    inline Array(const Array& other) : _size(other._size), _capacity(other._capacity) {
+      if(!other.empty()) {
+        _data = (T*)Memory::alloc(_capacity * sizeof(T));
+        copy(_data, other._data, _size);
       } else _data = nullptr;
     }
-    inline Array(Array&& other) : _data(other._data),_size(other._size),_capacity(other._capacity){
+    inline Array(Array&& other) : _data(other._data), _size(other._size), _capacity(other._capacity) {
       other._data = nullptr;
       other._size = other._capacity = 0;
     }
     inline ~Array() {
-      if(_data){
-        for(uintptr_t i(0); i<_size; i++)
-          (_data+i)->~T();
-        Memory::free(_data,_capacity*sizeof(T));
+      if(_data) {
+        for(uintptr_t i(0); i < _size; i++)
+          (_data + i)->~T();
+        Memory::free(_data, _capacity * sizeof(T));
       }
     }
     inline Array& operator=(const Array& other) {
-      if(this!=&other) {
+      if(this != &other) {
         clear();
-        insert_array(0,other);
+        insert_array(0, other);
       }
       return *this;
     }
-    inline Array& operator=(Array&& other){
+    inline Array& operator=(Array&& other) {
       this->~Array();
       _data = other._data;
       _size = other._size;
@@ -67,36 +67,36 @@ namespace L {
       return *this;
     }
     inline Array operator+(const Array& other) { Array wtr(*this); return wtr += other; }
-    inline Array& operator+=(const Array& other) { insert_array(_size,other); return *this; }
+    inline Array& operator+=(const Array& other) { insert_array(_size, other); return *this; }
 
     inline size_t size() const { return _size; }
     inline size_t capacity() const { return _capacity; }
-    inline bool empty() const { return size()==0; }
+    inline bool empty() const { return size() == 0; }
     inline T& operator[](uintptr_t i) { return _data[i]; }
     inline const T& operator[](uintptr_t i) const { return _data[i]; }
     inline T& front() { return operator[](0); }
     inline const T& front() const { return operator[](0); }
-    inline T& back() { return operator[](_size-1); }
-    inline const T& back() const { return operator[](_size-1); }
+    inline T& back() { return operator[](_size - 1); }
+    inline const T& back() const { return operator[](_size - 1); }
     inline T* begin() { return _data; }
-    inline T* end() { return _data+_size; }
-    inline const T* begin() const{ return _data; }
-    inline const T* end() const{ return _data+_size; }
-    template <typename... Args> inline void push(Args&&... args) { insert(_size,args...); }
+    inline T* end() { return _data + _size; }
+    inline const T* begin() const { return _data; }
+    inline const T* end() const { return _data + _size; }
+    template <typename... Args> inline void push(Args&&... args) { insert(_size, args...); }
     template <typename... Args> inline void push_multiple(const T& v, Args&&... args) { push(v); push_multiple(args...); }
     inline void push_multiple() {}
-    template <typename... Args> inline void push_front(Args&&... args) { insert(0,args...); }
-    inline void pop() { erase_fast(_size-1); }
+    template <typename... Args> inline void push_front(Args&&... args) { insert(0, args...); }
+    inline void pop() { erase_fast(_size - 1); }
 
     template <typename... Args>
-    void size(size_t n,Args&&... args) {
+    void size(size_t n, Args&&... args) {
       grow_to(n);
-      if(_size<n)
-        for(uintptr_t i(_size); i<n; i++)
-          new(_data+i)T(args...);
+      if(_size < n)
+        for(uintptr_t i(_size); i < n; i++)
+          new(_data + i)T(args...);
       else
-        for(uintptr_t i(n); i<_size; i++)
-          (_data+i)->~T();
+        for(uintptr_t i(n); i < _size; i++)
+          (_data + i)->~T();
       _size = n;
     }
     void clear() {
@@ -106,50 +106,50 @@ namespace L {
       _size = 0;
     }
     void capacity(size_t n) {
-      if(n!=capacity()) {
-        L_ASSERT_MSG(n>=_size, "Cannot have capacity of array inferior to its size");
-        _data = (T*)Memory::realloc(_data,_capacity*sizeof(T),n*sizeof(T));
+      if(n != capacity()) {
+        L_ASSERT_MSG(n >= _size, "Cannot have capacity of array inferior to its size");
+        _data = (T*)Memory::realloc(_data, _capacity * sizeof(T), n * sizeof(T));
         _capacity = n;
       }
     }
     inline void grow_to(size_t size) {
-      if(size>capacity()) {
+      if(size > capacity()) {
         // Avoid too low start (16 bytes min) and target power of two (uint8_t-wise)
-        capacity(max<size_t>(16u, upperpow2(size*sizeof(T)))/sizeof(T));
+        capacity(max<size_t>(16u, upperpow2(size * sizeof(T))) / sizeof(T));
       }
     }
     inline void shrink() { capacity(size()); }
     template <typename... Args>
-    void insert(size_t i,Args&&... args) {
-      grow_to(_size+1); // Check capacity
-      shift(i,1); // Move right part
-      new(_data+i)T(args...); // Place new value
+    void insert(size_t i, Args&&... args) {
+      grow_to(_size + 1); // Check capacity
+      shift(i, 1); // Move right part
+      new(_data + i)T(args...); // Place new value
       _size++; // Increase size
     }
-    inline void insert_array(size_t i,const Array& a,size_t alen = size_t(-1),size_t ai = 0) { replace_array(i,0,a,alen,ai); }
-    template <typename... Args> inline void replace(size_t i,Args&&... args) { reconstruct(operator[](i),args...); }
+    inline void insert_array(size_t i, const Array& a, size_t alen = size_t(-1), size_t ai = 0) { replace_array(i, 0, a, alen, ai); }
+    template <typename... Args> inline void replace(size_t i, Args&&... args) { reconstruct(operator[](i), args...); }
     void replace_array(size_t i, size_t len, const Array& a, size_t alen = size_t(-1), size_t ai = 0) {
-      if(alen==size_t(-1)) alen = a.size();
-      grow_to(_size+(alen-len)); // Check capacity
-      shift(i+len,alen-len);
-      copy(&operator[](i),&a[ai],alen);
-      _size += alen-len;
+      if(alen == size_t(-1)) alen = a.size();
+      grow_to(_size + (alen - len)); // Check capacity
+      shift(i + len, alen - len);
+      copy(&operator[](i), &a[ai], alen);
+      _size += alen - len;
     }
     void erase(size_t i) {
       _data[i].~T(); // Destruct value
-      shift(i+1,-1); // Move right part
+      shift(i + 1, -1); // Move right part
       _size--; // Decrease size
     }
     inline void erase_fast(uintptr_t i) {
       _data[i].~T(); // Destruct value
-      if(i<_size-1)
-        memcpy((void*)(_data+i), _data+_size-1, sizeof(T)); // Swap with last element
+      if(i < _size - 1)
+        memcpy((void*)(_data + i), _data + _size - 1, sizeof(T)); // Swap with last element
       _size--; // Decrease size
     }
-    void erase(size_t i,size_t count) {
-      for(uintptr_t j(0); j<count; j++)
-        (_data+i+j)->~T(); // Destruct values
-      shift(i+count,-intptr_t(count)); // Move right part
+    void erase(size_t i, size_t count) {
+      for(uintptr_t j(0); j < count; j++)
+        (_data + i + j)->~T(); // Destruct values
+      shift(i + count, -intptr_t(count)); // Move right part
       _size -= count; // Decrease size
     }
 
