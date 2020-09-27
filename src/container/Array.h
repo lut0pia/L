@@ -54,7 +54,7 @@ namespace L {
     inline Array& operator=(const Array& other) {
       if(this != &other) {
         clear();
-        insert_array(0, other);
+        insert_array(0, other.begin(), other.size());
       }
       return *this;
     }
@@ -67,7 +67,7 @@ namespace L {
       return *this;
     }
     inline Array operator+(const Array& other) { Array wtr(*this); return wtr += other; }
-    inline Array& operator+=(const Array& other) { insert_array(_size, other); return *this; }
+    inline Array& operator+=(const Array& other) { push_array(other.begin(), other.size()); return *this; }
 
     inline size_t size() const { return _size; }
     inline size_t capacity() const { return _capacity; }
@@ -83,6 +83,7 @@ namespace L {
     inline const T* begin() const { return _data; }
     inline const T* end() const { return _data + _size; }
     template <typename... Args> inline void push(Args&&... args) { insert(_size, args...); }
+    template <typename... Args> inline void push_array(const T* a, size_t len) { insert_array(_size, a, len); }
     template <typename... Args> inline void push_multiple(const T& v, Args&&... args) { push(v); push_multiple(args...); }
     inline void push_multiple() {}
     template <typename... Args> inline void push_front(Args&&... args) { insert(0, args...); }
@@ -119,6 +120,7 @@ namespace L {
       }
     }
     inline void shrink() { capacity(size()); }
+
     template <typename... Args>
     void insert(size_t i, Args&&... args) {
       grow_to(_size + 1); // Check capacity
@@ -126,15 +128,16 @@ namespace L {
       new(_data + i)T(args...); // Place new value
       _size++; // Increase size
     }
-    inline void insert_array(size_t i, const Array& a, size_t alen = size_t(-1), size_t ai = 0) { replace_array(i, 0, a, alen, ai); }
+    inline void insert_array(size_t i, const T* a, size_t len) { replace_array(i, 0, a, len); }
+
     template <typename... Args> inline void replace(size_t i, Args&&... args) { reconstruct(operator[](i), args...); }
-    void replace_array(size_t i, size_t len, const Array& a, size_t alen = size_t(-1), size_t ai = 0) {
-      if(alen == size_t(-1)) alen = a.size();
+    void replace_array(size_t i, size_t len, const T* a, size_t alen) {
       grow_to(_size + (alen - len)); // Check capacity
       shift(i + len, alen - len);
-      copy(&operator[](i), &a[ai], alen);
+      copy(begin() + i, a, alen);
       _size += alen - len;
     }
+
     void erase(size_t i) {
       _data[i].~T(); // Destruct value
       shift(i + 1, -1); // Move right part
