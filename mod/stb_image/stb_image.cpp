@@ -13,10 +13,21 @@ L_POP_NO_WARNINGS
 
 using namespace L;
 
-static const Symbol bmp_symbol("bmp"), jpeg_symbol("jpeg"), jpg_symbol("jpg"), png_symbol("png"), tga_symbol("tga");
+static const Array<Symbol> extensions = {
+  "bmp",
+  "gif",
+  "hdr",
+  "jpeg",
+  "jpg",
+  "pgm",
+  "png",
+  "ppm",
+  "psd",
+  "tga",
+};
 
 bool stb_image_loader(ResourceSlot& slot, Texture::Intermediate& intermediate) {
-  if(slot.ext != bmp_symbol && slot.ext != jpeg_symbol && slot.ext != jpg_symbol && slot.ext != png_symbol && slot.ext != tga_symbol) {
+  if(!extensions.find(slot.ext)) {
     return false;
   }
 
