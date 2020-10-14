@@ -31,8 +31,6 @@ namespace L {
     inline Camera& operator=(const Camera&) { error("Camera component should not be copied."); return *this; }
 
     virtual void update_components() override;
-    virtual Map<Symbol, Var> pack() const override;
-    virtual void unpack(const Map<Symbol, Var>&) override;
     static void script_registration();
 
     void resize_buffers();

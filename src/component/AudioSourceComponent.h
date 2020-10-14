@@ -20,8 +20,6 @@ namespace L {
     void audio_render(void* frames, uint32_t frame_count);
 
     void update_components() override;
-    virtual Map<Symbol, Var> pack() const override;
-    virtual void unpack(const Map<Symbol, Var>&) override;
     static void script_registration();
 
     inline void stream(const char* filepath) { _stream = filepath; }

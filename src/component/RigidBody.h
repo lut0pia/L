@@ -17,8 +17,6 @@ namespace L {
     RigidBody();
 
     virtual void update_components() override;
-    virtual Map<Symbol, Var> pack() const override;
-    virtual void unpack(const Map<Symbol, Var>&) override;
     static void script_registration();
 
     void update_inertia_tensor();

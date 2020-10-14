@@ -21,12 +21,6 @@ void ScriptComponent::update_components() {
 
   _context.try_execute_method(update_components_symbol);
 }
-Map<Symbol, Var> ScriptComponent::pack() const {
-  return {{"script",_script}};
-}
-void ScriptComponent::unpack(const Map<Symbol, Var>& data) {
-  unpack_item(data, "script", _script);
-}
 void ScriptComponent::script_registration() {
   // Engine ///////////////////////////////////////////////////////////////////
   ScriptGlobal("engine_timescale") = (ScriptNativeFunction)([](ScriptContext& c) {

@@ -14,8 +14,6 @@ namespace L {
   public:
     inline Transform() : _position(0.f, 0.f, 0.f) {}
 
-    virtual Map<Symbol, Var> pack() const override;
-    virtual void unpack(const Map<Symbol, Var>&) override;
     static void script_registration();
 
     inline Vector3f to_absolute(const Vector3f& v) const { return position()+_rotation.rotate(v); }

@@ -26,25 +26,6 @@ void Collider::update_components(){
     _node = tree.insert(_bounding_box,this);
   }
 }
-Map<Symbol, Var> Collider::pack() const {
-  Map<Symbol, Var> data;
-  data["type"] = Symbol(_type==Box ? "box" : "sphere");
-  data["center"] = _center;
-  data["radius"] = _radius;
-  return data;
-}
-void Collider::unpack(const Map<Symbol, Var>& data) {
-  {
-    Symbol type;
-    unpack_item(data, "type", type);
-    if(type==Symbol("sphere"))
-      _type = Sphere;
-    else if(type==Symbol("box"))
-      _type = Box;
-  }
-  unpack_item(data, "center", _center);
-  unpack_item(data, "radius", _radius);
-}
 void Collider::script_registration() {
   L_COMPONENT_BIND(Collider, "collider");
   L_SCRIPT_METHOD(Collider, "center", 1, center(c.param(0).get<Vector3f>()));

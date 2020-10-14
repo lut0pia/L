@@ -5,16 +5,6 @@
 
 using namespace L;
 
-Map<Symbol, Var> MidiSourceComponent::pack() const {
-  Map<Symbol, Var> data;
-  data["sequence"] = _sequence;
-  data["loop"] = _loop;
-  return data;
-}
-void MidiSourceComponent::unpack(const Map<Symbol, Var>& data) {
-  unpack_item(data, "sequence", _sequence);
-  unpack_item(data, "loop", _loop);
-}
 void MidiSourceComponent::script_registration() {
   L_COMPONENT_BIND(MidiSourceComponent, "midi_source");
   L_SCRIPT_METHOD(MidiSourceComponent, "sequence", 1, sequence(c.param(0).get<String>()));

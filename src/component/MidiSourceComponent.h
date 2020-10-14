@@ -13,8 +13,6 @@ namespace L {
     Time _play_time;
     bool _loop, _playing;
   public:
-    virtual Map<Symbol, Var> pack() const override;
-    virtual void unpack(const Map<Symbol, Var>&) override;
     static void script_registration();
 
     void update();

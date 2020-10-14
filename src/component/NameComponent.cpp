@@ -4,16 +4,6 @@ using namespace L;
 
 Table<Symbol, NameComponent*> NameComponent::_components;
 
-Map<Symbol, Var> NameComponent::pack() const {
-  Map<Symbol, Var> data;
-  data["name"] = _name;
-  return data;
-}
-void NameComponent::unpack(const Map<Symbol, Var>& data) {
-  Symbol symbol;
-  unpack_item(data, "name", symbol);
-  name(symbol);
-}
 void NameComponent::script_registration() {
   L_COMPONENT_BIND(NameComponent, "name");
   L_SCRIPT_METHOD(NameComponent, "set", 1, name(c.param(0).get<Symbol>()));

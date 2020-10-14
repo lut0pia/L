@@ -18,22 +18,6 @@ void RigidBody::update_components() {
   _last_position = _transform->position();
   update_inertia_tensor();
 }
-Map<Symbol, Var> RigidBody::pack() const {
-  Map<Symbol, Var> data;
-  data["inv_mass"] = _inv_mass;
-  data["restitution"] = _restitution;
-  data["drag"] = _drag;
-  data["ang_drag"] = _ang_drag;
-  data["kinematic"] = _kinematic;
-  return data;
-}
-void RigidBody::unpack(const Map<Symbol, Var>& data) {
-  unpack_item(data, "inv_mass", _inv_mass);
-  unpack_item(data, "restitution", _restitution);
-  unpack_item(data, "drag", _drag);
-  unpack_item(data, "ang_drag", _ang_drag);
-  unpack_item(data, "kinematic", _kinematic);
-}
 void RigidBody::script_registration() {
   L_COMPONENT_BIND(RigidBody, "rigidbody");
   L_SCRIPT_METHOD(RigidBody, "kinematic", 1, kinematic(c.param(0).get<bool>()));

@@ -13,8 +13,6 @@ namespace L {
     inline NameComponent() { name(ntos<16>(Rand::next(), sizeof(uint64_t)*2)); }
     inline ~NameComponent() { _components.remove(_name); }
 
-    virtual Map<Symbol, Var> pack() const override;
-    virtual void unpack(const Map<Symbol, Var>&) override;
     static void script_registration();
 
     inline void name(const Symbol& name) {

@@ -8,19 +8,6 @@ using namespace L;
 void GUIComponent::update_components() {
   _camera = entity()->get_component<Camera>();
 }
-Map<Symbol, Var> GUIComponent::pack() const {
-  return {
-    {"material", _material},
-    {"offset", _offset},
-    {"viewport_anchor", _viewport_anchor},
-    {"anchor", _anchor},
-    {"scale", _scale},
-  };
-}
-void GUIComponent::unpack(const Map<Symbol, Var>& data) {
-  unpack_item(data, "material", _material);
-  unpack_item(data, "scale", _scale);
-}
 void GUIComponent::script_registration() {
   L_COMPONENT_BIND(GUIComponent, "gui");
   L_SCRIPT_RETURN_METHOD(GUIComponent, "material", 0, material().handle());

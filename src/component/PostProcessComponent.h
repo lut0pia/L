@@ -9,8 +9,6 @@ namespace L {
   protected:
     Material _material;
   public:
-    virtual Map<Symbol, Var> pack() const override;
-    virtual void unpack(const Map<Symbol, Var>&) override;
     static void script_registration();
 
     void render(const Camera& camera, const RenderPass& render_pass);

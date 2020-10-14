@@ -23,33 +23,6 @@ Camera::Camera() :
 void Camera::update_components() {
   _transform = entity()->require_component<Transform>();
 }
-static const Symbol perspective_symbol("perspective"), ortho_symbol("ortho");
-Map<Symbol, Var> Camera::pack() const {
-  Map<Symbol, Var> data;
-  data["projection"] = (_projection_type == Perspective) ? perspective_symbol : ortho_symbol;
-  data["fovy"] = _fovy;
-  data["near"] = _near;
-  data["far"] = _far;
-  data["left"] = _left;
-  data["right"] = _right;
-  data["bottom"] = _bottom;
-  data["top"] = _top;
-  return data;
-}
-void Camera::unpack(const Map<Symbol, Var>& data) {
-  Symbol projection;
-  unpack_item(data, "projection", projection);
-  _projection_type = (projection == perspective_symbol) ? Perspective : Ortho;
-  unpack_item(data, "fovy", _fovy);
-  unpack_item(data, "near", _near);
-  unpack_item(data, "far", _far);
-  unpack_item(data, "left", _left);
-  unpack_item(data, "right", _right);
-  unpack_item(data, "bottom", _bottom);
-  unpack_item(data, "top", _top);
-  resize_buffers();
-  update_projection();
-}
 void Camera::script_registration() {
   L_COMPONENT_BIND(Camera, "camera");
   L_SCRIPT_RETURN_METHOD(Camera, "present_material", 0, present_material().handle());

@@ -10,19 +10,6 @@ void AudioSourceComponent::update_components() {
   _transform = entity()->require_component<Transform>();
   _script = entity()->get_component<ScriptComponent>();
 }
-
-Map<Symbol, Var> AudioSourceComponent::pack() const {
-  Map<Symbol, Var> data;
-  data["stream"] = _stream;
-  data["volume"] = _volume;
-  data["looping"] = _looping;
-  return data;
-}
-void AudioSourceComponent::unpack(const Map<Symbol, Var>& data) {
-  unpack_item(data, "stream", _stream);
-  unpack_item(data, "volume", _volume);
-  unpack_item(data, "looping", _looping);
-}
 void AudioSourceComponent::script_registration() {
   L_COMPONENT_BIND(AudioSourceComponent, "audio_source");
   L_SCRIPT_METHOD(AudioSourceComponent, "stream", 1, stream(c.param(0).get<String>()));

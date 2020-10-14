@@ -9,16 +9,6 @@ using namespace L;
 void Primitive::update_components() {
   _transform = entity()->require_component<Transform>();
 }
-Map<Symbol, Var> Primitive::pack() const {
-  return Map<Symbol, Var> {
-    {"material", _material},
-    {"scale", _scale},
-  };
-}
-void Primitive::unpack(const Map<Symbol, Var>& data) {
-  unpack_item(data, "material", _material);
-  unpack_item(data, "scale", _scale);
-}
 void Primitive::script_registration() {
   L_COMPONENT_BIND(Primitive, "primitive");
   L_SCRIPT_RETURN_METHOD(Primitive, "material", 0, material().handle());
