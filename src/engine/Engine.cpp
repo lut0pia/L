@@ -105,7 +105,7 @@ void Engine::update() {
   const bool render_this_frame(ComponentPool<Camera>::size()>0 && Window::opened());
   if(render_this_frame) {
     L_SCOPE_MARKER("Graphics rendering");
-    VkCommandBuffer cmd_buffer(Vulkan::begin_render_command_buffer());
+    RenderCommandBuffer* cmd_buffer(Renderer::get()->begin_render_command_buffer());
     ComponentPool<Camera>::iterate([&](Camera& camera) {
       camera.prerender(cmd_buffer);
       CullVolume::cull(camera);
@@ -128,13 +128,13 @@ void Engine::update() {
       }
       camera.light_buffer().end(cmd_buffer);
     });
-    Vulkan::begin_present_pass();
+    Renderer::get()->begin_present_pass();
     ComponentPool<Camera>::iterate([](Camera& camera) {
       camera.present();
       for(auto gui : _guis)
         gui(camera);
     });
-    Vulkan::end_present_pass();
+    Renderer::get()->end_present_pass();
   }
 
   {
@@ -168,7 +168,7 @@ void Engine::update() {
   _average_frame_work_duration /= L_COUNT_OF(_frame_work_durations);
 
   if(render_this_frame) {
-    Vulkan::end_render_command_buffer();
+    Renderer::get()->end_render_command_buffer();
   }
   _frame++;
 }

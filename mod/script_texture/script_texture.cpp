@@ -28,7 +28,7 @@ void ScriptTexture::create(float fwidth, float fheight) {
   _texture.width = uint32_t(fwidth);
   _texture.height = uint32_t(fheight);
   _texture.binary = Buffer(_texture.width*_texture.height * 4);
-  _texture.format = VK_FORMAT_R8G8B8A8_UNORM;
+  _texture.format = RenderFormat::R8G8B8A8_UNorm;
   memset(_texture.binary.data(), 0, _texture.binary.size());
 }
 void ScriptTexture::set_pixel(float x, float y, const Color& c) {

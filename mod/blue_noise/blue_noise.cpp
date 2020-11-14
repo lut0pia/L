@@ -123,7 +123,7 @@ static bool blue_noise_loader(ResourceSlot& slot, Texture::Intermediate& interme
 
   intermediate.width = width;
   intermediate.height = height;
-  intermediate.format = VK_FORMAT_R8_UNORM;
+  intermediate.format = RenderFormat::R8_UNorm;
   intermediate.binary = Buffer(width*height);
 
   for(uint32_t x(0); x<width; x++) {

@@ -6,7 +6,6 @@
 #include "../container/Ref.h"
 #include "../engine/Resource.h"
 #include "Font.h"
-#include "GPUBuffer.h"
 #include "Pipeline.h"
 #include "Texture.h"
 #include "Mesh.h"
@@ -40,23 +39,23 @@ namespace L {
     };
     struct DescSetPairing {
       const class Camera* camera;
-      VkPipeline pipeline;
-      VkDescriptorSet desc_set;
+      PipelineImpl* pipeline;
+      DescriptorSetImpl* desc_set;
       Time last_framebuffer_update;
       bool valid;
     };
     State _partial_state, _final_state;
     Ref<Pipeline> _pipeline;
     Array<DescSetPairing> _desc_set_pairings;
-    Array<GPUBuffer*> _buffers;
+    Array<UniformBuffer*> _buffers;
     uint32_t _last_chain_hash = 0;
     uint32_t _last_pipeline_hash = 0;
     uint32_t _last_descriptor_hash = 0;
     bool _state_dirty = true;
 
     uint32_t chain_hash() const;
-    VkDescriptorSet descriptor_set(const class Camera&, const Pipeline&);
-    bool fill_desc_set(const Pipeline&, VkDescriptorSet) const;
+    DescriptorSetImpl* descriptor_set(const class Camera&, const Pipeline&);
+    bool fill_desc_set(const Pipeline&, DescriptorSetImpl*) const;
     void create_uniform_buffers(const class Pipeline&);
     void clear_desc_set_pairings();
 
@@ -78,11 +77,11 @@ namespace L {
     inline void parent(const Resource<Material>& parent) { _parent = parent; _state_dirty = true; }
 
     // Pipeline state
-    void shader(VkShaderStageFlags stage, const Resource<Shader>& shader);
+    void shader(ShaderStage stage, const Resource<Shader>& shader);
     void render_pass(const Symbol& name) { _partial_state.pipeline.render_pass = name; _state_dirty = true; }
-    void polygon_mode(VkPolygonMode polygon_mode) { _partial_state.pipeline.polygon_mode = polygon_mode; _state_dirty = true; }
-    void cull_mode(VkCullModeFlags cull_mode) { _partial_state.pipeline.cull_mode = cull_mode; _state_dirty = true; }
-    void topology(VkPrimitiveTopology topology) { _partial_state.pipeline.topology = topology; _state_dirty = true; }
+    void polygon_mode(PolygonMode polygon_mode) { _partial_state.pipeline.polygon_mode = polygon_mode; _state_dirty = true; }
+    void cull_mode(CullMode cull_mode) { _partial_state.pipeline.cull_mode = cull_mode; _state_dirty = true; }
+    void topology(PrimitiveTopology topology) { _partial_state.pipeline.topology = topology; _state_dirty = true; }
     void blend_mode(BlendMode blend_mode) { _partial_state.pipeline.blend_mode = blend_mode; _state_dirty = true; }
 
     // Descriptor state

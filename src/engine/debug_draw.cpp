@@ -75,10 +75,10 @@ void L::init_debug_draw() {
 void L::debug_draw_line(const Vector3f& a, const Vector3f& b, const Color& color) {
   debug_drawings.push();
   DebugDrawing& debug_drawing = debug_drawings.back();
-  debug_drawing.material.shader(VK_SHADER_STAGE_VERTEX_BIT, (const char*)debug_draw_x_vert_shader);
-  debug_drawing.material.shader(VK_SHADER_STAGE_FRAGMENT_BIT, (const char*)debug_draw_color_frag_shader);
+  debug_drawing.material.shader(ShaderStage::Vertex, (const char*)debug_draw_x_vert_shader);
+  debug_drawing.material.shader(ShaderStage::Fragment, (const char*)debug_draw_color_frag_shader);
   debug_drawing.material.vertex_count(2);
-  debug_drawing.material.topology(VK_PRIMITIVE_TOPOLOGY_LINE_STRIP);
+  debug_drawing.material.topology(PrimitiveTopology::LineStrip);
   debug_drawing.material.color("color", color);
   debug_drawing.model = translation_matrix(a);
   debug_drawing.model.vector<3>(0) = b - a;

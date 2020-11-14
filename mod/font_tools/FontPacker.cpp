@@ -24,7 +24,7 @@ void FontPacker::grow() {
       pair.value().atlas_coords *= 0.5f;
     }
   } else { // First ever allocation
-    _intermediate.texture_intermediate.format = VK_FORMAT_R8_UNORM;
+    _intermediate.texture_intermediate.format = RenderFormat::R8_UNorm;
   }
   swap(old_binary, new_binary);
   _intermediate.texture_intermediate.width =

@@ -65,7 +65,7 @@ static bool perlin_noise_loader(ResourceSlot& slot, Texture::Intermediate& inter
 
   intermediate.width = size;
   intermediate.height = size;
-  intermediate.format = VK_FORMAT_R8_UNORM;
+  intermediate.format = RenderFormat::R8_UNorm;
   intermediate.binary = Buffer(size*size);
 
   const float mult = float(span) / size;

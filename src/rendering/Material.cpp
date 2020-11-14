@@ -5,7 +5,6 @@
 
 using namespace L;
 
-static Table<uint32_t, Ref<Pipeline>> pipeline_cache;
 static const Interval2i default_scissor = Vector2i(0);
 
 template <class K, class V>
@@ -33,10 +32,10 @@ void Material::State::apply(const State& patch) {
   if(pipeline.name == default_value && patch.pipeline.name != default_value){ \
     pipeline.name = patch.pipeline.name; \
   }
-  PATCH_VALUE(polygon_mode, VK_POLYGON_MODE_MAX_ENUM);
-  PATCH_VALUE(cull_mode, VK_CULL_MODE_FLAG_BITS_MAX_ENUM);
-  PATCH_VALUE(topology, VK_PRIMITIVE_TOPOLOGY_MAX_ENUM);
-  PATCH_VALUE(blend_mode, BlendMode::None);
+  PATCH_VALUE(polygon_mode, PolygonMode::Undefined);
+  PATCH_VALUE(cull_mode, CullMode::Undefined);
+  PATCH_VALUE(topology, PrimitiveTopology::Undefined);
+  PATCH_VALUE(blend_mode, BlendMode::Undefined);
 #undef PATCH_VALUE
 
   // Descriptor state
@@ -92,8 +91,8 @@ uint32_t Material::chain_hash() const {
   return h;
 }
 
-VkDescriptorSet Material::descriptor_set(const Camera& camera, const Pipeline& pipeline) {
-  DescSetPairing* working_pairing(nullptr);
+DescriptorSetImpl* Material::descriptor_set(const Camera& camera, const Pipeline& pipeline) {
+  DescSetPairing* working_pairing = nullptr;
   for(DescSetPairing& pairing : _desc_set_pairings) {
     if(pairing.camera == &camera) {
       working_pairing = &pairing;
@@ -107,26 +106,16 @@ VkDescriptorSet Material::descriptor_set(const Camera& camera, const Pipeline& p
       _desc_set_pairings.push();
       working_pairing = &_desc_set_pairings.back();
       working_pairing->camera = &camera;
-      working_pairing->pipeline = pipeline;
+      working_pairing->pipeline = pipeline.get_impl();
       working_pairing->last_framebuffer_update = 0;
-
-      if(!Vulkan::find_desc_set(pipeline, working_pairing->desc_set)) {
-        VkDescriptorSetLayout layouts[] = {pipeline.desc_set_layout()};
-        VkDescriptorSetAllocateInfo allocInfo = {};
-        allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-        allocInfo.descriptorPool = Vulkan::descriptor_pool();
-        allocInfo.descriptorSetCount = 1;
-        allocInfo.pSetLayouts = layouts;
-
-        L_VK_CHECKED(vkAllocateDescriptorSets(Vulkan::device(), &allocInfo, &working_pairing->desc_set));
-      }
+      working_pairing->desc_set = Renderer::get()->create_descriptor_set(pipeline.get_impl());
     }
 
     // Bind uniform buffers
-    pipeline.set_descriptor("Shared", working_pairing->desc_set, camera.shared_uniform().descriptor_info());
+    pipeline.set_descriptor("Shared", working_pairing->desc_set, camera.shared_uniform());
     for(uint32_t i = 0; i < _buffers.size(); i++) {
       if(_buffers[i]) {
-        pipeline.set_descriptor(i, working_pairing->desc_set, _buffers[i]->descriptor_info());
+        pipeline.set_descriptor(i, working_pairing->desc_set, *_buffers[i]);
       }
     }
 
@@ -151,39 +140,39 @@ VkDescriptorSet Material::descriptor_set(const Camera& camera, const Pipeline& p
 
   if(&pipeline.render_pass() == &RenderPass::light_pass()
     && working_pairing->last_framebuffer_update < camera.framebuffer_mtime()) {
-    pipeline.set_descriptor("color_buffer", working_pairing->desc_set, VkDescriptorImageInfo {Vulkan::sampler(), camera.geometry_buffer().image_view(0), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
-    pipeline.set_descriptor("normal_buffer", working_pairing->desc_set, VkDescriptorImageInfo {Vulkan::sampler(), camera.geometry_buffer().image_view(1), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
-    pipeline.set_descriptor("depth_buffer", working_pairing->desc_set, VkDescriptorImageInfo {Vulkan::sampler(), camera.geometry_buffer().image_view(2), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
+    pipeline.set_descriptor("color_buffer", working_pairing->desc_set, camera.geometry_buffer(), 0);
+    pipeline.set_descriptor("normal_buffer", working_pairing->desc_set, camera.geometry_buffer(), 1);
+    pipeline.set_descriptor("depth_buffer", working_pairing->desc_set, camera.geometry_buffer(), 2);
     working_pairing->last_framebuffer_update = camera.framebuffer_mtime();
   } else if(&pipeline.render_pass() == &RenderPass::present_pass()
     && working_pairing->last_framebuffer_update < camera.framebuffer_mtime()) {
-    pipeline.set_descriptor("light_buffer", working_pairing->desc_set, VkDescriptorImageInfo {Vulkan::sampler(), camera.light_buffer().image_view(0), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
+    pipeline.set_descriptor("light_buffer", working_pairing->desc_set, camera.light_buffer(), 0);
     working_pairing->last_framebuffer_update = camera.framebuffer_mtime();
   }
   return working_pairing->desc_set;
 }
-bool Material::fill_desc_set(const Pipeline& pip, VkDescriptorSet desc_set) const {
+bool Material::fill_desc_set(const Pipeline& pip, DescriptorSetImpl* desc_set) const {
   for(const auto& pair : _final_state.scalars) {
-    if(const Shader::Binding* binding = pip.find_binding(pair.key())) {
+    if(const ShaderBinding* binding = pip.find_binding(pair.key())) {
       _buffers[binding->binding]->load_item(pair.value(), binding->offset);
     }
   }
   for(const auto& pair : _final_state.textures) {
     if(pair.value().is_loaded()) {
-      pip.set_descriptor(pair.key(), desc_set, VkDescriptorImageInfo {Vulkan::sampler(), *pair.value(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
+      pip.set_descriptor(pair.key(), desc_set, *pair.value());
     } else {
       return false;
     }
   }
   for(const auto& pair : _final_state.vectors) {
-    if(const Shader::Binding* binding = pip.find_binding(pair.key())) {
+    if(const ShaderBinding* binding = pip.find_binding(pair.key())) {
       _buffers[binding->binding]->load_item(pair.value(), binding->offset);
     }
   }
 
   if(_final_state.font.is_set()) {
     if(_final_state.font.is_loaded()) {
-      pip.set_descriptor("atlas", desc_set, VkDescriptorImageInfo {Vulkan::sampler(), _final_state.font->atlas(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL});
+      pip.set_descriptor("atlas", desc_set, _final_state.font->atlas());
     } else {
       return false;
     }
@@ -192,23 +181,23 @@ bool Material::fill_desc_set(const Pipeline& pip, VkDescriptorSet desc_set) cons
   return true;
 }
 void Material::create_uniform_buffers(const Pipeline& pipeline) {
-  for(const Shader::Binding& binding : pipeline.bindings()) {
+  for(const ShaderBinding& binding : pipeline.bindings()) {
     // Binding 0 is reserved for Shared uniform buffer
-    if(binding.binding > 0 && binding.type == Shader::BindingType::Uniform) {
+    if(binding.binding > 0 && binding.type == ShaderBindingType::Uniform) {
       while(int32_t(_buffers.size()) <= binding.binding) {
         _buffers.push(nullptr);
       }
       if(binding.size > 0) {
-        _buffers[binding.binding] = Memory::new_type<GPUBuffer>(binding.size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+        _buffers[binding.binding] = Memory::new_type<UniformBuffer>(binding.size);
       }
     }
   }
 }
 void Material::clear_desc_set_pairings() {
   for(const auto& pairing : _desc_set_pairings) {
-    Vulkan::destroy_desc_set(pairing.pipeline, pairing.desc_set);
+    Renderer::get()->destroy_descriptor_set(pairing.desc_set, pairing.pipeline);
   }
-  for(GPUBuffer* buffer : _buffers) {
+  for(UniformBuffer* buffer : _buffers) {
     if(buffer) {
       Memory::delete_type(buffer);
     }
@@ -261,12 +250,6 @@ void Material::update() {
     // Clear all existing desc sets as they're no longer valid
     clear_desc_set_pairings();
 
-    if(Ref<Pipeline>* pipeline = pipeline_cache.find(pipeline_h)) {
-      _pipeline = *pipeline;
-      create_uniform_buffers(*_pipeline);
-      return;
-    }
-
     // Check shaders
     if(_final_state.pipeline.shaders.empty()) {
       return; // Abort because there aren't any shaders
@@ -283,7 +266,7 @@ void Material::update() {
     }
 
     // Create pipeline
-    pipeline_cache[pipeline_h] = _pipeline = ref<Pipeline>(_final_state.pipeline);
+    _pipeline = ref<Pipeline>(_final_state.pipeline);
 
     create_uniform_buffers(*_pipeline);
   }
@@ -294,9 +277,9 @@ void Material::draw(const Camera& camera, const RenderPass& render_pass, const M
   }
 
   L_ASSERT(&_pipeline->render_pass() == &render_pass);
-  const VkDescriptorSet desc_set = descriptor_set(camera, *_pipeline);
+  DescriptorSetImpl* desc_set = descriptor_set(camera, *_pipeline);
 
-  if(desc_set == VK_NULL_HANDLE) {
+  if(desc_set == nullptr) {
     return;
   }
 
@@ -309,50 +292,42 @@ void Material::draw(const Camera& camera, const RenderPass& render_pass, const M
       mesh = &font->text_mesh(text).mesh;
     }
   }
-  VkCommandBuffer cmd_buffer(camera.cmd_buffer());
-  vkCmdBindDescriptorSets(cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *_pipeline, 0, 1, &desc_set, 0, nullptr);
-  if(const Shader::Binding* constants_binding = _pipeline->find_binding("Constants")) {
-    vkCmdPushConstants(cmd_buffer, *_pipeline, constants_binding->stage, 0, sizeof(model), &model);
-  }
+
+  RenderCommandBuffer* cmd_buffer = camera.cmd_buffer();
+  _pipeline->bind(cmd_buffer, desc_set, model);
 
   // Only set scissor if value is different from default
   if(_final_state.scissor != default_scissor) {
-    const Vector2f scissor_size = _final_state.scissor.size();
-    VkRect2D vk_scissor = {
-      VkOffset2D {_final_state.scissor.min().x(), _final_state.scissor.min().y()},
-      VkExtent2D {uint32_t(scissor_size.x()), uint32_t(scissor_size.y())},
-    };
-    vkCmdSetScissor(cmd_buffer, 0, 1, &vk_scissor);
+    Renderer::get()->set_scissor(cmd_buffer, _final_state.scissor);
   }
 
-  vkCmdBindPipeline(cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *_pipeline);
   if(mesh) {
     mesh->draw(cmd_buffer, _final_state.vertex_count, _final_state.index_offset, _final_state.vertex_offset);
   } else if(uint32_t vertex_count = _final_state.vertex_count) {
-    vkCmdDraw(cmd_buffer, vertex_count, 1, _final_state.vertex_offset, 0);
+    Renderer::get()->draw(cmd_buffer, vertex_count, 1, _final_state.vertex_offset, 0);
   }
 
   // Reset scissor if we set it earlier
   if(_final_state.scissor != default_scissor) {
-    Vulkan::reset_scissor(cmd_buffer);
+    Renderer::get()->reset_scissor(cmd_buffer);
   }
 }
 void Material::set_buffer(const Symbol& name, const void* data, size_t size) {
   if(_pipeline) {
-    if(const Shader::Binding* binding = _pipeline->find_binding(name)) {
-      if(binding->type == Shader::BindingType::Uniform) {
+    if(const ShaderBinding* binding = _pipeline->find_binding(name)) {
+      if(binding->type == ShaderBindingType::Uniform) {
         if(_buffers[binding->binding] && _buffers[binding->binding]->size() != size) {
           Memory::delete_type(_buffers[binding->binding]);
           _buffers[binding->binding] = nullptr;
         }
         if(!_buffers[binding->binding]) {
-          _buffers[binding->binding] = Memory::new_type<GPUBuffer>(size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+          _buffers[binding->binding] = Memory::new_type<UniformBuffer>(size);
         }
         _buffers[binding->binding]->load(data, size);
 
         // Update live descriptor sets
         for(DescSetPairing& desc_set_pairing : _desc_set_pairings) {
-          _pipeline->set_descriptor(binding->binding, desc_set_pairing.desc_set, _buffers[binding->binding]->descriptor_info());
+          _pipeline->set_descriptor(binding->binding, desc_set_pairing.desc_set, *_buffers[binding->binding]);
         }
       }
     }
@@ -392,7 +367,7 @@ template <class K, class V> static void set_parameter(Array<KeyValue<K, V>>& arr
   }
   array.push(name, value);
 }
-void Material::shader(VkShaderStageFlags stage, const Resource<Shader>& shader) {
+void Material::shader(ShaderStage stage, const Resource<Shader>& shader) {
   set_parameter(_partial_state.pipeline.shaders, stage, shader);
   _state_dirty = true;
 }
@@ -410,37 +385,37 @@ void Material::vector(const Symbol& name, const Vector4f& vector) {
 }
 
 static const Symbol frag_symbol("frag"), fragment_symbol("fragment"), vert_symbol("vert"), vertex_symbol("vertex");
-static VkShaderStageFlags symbol_to_stage(const Symbol& sym) {
+static ShaderStage symbol_to_stage(const Symbol& sym) {
   if(sym == frag_symbol || sym == fragment_symbol) {
-    return VK_SHADER_STAGE_FRAGMENT_BIT;
+    return ShaderStage::Fragment;
   } else if(sym == vert_symbol || sym == vertex_symbol) {
-    return VK_SHADER_STAGE_VERTEX_BIT;
+    return ShaderStage::Vertex;
   } else {
-    return VK_SHADER_STAGE_ALL;
+    return ShaderStage::Undefined;
   }
 }
 
 static const Symbol fill_symbol("fill"), line_symbol("line");
-static VkPolygonMode symbol_to_polygon_mode(const Symbol& sym) {
+static PolygonMode symbol_to_polygon_mode(const Symbol& sym) {
   if(sym == fill_symbol) {
-    return VK_POLYGON_MODE_FILL;
+    return PolygonMode::Fill;
   } else if(sym == line_symbol) {
-    return VK_POLYGON_MODE_LINE;
+    return PolygonMode::Line;
   } else {
-    return VK_POLYGON_MODE_MAX_ENUM;
+    return PolygonMode::Undefined;
   }
 }
 
 static const Symbol back_symbol("back"), front_symbol("front"), none_symbol("none");
-static VkCullModeFlags symbol_to_cull_mode(const Symbol& sym) {
+static CullMode symbol_to_cull_mode(const Symbol& sym) {
   if(sym == back_symbol) {
-    return VK_CULL_MODE_BACK_BIT;
+    return CullMode::Back;
   } else if(sym == front_symbol) {
-    return VK_CULL_MODE_FRONT_BIT;
+    return CullMode::Front;
   } else if(sym == none_symbol) {
-    return VK_CULL_MODE_NONE;
+    return CullMode::None;
   } else {
-    return VK_CULL_MODE_FLAG_BITS_MAX_ENUM;
+    return CullMode::Undefined;
   }
 }
 
@@ -449,26 +424,35 @@ point_list_symbol("point_list"),
 line_list_symbol("line_list"),
 line_strip_symbol("line_strip"),
 triangle_list_symbol("triangle_list");
-static VkPrimitiveTopology symbol_to_topology(const Symbol& sym) {
+static PrimitiveTopology symbol_to_topology(const Symbol& sym) {
   if(sym == point_list_symbol) {
-    return VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
+    return PrimitiveTopology::PointList;
   } else if(sym == line_list_symbol) {
-    return VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
+    return PrimitiveTopology::LineList;
   } else if(sym == line_strip_symbol) {
-    return VK_PRIMITIVE_TOPOLOGY_LINE_STRIP;
+    return PrimitiveTopology::LineStrip;
   } else if(sym == triangle_list_symbol) {
-    return VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+    return PrimitiveTopology::TriangleList;
   } else {
-    return VK_PRIMITIVE_TOPOLOGY_MAX_ENUM;
+    return PrimitiveTopology::Undefined;
   }
 }
 
-static const Symbol mult_symbol("mult");
+static const Symbol
+mult_symbol("mult"),
+add_symbol("add"),
+alpha_symbol("alpha");
 static BlendMode symbol_to_blend_mode(const Symbol& sym) {
-  if(sym == mult_symbol) {
-    return BlendMode::Mult;
-  } else {
+  if(sym == none_symbol) {
     return BlendMode::None;
+  } else if(sym == mult_symbol) {
+    return BlendMode::Mult;
+  } else if(sym == add_symbol) {
+    return BlendMode::Add;
+  } else if(sym == alpha_symbol) {
+    return BlendMode::Alpha;
+  } else {
+    return BlendMode::Undefined;
   }
 }
 

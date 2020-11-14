@@ -11,274 +11,121 @@ static Symbol light_symbol("light"), present_symbol("present");
 Pipeline::Pipeline(const Parameters& parameters) {
   { // Make sure shader bindings are not incompatible
     for(const auto& shader : parameters.shaders) {
-      for(const Shader::Binding& binding : shader.value()->bindings()) {
-        bool already_bound(false);
-        for(Shader::Binding& own_binding : _bindings)
+      for(const ShaderBinding& binding : shader.value()->bindings()) {
+        bool already_bound = false;
+        for(ShaderBinding& own_binding : _bindings) {
           if(binding.name == own_binding.name && binding.binding == own_binding.binding) {
-            own_binding.stage |= binding.stage;
+            own_binding.stage = binding.stage;
             already_bound = true;
             break;
           }
-        if(!already_bound)
+        }
+        if(!already_bound) {
           _bindings.push(binding);
+        }
       }
     }
   }
+
+  BlendMode blend_mode = parameters.blend_mode;
 
   { // Determine render pass from name
     if(parameters.render_pass == light_symbol) {
       _render_pass = &RenderPass::light_pass();
+      if(blend_mode == BlendMode::Undefined) {
+        blend_mode = BlendMode::Add;
+      }
     } else if(parameters.render_pass == present_symbol) {
       _render_pass = &RenderPass::present_pass();
+      if(blend_mode == BlendMode::Undefined) {
+        blend_mode = BlendMode::Alpha;
+      }
     } else { // Default to geometry pass
       _render_pass = &RenderPass::geometry_pass();
-    }
-  }
-
-  { // Create desc set layout
-    Array<VkDescriptorSetLayoutBinding> dslb;
-    for(const Shader::Binding& binding : _bindings) {
-      if(binding.binding < 0)
-        continue;
-      VkDescriptorType desc_type;
-      switch(binding.type) {
-        case Shader::BindingType::UniformConstant: desc_type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER; break;
-        case Shader::BindingType::Uniform: desc_type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER; break;
-        default: continue;
-      }
-      dslb.push<VkDescriptorSetLayoutBinding>({uint32_t(binding.binding), desc_type, 1, binding.stage});
-    }
-
-    {
-      VkDescriptorSetLayoutCreateInfo create_info = {};
-      create_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-      create_info.bindingCount = uint32_t(dslb.size());
-      create_info.pBindings = dslb.begin();
-
-      L_VK_CHECKED(vkCreateDescriptorSetLayout(Vulkan::device(), &create_info, nullptr, &_desc_set_layout));
-    }
-
-    { // Create pipeline layout
-      VkDescriptorSetLayout layouts[] {_desc_set_layout};
-      VkPipelineLayoutCreateInfo create_info = {};
-      create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-      create_info.setLayoutCount = L_COUNT_OF(layouts);
-      create_info.pSetLayouts = layouts;
-      VkPushConstantRange push_constant_range;
-      if(const Shader::Binding* constants_binding = find_binding("Constants")) {
-        push_constant_range = {constants_binding->stage, 0, 64};
-        create_info.pushConstantRangeCount = 1;
-        create_info.pPushConstantRanges = &push_constant_range;
-      }
-
-      L_VK_CHECKED(vkCreatePipelineLayout(Vulkan::device(), &create_info, nullptr, &_layout));
-    }
-  }
-
-
-  VkPipelineShaderStageCreateInfo shader_stages[4] {};
-  uint32_t stage_count(0);
-  for(auto& shader : parameters.shaders) {
-    VkPipelineShaderStageCreateInfo& shader_stage(shader_stages[stage_count++]);
-    shader_stage.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-    shader_stage.stage = shader.value()->stage();
-    shader_stage.module = shader.value()->module();
-    shader_stage.pName = "main";
-  }
-
-  uint32_t vertex_size(0);
-  Array<VkVertexInputAttributeDescription> vertex_attributes;
-  if(parameters.vertex_attributes.empty()) {
-    for(const Shader::Binding& binding : _bindings) {
-      if(binding.stage == VK_SHADER_STAGE_VERTEX_BIT && binding.type == Shader::BindingType::Input) {
-        VkVertexInputAttributeDescription vertex_attribute {};
-        vertex_size = max<uint32_t>(vertex_size, binding.offset + binding.size);
-        vertex_attribute.binding = binding.binding;
-        vertex_attribute.location = binding.index;
-        vertex_attribute.format = binding.format;
-        vertex_attribute.offset = binding.offset;
-        vertex_attributes.push(vertex_attribute);
+      if(blend_mode == BlendMode::Undefined) {
+        blend_mode = BlendMode::None;
       }
     }
-  } else {
-    uint32_t location = 0;
-    for(const VertexAttribute& attribute : parameters.vertex_attributes) {
-      VkVertexInputAttributeDescription vertex_attribute {};
-      vertex_attribute.location = location++;
-      vertex_attribute.format = attribute.format;
-      vertex_attribute.offset = vertex_size;
-      vertex_size += Vulkan::format_size(attribute.format);
-      vertex_attributes.push(vertex_attribute);
-    }
   }
 
-  VkVertexInputBindingDescription vertex_binding {};
-  vertex_binding.binding = 0;
-  vertex_binding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-  vertex_binding.stride = vertex_size;
+  Array<ShaderImpl*> shaders;
 
-  VkPipelineVertexInputStateCreateInfo vertex_input {};
-  vertex_input.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-
-  if(vertex_size > 0) {
-    vertex_input.vertexBindingDescriptionCount = 1;
-    vertex_input.pVertexBindingDescriptions = &vertex_binding;
-
-    vertex_input.vertexAttributeDescriptionCount = uint32_t(vertex_attributes.size());
-    vertex_input.pVertexAttributeDescriptions = vertex_attributes.begin();
+  for(const auto& pair : parameters.shaders) {
+    shaders.push(pair.value()->get_impl());
   }
 
-  VkPipelineInputAssemblyStateCreateInfo input_assembly = {};
-  input_assembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-  input_assembly.topology = parameters.topology == VK_PRIMITIVE_TOPOLOGY_MAX_ENUM ? VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST : parameters.topology;
-  input_assembly.primitiveRestartEnable = VK_FALSE;
-
-  static const VkRect2D scissor = {{0, 0}, {1 << 16, 1 << 16}};
-  static const VkViewport viewport = {};
-
-  VkPipelineViewportStateCreateInfo viewport_state = {};
-  viewport_state.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
-  viewport_state.viewportCount = 1;
-  viewport_state.pViewports = &viewport;
-  viewport_state.scissorCount = 1;
-  viewport_state.pScissors = &scissor;
-
-  VkPipelineRasterizationStateCreateInfo rasterizer = {};
-  rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-  rasterizer.depthClampEnable = VK_FALSE;
-  rasterizer.rasterizerDiscardEnable = VK_FALSE;
-  rasterizer.polygonMode = parameters.polygon_mode == VK_POLYGON_MODE_MAX_ENUM ? VK_POLYGON_MODE_FILL : parameters.polygon_mode;
-  rasterizer.lineWidth = 1.0f;
-  rasterizer.cullMode = parameters.cull_mode == VK_CULL_MODE_FLAG_BITS_MAX_ENUM ? VkCullModeFlags(VK_CULL_MODE_BACK_BIT) : parameters.cull_mode;
-  rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-
-  VkPipelineMultisampleStateCreateInfo multisampling = {};
-  multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-  multisampling.sampleShadingEnable = VK_FALSE;
-  multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
-  multisampling.minSampleShading = 1.0f; // Optional
-  multisampling.pSampleMask = nullptr; // Optional
-  multisampling.alphaToCoverageEnable = VK_FALSE; // Optional
-  multisampling.alphaToOneEnable = VK_FALSE; // Optional
-
-  VkPipelineDepthStencilStateCreateInfo depth_stencil {};
-  depth_stencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-  depth_stencil.depthTestEnable = VK_TRUE;
-  depth_stencil.depthWriteEnable = VK_TRUE;
-  depth_stencil.depthCompareOp = VK_COMPARE_OP_LESS;
-
-  VkPipelineColorBlendAttachmentState color_blend_attachment = {};
-  color_blend_attachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-  if(parameters.blend_mode != BlendMode::None) {
-    switch(parameters.blend_mode) {
-      case BlendMode::Mult:
-        color_blend_attachment.blendEnable = VK_TRUE;
-        color_blend_attachment.srcColorBlendFactor = VK_BLEND_FACTOR_ZERO;
-        color_blend_attachment.dstColorBlendFactor = VK_BLEND_FACTOR_SRC_COLOR;
-        color_blend_attachment.colorBlendOp = VK_BLEND_OP_ADD;
-        break;
-      default: break;
-    }
-  } else if(_render_pass == &RenderPass::light_pass()) {
-    color_blend_attachment.blendEnable = VK_TRUE;
-    color_blend_attachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
-    color_blend_attachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
-    color_blend_attachment.colorBlendOp = VK_BLEND_OP_ADD;
-  } else if(_render_pass == &RenderPass::present_pass()) {
-    color_blend_attachment.blendEnable = VK_TRUE;
-    color_blend_attachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-    color_blend_attachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-    color_blend_attachment.colorBlendOp = VK_BLEND_OP_ADD;
-  }
-
-  VkPipelineColorBlendAttachmentState color_blend_attachments[] {
-    color_blend_attachment,
-    color_blend_attachment,
-  };
-
-  VkPipelineColorBlendStateCreateInfo color_blending = {};
-  color_blending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-  color_blending.logicOpEnable = VK_FALSE;
-  color_blending.logicOp = VK_LOGIC_OP_COPY; // Optional
-  color_blending.attachmentCount = _render_pass->color_attachment_count();
-  color_blending.pAttachments = color_blend_attachments;
-
-  VkDynamicState dynamic_states[] = {
-    VK_DYNAMIC_STATE_VIEWPORT,
-    VK_DYNAMIC_STATE_SCISSOR,
-  };
-
-  VkPipelineDynamicStateCreateInfo dynamic_state_create_info = {};
-  dynamic_state_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
-  dynamic_state_create_info.pDynamicStates = dynamic_states;
-  dynamic_state_create_info.dynamicStateCount = L_COUNT_OF(dynamic_states);
-
-  VkGraphicsPipelineCreateInfo create_info = {};
-  create_info.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-  create_info.stageCount = stage_count;
-  create_info.pStages = shader_stages;
-  create_info.pVertexInputState = &vertex_input;
-  create_info.pInputAssemblyState = &input_assembly;
-  create_info.pViewportState = &viewport_state;
-  create_info.pRasterizationState = &rasterizer;
-  create_info.pMultisampleState = &multisampling;
-  create_info.pDepthStencilState = &depth_stencil; // Optional
-  create_info.pColorBlendState = &color_blending;
-  create_info.pDynamicState = &dynamic_state_create_info;
-  create_info.layout = _layout;
-  create_info.renderPass = *_render_pass;
-  create_info.subpass = 0;
-  create_info.basePipelineHandle = VK_NULL_HANDLE; // Optional
-  create_info.basePipelineIndex = -1; // Optional
-
-  L_VK_CHECKED(vkCreateGraphicsPipelines(Vulkan::device(), VK_NULL_HANDLE, 1, &create_info, nullptr, &_pipeline));
+  _impl = Renderer::get()->create_pipeline(
+    shaders.begin(),
+    shaders.size(),
+    _bindings.begin(),
+    _bindings.size(),
+    parameters.vertex_attributes.begin(),
+    parameters.vertex_attributes.size(),
+    *_render_pass,
+    parameters.polygon_mode != PolygonMode::Undefined ? parameters.polygon_mode : PolygonMode::Fill,
+    parameters.cull_mode != CullMode::Undefined ? parameters.cull_mode : CullMode::Back,
+    parameters.topology != PrimitiveTopology::Undefined ? parameters.topology : PrimitiveTopology::TriangleList,
+    blend_mode);
 }
 Pipeline::~Pipeline() {
-  vkDestroyPipeline(Vulkan::device(), _pipeline, nullptr);
-  vkDestroyPipelineLayout(Vulkan::device(), _layout, nullptr);
+  Renderer::get()->destroy_pipeline(_impl);
 }
 
-const Shader::Binding* Pipeline::find_binding(const Symbol& name) const {
-  for(const Shader::Binding& binding : _bindings)
-    if(binding.name == name)
+void Pipeline::bind(RenderCommandBuffer* cmd_buffer, DescriptorSetImpl* desc_set, const Matrix44f& model) const {
+  Renderer::get()->bind_pipeline(_impl, cmd_buffer, desc_set, &model(0, 0));
+}
+const ShaderBinding* Pipeline::find_binding(const Symbol& name) const {
+  for(const ShaderBinding& binding : _bindings) {
+    if(binding.name == name) {
       return &binding;
+    }
+  }
   return nullptr;
 }
-void Pipeline::set_descriptor(uint32_t binding, VkDescriptorSet desc_set, VkDescriptorBufferInfo buffer_info) const {
-  VkWriteDescriptorSet desc_write {};
-  desc_write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-  desc_write.dstSet = desc_set;
-  desc_write.dstBinding = binding;
-  desc_write.dstArrayElement = 0;
-  desc_write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-  desc_write.descriptorCount = 1;
-  desc_write.pBufferInfo = &buffer_info;
-
-  vkUpdateDescriptorSets(Vulkan::device(), 1, &desc_write, 0, nullptr);
+const ShaderBinding* Pipeline::find_binding(int32_t binding_index) const {
+  for(const ShaderBinding& binding : _bindings) {
+    if(binding.binding == binding_index) {
+      return &binding;
+    }
+  }
+  return nullptr;
 }
-void Pipeline::set_descriptor(uint32_t binding, VkDescriptorSet desc_set, VkDescriptorImageInfo image_info) const {
-  VkWriteDescriptorSet desc_write {};
-  desc_write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-  desc_write.dstSet = desc_set;
-  desc_write.dstBinding = binding;
-  desc_write.dstArrayElement = 0;
-  desc_write.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-  desc_write.descriptorCount = 1;
-  desc_write.pImageInfo = &image_info;
 
-  vkUpdateDescriptorSets(Vulkan::device(), 1, &desc_write, 0, nullptr);
-}
-bool Pipeline::set_descriptor(const Symbol& name, VkDescriptorSet desc_set, VkDescriptorBufferInfo buffer_info) const {
-  if(const Shader::Binding* binding = find_binding(name)) {
-    set_descriptor(binding->binding, desc_set, buffer_info);
+bool Pipeline::set_descriptor(int32_t index, DescriptorSetImpl* desc_set, const UniformBuffer& buffer) const {
+  if(const ShaderBinding* binding = find_binding(index)) {
+    Renderer::get()->update_descriptor_set(desc_set, *binding, buffer.get_impl());
     return true;
   } else {
     return false;
   }
 }
-bool Pipeline::set_descriptor(const Symbol& name, VkDescriptorSet desc_set, VkDescriptorImageInfo image_info) const {
-  if(const Shader::Binding* binding = find_binding(name)) {
-    set_descriptor(binding->binding, desc_set, image_info);
+bool Pipeline::set_descriptor(int32_t index, DescriptorSetImpl* desc_set, const Texture& texture) const {
+  if(const ShaderBinding* binding = find_binding(index)) {
+    Renderer::get()->update_descriptor_set(desc_set, *binding, texture.get_impl());
+    return true;
+  } else {
+    return false;
+  }
+}
+bool Pipeline::set_descriptor(const Symbol& name, DescriptorSetImpl* desc_set, const UniformBuffer& buffer) const {
+  if(const ShaderBinding* binding = find_binding(name)) {
+    Renderer::get()->update_descriptor_set(desc_set, *binding, buffer.get_impl());
+    return true;
+  } else {
+    return false;
+  }
+}
+bool Pipeline::set_descriptor(const Symbol& name, DescriptorSetImpl* desc_set, const Texture& texture) const {
+  if(const ShaderBinding* binding = find_binding(name)) {
+    Renderer::get()->update_descriptor_set(desc_set, *binding, texture.get_impl());
+    return true;
+  } else {
+    return false;
+  }
+}
+bool Pipeline::set_descriptor(const Symbol& name, DescriptorSetImpl* desc_set, const Framebuffer& framebuffer, int32_t texture_index) const {
+  if(const ShaderBinding* binding = find_binding(name)) {
+    Renderer::get()->update_descriptor_set(desc_set, *binding, framebuffer.get_impl(), texture_index);
     return true;
   } else {
     return false;

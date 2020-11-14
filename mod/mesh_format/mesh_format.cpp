@@ -11,7 +11,7 @@ static Symbol fmt_symbol("fmt");
 static size_t vertex_size(const Array<VertexAttribute>& attributes) {
   size_t size = 0;
   for(const VertexAttribute& attribute : attributes) {
-    size += Vulkan::format_size(attribute.format);
+    size += Renderer::format_size(attribute.format);
   }
   return size;
 }
@@ -26,7 +26,7 @@ static uintptr_t attr_offset(const Array<VertexAttribute>& attributes, VertexAtt
     if(attribute.type == type) {
       return offset;
     } else {
-      offset += Vulkan::format_size(attribute.format);
+      offset += Renderer::format_size(attribute.format);
     }
   }
   error("mesh_format: Couldn't find offset of attribute");
@@ -81,13 +81,13 @@ static void transfer_vertices(const Mesh::Intermediate& intermediate, const Arra
       uint8_t* dst = (uint8_t*)new_vertices.data(new_offset);
 
       if(old_attribute.format == new_attribute->format) {
-        const size_t attribute_size = Vulkan::format_size(old_attribute.format);
+        const size_t attribute_size = Renderer::format_size(old_attribute.format);
         for(uintptr_t i = 0; i < vertex_count; i++) {
           memcpy(dst, src, attribute_size);
           dst += new_vertex_size;
           src += old_vertex_size;
         }
-      } else if(old_attribute.format == VK_FORMAT_R32G32B32A32_SFLOAT && new_attribute->format == VK_FORMAT_R8G8B8A8_UNORM) {
+      } else if(old_attribute.format == RenderFormat::R32G32B32A32_SFloat && new_attribute->format == RenderFormat::R8G8B8A8_UNorm) {
         for(uintptr_t i = 0; i < vertex_count; i++) {
           *(Color*)dst = Color::from(*(Vector4f*)src);
           dst += new_vertex_size;
@@ -215,13 +215,13 @@ void mesh_format_transformer(const ResourceSlot& slot, Mesh::Intermediate& inter
 
     while(*format) {
       switch(*format) {
-        case 'p': new_attributes.push(VertexAttribute {VK_FORMAT_R32G32B32_SFLOAT, VertexAttributeType::Position}); break;
-        case 'n': new_attributes.push(VertexAttribute {VK_FORMAT_R32G32B32_SFLOAT, VertexAttributeType::Normal}); break;
-        case 't': new_attributes.push(VertexAttribute {VK_FORMAT_R32G32B32_SFLOAT, VertexAttributeType::Tangent}); break;
-        case 'u': new_attributes.push(VertexAttribute {VK_FORMAT_R32G32_SFLOAT, VertexAttributeType::TexCoord}); break;
-        case 'c': new_attributes.push(VertexAttribute {VK_FORMAT_R8G8B8A8_UNORM, VertexAttributeType::Color}); break;
-        case 'j': new_attributes.push(VertexAttribute {VK_FORMAT_R16G16B16A16_UINT, VertexAttributeType::Joints}); break;
-        case 'w': new_attributes.push(VertexAttribute {VK_FORMAT_R32G32B32A32_SFLOAT, VertexAttributeType::Weights}); break;
+        case 'p': new_attributes.push(VertexAttribute {RenderFormat::R32G32B32_SFloat, VertexAttributeType::Position}); break;
+        case 'n': new_attributes.push(VertexAttribute {RenderFormat::R32G32B32_SFloat, VertexAttributeType::Normal}); break;
+        case 't': new_attributes.push(VertexAttribute {RenderFormat::R32G32B32_SFloat, VertexAttributeType::Tangent}); break;
+        case 'u': new_attributes.push(VertexAttribute {RenderFormat::R32G32_SFloat, VertexAttributeType::TexCoord}); break;
+        case 'c': new_attributes.push(VertexAttribute {RenderFormat::R8G8B8A8_UNorm, VertexAttributeType::Color}); break;
+        case 'j': new_attributes.push(VertexAttribute {RenderFormat::R16G16B16A16_UInt, VertexAttributeType::Joints}); break;
+        case 'w': new_attributes.push(VertexAttribute {RenderFormat::R32G32B32A32_SFloat, VertexAttributeType::Weights}); break;
         default: warning("mesh_format: unrecognized attribute '%c'", *format); break;
       }
       format++;

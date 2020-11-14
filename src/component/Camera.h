@@ -2,7 +2,7 @@
 
 #include "Transform.h"
 #include "../engine/Resource.h"
-#include "../rendering/GPUBuffer.h"
+#include "../rendering/UniformBuffer.h"
 #include "../rendering/Framebuffer.h"
 #include "../rendering/Material.h"
 #include "../math/Interval.h"
@@ -14,17 +14,17 @@ namespace L {
     Transform* _transform;
     Matrix44f _view, _projection, _view_projection, _prev_view_projection, _ray;
     Interval2f _viewport;
+    Interval2i _viewport_pixel;
     enum {
       Perspective,
       Ortho
     } _projection_type;
     float _fovy, _near, _far, _left, _right, _bottom, _top;
     Material _present_material;
-    VkCommandBuffer _cmd_buffer;
-    VkViewport _vk_viewport;
+    RenderCommandBuffer* _cmd_buffer;
     Framebuffer _geometry_buffer, _light_buffer;
     Time _framebuffer_mtime;
-    GPUBuffer _shared_uniform;
+    UniformBuffer _shared_uniform;
   public:
     Camera();
     inline Camera(const Camera&) : Camera() { error("Camera component should not be copied."); }
@@ -35,7 +35,7 @@ namespace L {
 
     void resize_buffers();
     void event(const Window::Event&);
-    void prerender(VkCommandBuffer);
+    void prerender(RenderCommandBuffer*);
     void present();
 
     void viewport(const Interval2f& viewport);
@@ -61,8 +61,8 @@ namespace L {
     inline const Framebuffer& geometry_buffer() const { return _geometry_buffer; }
     inline Framebuffer& light_buffer() { return _light_buffer; }
     inline const Framebuffer& light_buffer() const { return _light_buffer; }
-    inline const GPUBuffer& shared_uniform() const { return _shared_uniform; }
-    inline VkCommandBuffer cmd_buffer() const { return _cmd_buffer; }
+    inline const UniformBuffer& shared_uniform() const { return _shared_uniform; }
+    inline RenderCommandBuffer* cmd_buffer() const { return _cmd_buffer; }
     inline Time framebuffer_mtime() const { return _framebuffer_mtime; }
   };
 }

@@ -27,7 +27,7 @@ bool assimp_texture_loader(ResourceSlot& slot, Texture::Intermediate& intermedia
     intermediate.binary = Buffer(texture->pcData, texture->mWidth * texture->mHeight * 4);
     intermediate.width = texture->mWidth;
     intermediate.height = texture->mHeight;
-    intermediate.format = VK_FORMAT_R8G8B8A8_UNORM;
+    intermediate.format = RenderFormat::R8G8B8A8_UNorm;
   }
   return true;
 }

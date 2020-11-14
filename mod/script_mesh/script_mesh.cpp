@@ -17,11 +17,11 @@ protected:
   size_t _vertex_size = 0;
 
   template<class T>
-  bool check_attribute(const char* name, const Array<T>& arr, VkFormat format, VertexAttributeType type, uintptr_t& offset) {
+  bool check_attribute(const char* name, const Array<T>& arr, RenderFormat format, VertexAttributeType type, uintptr_t& offset) {
     if(arr.size() == _positions.size()) {
       offset = _vertex_size;
       _mesh.attributes.push(VertexAttribute {format, type});
-      _vertex_size += Vulkan::format_size(format);
+      _vertex_size += Renderer::format_size(format);
     } else if(arr.size() > 0) {
       warning("script_mesh: %s: missing %s vertex data", _slot.id, name);
       return false;
@@ -58,11 +58,11 @@ public:
     uintptr_t position_offset = 0, normal_offset = 0, tangent_offset = 0, texcoord_offset = 0, color_offset = 0;
 
     const bool check_success =
-      check_attribute("position", _positions, VK_FORMAT_R32G32B32_SFLOAT, VertexAttributeType::Position, position_offset) &&
-      check_attribute("normal", _normals, VK_FORMAT_R32G32B32_SFLOAT, VertexAttributeType::Normal, normal_offset) &&
-      check_attribute("tangent", _tangents, VK_FORMAT_R32G32B32_SFLOAT, VertexAttributeType::Tangent, tangent_offset) &&
-      check_attribute("texcoord", _texcoords, VK_FORMAT_R32G32_SFLOAT, VertexAttributeType::TexCoord, texcoord_offset) &&
-      check_attribute("color", _colors, VK_FORMAT_R8G8B8A8_UNORM, VertexAttributeType::Color, color_offset);
+      check_attribute("position", _positions, RenderFormat::R32G32B32_SFloat, VertexAttributeType::Position, position_offset) &&
+      check_attribute("normal", _normals, RenderFormat::R32G32B32_SFloat, VertexAttributeType::Normal, normal_offset) &&
+      check_attribute("tangent", _tangents, RenderFormat::R32G32B32_SFloat, VertexAttributeType::Tangent, tangent_offset) &&
+      check_attribute("texcoord", _texcoords, RenderFormat::R32G32_SFloat, VertexAttributeType::TexCoord, texcoord_offset) &&
+      check_attribute("color", _colors, RenderFormat::R8G8B8A8_UNorm, VertexAttributeType::Color, color_offset);
 
     if(!check_success) {
       return false;

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <stdint.h>
-#include <vulkan/vulkan.h>
 #include "../container/Array.h"
 
 namespace L {
@@ -35,9 +34,6 @@ namespace L {
     virtual void close() = 0;
     virtual void title(const char*) = 0;
     virtual void resize(uint32_t width, uint32_t height) = 0;
-
-    virtual void create_vulkan_surface(VkInstance, VkSurfaceKHR*) = 0;
-    virtual const char* extra_vulkan_extension() = 0;
 
     void open_fullscreen(const char* title, uint32_t flags = 0);
 

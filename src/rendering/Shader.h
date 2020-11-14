@@ -4,46 +4,30 @@
 #include "../container/Buffer.h"
 #include "../macros.h"
 #include "../text/Symbol.h"
-#include "Vulkan.h"
+#include "Renderer.h"
 
 namespace L {
   class Shader {
     L_NOCOPY(Shader)
   public:
-    enum BindingType {
-      None,
-      UniformConstant,
-      Uniform,
-      Input,
-      PushConstant,
-    };
-    struct Binding {
-      Symbol name;
-      int32_t offset, size, index, binding;
-      BindingType type;
-      VkFormat format;
-      VkShaderStageFlags stage;
-    };
     struct Intermediate {
       Buffer binary;
-      VkShaderStageFlagBits stage;
-      Array<Binding> bindings;
+      ShaderStage stage;
+      Array<ShaderBinding> bindings;
     };
   protected:
-    VkShaderModule _module;
-    VkShaderStageFlagBits _stage;
-    Array<Binding> _bindings;
+    ShaderImpl* _impl;
+    ShaderStage _stage;
+    Array<ShaderBinding> _bindings;
   public:
     Shader(const Intermediate& intermediate);
     ~Shader();
 
-    inline VkShaderModule module() const { return _module; }
-    inline VkShaderStageFlagBits stage() const { return _stage; }
-    inline const Array<Binding>& bindings() const { return _bindings; }
+    inline ShaderImpl* get_impl() const { return _impl; }
+    inline ShaderStage stage() const { return _stage; }
+    inline const Array<ShaderBinding>& bindings() const { return _bindings; }
 
     friend inline void resource_write(Stream& s, const Intermediate& v) { s <= v.binary <= v.stage <= v.bindings; }
     friend inline void resource_read(Stream& s, Intermediate& v) { s >= v.binary >= v.stage >= v.bindings; }
-    friend inline Stream& operator<=(Stream& s, const Binding& v) { return s <= v.name <= v.offset <= v.size <= v.index <= v.binding <= v.type <= v.format <= v.stage; }
-    friend inline Stream& operator>=(Stream& s, Binding& v) { return s >= v.name >= v.offset >= v.size >= v.index >= v.binding >= v.type >= v.format >= v.stage; }
   };
 }

@@ -25,7 +25,7 @@ void stb_dxt_transformer(const ResourceSlot& slot, Texture::Intermediate& interm
     if((intermediate.width % 4) == 0 && (intermediate.height % 4) == 0) {
       const Buffer& uncompressed = intermediate.binary;
       Buffer compressed = (intermediate.width * intermediate.height * block_size_bytes) / block_size_bytes;
-      intermediate.format = (compression == bc1_symbol) ? VK_FORMAT_BC1_RGB_UNORM_BLOCK : VK_FORMAT_BC3_UNORM_BLOCK;
+      intermediate.format = (compression == bc1_symbol) ? RenderFormat::BC1_RGB_UNorm_Block : RenderFormat::BC3_UNorm_Block;
       const uint32_t width_block(intermediate.width / 4), height_block(intermediate.height / 4);
 
       L_SCOPE_MARKER("stb_compress_dxt_block");

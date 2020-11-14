@@ -69,8 +69,8 @@ bool assimp_material_loader(ResourceSlot& slot, Material::Intermediate& intermed
 
   shader_options += "&fmt=" + mesh_format;
   intermediate.mesh(slot.path + "?fmt=" + mesh_format + "&mesh=" + to_string(material_index));
-  intermediate.shader(VK_SHADER_STAGE_FRAGMENT_BIT, ".assimp?stage=frag" + shader_options);
-  intermediate.shader(VK_SHADER_STAGE_VERTEX_BIT, ".assimp?stage=vert" + shader_options);
+  intermediate.shader(ShaderStage::Fragment, ".assimp?stage=frag" + shader_options);
+  intermediate.shader(ShaderStage::Vertex, ".assimp?stage=vert" + shader_options);
   intermediate.vector("color_factor", color_factor);
   intermediate.vector("metal_rough_factor", Vector4f(
     0.f,

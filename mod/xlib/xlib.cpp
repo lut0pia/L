@@ -1,7 +1,3 @@
-#define VK_USE_PLATFORM_XLIB_KHR
-#include <vulkan/vulkan.h>
-#undef None // That's awkward
-
 #include <L/src/engine/Engine.h>
 #include <L/src/rendering/Vulkan.h>
 #include <L/src/system/Window.h>
@@ -83,7 +79,7 @@ public:
     }
     _opened = true;
 
-    L::Vulkan::init();
+    L::Renderer::get()->init("Xlib", (uintptr_t)_xdisplay, (uintptr_t)_xwindow);
   }
   void close() override {
     L_ASSERT(_opened);
@@ -97,16 +93,6 @@ public:
   }
   void resize(uint32_t, uint32_t) override {
     L::warning("Resizing window is unsupported for X windows");
-  }
-  void create_vulkan_surface(VkInstance instance, VkSurfaceKHR* surface) override {
-    VkXlibSurfaceCreateInfoKHR create_info {};
-    create_info.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
-    create_info.dpy = _xdisplay;
-    create_info.window = _xwindow;
-    L_VK_CHECKED(vkCreateXlibSurfaceKHR(instance, &create_info, nullptr, surface));
-  }
-  const char* extra_vulkan_extension() override {
-    return VK_KHR_XLIB_SURFACE_EXTENSION_NAME;
   }
 };
 

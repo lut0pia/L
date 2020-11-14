@@ -16,7 +16,7 @@ Camera::Camera() :
   _geometry_buffer(Window::width(), Window::height(), RenderPass::geometry_pass()),
   _light_buffer(Window::width(), Window::height(), RenderPass::light_pass()),
   _framebuffer_mtime(Time::now()),
-  _shared_uniform(L_SHAREDUNIFORM_SIZE, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT) {
+  _shared_uniform(L_SHAREDUNIFORM_SIZE) {
   update_viewport();
 }
 
@@ -29,7 +29,7 @@ void Camera::script_registration() {
   L_SCRIPT_METHOD(Camera, "perspective", 3, perspective(c.param(0), c.param(1), c.param(2)));
   L_SCRIPT_METHOD(Camera, "ortho", 4, ortho(c.param(0), c.param(1), c.param(2), c.param(3)));
   L_SCRIPT_METHOD(Camera, "viewport", 4, viewport(Interval2f(Vector2f(c.param(0).get<float>(), c.param(1).get<float>()), Vector2f(c.param(2).get<float>(), c.param(3).get<float>()))));
-  
+
   L_SCRIPT_RETURN_METHOD(Camera, "screen_to_ray", 1, screen_to_ray(c.param(0)));
   L_SCRIPT_RETURN_METHOD(Camera, "screen_to_pixel", 1, screen_to_pixel(c.param(0)));
   L_SCRIPT_RETURN_METHOD(Camera, "pixel_to_screen", 1, pixel_to_screen(c.param(0)));
@@ -50,7 +50,7 @@ void Camera::event(const Window::Event& e) {
     update_viewport();
   }
 }
-void Camera::prerender(VkCommandBuffer cmd_buffer) {
+void Camera::prerender(RenderCommandBuffer* cmd_buffer) {
   L_SCOPE_MARKER("Camera::prerender");
   static const Matrix44f cam_nz2y = orientation_matrix(Vector3f(1.f, 0.f, 0.f), Vector3f(0.f, 0.f, 1.f), Vector3f(0.f, -1.f, 0.f)).transpose();
   const Matrix44f orientation = orientation_matrix(_transform->right(), _transform->forward(), _transform->up());
@@ -72,15 +72,14 @@ void Camera::prerender(VkCommandBuffer cmd_buffer) {
 
   _cmd_buffer = cmd_buffer;
 
-  VkViewport viewport {0,0,float(_geometry_buffer.width()),float(_geometry_buffer.height()),0.f,1.f};
-  vkCmdSetViewport(_cmd_buffer, 0, 1, &viewport);
+  Renderer::get()->set_viewport(cmd_buffer, Interval2i(0, Vector2i(_geometry_buffer.width(), _geometry_buffer.height())));
 
-  Vulkan::reset_scissor(cmd_buffer);
+  Renderer::get()->reset_scissor(cmd_buffer);
 
   _present_material.update();
 }
 void Camera::present() {
-  vkCmdSetViewport(_cmd_buffer, 0, 1, &_vk_viewport);
+  Renderer::get()->set_viewport(_cmd_buffer, _viewport_pixel);
   _present_material.draw(*this, RenderPass::present_pass());
 }
 
@@ -135,13 +134,10 @@ void Camera::update_projection() {
   }
 }
 void Camera::update_viewport() {
-  const Vector2f viewport_size(_viewport.size());
-  _vk_viewport.x = Window::width() * _viewport.min().x();
-  _vk_viewport.y = Window::width() * _viewport.min().y();
-  _vk_viewport.width = Window::width() * viewport_size.x();
-  _vk_viewport.height = Window::height() * viewport_size.y();
-  _vk_viewport.minDepth = 0.f;
-  _vk_viewport.maxDepth = 1.f;
+  _viewport_pixel =
+    Interval2i(
+      Vector2i(int32_t(Window::width() * _viewport.min().x()), int32_t(Window::height() * _viewport.min().y())),
+      Vector2i(int32_t(Window::width() * _viewport.max().x()), int32_t(Window::height() * _viewport.max().y())));
 }
 
 bool Camera::world_to_screen(const Vector3f& p, Vector2f& wtr) const {

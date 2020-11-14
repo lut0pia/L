@@ -129,15 +129,15 @@ static bool glslang_shader_loader(ResourceSlot& slot, Shader::Intermediate& inte
     return false;
   }
 
-  intermediate.stage = VK_SHADER_STAGE_ALL;
+  intermediate.stage = ShaderStage::Undefined;
   EShLanguage shader_language;
   const Symbol stage_param = slot.parameter(stage_symbol);
 
   if(!strcmp(strrchr(slot.path, '.'), ".frag") || stage_param == frag_symbol) {
-    intermediate.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+    intermediate.stage = ShaderStage::Fragment;
     shader_language = EShLanguage::EShLangFragment;
   } else if(!strcmp(strrchr(slot.path, '.'), ".vert") || stage_param == vert_symbol) {
-    intermediate.stage = VK_SHADER_STAGE_VERTEX_BIT;
+    intermediate.stage = ShaderStage::Vertex;
     shader_language = EShLanguage::EShLangVertex;
   } else {
     error("No shader language");
@@ -149,11 +149,11 @@ static bool glslang_shader_loader(ResourceSlot& slot, Shader::Intermediate& inte
   const Buffer source_buffer = slot.read_source_file();
 
   const char* shader_strings[] = {
-    intermediate.stage == VK_SHADER_STAGE_FRAGMENT_BIT ? frag_intro : vert_intro,
+    intermediate.stage == ShaderStage::Fragment ? frag_intro : vert_intro,
     (const char*)source_buffer.data(),
   };
   const int shader_string_lengths[] = {
-    int(intermediate.stage == VK_SHADER_STAGE_FRAGMENT_BIT ? sizeof(frag_intro) : sizeof(vert_intro)) - 1,
+    int(intermediate.stage == ShaderStage::Fragment ? sizeof(frag_intro) : sizeof(vert_intro)) - 1,
     int(source_buffer.size()),
   };
   const char* shader_filenames[] = {

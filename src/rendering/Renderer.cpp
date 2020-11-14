@@ -1,0 +1,57 @@
+#include "Renderer.h"
+
+#include "../dev/debug.h"
+
+using namespace L;
+
+Renderer* Renderer::_instance;
+
+Renderer::Renderer() {
+  _instance = this;
+}
+
+size_t Renderer::format_size(RenderFormat format) {
+  switch(format) {
+    case RenderFormat::Undefined:
+      return 0;
+    case RenderFormat::R8_UNorm:
+      return 1;
+    case RenderFormat::R8G8B8A8_UNorm:
+    case RenderFormat::R32_UInt:
+    case RenderFormat::R32_SFloat:
+    case RenderFormat::D24_UNorm_S8_UInt:
+      return 4;
+    case RenderFormat::R16G16B16A16_UNorm:
+    case RenderFormat::R16G16B16A16_UInt:
+    case RenderFormat::R16G16B16A16_SFloat:
+    case RenderFormat::R32G32_SFloat:
+      return 8;
+    case RenderFormat::R32G32B32_SFloat:
+      return 12;
+    case RenderFormat::R32G32B32A32_UInt:
+    case RenderFormat::R32G32B32A32_SFloat:
+      return 16;
+    default:
+      warning("Vulkan: unknown format %d", format);
+      return 0;
+  }
+}
+bool Renderer::is_depth_format(RenderFormat format) {
+  switch(format) {
+    case RenderFormat::D16_UNorm:
+    case RenderFormat::D16_UNorm_S8_UInt:
+    case RenderFormat::D32_SFloat:
+    case RenderFormat::D24_UNorm_S8_UInt:
+    case RenderFormat::D32_SFloat_S8_UInt:
+      return true;
+    default: return false;
+  }
+}
+bool Renderer::is_block_format(RenderFormat format) {
+  switch(format) {
+    case RenderFormat::BC1_RGB_UNorm_Block:
+    case RenderFormat::BC3_UNorm_Block:
+      return true;
+    default: return false;
+  }
+}

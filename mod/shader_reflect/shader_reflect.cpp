@@ -64,71 +64,71 @@ static void for_opcodes(const uint32_t* binary, size_t size, uint32_t opcode, F 
     binary += read_word_count(binary);
   }
 }
-static VkFormat find_type(const uint32_t* binary, size_t size, uint32_t type_id) {
+static RenderFormat find_type(const uint32_t* binary, size_t size, uint32_t type_id) {
   const uint32_t* type(find_id(binary, size, type_id));
   if(type != nullptr) {
     switch(read_opcode(type)) {
       case OpTypeInt:
         switch(type[2]) {
-          case 16: return VK_FORMAT_R16_UINT;
-          case 32: return VK_FORMAT_R32_UINT;
+          case 16: return RenderFormat::R16_UInt;
+          case 32: return RenderFormat::R32_UInt;
           default: break;
         }
         break;
       case OpTypeFloat:
         switch(type[2]) {
-          case 16: return VK_FORMAT_R16_SFLOAT;
-          case 32: return VK_FORMAT_R32_SFLOAT;
+          case 16: return RenderFormat::R16_SFloat;
+          case 32: return RenderFormat::R32_SFloat;
           default: break;
         }
         break;
       case OpTypeVector:
         switch(find_type(binary, size, type[2])) {
-          case VK_FORMAT_R16_SINT:
+          case RenderFormat::R16_SInt:
             switch(type[3]) {
-              case 2: return VK_FORMAT_R16G16_SINT;
-              case 3: return VK_FORMAT_R16G16B16_SINT;
-              case 4: return VK_FORMAT_R16G16B16A16_SINT;
+              case 2: return RenderFormat::R16G16_SInt;
+              case 3: return RenderFormat::R16G16B16_SInt;
+              case 4: return RenderFormat::R16G16B16A16_SInt;
               default: break;
             }
             break;
-          case VK_FORMAT_R16_UINT:
+          case RenderFormat::R16_UInt:
             switch(type[3]) {
-              case 2: return VK_FORMAT_R16G16_UINT;
-              case 3: return VK_FORMAT_R16G16B16_UINT;
-              case 4: return VK_FORMAT_R16G16B16A16_UINT;
+              case 2: return RenderFormat::R16G16_UInt;
+              case 3: return RenderFormat::R16G16B16_UInt;
+              case 4: return RenderFormat::R16G16B16A16_UInt;
               default: break;
             }
             break;
-          case VK_FORMAT_R16_SFLOAT:
+          case RenderFormat::R16_SFloat:
             switch(type[3]) {
-              case 2: return VK_FORMAT_R16G16_SFLOAT;
-              case 3: return VK_FORMAT_R16G16B16_SFLOAT;
-              case 4: return VK_FORMAT_R16G16B16A16_SFLOAT;
+              case 2: return RenderFormat::R16G16_SFloat;
+              case 3: return RenderFormat::R16G16B16_SFloat;
+              case 4: return RenderFormat::R16G16B16A16_SFloat;
               default: break;
             }
             break;
-          case VK_FORMAT_R32_SINT:
+          case RenderFormat::R32_SInt:
             switch(type[3]) {
-              case 2: return VK_FORMAT_R32G32_SINT;
-              case 3: return VK_FORMAT_R32G32B32_SINT;
-              case 4: return VK_FORMAT_R32G32B32A32_SINT;
+              case 2: return RenderFormat::R32G32_SInt;
+              case 3: return RenderFormat::R32G32B32_SInt;
+              case 4: return RenderFormat::R32G32B32A32_SInt;
               default: break;
             }
             break;
-          case VK_FORMAT_R32_UINT:
+          case RenderFormat::R32_UInt:
             switch(type[3]) {
-              case 2: return VK_FORMAT_R32G32_UINT;
-              case 3: return VK_FORMAT_R32G32B32_UINT;
-              case 4: return VK_FORMAT_R32G32B32A32_UINT;
+              case 2: return RenderFormat::R32G32_UInt;
+              case 3: return RenderFormat::R32G32B32_UInt;
+              case 4: return RenderFormat::R32G32B32A32_UInt;
               default: break;
             }
             break;
-          case VK_FORMAT_R32_SFLOAT:
+          case RenderFormat::R32_SFloat:
             switch(type[3]) {
-              case 2: return VK_FORMAT_R32G32_SFLOAT;
-              case 3: return VK_FORMAT_R32G32B32_SFLOAT;
-              case 4: return VK_FORMAT_R32G32B32A32_SFLOAT;
+              case 2: return RenderFormat::R32G32_SFloat;
+              case 3: return RenderFormat::R32G32B32_SFloat;
+              case 4: return RenderFormat::R32G32B32A32_SFloat;
               default: break;
             }
             break;
@@ -139,11 +139,11 @@ static VkFormat find_type(const uint32_t* binary, size_t size, uint32_t type_id)
       default: break;
     }
   }
-  return VK_FORMAT_UNDEFINED;
+  return RenderFormat::Undefined;
 }
 static size_t find_type_size(const uint32_t* binary, size_t size, uint32_t type_id) {
-  VkFormat type_format(find_type(binary, size, type_id));
-  if(size_t type_size = Vulkan::format_size(type_format)) {
+  RenderFormat type_format(find_type(binary, size, type_id));
+  if(size_t type_size = Renderer::format_size(type_format)) {
     return type_size;
   } else if(const uint32_t* type = find_id(binary, size, type_id)) {
     switch(read_opcode(type)) {
@@ -171,9 +171,9 @@ static void shader_reflect(const ResourceSlot&, Shader::Intermediate& intermedia
   const size_t size(intermediate.binary.size());
   const uint32_t* execution_mode(find_opcode(binary, OpEntryPoint));
   switch(execution_mode[1]) {
-    case 0: intermediate.stage = VK_SHADER_STAGE_VERTEX_BIT; break;
-    case 3: intermediate.stage = VK_SHADER_STAGE_GEOMETRY_BIT; break;
-    case 4: intermediate.stage = VK_SHADER_STAGE_FRAGMENT_BIT; break;
+    case 0: intermediate.stage = ShaderStage::Vertex; break;
+    case 3: intermediate.stage = ShaderStage::Geometry; break;
+    case 4: intermediate.stage = ShaderStage::Fragment; break;
     default: error("Couldn't determine shader stage from SPIR-V");
   }
 
@@ -181,7 +181,7 @@ static void shader_reflect(const ResourceSlot&, Shader::Intermediate& intermedia
     const uint32_t variable_id(variable[2]);
     const uint32_t* type_pointer(find_id(binary, size, variable[1]));
     const uint32_t type_id(type_pointer[3]);
-    Shader::Binding binding {};
+    ShaderBinding binding {};
 
     for_opcodes(binary, size, OpName, [&](const uint32_t* name) {
       if((!binding.name && name[1] == variable_id) || name[1] == type_id) {
@@ -190,10 +190,10 @@ static void shader_reflect(const ResourceSlot&, Shader::Intermediate& intermedia
     });
 
     switch(variable[3]) {
-      case 0: binding.type = Shader::UniformConstant; break;
-      case 1: binding.type = Shader::Input; break;
-      case 2: binding.type = Shader::Uniform; break;
-      case 9: binding.type = Shader::PushConstant; break;
+      case 0: binding.type = ShaderBindingType::UniformConstant; break;
+      case 1: binding.type = ShaderBindingType::Input; break;
+      case 2: binding.type = ShaderBindingType::Uniform; break;
+      case 9: binding.type = ShaderBindingType::PushConstant; break;
       default: return;
     }
 
@@ -212,8 +212,8 @@ static void shader_reflect(const ResourceSlot&, Shader::Intermediate& intermedia
       }
     });
     intermediate.bindings.push(binding);
-    if(binding.type == Shader::Uniform) { // Create bindings for every member of block
-      binding.type = Shader::None;
+    if(binding.type == ShaderBindingType::Uniform) { // Create bindings for every member of block
+      binding.type = ShaderBindingType::Undefined;
       for_opcodes(binary, size, OpMemberDecorate, [&](const uint32_t* decoration) {
         if(decoration[1] == type_id) {
           binding.index = decoration[2];
@@ -236,11 +236,11 @@ static void shader_reflect(const ResourceSlot&, Shader::Intermediate& intermedia
     if(intermediate.bindings[i].name == Symbol("gl_FragCoord") ||
       intermediate.bindings[i].name == Symbol("gl_VertexIndex")) {
       intermediate.bindings.erase_fast(i--);
-    } else if(intermediate.bindings[i].type == Shader::Input) {
+    } else if(intermediate.bindings[i].type == ShaderBindingType::Input) {
       // Compute Input offset by checking all Input with lesser index
-      Shader::Binding& binding(intermediate.bindings[i]);
-      for(const Shader::Binding& other_binding : intermediate.bindings) {
-        if(other_binding.type == Shader::Input && other_binding.index < binding.index) {
+      ShaderBinding& binding(intermediate.bindings[i]);
+      for(const ShaderBinding& other_binding : intermediate.bindings) {
+        if(other_binding.type == ShaderBindingType::Input && other_binding.index < binding.index) {
           binding.offset += other_binding.size;
         }
       }

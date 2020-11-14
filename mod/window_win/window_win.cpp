@@ -1,8 +1,6 @@
-#define VK_USE_PLATFORM_WIN32_KHR
-
 #include <L/src/engine/Engine.h>
 #include <L/src/parallelism/TaskSystem.h>
-#include <L/src/rendering/Vulkan.h>
+#include <L/src/rendering/Renderer.h>
 #include <L/src/system/Window.h>
 #include <L/src/text/encoding.h>
 
@@ -123,7 +121,7 @@ public:
       CW_USEDEFAULT, CW_USEDEFAULT, width, height,
       nullptr, nullptr, hInstance, nullptr);
 
-    Vulkan::init();
+    Renderer::get()->init("Win32", (uintptr_t)GetModuleHandle(nullptr), (uintptr_t)hWND);
     _opened = true;
   }
   void close() override {
@@ -139,16 +137,6 @@ public:
   void resize(uint32_t width, uint32_t height) override {
     L_ASSERT(opened());
     SetWindowPos(hWND, HWND_NOTOPMOST, 0, 0, width, height, SWP_NOMOVE|SWP_NOZORDER);
-  }
-  void create_vulkan_surface(VkInstance instance, VkSurfaceKHR* surface) override {
-    VkWin32SurfaceCreateInfoKHR create_info = {};
-    create_info.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
-    create_info.hwnd = hWND;
-    create_info.hinstance = GetModuleHandle(nullptr);
-    L_VK_CHECKED(vkCreateWin32SurfaceKHR(instance, &create_info, nullptr, surface));
-  }
-  const char* extra_vulkan_extension() override {
-    return VK_KHR_WIN32_SURFACE_EXTENSION_NAME;
   }
 };
 

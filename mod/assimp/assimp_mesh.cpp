@@ -36,42 +36,42 @@ bool assimp_mesh_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
 
   if(mesh->HasPositions()) {
     position_offset = vertex_size;
-    intermediate.attributes.push(VertexAttribute {VK_FORMAT_R32G32B32_SFLOAT, VertexAttributeType::Position});
-    vertex_size += Vulkan::format_size(intermediate.attributes.back().format);
+    intermediate.attributes.push(VertexAttribute {RenderFormat::R32G32B32_SFloat, VertexAttributeType::Position});
+    vertex_size += Renderer::format_size(intermediate.attributes.back().format);
   }
 
   if(mesh->HasNormals()) {
     normal_offset = vertex_size;
-    intermediate.attributes.push(VertexAttribute {VK_FORMAT_R32G32B32_SFLOAT, VertexAttributeType::Normal});
-    vertex_size += Vulkan::format_size(intermediate.attributes.back().format);
+    intermediate.attributes.push(VertexAttribute {RenderFormat::R32G32B32_SFloat, VertexAttributeType::Normal});
+    vertex_size += Renderer::format_size(intermediate.attributes.back().format);
   }
 
   if(mesh->HasTangentsAndBitangents()) {
     tangent_offset = vertex_size;
-    intermediate.attributes.push(VertexAttribute {VK_FORMAT_R32G32B32_SFLOAT, VertexAttributeType::Tangent});
-    vertex_size += Vulkan::format_size(intermediate.attributes.back().format);
+    intermediate.attributes.push(VertexAttribute {RenderFormat::R32G32B32_SFloat, VertexAttributeType::Tangent});
+    vertex_size += Renderer::format_size(intermediate.attributes.back().format);
   }
 
   if(mesh->HasTextureCoords(0)) {
     texcoord_offset = vertex_size;
-    intermediate.attributes.push(VertexAttribute {VK_FORMAT_R32G32_SFLOAT, VertexAttributeType::TexCoord});
-    vertex_size += Vulkan::format_size(intermediate.attributes.back().format);
+    intermediate.attributes.push(VertexAttribute {RenderFormat::R32G32_SFloat, VertexAttributeType::TexCoord});
+    vertex_size += Renderer::format_size(intermediate.attributes.back().format);
   }
 
   if(mesh->HasVertexColors(0)) {
     color_offset = vertex_size;
-    intermediate.attributes.push(VertexAttribute {VK_FORMAT_R32G32B32A32_SFLOAT, VertexAttributeType::Color});
-    vertex_size += Vulkan::format_size(intermediate.attributes.back().format);
+    intermediate.attributes.push(VertexAttribute {RenderFormat::R32G32B32A32_SFloat, VertexAttributeType::Color});
+    vertex_size += Renderer::format_size(intermediate.attributes.back().format);
   }
 
   if(mesh->HasBones()) {
     joints_offset = vertex_size;
-    intermediate.attributes.push(VertexAttribute {VK_FORMAT_R16G16B16A16_UINT, VertexAttributeType::Joints});
-    vertex_size += Vulkan::format_size(intermediate.attributes.back().format);
+    intermediate.attributes.push(VertexAttribute {RenderFormat::R16G16B16A16_UInt, VertexAttributeType::Joints});
+    vertex_size += Renderer::format_size(intermediate.attributes.back().format);
 
     weights_offset = vertex_size;
-    intermediate.attributes.push(VertexAttribute {VK_FORMAT_R32G32B32A32_SFLOAT, VertexAttributeType::Weights});
-    vertex_size += Vulkan::format_size(intermediate.attributes.back().format);
+    intermediate.attributes.push(VertexAttribute {RenderFormat::R32G32B32A32_SFloat, VertexAttributeType::Weights});
+    vertex_size += Renderer::format_size(intermediate.attributes.back().format);
   }
 
   intermediate.vertices = Buffer(mesh->mNumVertices * vertex_size);

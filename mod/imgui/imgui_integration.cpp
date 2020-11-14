@@ -66,16 +66,21 @@ static void imgui_update() {
   int global_vtx_offset = 0;
   int global_idx_offset = 0;
 
-  materials.clear();
+  uintptr_t material_count = 0;
   for(int i = 0; i < draw_data->CmdListsCount; i++) {
     const ImDrawList* draw_list = draw_data->CmdLists[i];
     for(const ImDrawCmd& cmd : draw_list->CmdBuffer) {
-      Material material;
-      material.shader(VK_SHADER_STAGE_VERTEX_BIT, shader_vert);
-      material.shader(VK_SHADER_STAGE_FRAGMENT_BIT, shader_frag);
-      material.render_pass("present");
-      material.mesh(mesh);
-      material.texture("tex", font_tex);
+      while(materials.size() <= material_count) {
+        materials.push();
+        Material& material = materials.back();
+        material.shader(ShaderStage::Vertex, shader_vert);
+        material.shader(ShaderStage::Fragment, shader_frag);
+        material.render_pass("present");
+        material.mesh(mesh);
+        material.texture("tex", font_tex);
+        material.cull_mode(CullMode::None);
+      }
+      Material& material = materials[material_count++];
       material.scissor(Interval2i {
         Vector2i{int(cmd.ClipRect.x), int(cmd.ClipRect.y)},
         Vector2i{int(cmd.ClipRect.z), int(cmd.ClipRect.w)},
@@ -83,8 +88,6 @@ static void imgui_update() {
       material.vertex_count(cmd.ElemCount);
       material.vertex_offset(cmd.VtxOffset + global_vtx_offset);
       material.index_offset(cmd.IdxOffset + global_idx_offset);
-      material.cull_mode(VK_CULL_MODE_NONE);
-      materials.push(material);
     }
 
     memcpy(vertex_buffer + global_vtx_offset, draw_list->VtxBuffer.Data, draw_list->VtxBuffer.Size * sizeof(ImDrawVert));
@@ -93,6 +96,8 @@ static void imgui_update() {
     global_vtx_offset += draw_list->VtxBuffer.Size;
     global_idx_offset += draw_list->IdxBuffer.Size;
   }
+  
+  materials.size(material_count);
 
   if(draw_data->TotalVtxCount && mesh) {
     Mesh& mesh_mut = ((Mesh&)*mesh);
@@ -196,9 +201,9 @@ void imgui_module_init() {
         return false;
       }
 
-      intermediate.attributes.push(VertexAttribute {VK_FORMAT_R32G32_SFLOAT, VertexAttributeType::Position});
-      intermediate.attributes.push(VertexAttribute {VK_FORMAT_R32G32_SFLOAT, VertexAttributeType::TexCoord});
-      intermediate.attributes.push(VertexAttribute {VK_FORMAT_R8G8B8A8_UNORM, VertexAttributeType::Color});
+      intermediate.attributes.push(VertexAttribute {RenderFormat::R32G32_SFloat, VertexAttributeType::Position});
+      intermediate.attributes.push(VertexAttribute {RenderFormat::R32G32_SFloat, VertexAttributeType::TexCoord});
+      intermediate.attributes.push(VertexAttribute {RenderFormat::R8G8B8A8_UNorm, VertexAttributeType::Color});
       intermediate.vertices = Buffer(sizeof(ImDrawVert));
 
       return true;
@@ -253,7 +258,7 @@ void imgui_module_init() {
       intermediate.binary = Buffer(pixels, width * height);
       intermediate.width = width;
       intermediate.height = height;
-      intermediate.format = VK_FORMAT_R8_UNORM;
+      intermediate.format = RenderFormat::R8_UNorm;
 
       return true;
     });

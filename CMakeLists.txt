@@ -84,12 +84,6 @@ else()
   link_libraries(X11 pthread)
 endif()
 
-# Vulkan
-
-find_package(Vulkan REQUIRED)
-include_directories(${Vulkan_INCLUDE_DIRS})
-link_libraries(${Vulkan_LIBRARIES})
-
 # Source files
 
 file(GLOB_RECURSE CORE_SOURCES src/*.cpp src/*.inl src/*.h)

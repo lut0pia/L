@@ -41,7 +41,7 @@ bool stb_image_loader(ResourceSlot& slot, Texture::Intermediate& intermediate) {
   if(img) {
     intermediate.width = width;
     intermediate.height = height;
-    intermediate.format = VK_FORMAT_R8G8B8A8_UNORM;
+    intermediate.format = RenderFormat::R8G8B8A8_UNorm;
     intermediate.binary = Buffer(img, width * height * 4);
     stbi_image_free(img);
     return true;
