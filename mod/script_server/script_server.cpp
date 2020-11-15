@@ -83,8 +83,8 @@ static void script_server_update() {
         }
 
         client.code_buffer.clear();
-      } else if(line[0] == '#') { // Directive
-        if(line[1] == '!') {
+      } else if(line[0u] == '#') { // Directive
+        if(line[1u] == '!') {
           client.language = line.begin() + 2;
           client.code_buffer.clear();
         }

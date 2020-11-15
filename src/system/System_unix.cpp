@@ -28,7 +28,7 @@ Vector2i System::screenSize() {
 }
 
 String System::formatPath(String path) {
-  if(!path.size() || path[0]!='/')
+  if(!path.size() || path[0u]!='/')
     path = System::pwd()+path;
   return path;
 }
