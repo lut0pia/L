@@ -59,7 +59,7 @@ PipelineImpl* VulkanRenderer::create_pipeline(
       create_info.setLayoutCount = L_COUNT_OF(layouts);
       create_info.pSetLayouts = layouts;
       VkPushConstantRange push_constant_range;
-      if(const ShaderBinding* constants_binding = find_binding(pipeline, "Constants")) {
+      if(find_binding(pipeline, "Constants") != nullptr) {
         push_constant_range = {VK_SHADER_STAGE_ALL, 0, 64};
         create_info.pushConstantRangeCount = 1;
         create_info.pPushConstantRanges = &push_constant_range;
@@ -256,7 +256,7 @@ void VulkanRenderer::destroy_pipeline(PipelineImpl* pipeline) {
 void VulkanRenderer::bind_pipeline(PipelineImpl* pipeline, RenderCommandBuffer* cmd_buffer, DescriptorSetImpl* desc_set, const float* model) {
   VulkanPipeline* vk_pipeline = (VulkanPipeline*)pipeline;
   vkCmdBindDescriptorSets((VkCommandBuffer)cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vk_pipeline->layout, 0, 1, (VkDescriptorSet*)&desc_set, 0, nullptr);
-  if(const ShaderBinding* constants_binding = find_binding(vk_pipeline, "Constants")) {
+  if(find_binding(vk_pipeline, "Constants") != nullptr) {
     vkCmdPushConstants((VkCommandBuffer)cmd_buffer, vk_pipeline->layout, VK_SHADER_STAGE_ALL, 0, sizeof(Matrix44f), model);
   }
   vkCmdBindPipeline((VkCommandBuffer)cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vk_pipeline->pipeline);
