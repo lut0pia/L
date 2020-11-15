@@ -1,3 +1,9 @@
+find_path(ALSA_PATHS asoundlib.h)
+if(NOT ALSA_PATHS)
+  message("-- Could NOT find ALSA")
+  return()
+endif()
+
 add_module(
   alsa
   CONDITION $<PLATFORM_ID:Linux>
