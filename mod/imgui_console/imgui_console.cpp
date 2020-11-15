@@ -46,7 +46,7 @@ static int text_edit_callback(ImGuiInputTextCallbackData* data) {
       } else {
         // Multiple matches. Complete as much as we can..
         // So inputing "C"+Tab will complete to "CL" then display "CLEAR" and "CLASSIFY" as matches.
-        int match_len = (int)(word_end - word_start);
+        uintptr_t match_len = (uintptr_t)(word_end - word_start);
         for(;;) {
           int c = 0;
           bool all_candidates_matches = true;
