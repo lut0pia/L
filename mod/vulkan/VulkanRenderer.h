@@ -2,6 +2,10 @@
 
 #include <vulkan/vulkan.h>
 
+#ifdef None
+#undef None // Xlib may have defined None and that breaks things
+#endif
+
 #include <L/src/container/Array.h>
 #include <L/src/parallelism/Lock.h>
 #include <L/src/rendering/Renderer.h>
