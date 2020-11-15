@@ -1,4 +1,4 @@
-find_path(ALSA_PATHS asoundlib.h)
+find_path(ALSA_PATHS alsa/asoundlib.h)
 if(NOT ALSA_PATHS)
   message("-- Could NOT find ALSA")
   return()
