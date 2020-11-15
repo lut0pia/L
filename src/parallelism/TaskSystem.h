@@ -6,7 +6,6 @@
 namespace L {
   namespace TaskSystem {
     enum Flags {
-      None,
       NoParent = 1<<1,
       MainTask = 1<<2,
     };
@@ -18,7 +17,7 @@ namespace L {
     uint32_t thread_id();
     uint32_t fiber_count();
     uint32_t fiber_id();
-    void push(Func, void* = nullptr, uint32_t thread_mask = -1, uint32_t flags = None);
+    void push(Func, void* = nullptr, uint32_t thread_mask = -1, uint32_t flags = 0);
     void yield();
     void yield_until(CondFunc, void* = nullptr);
     void join();
