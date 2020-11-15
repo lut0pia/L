@@ -1,5 +1,4 @@
 #include <L/src/engine/Engine.h>
-#include <L/src/rendering/Vulkan.h>
 #include <L/src/system/Window.h>
 
 #include <X11/X.h>
