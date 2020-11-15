@@ -80,8 +80,8 @@ namespace L {
   };
 
   struct VertexAttribute {
-    RenderFormat format = RenderFormat::Undefined;
-    VertexAttributeType type = VertexAttributeType::Undefined;
+    RenderFormat format;
+    VertexAttributeType type;
   };
 
   enum class ShaderBindingType : uint8_t {
