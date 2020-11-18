@@ -74,6 +74,9 @@ Pipeline::~Pipeline() {
 void Pipeline::bind(RenderCommandBuffer* cmd_buffer, DescriptorSetImpl* desc_set, const Matrix44f& model) const {
   Renderer::get()->bind_pipeline(_impl, cmd_buffer, desc_set, &model(0, 0));
 }
+void Pipeline::draw(RenderCommandBuffer* cmd_buffer, uint32_t vertex_count, uint32_t vertex_offset) const {
+  Renderer::get()->draw_pipeline(_impl, cmd_buffer, vertex_count, vertex_offset);
+}
 const ShaderBinding* Pipeline::find_binding(const Symbol& name) const {
   for(const ShaderBinding& binding : _bindings) {
     if(binding.name == name) {

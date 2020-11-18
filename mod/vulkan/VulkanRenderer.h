@@ -106,7 +106,6 @@ protected:
 public:
   virtual void init(const char* wmid, uintptr_t data1, uintptr_t data2) override;
   virtual void recreate_swapchain() override;
-  virtual void draw(L::RenderCommandBuffer*, uint32_t vertex_count, uint32_t instance_count, uint32_t first_vertex, uint32_t first_instance) override;
 
   virtual L::RenderCommandBuffer* begin_render_command_buffer() override;
   virtual void end_render_command_buffer() override;
@@ -151,6 +150,7 @@ public:
     L::BlendMode blend_mode) override;
   virtual void destroy_pipeline(L::PipelineImpl*) override;
   virtual void bind_pipeline(L::PipelineImpl*, L::RenderCommandBuffer*, L::DescriptorSetImpl*, const float* model) override;
+  virtual void draw_pipeline(L::PipelineImpl*, L::RenderCommandBuffer*, uint32_t vertex_count, uint32_t first_vertex) override;
 
   virtual L::TextureImpl* create_texture(uint32_t width, uint32_t height, L::RenderFormat format, const void* data, size_t size) override;
   virtual void load_texture(L::TextureImpl* texture, const void* data, size_t size, const L::Vector3i& offset, const L::Vector3i& extent) override;

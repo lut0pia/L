@@ -31,6 +31,7 @@ namespace L {
     ~Pipeline();
 
     void bind(RenderCommandBuffer*, DescriptorSetImpl*, const Matrix44f& model) const;
+    void draw(RenderCommandBuffer*, uint32_t vertex_count, uint32_t vertex_offset = 0) const;
     const ShaderBinding* find_binding(const Symbol& name) const;
     const ShaderBinding* find_binding(int32_t binding) const;
     bool set_descriptor(int32_t binding, DescriptorSetImpl*, const UniformBuffer&) const;

@@ -373,9 +373,6 @@ void VulkanRenderer::recreate_swapchain() {
     }
   }
 }
-void VulkanRenderer::draw(RenderCommandBuffer* cmd_buffer, uint32_t vertex_count, uint32_t instance_count, uint32_t first_vertex, uint32_t first_instance) {
-  vkCmdDraw((VkCommandBuffer)cmd_buffer, vertex_count, instance_count, first_vertex, first_instance);
-}
 
 static uint32_t image_index;
 RenderCommandBuffer* VulkanRenderer::begin_render_command_buffer() {

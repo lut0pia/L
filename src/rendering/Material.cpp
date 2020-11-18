@@ -304,7 +304,7 @@ void Material::draw(const Camera& camera, const RenderPass& render_pass, const M
   if(mesh) {
     mesh->draw(cmd_buffer, _final_state.vertex_count, _final_state.index_offset, _final_state.vertex_offset);
   } else if(uint32_t vertex_count = _final_state.vertex_count) {
-    Renderer::get()->draw(cmd_buffer, vertex_count, 1, _final_state.vertex_offset, 0);
+    _pipeline->draw(cmd_buffer, vertex_count, _final_state.vertex_offset);
   }
 
   // Reset scissor if we set it earlier

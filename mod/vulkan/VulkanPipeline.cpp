@@ -261,3 +261,6 @@ void VulkanRenderer::bind_pipeline(PipelineImpl* pipeline, RenderCommandBuffer* 
   }
   vkCmdBindPipeline((VkCommandBuffer)cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vk_pipeline->pipeline);
 }
+void VulkanRenderer::draw_pipeline(L::PipelineImpl*, RenderCommandBuffer* cmd_buffer, uint32_t vertex_count, uint32_t first_vertex) {
+  vkCmdDraw((VkCommandBuffer)cmd_buffer, vertex_count, 1, first_vertex, 0);
+}
