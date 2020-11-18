@@ -112,6 +112,10 @@ void VulkanRenderer::init(const char* wmid, uintptr_t data1, uintptr_t data2) {
     vkGetPhysicalDeviceProperties(physical_device, &physical_device_properties);
     vkGetPhysicalDeviceMemoryProperties(physical_device, &physical_device_memory_properties);
     vkGetPhysicalDeviceFeatures(physical_device, &physical_device_features);
+    log("Vulkan version: %d.%d.%d",
+      VK_VERSION_MAJOR(physical_device_properties.apiVersion),
+      VK_VERSION_MINOR(physical_device_properties.apiVersion),
+      VK_VERSION_PATCH(physical_device_properties.apiVersion));
     log("GPU: %s", physical_device_properties.deviceName);
     log("GPU memory: %dMB", (best_physical_device_memory >> 20));
   }
