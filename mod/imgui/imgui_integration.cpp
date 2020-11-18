@@ -70,6 +70,7 @@ static void imgui_update() {
   for(int i = 0; i < draw_data->CmdListsCount; i++) {
     const ImDrawList* draw_list = draw_data->CmdLists[i];
     for(const ImDrawCmd& cmd : draw_list->CmdBuffer) {
+      L_ASSERT(cmd.VtxOffset == 0);
       while(materials.size() <= material_count) {
         materials.push();
         Material& material = materials.back();
@@ -86,8 +87,12 @@ static void imgui_update() {
         Vector2i{int(cmd.ClipRect.z), int(cmd.ClipRect.w)},
         });
       material.vertex_count(cmd.ElemCount);
-      material.vertex_offset(cmd.VtxOffset + global_vtx_offset);
       material.index_offset(cmd.IdxOffset + global_idx_offset);
+    }
+
+    // Offset all indices since we are using a single vertex buffer
+    for(uintptr_t j = 0; j < draw_list->IdxBuffer.Size; j++) {
+      draw_list->IdxBuffer.Data[j] += ImDrawIdx(global_vtx_offset);
     }
 
     memcpy(vertex_buffer + global_vtx_offset, draw_list->VtxBuffer.Data, draw_list->VtxBuffer.Size * sizeof(ImDrawVert));
