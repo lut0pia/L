@@ -30,7 +30,6 @@ namespace L {
       Interval2i scissor = Vector2i(0);
       uint32_t vertex_count = 0;
       uint32_t index_offset = 0;
-      uint32_t vertex_offset = 0;
 
       void apply(const State&);
 
@@ -97,7 +96,6 @@ namespace L {
     inline void scissor(Interval2i interval) { _partial_state.scissor = interval; _state_dirty = true; }
     inline void vertex_count(uint32_t count) { _partial_state.vertex_count = count; _state_dirty = true; }
     inline void index_offset(uint32_t offset) { _partial_state.index_offset = offset; _state_dirty = true; }
-    inline void vertex_offset(uint32_t offset) { _partial_state.vertex_offset = offset; _state_dirty = true; }
 
     static void script_registration();
 

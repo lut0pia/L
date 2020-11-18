@@ -57,7 +57,6 @@ void Material::State::apply(const State& patch) {
   PATCH_VALUE(scissor, default_scissor);
   PATCH_VALUE(vertex_count, 0);
   PATCH_VALUE(index_offset, 0);
-  PATCH_VALUE(vertex_offset, 0);
   PATCH_VALUE(text, "");
 #undef PATCH_VALUE
 }
@@ -302,9 +301,9 @@ void Material::draw(const Camera& camera, const RenderPass& render_pass, const M
   }
 
   if(mesh) {
-    mesh->draw(cmd_buffer, _final_state.vertex_count, _final_state.index_offset, _final_state.vertex_offset);
+    mesh->draw(cmd_buffer, _final_state.vertex_count, _final_state.index_offset);
   } else if(uint32_t vertex_count = _final_state.vertex_count) {
-    _pipeline->draw(cmd_buffer, vertex_count, _final_state.vertex_offset);
+    _pipeline->draw(cmd_buffer, vertex_count);
   }
 
   // Reset scissor if we set it earlier

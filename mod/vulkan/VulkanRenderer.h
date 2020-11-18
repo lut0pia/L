@@ -150,7 +150,7 @@ public:
     L::BlendMode blend_mode) override;
   virtual void destroy_pipeline(L::PipelineImpl*) override;
   virtual void bind_pipeline(L::PipelineImpl*, L::RenderCommandBuffer*, L::DescriptorSetImpl*, const float* model) override;
-  virtual void draw_pipeline(L::PipelineImpl*, L::RenderCommandBuffer*, uint32_t vertex_count, uint32_t first_vertex) override;
+  virtual void draw_pipeline(L::PipelineImpl*, L::RenderCommandBuffer*, uint32_t vertex_count) override;
 
   virtual L::TextureImpl* create_texture(uint32_t width, uint32_t height, L::RenderFormat format, const void* data, size_t size) override;
   virtual void load_texture(L::TextureImpl* texture, const void* data, size_t size, const L::Vector3i& offset, const L::Vector3i& extent) override;
@@ -158,7 +158,7 @@ public:
 
   virtual L::MeshImpl* create_mesh(size_t count, const void* data, size_t size, const L::VertexAttribute* attributes, size_t acount, const uint16_t* iarray, size_t icount) override;
   virtual void destroy_mesh(L::MeshImpl* mesh) override;
-  virtual void draw_mesh(L::RenderCommandBuffer*, L::MeshImpl* mesh, uint32_t vertex_count = 0, uint32_t index_offset = 0, uint32_t vertex_offset = 0) override;
+  virtual void draw_mesh(L::RenderCommandBuffer*, L::MeshImpl* mesh, uint32_t vertex_count = 0, uint32_t index_offset = 0) override;
 
   virtual L::RenderPassImpl* create_render_pass(const L::RenderFormat* formats, size_t format_count, bool present) override;
   virtual void destroy_render_pass(L::RenderPassImpl*) override;

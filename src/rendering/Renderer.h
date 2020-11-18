@@ -163,7 +163,7 @@ namespace L {
       BlendMode blend_mode) = 0;
     virtual void destroy_pipeline(PipelineImpl*) = 0;
     virtual void bind_pipeline(PipelineImpl*, RenderCommandBuffer*, DescriptorSetImpl*, const float* model) = 0;
-    virtual void draw_pipeline(PipelineImpl*, RenderCommandBuffer*, uint32_t vertex_count, uint32_t first_vertex) = 0;
+    virtual void draw_pipeline(PipelineImpl*, RenderCommandBuffer*, uint32_t vertex_count) = 0;
 
     virtual TextureImpl* create_texture(uint32_t width, uint32_t height, RenderFormat format, const void* data, size_t size) = 0;
     virtual void load_texture(TextureImpl* texture, const void* data, size_t size, const Vector3i& offset, const Vector3i& extent) = 0;
@@ -171,7 +171,7 @@ namespace L {
 
     virtual MeshImpl* create_mesh(size_t count, const void* data, size_t size, const VertexAttribute* attributes, size_t acount, const uint16_t* iarray, size_t icount) = 0;
     virtual void destroy_mesh(MeshImpl* mesh) = 0;
-    virtual void draw_mesh(RenderCommandBuffer*, MeshImpl* mesh, uint32_t vertex_count = 0, uint32_t index_offset = 0, uint32_t vertex_offset = 0) = 0;
+    virtual void draw_mesh(RenderCommandBuffer*, MeshImpl* mesh, uint32_t vertex_count = 0, uint32_t index_offset = 0) = 0;
 
     virtual RenderPassImpl* create_render_pass(const RenderFormat* formats, size_t format_count, bool present) = 0;
     virtual void destroy_render_pass(RenderPassImpl*) = 0;

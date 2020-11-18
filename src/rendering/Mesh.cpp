@@ -45,11 +45,11 @@ void Mesh::load(size_t count, const void* data, size_t size, const VertexAttribu
   for(uintptr_t i(1); i < count; i++)
     _bounds.add(*(Vector3f*)((uint8_t*)data + vertex_size*i));
 }
-void Mesh::draw(RenderCommandBuffer* cmd_buffer, uint32_t vertex_count, uint32_t index_offset, uint32_t vertex_offset) const {
+void Mesh::draw(RenderCommandBuffer* cmd_buffer, uint32_t vertex_count, uint32_t index_offset) const {
   if(vertex_count == 0) {
     vertex_count = _count;
   }
-  Renderer::get()->draw_mesh(cmd_buffer, _impl, vertex_count, index_offset, vertex_offset);
+  Renderer::get()->draw_mesh(cmd_buffer, _impl, vertex_count, index_offset);
 }
 
 const Mesh& Mesh::quad() {

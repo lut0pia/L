@@ -29,7 +29,7 @@ void VulkanRenderer::destroy_mesh(MeshImpl* mesh) {
   }
   Memory::delete_type(vk_mesh);
 }
-void VulkanRenderer::draw_mesh(RenderCommandBuffer* cmd_buffer, MeshImpl* mesh, uint32_t vertex_count, uint32_t index_offset, uint32_t vertex_offset) {
+void VulkanRenderer::draw_mesh(RenderCommandBuffer* cmd_buffer, MeshImpl* mesh, uint32_t vertex_count, uint32_t index_offset) {
   VulkanMesh* vk_mesh = (VulkanMesh*)mesh;
   if(vk_mesh->vertex_buffer) {
     const VkBuffer buffers[] {*vk_mesh->vertex_buffer};
@@ -37,9 +37,9 @@ void VulkanRenderer::draw_mesh(RenderCommandBuffer* cmd_buffer, MeshImpl* mesh, 
     vkCmdBindVertexBuffers((VkCommandBuffer)cmd_buffer, 0, 1, buffers, offsets);
     if(vk_mesh->index_buffer) {
       vkCmdBindIndexBuffer((VkCommandBuffer)cmd_buffer, *vk_mesh->index_buffer, 0, VK_INDEX_TYPE_UINT16);
-      vkCmdDrawIndexed((VkCommandBuffer)cmd_buffer, vertex_count, 1, index_offset, vertex_offset, 0);
+      vkCmdDrawIndexed((VkCommandBuffer)cmd_buffer, vertex_count, 1, index_offset, 0, 0);
     } else {
-      vkCmdDraw((VkCommandBuffer)cmd_buffer, vertex_count, 1, vertex_offset, 0);
+      vkCmdDraw((VkCommandBuffer)cmd_buffer, vertex_count, 1, 0, 0);
     }
   }
 }
