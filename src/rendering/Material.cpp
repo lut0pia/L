@@ -282,14 +282,34 @@ void Material::draw(const Camera& camera, const RenderPass& render_pass, const M
     return;
   }
 
-  const Mesh* mesh(nullptr);
-  if(Resource<Mesh> mesh_res = _final_state.mesh) {
-    mesh = &*mesh_res;
-  } else if(Resource<Font> font = _final_state.font) {
-    const String& text(_final_state.text);
-    if(text.size() > 0) {
-      mesh = &font->text_mesh(text).mesh;
+  const Mesh* mesh = nullptr;
+  uint32_t vertex_count = _final_state.vertex_count;
+
+  if(_final_state.mesh.is_set()) {
+    if(Resource<Mesh> mesh_res = _final_state.mesh) {
+      mesh = &*mesh_res;
+    } else {
+      return; // Mesh is set but has not loaded yet
     }
+  } else if(_final_state.font.is_set()) {
+    if(Resource<Font> font = _final_state.font) {
+      const String& text(_final_state.text);
+      if(text.size() > 0) {
+        mesh = &font->text_mesh(text).mesh;
+      } else {
+        return; // Font is loaded but there is not text to draw
+      }
+    } else {
+      return; // Font is set but has not loaded yet
+    }
+  }
+
+  if(vertex_count == 0 && mesh) {
+    vertex_count = mesh->get_count();
+  }
+
+  if(vertex_count == 0) {
+    return; // No vertices to draw
   }
 
   RenderCommandBuffer* cmd_buffer = camera.cmd_buffer();
@@ -305,7 +325,7 @@ void Material::draw(const Camera& camera, const RenderPass& render_pass, const M
     desc_set,
     &model(0, 0),
     mesh ? mesh->get_impl() : nullptr,
-    _final_state.vertex_count ? _final_state.vertex_count : (mesh ? mesh->get_count() : 0),
+    vertex_count,
     _final_state.index_offset);
 
   // Reset scissor if we set it earlier
