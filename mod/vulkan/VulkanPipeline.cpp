@@ -5,8 +5,8 @@
 
 using namespace L;
 
-static const ShaderBinding* find_binding(const VulkanPipeline* pipeline, const Symbol& name) {
-  for(const ShaderBinding& binding : pipeline->bindings)
+const ShaderBinding* VulkanPipeline::find_binding(const Symbol& name) const {
+  for(const ShaderBinding& binding : bindings)
     if(binding.name == name)
       return &binding;
   return nullptr;
@@ -59,7 +59,7 @@ PipelineImpl* VulkanRenderer::create_pipeline(
       create_info.setLayoutCount = L_COUNT_OF(layouts);
       create_info.pSetLayouts = layouts;
       VkPushConstantRange push_constant_range;
-      if(find_binding(pipeline, "Constants") != nullptr) {
+      if(pipeline->find_binding("Constants") != nullptr) {
         push_constant_range = {VK_SHADER_STAGE_ALL, 0, 64};
         create_info.pushConstantRangeCount = 1;
         create_info.pPushConstantRanges = &push_constant_range;
@@ -252,15 +252,4 @@ void VulkanRenderer::destroy_pipeline(PipelineImpl* pipeline) {
   }
 
   Memory::delete_type(vk_pipeline);
-}
-void VulkanRenderer::bind_pipeline(PipelineImpl* pipeline, RenderCommandBuffer* cmd_buffer, DescriptorSetImpl* desc_set, const float* model) {
-  VulkanPipeline* vk_pipeline = (VulkanPipeline*)pipeline;
-  vkCmdBindDescriptorSets((VkCommandBuffer)cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vk_pipeline->layout, 0, 1, (VkDescriptorSet*)&desc_set, 0, nullptr);
-  if(find_binding(vk_pipeline, "Constants") != nullptr) {
-    vkCmdPushConstants((VkCommandBuffer)cmd_buffer, vk_pipeline->layout, VK_SHADER_STAGE_ALL, 0, sizeof(Matrix44f), model);
-  }
-  vkCmdBindPipeline((VkCommandBuffer)cmd_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vk_pipeline->pipeline);
-}
-void VulkanRenderer::draw_pipeline(L::PipelineImpl*, RenderCommandBuffer* cmd_buffer, uint32_t vertex_count) {
-  vkCmdDraw((VkCommandBuffer)cmd_buffer, vertex_count, 1, 0, 0);
 }

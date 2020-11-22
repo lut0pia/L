@@ -293,18 +293,20 @@ void Material::draw(const Camera& camera, const RenderPass& render_pass, const M
   }
 
   RenderCommandBuffer* cmd_buffer = camera.cmd_buffer();
-  _pipeline->bind(cmd_buffer, desc_set, model);
 
   // Only set scissor if value is different from default
   if(_final_state.scissor != default_scissor) {
     Renderer::get()->set_scissor(cmd_buffer, _final_state.scissor);
   }
 
-  if(mesh) {
-    mesh->draw(cmd_buffer, _final_state.vertex_count, _final_state.index_offset);
-  } else if(uint32_t vertex_count = _final_state.vertex_count) {
-    _pipeline->draw(cmd_buffer, vertex_count);
-  }
+  Renderer::get()->draw(
+    cmd_buffer,
+    _pipeline->get_impl(),
+    desc_set,
+    &model(0, 0),
+    mesh ? mesh->get_impl() : nullptr,
+    _final_state.vertex_count ? _final_state.vertex_count : (mesh ? mesh->get_count() : 0),
+    _final_state.index_offset);
 
   // Reset scissor if we set it earlier
   if(_final_state.scissor != default_scissor) {

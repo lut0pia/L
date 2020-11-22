@@ -42,6 +42,8 @@ struct VulkanPipeline : public L::PipelineImpl {
   VkDescriptorSetLayout desc_set_layout;
   L::Array<L::ShaderBinding> bindings;
   const L::RenderPass* render_pass;
+
+  const L::ShaderBinding* find_binding(const L::Symbol& name) const;
 };
 
 struct VulkanShader : public L::ShaderImpl {
@@ -106,6 +108,14 @@ protected:
 public:
   virtual void init(const char* wmid, uintptr_t data1, uintptr_t data2) override;
   virtual void recreate_swapchain() override;
+  virtual void draw(
+    L::RenderCommandBuffer*,
+    L::PipelineImpl*,
+    L::DescriptorSetImpl*,
+    const float* model,
+    L::MeshImpl*,
+    uint32_t vertex_count,
+    uint32_t index_offset) override;
 
   virtual L::RenderCommandBuffer* begin_render_command_buffer() override;
   virtual void end_render_command_buffer() override;
@@ -149,8 +159,6 @@ public:
     L::PrimitiveTopology topology,
     L::BlendMode blend_mode) override;
   virtual void destroy_pipeline(L::PipelineImpl*) override;
-  virtual void bind_pipeline(L::PipelineImpl*, L::RenderCommandBuffer*, L::DescriptorSetImpl*, const float* model) override;
-  virtual void draw_pipeline(L::PipelineImpl*, L::RenderCommandBuffer*, uint32_t vertex_count) override;
 
   virtual L::TextureImpl* create_texture(uint32_t width, uint32_t height, L::RenderFormat format, const void* data, size_t size) override;
   virtual void load_texture(L::TextureImpl* texture, const void* data, size_t size, const L::Vector3i& offset, const L::Vector3i& extent) override;
@@ -158,7 +166,6 @@ public:
 
   virtual L::MeshImpl* create_mesh(size_t count, const void* data, size_t size, const L::VertexAttribute* attributes, size_t acount, const uint16_t* iarray, size_t icount) override;
   virtual void destroy_mesh(L::MeshImpl* mesh) override;
-  virtual void draw_mesh(L::RenderCommandBuffer*, L::MeshImpl* mesh, uint32_t vertex_count = 0, uint32_t index_offset = 0) override;
 
   virtual L::RenderPassImpl* create_render_pass(const L::RenderFormat* formats, size_t format_count, bool present) override;
   virtual void destroy_render_pass(L::RenderPassImpl*) override;
