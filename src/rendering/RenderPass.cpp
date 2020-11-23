@@ -20,7 +20,7 @@ RenderPass::~RenderPass() {
 
 const RenderPass& RenderPass::geometry_pass() {
   static RenderPass render_pass(Array<RenderFormat> {
-    RenderFormat::B8G8R8A8_UNorm, // Color+Metal
+    RenderFormat::R8G8B8A8_UNorm, // Color+Metal
       RenderFormat::R16G16B16A16_UNorm, // Normal+Roughness+Emission
       RenderFormat::D24_UNorm_S8_UInt, // Depth
   });
