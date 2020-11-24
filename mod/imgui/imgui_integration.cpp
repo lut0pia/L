@@ -16,6 +16,11 @@ static Resource<Mesh> mesh;
 static Resource<Shader> shader_vert, shader_frag;
 static Array<Material> materials;
 static const Symbol imgui_symbol = "imgui", frag_symbol = "frag", vert_symbol = "vert";
+static Array<VertexAttribute> vertex_attributes = {
+  VertexAttribute {RenderFormat::R32G32_SFloat, VertexAttributeType::Position},
+  VertexAttribute {RenderFormat::R32G32_SFloat, VertexAttributeType::TexCoord},
+  VertexAttribute {RenderFormat::R8G8B8A8_UNorm, VertexAttributeType::Color},
+};
 static String text_input;
 static InputContext input_context;
 static bool demo_opened = false;
@@ -101,7 +106,7 @@ static void imgui_update() {
     global_vtx_offset += draw_list->VtxBuffer.Size;
     global_idx_offset += draw_list->IdxBuffer.Size;
   }
-  
+
   materials.size(material_count);
 
   if(draw_data->TotalVtxCount && mesh) {
@@ -109,7 +114,7 @@ static void imgui_update() {
     mesh_mut.load(
       draw_data->TotalVtxCount,
       vertex_buffer, draw_data->TotalVtxCount * sizeof(ImDrawVert),
-      mesh_mut.attributes().begin(), mesh_mut.attributes().size(),
+      vertex_attributes.begin(), vertex_attributes.size(),
       index_buffer, draw_data->TotalIdxCount);
   }
 
@@ -206,9 +211,7 @@ void imgui_module_init() {
         return false;
       }
 
-      intermediate.attributes.push(VertexAttribute {RenderFormat::R32G32_SFloat, VertexAttributeType::Position});
-      intermediate.attributes.push(VertexAttribute {RenderFormat::R32G32_SFloat, VertexAttributeType::TexCoord});
-      intermediate.attributes.push(VertexAttribute {RenderFormat::R8G8B8A8_UNorm, VertexAttributeType::Color});
+      intermediate.attributes = vertex_attributes;
       intermediate.vertices = Buffer(sizeof(ImDrawVert));
 
       return true;
