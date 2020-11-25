@@ -181,8 +181,9 @@ bool Material::fill_desc_set(const Pipeline& pip, DescriptorSetImpl* desc_set) c
 }
 void Material::create_uniform_buffers(const Pipeline& pipeline) {
   for(const ShaderBinding& binding : pipeline.bindings()) {
-    // Binding 0 is reserved for Shared uniform buffer
-    if(binding.binding > 0 && binding.type == ShaderBindingType::Uniform) {
+    // Binding 0 is reserved for Constants uniform buffer (optional, use push constants if possible)
+    // Binding 1 is reserved for Shared uniform buffer
+    if(binding.binding > 1 && binding.type == ShaderBindingType::Uniform) {
       while(int32_t(_buffers.size()) <= binding.binding) {
         _buffers.push(nullptr);
       }

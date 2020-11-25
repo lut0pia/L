@@ -168,6 +168,12 @@ static bool glslang_shader_loader(ResourceSlot& slot, Shader::Intermediate& inte
   shader.setEnvInput(glslang::EShSource::EShSourceGlsl, shader_language, glslang::EShClient::EShClientVulkan, 450);
   shader.setEnvClient(glslang::EShClient::EShClientVulkan, glslang::EShTargetClientVersion::EShTargetVulkan_1_0);
   shader.setEnvTarget(glslang::EShTargetLanguage::EShTargetSpv, glslang::EShTargetLanguageVersion::EShTargetSpv_1_0);
+
+  // Shift all bindings by 1 to use Constants uniform buffer at binding 0 in place of push constants when unavailable
+  for(uint32_t i = 0; i < glslang::TResourceType::EResCount; i++) {
+    shader.setShiftBinding(glslang::TResourceType(i), 1);
+  }
+
   {
     L_SCOPE_MARKER("glslang parsing");
     if(!shader.parse(&builtin_resources, 450, EProfile::ENoProfile, true, true, message_flags)) {
