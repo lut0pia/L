@@ -81,7 +81,7 @@ const ShaderBinding* Pipeline::find_binding(const Symbol& name) const {
 }
 const ShaderBinding* Pipeline::find_binding(int32_t binding_index) const {
   for(const ShaderBinding& binding : _bindings) {
-    if(binding.binding == binding_index) {
+    if(binding.type == ShaderBindingType::Uniform && binding.binding == binding_index) {
       return &binding;
     }
   }
