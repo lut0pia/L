@@ -204,6 +204,29 @@ static void compute_tangents(const Mesh::Intermediate& intermediate, const Array
 #undef POSITION
 }
 
+static void clean_joints(const Array<VertexAttribute>& new_attributes, Buffer& new_vertices, size_t vertex_count) {
+  const size_t new_vertex_size = vertex_size(new_attributes);
+  const void* joints_ptr = new_vertices.data(attr_offset(new_attributes, VertexAttributeType::Joints));
+  const void* weights_ptr = new_vertices.data(attr_offset(new_attributes, VertexAttributeType::Weights));
+#define JOINTS(i) (*((Vector<4, uint16_t>*)((uint8_t*)joints_ptr + i*new_vertex_size)))
+#define WEIGHTS(i) (*((Vector4f*)((uint8_t*)weights_ptr + i*new_vertex_size)))
+
+  for(uintptr_t i = 0; i < vertex_count; i++) {
+    Vector<4, uint16_t>& joints = JOINTS(i);
+    Vector4f& weights = WEIGHTS(i);
+    float weight_sum = 0.f;
+    for(uintptr_t j = 0; j < 4; j++) {
+      if(weights[j] == 0.f) {
+        joints[j] = 0; // Unused joints should fallback to safe joint, to avoid accessing random memory
+      }
+      weight_sum += weights[j];
+    }
+
+    // Make sure the sum of all weights is 1
+    weights /= weight_sum;
+  }
+}
+
 void mesh_format_transformer(const ResourceSlot& slot, Mesh::Intermediate& intermediate) {
   if(!intermediate.indices) {
     compute_indices(slot, intermediate);
@@ -245,6 +268,11 @@ void mesh_format_transformer(const ResourceSlot& slot, Mesh::Intermediate& inter
       && find_attr(intermediate.attributes, VertexAttributeType::TexCoord) != nullptr
       && find_attr(new_attributes, VertexAttributeType::Tangent) != nullptr) {
       compute_tangents(intermediate, new_attributes, new_vertices);
+    }
+
+    if(find_attr(new_attributes, VertexAttributeType::Joints) != nullptr
+      && find_attr(new_attributes, VertexAttributeType::Weights) != nullptr) {
+      clean_joints(new_attributes, new_vertices, vertex_count);
     }
 
     swap(intermediate.vertices, new_vertices);
