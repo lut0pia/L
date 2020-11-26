@@ -31,6 +31,7 @@
   "float noise = fract(tan(distance(coordinate*(seed+PHI*00000.1), vec2(PHI*00000.1, PI*00000.1)))*SQ2*10000.0);" \
   "return isnan(noise) ? 0.f : noise;" \
 "}" \
+"vec2 coords_correction(vec2 _coords) { return _coords; }" \
 "float frag_noise() {" \
   "return gold_noise(gl_FragCoord.xy, frame%4);" \
 "}" \
@@ -101,7 +102,7 @@
   "s.emissive = normal_sample.w;" \
   "s.depth = texture(depth_buffer, texcoords).r;" \
   "s.linear_depth = linearize_depth(s.depth);" \
-  "vec4 position_p = invViewProj * vec4(texcoords*2.f-1.f, s.depth, 1.f);" \
+  "vec4 position_p = invViewProj * vec4(coords_correction(texcoords*2.f-1.f), s.depth, 1.f);" \
   "s.position = position_p.xyz/position_p.w;" \
   "return s;" \
 "}"

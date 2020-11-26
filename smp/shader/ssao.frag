@@ -4,7 +4,7 @@ layout(binding = 1) uniform Parameters {
   vec4 color;
   float radius;
 };
- 
+
 layout(binding = 2) uniform sampler2D color_buffer;
 layout(binding = 3) uniform sampler2D normal_buffer;
 layout(binding = 4) uniform sampler2D depth_buffer;
@@ -45,8 +45,8 @@ void main() {
     projected_smp.xyz /= projected_smp.w;
     float neighbor_depth_target = linearize_depth(projected_smp.z);
     projected_smp.xyz = projected_smp.xyz * 0.5 + 0.5;
-    
-    float neighbor_depth = linearize_depth(texture(depth_buffer, projected_smp.xy).r);
+
+    float neighbor_depth = linearize_depth(texture(depth_buffer, coords_correction(projected_smp.xy)).r);
     float range_check = smoothstep(0.9f, 1.f, radius / abs(depth - neighbor_depth));
     occlusion -= (neighbor_depth < neighbor_depth_target) ? (inv_samples*range_check) : 0.f;
   }
