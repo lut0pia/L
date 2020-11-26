@@ -32,7 +32,7 @@ void mainjob(void*) {
   }
   Engine::clear();
   TaskSystem::join_all();
-#if !L_RLS
+#if L_PROFILING
   flush_profiling();
 #endif
 }
