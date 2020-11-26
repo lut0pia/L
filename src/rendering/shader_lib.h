@@ -40,16 +40,6 @@
 "vec3 linearize(vec3 c){" \
 "return pow(c, vec3(2.2f));" \
 "}" \
-"vec3 derive_normal(vec3 p, vec3 n, float h){" \
-"vec3 dpdx = dFdx(p);" \
-"vec3 dpdy = dFdy(p);" \
-"float dhdx = dFdx(h);" \
-"float dhdy = dFdy(h);" \
-"vec3 r1 = cross(dpdy, n);" \
-"vec3 r2 = cross(n, dpdx);" \
-"vec3 g = (r1 * dhdx + r2 * dhdy) / dot(dpdx, r1);" \
-"return normalize(n - g);" \
-"}" \
 "vec2 encodeNormal(vec3 n){" \
 "n = normalize((view*vec4(n,0.f)).xyz);" \
 "return (n.xy/sqrt(n.z*8.f+8.f))+.5f;" \
