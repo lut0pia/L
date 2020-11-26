@@ -118,8 +118,7 @@ void Engine::update() {
       for(auto render : _renders)
         render(camera, camera.light_buffer().render_pass());
 
-      {
-        Entity* cam_entity(camera.entity());
+      if(Entity* cam_entity = camera.entity()) {
         Array<PostProcessComponent*> post_processes;
         cam_entity->components(post_processes);
         for(PostProcessComponent* post_process : post_processes) {
