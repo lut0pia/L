@@ -116,6 +116,13 @@ set_target_properties(
   OUTPUT_NAME_RELEASE L
 )
 
+# Engine settings
+
+option(L_USE_DEBUG_ALLOC "Use system page allocator to track memory issues (expect disastrous performance)" OFF)
+option(L_USE_MALLOC "Use malloc/free instead of custom allocator" OFF)
+target_compile_definitions(core PRIVATE L_USE_DEBUG_ALLOC=$<BOOL:${L_USE_DEBUG_ALLOC}>)
+target_compile_definitions(core PRIVATE L_USE_MALLOC=$<BOOL:${L_USE_MALLOC}>)
+
 # Modules - function
 
 set(MODULE_LIST "")

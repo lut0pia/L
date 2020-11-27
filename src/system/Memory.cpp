@@ -7,11 +7,27 @@
 
 using namespace L;
 
-#ifndef L_USE_MALLOC
-# define L_USE_MALLOC 0
-#endif
-
-#if L_USE_MALLOC
+#if L_USE_DEBUG_ALLOC
+void* Memory::alloc(size_t size) {
+  void* ptr = virtual_alloc(size);
+  L_ASSERT(ptr != nullptr);
+  return ptr;
+}
+void* Memory::alloc_zero(size_t size) {
+  void* ptr = alloc(size);
+  memset(ptr, 0, size);
+  return ptr;
+}
+void* Memory::realloc(void* oldptr, size_t oldsize, size_t newsize) {
+  void* ptr = alloc(newsize);
+  memcpy(ptr, oldptr, oldsize);
+  free(oldptr, oldsize);
+  return ptr;
+}
+void Memory::free(void* ptr, size_t size) {
+  virtual_free(ptr, size);
+}
+#elif L_USE_MALLOC
 void* Memory::alloc(size_t size) { return malloc(size); }
 void* Memory::alloc_zero(size_t size) { return ::calloc(size, 1); }
 void* Memory::realloc(void* ptr, size_t, size_t newsize) { return ::realloc(ptr, newsize); }
