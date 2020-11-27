@@ -37,7 +37,7 @@ namespace L {
       uint32_t descriptor_hash() const;
     };
     struct DescSetPairing {
-      const class Camera* camera;
+      Handle<class Camera> camera;
       PipelineImpl* pipeline;
       DescriptorSetImpl* desc_set;
       Time last_framebuffer_update;

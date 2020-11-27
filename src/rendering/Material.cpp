@@ -93,7 +93,7 @@ uint32_t Material::chain_hash() const {
 DescriptorSetImpl* Material::descriptor_set(const Camera& camera, const Pipeline& pipeline) {
   DescSetPairing* working_pairing = nullptr;
   for(DescSetPairing& pairing : _desc_set_pairings) {
-    if(pairing.camera == &camera) {
+    if(pairing.camera == camera.handle()) {
       working_pairing = &pairing;
       break;
     }
@@ -104,7 +104,7 @@ DescriptorSetImpl* Material::descriptor_set(const Camera& camera, const Pipeline
 
       _desc_set_pairings.push();
       working_pairing = &_desc_set_pairings.back();
-      working_pairing->camera = &camera;
+      working_pairing->camera = camera.handle();
       working_pairing->pipeline = pipeline.get_impl();
       working_pairing->last_framebuffer_update = 0;
       working_pairing->desc_set = Renderer::get()->create_descriptor_set(pipeline.get_impl());
