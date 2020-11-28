@@ -7,9 +7,10 @@ addons:
     packages:
     # Core
       - build-essential
-      - libvulkan-dev
     # Modules
       - libasound2-dev
+      - libgl1-mesa-dev
+      - libvulkan-dev
       - libxi-dev
 
 install:
