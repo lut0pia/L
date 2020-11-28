@@ -59,6 +59,7 @@ protected:
 #undef L_GL_FUNC
   GLuint _dummy_vao;
   void* _hdc;
+  uint32_t _glsl_version;
 public:
   virtual void init(const char* wmid, uintptr_t data1, uintptr_t data2) override;
   virtual void recreate_swapchain() override;

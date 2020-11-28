@@ -34,7 +34,7 @@ ShaderImpl* OpenGLRenderer::create_shader(L::ShaderStage stage, const void* bina
   // Modify options.
   spvc_compiler_options options = nullptr;
   spvc_compiler_create_compiler_options(compiler_glsl, &options);
-  spvc_compiler_options_set_uint(options, SPVC_COMPILER_OPTION_GLSL_VERSION, 450);
+  spvc_compiler_options_set_uint(options, SPVC_COMPILER_OPTION_GLSL_VERSION, _glsl_version);
   spvc_compiler_options_set_bool(options, SPVC_COMPILER_OPTION_GLSL_ES, SPVC_FALSE);
   spvc_compiler_options_set_bool(options, SPVC_COMPILER_OPTION_GLSL_EMIT_PUSH_CONSTANT_AS_UNIFORM_BUFFER, SPVC_TRUE);
   spvc_compiler_options_set_bool(options, SPVC_COMPILER_OPTION_FIXUP_DEPTH_CONVENTION, SPVC_TRUE);

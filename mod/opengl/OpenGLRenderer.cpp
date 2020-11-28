@@ -98,6 +98,13 @@ void OpenGLRenderer::init(const char*, uintptr_t, uintptr_t data2) {
       extensions.push((const char*)glGetStringi(GL_EXTENSIONS, i));
   }
 
+  { // Detect GLSL version
+    const char* shader_version = (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
+    _glsl_version =
+      (shader_version[0] - '0') * 100 +
+      (shader_version[2] - '0') * 10;
+  }
+
 #define L_GL_STATIC_FUNC(type,name) static type name(type(load_function(#name)))
   if(extensions.find(Symbol("GL_ARB_direct_state_access")) == nullptr) {
     L_GL_STATIC_FUNC(PFNGLGENBUFFERSPROC, glGenBuffers);
