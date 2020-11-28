@@ -393,12 +393,14 @@ GLint OpenGLRenderer::to_gl_internal_format(L::RenderFormat format) {
 bool OpenGLRenderer::to_gl_normalized(L::RenderFormat format) {
   switch(format) {
     case RenderFormat::R8G8B8A8_UNorm: return true;
+    default: return false;
   }
   return false;
 }
 bool OpenGLRenderer::to_gl_integer(L::RenderFormat format) {
   switch(format) {
     case RenderFormat::R16G16B16A16_UInt: return true;
+    default: return false;
   }
   return false;
 }
@@ -434,15 +436,17 @@ GLuint OpenGLRenderer::to_gl_polygon_mode(L::PolygonMode polygon_mode) {
 }
 GLuint OpenGLRenderer::to_gl_cull_mode(L::CullMode cull_mode) {
   switch(cull_mode) {
-    case L::CullMode::Front: return GL_FRONT;
-    case L::CullMode::Back: return GL_BACK;
-    case L::CullMode::FrontAndBack: return GL_FRONT_AND_BACK;
-      //default: L::error("opengl: Unknown cull mode");
+    case CullMode::Undefined: return GL_INVALID_ENUM;
+    case CullMode::None: return GL_INVALID_ENUM;
+    case CullMode::Front: return GL_FRONT;
+    case CullMode::Back: return GL_BACK;
+    case CullMode::FrontAndBack: return GL_FRONT_AND_BACK;
   }
   return GL_INVALID_ENUM;
 }
 GLuint OpenGLRenderer::to_gl_blend_src(BlendMode blend_mode) {
   switch(blend_mode) {
+    case BlendMode::Undefined: return GL_INVALID_ENUM;
     case BlendMode::None: return GL_ONE;
     case BlendMode::Mult: return GL_ZERO;
     case BlendMode::Add: return GL_ONE;
@@ -452,6 +456,7 @@ GLuint OpenGLRenderer::to_gl_blend_src(BlendMode blend_mode) {
 }
 GLuint OpenGLRenderer::to_gl_blend_dst(BlendMode blend_mode) {
   switch(blend_mode) {
+    case BlendMode::Undefined: return GL_INVALID_ENUM;
     case BlendMode::None: return GL_ZERO;
     case BlendMode::Mult: return GL_SRC_COLOR;
     case BlendMode::Add: return GL_ONE;
