@@ -27,10 +27,10 @@ static void APIENTRY debug_callback(GLenum, GLenum type, GLuint, GLenum, GLsizei
     warning("opengl: %s", message);
   }
 }
-void OpenGLRenderer::init(const char*, uintptr_t, uintptr_t data2) {
-  // Init surface
-  {
+void OpenGLRenderer::init(const char*, uintptr_t data1, uintptr_t data2) {
+  { // Init surface
 #if L_WINDOWS
+    (void)data1;
     HWND hWnd = (HWND)data2;
     HDC hDC = GetDC(hWnd);
     _hdc = (void*)hDC;
@@ -79,7 +79,12 @@ void OpenGLRenderer::init(const char*, uintptr_t, uintptr_t data2) {
     wglMakeCurrent(hDC, hRC);
     wglDeleteContext(hRCFake);
 #elif L_LINUX
-
+    ::Window win = (::Window)data2;
+    ::Display* dpy = (::Display*)data1;
+    GLint attr[] = {GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, 0};
+    XVisualInfo* vi = glXChooseVisual(dpy, 0, attr);
+    GLXContext glc = glXCreateContext(dpy, vi, nullptr, true);
+    glXMakeCurrent(dpy, win, glc);
 #endif
   }
 
