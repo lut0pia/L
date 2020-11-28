@@ -129,7 +129,6 @@ void OpenGLRenderer::init(const char*, uintptr_t, uintptr_t data2) {
     };
 
     L_GL_STATIC_FUNC(PFNGLGENTEXTURESEXTPROC, glGenTexturesEXT);
-    L_GL_STATIC_FUNC(PFNGLGENERATEMIPMAPPROC, glGenerateMipmap);
     glCreateTextures = [](GLenum target, GLsizei n, GLuint* textures) {
       glGenTexturesEXT(n, textures);
       for(uintptr_t i = 0; i < n; i++) {
