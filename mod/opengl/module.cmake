@@ -1,3 +1,4 @@
+set(OpenGL_GL_PREFERENCE GLVND)
 find_package(OpenGL)
 if(NOT OpenGL_OpenGL_FOUND)
   return()
