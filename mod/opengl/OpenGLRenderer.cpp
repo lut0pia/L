@@ -397,14 +397,12 @@ bool OpenGLRenderer::to_gl_normalized(L::RenderFormat format) {
     case RenderFormat::R8G8B8A8_UNorm: return true;
     default: return false;
   }
-  return false;
 }
 bool OpenGLRenderer::to_gl_integer(L::RenderFormat format) {
   switch(format) {
     case RenderFormat::R16G16B16A16_UInt: return true;
     default: return false;
   }
-  return false;
 }
 GLuint OpenGLRenderer::to_gl_shader_stage(L::ShaderStage stage) {
   switch(stage) {
