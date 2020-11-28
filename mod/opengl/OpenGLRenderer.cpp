@@ -4,6 +4,7 @@
 #include "wglext.h"
 #elif L_LINUX
 #include <GL/glx.h>
+#undef None
 #endif
 
 #include <L/src/dev/debug.h>
