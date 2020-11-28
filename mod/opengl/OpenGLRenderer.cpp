@@ -16,7 +16,7 @@
 using namespace L;
 
 // Define GL functions
-#define L_GL_FUNC(type,name) type name;
+#define L_GL_FUNC(type,name) type OpenGLRenderer::name;
 #include "gl_functions.def"
 #undef L_GL_FUNC
 

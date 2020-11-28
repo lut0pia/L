@@ -13,11 +13,6 @@
 #include <L/src/rendering/Renderer.h>
 #include <L/src/rendering/Shader.h>
 
-// Declare GL functions
-#define L_GL_FUNC(type,name) extern type name;
-#include "gl_functions.def"
-#undef L_GL_FUNC
-
 struct OpenGLDescriptorSet : public L::DescriptorSetImpl {
   struct OpenGLUniformBuffer* constants = nullptr;
   L::Table<L::ShaderBinding, struct OpenGLTexture*> textures;
@@ -58,6 +53,10 @@ struct OpenGLUniformBuffer : public L::UniformBufferImpl {
 
 class OpenGLRenderer : public L::Renderer {
 protected:
+// Declare GL functions
+#define L_GL_FUNC(type,name) static type name;
+#include "gl_functions.def"
+#undef L_GL_FUNC
   GLuint _dummy_vao;
   void* _hdc;
 public:
