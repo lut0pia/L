@@ -4,7 +4,7 @@
 #include <Windows.h>
 #endif
 
-#include <GL/GL.h>
+#include <GL/gl.h>
 #include "glext.h"
 
 #include <L/src/container/Array.h>
