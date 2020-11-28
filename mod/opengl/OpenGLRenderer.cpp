@@ -2,6 +2,8 @@
 
 #if L_WINDOWS
 #include "wglext.h"
+#elif L_LINUX
+#include <GL/glx.h>
 #endif
 
 #include <L/src/dev/debug.h>
