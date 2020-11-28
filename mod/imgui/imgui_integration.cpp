@@ -96,7 +96,7 @@ static void imgui_update() {
     }
 
     // Offset all indices since we are using a single vertex buffer
-    for(uintptr_t j = 0; j < draw_list->IdxBuffer.Size; j++) {
+    for(int j = 0; j < draw_list->IdxBuffer.Size; j++) {
       draw_list->IdxBuffer.Data[j] += ImDrawIdx(global_vtx_offset);
     }
 
