@@ -24,13 +24,16 @@ FramebufferImpl* OpenGLRenderer::create_framebuffer(uint32_t width, uint32_t hei
 
   glNamedFramebufferDrawBuffers(framebuffer->id, color_attachment - GL_COLOR_ATTACHMENT0, attachments);
 
-  L_ASSERT(glCheckNamedFramebufferStatus(framebuffer->id, GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
+  GLenum framebuffer_status = glCheckNamedFramebufferStatus(framebuffer->id, GL_FRAMEBUFFER);
+  if(framebuffer_status != GL_FRAMEBUFFER_COMPLETE) {
+    error("opengl: Incomplete framebuffer: %d", framebuffer_status);
+  }
 
   return framebuffer;
 }
 void OpenGLRenderer::destroy_framebuffer(L::FramebufferImpl* framebuffer) {
   L_SCOPE_THREAD_MASK(1);
-  
+
   OpenGLFramebuffer* gl_framebuffer = (OpenGLFramebuffer*)framebuffer;
 
   for(OpenGLTexture* texture : gl_framebuffer->textures) {
