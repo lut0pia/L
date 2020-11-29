@@ -58,19 +58,18 @@ void OpenGLRenderer::init(const char*, uintptr_t data1, uintptr_t data2) {
     HGLRC hRCFake = wglCreateContext(hDC);
     wglMakeCurrent(hDC, hRCFake);
 
-    int context_attributes[] =
-    {
+    int context_attributes[] = {
       WGL_CONTEXT_MAJOR_VERSION_ARB, 3,
       WGL_CONTEXT_MINOR_VERSION_ARB, 0,
-#ifdef L_DBG
+#if L_DBG
       WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_DEBUG_BIT_ARB,
 #endif
       WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
       0 // End of attributes list
     };
 
-    static PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB(
-      PFNWGLCREATECONTEXTATTRIBSARBPROC(wglGetProcAddress("wglCreateContextAttribsARB")));
+    PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB =
+      PFNWGLCREATECONTEXTATTRIBSARBPROC(wglGetProcAddress("wglCreateContextAttribsARB"));
     HGLRC hRC = wglCreateContextAttribsARB(hDC, 0, context_attributes);
     if(!hRC) {
       error("opengl: wglCreateContextAttribsARB failed");
