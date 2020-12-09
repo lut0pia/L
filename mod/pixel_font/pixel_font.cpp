@@ -12,7 +12,8 @@ bool pixel_font_loader(ResourceSlot& slot, Font::Intermediate& intermediate) {
     return false;
   }
 
-  intermediate.line_height = 11.f/9.f;
+  intermediate.line_height = 11.f / 9.f;
+  intermediate.base_line = 7.f / 9.f;
   FontPacker helper(intermediate);
 
 #define O 0xff

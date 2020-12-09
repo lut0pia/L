@@ -21,7 +21,7 @@ namespace L {
     struct Intermediate {
       Texture::Intermediate texture_intermediate;
       Table<uint32_t, Glyph> glyphs;
-      float line_height;
+      float line_height, base_line;
     };
     struct TextMesh {
       Array<Vertex> vertices;
@@ -36,7 +36,7 @@ namespace L {
     Table<uint32_t, Glyph> _glyphs;
     mutable Table<uint32_t, TextMesh> _text_meshes;
     mutable Time _last_update;
-    float _line_height;
+    float _line_height, _base_line;
 
   public:
     Font(const Intermediate&);
@@ -45,6 +45,7 @@ namespace L {
 
     inline const Texture& atlas() const { return _atlas; }
     inline float get_line_height() const { return _line_height; }
+    inline float get_base_line() const { return _base_line; }
 
     friend inline void resource_write(Stream& s, const Intermediate& v) {
       resource_write(s, v.texture_intermediate);

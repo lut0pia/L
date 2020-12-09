@@ -4,7 +4,12 @@
 
 using namespace L;
 
-Font::Font(const Intermediate& intermediate) : _atlas(intermediate.texture_intermediate), _ascii {}, _last_update(0), _line_height(intermediate.line_height) {
+Font::Font(const Intermediate& intermediate) :
+  _atlas(intermediate.texture_intermediate),
+  _ascii {},
+  _last_update(0),
+  _line_height(intermediate.line_height),
+  _base_line(intermediate.base_line) {
   for(const auto& pair : intermediate.glyphs) {
     if(pair.key() < 128) {
       _ascii[pair.key()] = pair.value();
