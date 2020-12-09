@@ -21,7 +21,9 @@ Mesh::Mesh(const Intermediate& intermediate) : Mesh() {
     intermediate.indices.size() / 2);
 }
 Mesh::~Mesh() {
-  Renderer::get()->destroy_mesh(_impl);
+  if(_impl) {
+    Renderer::get()->destroy_mesh(_impl);
+  }
 }
 
 void Mesh::load(size_t count, const void* data, size_t size, const VertexAttribute* attributes, size_t acount, const uint16_t* iarray, size_t icount) {
