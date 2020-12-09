@@ -44,6 +44,7 @@ namespace L {
     const TextMesh& get_text_mesh(const char*) const;
 
     inline const Texture& atlas() const { return _atlas; }
+    inline float get_line_height() const { return _line_height; }
 
     friend inline void resource_write(Stream& s, const Intermediate& v) {
       resource_write(s, v.texture_intermediate);
