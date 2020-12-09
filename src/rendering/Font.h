@@ -41,6 +41,7 @@ namespace L {
   public:
     Font(const Intermediate&);
     const Glyph& get_glyph(uint32_t utf32) const;
+    float get_text_width(const char*) const;
     const TextMesh& get_text_mesh(const char*) const;
 
     inline const Texture& atlas() const { return _atlas; }

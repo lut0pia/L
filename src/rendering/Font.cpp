@@ -26,6 +26,26 @@ const Font::Glyph& Font::get_glyph(uint32_t utf32) const {
   }
   return *glyph;
 }
+float Font::get_text_width(const char* str) const {
+  const uint32_t h = hash(str);
+  if(TextMesh* found = _text_meshes.find(h)) {
+    found->last_used = Time::now();
+    return found->dimensions.x();
+  } else {
+    float x = 0.f, width = 0.f;
+    while(*str) {
+      const uint32_t utf32 = utf8_to_utf32(str);
+      if(utf32 == '\n') { // End line
+        x = 0.f;
+      } else { // Character
+        const Glyph& g = get_glyph(utf32);
+        x += g.advance;
+        width = max(width, x);
+      }
+    }
+    return width;
+  }
+}
 const Font::TextMesh& Font::get_text_mesh(const char* str) const {
   const uint32_t h = hash(str);
   if(TextMesh* found = _text_meshes.find(h)) {
