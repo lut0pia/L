@@ -296,7 +296,7 @@ void Material::draw(const Camera& camera, const RenderPass& render_pass, const M
     if(Resource<Font> font = _final_state.font) {
       const String& text(_final_state.text);
       if(text.size() > 0) {
-        mesh = &font->text_mesh(text).mesh;
+        mesh = &font->get_text_mesh(text).mesh;
       } else {
         return; // Font is loaded but there is not text to draw
       }
@@ -367,7 +367,7 @@ Interval3f Material::bounds() const {
 Vector2f Material::gui_size() const {
   if(Resource<Font> font = _final_state.font) {
     if(_final_state.text.size() > 0) {
-      const Font::TextMesh& text_mesh(font->text_mesh(_final_state.text));
+      const Font::TextMesh& text_mesh(font->get_text_mesh(_final_state.text));
       return text_mesh.dimensions;
     }
   } else if(_pipeline) {

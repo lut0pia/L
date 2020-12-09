@@ -9,6 +9,10 @@
 namespace L {
   class Font {
   public:
+    struct Vertex {
+      Vector2f position;
+      Vector2f texcoord;
+    };
     struct Glyph {
       Vector2f origin, size;
       Interval2f atlas_coords;
@@ -20,6 +24,7 @@ namespace L {
       float line_height;
     };
     struct TextMesh {
+      Array<Vertex> vertices;
       Mesh mesh;
       Vector2f dimensions;
       Time last_used;
@@ -35,8 +40,8 @@ namespace L {
 
   public:
     Font(const Intermediate&);
-    const Glyph& glyph(uint32_t utf32) const;
-    const TextMesh& text_mesh(const char*) const;
+    const Glyph& get_glyph(uint32_t utf32) const;
+    const TextMesh& get_text_mesh(const char*) const;
 
     inline const Texture& atlas() const { return _atlas; }
 
