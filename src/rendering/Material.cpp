@@ -359,6 +359,9 @@ void Material::set_buffer(const Symbol& name, const void* data, size_t size) {
 bool Material::valid_for_render_pass(const class RenderPass& render_pass) const {
   return _pipeline && &_pipeline->render_pass() == &render_pass;
 }
+bool Material::is_text() const {
+  return _final_state.text.size() > 0;
+}
 Interval3f Material::bounds() const {
   if(_final_state.mesh)
     return _final_state.mesh->bounds();

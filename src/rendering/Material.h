@@ -69,6 +69,7 @@ namespace L {
     void set_buffer(const Symbol& name, const void* data, size_t size);
 
     bool valid_for_render_pass(const class RenderPass&) const;
+    bool is_text() const;
     Interval3f bounds() const;
     Vector2f gui_size() const;
 
