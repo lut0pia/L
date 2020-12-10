@@ -32,14 +32,12 @@ ExternalProject_Add(
 ExternalProject_Get_Property(ext_spirv_cross SOURCE_DIR)
 ExternalProject_Get_Property(ext_spirv_cross BINARY_DIR)
 
-file(GLOB OPENGL_SOURCES ${CMAKE_CURRENT_LIST_DIR}/*.cpp)
 add_module(
   opengl
-  SOURCES ${OPENGL_SOURCES}
   INCLUDE_DIRS
-	${CMAKE_CURRENT_LIST_DIR}
-	${OPENGL_INCLUDE_DIR}
-	${SPIRV_CROSS_INSTALL_DIR}/include
+    ${CMAKE_CURRENT_LIST_DIR}
+    ${OPENGL_INCLUDE_DIR}
+    ${SPIRV_CROSS_INSTALL_DIR}/include
   LIBRARIES
     ${OPENGL_gl_LIBRARY}
     ${OPENGL_opengl_LIBRARY}

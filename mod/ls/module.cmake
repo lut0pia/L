@@ -1,6 +1,4 @@
-file(GLOB LS_SOURCES ${CMAKE_CURRENT_LIST_DIR}/*.cpp)
 add_module(
   ls
   CONDITION ${DEV_DBG}
-  SOURCES ${LS_SOURCES}
 )

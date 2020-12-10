@@ -130,7 +130,6 @@ function(add_module NAME)
   set(OPTARGS "")
   set(SINGLEARGS CONDITION)
   set(MULTIARGS
-    SOURCES
     LINK_DIRS INCLUDE_DIRS SYSTEM_INCLUDE_DIRS
     LIBRARIES DBG_LIBRARIES RLS_LIBRARIES
     DEPENDENCIES MOD_DEPENDENCIES
@@ -140,7 +139,12 @@ function(add_module NAME)
     set(M_CONDITION 1) # Always use module if no condition set
   endif()
 
-  add_library(mod_${NAME} ${M_SOURCES})
+  file(GLOB_RECURSE MOD_SOURCES
+    ${CMAKE_CURRENT_LIST_DIR}/*.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/*.inl
+    ${CMAKE_CURRENT_LIST_DIR}/*.h)
+
+  add_library(mod_${NAME} ${MOD_SOURCES})
   set_target_properties(
     mod_${NAME} PROPERTIES
     EXCLUDE_FROM_ALL TRUE

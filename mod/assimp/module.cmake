@@ -1,4 +1,3 @@
-file(GLOB ASSIMP_SOURCES ${CMAKE_CURRENT_LIST_DIR}/*.cpp)
 set(ASSIMP_INSTALL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ext/assimp)
 
 if(MSVC)
@@ -48,7 +47,6 @@ ExternalProject_Get_Property(ext_assimp BINARY_DIR)
 add_module(
   assimp
   CONDITION ${DEV_DBG}
-  SOURCES ${ASSIMP_SOURCES}
   DEPENDENCIES ext_assimp
   INCLUDE_DIRS ${ASSIMP_INSTALL_DIR}/include
   DBG_LIBRARIES ${ASSIMP_DBG_LIBRARIES}

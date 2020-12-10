@@ -27,7 +27,6 @@ ExternalProject_Get_Property(ext_glslang BINARY_DIR)
 add_module(
   glslang
   CONDITION ${DEV_DBG}
-  SOURCES ${CMAKE_CURRENT_LIST_DIR}/glslang.cpp
   DEPENDENCIES ext_glslang
   INCLUDE_DIRS ${GLSLANG_INSTALL_DIR}/include
   DBG_LIBRARIES ${GLSLANG_DBG_LIBRARIES}
