@@ -103,15 +103,6 @@ const Font::TextMesh& Font::get_text_mesh(const char* str) const {
         text_mesh.dimensions.y() = max(text_mesh.dimensions.y(), y + 1.f);
       }
     }
-    {
-      // Go from pixel coordinates to (-1:1) coordinates
-      const float inv_width = 2.f / text_mesh.dimensions.x();
-      const float inv_height = 2.f / text_mesh.dimensions.y();
-      for(Vertex& vertex : text_mesh.vertices) {
-        vertex.position.x() = vertex.position.x() * inv_width - 1.f;
-        vertex.position.y() = vertex.position.y() * inv_height - 1.f;
-      }
-    }
     static const VertexAttribute attributes[] {
       {RenderFormat::R32G32_SFloat, VertexAttributeType::Position},
       {RenderFormat::R32G32_SFloat, VertexAttributeType::TexCoord},

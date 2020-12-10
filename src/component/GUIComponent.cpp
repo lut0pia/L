@@ -19,11 +19,19 @@ void GUIComponent::script_registration() {
 
 void GUIComponent::gui(const Camera& camera) {
   _material.update();
-  if(&camera==_camera && _material.valid_for_render_pass(RenderPass::present_pass())) {
-    const Vector2f dimensions(_material.gui_size()*_scale);
-    const Matrix44f model(translation_matrix(Vector3f(_viewport_anchor.x()*2.f-1.f, _viewport_anchor.y()*2.f-1.f, 0.f))
-      * scale_matrix(Vector3f(dimensions.x()/camera.geometry_buffer().width(), dimensions.y()/camera.geometry_buffer().height(), 0.f))
-      * translation_matrix(Vector3f(-(_anchor.x()*2.f-1.f)+float(_offset.x()*2.f)/dimensions.x(), -(_anchor.y()*2.f-1.f)+float(_offset.y()*2.f)/dimensions.y(), 0.f)));
+  if(&camera == _camera && _material.valid_for_render_pass(RenderPass::present_pass())) {
+    const Vector2f dimensions = _material.gui_size() * _scale;
+    Matrix44f model = translation_matrix(Vector3f(_viewport_anchor.x() * 2.f - 1.f, _viewport_anchor.y() * 2.f - 1.f, 0.f))
+      * scale_matrix(Vector3f(dimensions.x() / camera.geometry_buffer().width(), dimensions.y() / camera.geometry_buffer().height(), 0.f))
+      * translation_matrix(Vector3f(-(_anchor.x() * 2.f - 1.f) + float(_offset.x() * 2.f) / dimensions.x(), -(_anchor.y() * 2.f - 1.f) + float(_offset.y() * 2.f) / dimensions.y(), 0.f));
+
+    if(_material.is_text()) {
+      // This is weird but in case we are drawing text and not a texture, the coordinates of the text are not normalized
+      model = model
+        * translation_matrix(Vector3f(-1.f, -1.f, 0.f))
+        * scale_matrix(Vector3f(2.f * _scale.x() / dimensions.x(), 2.f * _scale.y() / dimensions.y(), 0.f));
+    }
+
     _material.draw(camera, RenderPass::present_pass(), model);
   }
 }
