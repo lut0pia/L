@@ -10,6 +10,7 @@ namespace L {
     void* _data;
     size_t _size;
   public:
+    typedef Buffer Intermediate;
     constexpr Buffer() : _data(nullptr), _size(0) {}
     inline Buffer(const Buffer& other) : _data(nullptr), _size(0) {
       if(other.size() > 0) {
@@ -45,5 +46,7 @@ namespace L {
 
     friend inline Stream& operator<=(Stream& s, const Buffer& v) { s <= v._size; s.write(v._data, v._size); return s; }
     friend inline Stream& operator>=(Stream& s, Buffer& v) { size_t size; s >= size; v.~Buffer(); new(&v)Buffer(size); s.read(v._data, size); return s; }
+    friend inline void resource_write(Stream& s, const Intermediate& v) { s <= v; }
+    friend inline void resource_read(Stream& s, Intermediate& v) { s >= v; }
   };
 }

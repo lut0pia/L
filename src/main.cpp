@@ -41,6 +41,11 @@ int main(int argc, const char* argv[]) {
   init_log_file();
   init_debug_draw();
   Engine::add_parallel_update(ResourceSlot::update);
+  ResourceLoading<Buffer>::add_loader(
+    [](ResourceSlot& slot, Buffer::Intermediate& intermediate) {
+      intermediate = slot.read_source_file();
+      return true;
+    });
 #endif
 
   Date program_mtime;
