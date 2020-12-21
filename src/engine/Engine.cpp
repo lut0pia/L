@@ -47,6 +47,7 @@ void Engine::update() {
   ScriptGlobal("delta") = _delta_seconds;
   ScriptGlobal("avg_frame_work_duration") = _average_frame_work_duration;
   ScriptGlobal("max_frame_work_duration") = _max_frame_work_duration;
+  ScriptGlobal("frame") = float(_frame);
 
   {
     L_SCOPE_MARKER("Parallel updates");
