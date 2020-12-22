@@ -12,7 +12,7 @@
 #include <L/src/rendering/Shader.h>
 
 #define L_VK_EXT_FUNC(name,...) (PFN_##name(vkGetInstanceProcAddr(instance, "vkCreateDebugReportCallbackEXT")))(__VA_ARGS__)
-#define L_VK_CHECKED(...) {VkResult result(__VA_ARGS__);L_ASSERT_MSG(result==VK_SUCCESS,VulkanRenderer::result_str(result));}
+#define L_VK_CHECKED(...) {VkResult result(__VA_ARGS__);if(result!=VK_SUCCESS)error("vulkan: %s:%s",#__VA_ARGS__,VulkanRenderer::result_str(result));}
 
 struct VulkanTexture : public L::TextureImpl {
   VkFormat format;
