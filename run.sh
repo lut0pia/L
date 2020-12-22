@@ -60,6 +60,6 @@ if (cd bld && cmake -DCMAKE_BUILD_TYPE=$config ..) ; then # Run CMake
   fi
 
   exit $success
+else # CMake failure
+  exit 1
 fi
-
-exit $?
