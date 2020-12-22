@@ -163,5 +163,5 @@ namespace L {
   // Instantiate structures
   template <class T> TypeDescription Type<T>::td(Type<T>::make_desc());
 
-  void TypeInit();
+  void init_type();
 }

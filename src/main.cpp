@@ -53,7 +53,7 @@ int main(int argc, const char* argv[]) {
     ResourceSlot::set_program_mtime(program_mtime);
   }
 
-  TypeInit();
+  init_type();
   init_script_standard_functions();
 
   Engine::register_component<Transform>();

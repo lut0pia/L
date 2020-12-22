@@ -12,7 +12,7 @@ using namespace L;
 
 Table<Symbol, const TypeDescription*> L::types;
 
-void L::TypeInit() {
+void L::init_type() {
   // Operators
   Type<int8_t>::canall<>();
   Type<int16_t>::canall<>();
