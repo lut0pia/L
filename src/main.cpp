@@ -30,9 +30,15 @@ void mainjob(void*) {
   while(Window::opened()) {
     Engine::update();
   }
+
+  log("exit: clear engine");
   Engine::clear();
+
+  log("exit: join all tasks");
   TaskSystem::join_all();
+
 #if L_PROFILING
+  log("exit: flush profiling");
   flush_profiling();
 #endif
 }
