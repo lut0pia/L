@@ -38,11 +38,7 @@ ExternalProject_Add(
     -DASSIMP_NO_EXPORT=ON
     -DASSIMP_BUILD_ASSIMP_TOOLS=OFF
     -DASSIMP_BUILD_TESTS=OFF
-  BUILD_COMMAND ${CMAKE_COMMAND} --build . --config $<IF:$<CONFIG:Debug>,Debug,Release>
-  INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install --config $<IF:$<CONFIG:Debug>,Debug,Release>
 )
-ExternalProject_Get_Property(ext_assimp SOURCE_DIR)
-ExternalProject_Get_Property(ext_assimp BINARY_DIR)
 
 add_module(
   assimp

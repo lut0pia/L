@@ -29,11 +29,15 @@ case $config in
   ;;
   "dev")
     exe="Ldev"
-    config=Development
+    config=RelWithDebInfo
   ;;
   "rls")
     exe="L"
     config=Release
+  ;;
+  *)
+    echo "Unknown configuration: $config"
+    exit 1;
   ;;
 esac
 

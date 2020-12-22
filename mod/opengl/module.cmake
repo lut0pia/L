@@ -25,12 +25,8 @@ ExternalProject_Add(
   GIT_REPOSITORY https://github.com/KhronosGroup/SPIRV-Cross.git
   GIT_TAG 8891bd35120ca91c252a66ccfdc3f9a9d03c70cd # 2020-09-17
   GIT_SHALLOW true
-  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${SPIRV_CROSS_INSTALL_DIR} -DCMAKE_BUILD_TYPE=$<IF:$<CONFIG:Debug>,DEBUG,RELEASE>
-  BUILD_COMMAND ${CMAKE_COMMAND} --build . --config $<IF:$<CONFIG:Debug>,Debug,Release>
-  INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install --config $<IF:$<CONFIG:Debug>,Debug,Release>
+  -DCMAKE_INSTALL_PREFIX=${SPIRV_CROSS_INSTALL_DIR}
 )
-ExternalProject_Get_Property(ext_spirv_cross SOURCE_DIR)
-ExternalProject_Get_Property(ext_spirv_cross BINARY_DIR)
 
 add_module(
   opengl

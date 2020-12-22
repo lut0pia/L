@@ -17,12 +17,8 @@ ExternalProject_Add(
   GIT_REPOSITORY https://github.com/KhronosGroup/glslang.git
   GIT_TAG bcf6a2430e99e8fc24f9f266e99316905e6d5134 # v8.13.3743
   GIT_SHALLOW true
-  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${GLSLANG_INSTALL_DIR} -DCMAKE_BUILD_TYPE=$<IF:$<CONFIG:Debug>,DEBUG,RELEASE>
-  BUILD_COMMAND ${CMAKE_COMMAND} --build . --config $<IF:$<CONFIG:Debug>,Debug,Release>
-  INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install --config $<IF:$<CONFIG:Debug>,Debug,Release>
+  -DCMAKE_INSTALL_PREFIX=${GLSLANG_INSTALL_DIR}
 )
-ExternalProject_Get_Property(ext_glslang SOURCE_DIR)
-ExternalProject_Get_Property(ext_glslang BINARY_DIR)
 
 add_module(
   glslang
