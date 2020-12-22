@@ -76,6 +76,7 @@ int main(int argc, const char* argv[]) {
   {
     L_SCOPE_MARKER("Initializing modules");
 #define MOD_USED_1(M) { \
+      log("Initializing module: %s", #M); \
       L_SCOPE_MARKER(#M); \
       extern void M##_module_init(); \
       M##_module_init(); \
