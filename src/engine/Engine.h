@@ -13,7 +13,7 @@ namespace L {
       void* data;
     };
   private:
-    static Array<void(*)()> _parallel_updates, _updates, _late_updates, _sub_updates;
+    static Array<void(*)()> _parallel_updates, _updates, _late_updates, _sub_updates, _shutdowns;
     static Array<void(*)(const class Camera&, const class RenderPass&)> _renders;
     static Array<void(*)(void* frames, uint32_t frame_count)> _audio_renders;
     static Array<void(*)(const class Camera&)> _guis;
@@ -35,6 +35,7 @@ namespace L {
     static inline uint32_t frame() { return _frame; }
 
     static void init();
+    static void shutdown();
     static void update();
     static void clear();
     static void add_deferred_action(const DeferredAction& la) { _deferred_actions.push(la); }
@@ -42,6 +43,7 @@ namespace L {
     static void add_update(void(*update)()) { _updates.push(update); }
     static void add_sub_update(void(*sub_update)()) { _sub_updates.push(sub_update); }
     static void add_late_update(void(*late_update)()) { _late_updates.push(late_update); }
+    static void add_shutdown(void(*shutdown)()) { _shutdowns.push(shutdown); }
     static void add_render(void(*render)(const class Camera&, const class RenderPass&)) { _renders.push(render); }
     static void add_gui(void(*gui)(const class Camera&)) { _guis.push(gui); }
     static void add_window_event(void(*win_event)(const struct Window::Event&)) { _win_events.push((void(*)(const struct Window::Event&))win_event); }

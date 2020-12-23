@@ -34,6 +34,9 @@ void mainjob(void*) {
   log("exit: clear engine");
   Engine::clear();
 
+  log("exit: shutdown engine");
+  Engine::shutdown();
+
   log("exit: join all tasks");
   TaskSystem::join_all();
 

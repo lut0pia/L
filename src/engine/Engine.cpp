@@ -15,7 +15,7 @@
 
 using namespace L;
 
-Array<void(*)()> Engine::_parallel_updates, Engine::_updates, Engine::_sub_updates, Engine::_late_updates;
+Array<void(*)()> Engine::_parallel_updates, Engine::_updates, Engine::_sub_updates, Engine::_late_updates, Engine::_shutdowns;
 Array<void(*)(const Camera&, const RenderPass&)> Engine::_renders;
 Array<void(*)(void* frames, uint32_t frame_count)> Engine::_audio_renders;
 Array<void(*)(const Camera&)> Engine::_guis;
@@ -35,6 +35,11 @@ void Engine::init() {
     ScriptContext().execute(ref<ScriptFunction>(*ini_script));
   } else {
     error("Could not load init script");
+  }
+}
+void Engine::shutdown() {
+  for(const auto& shutdown : _shutdowns) {
+    shutdown();
   }
 }
 void Engine::update() {
