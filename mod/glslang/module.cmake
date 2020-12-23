@@ -17,7 +17,7 @@ ExternalProject_Add(
   GIT_REPOSITORY https://github.com/KhronosGroup/glslang.git
   GIT_TAG bcf6a2430e99e8fc24f9f266e99316905e6d5134 # v8.13.3743
   GIT_SHALLOW true
-  -DCMAKE_INSTALL_PREFIX=${GLSLANG_INSTALL_DIR}
+  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${GLSLANG_INSTALL_DIR}
 )
 
 add_module(
