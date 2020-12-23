@@ -287,4 +287,9 @@ void imgui_module_init() {
       Engine::add_gui(imgui_gui);
       Engine::add_window_event(imgui_window_event);
     }});
+  
+  Engine::add_shutdown(
+    []() {
+      materials.clear();
+    });
 }
