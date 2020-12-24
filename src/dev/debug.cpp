@@ -22,6 +22,7 @@ void L::error(const char* msg, ...) {
   va_list args;
   va_start(args, msg);
   verror(msg, args);
+  va_end(args);
 }
 void L::warning(const char* msg, ...) {
   va_list args;
@@ -37,15 +38,18 @@ void L::log(const char* msg, ...) {
   va_end(args);
 }
 
-void L::verror(const char* msg, va_list args) {
+void L::verror(const char* msg, va_list args1) {
+  va_list args2;
+  va_copy(args2, args1);
+
   fprintf(stderr, "Error: ");
-  vfprintf(stderr, msg, args);
+  vfprintf(stderr, msg, args1);
   fprintf(stderr, "\nCallstack:\n");
   dump_stack(stderr);
 
   if(log_file) {
     fprintf(log_file, "Error: ");
-    vfprintf(log_file, msg, args);
+    vfprintf(log_file, msg, args2);
     fprintf(log_file, "\nCallstack:\n");
     dump_stack(log_file);
     fflush(log_file);
@@ -54,24 +58,30 @@ void L::verror(const char* msg, va_list args) {
   debugbreak();
   exit(0xA55E2737);
 }
-void L::vwarning(const char* msg, va_list args) {
+void L::vwarning(const char* msg, va_list args1) {
+  va_list args2;
+  va_copy(args2, args1);
+
   fprintf(stderr, "Warning: ");
-  vfprintf(stderr, msg, args);
+  vfprintf(stderr, msg, args1);
   putc('\n', stderr);
 
   if(log_file) {
     fprintf(log_file, "Warning: ");
-    vfprintf(log_file, msg, args);
+    vfprintf(log_file, msg, args2);
     putc('\n', log_file);
     fflush(log_file);
   }
 }
-void L::vlog(const char* msg, va_list args) {
-  vfprintf(stdout, msg, args);
+void L::vlog(const char* msg, va_list args1) {
+  va_list args2;
+  va_copy(args2, args1);
+
+  vfprintf(stdout, msg, args1);
   putc('\n', stdout);
 
   if(log_file) {
-    vfprintf(log_file, msg, args);
+    vfprintf(log_file, msg, args2);
     putc('\n', log_file);
   }
 }
