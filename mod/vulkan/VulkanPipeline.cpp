@@ -232,24 +232,10 @@ PipelineImpl* VulkanRenderer::create_pipeline(
 }
 void VulkanRenderer::destroy_pipeline(PipelineImpl* pipeline) {
   VulkanPipeline* vk_pipeline = (VulkanPipeline*)pipeline;
-  vkDestroyPipeline(_device, vk_pipeline->pipeline, nullptr);
-  vkDestroyPipelineLayout(_device, vk_pipeline->layout, nullptr);
-
-  // Destroy all related descriptor sets
-  for(uintptr_t i = 0; i < free_sets.size(); i++) {
-    const FlyingSet& flying_set = free_sets[i];
-    if(flying_set.pipeline == vk_pipeline->pipeline) {
-      vkFreeDescriptorSets(_device, _descriptor_pool, 1, &flying_set.set);
-      free_sets.erase_fast(i);
-    }
-  }
-  for(uintptr_t i = 0; i < used_sets.size(); i++) {
-    const FlyingSet& flying_set = used_sets[i];
-    if(flying_set.pipeline == vk_pipeline->pipeline) {
-      vkFreeDescriptorSets(_device, _descriptor_pool, 1, &flying_set.set);
-      used_sets.erase_fast(i);
-    }
-  }
+  garbage_pipelines.push(FlyingPipeline {
+    vk_pipeline->pipeline,
+    vk_pipeline->layout,
+    });
 
   Memory::delete_type(vk_pipeline);
 }

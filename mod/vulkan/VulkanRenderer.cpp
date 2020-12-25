@@ -483,6 +483,20 @@ void VulkanRenderer::end_render_command_buffer() {
     vkFreeMemory(VulkanRenderer::device(), image.memory, nullptr);
   }
   garbage_images.clear();
+  for(const FlyingPipeline& pipeline : garbage_pipelines) {
+    vkDestroyPipeline(_device, pipeline.pipeline, nullptr);
+    vkDestroyPipelineLayout(_device, pipeline.layout, nullptr);
+    
+    // Destroy all related descriptor sets
+    for(uintptr_t i = 0; i < free_sets.size(); i++) {
+      const FlyingSet& flying_set = free_sets[i];
+      if(flying_set.pipeline == pipeline.pipeline) {
+        vkFreeDescriptorSets(_device, _descriptor_pool, 1, &flying_set.set);
+        free_sets.erase_fast(i);
+      }
+    }
+  }
+  garbage_pipelines.clear();
 }
 void VulkanRenderer::begin_present_pass() {
   VkCommandBuffer cmd_buffer(render_command_buffers[image_index]);

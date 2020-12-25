@@ -86,6 +86,11 @@ protected:
     VkBufferUsageFlagBits usage;
   };
 
+  struct FlyingPipeline {
+    VkPipeline pipeline;
+    VkPipelineLayout layout;
+  };
+
   struct FlyingSet {
     VkDescriptorSet set;
     VkPipeline pipeline;
@@ -98,6 +103,7 @@ protected:
 
   L::Array<FlyingBuffer> used_buffers, free_buffers;
   L::Array<FlyingSet> used_sets, free_sets;
+  L::Array<FlyingPipeline> garbage_pipelines;
   L::Array<VkFramebuffer> garbage_framebuffers;
   L::Array<GarbageImage> garbage_images;
 
