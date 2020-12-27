@@ -60,6 +60,14 @@ namespace L {
       ::new(_p)T(args...);
       return **this;
     }
+    T& make_move(T&& v) {
+      this->~Ref();
+      _p = (T*)((uint8_t*)Memory::alloc(sizeof(T) + offset) + offset);
+      counter() = 1;
+      size() = sizeof(T);
+      ::new(_p)T(std::move(v));
+      return **this;
+    }
     template <class R> inline bool operator==(const Ref<R>& other) { return _p==other._p; }
     inline const T& operator*() const { return *_p; }
     inline T& operator*() { return *_p; }
@@ -74,6 +82,12 @@ namespace L {
   inline Ref<T> ref(Args&&... args) {
     Ref<T> wtr;
     wtr.make(args...);
+    return wtr;
+  }
+  template <class T>
+  inline Ref<T> ref_move(T&& v) {
+    Ref<T> wtr;
+    wtr.make_move(std::move(v));
     return wtr;
   }
   template <class T>
