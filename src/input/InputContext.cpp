@@ -28,6 +28,9 @@ bool InputContext::get_raw_button(Device::Button b) const {
 bool InputContext::get_raw_button_pressed(Device::Button b) const {
   return _buttons[uintptr_t(b)] && !_previous_buttons[uintptr_t(b)];
 }
+bool InputContext::get_raw_button_released(Device::Button b) const {
+  return !_buttons[uintptr_t(b)] && _previous_buttons[uintptr_t(b)];
+}
 float InputContext::get_raw_axis(Device::Axis a) const {
   return _axes[uintptr_t(a)];
 }
@@ -38,6 +41,12 @@ bool InputContext::get_button(const Symbol& name) const {
 bool InputContext::get_button_pressed(const Symbol& name) const {
   if(float* value = _previous_inputs.find(name)) {
     return get_axis(name) > 0.f && *value <= 0.f;
+  }
+  return false;
+}
+bool InputContext::get_button_released(const Symbol& name) const {
+  if(float* value = _previous_inputs.find(name)) {
+    return get_axis(name) <= 0.f && *value > 0.f;
   }
   return false;
 }
@@ -178,8 +187,10 @@ void InputContext::script_registration() {
   L_SCRIPT_METHOD(InputContext, "set_block_mode", 1, set_block_mode(symbol_to_block_mode(c.param(0))));
   L_SCRIPT_RETURN_METHOD(InputContext, "get_raw_button", 1, get_raw_button(Device::symbol_to_button(c.param(0))));
   L_SCRIPT_RETURN_METHOD(InputContext, "get_raw_button_pressed", 1, get_raw_button_pressed(Device::symbol_to_button(c.param(0))));
+  L_SCRIPT_RETURN_METHOD(InputContext, "get_raw_button_released", 1, get_raw_button_released(Device::symbol_to_button(c.param(0))));
   L_SCRIPT_RETURN_METHOD(InputContext, "get_raw_axis", 1, get_raw_axis(Device::symbol_to_axis(c.param(0))));
   L_SCRIPT_RETURN_METHOD(InputContext, "get_button", 1, get_button(c.param(0)));
   L_SCRIPT_RETURN_METHOD(InputContext, "get_button_pressed", 1, get_button_pressed(c.param(0)));
+  L_SCRIPT_RETURN_METHOD(InputContext, "get_button_released", 1, get_button_released(c.param(0)));
   L_SCRIPT_RETURN_METHOD(InputContext, "get_axis", 1, get_axis(c.param(0)));
 }

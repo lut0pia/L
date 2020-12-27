@@ -58,10 +58,12 @@ namespace L {
 
     bool get_raw_button(Device::Button) const;
     bool get_raw_button_pressed(Device::Button) const;
+    bool get_raw_button_released(Device::Button) const;
     float get_raw_axis(Device::Axis) const;
 
     bool get_button(const Symbol&) const;
     bool get_button_pressed(const Symbol&) const;
+    bool get_button_released(const Symbol&) const;
     float get_axis(const Symbol&) const;
 
     static const Array<Handle<InputContext>>& contexts() { return _contexts; }
