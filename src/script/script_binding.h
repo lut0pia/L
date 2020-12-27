@@ -3,7 +3,8 @@
 #include "ScriptContext.h"
 
 #define L_SCRIPT_FUNCTION(NAME, NARGS, ...) \
-  ScriptGlobal(NAME) = (ScriptNativeFunction)([](ScriptContext& c) { \
+  register_script_function(NAME, \
+  [](ScriptContext& c) { \
     if(c.param_count() < NARGS) { \
       c.warning("Too few arguments in function call '%s'", NAME); \
     } \
@@ -11,8 +12,8 @@
   })
 
 #define L_SCRIPT_METHOD_INTERNAL(PREFIX, TYPE, NAME, NARGS, ...) \
-  ScriptContext::type_value(Type<Handle<TYPE>>::description(), Symbol(NAME)) = \
-  (ScriptNativeFunction)([](ScriptContext& c) { \
+  register_script_method<Handle<TYPE>>(NAME, \
+  [](ScriptContext& c) { \
     if(c.param_count() < NARGS) { \
       c.warning("Too few arguments in method call '%s.%s'", #TYPE, NAME); \
     } \
@@ -28,3 +29,13 @@
   })
 #define L_SCRIPT_METHOD(TYPE, NAME, NARGS, ...) L_SCRIPT_METHOD_INTERNAL(, TYPE, NAME, NARGS, __VA_ARGS__)
 #define L_SCRIPT_RETURN_METHOD(TYPE, NAME, NARGS, ...) L_SCRIPT_METHOD_INTERNAL(c.return_value() =, TYPE, NAME, NARGS, __VA_ARGS__)
+
+namespace L {
+  template <class T>
+  inline void register_script_method(const char* name, ScriptNativeFunction func) {
+    ScriptContext::type_value(Type<T>::description(), Symbol(name)) = func;
+  }
+  inline void register_script_function(const char* name, ScriptNativeFunction func) {
+    ScriptGlobal(Symbol(name)) = func;
+  }
+}

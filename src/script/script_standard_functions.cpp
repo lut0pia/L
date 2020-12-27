@@ -7,11 +7,12 @@
 #include "../macros.h"
 #include "../math/geometry.h"
 #include "../math/Rand.h"
+#include "../math/Vector.h"
 #include "../rendering/Color.h"
 #include "../stream/CFileStream.h"
-#include "../math/Vector.h"
 #include "../system/Window.h"
 #include "../time/Time.h"
+#include "script_binding.h"
 
 using namespace L;
 
@@ -34,17 +35,6 @@ static bool check_param_count(ScriptContext& c, uint32_t count) {
       c.return_value() = __VA_ARGS__; \
     } \
   })
-
-#define L_SCRIPT_NATIVE_METHOD(type,name,...) \
-  ScriptContext::type_value(Type<type>::description(), Symbol(name)) = (ScriptNativeFunction)(__VA_ARGS__);
-
-template <class T>
-static void register_script_method(const char* name, ScriptNativeFunction func) {
-  ScriptContext::type_value(Type<T>::description(), Symbol(name)) = func;
-}
-static void register_script_function(const char* name, ScriptNativeFunction func) {
-  ScriptGlobal(Symbol(name)) = func;
-}
 
 void L::init_script_standard_functions() {
   L_SCRIPT_NATIVE_RETURN("rand", 0, Rand::next_float());
