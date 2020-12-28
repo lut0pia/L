@@ -1,0 +1,24 @@
+set(RMLUI_INSTALL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ext/rmlui)
+set(RMLUI_LIBRARIES
+  ${RMLUI_INSTALL_DIR}/lib/RmlControls
+  ${RMLUI_INSTALL_DIR}/lib/RmlCore
+  #${RMLUI_INSTALL_DIR}/lib/RmlDebugger
+)
+
+ExternalProject_Add(
+  ext_rmlui
+  GIT_REPOSITORY https://github.com/mikke89/RmlUi.git
+  GIT_TAG a220824bfc65332568516eb25709ea3a22605b21 # v3.3
+  GIT_SHALLOW true
+  CMAKE_ARGS
+    -DCMAKE_INSTALL_PREFIX=${RMLUI_INSTALL_DIR}
+    -DBUILD_SHARED_LIBS=OFF
+    -DNO_FONT_INTERFACE_DEFAULT=ON
+)
+
+add_module(
+  rmlui
+  DEPENDENCIES ext_rmlui
+  INCLUDE_DIRS ${RMLUI_INSTALL_DIR}/include
+  LIBRARIES ${RMLUI_LIBRARIES}
+)
