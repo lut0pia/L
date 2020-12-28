@@ -22,11 +22,14 @@ using namespace L;
 
 static Array<Symbol> extensions;
 
+#if !L_RLS
 static void APIENTRY debug_callback(GLenum, GLenum type, GLuint, GLenum, GLsizei, const char* message, const void*) {
   if(type != GL_DEBUG_TYPE_PERFORMANCE && type != GL_DEBUG_TYPE_OTHER) {
     warning("opengl: %s", message);
   }
 }
+#endif
+
 void OpenGLRenderer::init(const char*, uintptr_t data1, uintptr_t data2) {
   { // Init surface
 #if L_WINDOWS
