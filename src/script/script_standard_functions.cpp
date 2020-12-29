@@ -127,6 +127,10 @@ void L::init_script_standard_functions() {
     }
   });
 
+  { // Function
+    Type<Ref<ScriptFunction>>::cancmp();
+  }
+
   { // Array
     Type<Ref<Array<Var>>>::cancmp<>();
     Type<Ref<Array<Var>>>::addcast<bool>([](void* dst, const void*) {new(dst)bool(true); });
