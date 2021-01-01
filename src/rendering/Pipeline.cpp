@@ -121,9 +121,9 @@ bool Pipeline::set_descriptor(const Symbol& name, DescriptorSetImpl* desc_set, c
     return false;
   }
 }
-bool Pipeline::set_descriptor(const Symbol& name, DescriptorSetImpl* desc_set, const Framebuffer& framebuffer, int32_t texture_index) const {
+bool Pipeline::set_descriptor(const Symbol& name, DescriptorSetImpl* desc_set, FramebufferImpl* framebuffer, int32_t texture_index) const {
   if(const ShaderBinding* binding = find_binding(name)) {
-    Renderer::get()->update_descriptor_set(desc_set, *binding, framebuffer.get_impl(), texture_index);
+    Renderer::get()->update_descriptor_set(desc_set, *binding, framebuffer, texture_index);
     return true;
   } else {
     return false;

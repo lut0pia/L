@@ -2,28 +2,30 @@
 
 using namespace L;
 
-RenderPassImpl* VulkanRenderer::create_render_pass(const RenderFormat* formats, size_t format_count, bool present) {
+RenderPassImpl* VulkanRenderer::create_render_pass(const RenderFormat* formats, size_t format_count, bool present, bool depth_write) {
   Array<VkAttachmentReference> attachment_references;
   Array<VkAttachmentDescription> attachment_descriptions;
   bool has_depth = false;
 
   for(uintptr_t i = 0; i < format_count; i++) {
+    const bool is_depth = is_depth_format(formats[i]);
+    const bool should_clear = !is_depth || depth_write;
     VkAttachmentDescription attachment_desc {};
     attachment_desc.format = to_vk_format(formats[i]);
     attachment_desc.samples = VK_SAMPLE_COUNT_1_BIT;
-    attachment_desc.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-    attachment_desc.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+    attachment_desc.loadOp = should_clear ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD;
+    attachment_desc.storeOp = should_clear ? VK_ATTACHMENT_STORE_OP_STORE : VK_ATTACHMENT_STORE_OP_DONT_CARE;
     attachment_desc.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
     attachment_desc.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-    attachment_desc.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    attachment_desc.initialLayout = should_clear ? VK_IMAGE_LAYOUT_UNDEFINED : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
     VkAttachmentReference attachment_ref {};
     attachment_ref.attachment = uint32_t(i);
 
-    if(Renderer::is_depth_format(formats[i])) {
+    if(is_depth) {
       L_ASSERT(i==format_count-1);
       attachment_desc.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-      attachment_ref.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+      attachment_ref.layout = depth_write ? VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL : VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
       has_depth = true;
     } else {
       attachment_desc.finalLayout = present ? VK_IMAGE_LAYOUT_PRESENT_SRC_KHR : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;

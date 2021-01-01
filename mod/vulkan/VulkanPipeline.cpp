@@ -159,7 +159,7 @@ PipelineImpl* VulkanRenderer::create_pipeline(
   VkPipelineDepthStencilStateCreateInfo depth_stencil {};
   depth_stencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
   depth_stencil.depthTestEnable = VK_TRUE;
-  depth_stencil.depthWriteEnable = VK_TRUE;
+  depth_stencil.depthWriteEnable = &render_pass != &RenderPass::light_pass();
   depth_stencil.depthCompareOp = to_vk_depth_func(depth_func);
 
   VkPipelineColorBlendAttachmentState color_blend_attachment = {};

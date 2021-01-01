@@ -115,23 +115,23 @@ void Engine::update() {
     ComponentPool<Camera>::iterate([&](Camera& camera) {
       camera.prerender(cmd_buffer);
       CullVolume::cull(camera);
-      camera.geometry_buffer().begin(cmd_buffer);
+      Renderer::get()->begin_framebuffer(camera.geometry_buffer(), cmd_buffer);
       for(auto render : _renders)
-        render(camera, camera.geometry_buffer().render_pass());
-      camera.geometry_buffer().end(cmd_buffer);
+        render(camera, RenderPass::geometry_pass());
+      Renderer::get()->end_framebuffer(camera.geometry_buffer(), cmd_buffer);
 
-      camera.light_buffer().begin(cmd_buffer);
+      Renderer::get()->begin_framebuffer(camera.light_buffer(), cmd_buffer);
       for(auto render : _renders)
-        render(camera, camera.light_buffer().render_pass());
+        render(camera, RenderPass::light_pass());
 
       if(Entity* cam_entity = camera.entity()) {
         Array<PostProcessComponent*> post_processes;
         cam_entity->components(post_processes);
         for(PostProcessComponent* post_process : post_processes) {
-          post_process->render(camera, camera.light_buffer().render_pass());
+          post_process->render(camera, RenderPass::light_pass());
         }
       }
-      camera.light_buffer().end(cmd_buffer);
+      Renderer::get()->end_framebuffer(camera.light_buffer(), cmd_buffer);
     });
     Renderer::get()->begin_present_pass();
     ComponentPool<Camera>::iterate([](Camera& camera) {

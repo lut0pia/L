@@ -2,7 +2,7 @@
 
 using namespace L;
 
-RenderPass::RenderPass(const Array<RenderFormat>& formats, bool present) : _formats(formats) {
+RenderPass::RenderPass(const Array<RenderFormat>& formats, bool present, bool depth_write) : _formats(formats) {
   const size_t format_count(formats.size());
   _has_depth = false;
   for(uintptr_t i = 0; i < format_count; i++) {
@@ -12,7 +12,7 @@ RenderPass::RenderPass(const Array<RenderFormat>& formats, bool present) : _form
     }
   }
 
-  _impl = Renderer::get()->create_render_pass(formats.begin(), formats.size(), present);
+  _impl = Renderer::get()->create_render_pass(formats.begin(), formats.size(), present, depth_write);
 }
 RenderPass::~RenderPass() {
   Renderer::get()->destroy_render_pass(_impl);
@@ -23,12 +23,13 @@ const RenderPass& RenderPass::geometry_pass() {
     RenderFormat::R8G8B8A8_UNorm, // Color+Metal
       RenderFormat::R16G16B16A16_UNorm, // Normal+Roughness+Emission
       RenderFormat::D24_UNorm_S8_UInt, // Depth
-  });
+  }, false, true);
   return render_pass;
 }
 const RenderPass& RenderPass::light_pass() {
   static RenderPass render_pass(Array<RenderFormat> {
     RenderFormat::R16G16B16A16_SFloat, // Light
+      RenderFormat::D24_UNorm_S8_UInt, // Depth
   });
   return render_pass;
 }

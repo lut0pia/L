@@ -13,11 +13,10 @@ static const float& screen_percentage(Settings::get_float("screen-percentage", 1
 
 Camera::Camera() :
   _viewport(Vector2f(0.f, 0.f), Vector2f(1.f, 1.f)),
-  _geometry_buffer(Window::width(), Window::height(), RenderPass::geometry_pass()),
-  _light_buffer(Window::width(), Window::height(), RenderPass::light_pass()),
   _framebuffer_mtime(Time::now()),
   _shared_uniform(L_SHAREDUNIFORM_SIZE) {
   update_viewport();
+  resize_buffers();
 }
 
 void Camera::update_components() {
@@ -36,11 +35,48 @@ void Camera::script_registration() {
 }
 
 void Camera::resize_buffers() {
-  const Vector2f viewport_size(_viewport.size());
-  const uint32_t viewport_width(uint32_t(Window::width() * viewport_size.x() * screen_percentage));
-  const uint32_t viewport_height(uint32_t(Window::height() * viewport_size.y() * screen_percentage));
-  _geometry_buffer.resize(viewport_width, viewport_height);
-  _light_buffer.resize(viewport_width, viewport_height);
+  if(_geometry_buffer) {
+    Renderer::get()->destroy_framebuffer(_geometry_buffer);
+    _geometry_buffer = nullptr;
+  }
+
+  if(_light_buffer) {
+    Renderer::get()->destroy_framebuffer(_light_buffer);
+    _light_buffer = nullptr;
+  }
+
+  if(_color_texture) {
+    Renderer::get()->destroy_texture(_color_texture);
+    _color_texture = nullptr;
+  }
+
+  if(_normal_texture) {
+    Renderer::get()->destroy_texture(_normal_texture);
+    _normal_texture = nullptr;
+  }
+
+  if(_light_texture) {
+    Renderer::get()->destroy_texture(_light_texture);
+    _light_texture = nullptr;
+  }
+
+  if(_depth_texture) {
+    Renderer::get()->destroy_texture(_depth_texture);
+    _depth_texture = nullptr;
+  }
+
+  const Vector2f viewport_size = _viewport.size();
+  const uint32_t viewport_width = uint32_t(Window::width() * viewport_size.x() * screen_percentage);
+  const uint32_t viewport_height = uint32_t(Window::height() * viewport_size.y() * screen_percentage);
+  _color_texture = Renderer::get()->create_texture(viewport_width, viewport_height, RenderPass::geometry_pass().formats()[0]);
+  _normal_texture = Renderer::get()->create_texture(viewport_width, viewport_height, RenderPass::geometry_pass().formats()[1]);
+  _light_texture = Renderer::get()->create_texture(viewport_width, viewport_height, RenderPass::light_pass().formats()[0]);
+  _depth_texture = Renderer::get()->create_texture(viewport_width, viewport_height, RenderPass::geometry_pass().formats()[2]);
+
+  const TextureImpl* geometry_textures[] = {_color_texture, _normal_texture, _depth_texture};
+  const TextureImpl* light_textures[] = {_light_texture, _depth_texture};
+  _geometry_buffer = Renderer::get()->create_framebuffer(RenderPass::geometry_pass().get_impl(), geometry_textures, 3);
+  _light_buffer = Renderer::get()->create_framebuffer(RenderPass::light_pass().get_impl(), light_textures, 2);
   _framebuffer_mtime = Time::now();
 }
 void Camera::event(const Window::Event& e) {
@@ -54,6 +90,10 @@ void Camera::prerender(RenderCommandBuffer* cmd_buffer) {
   L_SCOPE_MARKER("Camera::prerender");
   static const Matrix44f cam_nz2y = orientation_matrix(Vector3f(1.f, 0.f, 0.f), Vector3f(0.f, 0.f, 1.f), Vector3f(0.f, -1.f, 0.f)).transpose();
   const Matrix44f orientation = orientation_matrix(_transform->right(), _transform->forward(), _transform->up());
+  const Vector2f viewport_size = _viewport.size();
+  const uint32_t viewport_width = uint32_t(Window::width() * viewport_size.x() * screen_percentage);
+  const uint32_t viewport_height = uint32_t(Window::height() * viewport_size.y() * screen_percentage);
+
   _view = cam_nz2y * _transform->matrix().inverse();
   _prev_view_projection = _view_projection;
   _view_projection = _projection * _view;
@@ -66,13 +106,13 @@ void Camera::prerender(RenderCommandBuffer* cmd_buffer) {
   _shared_uniform.load_item(_view_projection.inverse(), L_SHAREDUNIFORM_INVVIEWPROJ);
   _shared_uniform.load_item(_prev_view_projection, L_SHAREDUNIFORM_PREVVIEWPROJ);
   _shared_uniform.load_item(_transform->position(), L_SHAREDUNIFORM_EYE);
-  _shared_uniform.load_item(Vector4f(float(Window::width()), float(Window::height()), float(_geometry_buffer.width()), float(_geometry_buffer.height())), L_SHAREDUNIFORM_SCREEN);
+  _shared_uniform.load_item(Vector4f(float(Window::width()), float(Window::height()), float(viewport_width), float(viewport_height)), L_SHAREDUNIFORM_SCREEN);
   _shared_uniform.load_item(Vector4f(_viewport.min().x(), _viewport.min().y(), _viewport.max().x(), _viewport.max().y()), L_SHAREDUNIFORM_VIEWPORT);
-  _shared_uniform.load_item(Vector4f(float(_geometry_buffer.width()), float(_geometry_buffer.height()), 1.f / _geometry_buffer.width(), 1.f / _geometry_buffer.height()), L_SHAREDUNIFORM_VIEWPORT_PIXEL_SIZE);
+  _shared_uniform.load_item(Vector4f(float(viewport_width), float(viewport_height), 1.f / viewport_width, 1.f / viewport_height), L_SHAREDUNIFORM_VIEWPORT_PIXEL_SIZE);
 
   _cmd_buffer = cmd_buffer;
 
-  Renderer::get()->set_viewport(cmd_buffer, Interval2i(0, Vector2i(_geometry_buffer.width(), _geometry_buffer.height())));
+  Renderer::get()->set_viewport(cmd_buffer, Interval2i(0, Vector2i(viewport_width, viewport_height)));
 
   Renderer::get()->reset_scissor(cmd_buffer);
 

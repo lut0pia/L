@@ -36,6 +36,9 @@ void VulkanRenderer::destroy_descriptor_set(DescriptorSetImpl* desc_set, Pipelin
 void VulkanRenderer::update_descriptor_set(DescriptorSetImpl* desc_set, const ShaderBinding& binding, TextureImpl* texture) {
   VulkanTexture* vk_texture = (VulkanTexture*)texture;
   VkDescriptorImageInfo image_info {_sampler, vk_texture->view, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
+  if(vk_texture->is_depth) {
+    image_info.imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
+  }
   VkWriteDescriptorSet desc_write {};
   desc_write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
   desc_write.dstSet = (VkDescriptorSet)desc_set;

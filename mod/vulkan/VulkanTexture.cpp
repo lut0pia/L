@@ -72,6 +72,9 @@ TextureImpl* VulkanRenderer::create_texture(uint32_t width, uint32_t height, L::
   const bool cubemap(width*6==height);
 
   VulkanTexture* tex = Memory::new_type<VulkanTexture>();
+  tex->width = width;
+  tex->height = height;
+  tex->is_depth = depth_texture;
 
   VkImageCreateInfo image_info = {};
   image_info.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;

@@ -2,6 +2,7 @@
 (self.shader 'vertex "shader/color.vert")
 (self.mesh "mesh/sphere.ls?fmt=pn")
 (self.cull_mode 'front)
+(self.depth_func 'greater)
 (self.render_pass 'light)
 (self.scalar 'intensity 1)
 (self.vector 'color "white")

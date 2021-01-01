@@ -12,7 +12,7 @@ namespace L {
     RenderPassImpl* _impl;
     bool _has_depth;
   public:
-    RenderPass(const Array<RenderFormat>& formats, bool present = false);
+    RenderPass(const Array<RenderFormat>& formats, bool present = false, bool depth_write = false);
     ~RenderPass();
 
     inline RenderPassImpl* get_impl() const { return _impl; }

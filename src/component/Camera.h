@@ -3,7 +3,6 @@
 #include "Transform.h"
 #include "../engine/Resource.h"
 #include "../rendering/UniformBuffer.h"
-#include "../rendering/Framebuffer.h"
 #include "../rendering/Material.h"
 #include "../math/Interval.h"
 #include "../time/Time.h"
@@ -21,8 +20,13 @@ namespace L {
     } _projection_type;
     float _fovy, _near, _far, _left, _right, _bottom, _top;
     Material _present_material;
-    RenderCommandBuffer* _cmd_buffer;
-    Framebuffer _geometry_buffer, _light_buffer;
+    RenderCommandBuffer* _cmd_buffer = nullptr;
+    TextureImpl* _color_texture = nullptr;
+    TextureImpl* _normal_texture = nullptr;
+    TextureImpl* _depth_texture = nullptr;
+    TextureImpl* _light_texture = nullptr;
+    FramebufferImpl* _geometry_buffer = nullptr;
+    FramebufferImpl* _light_buffer = nullptr;
     Time _framebuffer_mtime;
     UniformBuffer _shared_uniform;
   public:
@@ -57,10 +61,8 @@ namespace L {
     inline const Matrix44f& projection() const { return _projection; }
     inline const Matrix44f& view_projection() const { return _view_projection; }
     inline Material& present_material() { return _present_material; }
-    inline Framebuffer& geometry_buffer() { return _geometry_buffer; }
-    inline const Framebuffer& geometry_buffer() const { return _geometry_buffer; }
-    inline Framebuffer& light_buffer() { return _light_buffer; }
-    inline const Framebuffer& light_buffer() const { return _light_buffer; }
+    inline FramebufferImpl* geometry_buffer() const { return _geometry_buffer; }
+    inline FramebufferImpl* light_buffer() const { return _light_buffer; }
     inline const UniformBuffer& shared_uniform() const { return _shared_uniform; }
     inline RenderCommandBuffer* cmd_buffer() const { return _cmd_buffer; }
     inline Time framebuffer_mtime() const { return _framebuffer_mtime; }

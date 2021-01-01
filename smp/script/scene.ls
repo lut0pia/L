@@ -30,7 +30,7 @@
   (light.material|.parent "material/pointlight.ls")
   (light.material|.color 'color color)
   (light.material|.scalar 'intensity 4)
-  (light.scale 32)
+  (light.scale 8)
 )))
 
 (local make_static_box (fun position size (do

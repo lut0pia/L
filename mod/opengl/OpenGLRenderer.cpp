@@ -273,7 +273,7 @@ void OpenGLRenderer::end_render_command_buffer() {
 
 }
 void OpenGLRenderer::begin_present_pass() {
-
+  glDisable(GL_DEPTH_TEST);
 }
 void OpenGLRenderer::end_present_pass() {
 #if L_WINDOWS

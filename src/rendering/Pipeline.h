@@ -3,7 +3,6 @@
 #include "../container/KeyValue.h"
 #include "../engine/Resource.h"
 #include "../math/Matrix.h"
-#include "Framebuffer.h"
 #include "Mesh.h"
 #include "RenderPass.h"
 #include "Shader.h"
@@ -37,7 +36,7 @@ namespace L {
     bool set_descriptor(int32_t binding, DescriptorSetImpl*, const Texture&) const;
     bool set_descriptor(const Symbol& name, DescriptorSetImpl*, const UniformBuffer&) const;
     bool set_descriptor(const Symbol& name, DescriptorSetImpl*, const Texture&) const;
-    bool set_descriptor(const Symbol& name, DescriptorSetImpl*, const Framebuffer&, int32_t texture_index) const;
+    bool set_descriptor(const Symbol& name, DescriptorSetImpl*, FramebufferImpl*, int32_t texture_index) const;
 
     inline PipelineImpl* get_impl() const { return _impl; }
     inline const Array<ShaderBinding>& bindings() const { return _bindings; }

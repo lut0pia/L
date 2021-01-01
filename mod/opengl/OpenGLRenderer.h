@@ -22,6 +22,8 @@ struct OpenGLDescriptorSet : public L::DescriptorSetImpl {
 struct OpenGLFramebuffer : public L::FramebufferImpl {
   L::Array<struct OpenGLTexture*> textures;
   GLuint id;
+  GLbitfield clear_bitfield = GL_COLOR_BUFFER_BIT;
+  bool depth_mask = true;
   bool has_depth = false;
 };
 
@@ -41,6 +43,10 @@ struct OpenGLPipeline : public L::PipelineImpl {
   L::Array<L::ShaderBinding> bindings;
 };
 
+struct OpenGLRenderPass : public L::RenderPassImpl {
+  bool depth_write = false;
+};
+
 struct OpenGLTexture : public L::TextureImpl {
   GLuint id;
   GLenum target;
@@ -54,7 +60,7 @@ struct OpenGLUniformBuffer : public L::UniformBufferImpl {
 
 class OpenGLRenderer : public L::Renderer {
 protected:
-// Declare GL functions
+  // Declare GL functions
 #define L_GL_FUNC(type,name) static type name;
 #include "gl_functions.def"
 #undef L_GL_FUNC
@@ -85,7 +91,7 @@ public:
   virtual void set_viewport(L::RenderCommandBuffer*, const L::Interval2i&) override;
   virtual void reset_viewport(L::RenderCommandBuffer*) override;
 
-  virtual L::FramebufferImpl* create_framebuffer(uint32_t width, uint32_t height, const L::RenderPass& render_pass) override;
+  virtual L::FramebufferImpl* create_framebuffer(const L::RenderPassImpl*, const L::TextureImpl** textures, size_t texture_count) override;
   virtual void destroy_framebuffer(L::FramebufferImpl*) override;
   virtual void begin_framebuffer(L::FramebufferImpl*, L::RenderCommandBuffer*) override;
   virtual void end_framebuffer(L::FramebufferImpl*, L::RenderCommandBuffer*) override;
@@ -125,7 +131,7 @@ public:
   virtual L::MeshImpl* create_mesh(size_t count, const void* data, size_t size, const L::VertexAttribute* attributes, size_t attribute_count, const uint16_t* iarray, size_t icount) override;
   virtual void destroy_mesh(L::MeshImpl* mesh) override;
 
-  virtual L::RenderPassImpl* create_render_pass(const L::RenderFormat* formats, size_t format_count, bool present) override;
+  virtual L::RenderPassImpl* create_render_pass(const L::RenderFormat* formats, size_t format_count, bool present, bool depth_write) override;
   virtual void destroy_render_pass(L::RenderPassImpl*) override;
 
   static GLenum to_gl_format(L::RenderFormat);

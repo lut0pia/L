@@ -143,7 +143,7 @@ namespace L {
     virtual void set_viewport(RenderCommandBuffer*, const Interval2i&) = 0;
     virtual void reset_viewport(RenderCommandBuffer*) = 0;
 
-    virtual FramebufferImpl* create_framebuffer(uint32_t width, uint32_t height, const class RenderPass& render_pass) = 0;
+    virtual FramebufferImpl* create_framebuffer(const RenderPassImpl*, const TextureImpl** textures, size_t texture_count) = 0;
     virtual void destroy_framebuffer(FramebufferImpl*) = 0;
     virtual void begin_framebuffer(FramebufferImpl*, RenderCommandBuffer*) = 0;
     virtual void end_framebuffer(FramebufferImpl*, RenderCommandBuffer*) = 0;
@@ -168,7 +168,7 @@ namespace L {
       size_t binding_count,
       const VertexAttribute* vertex_attributes,
       size_t vertex_attribute_count,
-      const RenderPass& render_pass,
+      const class RenderPass& render_pass,
       PolygonMode polygon_mode,
       CullMode cull_mode,
       PrimitiveTopology topology,
@@ -176,14 +176,14 @@ namespace L {
       DepthFunc depth_func) = 0;
     virtual void destroy_pipeline(PipelineImpl*) = 0;
 
-    virtual TextureImpl* create_texture(uint32_t width, uint32_t height, RenderFormat format, const void* data, size_t size) = 0;
+    virtual TextureImpl* create_texture(uint32_t width, uint32_t height, RenderFormat format, const void* data = nullptr, size_t size = 0) = 0;
     virtual void load_texture(TextureImpl* texture, const void* data, size_t size, const Vector3i& offset, const Vector3i& extent) = 0;
     virtual void destroy_texture(TextureImpl* texture) = 0;
 
     virtual MeshImpl* create_mesh(size_t count, const void* data, size_t size, const VertexAttribute* attributes, size_t acount, const uint16_t* iarray, size_t icount) = 0;
     virtual void destroy_mesh(MeshImpl* mesh) = 0;
 
-    virtual RenderPassImpl* create_render_pass(const RenderFormat* formats, size_t format_count, bool present) = 0;
+    virtual RenderPassImpl* create_render_pass(const RenderFormat* formats, size_t format_count, bool present, bool depth_write) = 0;
     virtual void destroy_render_pass(RenderPassImpl*) = 0;
 
     static size_t format_size(RenderFormat);
