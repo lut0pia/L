@@ -1,12 +1,10 @@
 #include "VulkanRenderer.h"
 
-#include <L/src/rendering/RenderPass.h>
-
 using namespace L;
 
 FramebufferImpl* VulkanRenderer::create_framebuffer(const L::RenderPassImpl* render_pass, const L::TextureImpl** textures, size_t texture_count) {
   VulkanFramebuffer* framebuffer = Memory::new_type<VulkanFramebuffer>();
-  framebuffer->render_pass = (VkRenderPass)render_pass;
+  framebuffer->render_pass = ((VulkanRenderPass*)render_pass)->render_pass;
 
   Array<VkImageView> attachment_views;
   for(uintptr_t i = 0; i < texture_count; i++) {

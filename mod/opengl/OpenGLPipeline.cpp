@@ -1,6 +1,5 @@
 #include "OpenGLRenderer.h"
 
-#include <L/src/rendering/RenderPass.h>
 #include <L/src/rendering/Shader.h>
 
 using namespace L;
@@ -12,7 +11,7 @@ PipelineImpl* OpenGLRenderer::create_pipeline(
   size_t binding_count,
   const L::VertexAttribute*,
   size_t,
-  const L::RenderPass&,
+  const L::RenderPassImpl*,
   L::PolygonMode polygon_mode,
   L::CullMode cull_mode,
   L::PrimitiveTopology topology,

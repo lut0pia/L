@@ -16,7 +16,7 @@
 using namespace L;
 
 Array<void(*)()> Engine::_parallel_updates, Engine::_updates, Engine::_sub_updates, Engine::_late_updates, Engine::_shutdowns;
-Array<void(*)(const Camera&, const RenderPass&)> Engine::_renders;
+Array<void(*)(const Camera&, const RenderPassImpl*)> Engine::_renders;
 Array<void(*)(void* frames, uint32_t frame_count)> Engine::_audio_renders;
 Array<void(*)(const Camera&)> Engine::_guis;
 Array<void(*)(const L::Window::Event&)> Engine::_win_events;
@@ -117,18 +117,18 @@ void Engine::update() {
       CullVolume::cull(camera);
       Renderer::get()->begin_framebuffer(camera.geometry_buffer(), cmd_buffer);
       for(auto render : _renders)
-        render(camera, RenderPass::geometry_pass());
+        render(camera, Renderer::get()->get_geometry_pass());
       Renderer::get()->end_framebuffer(camera.geometry_buffer(), cmd_buffer);
 
       Renderer::get()->begin_framebuffer(camera.light_buffer(), cmd_buffer);
       for(auto render : _renders)
-        render(camera, RenderPass::light_pass());
+        render(camera, Renderer::get()->get_light_pass());
 
       if(Entity* cam_entity = camera.entity()) {
         Array<PostProcessComponent*> post_processes;
         cam_entity->components(post_processes);
         for(PostProcessComponent* post_process : post_processes) {
-          post_process->render(camera, RenderPass::light_pass());
+          post_process->render(camera, Renderer::get()->get_light_pass());
         }
       }
       Renderer::get()->end_framebuffer(camera.light_buffer(), cmd_buffer);

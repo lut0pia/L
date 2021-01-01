@@ -147,7 +147,7 @@ static void imgui_update() {
 
 static void imgui_gui(const Camera& cam) {
   for(Material& material : materials) {
-    material.draw(cam, RenderPass::present_pass());
+    material.draw(cam, Renderer::get()->get_present_pass());
   }
 }
 

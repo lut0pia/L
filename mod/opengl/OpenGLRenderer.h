@@ -116,7 +116,7 @@ public:
     size_t binding_count,
     const L::VertexAttribute* vertex_attributes,
     size_t vertex_attribute_count,
-    const L::RenderPass& render_pass,
+    const L::RenderPassImpl* render_pass,
     L::PolygonMode polygon_mode,
     L::CullMode cull_mode,
     L::PrimitiveTopology topology,

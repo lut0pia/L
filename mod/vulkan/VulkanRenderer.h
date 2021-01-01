@@ -42,9 +42,14 @@ struct VulkanPipeline : public L::PipelineImpl {
   VkPipelineLayout layout;
   VkDescriptorSetLayout desc_set_layout;
   L::Array<L::ShaderBinding> bindings;
-  const L::RenderPass* render_pass;
+  const L::RenderPassImpl* render_pass;
 
   const L::ShaderBinding* find_binding(const L::Symbol& name) const;
+};
+
+struct VulkanRenderPass : public L::RenderPassImpl {
+  VkRenderPass render_pass;
+  uint32_t color_attachment_count = 0;
 };
 
 struct VulkanShader : public L::ShaderImpl {
@@ -160,7 +165,7 @@ public:
     size_t binding_count,
     const L::VertexAttribute* vertex_attributes,
     size_t vertex_attribute_count,
-    const L::RenderPass& render_pass,
+    const L::RenderPassImpl* render_pass,
     L::PolygonMode polygon_mode,
     L::CullMode cull_mode,
     L::PrimitiveTopology topology,

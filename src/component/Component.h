@@ -11,7 +11,6 @@
 
 namespace L {
   class Camera;
-  class RenderPass;
   class Component : public GenericHandled {
   protected:
     Handle<Entity> _entity;
@@ -59,7 +58,7 @@ namespace L {
     L_COMPONENT_OVERLOAD(ComponentFlag::SubUpdateAsync, sub_update_all_async)() { ComponentPool<T>::async_iterate([](T& c, uint32_t) { c.sub_update(); }); }
     L_COMPONENT_OVERLOAD(ComponentFlag::LateUpdate, late_update_all)() { ComponentPool<T>::iterate([](T& c) { c.late_update(); }); }
     L_COMPONENT_OVERLOAD(ComponentFlag::LateUpdateAsync, late_update_all_async)() { ComponentPool<T>::async_iterate([](T& c, uint32_t) { c.late_update(); }); }
-    L_COMPONENT_OVERLOAD(ComponentFlag::Render, render_all, const Camera&, const RenderPass&)(const Camera& cam, const RenderPass& rp) { ComponentPool<T>::iterate([&](T& c) { c.render(cam, rp); }); }
+    L_COMPONENT_OVERLOAD(ComponentFlag::Render, render_all, const Camera&, const struct RenderPassImpl*)(const Camera& cam, const struct RenderPassImpl* rp) { ComponentPool<T>::iterate([&](T& c) { c.render(cam, rp); }); }
     L_COMPONENT_OVERLOAD(ComponentFlag::AudioRender, audio_render_all, void*, uint32_t)(void* frames, uint32_t fc) { ComponentPool<T>::iterate([&](T& c) { c.audio_render(frames, fc); }); }
     L_COMPONENT_OVERLOAD(ComponentFlag::GUI, gui_all, const Camera&)(const Camera& cam) { ComponentPool<T>::iterate([&](T& c) { c.gui(cam); }); }
     L_COMPONENT_OVERLOAD(ComponentFlag::WindowEvent, win_event_all, const Window::Event&)(const Window::Event& e) { ComponentPool<T>::iterate([&](T& c) { c.event(e); }); }

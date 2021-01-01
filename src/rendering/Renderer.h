@@ -117,9 +117,16 @@ namespace L {
   class Renderer {
   protected:
     static Renderer* _instance;
+
+    RenderPassImpl* _geometry_pass;
+    RenderPassImpl* _light_pass;
+    RenderPassImpl* _present_pass;
+
   public:
     Renderer();
     virtual ~Renderer() {}
+
+    void init_render_passes();
 
     virtual void init(const char* wmid, uintptr_t data1, uintptr_t data2) = 0;
     virtual void recreate_swapchain() = 0;
@@ -168,7 +175,7 @@ namespace L {
       size_t binding_count,
       const VertexAttribute* vertex_attributes,
       size_t vertex_attribute_count,
-      const class RenderPass& render_pass,
+      const RenderPassImpl* render_pass,
       PolygonMode polygon_mode,
       CullMode cull_mode,
       PrimitiveTopology topology,
@@ -185,6 +192,10 @@ namespace L {
 
     virtual RenderPassImpl* create_render_pass(const RenderFormat* formats, size_t format_count, bool present, bool depth_write) = 0;
     virtual void destroy_render_pass(RenderPassImpl*) = 0;
+
+    inline RenderPassImpl* get_geometry_pass() const { return _geometry_pass; }
+    inline RenderPassImpl* get_light_pass() const { return _light_pass; }
+    inline RenderPassImpl* get_present_pass() const { return _present_pass; }
 
     static size_t format_size(RenderFormat);
     static bool is_depth_format(RenderFormat);

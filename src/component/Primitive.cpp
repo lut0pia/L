@@ -17,7 +17,7 @@ void Primitive::script_registration() {
   Engine::add_late_update(custom_late_update_all);
 }
 
-void Primitive::render(const Camera& camera, const RenderPass& render_pass) {
+void Primitive::render(const Camera& camera, const RenderPassImpl* render_pass) {
   if(_cull_volume.visible() && _material.valid_for_render_pass(render_pass)) {
     _material.draw(camera, render_pass, _transform->matrix()*scale_matrix(_scale));
   }

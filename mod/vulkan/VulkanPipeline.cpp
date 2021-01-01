@@ -1,6 +1,5 @@
 #include "VulkanRenderer.h"
 
-#include <L/src/rendering/RenderPass.h>
 #include <L/src/rendering/Shader.h>
 
 using namespace L;
@@ -19,7 +18,7 @@ PipelineImpl* VulkanRenderer::create_pipeline(
   size_t binding_count,
   const L::VertexAttribute* in_vertex_attributes,
   size_t in_vertex_attribute_count,
-  const L::RenderPass& render_pass,
+  const L::RenderPassImpl* render_pass,
   L::PolygonMode polygon_mode,
   L::CullMode cull_mode,
   L::PrimitiveTopology topology,
@@ -159,7 +158,7 @@ PipelineImpl* VulkanRenderer::create_pipeline(
   VkPipelineDepthStencilStateCreateInfo depth_stencil {};
   depth_stencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
   depth_stencil.depthTestEnable = VK_TRUE;
-  depth_stencil.depthWriteEnable = &render_pass != &RenderPass::light_pass();
+  depth_stencil.depthWriteEnable = render_pass != _light_pass;
   depth_stencil.depthCompareOp = to_vk_depth_func(depth_func);
 
   VkPipelineColorBlendAttachmentState color_blend_attachment = {};
@@ -196,7 +195,7 @@ PipelineImpl* VulkanRenderer::create_pipeline(
   color_blending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
   color_blending.logicOpEnable = VK_FALSE;
   color_blending.logicOp = VK_LOGIC_OP_COPY; // Optional
-  color_blending.attachmentCount = render_pass.color_attachment_count();
+  color_blending.attachmentCount = ((VulkanRenderPass*)render_pass)->color_attachment_count;
   color_blending.pAttachments = color_blend_attachments;
 
   VkDynamicState dynamic_states[] = {
@@ -222,7 +221,7 @@ PipelineImpl* VulkanRenderer::create_pipeline(
   create_info.pColorBlendState = &color_blending;
   create_info.pDynamicState = &dynamic_state_create_info;
   create_info.layout = pipeline->layout;
-  create_info.renderPass = (VkRenderPass)render_pass.get_impl();
+  create_info.renderPass = ((VulkanRenderPass*)render_pass)->render_pass;
   create_info.subpass = 0;
   create_info.basePipelineHandle = VK_NULL_HANDLE; // Optional
   create_info.basePipelineIndex = -1; // Optional

@@ -18,7 +18,7 @@ namespace L {
     virtual void update_components() override;
     static void script_registration();
     
-    void render(const Camera& camera, const RenderPass& render_pass);
+    void render(const Camera& camera, const RenderPassImpl* render_pass);
 
     inline void material(const char* filename) { _material.parent(filename); }
     inline Material& material() { return _material; }

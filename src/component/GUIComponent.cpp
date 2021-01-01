@@ -19,7 +19,7 @@ void GUIComponent::script_registration() {
 
 void GUIComponent::gui(const Camera& camera) {
   _material.update();
-  if(&camera == _camera && _material.valid_for_render_pass(RenderPass::present_pass())) {
+  if(&camera == _camera && _material.valid_for_render_pass(Renderer::get()->get_present_pass())) {
     const Vector2f dimensions = _material.gui_size() * _scale;
     const Interval2i viewport_pixel = camera.viewport_pixel();
     const Vector2i viewport_pixel_size = viewport_pixel.size();
@@ -34,6 +34,6 @@ void GUIComponent::gui(const Camera& camera) {
         * scale_matrix(Vector3f(2.f * _scale.x() / dimensions.x(), 2.f * _scale.y() / dimensions.y(), 0.f));
     }
 
-    _material.draw(camera, RenderPass::present_pass(), model);
+    _material.draw(camera, Renderer::get()->get_present_pass(), model);
   }
 }

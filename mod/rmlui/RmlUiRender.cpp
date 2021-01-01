@@ -207,7 +207,7 @@ void RmlUiRender::Render(const class Camera& camera) {
     if(RmlUiComponent* component = material_transform.component) {
       if(Camera* ui_camera = component->entity()->get_component<Camera>()) {
         if(&camera == ui_camera) {
-          material_transform.material.draw(camera, RenderPass::present_pass(), material_transform.transform);
+          material_transform.material.draw(camera, Renderer::get()->get_present_pass(), material_transform.transform);
         }
       }
     }

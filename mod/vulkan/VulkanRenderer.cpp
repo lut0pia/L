@@ -9,7 +9,6 @@
 #include <L/src/dev/debug.h>
 #include <L/src/dev/profiling.h>
 #include <L/src/macros.h>
-#include <L/src/rendering/RenderPass.h>
 #include <L/src/system/Window.h>
 
 #include "VulkanBuffer.h"
@@ -356,6 +355,8 @@ void VulkanRenderer::recreate_swapchain() {
     }
   }
 
+  init_render_passes();
+
   { // Create framebuffers
     for(size_t i = 0; i < L_COUNT_OF(swapchain_image_views); i++) {
       VkImageView attachments[] = {
@@ -364,7 +365,7 @@ void VulkanRenderer::recreate_swapchain() {
 
       VkFramebufferCreateInfo framebufferInfo = {};
       framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-      framebufferInfo.renderPass = (VkRenderPass)L::RenderPass::present_pass().get_impl();
+      framebufferInfo.renderPass = ((VulkanRenderPass*)_present_pass)->render_pass;
       framebufferInfo.attachmentCount = L_COUNT_OF(attachments);
       framebufferInfo.pAttachments = attachments;
       framebufferInfo.width = surface_capabilities.currentExtent.width;
@@ -502,7 +503,7 @@ void VulkanRenderer::begin_present_pass() {
   VkCommandBuffer cmd_buffer(render_command_buffers[image_index]);
   VkRenderPassBeginInfo renderPassInfo = {};
   renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-  renderPassInfo.renderPass = (VkRenderPass)L::RenderPass::present_pass().get_impl();
+  renderPassInfo.renderPass = ((VulkanRenderPass*)_present_pass)->render_pass;
   renderPassInfo.framebuffer = framebuffers[image_index];
   renderPassInfo.renderArea.offset = {0, 0};
   renderPassInfo.renderArea.extent = VkExtent2D {uint32_t(_viewport.width), uint32_t(_viewport.height)};

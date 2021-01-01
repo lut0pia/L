@@ -31,17 +31,17 @@ Pipeline::Pipeline(const Parameters& parameters) {
 
   { // Determine render pass from name
     if(parameters.render_pass == light_symbol) {
-      _render_pass = &RenderPass::light_pass();
+      _render_pass = Renderer::get()->get_light_pass();
       if(blend_mode == BlendMode::Undefined) {
         blend_mode = BlendMode::Add;
       }
     } else if(parameters.render_pass == present_symbol) {
-      _render_pass = &RenderPass::present_pass();
+      _render_pass = Renderer::get()->get_present_pass();
       if(blend_mode == BlendMode::Undefined) {
         blend_mode = BlendMode::Alpha;
       }
     } else { // Default to geometry pass
-      _render_pass = &RenderPass::geometry_pass();
+      _render_pass = Renderer::get()->get_geometry_pass();
       if(blend_mode == BlendMode::Undefined) {
         blend_mode = BlendMode::None;
       }
@@ -61,7 +61,7 @@ Pipeline::Pipeline(const Parameters& parameters) {
     _bindings.size(),
     parameters.vertex_attributes.begin(),
     parameters.vertex_attributes.size(),
-    *_render_pass,
+    _render_pass,
     parameters.polygon_mode != PolygonMode::Undefined ? parameters.polygon_mode : PolygonMode::Fill,
     parameters.cull_mode != CullMode::Undefined ? parameters.cull_mode : CullMode::Back,
     parameters.topology != PrimitiveTopology::Undefined ? parameters.topology : PrimitiveTopology::TriangleList,

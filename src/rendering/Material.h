@@ -65,10 +65,10 @@ namespace L {
     ~Material();
 
     void update();
-    void draw(const class Camera&, const class RenderPass&, const Matrix44f& model = Matrix44f(1.f));
+    void draw(const class Camera&, const RenderPassImpl*, const Matrix44f& model = Matrix44f(1.f));
     void set_buffer(const Symbol& name, const void* data, size_t size);
 
-    bool valid_for_render_pass(const class RenderPass&) const;
+    bool valid_for_render_pass(const RenderPassImpl*) const;
     bool is_text() const;
     Interval3f bounds() const;
     Vector2f gui_size() const;

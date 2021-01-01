@@ -14,7 +14,7 @@ namespace L {
     };
   private:
     static Array<void(*)()> _parallel_updates, _updates, _late_updates, _sub_updates, _shutdowns;
-    static Array<void(*)(const class Camera&, const class RenderPass&)> _renders;
+    static Array<void(*)(const class Camera&, const RenderPassImpl*)> _renders;
     static Array<void(*)(void* frames, uint32_t frame_count)> _audio_renders;
     static Array<void(*)(const class Camera&)> _guis;
     static Array<void(*)(const struct Window::Event&)> _win_events;
@@ -44,7 +44,7 @@ namespace L {
     static void add_sub_update(void(*sub_update)()) { _sub_updates.push(sub_update); }
     static void add_late_update(void(*late_update)()) { _late_updates.push(late_update); }
     static void add_shutdown(void(*shutdown)()) { _shutdowns.push(shutdown); }
-    static void add_render(void(*render)(const class Camera&, const class RenderPass&)) { _renders.push(render); }
+    static void add_render(void(*render)(const class Camera&, const RenderPassImpl*)) { _renders.push(render); }
     static void add_gui(void(*gui)(const class Camera&)) { _guis.push(gui); }
     static void add_window_event(void(*win_event)(const struct Window::Event&)) { _win_events.push((void(*)(const struct Window::Event&))win_event); }
     template <class T> inline static void register_component() {
@@ -54,7 +54,7 @@ namespace L {
       if(T::flags & ComponentFlag::SubUpdateAsync) _sub_updates.push((void(*)())T::sub_update_all_async);
       if(T::flags & ComponentFlag::LateUpdate) _late_updates.push((void(*)())T::late_update_all);
       if(T::flags & ComponentFlag::LateUpdateAsync) _late_updates.push((void(*)())T::late_update_all_async);
-      if(T::flags & ComponentFlag::Render) _renders.push((void(*)(const class Camera&, const class RenderPass&))T::render_all);
+      if(T::flags & ComponentFlag::Render) _renders.push((void(*)(const class Camera&, const RenderPassImpl*))T::render_all);
       if(T::flags & ComponentFlag::AudioRender) _audio_renders.push((void(*)(void* frames, uint32_t frame_count))T::audio_render_all);
       if(T::flags & ComponentFlag::GUI) _guis.push((void(*)(const class Camera&))T::gui_all);
       if(T::flags & ComponentFlag::WindowEvent) _win_events.push((void(*)(const struct Window::Event&))T::win_event_all);

@@ -11,7 +11,7 @@ namespace L {
   public:
     static void script_registration();
 
-    void render(const Camera& camera, const RenderPass& render_pass);
+    void render(const Camera& camera, const RenderPassImpl* render_pass);
 
     inline Material& material() { return _material; }
   };

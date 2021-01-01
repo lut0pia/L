@@ -4,7 +4,6 @@
 #include "../engine/Resource.h"
 #include "../math/Matrix.h"
 #include "Mesh.h"
-#include "RenderPass.h"
 #include "Shader.h"
 #include "Texture.h"
 #include "UniformBuffer.h"
@@ -15,7 +14,7 @@ namespace L {
   protected:
     PipelineImpl* _impl;
     Array<ShaderBinding> _bindings;
-    const RenderPass* _render_pass;
+    const RenderPassImpl* _render_pass;
   public:
     struct Parameters {
       Array<KeyValue<ShaderStage, Resource<Shader>>> shaders;
@@ -40,7 +39,7 @@ namespace L {
 
     inline PipelineImpl* get_impl() const { return _impl; }
     inline const Array<ShaderBinding>& bindings() const { return _bindings; }
-    inline const RenderPass& render_pass() const { return *_render_pass; }
+    inline const RenderPassImpl* render_pass() const { return _render_pass; }
 
     friend inline Stream& operator<=(Stream& s, const Pipeline::Parameters& v) {
       return s <= v.shaders <= v.vertex_attributes <= v.render_pass <= v.polygon_mode <= v.cull_mode <= v.topology <= v.blend_mode <= v.depth_func;

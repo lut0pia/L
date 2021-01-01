@@ -10,7 +10,6 @@
 #include <L/src/dev/debug.h>
 #include <L/src/dev/profiling.h>
 #include <L/src/macros.h>
-#include <L/src/rendering/RenderPass.h>
 #include <L/src/system/Window.h>
 
 using namespace L;
@@ -189,6 +188,8 @@ void OpenGLRenderer::init(const char*, uintptr_t data1, uintptr_t data2) {
 
   glFrontFace(GL_CCW);
   //glClipControl(GL_UPPER_LEFT, GL_ZERO_TO_ONE);
+
+  init_render_passes();
 }
 void OpenGLRenderer::recreate_swapchain() {
 

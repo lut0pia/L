@@ -2,7 +2,6 @@
 
 #include "../component/Camera.h"
 #include "Engine.h"
-#include "../rendering/RenderPass.h"
 #include "Resource.inl"
 
 using namespace L;
@@ -57,8 +56,8 @@ static bool debug_shader_loader(ResourceSlot& slot, Shader::Intermediate& interm
   return ResourceLoading<Shader>::load_internal(slot, intermediate);
 }
 
-static void debug_draw_render(const Camera& camera, const RenderPass& render_pass) {
-  if(&render_pass == &RenderPass::geometry_pass()) {
+static void debug_draw_render(const Camera& camera, const RenderPassImpl* render_pass) {
+  if(render_pass == Renderer::get()->get_geometry_pass()) {
     for(DebugDrawing& debug_drawing : debug_drawings) {
       debug_drawing.material.update();
       debug_drawing.material.draw(camera, render_pass, debug_drawing.model);

@@ -138,13 +138,13 @@ DescriptorSetImpl* Material::descriptor_set(const Camera& camera, const Pipeline
     return nullptr; // Desc set is invalid if some resources are unloaded
   }
 
-  if(&pipeline.render_pass() == &RenderPass::light_pass()
+  if(pipeline.render_pass() == Renderer::get()->get_light_pass()
     && working_pairing->last_framebuffer_update < camera.framebuffer_mtime()) {
     pipeline.set_descriptor("color_buffer", working_pairing->desc_set, camera.geometry_buffer(), 0);
     pipeline.set_descriptor("normal_buffer", working_pairing->desc_set, camera.geometry_buffer(), 1);
     pipeline.set_descriptor("depth_buffer", working_pairing->desc_set, camera.geometry_buffer(), 2);
     working_pairing->last_framebuffer_update = camera.framebuffer_mtime();
-  } else if(&pipeline.render_pass() == &RenderPass::present_pass()
+  } else if(pipeline.render_pass() == Renderer::get()->get_present_pass()
     && working_pairing->last_framebuffer_update < camera.framebuffer_mtime()) {
     pipeline.set_descriptor("light_buffer", working_pairing->desc_set, camera.light_buffer(), 0);
     working_pairing->last_framebuffer_update = camera.framebuffer_mtime();
@@ -272,12 +272,12 @@ void Material::update() {
     create_uniform_buffers(*_pipeline);
   }
 }
-void Material::draw(const Camera& camera, const RenderPass& render_pass, const Matrix44f& model) {
+void Material::draw(const Camera& camera, const RenderPassImpl* render_pass, const Matrix44f& model) {
   if(!_pipeline) {
     return;
   }
 
-  L_ASSERT(&_pipeline->render_pass() == &render_pass);
+  L_ASSERT(_pipeline->render_pass() == render_pass);
   DescriptorSetImpl* desc_set = descriptor_set(camera, *_pipeline);
 
   if(desc_set == nullptr) {
@@ -357,8 +357,8 @@ void Material::set_buffer(const Symbol& name, const void* data, size_t size) {
   }
 }
 
-bool Material::valid_for_render_pass(const class RenderPass& render_pass) const {
-  return _pipeline && &_pipeline->render_pass() == &render_pass;
+bool Material::valid_for_render_pass(const struct RenderPassImpl* render_pass) const {
+  return _pipeline && _pipeline->render_pass() == render_pass;
 }
 bool Material::is_text() const {
   return _final_state.text.size() > 0;
@@ -375,7 +375,7 @@ Vector2f Material::gui_size() const {
       return text_mesh.dimensions;
     }
   } else if(_pipeline) {
-    if(&_pipeline->render_pass() == &RenderPass::present_pass() &&
+    if(_pipeline->render_pass() == Renderer::get()->get_present_pass() &&
       _final_state.textures.size() > 0 && _final_state.textures[0].value()) {
       const Texture& texture(*_final_state.textures[0].value());
       return Vector2f(float(texture.width()), float(texture.height()));

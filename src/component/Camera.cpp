@@ -68,15 +68,15 @@ void Camera::resize_buffers() {
   const Vector2f viewport_size = _viewport.size();
   const uint32_t viewport_width = uint32_t(Window::width() * viewport_size.x() * screen_percentage);
   const uint32_t viewport_height = uint32_t(Window::height() * viewport_size.y() * screen_percentage);
-  _color_texture = Renderer::get()->create_texture(viewport_width, viewport_height, RenderPass::geometry_pass().formats()[0]);
-  _normal_texture = Renderer::get()->create_texture(viewport_width, viewport_height, RenderPass::geometry_pass().formats()[1]);
-  _light_texture = Renderer::get()->create_texture(viewport_width, viewport_height, RenderPass::light_pass().formats()[0]);
-  _depth_texture = Renderer::get()->create_texture(viewport_width, viewport_height, RenderPass::geometry_pass().formats()[2]);
+  _color_texture = Renderer::get()->create_texture(viewport_width, viewport_height, RenderFormat::R8G8B8A8_UNorm);
+  _normal_texture = Renderer::get()->create_texture(viewport_width, viewport_height, RenderFormat::R16G16B16A16_UNorm);
+  _light_texture = Renderer::get()->create_texture(viewport_width, viewport_height, RenderFormat::R16G16B16A16_SFloat);
+  _depth_texture = Renderer::get()->create_texture(viewport_width, viewport_height, RenderFormat::D24_UNorm_S8_UInt);
 
   const TextureImpl* geometry_textures[] = {_color_texture, _normal_texture, _depth_texture};
   const TextureImpl* light_textures[] = {_light_texture, _depth_texture};
-  _geometry_buffer = Renderer::get()->create_framebuffer(RenderPass::geometry_pass().get_impl(), geometry_textures, 3);
-  _light_buffer = Renderer::get()->create_framebuffer(RenderPass::light_pass().get_impl(), light_textures, 2);
+  _geometry_buffer = Renderer::get()->create_framebuffer(Renderer::get()->get_geometry_pass(), geometry_textures, 3);
+  _light_buffer = Renderer::get()->create_framebuffer(Renderer::get()->get_light_pass(), light_textures, 2);
   _framebuffer_mtime = Time::now();
 }
 void Camera::event(const Window::Event& e) {
@@ -120,7 +120,7 @@ void Camera::prerender(RenderCommandBuffer* cmd_buffer) {
 }
 void Camera::present() {
   Renderer::get()->set_viewport(_cmd_buffer, _viewport_pixel);
-  _present_material.draw(*this, RenderPass::present_pass());
+  _present_material.draw(*this, Renderer::get()->get_present_pass());
 }
 
 void Camera::viewport(const Interval2f& i) {
