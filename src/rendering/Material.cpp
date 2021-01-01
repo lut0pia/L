@@ -36,6 +36,7 @@ void Material::State::apply(const State& patch) {
   PATCH_VALUE(cull_mode, CullMode::Undefined);
   PATCH_VALUE(topology, PrimitiveTopology::Undefined);
   PATCH_VALUE(blend_mode, BlendMode::Undefined);
+  PATCH_VALUE(depth_func, DepthFunc::Undefined);
 #undef PATCH_VALUE
 
   // Descriptor state
@@ -481,6 +482,37 @@ static BlendMode symbol_to_blend_mode(const Symbol& sym) {
   }
 }
 
+static const Symbol
+never_symbol("never"),
+always_symbol("always"),
+less_symbol("less"),
+less_equal_symbol("less_equal"),
+greater_symbol("greater"),
+greater_equal_symbol("greater_equal"),
+equal_symbol("equal"),
+not_equal_symbol("not_equal");
+static DepthFunc symbol_to_depth_func(const Symbol& sym) {
+  if(sym == never_symbol) {
+    return DepthFunc::Never;
+  } else if(sym == always_symbol) {
+    return DepthFunc::Always;
+  } else if(sym == less_symbol) {
+    return DepthFunc::Less;
+  } else if(sym == less_equal_symbol) {
+    return DepthFunc::LessEqual;
+  } else if(sym == greater_symbol) {
+    return DepthFunc::Greater;
+  } else if(sym == greater_equal_symbol) {
+    return DepthFunc::GreaterEqual;
+  } else if(sym == equal_symbol) {
+    return DepthFunc::Equal;
+  } else if(sym == not_equal_symbol) {
+    return DepthFunc::NotEqual;
+  } else {
+    return DepthFunc::Undefined;
+  }
+}
+
 void Material::script_registration() {
   L_SCRIPT_METHOD(Material, "parent", 1, parent(c.param(0).get<String>()));
   // Pipeline state
@@ -490,6 +522,7 @@ void Material::script_registration() {
   L_SCRIPT_METHOD(Material, "cull_mode", 1, cull_mode(symbol_to_cull_mode(c.param(0))));
   L_SCRIPT_METHOD(Material, "topology", 1, topology(symbol_to_topology(c.param(0))));
   L_SCRIPT_METHOD(Material, "blend_mode", 1, blend_mode(symbol_to_blend_mode(c.param(0))));
+  L_SCRIPT_METHOD(Material, "depth_func", 1, depth_func(symbol_to_depth_func(c.param(0))));
   // Descriptor state
   L_SCRIPT_METHOD(Material, "texture", 2, texture(c.param(0), c.param(1).get<String>()));
   L_SCRIPT_METHOD(Material, "vector", 2, vector(c.param(0), c.param(1)));

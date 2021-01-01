@@ -23,7 +23,8 @@ PipelineImpl* VulkanRenderer::create_pipeline(
   L::PolygonMode polygon_mode,
   L::CullMode cull_mode,
   L::PrimitiveTopology topology,
-  L::BlendMode blend_mode) {
+  L::BlendMode blend_mode,
+  L::DepthFunc depth_func) {
   VulkanPipeline* pipeline = Memory::new_type<VulkanPipeline>();
 
   { // Create desc set layout
@@ -159,7 +160,7 @@ PipelineImpl* VulkanRenderer::create_pipeline(
   depth_stencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
   depth_stencil.depthTestEnable = VK_TRUE;
   depth_stencil.depthWriteEnable = VK_TRUE;
-  depth_stencil.depthCompareOp = VK_COMPARE_OP_LESS;
+  depth_stencil.depthCompareOp = to_vk_depth_func(depth_func);
 
   VkPipelineColorBlendAttachmentState color_blend_attachment = {};
   color_blend_attachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;

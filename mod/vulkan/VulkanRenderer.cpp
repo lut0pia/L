@@ -723,6 +723,20 @@ VkCullModeFlagBits VulkanRenderer::to_vk_cull_mode(L::CullMode cull_mode) {
     default: return VK_CULL_MODE_FLAG_BITS_MAX_ENUM;
   }
 }
+VkCompareOp VulkanRenderer::to_vk_depth_func(L::DepthFunc depth_func) {
+  switch(depth_func) {
+    case L::DepthFunc::Undefined: return VK_COMPARE_OP_MAX_ENUM;
+    case L::DepthFunc::Never: return VK_COMPARE_OP_NEVER;
+    case L::DepthFunc::Always: return VK_COMPARE_OP_ALWAYS;
+    case L::DepthFunc::Less: return VK_COMPARE_OP_LESS;
+    case L::DepthFunc::LessEqual: return VK_COMPARE_OP_LESS_OR_EQUAL;
+    case L::DepthFunc::Greater: return VK_COMPARE_OP_GREATER;
+    case L::DepthFunc::GreaterEqual: return VK_COMPARE_OP_GREATER_OR_EQUAL;
+    case L::DepthFunc::Equal: return VK_COMPARE_OP_EQUAL;
+    case L::DepthFunc::NotEqual: return VK_COMPARE_OP_NOT_EQUAL;
+  }
+  return VK_COMPARE_OP_MAX_ENUM;
+}
 
 const char* VulkanRenderer::result_str(VkResult result) {
 #define CASE(v) case v: return #v

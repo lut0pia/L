@@ -16,7 +16,8 @@ PipelineImpl* OpenGLRenderer::create_pipeline(
   L::PolygonMode polygon_mode,
   L::CullMode cull_mode,
   L::PrimitiveTopology topology,
-  L::BlendMode blend_mode) {
+  L::BlendMode blend_mode,
+  L::DepthFunc depth_func) {
   L_SCOPE_THREAD_MASK(1);
 
   OpenGLPipeline* pipeline = Memory::new_type<OpenGLPipeline>();
@@ -27,6 +28,7 @@ PipelineImpl* OpenGLRenderer::create_pipeline(
   pipeline->topology = to_gl_topology(topology);
   pipeline->blend_src = to_gl_blend_src(blend_mode);
   pipeline->blend_dst = to_gl_blend_dst(blend_mode);
+  pipeline->depth_func = to_gl_depth_func(depth_func);
 
   for(uintptr_t i = 0; i < binding_count; i++) {
     pipeline->bindings.push(bindings[i]);

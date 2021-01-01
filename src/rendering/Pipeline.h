@@ -26,6 +26,7 @@ namespace L {
       CullMode cull_mode = CullMode::Undefined;
       PrimitiveTopology topology = PrimitiveTopology::Undefined;
       BlendMode blend_mode = BlendMode::Undefined;
+      DepthFunc depth_func = DepthFunc::Undefined;
     };
     Pipeline(const Parameters& parameters);
     ~Pipeline();
@@ -43,10 +44,10 @@ namespace L {
     inline const RenderPass& render_pass() const { return *_render_pass; }
 
     friend inline Stream& operator<=(Stream& s, const Pipeline::Parameters& v) {
-      return s <= v.shaders <= v.vertex_attributes <= v.render_pass <= v.polygon_mode <= v.cull_mode <= v.topology <= v.blend_mode;
+      return s <= v.shaders <= v.vertex_attributes <= v.render_pass <= v.polygon_mode <= v.cull_mode <= v.topology <= v.blend_mode <= v.depth_func;
     }
     friend inline Stream& operator>=(Stream& s, Pipeline::Parameters& v) {
-      return s >= v.shaders >= v.vertex_attributes >= v.render_pass >= v.polygon_mode >= v.cull_mode >= v.topology >= v.blend_mode;
+      return s >= v.shaders >= v.vertex_attributes >= v.render_pass >= v.polygon_mode >= v.cull_mode >= v.topology >= v.blend_mode >= v.depth_func;
     }
   };
 }

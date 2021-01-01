@@ -68,6 +68,10 @@ namespace L {
     Undefined, None, Mult, Add, Alpha,
   };
 
+  enum class DepthFunc : uint8_t {
+    Undefined, Never, Always, Less, LessEqual, Greater, GreaterEqual, Equal, NotEqual,
+  };
+
   enum class PrimitiveTopology : uint8_t {
     Undefined,
     PointList,
@@ -168,7 +172,8 @@ namespace L {
       PolygonMode polygon_mode,
       CullMode cull_mode,
       PrimitiveTopology topology,
-      BlendMode blend_mode) = 0;
+      BlendMode blend_mode,
+      DepthFunc depth_func) = 0;
     virtual void destroy_pipeline(PipelineImpl*) = 0;
 
     virtual TextureImpl* create_texture(uint32_t width, uint32_t height, RenderFormat format, const void* data, size_t size) = 0;

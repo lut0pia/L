@@ -221,6 +221,8 @@ void OpenGLRenderer::draw(
     glDisable(GL_BLEND);
   }
 
+  glDepthFunc(gl_pipeline->depth_func);
+
   glUseProgram(gl_pipeline->id);
 
   // Bind textures
@@ -475,6 +477,20 @@ GLuint OpenGLRenderer::to_gl_blend_dst(BlendMode blend_mode) {
     case BlendMode::Mult: return GL_SRC_COLOR;
     case BlendMode::Add: return GL_ONE;
     case BlendMode::Alpha: return GL_ONE_MINUS_SRC_ALPHA;
+  }
+  return GL_INVALID_ENUM;
+}
+GLuint OpenGLRenderer::to_gl_depth_func(DepthFunc depth_func) {
+  switch(depth_func) {
+    case DepthFunc::Undefined: return GL_INVALID_ENUM;
+    case DepthFunc::Never: return GL_NEVER;
+    case DepthFunc::Always: return GL_ALWAYS;
+    case DepthFunc::Less: return GL_LESS;
+    case DepthFunc::LessEqual: return GL_LEQUAL;
+    case DepthFunc::Greater: return GL_GREATER;
+    case DepthFunc::GreaterEqual: return GL_GEQUAL;
+    case DepthFunc::Equal: return GL_EQUAL;
+    case DepthFunc::NotEqual: return GL_NOTEQUAL;
   }
   return GL_INVALID_ENUM;
 }

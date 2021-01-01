@@ -37,6 +37,7 @@ struct OpenGLPipeline : public L::PipelineImpl {
   GLuint topology;
   GLenum blend_src;
   GLenum blend_dst;
+  GLenum depth_func;
   L::Array<L::ShaderBinding> bindings;
 };
 
@@ -113,7 +114,8 @@ public:
     L::PolygonMode polygon_mode,
     L::CullMode cull_mode,
     L::PrimitiveTopology topology,
-    L::BlendMode blend_mode) override;
+    L::BlendMode blend_mode,
+    L::DepthFunc depth_func) override;
   virtual void destroy_pipeline(L::PipelineImpl*) override;
 
   virtual L::TextureImpl* create_texture(uint32_t width, uint32_t height, L::RenderFormat format, const void* data, size_t size) override;
@@ -138,6 +140,7 @@ public:
   static GLuint to_gl_cull_mode(L::CullMode);
   static GLuint to_gl_blend_src(L::BlendMode);
   static GLuint to_gl_blend_dst(L::BlendMode);
+  static GLuint to_gl_depth_func(L::DepthFunc);
 
   static void* load_function(const char*);
   static const char* error_str(GLenum result);

@@ -83,6 +83,7 @@ namespace L {
     void cull_mode(CullMode cull_mode) { _partial_state.pipeline.cull_mode = cull_mode; _state_dirty = true; }
     void topology(PrimitiveTopology topology) { _partial_state.pipeline.topology = topology; _state_dirty = true; }
     void blend_mode(BlendMode blend_mode) { _partial_state.pipeline.blend_mode = blend_mode; _state_dirty = true; }
+    void depth_func(DepthFunc depth_func) { _partial_state.pipeline.depth_func = depth_func; _state_dirty = true; }
 
     // Descriptor state
     void texture(const Symbol& name, const Resource<Texture>& texture);

@@ -163,7 +163,8 @@ public:
     L::PolygonMode polygon_mode,
     L::CullMode cull_mode,
     L::PrimitiveTopology topology,
-    L::BlendMode blend_mode) override;
+    L::BlendMode blend_mode,
+    L::DepthFunc depth_func) override;
   virtual void destroy_pipeline(L::PipelineImpl*) override;
 
   virtual L::TextureImpl* create_texture(uint32_t width, uint32_t height, L::RenderFormat format, const void* data, size_t size) override;
@@ -197,6 +198,7 @@ public:
   static VkPrimitiveTopology to_vk_topology(L::PrimitiveTopology);
   static VkPolygonMode to_vk_polygon_mode(L::PolygonMode);
   static VkCullModeFlagBits to_vk_cull_mode(L::CullMode);
+  static VkCompareOp to_vk_depth_func(L::DepthFunc);
   static const char* result_str(VkResult result);
   static VulkanRenderer* get() { return (VulkanRenderer*)_instance; }
 };

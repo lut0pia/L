@@ -65,7 +65,8 @@ Pipeline::Pipeline(const Parameters& parameters) {
     parameters.polygon_mode != PolygonMode::Undefined ? parameters.polygon_mode : PolygonMode::Fill,
     parameters.cull_mode != CullMode::Undefined ? parameters.cull_mode : CullMode::Back,
     parameters.topology != PrimitiveTopology::Undefined ? parameters.topology : PrimitiveTopology::TriangleList,
-    blend_mode);
+    blend_mode,
+    parameters.depth_func != DepthFunc::Undefined ? parameters.depth_func : DepthFunc::Less);
 }
 Pipeline::~Pipeline() {
   Renderer::get()->destroy_pipeline(_impl);
