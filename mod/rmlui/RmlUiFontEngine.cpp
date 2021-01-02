@@ -6,16 +6,11 @@ RmlUiFontEngine::RmlUiFontEngine() {
   _font_faces.push(); // Nothing for null handle
 }
 
-bool RmlUiFontEngine::LoadFontFace(const Rml::Core::String& file_name, bool fallback_face) {
-  file_name;
-  fallback_face;
+bool RmlUiFontEngine::LoadFontFace(const Rml::Core::String& /*file_name*/, bool /*fallback_face*/) {
   return false;
 }
 
-Rml::Core::FontFaceHandle RmlUiFontEngine::GetFontFaceHandle(const Rml::Core::String& family, Rml::Core::Style::FontStyle style, Rml::Core::Style::FontWeight weight, int size) {
-  family;
-  style;
-  weight;
+Rml::Core::FontFaceHandle RmlUiFontEngine::GetFontFaceHandle(const Rml::Core::String& /*family*/, Rml::Core::Style::FontStyle /*style*/, Rml::Core::Style::FontWeight /*weight*/, int size) {
   Rml::Core::FontFaceHandle handle = _font_faces.size();
   FontFace font_face {};
   font_face.font = ".pixel";
@@ -43,9 +38,7 @@ int RmlUiFontEngine::GetStringWidth(Rml::Core::FontFaceHandle handle, const Rml:
   return int(font_face.font->get_text_width(string.c_str()) * float(font_face.size));
 }
 
-int RmlUiFontEngine::GenerateString(Rml::Core::FontFaceHandle handle, Rml::Core::FontEffectsHandle font_effects_handle, const Rml::Core::String& string, const Rml::Core::Vector2f& position, const Rml::Core::Colourb& colour, Rml::Core::GeometryList& geometry_list) {
-  font_effects_handle;
-
+int RmlUiFontEngine::GenerateString(Rml::Core::FontFaceHandle handle, Rml::Core::FontEffectsHandle /*font_effects_handle*/, const Rml::Core::String& string, const Rml::Core::Vector2f& position, const Rml::Core::Colourb& colour, Rml::Core::GeometryList& geometry_list) {
   FontFace& font_face = _font_faces[handle];
   const Font::TextMesh& text_mesh = font_face.font->get_text_mesh(string.c_str());
 
