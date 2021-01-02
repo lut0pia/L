@@ -18,6 +18,9 @@ Camera::Camera() :
   update_viewport();
   resize_buffers();
 }
+Camera::~Camera() {
+  destroy_buffers();
+}
 
 void Camera::update_components() {
   _transform = entity()->require_component<Transform>();
@@ -34,7 +37,8 @@ void Camera::script_registration() {
   L_SCRIPT_RETURN_METHOD(Camera, "pixel_to_screen", 1, pixel_to_screen(c.param(0)));
 }
 
-void Camera::resize_buffers() {
+void Camera::destroy_buffers() {
+
   if(_geometry_buffer) {
     Renderer::get()->destroy_framebuffer(_geometry_buffer);
     _geometry_buffer = nullptr;
@@ -64,10 +68,18 @@ void Camera::resize_buffers() {
     Renderer::get()->destroy_texture(_depth_texture);
     _depth_texture = nullptr;
   }
+}
+void Camera::resize_buffers() {
+  destroy_buffers();
 
   const Vector2f viewport_size = _viewport.size();
   const uint32_t viewport_width = uint32_t(Window::width() * viewport_size.x() * screen_percentage);
   const uint32_t viewport_height = uint32_t(Window::height() * viewport_size.y() * screen_percentage);
+
+  if(viewport_width == 0 || viewport_height == 0) {
+    return; // No space to render
+  }
+
   _color_texture = Renderer::get()->create_texture(viewport_width, viewport_height, RenderFormat::R8G8B8A8_UNorm);
   _normal_texture = Renderer::get()->create_texture(viewport_width, viewport_height, RenderFormat::R16G16B16A16_UNorm);
   _light_texture = Renderer::get()->create_texture(viewport_width, viewport_height, RenderFormat::R16G16B16A16_SFloat);

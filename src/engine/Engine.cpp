@@ -113,6 +113,10 @@ void Engine::update() {
     L_SCOPE_MARKER("Graphics rendering");
     RenderCommandBuffer* cmd_buffer(Renderer::get()->begin_render_command_buffer());
     ComponentPool<Camera>::iterate([&](Camera& camera) {
+      if(!camera.should_render()) {
+        return;
+      }
+
       camera.prerender(cmd_buffer);
       CullVolume::cull(camera);
       Renderer::get()->begin_framebuffer(camera.geometry_buffer(), cmd_buffer);
@@ -135,6 +139,10 @@ void Engine::update() {
     });
     Renderer::get()->begin_present_pass();
     ComponentPool<Camera>::iterate([](Camera& camera) {
+      if(!camera.should_render()) {
+        return;
+      }
+
       camera.present();
       for(auto gui : _guis)
         gui(camera);

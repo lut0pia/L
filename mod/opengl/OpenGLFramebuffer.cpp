@@ -40,10 +40,6 @@ void OpenGLRenderer::destroy_framebuffer(L::FramebufferImpl* framebuffer) {
 
   OpenGLFramebuffer* gl_framebuffer = (OpenGLFramebuffer*)framebuffer;
 
-  for(OpenGLTexture* texture : gl_framebuffer->textures) {
-    destroy_texture(texture);
-  }
-
   glDeleteFramebuffers(1, &gl_framebuffer->id);
 
   Memory::delete_type(gl_framebuffer);
