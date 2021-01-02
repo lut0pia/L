@@ -30,7 +30,7 @@ FramebufferImpl* OpenGLRenderer::create_framebuffer(const L::RenderPassImpl* ren
 
   GLenum framebuffer_status = glCheckNamedFramebufferStatus(framebuffer->id, GL_FRAMEBUFFER);
   if(framebuffer_status != GL_FRAMEBUFFER_COMPLETE) {
-    error("opengl: Incomplete framebuffer: %d", framebuffer_status);
+    error("opengl: Incomplete framebuffer: %s", error_str(framebuffer_status));
   }
 
   return framebuffer;
