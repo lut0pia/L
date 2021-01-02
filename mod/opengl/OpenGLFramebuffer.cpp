@@ -19,7 +19,7 @@ FramebufferImpl* OpenGLRenderer::create_framebuffer(const L::RenderPassImpl* ren
   for(uintptr_t i = 0; i < texture_count; i++) {
     OpenGLTexture* texture = (OpenGLTexture*)textures[i];
     const bool depth_format = is_depth_format(texture->format);
-    GLuint attachement = depth_format ? GL_DEPTH_ATTACHMENT : color_attachment++;
+    GLuint attachement = depth_format ? GL_DEPTH_STENCIL_ATTACHMENT : color_attachment++;
     glNamedFramebufferTexture(framebuffer->id, attachement, texture->id, 0);
     framebuffer->textures.push(texture);
 
