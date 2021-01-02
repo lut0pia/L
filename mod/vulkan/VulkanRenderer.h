@@ -3,7 +3,9 @@
 #include <vulkan/vulkan.h>
 
 #ifdef None
-#undef None // Xlib may have defined None and that breaks things
+// Xlib may have defined some badly named macros and that breaks things
+#undef None
+#undef Always
 #endif
 
 #include <L/src/container/Array.h>
