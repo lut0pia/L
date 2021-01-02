@@ -75,6 +75,11 @@ void Camera::resize_buffers() {
   const Vector2f viewport_size = _viewport.size();
   const uint32_t viewport_width = uint32_t(Window::width() * viewport_size.x() * screen_percentage);
   const uint32_t viewport_height = uint32_t(Window::height() * viewport_size.y() * screen_percentage);
+
+  if(viewport_width == 0 || viewport_height == 0) {
+    return; // No space to render
+  }
+
   _color_texture = Renderer::get()->create_texture(viewport_width, viewport_height, RenderFormat::R8G8B8A8_UNorm);
   _normal_texture = Renderer::get()->create_texture(viewport_width, viewport_height, RenderFormat::R16G16B16A16_UNorm);
   _light_texture = Renderer::get()->create_texture(viewport_width, viewport_height, RenderFormat::R16G16B16A16_SFloat);

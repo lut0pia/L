@@ -59,6 +59,7 @@ namespace L {
     bool sees(const Interval3f&) const; // Checks if an interval can currently be seen by camera
     void frustum_planes(Vector4f[6]) const; // In world-space
 
+    inline bool should_render() const { return _geometry_buffer != nullptr; }
     inline const Matrix44f& view() const { return _view; }
     inline const Matrix44f& projection() const { return _projection; }
     inline const Matrix44f& view_projection() const { return _view_projection; }
