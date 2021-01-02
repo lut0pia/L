@@ -5,6 +5,7 @@
 L_PUSH_NO_WARNINGS
 
 #define RMLUI_STATIC_LIB
+#define RMLUI_USE_CUSTOM_RTTI
 #include <RmlUi/Core.h>
 #include <RmlUi/Controls.h>
 

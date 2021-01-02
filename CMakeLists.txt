@@ -60,6 +60,7 @@ else()
   add_compile_options(
     -fno-operator-names
     -fno-exceptions
+    -fno-rtti
     -ffast-math
     -Werror -Wall
   )
