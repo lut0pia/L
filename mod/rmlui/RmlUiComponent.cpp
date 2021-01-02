@@ -22,7 +22,7 @@ register_rmlui_script_method(NAME, \
 #define RMLUI_SCRIPT_RETURN_METHOD(NAME, NARGS, ...) RMLUI_SCRIPT_METHOD_INTERNAL(c.return_value() = rmlui_script_type, NAME, NARGS, __VA_ARGS__)
 
 static RmlUiSafeElement rmlui_script_type(Rml::Core::Element* element) { return element->GetObserverPtr(); }
-static Ref<Rml::Core::ElementPtr> rmlui_script_type(Rml::Core::ElementPtr element_ptr) { return ref_move<Rml::Core::ElementPtr>(std::move(element_ptr)); }
+static Ref<Rml::Core::ElementPtr> rmlui_script_type(Rml::Core::ElementPtr element_ptr) { return ref_move<Rml::Core::ElementPtr>(static_cast<Rml::Core::ElementPtr&&>(element_ptr)); }
 static String rmlui_script_type(Rml::Core::String string) { return String(string.c_str(), string.size()); }
 static bool rmlui_script_type(bool v) { return v; }
 
@@ -126,7 +126,7 @@ void RmlUiComponent::script_registration() {
     [](ScriptContext& c) {
       if(Rml::Core::Element* element = rmlui_native_element(c.current_self())) {
         if(Ref<Rml::Core::ElementPtr>* child_element_ref = c.param(0).try_as<Ref<Rml::Core::ElementPtr>>()) {
-          c.return_value() = rmlui_script_type(element->AppendChild(std::move(**child_element_ref)));;
+          c.return_value() = rmlui_script_type(element->AppendChild(static_cast<Rml::Core::ElementPtr&&>(**child_element_ref)));;
         }
       }
     });

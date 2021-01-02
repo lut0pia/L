@@ -65,7 +65,7 @@ namespace L {
       _p = (T*)((uint8_t*)Memory::alloc(sizeof(T) + offset) + offset);
       counter() = 1;
       size() = sizeof(T);
-      ::new(_p)T(std::move(v));
+      ::new(_p)T(static_cast<T&&>(v));
       return **this;
     }
     template <class R> inline bool operator==(const Ref<R>& other) { return _p==other._p; }
@@ -87,7 +87,7 @@ namespace L {
   template <class T>
   inline Ref<T> ref_move(T&& v) {
     Ref<T> wtr;
-    wtr.make_move(std::move(v));
+    wtr.make_move(static_cast<T&&>(v));
     return wtr;
   }
   template <class T>
