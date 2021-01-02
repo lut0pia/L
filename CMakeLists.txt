@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 set(CMAKE_SUPPRESS_REGENERATION true)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Override platform if generating for Visual Studio
@@ -60,7 +60,6 @@ else()
   add_compile_options(
     -fno-operator-names
     -fno-exceptions
-    -fno-rtti
     -ffast-math
     -Werror -Wall
   )
