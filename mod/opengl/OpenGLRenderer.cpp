@@ -5,6 +5,7 @@
 #elif L_LINUX
 #include <GL/glx.h>
 #undef None
+#undef Always
 #endif
 
 #include <L/src/dev/debug.h>
