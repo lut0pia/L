@@ -18,6 +18,9 @@ Camera::Camera() :
   update_viewport();
   resize_buffers();
 }
+Camera::~Camera() {
+  destroy_buffers();
+}
 
 void Camera::update_components() {
   _transform = entity()->require_component<Transform>();
@@ -34,7 +37,8 @@ void Camera::script_registration() {
   L_SCRIPT_RETURN_METHOD(Camera, "pixel_to_screen", 1, pixel_to_screen(c.param(0)));
 }
 
-void Camera::resize_buffers() {
+void Camera::destroy_buffers() {
+
   if(_geometry_buffer) {
     Renderer::get()->destroy_framebuffer(_geometry_buffer);
     _geometry_buffer = nullptr;
@@ -64,6 +68,9 @@ void Camera::resize_buffers() {
     Renderer::get()->destroy_texture(_depth_texture);
     _depth_texture = nullptr;
   }
+}
+void Camera::resize_buffers() {
+  destroy_buffers();
 
   const Vector2f viewport_size = _viewport.size();
   const uint32_t viewport_width = uint32_t(Window::width() * viewport_size.x() * screen_percentage);

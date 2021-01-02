@@ -31,12 +31,14 @@ namespace L {
     UniformBuffer _shared_uniform;
   public:
     Camera();
+    ~Camera();
     inline Camera(const Camera&) : Camera() { error("Camera component should not be copied."); }
     inline Camera& operator=(const Camera&) { error("Camera component should not be copied."); return *this; }
 
     virtual void update_components() override;
     static void script_registration();
 
+    void destroy_buffers();
     void resize_buffers();
     void event(const Window::Event&);
     void prerender(RenderCommandBuffer*);
