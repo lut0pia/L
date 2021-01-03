@@ -17,7 +17,7 @@
   ; Create cursor entity
   (set self.cursor (entity_make))
   (set self.cursor_transform (self.cursor.require_transform))
-  (self.cursor.require_primitive|.material|.parent "material/sphere.ls")
+  (self.cursor.require_primitive|.material|.parent "material/sphere_light.ls")
   (self.cursor.require_primitive|.scale 0.1)
   (self.entity.require_collider|.sphere 0.5)
   (self.entity.require_rigidbody|.kinematic true)
@@ -62,10 +62,10 @@
   (local hit (raycast (transform.get_position) (transform.forward)))
   (if (non_null hit.collider)
     (do
-      (cursor.require_primitive|.material|.color 'color (color 1.0 0 0 0.5))
+      (cursor.require_primitive|.material|.vector 'color (vec 1 0 0 1))
       (cursor_transform.set_position hit.position)
     )
-    (cursor.require_primitive|.material|.color 'color (color 0 0 0 0))
+    (cursor.require_primitive|.material|.vector 'color (vec 0 0 0 0))
   )
 
   ; Other actions

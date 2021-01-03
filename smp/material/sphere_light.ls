@@ -1,0 +1,5 @@
+(self.shader 'fragment "shader/color_light.frag")
+(self.shader 'vertex "shader/color.vert")
+(self.render_pass 'light)
+(self.mesh "mesh/sphere.ls?fmt=pn")
+(self.vector 'color "white")
