@@ -25,7 +25,8 @@ bool assimp_skeleton_loader(ResourceSlot& slot, Skeleton::Intermediate& intermed
     const aiBone* bone = mesh->mBones[i];
     joint.name = bone->mName.C_Str();
     joint.parent = -1;
-    const Matrix44f inv_bind_pose = (*(Matrix44f*)(&bone->mOffsetMatrix));
+    Matrix44f inv_bind_pose;
+    memcpy(&inv_bind_pose, &bone->mOffsetMatrix, sizeof(inv_bind_pose));
     joint.inv_bind_pose = inv_bind_pose.transpose();
     intermediate.joints.push(joint);
   }
