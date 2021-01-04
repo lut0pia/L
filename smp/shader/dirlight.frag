@@ -1,10 +1,12 @@
+#include <shader/light_lib.glsl>
+
 layout(location = 0) out vec4 fragcolor;
 
 layout(binding = 1) uniform Parameters {
   vec4 color;
   float intensity;
 };
- 
+
 layout(binding = 2) uniform sampler2D color_buffer;
 layout(binding = 3) uniform sampler2D normal_buffer;
 layout(binding = 4) uniform sampler2D depth_buffer;

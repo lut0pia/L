@@ -1,3 +1,5 @@
+#include <shader/alpha_lib.glsl>
+
 layout(location = 0) out vec4 fragcolor;
 
 layout(binding = 1) uniform Parameters {

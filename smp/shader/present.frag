@@ -1,3 +1,5 @@
+#include <shader/alpha_lib.glsl>
+
 layout(binding = 1) uniform sampler2D light_buffer;
 layout(location = 0) out vec4 fragcolor;
 

@@ -23,21 +23,8 @@
 "mat4 model;" \
 "};"
 #define L_SHADER_LIB \
-"const float PI = 3.14159265359f;" \
-"const float PHI = 1.61803398874989484820459;" \
-"const float SQ2 = 1.41421356237309504880169;" \
 "struct GBufferSample { vec3 color; float metalness; vec3 normal; float roughness; float emissive; vec3 position; float depth; float linear_depth; };" \
-"float gold_noise(in vec2 coordinate, in float seed) {" \
-  "float noise = fract(tan(distance(coordinate*(seed+PHI*00000.1), vec2(PHI*00000.1, PI*00000.1)))*SQ2*10000.0);" \
-  "return isnan(noise) ? 0.f : noise;" \
-"}" \
 "vec2 coords_correction(vec2 _coords) { return _coords; }" \
-"float frag_noise() {" \
-  "return gold_noise(gl_FragCoord.xy, frame%4);" \
-"}" \
-"bool alpha(float a){" \
-"return a<clamp(frag_noise(), 0.01f, 0.99f);" \
-"}" \
 "vec3 linearize(vec3 c){" \
 "return pow(c, vec3(2.2f));" \
 "}" \
@@ -53,42 +40,6 @@
 "}" \
 "float linearize_depth(float depth) {" \
   "return projection[3][2] / (projection[2][2] + (2.f * depth - 1.f));" \
-"}" \
-"float light_attenuation(float dist, float radius, float intensity){" \
-  "float num = clamp(1.f-pow(dist/radius,4.f),0.f,1.f);" \
-  "return intensity*num*num/(dist*dist+1.f);" \
-"}" \
-"vec3 fresnel_schlick(float cos_theta, vec3 F0){" \
-  "return F0 + (1.0 - F0) * pow(1.0 - cos_theta, 5.0);" \
-"}" \
-"float distribution_GGX(vec3 N, vec3 H, float roughness){" \
-  "float a = roughness*roughness;" \
-  "float a2 = a*a;" \
-  "float NdotH = max(dot(N, H), 0.0);" \
-  "float NdotH2 = NdotH*NdotH;" \
-  "float nom = a2;" \
-  "float denom = (NdotH2 * (a2 - 1.0) + 1.0);" \
-  "denom = PI * denom * denom;" \
-  "return nom / denom;" \
-"}" \
-"float geometry_schlick_GGX(float NdotV, float roughness){" \
-  "float r = (roughness + 1.0);" \
-  "float k = (r*r) / 8.0;" \
-  "float nom = NdotV;" \
-  "float denom = NdotV * (1.0 - k) + k;" \
-  "return nom / denom;" \
-"}" \
-"float geometry_smith(vec3 N, vec3 V, vec3 L, float roughness){" \
-  "float NdotV = max(dot(N, V), 0.0);" \
-  "float NdotL = max(dot(N, L), 0.0);" \
-  "float ggx2 = geometry_schlick_GGX(NdotV, roughness);" \
-  "float ggx1 = geometry_schlick_GGX(NdotL, roughness);" \
-  "return ggx1 * ggx2;" \
-"}" \
-"vec3 specular(float NDF, float G, vec3 F, vec3 N, vec3 V, vec3 L){" \
-  "vec3 nominator = NDF * G * F;" \
-  "float denominator = 4 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001f;" \
-  "return nominator / denominator;" \
 "}" \
 "GBufferSample sample_gbuffer(sampler2D color_buffer, sampler2D normal_buffer, sampler2D depth_buffer) {" \
   "GBufferSample s;" \

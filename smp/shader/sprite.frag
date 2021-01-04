@@ -1,3 +1,5 @@
+#include <shader/alpha_lib.glsl>
+
 layout(location = 0) in vec2 ftexcoords;
 layout(location = 1) in vec3 fnormal;
 
@@ -8,7 +10,9 @@ layout(binding = 2) uniform sampler2D tex;
 
 void main() {
   vec4 color = texture(tex,ftexcoords);
-  if(alpha(color.a)) discard;
+  if(alpha(color.a)) {
+    discard;
+  }
   ocolor.rgb = linearize(color.rgb);
   ocolor.a = 0.f; // Metalness
   onormal.xy = encodeNormal(fnormal);

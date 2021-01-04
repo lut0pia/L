@@ -1,3 +1,5 @@
+#include <shader/alpha_lib.glsl>
+
 layout(location = 0) in vec3 fposition;
 layout(location = 1) in vec2 ftexcoords;
 layout(location = 2) in vec3 fnormal;
@@ -21,7 +23,9 @@ vec3 derive_normal(vec3 p, vec3 n, float h){
 
 void main() {
   vec4 color = texture(tex,ftexcoords);
-  if(alpha(color.a)) discard;
+  if(alpha(color.a)) {
+    discard;
+  }
   vec4 material = texture(mat_tex,ftexcoords);
   ocolor.rgb = linearize(color.rgb);
   ocolor.a = material.y; /* Metalness */
