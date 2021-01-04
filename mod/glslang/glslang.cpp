@@ -122,7 +122,41 @@ static const TBuiltInResource builtin_resources = {
 
 static const Symbol glsl_symbol("glsl"), stage_symbol("stage"), frag_symbol("frag"), vert_symbol("vert");
 
-#define L_GLSL_INTRO "#version 450\n#extension GL_ARB_separate_shader_objects : require\n"
+#define L_GLSL_INTRO "#version 450\n#extension GL_ARB_separate_shader_objects : require\n#extension GL_GOOGLE_include_directive : require\n"
+
+class Includer : public glslang::TShader::Includer {
+protected:
+  ResourceSlot& _slot;
+public:
+  Includer(ResourceSlot& slot) : _slot(slot) {}
+
+  virtual IncludeResult* includeSystem(const char* header_name, const char*, size_t) override {
+    if(CFileStream stream = CFileStream(header_name, "rb")) {
+      // Add it to source files
+      if(!_slot.source_files.find(String(header_name))) {
+        _slot.source_files.push(header_name);
+      }
+      const size_t header_length = stream.size();
+      char* header_data = (char*)Memory::alloc(header_length);
+      stream.read(header_data, header_length);
+      IncludeResult* result = Memory::new_type<IncludeResult>(header_name, header_data, header_length, nullptr);
+      return result;
+    } else {
+      warning("glslang: Couldn't read source file: %s", header_name);
+      return nullptr;
+    }
+  }
+  virtual IncludeResult* includeLocal(const char*, const char*, size_t) override {
+    warning("glslang: No support for local inclusion");
+    return nullptr;
+  }
+  virtual void releaseInclude(IncludeResult* result) override {
+    if(result != nullptr) {
+      Memory::free((void*)result->headerData, result->headerLength);
+      Memory::delete_type(result);
+    }
+  }
+};
 
 static bool glslang_shader_loader(ResourceSlot& slot, Shader::Intermediate& intermediate) {
   if(slot.ext != glsl_symbol && slot.ext != frag_symbol && slot.ext != vert_symbol) {
@@ -175,8 +209,9 @@ static bool glslang_shader_loader(ResourceSlot& slot, Shader::Intermediate& inte
   }
 
   {
+    Includer includer(slot);
     L_SCOPE_MARKER("glslang parsing");
-    if(!shader.parse(&builtin_resources, 450, EProfile::ENoProfile, true, true, message_flags)) {
+    if(!shader.parse(&builtin_resources, 450, EProfile::ENoProfile, true, true, message_flags, includer)) {
       warning("glslang: %s", shader.getInfoLog());
       return false;
     }
