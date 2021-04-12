@@ -188,6 +188,7 @@ void OpenGLRenderer::init(const char*, uintptr_t data1, uintptr_t data2) {
   glCreateVertexArrays(1, &_dummy_vao);
 
   glFrontFace(GL_CCW);
+  glEnable(GL_SCISSOR_TEST);
   //glClipControl(GL_UPPER_LEFT, GL_ZERO_TO_ONE);
 
   init_render_passes();
@@ -285,7 +286,8 @@ void OpenGLRenderer::end_present_pass() {
 
 void OpenGLRenderer::set_scissor(RenderCommandBuffer*, const L::Interval2i& scissor) {
   const Vector2i scissor_size = scissor.size();
-  glScissor(scissor.min().x(), scissor.min().y(), scissor_size.x(), scissor_size.y());
+  // Lower left origin shenanigans
+  glScissor(scissor.min().x(), Window::height() - scissor.max().y(), scissor_size.x(), scissor_size.y());
 }
 void OpenGLRenderer::reset_scissor(RenderCommandBuffer*) {
   glScissor(0, 0, 1 << 14, 1 << 14);
@@ -293,7 +295,8 @@ void OpenGLRenderer::reset_scissor(RenderCommandBuffer*) {
 
 void OpenGLRenderer::set_viewport(RenderCommandBuffer*, const Interval2i& viewport) {
   const Vector2i viewport_size = viewport.size();
-  glViewport(viewport.min().x(), viewport.min().y(), viewport_size.x(), viewport_size.y());
+  // Lower left origin shenanigans
+  glViewport(viewport.min().x(), Window::height() - viewport.max().y(), viewport_size.x(), viewport_size.y());
 }
 void OpenGLRenderer::reset_viewport(RenderCommandBuffer*) {
 
