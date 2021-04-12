@@ -6,6 +6,12 @@ using namespace L;
 
 L::Array<RmlUiComponent::EventListener*> RmlUiComponent::_event_listeners;
 
+static Ref<InputMap> input_map = ref<InputMap>(Array<InputMapEntry> {
+  InputMapEntry {"MouseLeft", Device::Button::MouseLeft},
+    InputMapEntry {"MouseRight", Device::Button::MouseRight},
+    InputMapEntry {"MouseMiddle", Device::Button::MouseMiddle},
+});
+
 #define RMLUI_SCRIPT_METHOD_INTERNAL(PREFIX, NAME, NARGS, ...) \
 register_rmlui_script_method(NAME, \
   [](ScriptContext& c) { \
@@ -54,6 +60,7 @@ RmlUiComponent::RmlUiComponent() {
   _context->SetDensityIndependentPixelRatio(1.0f);
 
   _input_context.set_name("rmlui");
+  _input_context.set_input_map(input_map);
 }
 
 RmlUiComponent::~RmlUiComponent() {
@@ -149,6 +156,10 @@ void RmlUiComponent::update() {
 
     // Mouse move
     _context->ProcessMouseMove(Window::cursor_x(), Window::cursor_y(), key_modifier_state);
+
+    // Block mouse input if outstanding element is hovered
+    Rml::Core::Element* hover_el = _context->GetHoverElement();
+    _input_context.set_block_mode(hover_el && hover_el->GetTagName() != "body" ? InputBlockMode::Used : InputBlockMode::None);
 
     { // Mouse buttons
       Device::Button mouse_buttons[] = {
