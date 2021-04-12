@@ -8,12 +8,12 @@ using namespace L;
 static bool opened = false;
 
 static void imgui_input_update() {
-  if(ImGui::BeginMainMenuBar()) {
+  if(imgui_begin_main_menu_bar()) {
     if(ImGui::BeginMenu("Window")) {
       ImGui::MenuItem("Input", "", &opened);
       ImGui::EndMenu();
     }
-    ImGui::EndMainMenuBar();
+    imgui_end_main_menu_bar();
   }
 
   if(!opened) {

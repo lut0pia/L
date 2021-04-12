@@ -15,12 +15,12 @@ static Table<Symbol, Color> type_colors;
 static uint32_t state_mask = (1 << ResourceSlot::Loading) | (1 << ResourceSlot::Failed);
 
 static void imgui_resources_update() {
-  if(ImGui::BeginMainMenuBar()) {
+  if(imgui_begin_main_menu_bar()) {
     if(ImGui::BeginMenu("Window")) {
       ImGui::MenuItem("Resources", "", &opened);
       ImGui::EndMenu();
     }
-    ImGui::EndMainMenuBar();
+    imgui_end_main_menu_bar();
   }
 
   if(!opened) {

@@ -23,7 +23,16 @@ static Array<VertexAttribute> vertex_attributes = {
 };
 static String text_input;
 static InputContext input_context;
-static bool demo_opened = false;
+static bool menu_open = false;
+static bool demo_open = false;
+
+bool imgui_begin_main_menu_bar() {
+  return menu_open && ImGui::BeginMainMenuBar();
+}
+
+void imgui_end_main_menu_bar() {
+  ImGui::EndMainMenuBar();
+}
 
 static void imgui_new_frame() {
   ImGuiIO& io = ImGui::GetIO();
@@ -132,16 +141,21 @@ static void imgui_update() {
 
   imgui_new_frame();
 
-  if(ImGui::BeginMainMenuBar()) {
-    if(ImGui::BeginMenu("Window")) {
-      ImGui::MenuItem("Demo", "", &demo_opened);
-      ImGui::EndMenu();
-    }
-    ImGui::EndMainMenuBar();
+  ImGuiIO& io = ImGui::GetIO();
+  if(io.KeyCtrl && ImGui::IsKeyPressed(int(Device::Button::F10))) {
+    menu_open = !menu_open;
   }
 
-  if(demo_opened) {
-    ImGui::ShowDemoWindow(&demo_opened);
+  if(imgui_begin_main_menu_bar()) {
+    if(ImGui::BeginMenu("Window")) {
+      ImGui::MenuItem("Demo", "", &demo_open);
+      ImGui::EndMenu();
+    }
+    imgui_end_main_menu_bar();
+  }
+
+  if(demo_open) {
+    ImGui::ShowDemoWindow(&demo_open);
   }
 }
 
