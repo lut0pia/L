@@ -284,7 +284,7 @@ void imgui_module_init() {
       shader_vert = ".imgui?stage=vert";
       shader_frag = ".imgui?stage=frag";
       Engine::add_update(imgui_update);
-      Engine::add_gui(imgui_gui);
+      Engine::add_gui(imgui_gui, true);
       Engine::add_window_event(imgui_window_event);
     }});
   
