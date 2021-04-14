@@ -126,8 +126,9 @@
     <DisplayString Optional="true" Condition="_td == &amp;L::Type&lt;bool&gt;::td">{*(bool*)_data}</DisplayString>
     <DisplayString Optional="true" Condition="_td == &amp;L::Type&lt;int&gt;::td">{*(int*)_data}</DisplayString>
     <DisplayString Optional="true" Condition="_td == &amp;L::Type&lt;float&gt;::td">{*(float*)_data}</DisplayString>
+    <DisplayString Optional="true" Condition="_td == &amp;L::Type&lt;L::Vector&lt;2,float&gt; &gt;::td">{*(Vector&lt;2,float&gt;*)_data}</DisplayString>
+    <DisplayString Optional="true" Condition="_td == &amp;L::Type&lt;L::Vector&lt;3,float&gt; &gt;::td">{*(Vector&lt;3,float&gt;*)_data}</DisplayString>
     <DisplayString Optional="true" Condition="_td == &amp;L::Type&lt;L::Symbol&gt;::td">{*(L::Symbol*)&amp;_data}</DisplayString>
-    <DisplayString Optional="true" Condition="_td == &amp;L::Type&lt;L::Script::RawSymbol&gt;::td">{*(L::Script::RawSymbol*)&amp;_data}</DisplayString>
     <DisplayString Optional="true" Condition="_td == &amp;L::Type&lt;L::String&gt;::td">{*(L::String*)_p}</DisplayString>
     <DisplayString Optional="true" Condition="_td == &amp;L::Type&lt;L::Array&lt;L::Variable&gt; &gt;::td">{*(L::Array&lt;L::Variable&gt;*)_p}</DisplayString>
     <DisplayString Optional="true" Condition="_td == &amp;L::Type&lt;L::Table&lt;L::Variable,L::Variable&gt; &gt;::td">{*(L::Table&lt;L::Variable,L::Variable&gt;*)&amp;_data}</DisplayString>
