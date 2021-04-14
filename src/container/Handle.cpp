@@ -1,6 +1,7 @@
 #include "Handle.h"
 
-#include "Array.h"
+#include "../system/intrinsics.h"
+#include "../system/Memory.h"
 
 using namespace L;
 
@@ -11,6 +12,8 @@ static uint64_t address_mask = (1ull << address_bits) - 1;
 static uint64_t freelist = address_mask;
 
 GenericHandle::GenericHandle(void* ptr) {
+  L_ASSERT((uint64_t(ptr) & address_mask) == uint64_t(ptr));
+
   while(freelist != address_mask) {
     const uint64_t index = freelist;
     const uint64_t version = handle_objects[index] >> address_bits;
