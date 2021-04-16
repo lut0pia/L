@@ -100,6 +100,7 @@ namespace L {
     inline void index_offset(uint32_t offset) { _partial_state.index_offset = offset; _state_dirty = true; }
 
     static void script_registration();
+    static void clear_cache();
 
     friend inline void resource_write(Stream& s, const Material& v) { s <= v._parent <= v._partial_state; }
     friend inline void resource_read(Stream& s, Material& v) { s >= v._parent >= v._partial_state; }

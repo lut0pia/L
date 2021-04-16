@@ -34,6 +34,9 @@ void mainjob(void*) {
   log("exit: clear engine");
   Engine::clear();
 
+  log("exit: clear material cache");
+  Material::clear_cache();
+
   log("exit: shutdown engine");
   Engine::shutdown();
 

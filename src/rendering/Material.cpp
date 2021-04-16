@@ -5,6 +5,7 @@
 
 using namespace L;
 
+static Table<uint32_t, Ref<Pipeline>> pipeline_cache;
 static const Interval2i default_scissor = Vector2i(0);
 
 template <class K, class V>
@@ -251,6 +252,12 @@ void Material::update() {
     // Clear all existing desc sets as they're no longer valid
     clear_desc_set_pairings();
 
+    if(Ref<Pipeline>* pipeline = pipeline_cache.find(pipeline_h)) {
+      _pipeline = *pipeline;
+      create_uniform_buffers(*_pipeline);
+      return;
+    }
+
     // Check shaders
     if(_final_state.pipeline.shaders.empty()) {
       return; // Abort because there aren't any shaders
@@ -267,7 +274,7 @@ void Material::update() {
     }
 
     // Create pipeline
-    _pipeline = ref<Pipeline>(_final_state.pipeline);
+    pipeline_cache[pipeline_h] = _pipeline = ref<Pipeline>(_final_state.pipeline);
 
     create_uniform_buffers(*_pipeline);
   }
@@ -533,4 +540,8 @@ void Material::script_registration() {
   L_SCRIPT_METHOD(Material, "mesh", 1, mesh(c.param(0).get<String>()));
   L_SCRIPT_METHOD(Material, "text", 1, text(c.param(0).get<String>()));
   L_SCRIPT_METHOD(Material, "vertex_count", 1, vertex_count(uint32_t(c.param(0).get<float>())));
+}
+
+void Material::clear_cache() {
+  pipeline_cache.clear();
 }
