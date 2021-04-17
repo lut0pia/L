@@ -21,10 +21,11 @@ using namespace L;
 #undef L_GL_FUNC
 
 static Array<Symbol> extensions;
+static GLuint event_id = 0xffffffff;
 
 #if !L_RLS
-static void APIENTRY debug_callback(GLenum, GLenum type, GLuint, GLenum, GLsizei, const char* message, const void*) {
-  if(type != GL_DEBUG_TYPE_PERFORMANCE && type != GL_DEBUG_TYPE_OTHER) {
+static void APIENTRY debug_callback(GLenum, GLenum type, GLuint id, GLenum, GLsizei, const char* message, const void*) {
+  if(type != GL_DEBUG_TYPE_PERFORMANCE && type != GL_DEBUG_TYPE_OTHER && id != event_id) {
     warning("opengl: %s", message);
   }
 }
@@ -300,6 +301,13 @@ void OpenGLRenderer::set_viewport(RenderCommandBuffer*, const Interval2i& viewpo
 }
 void OpenGLRenderer::reset_viewport(RenderCommandBuffer*) {
 
+}
+
+void OpenGLRenderer::begin_event(RenderCommandBuffer*, const char* event_name) {
+  glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, event_id, -1, event_name);
+}
+void OpenGLRenderer::end_event(RenderCommandBuffer*) {
+  glPopDebugGroup();
 }
 
 GLuint OpenGLRenderer::to_gl_format(L::RenderFormat format) {

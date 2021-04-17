@@ -93,6 +93,9 @@ public:
   virtual void set_viewport(L::RenderCommandBuffer*, const L::Interval2i&) override;
   virtual void reset_viewport(L::RenderCommandBuffer*) override;
 
+  virtual void begin_event(L::RenderCommandBuffer*, const char*) override;
+  virtual void end_event(L::RenderCommandBuffer*) override;
+
   virtual L::FramebufferImpl* create_framebuffer(const L::RenderPassImpl*, const L::TextureImpl** textures, size_t texture_count) override;
   virtual void destroy_framebuffer(L::FramebufferImpl*) override;
   virtual void begin_framebuffer(L::FramebufferImpl*, L::RenderCommandBuffer*) override;
