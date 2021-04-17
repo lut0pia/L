@@ -10,31 +10,36 @@
 
 using namespace L;
 
-struct ProfilingEvent {
-  const char* name;
-  Time start, duration;
-  uint32_t fiber_id;
-};
-ProfilingEvent events[2 << 20];
-uint32_t event_index(0);
+static ProfilingEvent events[2 << 20];
+static uint32_t event_index(0);
 
-ScopeMarker::~ScopeMarker() {
-  const Time duration(Time::now() - _start);
-  if(duration > 0) {
-    uint32_t index;
-    do {
-      index = event_index;
-    } while(cas(&event_index, index, (index + 1) % L_COUNT_OF(events)) != index);
-    events[index] = {_name, _start, duration, TaskSystem::fiber_id()};
+ScopeMarker::ScopeMarker(const char* name) {
+  uint32_t index;
+  do {
+    index = event_index;
+  } while(cas(&event_index, index, (index + 1) % L_COUNT_OF(events)) != index);
+  _event = events + index;
+
+  if(_event->alloc_size > 0) {
+    Memory::free_type<char>((char*)_event->name, _event->alloc_size);
   }
+
+  _event->name = name;
+  _event->start = Time::now();
+  _event->duration = 0;
+  _event->fiber_id = TaskSystem::fiber_id();
+  _event->alloc_size = 0;
+}
+ScopeMarker::~ScopeMarker() {
+  _event->duration = Time::now() - _event->start;
 }
 ScopeMarkerFormatted::ScopeMarkerFormatted(const char* format, ...) : ScopeMarker(nullptr) {
   va_list args;
   va_start(args, format);
-  const size_t size(vsnprintf(nullptr, 0, format, args) + 1);
-  _name = Memory::alloc_type<char>(size);
+  _event->alloc_size = vsnprintf(nullptr, 0, format, args) + 1;
+  _event->name = Memory::alloc_type<char>(_event->alloc_size);
   va_start(args, format);
-  vsnprintf((char*)_name, size, format, args);
+  vsnprintf((char*)_event->name, _event->alloc_size, format, args);
 }
 
 struct ProfilingCounterEvent {

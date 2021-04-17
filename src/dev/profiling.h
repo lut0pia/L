@@ -16,12 +16,17 @@
 #define L_COUNT_MARKER(name,value) count_marker(name,value)
 
 namespace L {
+  struct ProfilingEvent {
+    const char* name = nullptr;
+    Time start, duration;
+    uint32_t fiber_id;
+    size_t alloc_size = 0;
+  };
   class ScopeMarker {
   protected:
-    const char* _name;
-    const Time _start;
+    ProfilingEvent* _event;
   public:
-    inline ScopeMarker(const char* name) : _name(name), _start(Time::now()) {}
+    ScopeMarker(const char* name);
     ~ScopeMarker();
   };
   class ScopeMarkerFormatted : public ScopeMarker {
