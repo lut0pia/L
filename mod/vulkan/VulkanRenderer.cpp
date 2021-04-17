@@ -6,6 +6,11 @@
 
 #include "VulkanRenderer.h"
 
+// Remove macros potentially defined by Xlib
+#ifdef Window
+#undef Window
+#endif
+
 #include <L/src/dev/debug.h>
 #include <L/src/dev/profiling.h>
 #include <L/src/macros.h>
