@@ -1,5 +1,5 @@
 (local m self)
-(local face (fun p0 p1 p2 p3 n (do
+(local face (fn p0 p1 p2 p3 n (do
   (m.push_position p0)
   (m.push_normal n)
   (m.push_position p1)

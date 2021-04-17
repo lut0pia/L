@@ -1,4 +1,4 @@
-(local make_box (fun (do
+(local make_box (fn (do
   (local entity (group_entity_create))
   (local transform (entity.require_transform))
   (local primitive (entity.add_primitive))
@@ -33,7 +33,7 @@
   (light.scale 8)
 )))
 
-(local make_static_box (fun position size (do
+(local make_static_box (fn position size (do
   (local entity (group_entity_create))
   (entity.require_transform|.move position)
   (entity.require_collider|.box size)
@@ -41,7 +41,7 @@
   (entity.require_primitive|.material|.parent "material/box.ls")
 )))
 
-(local make_cage (fun (do
+(local make_cage (fn (do
   (local size 20)
   (local nsize (- size))
   (local half (/ size 2))
@@ -53,7 +53,7 @@
   (make_static_box (vec 0 nhalf 1) (vec half 0.5 1))
 )))
 
-(local make_mesh (fun mat pos (do
+(local make_mesh (fn mat pos (do
   (local entity (group_entity_create))
   (set last_mesh entity)
   (local transform (entity.require_transform))

@@ -1,5 +1,5 @@
-(set rand_range (fun min max (+ min (* (- max min) (rand)))))
-(set rand_color (fun (color (rand) (rand) (rand))))
+(set rand_range (fn min max (+ min (* (- max min) (rand)))))
+(set rand_color (fn (color (rand) (rand) (rand))))
 
 (engine_gravity (vec 0 0 -9.8))
 ;(engine_gravity (vec 0 0 0))

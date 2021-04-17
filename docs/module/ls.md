@@ -44,10 +44,10 @@ You can access object fields with either `.token` or `:value`.
 ```
 
 ## Functions
-* `fun` can be used to create a function. The last parameter is the function's instruction, all previous parameters must be symbols and are the function's parameter names.
+* `fn` can be used to create a function. The last parameter is the function's instruction, all previous parameters must be symbols and are the function's parameter names.
 ```clojure
-(local fart (fun (print "PROUT!")))
-(local do_twice (fun f (do (f) (f))))
+(local fart (fn (print "PROUT!")))
+(local do_twice (fn f (do (f) (f))))
 (do_twice fart) ; Prints PROUT!PROUT!
 ```
 

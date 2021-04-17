@@ -2,13 +2,13 @@
 (local div 4)
 (local div2 (* div div))
 
-(local push_pos (fun p (do
+(local push_pos (fn p (do
   (set p (normalize p))
   (m.push_position p)
   (m.push_normal p)
 )))
 
-(local subface (fun p0 p1 p2 p3 (do
+(local subface (fn p0 p1 p2 p3 (do
   (push_pos p0)
   (push_pos p1)
   (push_pos p2)
@@ -18,7 +18,7 @@
   (push_pos p3)
 )))
 
-(local face (fun o xa ya (do
+(local face (fn o xa ya (do
   (local i 0)
   (local xad (/ xa div))
   (local yad (/ ya div))

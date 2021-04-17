@@ -1,4 +1,4 @@
-(set self.start (fun (do
+(set self.start (fn (do
   (self.entity.require_name|.set "camera")
   (set self.last_shoot (time 0))
   (set self.transform (self.entity.require_transform))
@@ -37,7 +37,7 @@
   (self.logo_gui.material|.vertex_count 6)
   (self.logo_gui.offset 10 10)
 )))
-(set self.update (fun (do
+(set self.update (fn (do
   ; Movement values
   (local transform self.transform)
   (local cursor self.cursor)
@@ -87,7 +87,7 @@
     (+ "FPS: " (/ 1.0 delta) "\n"
     "Frame: " avg_frame_work_duration "\n"))
 )))
-(set self.shoot (fun (do
+(set self.shoot (fn (do
   (if (> (- (now) self.last_shoot) (time 0.05)) (do
     (set self.last_shoot (now))
     (local e (entity_make))

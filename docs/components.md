@@ -31,10 +31,10 @@ Script components are used to add behaviour to entities. Their `start` function 
 ```
 Example of *script.ls*:
 ```clojure
-(set self.start (fun (do
+(set self.start (fn (do
   (set self.transform (self.entity.require_transform))
 )))
-(set self.event (fun e (do
+(set self.event (fn e (do
   (switch e.type
     'Collision (if (= e.other bullet_collider) (die))
   )

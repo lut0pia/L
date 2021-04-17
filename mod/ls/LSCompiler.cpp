@@ -5,7 +5,7 @@
 using namespace L;
 
 static const Symbol local_symbol("local"), set_symbol("set"), object_symbol("{object}"), array_symbol("[array]"),
-fun_symbol("fun"), return_symbol("return"), foreach_symbol("foreach"), do_symbol("do"), if_symbol("if"), self_symbol("self"),
+fn_symbol("fn"), return_symbol("return"), foreach_symbol("foreach"), do_symbol("do"), if_symbol("if"), self_symbol("self"),
 switch_symbol("switch"), while_symbol("while"), and_symbol("and"), or_symbol("or"), not_symbol("not"),
 add_symbol("+"), sub_symbol("-"), mul_symbol("*"), div_symbol("/"), mod_symbol("%"),
 add_assign_symbol("+="), sub_assign_symbol("-="), mul_assign_symbol("*="), div_assign_symbol("/="), mod_assign_symbol("%="),
@@ -111,7 +111,7 @@ void LSCompiler::resolve_locals(Function& func, const LSParser::Node& code) {
         func.local_table[code.children[1].value.as<Symbol>()] = func.local_count++;
       if(code.children.size() >= 5) // Key value
         func.local_table[code.children[2].value.as<Symbol>()] = func.local_count++;
-    } else if(sym == fun_symbol) {
+    } else if(sym == fn_symbol) {
       return;
     }
   }
@@ -306,7 +306,7 @@ bool LSCompiler::compile(Function& func, const LSParser::Node& node, uint8_t off
       } else if(sym == not_symbol) { // Not
         compile(func, children[1], offset);
         func.push(node, ScriptInstruction {Not, offset});
-      } else if(sym == fun_symbol) { // Function
+      } else if(sym == fn_symbol) { // Function
         if(children.size() > 1) {
           // Make a new function from the last item of the array
           // because the last part is always the code
