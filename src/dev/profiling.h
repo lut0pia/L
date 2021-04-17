@@ -11,7 +11,7 @@
 #include "../macros.h"
 #include "../time/Time.h"
 
-#define L_SCOPE_MARKER_NOCMD ((struct RenderCommandBuffer*)~uintptr_t(0))
+#define L_SCOPE_MARKER_NOCMD ((struct L::RenderCommandBuffer*)~uintptr_t(0))
 #define L_SCOPE_MARKER(name) L::ScopeMarker L_CONCAT(MARKER_,__LINE__)(name,L_SCOPE_MARKER_NOCMD)
 #define L_SCOPE_MARKERF(format,...) L::ScopeMarkerFormatted L_CONCAT(MARKER_,__LINE__)(format,L_SCOPE_MARKER_NOCMD,__VA_ARGS__)
 #define L_SCOPE_GPU_MARKER(cmd,name) L::ScopeMarker L_CONCAT(MARKER_,__LINE__)(name,cmd)
