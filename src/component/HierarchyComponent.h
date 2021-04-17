@@ -17,13 +17,12 @@ namespace L {
     static void script_registration();
 
     inline void parent(Transform* t) { _parent = t; }
-    inline void translation(const Vector3f& t) { _translation = t; }
-    inline void rotation(const Quatf& r) { _rotation = r; }
-    inline void rotation(const Vector3f& axis, float angle) { _rotation = Quatf(axis, angle);; }
 
+    inline void translation(const Vector3f& t) { _translation = t; }
+    inline void translate(const Vector3f& t) { _translation += t; }
+
+    inline void rotation(const Quatf& r) { _rotation = r; }
     inline void rotate(const Quatf& q) { _rotation = _rotation * q; }
-    inline void rotate(const Vector3f& v, float d) { rotate(Quatf(v, d)); }
     inline void rotate_absolute(const Quatf& q) { _rotation = q * _rotation; }
-    inline void rotate_absolute(const Vector3f& v, float d) { rotate_absolute(Quatf(v, d)); }
   };
 }
