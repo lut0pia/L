@@ -119,35 +119,51 @@ void Engine::update() {
 
       camera.prerender(cmd_buffer);
       CullVolume::cull(camera);
-      Renderer::get()->begin_framebuffer(camera.geometry_buffer(), cmd_buffer);
-      for(auto render : _renders)
-        render(camera, Renderer::get()->get_geometry_pass());
-      Renderer::get()->end_framebuffer(camera.geometry_buffer(), cmd_buffer);
 
-      Renderer::get()->begin_framebuffer(camera.light_buffer(), cmd_buffer);
-      for(auto render : _renders)
-        render(camera, Renderer::get()->get_light_pass());
-
-      if(Entity* cam_entity = camera.entity()) {
-        Array<PostProcessComponent*> post_processes;
-        cam_entity->components(post_processes);
-        for(PostProcessComponent* post_process : post_processes) {
-          post_process->render(camera, Renderer::get()->get_light_pass());
+      {
+        L_SCOPE_GPU_MARKER(cmd_buffer, "Geometry pass");
+        Renderer::get()->begin_framebuffer(camera.geometry_buffer(), cmd_buffer);
+        for(auto render : _renders) {
+          render(camera, Renderer::get()->get_geometry_pass());
         }
-      }
-      Renderer::get()->end_framebuffer(camera.light_buffer(), cmd_buffer);
-    });
-    Renderer::get()->begin_present_pass();
-    ComponentPool<Camera>::iterate([](Camera& camera) {
-      if(!camera.should_render()) {
-        return;
+        Renderer::get()->end_framebuffer(camera.geometry_buffer(), cmd_buffer);
       }
 
-      camera.present();
-      for(auto gui : _guis)
-        gui(camera);
+      {
+        L_SCOPE_GPU_MARKER(cmd_buffer, "Light pass");
+        Renderer::get()->begin_framebuffer(camera.light_buffer(), cmd_buffer);
+        for(auto render : _renders) {
+          render(camera, Renderer::get()->get_light_pass());
+        }
+
+        if(Entity* cam_entity = camera.entity()) {
+          Array<PostProcessComponent*> post_processes;
+          cam_entity->components(post_processes);
+          if(post_processes.size() > 0) {
+            L_SCOPE_GPU_MARKER(cmd_buffer, "Post processes");
+            for(PostProcessComponent* post_process : post_processes) {
+              post_process->render(camera, Renderer::get()->get_light_pass());
+            }
+          }
+        }
+        Renderer::get()->end_framebuffer(camera.light_buffer(), cmd_buffer);
+      }
     });
-    Renderer::get()->end_present_pass();
+
+    {
+      L_SCOPE_GPU_MARKER(cmd_buffer, "Present pass");
+      Renderer::get()->begin_present_pass();
+      ComponentPool<Camera>::iterate([](Camera& camera) {
+        if(!camera.should_render()) {
+          return;
+        }
+
+        camera.present();
+        for(auto gui : _guis)
+          gui(camera);
+        });
+      Renderer::get()->end_present_pass();
+    }
   }
 
   {

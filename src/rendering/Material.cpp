@@ -322,6 +322,7 @@ void Material::draw(const Camera& camera, const RenderPassImpl* render_pass, con
   }
 
   RenderCommandBuffer* cmd_buffer = camera.cmd_buffer();
+  L_SCOPE_GPU_MARKERF(cmd_buffer, "Material: %s", _parent.slot() ? _parent.slot()->id : "custom");
 
   // Only set scissor if value is different from default
   if(_final_state.scissor != default_scissor) {
