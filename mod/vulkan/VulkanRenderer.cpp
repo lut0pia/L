@@ -52,6 +52,7 @@ void VulkanRenderer::init(const char* wmid, uintptr_t data1, uintptr_t data2) {
     const char* required_extensions[] = {
       VK_KHR_SURFACE_EXTENSION_NAME,
       window_manager_ext,
+      VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
 #if !L_RLS
       VK_EXT_DEBUG_REPORT_EXTENSION_NAME,
 #endif
@@ -551,6 +552,16 @@ void VulkanRenderer::reset_viewport(RenderCommandBuffer*) {
   VkViewport viewport {0,0,float(_geometry_buffer.width()),float(_geometry_buffer.height()),0.f,1.f};
   vkCmdSetViewport((VkCommandBuffer)cmd_buffer, 0, 1, &viewport);
 #endif
+}
+
+void VulkanRenderer::begin_event(RenderCommandBuffer* cmd_buffer, const char* name) {
+  VkDebugUtilsLabelEXT marker_info = {};
+  marker_info.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
+  marker_info.pLabelName = name;
+  L_VK_EXT_FUNC(vkCmdBeginDebugUtilsLabelEXT, (VkCommandBuffer)cmd_buffer, &marker_info);
+}
+void VulkanRenderer::end_event(RenderCommandBuffer* cmd_buffer) {
+  L_VK_EXT_FUNC(vkCmdEndDebugUtilsLabelEXT, (VkCommandBuffer)cmd_buffer);
 }
 
 VkFormat VulkanRenderer::find_supported_format(VkFormat* candidates, size_t candidate_count, VkFormatFeatureFlags features) {

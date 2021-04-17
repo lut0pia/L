@@ -13,7 +13,7 @@
 #include <L/src/rendering/Renderer.h>
 #include <L/src/rendering/Shader.h>
 
-#define L_VK_EXT_FUNC(name,...) (PFN_##name(vkGetInstanceProcAddr(instance, "vkCreateDebugReportCallbackEXT")))(__VA_ARGS__)
+#define L_VK_EXT_FUNC(name,...) (PFN_##name(vkGetInstanceProcAddr(instance, #name)))(__VA_ARGS__)
 #define L_VK_CHECKED(...) {VkResult result(__VA_ARGS__);if(result!=VK_SUCCESS)error("vulkan: %s:%s",#__VA_ARGS__,VulkanRenderer::result_str(result));}
 
 struct VulkanTexture : public L::TextureImpl {
@@ -141,6 +141,9 @@ public:
 
   virtual void set_viewport(L::RenderCommandBuffer*, const L::Interval2i&) override;
   virtual void reset_viewport(L::RenderCommandBuffer*) override;
+
+  virtual void begin_event(L::RenderCommandBuffer*, const char*) override;
+  virtual void end_event(L::RenderCommandBuffer*) override;
 
   virtual L::FramebufferImpl* create_framebuffer(const L::RenderPassImpl*, const L::TextureImpl** textures, size_t texture_count) override;
   virtual void destroy_framebuffer(L::FramebufferImpl*) override;
