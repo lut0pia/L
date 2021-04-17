@@ -289,7 +289,7 @@ void OpenGLRenderer::end_present_pass() {
 void OpenGLRenderer::set_scissor(RenderCommandBuffer*, const L::Interval2i& scissor) {
   const Vector2i scissor_size = scissor.size();
   // Lower left origin shenanigans
-  glScissor(scissor.min().x(), Window::height() - scissor.max().y(), scissor_size.x(), scissor_size.y());
+  glScissor(scissor.min().x(), L::Window::height() - scissor.max().y(), scissor_size.x(), scissor_size.y());
 }
 void OpenGLRenderer::reset_scissor(RenderCommandBuffer*) {
   glScissor(0, 0, 1 << 14, 1 << 14);
@@ -298,7 +298,7 @@ void OpenGLRenderer::reset_scissor(RenderCommandBuffer*) {
 void OpenGLRenderer::set_viewport(RenderCommandBuffer*, const Interval2i& viewport) {
   const Vector2i viewport_size = viewport.size();
   // Lower left origin shenanigans
-  glViewport(viewport.min().x(), Window::height() - viewport.max().y(), viewport_size.x(), viewport_size.y());
+  glViewport(viewport.min().x(), L::Window::height() - viewport.max().y(), viewport_size.x(), viewport_size.y());
 }
 void OpenGLRenderer::reset_viewport(RenderCommandBuffer*) {
 
