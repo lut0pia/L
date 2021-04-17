@@ -3,6 +3,7 @@
 #if L_PROFILING
 
 #include "../parallelism/TaskSystem.h"
+#include "../rendering/Renderer.h"
 #include "../stream/CFileStream.h"
 #include "../system/intrinsics.h"
 #include "../system/Memory.h"
@@ -11,14 +12,23 @@
 using namespace L;
 
 static ProfilingEvent events[2 << 20];
-static uint32_t event_index(0);
+static int64_t event_index = 0;
 
-ScopeMarker::ScopeMarker(const char* name) {
-  uint32_t index;
-  do {
-    index = event_index;
-  } while(cas(&event_index, index, (index + 1) % L_COUNT_OF(events)) != index);
-  _event = events + index;
+ScopeMarker::ScopeMarker(const char* name, RenderCommandBuffer* cmd) : _cmd(cmd) {
+  if(name) {
+    add_event(name, 0);
+  }
+}
+ScopeMarker::~ScopeMarker() {
+  _event->duration = Time::now() - _event->start;
+
+  if(_cmd != L_SCOPE_MARKER_NOCMD) {
+    Renderer::get()->end_event(_cmd);
+  }
+}
+void ScopeMarker::add_event(const char* name, size_t alloc_size) {
+  const uint64_t index = atomic_add(&event_index, int64_t(1));
+  _event = events + (index % L_COUNT_OF(events));
 
   if(_event->alloc_size > 0) {
     Memory::free_type<char>((char*)_event->name, _event->alloc_size);
@@ -28,18 +38,20 @@ ScopeMarker::ScopeMarker(const char* name) {
   _event->start = Time::now();
   _event->duration = 0;
   _event->fiber_id = TaskSystem::fiber_id();
-  _event->alloc_size = 0;
+  _event->alloc_size = alloc_size;
+
+  if(_cmd != L_SCOPE_MARKER_NOCMD) {
+    Renderer::get()->begin_event(_cmd, name);
+  }
 }
-ScopeMarker::~ScopeMarker() {
-  _event->duration = Time::now() - _event->start;
-}
-ScopeMarkerFormatted::ScopeMarkerFormatted(const char* format, ...) : ScopeMarker(nullptr) {
+ScopeMarkerFormatted::ScopeMarkerFormatted(const char* format, RenderCommandBuffer* cmd, ...) : ScopeMarker(nullptr, cmd) {
   va_list args;
-  va_start(args, format);
-  _event->alloc_size = vsnprintf(nullptr, 0, format, args) + 1;
-  _event->name = Memory::alloc_type<char>(_event->alloc_size);
-  va_start(args, format);
-  vsnprintf((char*)_event->name, _event->alloc_size, format, args);
+  va_start(args, cmd);
+  const size_t alloc_size = vsnprintf(nullptr, 0, format, args) + size_t(1);
+  char* name = Memory::alloc_type<char>(alloc_size);
+  va_start(args, cmd);
+  vsnprintf(name, alloc_size, format, args);
+  add_event(name, alloc_size);
 }
 
 struct ProfilingCounterEvent {

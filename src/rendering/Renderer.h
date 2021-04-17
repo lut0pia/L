@@ -150,6 +150,9 @@ namespace L {
     virtual void set_viewport(RenderCommandBuffer*, const Interval2i&) = 0;
     virtual void reset_viewport(RenderCommandBuffer*) = 0;
 
+    virtual void begin_event(RenderCommandBuffer*, const char*) = 0;
+    virtual void end_event(RenderCommandBuffer*) = 0;
+
     virtual FramebufferImpl* create_framebuffer(const RenderPassImpl*, const TextureImpl** textures, size_t texture_count) = 0;
     virtual void destroy_framebuffer(FramebufferImpl*) = 0;
     virtual void begin_framebuffer(FramebufferImpl*, RenderCommandBuffer*) = 0;
