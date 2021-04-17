@@ -6,6 +6,7 @@
 #include <GL/glx.h>
 #undef None
 #undef Always
+#undef Window
 #endif
 
 #include <L/src/dev/debug.h>
