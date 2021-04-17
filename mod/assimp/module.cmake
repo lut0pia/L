@@ -29,6 +29,7 @@ ExternalProject_Add(
   ext_assimp
   GIT_REPOSITORY https://github.com/assimp/assimp.git
   GIT_TAG 8f0c6b04b2257a520aaab38421b2e090204b69df # v5.0.1
+  UPDATE_COMMAND ""
   GIT_SHALLOW true
   CMAKE_ARGS
     -DCMAKE_INSTALL_PREFIX=${ASSIMP_INSTALL_DIR}

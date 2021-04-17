@@ -30,6 +30,7 @@ ExternalProject_Add(
   GIT_REPOSITORY https://github.com/KhronosGroup/SPIRV-Cross.git
   GIT_TAG 8891bd35120ca91c252a66ccfdc3f9a9d03c70cd # 2020-09-17
   GIT_SHALLOW true
+  UPDATE_COMMAND ""
   CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${SPIRV_CROSS_INSTALL_DIR}
 )
 
