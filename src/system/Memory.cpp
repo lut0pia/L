@@ -20,11 +20,14 @@ void* Memory::alloc_zero(size_t size) {
 }
 void* Memory::realloc(void* oldptr, size_t oldsize, size_t newsize) {
   void* ptr = alloc(newsize);
-  memcpy(ptr, oldptr, oldsize);
-  free(oldptr, oldsize);
+  if(oldptr != nullptr) {
+    memcpy(ptr, oldptr, oldsize);
+    free(oldptr, oldsize);
+  }
   return ptr;
 }
 void Memory::free(void* ptr, size_t size) {
+  L_ASSERT(ptr != nullptr);
   virtual_free(ptr, size);
 }
 #elif L_USE_MALLOC
