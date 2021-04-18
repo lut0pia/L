@@ -13,6 +13,7 @@ L::UniformBufferImpl* OpenGLRenderer::create_uniform_buffer(size_t size) {
 void OpenGLRenderer::destroy_uniform_buffer(UniformBufferImpl* uniform_buffer) {
   OpenGLTexture* gl_uniform_buffer = (OpenGLTexture*)uniform_buffer;
   glDeleteBuffers(1, &gl_uniform_buffer->id);
+  Memory::delete_type(gl_uniform_buffer);
 }
 void OpenGLRenderer::load_uniform_buffer(UniformBufferImpl* uniform_buffer, const void* data, size_t size, size_t offset) {
   L_SCOPE_THREAD_MASK(1);

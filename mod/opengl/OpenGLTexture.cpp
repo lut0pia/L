@@ -40,6 +40,7 @@ TextureImpl* OpenGLRenderer::create_texture(uint32_t width, uint32_t height, L::
 void OpenGLRenderer::destroy_texture(TextureImpl* tex) {
   OpenGLTexture* gl_tex = (OpenGLTexture*)tex;
   glDeleteTextures(1, &gl_tex->id);
+  Memory::delete_type(gl_tex);
 }
 
 void OpenGLRenderer::load_texture(TextureImpl* tex, const void* data, size_t, const L::Vector3i& offset, const L::Vector3i& extent) {

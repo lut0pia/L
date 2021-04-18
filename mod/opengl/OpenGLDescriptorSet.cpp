@@ -6,7 +6,11 @@ DescriptorSetImpl* OpenGLRenderer::create_descriptor_set(PipelineImpl*) {
   return Memory::new_type<OpenGLDescriptorSet>();
 }
 void OpenGLRenderer::destroy_descriptor_set(DescriptorSetImpl* desc_set, PipelineImpl*) {
-  Memory::delete_type((OpenGLDescriptorSet*)desc_set);
+  OpenGLDescriptorSet* gl_desc_set = (OpenGLDescriptorSet*)desc_set;
+  if(gl_desc_set->constants) {
+    destroy_uniform_buffer(gl_desc_set->constants);
+  }
+  Memory::delete_type(gl_desc_set);
 }
 void OpenGLRenderer::update_descriptor_set(DescriptorSetImpl* desc_set, const ShaderBinding& binding, TextureImpl* texture) {
   OpenGLDescriptorSet* gl_desc_set = (OpenGLDescriptorSet*)desc_set;
