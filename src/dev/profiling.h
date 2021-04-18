@@ -45,5 +45,7 @@ namespace L {
 #else
 #define L_SCOPE_MARKER(name)
 #define L_SCOPE_MARKERF(format,...)
+#define L_SCOPE_GPU_MARKER(cmd,name)
+#define L_SCOPE_GPU_MARKERF(cmd,format,...)
 #define L_COUNT_MARKER(name,value)
 #endif
