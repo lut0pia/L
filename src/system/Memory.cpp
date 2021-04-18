@@ -9,8 +9,10 @@ using namespace L;
 
 #if L_USE_DEBUG_ALLOC
 void* Memory::alloc(size_t size) {
-  void* ptr = virtual_alloc(size);
+  void* ptr = virtual_alloc(size + 8);
   L_ASSERT(ptr != nullptr);
+  *(uintptr_t*)ptr = size;
+  ptr = (uint8_t*)ptr + 8;
   return ptr;
 }
 void* Memory::alloc_zero(size_t size) {
@@ -28,7 +30,9 @@ void* Memory::realloc(void* oldptr, size_t oldsize, size_t newsize) {
 }
 void Memory::free(void* ptr, size_t size) {
   L_ASSERT(ptr != nullptr);
-  virtual_free(ptr, size);
+  ptr = (uint8_t*)ptr - 8;
+  L_ASSERT(*(uintptr_t*)ptr == size);
+  virtual_free(ptr, size + 8);
 }
 #elif L_USE_MALLOC
 void* Memory::alloc(size_t size) { return malloc(size); }
