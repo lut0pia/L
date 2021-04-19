@@ -118,6 +118,9 @@ Var ScriptContext::execute(const Ref<ScriptFunction>& function, const Var* param
   const uintptr_t start_stack_start = _current_stack_start;
   const uint32_t start_param_count = _current_param_count;
 
+  // Increase stack start to keep previous locals untouched
+  _current_stack_start += _current_param_count + 2;
+
   _stack.size(_current_stack_start + 256);
   _frames.push();
   _frames.back().function = function;
