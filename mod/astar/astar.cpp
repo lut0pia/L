@@ -4,6 +4,9 @@
 
 using namespace L;
 
+template<class Node> using AStarDistanceFunc = float(const Node&, const Node&, void*);
+template<class Node> using AStarNeighborsFunc = Array<Node>(const Node&, void*);
+
 enum class AStarNodeStatus : uint8_t {
   New,
   Open,
@@ -17,14 +20,24 @@ struct AStarNode {
   Node parent;
 };
 
-template<class Node, class Distance, class Neighbors>
-bool astar_find_path(const Node& start, const Node& target, Distance dist_func, Neighbors ngbr_func, Array<Node>& path) {
+template<class Node>
+struct AStarParameters {
+  Node start, target;
+  float max_dist;
+  AStarDistanceFunc<Node>* dist_func;
+  AStarNeighborsFunc<Node>* ngbr_func;
+  Array<Node> output;
+  void* user_data;
+};
+
+template<class Node>
+bool astar_find_path(AStarParameters<Node>& parameters) {
   Table<Node, AStarNode<Node>> nodes;
 
   { // Setup start node
-    AStarNode<Node>& start_node = nodes[start];
+    AStarNode<Node>& start_node = nodes[parameters.start];
     start_node.g_score = 0.f;
-    start_node.f_score = dist_func(start, target);
+    start_node.f_score = parameters.dist_func(parameters.start, parameters.target, parameters.user_data);
     start_node.status = AStarNodeStatus::Open;
   }
 
@@ -42,11 +55,11 @@ bool astar_find_path(const Node& start, const Node& target, Distance dist_func, 
       return false;
     }
 
-    if(current.key() == target) {
+    if(current.key() == parameters.target) {
       Node iter = current.key();
       while(auto* node = nodes.find(iter)) {
-        if(iter != start) {
-          path.push_front(iter);
+        if(iter != parameters.start) {
+          parameters.output.push_front(iter);
         }
         iter = node->parent;
       }
@@ -55,15 +68,15 @@ bool astar_find_path(const Node& start, const Node& target, Distance dist_func, 
 
     nodes[current.key()].status = AStarNodeStatus::Closed;
 
-    Array<Node> neighbors = ngbr_func(current.key());
+    Array<Node> neighbors = parameters.ngbr_func(current.key(), parameters.user_data);
     for(const Node& neighbor : neighbors) {
       AStarNode<Node>& node = nodes[neighbor];
       if(node.status != AStarNodeStatus::Closed) {
-        const float tentative_g_score = current.value().g_score + dist_func(current.key(), neighbor);
+        const float tentative_g_score = current.value().g_score + parameters.dist_func(current.key(), neighbor, parameters.user_data);
         if(node.status == AStarNodeStatus::New || tentative_g_score < node.g_score) {
           node.parent = current.key();
           node.g_score = tentative_g_score;
-          node.f_score = tentative_g_score + dist_func(neighbor, target);
+          node.f_score = tentative_g_score + parameters.dist_func(neighbor, parameters.target, parameters.user_data);
           node.status = AStarNodeStatus::Open;
         }
       }
@@ -73,12 +86,12 @@ bool astar_find_path(const Node& start, const Node& target, Distance dist_func, 
   return false;
 }
 
-template<class Node, class Distance, class Neighbors>
-void astar_find_zone(const Node& start, const float max_dist, Distance dist_func, Neighbors ngbr_func, Array<Node>& zone) {
+template<class Node>
+void astar_find_zone(AStarParameters<Node>& parameters) {
   Table<Node, AStarNode<Node>> nodes;
 
   { // Setup start node
-    AStarNode<Node>& start_node = nodes[start];
+    AStarNode<Node>& start_node = nodes[parameters.start];
     start_node.g_score = 0.f;
     start_node.status = AStarNodeStatus::Open;
   }
@@ -95,8 +108,8 @@ void astar_find_zone(const Node& start, const float max_dist, Distance dist_func
     if(current.empty()) {
       // No more open nodes
       for(const Table<Node, AStarNode<Node>>::Slot& node : nodes) {
-        if(node.value().g_score <= max_dist) {
-          zone.push(node.key());
+        if(node.value().g_score <= parameters.max_dist) {
+          parameters.output.push(node.key());
         }
       }
       return;
@@ -104,14 +117,14 @@ void astar_find_zone(const Node& start, const float max_dist, Distance dist_func
 
     nodes[current.key()].status = AStarNodeStatus::Closed;
 
-    if(nodes[current.key()].g_score > max_dist) {
+    if(nodes[current.key()].g_score > parameters.max_dist) {
       continue;
     }
 
-    Array<Node> neighbors = ngbr_func(current.key());
+    Array<Node> neighbors = parameters.ngbr_func(current.key(), parameters.user_data);
     for(const Node& neighbor : neighbors) {
       AStarNode<Node>& neighbor_node = nodes[neighbor];
-      const float tentative_g_score = current.value().g_score + dist_func(current.key(), neighbor);
+      const float tentative_g_score = current.value().g_score + parameters.dist_func(current.key(), neighbor, parameters.user_data);
       if(neighbor_node.status == AStarNodeStatus::New || tentative_g_score < neighbor_node.g_score) {
         neighbor_node.g_score = tentative_g_score;
         neighbor_node.status = AStarNodeStatus::Open;
@@ -120,54 +133,55 @@ void astar_find_zone(const Node& start, const float max_dist, Distance dist_func
   }
 }
 
+static bool fill_parameters(AStarParameters<Var>& parameters, ScriptContext& c) {
+  if(c.param(2).is<Ref<ScriptFunction>>() &&
+    c.param(3).is<Ref<ScriptFunction>>()) {
+    parameters.start = c.param(0);
+    if(c.param(1).is<float>()) {
+      parameters.max_dist = c.param(1);
+    } else {
+      parameters.target = c.param(1);
+    }
+    parameters.user_data = &c;
+    parameters.dist_func = [](const Var& a, const Var& b, void* user_data) {
+      ScriptContext* c = (ScriptContext*)user_data;
+      Ref<ScriptFunction> func = c->param(2).as<Ref<ScriptFunction>>();
+      return c->execute(func, {a, b}).get<float>();
+    };
+    parameters.ngbr_func = [](const Var& n, void* user_data) {
+      ScriptContext* c = (ScriptContext*)user_data;
+      const Var result = c->execute(c->param(3).as<Ref<ScriptFunction>>(), &n, 1);
+      if(const Ref<Array<Var>>* result_array_ptr = result.try_as<Ref<Array<Var>>>()) {
+        return **result_array_ptr;
+      }
+      return Array<Var>{};
+    };
+
+    return true;
+  }
+
+  return false;
+}
+
 void astar_module_init() {
   register_script_function("astar_find_path",
     [](ScriptContext& c) {
-      Ref<ScriptFunction>* distance_func_ptr = c.param(2).try_as<Ref<ScriptFunction>>();
-      Ref<ScriptFunction>* neighbors_func_ptr = c.param(3).try_as<Ref<ScriptFunction>>();
-      if(distance_func_ptr && neighbors_func_ptr) {
-        Ref<ScriptFunction> distance_func = *distance_func_ptr;
-        Ref<ScriptFunction> neighbors_func = *neighbors_func_ptr;
-        const auto distance = [&c, distance_func](const Var& a, const Var& b) {
-          return c.execute(distance_func, {a, b}).get<float>();
-        };
-        const auto neighbors = [&c, neighbors_func](const Var& n) {
-          const Var result = c.execute(neighbors_func, &n, 1);
-          if(const Ref<Array<Var>>* result_array_ptr = result.try_as<Ref<Array<Var>>>()) {
-            return **result_array_ptr;
-          }
-          return Array<Var>{};
-        };
-        Ref<Array<Var>> path = ref<Array<Var>>();
-        const Var start = c.param(0);
-        const Var target = c.param(1);
-        const bool success = astar_find_path(start, target, distance, neighbors, *path);
-        c.return_value() = success ? path : false;
+      AStarParameters<Var> parameters;
+      if(fill_parameters(parameters, c)) {
+        if(astar_find_path(parameters)) {
+          c.return_value() = ref<Array<Var>>(parameters.output);
+        } else {
+          c.return_value() = false;
+        }
       }
     });
 
   register_script_function("astar_find_zone",
     [](ScriptContext& c) {
-      Ref<ScriptFunction>* distance_func_ptr = c.param(2).try_as<Ref<ScriptFunction>>();
-      Ref<ScriptFunction>* neighbors_func_ptr = c.param(3).try_as<Ref<ScriptFunction>>();
-      if(distance_func_ptr && neighbors_func_ptr) {
-        Ref<ScriptFunction> distance_func = *distance_func_ptr;
-        Ref<ScriptFunction> neighbors_func = *neighbors_func_ptr;
-        const auto distance = [&c, distance_func](const Var& a, const Var& b) {
-          return c.execute(distance_func, {a, b}).get<float>();
-        };
-        const auto neighbors = [&c, neighbors_func](const Var& n) {
-          const Var result = c.execute(neighbors_func, &n, 1);
-          if(const Ref<Array<Var>>* result_array_ptr = result.try_as<Ref<Array<Var>>>()) {
-            return **result_array_ptr;
-          }
-          return Array<Var>{};
-        };
-        Ref<Array<Var>> zone = ref<Array<Var>>();
-        const Var start = c.param(0);
-        const float max_dist = c.param(1);
-        astar_find_zone(start, max_dist, distance, neighbors, *zone);
-        c.return_value() = zone;
+      AStarParameters<Var> parameters;
+      if(fill_parameters(parameters, c)) {
+        astar_find_zone(parameters);
+        c.return_value() = ref<Array<Var>>(parameters.output);
       }
     });
 }
