@@ -23,7 +23,7 @@ void* Memory::alloc_zero(size_t size) {
 void* Memory::realloc(void* oldptr, size_t oldsize, size_t newsize) {
   void* ptr = alloc(newsize);
   if(oldptr != nullptr) {
-    memcpy(ptr, oldptr, oldsize);
+    memcpy(ptr, oldptr, min(oldsize, newsize));
     free(oldptr, oldsize);
   }
   return ptr;
