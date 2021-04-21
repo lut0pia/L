@@ -72,9 +72,13 @@ void L::count_marker(const char* name, int64_t value) {
 void L::flush_profiling() {
   CFileStream file_stream("trace.json", "w");
   file_stream << "{\"traceEvents\":[\n";
-  bool first(true);
-  for(uint32_t i(0); i < event_index; i++) {
-    const ProfilingEvent& event(events[i]);
+  bool first = true;
+  for(uint32_t i = 0; i < L_COUNT_OF(events); i++) {
+    const ProfilingEvent& event = events[i];
+    if(event.name == nullptr) {
+      continue;
+    }
+
     const String escaped_event_name(String(event.name) // Need some escaping to put into json
       .replace_all("\n", "\\n")
       .replace_all("\"", "\\\""));
