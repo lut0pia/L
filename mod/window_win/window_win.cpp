@@ -104,9 +104,8 @@ public:
     }
 
     // Create window style
-    DWORD wStyle = ((flags & borderless) ? (WS_POPUP) : (WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU))
-      | ((flags & resizable) ? (WS_MAXIMIZEBOX) : 0)
-      | ((flags & resizable) ? (WS_SIZEBOX) : 0)
+    DWORD wStyle = ((flags & borderless) ? (WS_POPUP) : (WS_CAPTION | WS_MINIMIZEBOX))
+      | ((flags & resizable) ? (WS_MAXIMIZEBOX | WS_SIZEBOX) : 0)
       | WS_VISIBLE;
 
     // Find out needed window size for wanted client area size
