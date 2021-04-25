@@ -69,7 +69,7 @@ namespace L {
 #define L_COMPONENT_GET(cname, fname) L_SCRIPT_RETURN_METHOD(Entity, fname, 0, get_component<cname>())
 #define L_COMPONENT_REQUIRE(cname, fname) L_SCRIPT_RETURN_METHOD(Entity, fname, 0, require_component<cname>())
 #define L_COMPONENT_ENTITY(cname) L_SCRIPT_RETURN_METHOD(cname, "entity", 0, entity())
-#define L_COMPONENT_COPY(cname) L_SCRIPT_METHOD(cname, "copy" , 1, copy(c.param(0).get<Handle<cname>>());)
+#define L_COMPONENT_COPY(cname) L_SCRIPT_METHOD(cname, "copy" , 1, copy(c.param(0).get<Handle<cname>>()))
 #define L_COMPONENT_BIND(cname,name) \
   L_COMPONENT_ADD(cname,"add_" name); \
   L_COMPONENT_GET(cname,"get_" name); \
