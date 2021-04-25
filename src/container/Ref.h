@@ -73,6 +73,7 @@ namespace L {
     inline T& operator*() { return *_p; }
     inline operator T*() const { return _p; }
     inline T* operator->() const { return _p; }
+    inline bool is_valid() const { return _p != nullptr; }
     inline bool null() const { return _p==nullptr; }
     inline void clear() { destruct(*this); _p = nullptr; }
     inline int counter() const { return (_p) ? *((int*)_p-1) : 0; }
