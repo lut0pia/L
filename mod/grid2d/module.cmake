@@ -1,3 +1,3 @@
 add_module(
-  astar
+  grid2d
 )
