@@ -3,7 +3,7 @@ Modules, found in the `mod` folder, are subparts of the engine that are not reli
 
 ## Loaders
 Modules can register loading functions to the resource mechanism to create resources from files or even just a single url. Here's a list of such modules already included:
-- `assimg`: Load meshes, materials, scenes, textures and shaders using `assimp`
+- `assimp`: Load meshes, materials, scenes, textures and shaders using `assimp`
 - `blue_noise`: Generate blue noise textures using the void and cluster algorithm
 - `glslang`: Load shaders from `.vert` and `.frag` files using `glslang`
 - `lasm`: Load scripts from `.lasm` files
@@ -12,6 +12,7 @@ Modules can register loading functions to the resource mechanism to create resou
 - `pixel_font`: Generate a very simple debug font
 - `script_material`: Load materials from any script file
 - `script_mesh`: Generate meshes from any script file
+- `script_texture`: Generate textures from any script file
 - `stb_image`: Load textures from `.jpeg`, `.jpg`, `.png` and `.bmp` files
 - `stb_perlin`: Generate perlin noise textures
 - `stb_truetype`: Load fonts from `.ttf` files
@@ -32,7 +33,9 @@ Modules can register objects or mechanisms to interact with an external system. 
 - `audio_win`: Render audio to WASAPI
 - `joystick_unix`: Register `/dev/input` joysticks as devices
 - `midi_win`: Play Midi events to Windows MidiOut
+- `opengl`: Implement OpenGL renderer
 - `rawinput`: Register Windows HIDs as devices
+- `vulkan`: Implement Vulkan renderer
 - `window_win`: Open Windows windows
 - `xinput_unix`: Register X XInput2 devices as devices
 - `xinput_win`: Register Windows XInput devices as devices
