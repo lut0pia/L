@@ -171,6 +171,15 @@ void L::init_script_standard_functions() {
         }
       }
     });
+    register_script_method<Ref<Array<Var>>>("push_unique", [](ScriptContext& c) {
+      if(Ref<Array<Var>>* array = c.current_self().try_as<Ref<Array<Var>>>()) {
+        for(uint32_t i = 0; i < c.param_count(); i++) {
+          if(!(*array)->find(c.param(i))) {
+            (*array)->push(c.param(i));
+          }
+        }
+      }
+    });
     register_script_method<Ref<Array<Var>>>("pop", [](ScriptContext& c) {
       if(Ref<Array<Var>>* array = c.current_self().try_as<Ref<Array<Var>>>()) {
         if((*array)->size() > 0) {
