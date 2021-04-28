@@ -206,13 +206,21 @@ void L::init_script_standard_functions() {
     register_script_method<Ref<Array<Var>>>("contains", [](ScriptContext& c) {
       if(Ref<Array<Var>>* array = c.current_self().try_as<Ref<Array<Var>>>()) {
         if(c.param_count() > 0) {
-          const Var& search = c.param(0);
-          c.return_value() = false;
-          for(const Var& v : **array) {
-            if(v == search) {
-              c.return_value() = true;
-              return;
-            }
+          c.return_value() = (*array)->find(c.param(0)) != nullptr;
+        }
+      }
+    });
+    register_script_method<Ref<Array<Var>>>("find", [](ScriptContext& c) {
+      Ref<Array<Var>>* array_ptr = c.current_self().try_as<Ref<Array<Var>>>();
+      Ref<ScriptFunction>* find_func_ptr = c.param(0).try_as<Ref<ScriptFunction>>();
+      if(array_ptr && find_func_ptr && c.param_count() > 0) {
+        Ref<Array<Var>> array = *array_ptr;
+        Ref<ScriptFunction> find_func = *find_func_ptr;
+        c.return_value() = false;
+        for(const Var& v : *array) {
+          if(c.execute(find_func, &v, 1).get<bool>()) {
+            c.return_value() = v;
+            break;
           }
         }
       }
