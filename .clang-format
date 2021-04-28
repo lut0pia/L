@@ -1,0 +1,25 @@
+Language: Cpp
+
+ColumnLimit: 0
+IndentWidth: 2
+TabWidth: 2
+UseTab: Never
+
+AlignEscapedNewlines: DontAlign
+AllowShortCaseLabelsOnASingleLine: true
+BreakBeforeBraces: Attach
+FixNamespaceComments: false
+IndentCaseLabels: true
+NamespaceIndentation: All
+PointerAlignment: Left
+SpaceBeforeParens: Never
+
+#SortIncludes: CaseInsensitive
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex: '.*\.(cpp|inl)'
+    Priority: 3
+  - Regex: '<[[:alnum:].]+>'
+    Priority: 1
+  - Regex: '.*'
+    Priority: 2
