@@ -52,6 +52,7 @@ namespace L {
 
   public:
     constexpr Handle() : GenericHandle() {}
+    constexpr Handle(std::nullptr_t) : GenericHandle() {}
     inline explicit Handle(GenericHandle gen_handle) : GenericHandle(gen_handle) {}
     template <class R> inline Handle(const Handle<R>& other) {
       static_assert(std::is_base_of<T, R>::value, "Cannot convert to a non-base class");
