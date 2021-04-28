@@ -10,6 +10,7 @@ public:
   struct Parameters {
     L::Vector2i start, target;
     float max_dist = 0.f;
+    bool ignore_obstacles = false;
   };
 
 protected:

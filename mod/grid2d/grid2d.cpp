@@ -86,7 +86,7 @@ Array<Vector2i> Grid2d::find_path(const Parameters& parameters) {
     Array<Vector2i> neighbors = get_neighbors(current.key());
     for(const Vector2i& neighbor : neighbors) {
       Node& neighbor_node = _nodes[neighbor];
-      if(neighbor_node.is_obstacle) {
+      if(neighbor_node.is_obstacle && !parameters.ignore_obstacles) {
         continue; // Ignore obstacles
       }
       if(neighbor_node.status != NodeStatus::Closed) {
@@ -146,7 +146,7 @@ Array<Vector2i> Grid2d::find_zone(const Parameters& parameters) {
     Array<Vector2i> neighbors = get_neighbors(current.key());
     for(const Vector2i& neighbor : neighbors) {
       Node& neighbor_node = _nodes[neighbor];
-      if(neighbor_node.is_obstacle) {
+      if(neighbor_node.is_obstacle && !parameters.ignore_obstacles) {
         continue; // Ignore obstacles
       }
       const float tentative_g_score = current.value().g_score + get_cost(current.key(), neighbor);
@@ -189,6 +189,9 @@ static Grid2d::Parameters fill_parameters(ScriptContext& c) {
 
     if(const Var* max_dist_var = (*table)->find(Symbol("max_dist"))) {
       parameters.max_dist = max_dist_var->get<float>();
+    }
+    if(const Var* ignore_obstacles_var = (*table)->find(Symbol("ignore_obstacles"))) {
+      parameters.ignore_obstacles = ignore_obstacles_var->get<bool>();
     }
   }
 
