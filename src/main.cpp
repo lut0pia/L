@@ -1,3 +1,4 @@
+#include "audio/AudioEngine.h"
 #include "engine/Engine.h"
 #include "engine/debug_draw.h"
 #include "engine/Resource.inl"
@@ -99,6 +100,7 @@ int main(int argc, const char* argv[]) {
   }
 
   Engine::init();
+  AudioEngine::init_instance();
 
   const char* window_name(Settings::get_string("window_name", "L Engine Sample"));
 
