@@ -8,9 +8,9 @@ using namespace L;
 
 static const Symbol obj_symbol("obj");
 
-static inline void ignore_line(const char*& c) {
-  while(*c != '\n' && *c != '\r') c++;
-  while(*c == '\n' || *c == '\r') c++;
+static inline void ignore_line(const char*& c, const char* end) {
+  while(c < end && *c != '\n' && *c != '\r') c++;
+  while(c < end && (*c == '\n' || *c == '\r')) c++;
 }
 static inline void read_scalars(const char*& c, Vector3f& scalars) {
   for(uintptr_t i(0); i < 3; i++) {
@@ -57,22 +57,22 @@ bool obj_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
         switch(*cur) {
           case ' ': // Position
             read_scalars(cur, scalars);
-            ignore_line(cur);
+            ignore_line(cur, end);
             positions.push(scalars);
             break;
           case 't': // Texture coordinates
             cur += 1;
             read_scalars(cur, scalars);
-            ignore_line(cur);
-            texcoords.push(scalars.x(), 1.f - scalars.y());
+            ignore_line(cur, end);
+            texcoords.push(Vector2f(scalars.x(), 1.f - scalars.y()));
             break;
           case 'n': // Normal
             cur += 1;
             read_scalars(cur, scalars);
-            ignore_line(cur);
+            ignore_line(cur, end);
             normals.push(scalars);
             break;
-          default: ignore_line(cur); break;
+          default: ignore_line(cur, end); break;
         }
         break;
       case 'f':
@@ -100,7 +100,7 @@ bool obj_loader(ResourceSlot& slot, Mesh::Intermediate& intermediate) {
         }
         break;
       }
-      default: ignore_line(cur); break;
+      default: ignore_line(cur, end); break;
     }
   }
 
