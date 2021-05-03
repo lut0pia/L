@@ -34,6 +34,9 @@ void ScriptComponent::script_registration() {
       Engine::clear();
     }});
   });
+  register_script_function("engine_shutdown", [](ScriptContext&) {
+    Window::instance()->close();
+  });
   ScriptGlobal("engine_clear_and_read") = (ScriptNativeFunction)([](ScriptContext& c) {
     L_ASSERT(c.param_count() == 1);
     const Resource<ScriptFunction> script(c.param(0).get<String>());
