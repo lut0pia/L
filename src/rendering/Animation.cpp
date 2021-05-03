@@ -33,7 +33,13 @@ void Animation::pose_at(float time, JointPose* joints) const {
     float t = 0.f, span = 0.f;
     find_sample(channel, time, i, t, span);
 
-    switch(channel.interpolation) {
+    AnimationInterpolationType interpolation = channel.interpolation;
+    if(channel.times.size() == 1) {
+      // Cannot do fancy interpolation with a single value
+      interpolation = AnimationInterpolationType::Step;
+    }
+
+    switch(interpolation) {
       case AnimationInterpolationType::Step:
         switch(channel.type) {
           case AnimationChannelType::Translation:
