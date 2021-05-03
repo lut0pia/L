@@ -118,9 +118,9 @@ static void imgui_update() {
 
   materials.size(material_count);
 
-  if(draw_data->TotalVtxCount && mesh) {
-    Mesh& mesh_mut = ((Mesh&)*mesh);
-    mesh_mut.load(
+  Mesh* mesh_mut = ((Mesh*)mesh.force_load());
+  if(draw_data->TotalVtxCount && mesh_mut) {
+    mesh_mut->load(
       draw_data->TotalVtxCount,
       vertex_buffer, draw_data->TotalVtxCount * sizeof(ImDrawVert),
       vertex_attributes.begin(), vertex_attributes.size(),

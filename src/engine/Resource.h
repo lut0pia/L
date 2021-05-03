@@ -18,9 +18,12 @@ namespace L {
     Date mtime;
 
     enum : uint32_t { // 32bits because of atomic operations
-      Unloaded, Loading, Loaded, Failed,
+      Unloaded,
+      Loading,
+      Loaded,
+      Failed,
     } state = Unloaded;
-    void(*load_function)(ResourceSlot&);
+    void (*load_function)(ResourceSlot&);
     void* value = nullptr;
 
     ResourceSlot(const Symbol& type, const char* url);
@@ -66,21 +69,33 @@ namespace L {
     inline Resource(const char* url) : _slot(ResourceSlot::find(type_name<T>(), url)) {
       _slot->load_function = load_function;
     }
-    inline const T& operator*() const { flush(); return *(T*)_slot->value; }
-    inline const T* operator->() const { flush(); return (T*)_slot->value; }
     inline const ResourceSlot* slot() const { return _slot; }
     inline bool is_set() const { return _slot != nullptr; }
     inline bool is_loaded() const {
       if(_slot) {
-        load();
+        _slot->load();
         return _slot->state == ResourceSlot::Loaded && _slot->value;
-      } else return false;
+      } else
+        return false;
     }
-    inline operator bool() const { return is_loaded(); }
-    inline bool operator==(const Resource& other) { return slot() == other.slot(); }
-    inline bool operator!=(const Resource& other) { return !operator==(other); }
-    inline void load() const { if(_slot) _slot->load(); }
-    inline void flush() const { if(_slot) _slot->flush(); }
+    inline bool operator==(const Resource& other) const { return slot() == other.slot(); }
+    inline bool operator!=(const Resource& other) const { return !operator==(other); }
+    inline const T* try_load() const {
+      if(_slot) {
+        _slot->load();
+        return (T*)_slot->value;
+      } else {
+        return nullptr;
+      }
+    }
+    inline const T* force_load() const {
+      if(_slot) {
+        _slot->flush();
+        return (T*)_slot->value;
+      } else {
+        return nullptr;
+      }
+    }
 
     static void load_function(ResourceSlot&);
 

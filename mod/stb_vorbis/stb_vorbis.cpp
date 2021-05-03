@@ -56,10 +56,12 @@ public:
     }
   }
   void render(void* dst, uint32_t dst_sample_count, float volume[2]) override {
+    const AudioStream* stream = _stream.try_load();
+
     { // Make sure we have an stb_vorbis handle
-      if(!_handle && _stream.is_loaded()) {
+      if(!_handle && stream) {
         int error;
-        const Buffer& samples = _stream->samples;
+        const Buffer& samples = stream->samples;
         _handle = stb_vorbis_open_memory((uint8_t*)samples.data(), int(samples.size()), &error, nullptr);
       }
 
@@ -73,7 +75,7 @@ public:
       stb_vorbis_seek(_handle, _current_frame);
     }
 
-    const Audio::SampleFormat sample_format = _stream->sample_format;
+    const Audio::SampleFormat sample_format = stream->sample_format;
     const uint32_t channel_count = Audio::sample_format_channels(sample_format);
     const size_t value_count = dst_sample_count*channel_count;
     int16_t* buffer(Memory::alloc_type<int16_t>(value_count));

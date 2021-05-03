@@ -14,13 +14,12 @@ Rml::Core::FontFaceHandle RmlUiFontEngine::GetFontFaceHandle(const Rml::Core::St
   Rml::Core::FontFaceHandle handle = _font_faces.size();
   FontFace font_face {};
   font_face.font = ".pixel";
-  font_face.font.flush();
-  if(font_face.font.is_loaded()) {
+  if(const Font* font = font_face.font.force_load()) {
     font_face.texture = Memory::new_type<Rml::Core::Texture>();
     font_face.texture->Set("font:.pixel");
     font_face.size = size;
-    font_face.line_height = int(font_face.font->get_line_height() * size);
-    font_face.baseline = int(font_face.font->get_base_line() * size);
+    font_face.line_height = int(font->get_line_height() * size);
+    font_face.baseline = int(font->get_base_line() * size);
     _font_faces.push(font_face);
     return handle;
   } else {
@@ -35,12 +34,21 @@ int RmlUiFontEngine::GetBaseline(Rml::Core::FontFaceHandle handle) { return _fon
 float RmlUiFontEngine::GetUnderline(Rml::Core::FontFaceHandle handle, float& thickness) { thickness = 1.f; return _font_faces[handle].underline; }
 int RmlUiFontEngine::GetStringWidth(Rml::Core::FontFaceHandle handle, const Rml::Core::String& string, Rml::Core::Character) {
   FontFace& font_face = _font_faces[handle];
-  return int(font_face.font->get_text_width(string.c_str()) * float(font_face.size));
+  if(const Font* font = font_face.font.force_load()) {
+    return int(font->get_text_width(string.c_str()) * float(font_face.size));
+  } else {
+    return 0;
+  }
 }
 
 int RmlUiFontEngine::GenerateString(Rml::Core::FontFaceHandle handle, Rml::Core::FontEffectsHandle /*font_effects_handle*/, const Rml::Core::String& string, const Rml::Core::Vector2f& position, const Rml::Core::Colourb& colour, Rml::Core::GeometryList& geometry_list) {
   FontFace& font_face = _font_faces[handle];
-  const Font::TextMesh& text_mesh = font_face.font->get_text_mesh(string.c_str());
+  const Font* font = font_face.font.force_load();
+  if(font == nullptr) {
+    return 0;
+  }
+
+  const Font::TextMesh& text_mesh = font->get_text_mesh(string.c_str());
 
   geometry_list.push_back(Rml::Core::Geometry());
   Rml::Core::Geometry& geometry = geometry_list.back();

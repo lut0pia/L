@@ -16,8 +16,9 @@ start_symbol("start"), update_symbol("update"), late_update_symbol("late_update"
 void ScriptComponent::update_components() {
   _context.self_table()[entity_symbol] = entity();
 
-  if(!_started && _script)
+  if(!_started && _script.force_load()) {
     start();
+  }
 
   _context.try_execute_method(update_components_symbol);
 }
@@ -36,24 +37,26 @@ void ScriptComponent::script_registration() {
   ScriptGlobal("engine_clear_and_read") = (ScriptNativeFunction)([](ScriptContext& c) {
     L_ASSERT(c.param_count() == 1);
     const Resource<ScriptFunction> script(c.param(0).get<String>());
-    script.load();
+    script.try_load();
     Engine::add_deferred_action({[](void* p) {
-      Resource<ScriptFunction>* script = (Resource<ScriptFunction>*)p;
+      Resource<ScriptFunction>* script_res = (Resource<ScriptFunction>*)p;
       Engine::clear();
-      script->flush();
-      if(script->is_loaded()) {
-        ScriptContext().execute(ref<ScriptFunction>(**script));
+      if(const ScriptFunction* script = script_res->force_load()) {
+        ScriptContext().execute(ref<ScriptFunction>(*script));
       } else {
-        warning("Could not load script %s for engine_clear_and_read", script->slot()->id);
+        warning("Could not load script %s for engine_clear_and_read", script_res->slot()->id);
       }
-      Memory::delete_type(script);
+      Memory::delete_type(script_res);
     }, Memory::new_type<Resource<ScriptFunction>>(script)});
   });
   ScriptGlobal("read") = (ScriptNativeFunction)([](ScriptContext& c) {
     L_ASSERT(c.param_count() == 1);
     Resource<ScriptFunction> script_resource = c.param(0).get<String>();
-    script_resource.flush();
-    c.return_value() = script_resource.is_loaded() ? Var(ref<ScriptFunction>(*script_resource)) : Var();
+    if(const ScriptFunction* script = script_resource.force_load()) {
+      c.return_value() = ref<ScriptFunction>(*script);
+    } else {
+      c.return_value() = Var(); 
+    }
   });
   ScriptGlobal("setting") = (ScriptNativeFunction)([](ScriptContext& c) {
     L_ASSERT(c.param_count()==2);
@@ -101,13 +104,13 @@ void ScriptComponent::script_registration() {
 
 void ScriptComponent::load(const char* filename) {
   _script = filename;
-  _script.flush();
+  _script.force_load();
   start();
 }
 void ScriptComponent::start() {
-  L_ASSERT(_script);
+  L_ASSERT(_script.is_loaded());
   _started = true;
-  _context.execute(ref<ScriptFunction>(*_script));
+  _context.execute(ref<ScriptFunction>(*_script.force_load()));
   _context.try_execute_method(start_symbol);
 }
 void ScriptComponent::update() {

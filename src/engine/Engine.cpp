@@ -29,9 +29,8 @@ float Engine::_real_delta_seconds, Engine::_delta_seconds, Engine::_sub_delta_se
 uint32_t Engine::_frame(0);
 
 void Engine::init() {
-  Resource<ScriptFunction> ini_script = "ini.ls";
-  ini_script.flush();
-  if(ini_script.is_loaded()) {
+  Resource<ScriptFunction> ini_script_res = "ini.ls";
+  if(const ScriptFunction* ini_script = ini_script_res.force_load()) {
     ScriptContext().execute(ref<ScriptFunction>(*ini_script));
   } else {
     error("Could not load init script");

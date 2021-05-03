@@ -71,8 +71,8 @@ uint32_t Material::State::pipeline_hash() const {
   hash_combine(h, pipeline.cull_mode);
   hash_combine(h, pipeline.topology);
   hash_combine(h, pipeline.blend_mode);
-  if(mesh) {
-    hash_combine(h, mesh->attributes());
+  if(const Mesh* mesh_ptr = mesh.try_load()) {
+    hash_combine(h, mesh_ptr->attributes());
   }
   return h;
 }
@@ -159,8 +159,8 @@ bool Material::fill_desc_set(const Pipeline& pip, DescriptorSetImpl* desc_set) c
     }
   }
   for(const auto& pair : _final_state.textures) {
-    if(pair.value().is_loaded()) {
-      pip.set_descriptor(pair.key(), desc_set, *pair.value());
+    if(const Texture* texture = pair.value().try_load()) {
+      pip.set_descriptor(pair.key(), desc_set, *texture);
     } else {
       return false;
     }
@@ -172,8 +172,8 @@ bool Material::fill_desc_set(const Pipeline& pip, DescriptorSetImpl* desc_set) c
   }
 
   if(_final_state.font.is_set()) {
-    if(_final_state.font.is_loaded()) {
-      pip.set_descriptor("atlas", desc_set, _final_state.font->atlas());
+    if(const Font* font = _final_state.font.try_load()) {
+      pip.set_descriptor("atlas", desc_set, font->atlas());
     } else {
       return false;
     }
@@ -236,8 +236,8 @@ void Material::update() {
 
       if(!mat->_parent.is_set()) {
         break; // No more parents
-      } else if(mat->_parent.is_loaded()) {
-        mat = &*mat->_parent;
+      } else if(const Material* parent = mat->_parent.try_load()) {
+        mat = parent;
       } else { // Parent is not ready! Abort!
         return;
       }
@@ -269,8 +269,8 @@ void Material::update() {
     }
 
     // Apply vertex attributes to pipeline parameters
-    if(_final_state.mesh) {
-      _final_state.pipeline.vertex_attributes = _final_state.mesh->attributes();
+    if(const Mesh* mesh = _final_state.mesh.try_load()) {
+      _final_state.pipeline.vertex_attributes = mesh->attributes();
     }
 
     // Create pipeline
@@ -295,13 +295,13 @@ void Material::draw(const Camera& camera, const RenderPassImpl* render_pass, con
   uint32_t vertex_count = _final_state.vertex_count;
 
   if(_final_state.mesh.is_set()) {
-    if(Resource<Mesh> mesh_res = _final_state.mesh) {
-      mesh = &*mesh_res;
+    if(const Mesh* mesh_ptr = _final_state.mesh.try_load()) {
+      mesh = mesh_ptr;
     } else {
       return; // Mesh is set but has not loaded yet
     }
   } else if(_final_state.font.is_set()) {
-    if(Resource<Font> font = _final_state.font) {
+    if(const Font* font = _final_state.font.try_load()) {
       const String& text(_final_state.text);
       if(text.size() > 0) {
         mesh = &font->get_text_mesh(text).mesh;
@@ -372,21 +372,23 @@ bool Material::is_text() const {
   return _final_state.text.size() > 0;
 }
 Interval3f Material::bounds() const {
-  if(_final_state.mesh)
-    return _final_state.mesh->bounds();
-  else return Interval3f(Vector3f(-1.f), Vector3f(1.f));
+  if(const Mesh* mesh = _final_state.mesh.try_load()) {
+    return mesh->bounds();
+  } else {
+    return Interval3f(Vector3f(-1.f), Vector3f(1.f));
+  }
 }
 Vector2f Material::gui_size() const {
-  if(Resource<Font> font = _final_state.font) {
+  if(const Font* font = _final_state.font.try_load()) {
     if(_final_state.text.size() > 0) {
       const Font::TextMesh& text_mesh(font->get_text_mesh(_final_state.text));
       return text_mesh.dimensions;
     }
   } else if(_pipeline) {
-    if(_pipeline->render_pass() == Renderer::get()->get_present_pass() &&
-      _final_state.textures.size() > 0 && _final_state.textures[0].value()) {
-      const Texture& texture(*_final_state.textures[0].value());
-      return Vector2f(float(texture.width()), float(texture.height()));
+    if(_pipeline->render_pass() == Renderer::get()->get_present_pass() && _final_state.textures.size() > 0) {
+      if(const Texture* texture = _final_state.textures[0].value().try_load()) {
+        return Vector2f(float(texture->width()), float(texture->height()));
+      }
     }
   }
   return Vector2f(0.f, 0.f);

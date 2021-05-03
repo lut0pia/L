@@ -62,24 +62,22 @@ void RmlUiRender::SetScissorRegion(int x, int y, int width, int height) {
 bool RmlUiRender::LoadTexture(Rml::Core::TextureHandle& texture_handle, Rml::Core::Vector2i& texture_dimensions, const Rml::Core::String& source) {
   if(source.substr(0, 5) == "font:") {
     Resource<Font> font_res = source.substr(5).c_str();
-    font_res.flush();
-    if(font_res.is_loaded()) {
+    if(const Font* font = font_res.force_load()) {
       texture_handle = _fonts.size() + _font_offset;
       _fonts.push(font_res);
-      texture_dimensions.x = font_res->atlas().width();
-      texture_dimensions.y = font_res->atlas().height();
+      texture_dimensions.x = font->atlas().width();
+      texture_dimensions.y = font->atlas().height();
       return true;
     } else {
       return false;
     }
   } else {
     Resource<Texture> tex_res = source.c_str();
-    tex_res.flush();
-    if(tex_res.is_loaded()) {
+    if(const Texture* tex = tex_res.force_load()) {
       texture_handle = _textures.size();
       _textures.push(tex_res);
-      texture_dimensions.x = tex_res->width();
-      texture_dimensions.y = tex_res->height();
+      texture_dimensions.x = tex->width();
+      texture_dimensions.y = tex->height();
       return true;
     } else {
       return false;
@@ -184,9 +182,9 @@ void RmlUiRender::Update() {
     });
 
   // Upload mesh
-  if(_mesh && _vertices.size() > 0) {
-    Mesh& mesh_mut = ((Mesh&)*_mesh);
-    mesh_mut.load(
+    Mesh* mesh_mut = ((Mesh*)_mesh.force_load());
+  if(mesh_mut && _vertices.size() > 0) {
+    mesh_mut->load(
       _vertices.size(),
       _vertices.begin(),
       _vertices.size() * sizeof(Rml::Core::Vertex),

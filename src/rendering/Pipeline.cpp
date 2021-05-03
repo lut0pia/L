@@ -10,8 +10,9 @@ static Symbol light_symbol("light"), present_symbol("present");
 
 Pipeline::Pipeline(const Parameters& parameters) {
   { // Make sure shader bindings are not incompatible
-    for(const auto& shader : parameters.shaders) {
-      for(const ShaderBinding& binding : shader.value()->bindings()) {
+    for(const auto& shader_pair : parameters.shaders) {
+      const Shader* shader = shader_pair.value().force_load();
+      for(const ShaderBinding& binding : shader->bindings()) {
         bool already_bound = false;
         for(ShaderBinding& own_binding : _bindings) {
           if(binding.name == own_binding.name && binding.binding == own_binding.binding) {
@@ -51,7 +52,7 @@ Pipeline::Pipeline(const Parameters& parameters) {
   Array<ShaderImpl*> shaders;
 
   for(const auto& pair : parameters.shaders) {
-    shaders.push(pair.value()->get_impl());
+    shaders.push(pair.value().force_load()->get_impl());
   }
 
   _impl = Renderer::get()->create_pipeline(

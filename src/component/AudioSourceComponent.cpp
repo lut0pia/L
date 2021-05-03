@@ -21,7 +21,12 @@ void AudioSourceComponent::script_registration() {
 }
 
 void AudioSourceComponent::audio_render(void* frames, uint32_t frame_count) {
-  if(_playing && _stream) {
+  if(_playing) {
+    const AudioStream* stream = _stream.try_load();
+    if(stream == nullptr) {
+      return;
+    }
+
     // Make sure we have a decoder
     if(!_decoder && !(_decoder = AudioDecoder::make(_stream))) {
       return;
@@ -42,7 +47,7 @@ void AudioSourceComponent::audio_render(void* frames, uint32_t frame_count) {
       }
     }
     float volumes[2] {_volume, _volume};
-    if(Audio::sample_format_channels(_stream->sample_format) == 1) { // Mono sounds are spatialized
+    if(Audio::sample_format_channels(stream->sample_format) == 1) { // Mono sounds are spatialized
       const Vector3f position(_transform->position());
       const Vector3f direction((position - AudioListenerComponent::position()).normalize());
       volumes[0] *= 1.f - max(0.f, direction.dot(AudioListenerComponent::right()));

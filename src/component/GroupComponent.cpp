@@ -12,14 +12,15 @@ GroupComponent::~GroupComponent() {
 void GroupComponent::update() {
   L_ASSERT(group_context == nullptr);
   // Check if the level script has loaded or changed since last execution
-  if(_level_script.is_loaded() && _level_script.slot()->value != _level_script_value) {
+  const ScriptFunction* level_script = _level_script.try_load();
+  if(level_script && _level_script.slot()->value != _level_script_value) {
     // Destroy all linked entities
     for(Handle<Entity> linked_entity : _entities) {
       Entity::destroy(linked_entity);
     }
 
     group_context = this;
-    ScriptContext().execute(ref<ScriptFunction>(*_level_script));
+    ScriptContext().execute(ref<ScriptFunction>(*level_script));
     group_context = nullptr;
 
     _level_script_value = _level_script.slot()->value;

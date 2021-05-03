@@ -15,11 +15,17 @@ void MidiSourceComponent::script_registration() {
 }
 
 void MidiSourceComponent::update() {
-  if(_playing && _sequence) {
+  if(_playing) {
+    const MidiSequence* sequence = _sequence.try_load();
+    if(sequence == nullptr) {
+      return;
+    }
+
     _play_time += Engine::delta_time();
-    _sequence->play(_play_index, _play_time);
-    if(_loop && _play_index>=_sequence->events.size())
+    sequence->play(_play_index, _play_time);
+    if(_loop && _play_index >= sequence->events.size()) {
       _play_index = 0;
+    }
   }
 }
 void MidiSourceComponent::play() {

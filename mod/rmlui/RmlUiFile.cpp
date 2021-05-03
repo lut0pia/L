@@ -19,11 +19,9 @@ void RmlUiFile::Close(Rml::Core::FileHandle handle) {
 
 size_t RmlUiFile::Read(void* dst, size_t size, Rml::Core::FileHandle handle) {
   File& file = _files[handle];
-  file.resource.flush();
-  if(file.resource) {
-    const Buffer& buffer = *file.resource;
-    const void* data = buffer.data();
-    const size_t max_size = min(size, buffer.size() - file.offset);
+  if(const Buffer* buffer = file.resource.force_load()) {
+    const void* data = buffer->data();
+    const size_t max_size = min(size, buffer->size() - file.offset);
     memcpy(dst, (uint8_t*)data + file.offset, max_size);
     file.offset += max_size;
     return max_size;
@@ -32,13 +30,11 @@ size_t RmlUiFile::Read(void* dst, size_t size, Rml::Core::FileHandle handle) {
 }
 bool RmlUiFile::Seek(Rml::Core::FileHandle handle, long offset, int origin) {
   File& file = _files[handle];
-  file.resource.flush();
-  if(file.resource) {
-    const Buffer& buffer = *file.resource;
+  if(const Buffer* buffer = file.resource.force_load()) {
     switch(origin) {
       case SEEK_SET: file.offset = offset; break;
       case SEEK_CUR: file.offset += offset; break;
-      case SEEK_END: file.offset = buffer.size() - offset;
+      case SEEK_END: file.offset = buffer->size() - offset;
       default: return false;
     }
     return true;
@@ -52,10 +48,8 @@ size_t RmlUiFile::Tell(Rml::Core::FileHandle handle) {
 
 size_t RmlUiFile::Length(Rml::Core::FileHandle handle) {
   File& file = _files[handle];
-  file.resource.flush();
-  if(file.resource) {
-    const Buffer& buffer = *file.resource;
-    return buffer.size();
+  if(const Buffer* buffer = file.resource.force_load()) {
+    return buffer->size();
   }
   return 0;
 }
