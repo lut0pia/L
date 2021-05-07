@@ -195,9 +195,11 @@ void RmlUiComponent::refresh() {
   const int num_docs = _context->GetNumDocuments();
   for(int i = 0; i < num_docs; i++) {
     Rml::Core::ElementDocument* document = _context->GetDocument(i);
-    Rml::Core::ElementDocument* tmp_doc = _context->LoadDocument(document->GetSourceURL());
-    document->SetStyleSheet(tmp_doc->GetStyleSheet());
-    _context->UnloadDocument(tmp_doc);
+    if(!document->GetSourceURL().empty()) {
+      Rml::Core::ElementDocument* tmp_doc = _context->LoadDocument(document->GetSourceURL());
+      document->SetStyleSheet(tmp_doc->GetStyleSheet());
+      _context->UnloadDocument(tmp_doc);
+    }
   }
 }
 #endif
