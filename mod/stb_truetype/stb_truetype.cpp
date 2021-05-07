@@ -37,8 +37,8 @@ bool stb_truetype_loader(ResourceSlot& slot, Font::Intermediate& intermediate) {
   const float scale(1.f/height);
   const float bmp_scale(scale*128.f);
   const float inv_bmp_scale(1.f/bmp_scale);
-  intermediate.line_height = scale*(height+line_gap);
-  intermediate.base_line = scale * height;
+  intermediate.line_height = scale * (height + line_gap);
+  intermediate.ascent = scale * ascent;
 
   FontPacker helper(intermediate);
 

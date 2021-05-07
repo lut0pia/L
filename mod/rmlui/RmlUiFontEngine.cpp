@@ -19,7 +19,7 @@ Rml::Core::FontFaceHandle RmlUiFontEngine::GetFontFaceHandle(const Rml::Core::St
     font_face.texture->Set("font:.pixel");
     font_face.size = size;
     font_face.line_height = int(font->get_line_height() * size);
-    font_face.baseline = int(font->get_base_line() * size);
+    font_face.baseline = int(font->get_ascent() * size);
     _font_faces.push(font_face);
     return handle;
   } else {
