@@ -7,19 +7,27 @@ RmlUiFontEngine::RmlUiFontEngine() {
 }
 
 bool RmlUiFontEngine::LoadFontFace(const Rml::Core::String& /*file_name*/, bool /*fallback_face*/) {
-  return false;
+  return true;
+}
+bool RmlUiFontEngine::LoadFontFace(const Rml::Core::byte* /*data*/, int /*data_size*/, const Rml::Core::String& /*family*/, Rml::Core::Style::FontStyle /*style*/, Rml::Core::Style::FontWeight /*weight*/, bool /*fallback_face*/) {
+  return true;
 }
 
-Rml::Core::FontFaceHandle RmlUiFontEngine::GetFontFaceHandle(const Rml::Core::String& /*family*/, Rml::Core::Style::FontStyle /*style*/, Rml::Core::Style::FontWeight /*weight*/, int size) {
+Rml::Core::FontFaceHandle RmlUiFontEngine::GetFontFaceHandle(const Rml::Core::String& family, Rml::Core::Style::FontStyle /*style*/, Rml::Core::Style::FontWeight /*weight*/, int size) {
   Rml::Core::FontFaceHandle handle = _font_faces.size();
   FontFace font_face {};
-  font_face.font = ".pixel";
+  if(family.empty() || family == "rmlui-debugger-font") {
+    font_face.font = ".pixel";
+  } else {
+    font_face.font = family.c_str();
+  }
   if(const Font* font = font_face.font.force_load()) {
     font_face.texture = Memory::new_type<Rml::Core::Texture>();
-    font_face.texture->Set("font:.pixel");
+    font_face.texture->Set(Rml::Core::String("font:") + (const char*)font_face.font.slot()->id);
     font_face.size = size;
-    font_face.line_height = int(font->get_line_height() * size);
-    font_face.baseline = int(font->get_ascent() * size);
+    font_face.x_height = 0;
+    font_face.line_height = size;
+    font_face.baseline = font_face.line_height - int(font->get_ascent() * size);
     _font_faces.push(font_face);
     return handle;
   } else {
@@ -55,8 +63,12 @@ int RmlUiFontEngine::GenerateString(Rml::Core::FontFaceHandle handle, Rml::Core:
   geometry.SetTexture(font_face.texture);
   for(const Font::Vertex& vertex : text_mesh.vertices) {
     geometry.GetIndices().push_back(int(geometry.GetVertices().size()));
+    // We use the font face's size to scale the engine mesh to the wanted size
+    // since the engine mesh was made normalized to the text height
+    // We also shift in y with an offset of 1 because engine mesh uses bottom-left origins
+    // however RmlUi uses top-left origins
     geometry.GetVertices().push_back(Rml::Core::Vertex {
-        Rml::Core::Vector2f(vertex.position.x(), vertex.position.y()) * float(font_face.size) + position,
+        Rml::Core::Vector2f(vertex.position.x(), vertex.position.y() - 1.f) * float(font_face.size) + position,
         colour,
         Rml::Core::Vector2f(vertex.texcoord.x(), vertex.texcoord.y()),
       });

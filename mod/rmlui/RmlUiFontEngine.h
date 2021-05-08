@@ -20,6 +20,7 @@ protected:
 public:
   RmlUiFontEngine();
   virtual bool LoadFontFace(const Rml::Core::String& file_name, bool fallback_face) override;
+  virtual bool LoadFontFace(const Rml::Core::byte* data, int data_size, const Rml::Core::String& family, Rml::Core::Style::FontStyle style, Rml::Core::Style::FontWeight weight, bool fallback_face) override;
   virtual Rml::Core::FontFaceHandle GetFontFaceHandle(const Rml::Core::String& family, Rml::Core::Style::FontStyle style, Rml::Core::Style::FontWeight weight, int size) override;
 
   virtual int GetSize(Rml::Core::FontFaceHandle handle) override;
