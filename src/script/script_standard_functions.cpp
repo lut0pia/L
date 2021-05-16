@@ -240,6 +240,16 @@ void L::init_script_standard_functions() {
         c.return_value() = new_array;
       }
     });
+    register_script_method<Ref<Array<Var>>>("concat", [](ScriptContext& c) {
+      Ref<Array<Var>>* array_ptr = c.current_self().try_as<Ref<Array<Var>>>();
+      if(array_ptr && c.param_count() > 0) {
+        Ref<Array<Var>>* other_array_ptr = c.param(0).try_as<Ref<Array<Var>>>();
+        if(other_array_ptr) {
+          Ref<Array<Var>> new_array = ref<Array<Var>>(**array_ptr + **other_array_ptr);
+          c.return_value() = new_array;
+        }
+      }    
+    });
   }
 
   { // Table
