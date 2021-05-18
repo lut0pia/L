@@ -210,6 +210,21 @@ void L::init_script_standard_functions() {
         }
       }
     });
+    register_script_method<Ref<Array<Var>>>("every", [](ScriptContext& c) {
+      Ref<Array<Var>>* array_ptr = c.current_self().try_as<Ref<Array<Var>>>();
+      Ref<ScriptFunction>* every_func_ptr = c.param(0).try_as<Ref<ScriptFunction>>();
+      if(array_ptr && every_func_ptr && c.param_count() > 0) {
+        Ref<Array<Var>> array = *array_ptr;
+        Ref<ScriptFunction> every_func = *every_func_ptr;
+        c.return_value() = true;
+        for(const Var& v : *array) {
+          if(!c.execute(every_func, &v, 1).get<bool>()) {
+            c.return_value() = false;
+            break;
+          }
+        }
+      }
+    });
     register_script_method<Ref<Array<Var>>>("find", [](ScriptContext& c) {
       Ref<Array<Var>>* array_ptr = c.current_self().try_as<Ref<Array<Var>>>();
       Ref<ScriptFunction>* find_func_ptr = c.param(0).try_as<Ref<ScriptFunction>>();
