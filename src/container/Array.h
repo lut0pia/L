@@ -11,27 +11,27 @@ namespace L {
   template <class T>
   class Array {
   protected:
-    T* _data;
-    size_t _size, _capacity;
+    T* _data = nullptr;
+    size_t _size = 0, _capacity = 0;
 
     inline void shift(uintptr_t i, intptr_t offset) {
       memmove((void*)(_data + i + offset), _data + i, (_size - i) * sizeof(T));
     }
 
   public:
-    constexpr Array() : _data(nullptr), _size(0), _capacity(0) {}
-    inline Array(const std::initializer_list<T>& il) : _data(nullptr), _size(0), _capacity(0) {
+    constexpr Array() {}
+    inline Array(const std::initializer_list<T>& il) {
       grow_to(il.size());
       for(auto&& e : il)
         push(e);
     }
-    inline Array(const T* a, size_t size) : _data(nullptr), _size(0), _capacity(0) {
+    inline Array(const T* a, size_t size) {
       grow_to(size);
       while(_size < size)
         push(*a++);
     }
     template <typename... Args>
-    inline Array(size_t s, Args&&... args) : _data(nullptr), _size(0), _capacity(0) {
+    inline Array(size_t s, Args&&... args) {
       size(s, args...);
     }
     inline Array(const Array& other) : _size(other._size), _capacity(other._capacity) {
