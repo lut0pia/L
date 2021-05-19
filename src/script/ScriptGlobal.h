@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../container/Array.h"
 #include "../dynamic/Variable.h"
 #include "../text/Symbol.h"
 
@@ -21,6 +22,8 @@ namespace L {
     inline const Symbol& name() const { return _slot->name; }
     inline Var& value() { return _slot->value; }
     inline Var& operator=(const Var& value) { return _slot->value = value; }
+
+    static Array<Symbol> get_all_names();
 
     friend Stream& operator<=(Stream&, const ScriptGlobal&);
     friend Stream& operator>=(Stream&, ScriptGlobal&);

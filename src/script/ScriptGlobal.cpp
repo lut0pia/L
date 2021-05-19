@@ -19,6 +19,16 @@ ScriptGlobal::ScriptGlobal(const Symbol& name) {
     _slot->name = name;
   }
 }
+
+Array<Symbol> ScriptGlobal::get_all_names() {
+  L_SCOPED_LOCK(slots_lock);
+  Array<Symbol> names;
+  for(const auto& slot : slots_by_name) {
+    names.push(slot.key());
+  }
+  return names;
+}
+
 Stream& L::operator<=(Stream& s, const ScriptGlobal& v) {
   return s <= v._slot->name;
 }
