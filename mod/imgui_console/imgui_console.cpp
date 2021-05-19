@@ -1,40 +1,46 @@
-#include <L/src/engine/Engine.h>
-#include <L/src/engine/Resource.h>
-#include <L/src/engine/Resource.inl>
-
 #include <cctype>
 #include <imgui.h>
+
+#include <L/src/engine/Engine.h>
+#include <L/src/engine/Resource.h>
+
+#include <L/src/engine/Resource.inl>
 
 using namespace L;
 
 static bool opened = false;
 static char input_buffer[512];
 static int32_t scroll_to_bottom = 0, history_pos = -1;
-static Array<String> history, items, commands, candidates;
+static Array<String> history, items, candidates;
 static ScriptContext script_context;
 static Symbol script_language;
 
 static int text_edit_callback(ImGuiInputTextCallbackData* data) {
-  switch(data->EventFlag) {
-    case ImGuiInputTextFlags_CallbackCompletion:
-    {
-      // Locate beginning of current word
-      const char* word_end = data->Buf + data->CursorPos;
-      const char* word_start = word_end;
-      while(word_start > data->Buf) {
-        const char c = word_start[-1];
-        if(c == ' ' || c == '\t' || c == ',' || c == ';' || c == '.') {
-          break;
-        }
-        word_start--;
+  // Locate beginning of current word
+  const char* word_end = data->Buf + data->CursorPos;
+  const char* word_start = word_end;
+  while(word_start > data->Buf) {
+    const char c = word_start[-1];
+    if(c == ' ' || c == '\t' || c == ',' || c == ';' || c == '.' || c == '(' || c == ')') {
+      break;
+    }
+    word_start--;
+  }
+
+  // Only find candidates if there is at least a letter
+  candidates.clear();
+  if(word_start < word_end) {
+    Array<String> commands = ScriptGlobal::get_all_names().map([](const Symbol& s) -> String { return (const char*)s; });
+    for(const String& command : commands) {
+      if(strncmp(command, word_start, (int)(word_end - word_start)) == 0 &&
+         command != String(word_start, word_end - word_start)) {
+        candidates.push(command);
       }
+    }
+  }
 
-      // Build a list of candidates
-      candidates.clear();
-      for(uintptr_t i = 0; i < commands.size(); i++)
-        if(strncmp(commands[i], word_start, (int)(word_end - word_start)) == 0)
-          candidates.push(commands[i]);
-
+  switch(data->EventFlag) {
+    case ImGuiInputTextFlags_CallbackCompletion: {
       if(candidates.size() == 0) {
         // No match
         //AddLog("No match for \"%.*s\"!\n", (int)(word_end - word_start), word_start);
@@ -42,7 +48,6 @@ static int text_edit_callback(ImGuiInputTextCallbackData* data) {
         // Single match. Delete the beginning of the word and replace it entirely so we've got nice casing.
         data->DeleteChars((int)(word_start - data->Buf), (int)(word_end - word_start));
         data->InsertChars(data->CursorPos, candidates[0]);
-        data->InsertChars(data->CursorPos, " ");
       } else {
         // Multiple matches. Complete as much as we can..
         // So inputing "C"+Tab will complete to "CL" then display "CLEAR" and "CLASSIFY" as matches.
@@ -67,17 +72,11 @@ static int text_edit_callback(ImGuiInputTextCallbackData* data) {
           data->DeleteChars((int)(word_start - data->Buf), (int)(word_end - word_start));
           data->InsertChars(data->CursorPos, candidates[0], candidates[0] + match_len);
         }
-
-        items.push("Candidates:");
-        for(const String& candidate : candidates) {
-          items.push("- " + candidate);
-        }
       }
 
       break;
     }
-    case ImGuiInputTextFlags_CallbackHistory:
-    {
+    case ImGuiInputTextFlags_CallbackHistory: {
       const int32_t prev_history_pos = history_pos;
       if(data->EventKey == ImGuiKey_UpArrow) {
         if(history_pos == -1) {
@@ -134,6 +133,9 @@ static void imgui_console_update() {
     if(strstr(item, "> ")) {
       color = ImVec4(0.7f, 0.7f, 1.0f, 1.0f);
       has_color = true;
+    } else if(strstr(item, "< ")) {
+      color = ImVec4(0.7f, 0.3f, 1.0f, 1.0f);
+      has_color = true;
     }
 
     if(has_color) {
@@ -154,10 +156,11 @@ static void imgui_console_update() {
 
   // Text input
   ImGui::SetNextItemWidth(-1.f);
-  ImGuiInputTextFlags input_text_flags = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory;
-  if(ImGui::InputText("", input_buffer, IM_ARRAYSIZE(input_buffer), input_text_flags, &text_edit_callback) && *input_buffer) {
+  ImGuiInputTextFlags input_text_flags = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory | ImGuiInputTextFlags_CallbackAlways;
+  if(ImGui::InputTextWithHint("TextInput", "Enter command here", input_buffer, IM_ARRAYSIZE(input_buffer), input_text_flags, &text_edit_callback) && *input_buffer) {
     items.push(String("> ") + input_buffer);
     history.push(input_buffer);
+    history_pos = -1;
 
     ResourceSlot res_slot(type_name<ScriptFunction>(), "imgui_console");
     res_slot.source_buffer = Buffer(input_buffer, strlen(input_buffer));
@@ -168,7 +171,7 @@ static void imgui_console_update() {
       const Var result = script_context.execute(script_function);
 
       StringStream string_stream;
-      string_stream << result;
+      string_stream << "< " << result;
       items.push(string_stream.string());
     } else {
       items.push("Could not compile!");
@@ -181,6 +184,17 @@ static void imgui_console_update() {
   ImGui::SetKeyboardFocusHere(-1); // Auto focus text input always
 
   ImGui::End();
+
+  if(candidates.size() > 0) {
+    const ImGuiWindowFlags candidates_window_flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
+    ImGui::SetNextWindowPos(ImVec2(0, io.DisplaySize.y / 2));
+    if(ImGui::Begin("Candidates", nullptr, candidates_window_flags)) {
+      for(const String& candidate : candidates) {
+        ImGui::TextUnformatted(candidate.begin());
+      }
+      ImGui::End();
+    }
+  }
 }
 
 void imgui_console_module_init() {
