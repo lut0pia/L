@@ -167,6 +167,16 @@ namespace L {
     }
     inline const T* find(const T& k) const { return find([&k](const T& e) {return e == k; }); }
 
+    template <typename M>
+    auto map(M m) const {
+      Array<decltype(m(T()))> mapped;
+      mapped.grow_to(size());
+      for(const T& e : *this) {
+        mapped.push(m(e));
+      }
+      return mapped;
+    }
+
     friend Stream& operator<<(Stream& s, const Array& v) {
       s << '[';
       bool first(true);
