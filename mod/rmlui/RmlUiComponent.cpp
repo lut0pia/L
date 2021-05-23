@@ -129,6 +129,18 @@ void RmlUiComponent::script_registration() {
       }
     });
 
+  register_rmlui_script_method("get_elements_by_class_name",
+    [](ScriptContext& c) {
+      if(Rml::Core::Element* element = rmlui_native_element(c.current_self())) {
+        Rml::Core::ElementList element_list;
+        element->GetElementsByClassName(element_list, c.param(0).get<String>().begin());
+        Array<Var>& array = c.return_value().make<Ref<Array<Var>>>().make();
+        for(Rml::Core::Element* tag_element : element_list) {
+          array.push(rmlui_script_type(tag_element));
+        }
+      }
+    });
+
   register_rmlui_script_method("append_child",
     [](ScriptContext& c) {
       if(Rml::Core::Element* element = rmlui_native_element(c.current_self())) {
