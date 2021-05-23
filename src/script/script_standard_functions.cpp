@@ -149,7 +149,7 @@ void L::init_script_standard_functions() {
       }
       return false;
     };
-    ScriptContext::type_set_item(Type<Ref<Table<Var, Var>>>::description()) = [](const ScriptContext& c, Var& object, const Var& index, const Var& value) {
+    ScriptContext::type_set_item(Type<Ref<Array<Var>>>::description()) = [](const ScriptContext& c, Var& object, const Var& index, const Var& value) {
       if(Ref<Array<Var>>* array = object.try_as<Ref<Array<Var>>>()) {
         if(const float* index_float = index.try_as<float>()) {
           const uintptr_t index_integer = uintptr_t(*index_float);
