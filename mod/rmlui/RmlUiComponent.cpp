@@ -82,10 +82,12 @@ void RmlUiComponent::script_registration() {
   RMLUI_SCRIPT_RETURN_METHOD("create_text_node", 0, GetOwnerDocument()->CreateTextNode(c.param(0).get<String>().begin()));
 
   RMLUI_SCRIPT_RETURN_METHOD("get_address", 0, GetAddress());
+  RMLUI_SCRIPT_RETURN_METHOD("get_child", 0, GetChild(int(c.param(0).get<float>())));
   RMLUI_SCRIPT_RETURN_METHOD("get_first_child", 0, GetFirstChild());
   RMLUI_SCRIPT_RETURN_METHOD("get_id", 0, GetId());
   RMLUI_SCRIPT_RETURN_METHOD("get_last_child", 0, GetLastChild());
   RMLUI_SCRIPT_RETURN_METHOD("get_next_sibling", 0, GetNextSibling());
+  RMLUI_SCRIPT_RETURN_METHOD("get_num_children", 0, GetNumChildren());
   RMLUI_SCRIPT_RETURN_METHOD("get_parent_node", 0, GetParentNode());
   RMLUI_SCRIPT_RETURN_METHOD("get_previous_sibling", 0, GetPreviousSibling());
   RMLUI_SCRIPT_RETURN_METHOD("get_tag_name", 0, GetTagName());
