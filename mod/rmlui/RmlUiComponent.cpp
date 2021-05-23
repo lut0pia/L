@@ -27,7 +27,7 @@ static Ref<InputMap> input_map = ref<InputMap>(Array<InputMapEntry>{
 #define RMLUI_SCRIPT_METHOD(NAME, NARGS, ...) RMLUI_SCRIPT_METHOD_INTERNAL(, NAME, NARGS, __VA_ARGS__)
 #define RMLUI_SCRIPT_RETURN_METHOD(NAME, NARGS, ...) RMLUI_SCRIPT_METHOD_INTERNAL(c.return_value() = rmlui_script_type, NAME, NARGS, __VA_ARGS__)
 
-static RmlUiSafeElement rmlui_script_type(Rml::Core::Element* element) { return element->GetObserverPtr(); }
+static RmlUiSafeElement rmlui_script_type(Rml::Core::Element* element) { return element ? element->GetObserverPtr() : nullptr; }
 static Ref<Rml::Core::ElementPtr> rmlui_script_type(Rml::Core::ElementPtr element_ptr) { return ref_move<Rml::Core::ElementPtr>(static_cast<Rml::Core::ElementPtr&&>(element_ptr)); }
 static String rmlui_script_type(Rml::Core::String string) { return String(string.c_str(), string.size()); }
 static bool rmlui_script_type(bool v) { return v; }
