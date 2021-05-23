@@ -1,10 +1,12 @@
 Language: Cpp
 
 ColumnLimit: 0
+ContinuationIndentWidth: 2
 IndentWidth: 2
 TabWidth: 2
 UseTab: Never
 
+AlignAfterOpenBracket: DontAlign
 AlignEscapedNewlines: DontAlign
 AllowShortCaseLabelsOnASingleLine: true
 BreakBeforeBraces: Attach
