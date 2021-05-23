@@ -6,24 +6,24 @@ using namespace L;
 
 L::Array<RmlUiComponent::EventListener*> RmlUiComponent::_event_listeners;
 
-static Ref<InputMap> input_map = ref<InputMap>(Array<InputMapEntry> {
-  InputMapEntry {"MouseLeft", Device::Button::MouseLeft},
-    InputMapEntry {"MouseRight", Device::Button::MouseRight},
-    InputMapEntry {"MouseMiddle", Device::Button::MouseMiddle},
+static Ref<InputMap> input_map = ref<InputMap>(Array<InputMapEntry>{
+  InputMapEntry{"MouseLeft", Device::Button::MouseLeft},
+  InputMapEntry{"MouseRight", Device::Button::MouseRight},
+  InputMapEntry{"MouseMiddle", Device::Button::MouseMiddle},
 });
 
 #define RMLUI_SCRIPT_METHOD_INTERNAL(PREFIX, NAME, NARGS, ...) \
-register_rmlui_script_method(NAME, \
-  [](ScriptContext& c) { \
-    if(c.param_count() < NARGS) { \
-      c.warning("Too few arguments in method call '%s.%s'", "RmlUiElement", NAME); \
-    } \
-    if(Rml::Core::Element* element = rmlui_native_element(c.current_self())) { \
+  register_rmlui_script_method(NAME, \
+    [](ScriptContext& c) { \
+      if(c.param_count() < NARGS) { \
+        c.warning("Too few arguments in method call '%s.%s'", "RmlUiElement", NAME); \
+      } \
+      if(Rml::Core::Element* element = rmlui_native_element(c.current_self())) { \
         PREFIX(element->__VA_ARGS__); \
-    } else { \
-      c.warning("Calling method '%s.%s' on invalid value of type '%s'", "RmlUiElement", NAME, c.current_self().type()->name); \
-    } \
-  })
+      } else { \
+        c.warning("Calling method '%s.%s' on invalid value of type '%s'", "RmlUiElement", NAME, c.current_self().type()->name); \
+      } \
+    })
 #define RMLUI_SCRIPT_METHOD(NAME, NARGS, ...) RMLUI_SCRIPT_METHOD_INTERNAL(, NAME, NARGS, __VA_ARGS__)
 #define RMLUI_SCRIPT_RETURN_METHOD(NAME, NARGS, ...) RMLUI_SCRIPT_METHOD_INTERNAL(c.return_value() = rmlui_script_type, NAME, NARGS, __VA_ARGS__)
 
@@ -145,7 +145,7 @@ void RmlUiComponent::script_registration() {
     [](ScriptContext& c) {
       if(Rml::Core::Element* element = rmlui_native_element(c.current_self())) {
         if(Ref<Rml::Core::ElementPtr>* child_element_ref = c.param(0).try_as<Ref<Rml::Core::ElementPtr>>()) {
-          c.return_value() = rmlui_script_type(element->AppendChild(static_cast<Rml::Core::ElementPtr&&>(**child_element_ref)));;
+          c.return_value() = rmlui_script_type(element->AppendChild(static_cast<Rml::Core::ElementPtr&&>(**child_element_ref)));
         }
       }
     });
