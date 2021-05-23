@@ -141,6 +141,17 @@ void RmlUiComponent::script_registration() {
       }
     });
 
+  register_rmlui_script_method("get_children",
+    [](ScriptContext& c) {
+      if(Rml::Core::Element* element = rmlui_native_element(c.current_self())) {
+        int num_children = element->GetNumChildren();
+        Array<Var>& array = c.return_value().make<Ref<Array<Var>>>().make();
+        for(int i = 0; i < num_children; i++) {
+          array.push(rmlui_script_type(element->GetChild(i)));
+        }
+      }
+    });
+
   register_rmlui_script_method("append_child",
     [](ScriptContext& c) {
       if(Rml::Core::Element* element = rmlui_native_element(c.current_self())) {
