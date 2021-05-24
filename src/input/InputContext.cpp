@@ -65,6 +65,13 @@ void InputContext::update() {
     masks[device].clear(0xff);
   }
 
+  // Remove stale contexts
+  for(uintptr_t i = 0; i < _contexts.size(); i++) {
+    if(!_contexts[i].is_valid()) {
+      _contexts.erase(i--);
+    }
+  }
+
   for(Handle<InputContext> context_handle : _contexts) {
     if(InputContext* context = context_handle) {
       // Save previous input
