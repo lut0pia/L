@@ -164,6 +164,8 @@ void L::init_script_standard_functions() {
       return false;
     };
 
+    L_SCRIPT_REF_WRAPPED_RETURN_METHOD(Array<Var>, "size", 0, float, size());
+
     register_script_method<Ref<Array<Var>>>("push", [](ScriptContext& c) {
       if(Ref<Array<Var>>* array = c.current_self().try_as<Ref<Array<Var>>>()) {
         for(uint32_t i = 0; i < c.param_count(); i++) {
