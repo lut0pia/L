@@ -13,6 +13,8 @@ using namespace L;
 Table<Symbol, const TypeDescription*> L::types;
 
 void L::init_type() {
+  Type<bool>::cancmp<>();
+
   // Operators
   Type<int8_t>::canall<>();
   Type<int16_t>::canall<>();
