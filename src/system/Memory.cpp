@@ -40,9 +40,14 @@ void* Memory::alloc_zero(size_t size) { return ::calloc(size, 1); }
 void* Memory::realloc(void* ptr, size_t, size_t newsize) { return ::realloc(ptr, newsize); }
 void Memory::free(void* ptr, size_t) { ::free(ptr); }
 #else
-const size_t max_size = 1 << 20;
+
+static constexpr size_t max_size = 1 << 20;
+static constexpr size_t alloc_block_size = 1ull << 29;
+
 static void* freelists[128] = {};
 static size_t allocated(0), unused(0), wasted(0);
+static uint8_t* alloc_block_start = nullptr;
+static uint8_t* next = nullptr;
 
 // Cannot allocate less than 8 bytes for alignment purposes
 inline uintptr_t freelist_index(size_t size) {
@@ -83,7 +88,9 @@ void* Memory::alloc(size_t size) {
   }
 
   // No free space available: make one
-  static uint8_t* next = (uint8_t*)Memory::virtual_alloc(1ull << 29);
+  if(alloc_block_start == nullptr) {
+    alloc_block_start = next = (uint8_t*)Memory::virtual_alloc(1ull << 29);
+  }
   return (void*)atomic_add((intptr_t*)&next, padded_size);
 }
 void* Memory::alloc_zero(size_t size) {
@@ -122,10 +129,12 @@ void Memory::free(void* ptr, size_t size) {
     L_COUNT_MARKER("Allocated memory", allocated);
     return;
   }
+  L_ASSERT(ptr >= alloc_block_start && ptr < alloc_block_start + alloc_block_size);
   uintptr_t index;
   size_t padded_size;
   freelist_index_size(size, index, padded_size);
   do {
+    L_ASSERT(freelists[index] == nullptr || freelists[index] >= alloc_block_start && freelists[index] < alloc_block_start + alloc_block_size);
     *((void**)ptr) = freelists[index];
   } while(cas((uintptr_t*)freelists + index, *(uintptr_t*)ptr, uintptr_t(ptr)) != *(uintptr_t*)ptr);
   unused += padded_size;
