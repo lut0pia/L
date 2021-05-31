@@ -8,6 +8,7 @@ UseTab: Never
 
 AlignAfterOpenBracket: DontAlign
 AlignEscapedNewlines: DontAlign
+AlignTrailingComments: false
 AllowShortCaseLabelsOnASingleLine: true
 BreakBeforeBraces: Attach
 FixNamespaceComments: false
