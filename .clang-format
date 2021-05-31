@@ -22,7 +22,11 @@ IncludeBlocks: Regroup
 IncludeCategories:
   - Regex: '.*\.(cpp|inl)'
     Priority: 3
+  - Regex: '<Windows.h>'
+    Priority: 1
+    SortPriority: 1
   - Regex: '<[[:alnum:].]+>'
     Priority: 1
+    SortPriority: 2
   - Regex: '.*'
     Priority: 2
