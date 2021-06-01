@@ -134,7 +134,7 @@ void Memory::free(void* ptr, size_t size) {
   size_t padded_size;
   freelist_index_size(size, index, padded_size);
   do {
-    L_ASSERT(freelists[index] == nullptr || freelists[index] >= alloc_block_start && freelists[index] < alloc_block_start + alloc_block_size);
+    L_ASSERT(freelists[index] == nullptr || (freelists[index] >= alloc_block_start && freelists[index] < alloc_block_start + alloc_block_size));
     *((void**)ptr) = freelists[index];
   } while(cas((uintptr_t*)freelists + index, *(uintptr_t*)ptr, uintptr_t(ptr)) != *(uintptr_t*)ptr);
   unused += padded_size;
