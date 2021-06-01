@@ -5,7 +5,7 @@ if(NOT OpenGL_OpenGL_FOUND)
 endif()
 
 set(GL_LIBRARIES ${OPENGL_gl_LIBRARY})
-if(OpenGL_OPENGL_FOUND)
+if(EXISTS ${OPENGL_opengl_LIBRARY})
   list(APPEND GL_LIBRARIES ${OPENGL_opengl_LIBRARY})
 endif()
 if(OpenGL_GLX_FOUND)
