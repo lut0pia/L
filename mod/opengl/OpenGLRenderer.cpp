@@ -4,6 +4,7 @@
 #include "wglext.h"
 #elif L_LINUX
 #include <GL/glx.h>
+#include <GL/glxext.h>
 #undef None
 #undef Always
 #undef Window
@@ -83,12 +84,44 @@ void OpenGLRenderer::init(const char*, uintptr_t data1, uintptr_t data2) {
     wglMakeCurrent(hDC, hRC);
     wglDeleteContext(hRCFake);
 #elif L_LINUX
-    ::Window win = (::Window)data2;
-    ::Display* dpy = (::Display*)data1;
-    GLint attr[] = {GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, 0};
-    XVisualInfo* vi = glXChooseVisual(dpy, 0, attr);
-    GLXContext glc = glXCreateContext(dpy, vi, nullptr, true);
-    glXMakeCurrent(dpy, win, glc);
+    ::Display* display = (::Display*)data1;
+    ::Window window = (::Window)data2;
+
+    PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribsARB =
+      PFNGLXCREATECONTEXTATTRIBSARBPROC(glXGetProcAddressARB((const GLubyte*)"glXCreateContextAttribsARB"));
+
+    int visual_attribs[] = {
+      GLX_X_RENDERABLE, True,
+      GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
+      GLX_RENDER_TYPE, GLX_RGBA_BIT,
+      //GLX_X_VISUAL_TYPE, GLX_TRUE_COLOR,
+      GLX_RED_SIZE, 8,
+      GLX_GREEN_SIZE, 8,
+      GLX_BLUE_SIZE, 8,
+      GLX_ALPHA_SIZE, 8,
+      GLX_DEPTH_SIZE, 24,
+      GLX_STENCIL_SIZE, 8,
+      GLX_DOUBLEBUFFER, True,
+      0
+    };
+
+    int context_attributes[] = {
+      GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
+      GLX_CONTEXT_MINOR_VERSION_ARB, 1,
+#if L_DBG
+      GLX_CONTEXT_FLAGS_ARB, GLX_CONTEXT_DEBUG_BIT_ARB,
+#endif
+      GLX_CONTEXT_PROFILE_MASK_ARB, GLX_CONTEXT_CORE_PROFILE_BIT_ARB,
+      0 // End of attributes list
+    };
+    //GLint attr[] = {GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, 0};
+    //XVisualInfo* vi = glXChooseVisual(dpy, 0, attr);
+
+    int fbcount;
+    GLXFBConfig* fbc = glXChooseFBConfig(display, DefaultScreen(display), visual_attribs, &fbcount);
+    GLXFBConfig bestFbc = fbc[0];
+    GLXContext context = glXCreateContextAttribsARB(display, bestFbc, 0, True, context_attributes);
+    glXMakeCurrent(display, window, context);
 #endif
   }
 
