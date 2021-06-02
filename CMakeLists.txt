@@ -158,6 +158,7 @@ function(add_module NAME)
   target_link_directories(core PRIVATE ${M_LINK_DIRS})
 
   # Module directories
+  target_include_directories(mod_${NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/mod/${NAME}/include) # Own include directory
   target_include_directories(mod_${NAME} PRIVATE ${M_INCLUDE_DIRS})
   target_include_directories(mod_${NAME} SYSTEM PRIVATE ${M_SYSTEM_INCLUDE_DIRS})
 
