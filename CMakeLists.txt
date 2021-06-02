@@ -153,7 +153,7 @@ function(add_module NAME)
   )
 
   # Core definition and link
-  target_compile_definitions(core PRIVATE L_USE_MODULE_${NAME}=${M_CONDITION})
+  add_compile_definitions(L_USE_MODULE_${NAME}=${M_CONDITION}) # Define for everyone
   target_link_libraries(core PRIVATE $<${M_CONDITION}:mod_${NAME}>)
   target_link_directories(core PRIVATE ${M_LINK_DIRS})
 
