@@ -134,7 +134,7 @@ function(add_module NAME)
   set(MULTIARGS
     LINK_DIRS INCLUDE_DIRS SYSTEM_INCLUDE_DIRS
     LIBRARIES DBG_LIBRARIES RLS_LIBRARIES
-    DEPENDENCIES MOD_DEPENDENCIES
+    DEPENDENCIES MOD_DEPENDENCIES OPT_MOD_DEPENDENCIES
   )
   cmake_parse_arguments(M "${OPTARGS}" "${SINGLEARGS}" "${MULTIARGS}" ${ARGN})
   if(NOT DEFINED M_CONDITION)
@@ -183,6 +183,9 @@ function(add_module NAME)
   foreach(MOD_DEP ${M_MOD_DEPENDENCIES})
     target_include_directories(mod_${NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/mod/${MOD_DEP}/include)
     target_link_libraries(mod_${NAME} mod_${MOD_DEP})
+  endforeach()
+  foreach(MOD_DEP ${M_OPT_MOD_DEPENDENCIES})
+    target_include_directories(mod_${NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/mod/${MOD_DEP}/include)
   endforeach()
 
   set(MODULE_LIST ${MODULE_LIST} ${NAME} PARENT_SCOPE)
