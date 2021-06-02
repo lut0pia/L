@@ -1,8 +1,8 @@
 #include "OpenGLRenderer.h"
 
-#if L_USE_MODULE_window_win
+#if L_USE_MODULE_win32
 #include "wglext.h"
-#include "window_win.h"
+#include "win32.h"
 #endif
 #if L_USE_MODULE_xlib
 #include <GL/glx.h>
@@ -37,7 +37,7 @@ static void APIENTRY debug_callback(GLenum, GLenum type, GLuint id, GLenum, GLsi
 bool OpenGLRenderer::init(GenericWindowData* generic_window_data) {
   { // Init surface
     bool surface_init_success = false;
-#if L_USE_MODULE_window_win
+#if L_USE_MODULE_win32
     if(generic_window_data->type == win32_window_type) {
       Win32WindowData* win_data = (Win32WindowData*)generic_window_data;
       HDC hDC = GetDC(win_data->window);
@@ -299,7 +299,7 @@ void OpenGLRenderer::begin_present_pass() {
   glDisable(GL_DEPTH_TEST);
 }
 void OpenGLRenderer::end_present_pass() {
-#if L_USE_MODULE_window_win
+#if L_USE_MODULE_win32
   SwapBuffers((HDC)_hdc);
 #endif
 }

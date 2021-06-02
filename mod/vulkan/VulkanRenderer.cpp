@@ -1,6 +1,6 @@
-#if L_USE_MODULE_window_win
+#if L_USE_MODULE_win32
 #define VK_USE_PLATFORM_WIN32_KHR
-#include "window_win.h"
+#include "win32.h"
 #endif
 #if L_USE_MODULE_xlib
 #define VK_USE_PLATFORM_XLIB_KHR
@@ -42,7 +42,7 @@ bool VulkanRenderer::init(GenericWindowData* generic_window_data) {
     create_info.pApplicationInfo = &app_info;
 
     const char* window_manager_ext = nullptr;
-#if L_USE_MODULE_window_win
+#if L_USE_MODULE_win32
     if(!window_manager_ext && generic_window_data->type == win32_window_type) {
       window_manager_ext = VK_KHR_WIN32_SURFACE_EXTENSION_NAME;
     }
@@ -132,7 +132,7 @@ bool VulkanRenderer::init(GenericWindowData* generic_window_data) {
   }
 
   { // Create surface
-#if L_USE_MODULE_window_win
+#if L_USE_MODULE_win32
     if(!surface && generic_window_data->type == win32_window_type) {
       Win32WindowData* win32_window_data = (Win32WindowData*)generic_window_data;
       VkWin32SurfaceCreateInfoKHR create_info = {};

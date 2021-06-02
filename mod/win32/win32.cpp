@@ -1,4 +1,4 @@
-#include "window_win.h"
+#include "win32.h"
 
 #include <windows.h>
 
@@ -14,17 +14,17 @@ using namespace L;
 
 Symbol win32_window_type("win32");
 
-class WinAPIWindow : public Window {
+class Win32Window : public Window {
 protected:
-  static WinAPIWindow* _win_instance;
+  static Win32Window* _win_instance;
   HWND hWND;
 
 public:
-  inline WinAPIWindow() {
+  inline Win32Window() {
     L_ASSERT(_win_instance == nullptr);
     _win_instance = this;
   }
-  inline WinAPIWindow::~WinAPIWindow() {
+  inline Win32Window::~Win32Window() {
     L_ASSERT(_win_instance != nullptr);
     _win_instance = nullptr;
   }
@@ -147,11 +147,11 @@ public:
   }
 };
 
-WinAPIWindow* WinAPIWindow::_win_instance;
+Win32Window* Win32Window::_win_instance;
 
-void window_win_module_init() {
-  Memory::new_type<WinAPIWindow>();
+void win32_module_init() {
+  Memory::new_type<Win32Window>();
   Engine::add_parallel_update([]() {
-    WinAPIWindow::update();
+    Win32Window::update();
   });
 }

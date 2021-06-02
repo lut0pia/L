@@ -1,4 +1,4 @@
 add_module(
-  window_win
+  win32
   CONDITION $<PLATFORM_ID:Windows>
 )
