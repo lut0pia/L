@@ -4,10 +4,12 @@
 #include "../stream/Stream.h"
 #include "../stream/serial_bin.h"
 #include "../system/Memory.h"
+#include "../system/intrinsics.h"
 
 namespace L {
   struct RefMeta {
-    uint32_t counter, size;
+    int32_t counter;
+    uint32_t size;
   };
   template<class T>
   class Ref {
@@ -15,23 +17,28 @@ namespace L {
     static const size_t offset = sizeof(RefMeta);
     T* _p;
     inline RefMeta& meta() { return *((RefMeta*)_p-1); }
-    inline uint32_t& counter() { return meta().counter; }
+    inline int32_t& counter() { return meta().counter; }
     inline uint32_t& size() { return meta().size; }
+    inline int32_t counter_add(int32_t v) { return atomic_add(&counter(), v); }
 
   public:
     constexpr Ref() : _p(nullptr) {}
     constexpr Ref(std::nullptr_t) : _p(nullptr) {}
     inline Ref(const Ref& other) {
       _p = other._p;
-      if(_p) counter()++;
+      if(_p) {
+        counter_add(1);
+      }
     }
     template <class R> inline Ref(const Ref<R>& other) {
       static_assert(std::is_base_of<T, R>::value, "Cannot convert to a non-base class");
       _p = other._p;
-      if(_p) counter()++;
+      if(_p) {
+        counter_add(1);
+      }
     }
     inline ~Ref() {
-      if(_p && --counter()==0) {
+      if(_p && counter_add(-1) == 1) {
         _p->~T();
         Memory::free((uint8_t*)_p-offset, size()+offset);
       }
