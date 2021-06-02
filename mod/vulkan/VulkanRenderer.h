@@ -68,7 +68,7 @@ protected:
   VkPhysicalDeviceFeatures physical_device_features;
   VkDevice _device;
   VkQueue queue;
-  VkSurfaceKHR surface;
+  VkSurfaceKHR surface = nullptr;
   VkSurfaceCapabilitiesKHR surface_capabilities;
   VkSurfaceFormatKHR surface_format;
   VkSwapchainKHR swapchain;
@@ -120,7 +120,7 @@ protected:
 #endif
 
 public:
-  virtual void init(const char* wmid, uintptr_t data1, uintptr_t data2) override;
+  virtual bool init(L::GenericWindowData* generic_window_data) override;
   virtual void recreate_swapchain() override;
   virtual void draw(
     L::RenderCommandBuffer*,

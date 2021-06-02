@@ -1,7 +1,10 @@
-#if L_WINDOWS
+#if L_USE_MODULE_window_win
 #define VK_USE_PLATFORM_WIN32_KHR
-#elif L_LINUX
+#include "window_win.h"
+#endif
+#if L_USE_MODULE_xlib
 #define VK_USE_PLATFORM_XLIB_KHR
+#include "xlib.h"
 #endif
 
 #include "VulkanRenderer.h"
@@ -22,7 +25,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debug_callback(VkDebugReportFlagsEXT, VkDe
 }
 #endif
 
-void VulkanRenderer::init(const char* wmid, uintptr_t data1, uintptr_t data2) {
+bool VulkanRenderer::init(GenericWindowData* generic_window_data) {
 #if L_WINDOWS
   _putenv("DISABLE_VK_LAYER_VALVE_steam_overlay_1=1");
 #endif
@@ -39,15 +42,21 @@ void VulkanRenderer::init(const char* wmid, uintptr_t data1, uintptr_t data2) {
     create_info.pApplicationInfo = &app_info;
 
     const char* window_manager_ext = nullptr;
-#if L_WINDOWS
-    if(!strcmp(wmid, "Win32")) {
+#if L_USE_MODULE_window_win
+    if(!window_manager_ext && generic_window_data->type == win32_window_type) {
       window_manager_ext = VK_KHR_WIN32_SURFACE_EXTENSION_NAME;
     }
-#elif L_LINUX
-    if(!strcmp(wmid, "Xlib")) {
+#endif
+#if L_USE_MODULE_xlib
+    if(!window_manager_ext && !strcmp(wmid, "Xlib")) {
       window_manager_ext = VK_KHR_XLIB_SURFACE_EXTENSION_NAME;
     }
 #endif
+
+    if(window_manager_ext == nullptr) {
+      warning("vulkan: Unknown window manager %s", (const char*)generic_window_data->type);
+      return false;
+    }
 
     const char* required_extensions[] = {
       VK_KHR_SURFACE_EXTENSION_NAME,
@@ -123,16 +132,18 @@ void VulkanRenderer::init(const char* wmid, uintptr_t data1, uintptr_t data2) {
   }
 
   { // Create surface
-#if L_WINDOWS
-    if(!strcmp(wmid, "Win32")) {
+#if L_USE_MODULE_window_win
+    if(!surface && generic_window_data->type == win32_window_type) {
+      Win32WindowData* win32_window_data = (Win32WindowData*)generic_window_data;
       VkWin32SurfaceCreateInfoKHR create_info = {};
       create_info.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
-      create_info.hinstance = (HINSTANCE)data1;
-      create_info.hwnd = (HWND)data2;
+      create_info.hinstance = win32_window_data->module;
+      create_info.hwnd = win32_window_data->window;
       L_VK_CHECKED(vkCreateWin32SurfaceKHR(instance, &create_info, nullptr, &surface));
     }
-#elif L_LINUX
-    if(!strcmp(wmid, "Xlib")) {
+#endif
+#if L_USE_MODULE_xlib
+    if(!surface && !strcmp(wmid, "Xlib")) {
       VkXlibSurfaceCreateInfoKHR create_info {};
       create_info.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
       create_info.dpy = (Display*)data1;
@@ -140,6 +151,7 @@ void VulkanRenderer::init(const char* wmid, uintptr_t data1, uintptr_t data2) {
       L_VK_CHECKED(vkCreateXlibSurfaceKHR(instance, &create_info, nullptr, &surface));
     }
 #endif
+    L_ASSERT(surface);
   }
 
   uint32_t queue_family_index(UINT32_MAX);
@@ -282,6 +294,8 @@ void VulkanRenderer::init(const char* wmid, uintptr_t data1, uintptr_t data2) {
   }
 
   recreate_swapchain();
+
+  return true;
 }
 void VulkanRenderer::recreate_swapchain() {
   vkDeviceWaitIdle(VulkanRenderer::device());

@@ -70,7 +70,7 @@ protected:
   void* _hdc;
   uint32_t _glsl_version;
 public:
-  virtual void init(const char* wmid, uintptr_t data1, uintptr_t data2) override;
+  virtual bool init(L::GenericWindowData* window_data) override;
   virtual void recreate_swapchain() override;
   virtual void draw(
     L::RenderCommandBuffer*,

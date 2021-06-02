@@ -1,8 +1,10 @@
 #include "OpenGLRenderer.h"
 
-#if L_WINDOWS
+#if L_USE_MODULE_window_win
 #include "wglext.h"
-#elif L_LINUX
+#include "window_win.h"
+#endif
+#if L_USE_MODULE_xlib
 #include <GL/glx.h>
 #undef None
 #undef Always
@@ -32,57 +34,66 @@ static void APIENTRY debug_callback(GLenum, GLenum type, GLuint id, GLenum, GLsi
 }
 #endif
 
-void OpenGLRenderer::init(const char*, uintptr_t data1, uintptr_t data2) {
+bool OpenGLRenderer::init(GenericWindowData* generic_window_data) {
   { // Init surface
-#if L_WINDOWS
-    (void)data1;
-    HWND hWnd = (HWND)data2;
-    HDC hDC = GetDC(hWnd);
-    _hdc = (void*)hDC;
+    bool surface_init_success = false;
+#if L_USE_MODULE_window_win
+    if(generic_window_data->type == win32_window_type) {
+      Win32WindowData* win_data = (Win32WindowData*)generic_window_data;
+      HDC hDC = GetDC(win_data->window);
+      _hdc = (void*)hDC;
 
-    PIXELFORMATDESCRIPTOR pfd;
-    ZeroMemory(&pfd, sizeof(pfd)); // Initialize pixel format descriptor
-    pfd.nSize = sizeof(pfd);
-    pfd.nVersion = 1;
-    pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
-    pfd.iPixelType = PFD_TYPE_RGBA;
-    pfd.cColorBits = 32;
-    pfd.cDepthBits = 0;
-    pfd.cStencilBits = 0;
-    pfd.iPixelType = PFD_TYPE_RGBA;
-    pfd.iLayerType = PFD_MAIN_PLANE;
-    int pixel_format = ChoosePixelFormat(hDC, &pfd);
-    if(!pixel_format) {
-      error("opengl: ChoosePixelFormat failed");
-    }
+      PIXELFORMATDESCRIPTOR pfd;
+      ZeroMemory(&pfd, sizeof(pfd)); // Initialize pixel format descriptor
+      pfd.nSize = sizeof(pfd);
+      pfd.nVersion = 1;
+      pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+      pfd.iPixelType = PFD_TYPE_RGBA;
+      pfd.cColorBits = 32;
+      pfd.cDepthBits = 0;
+      pfd.cStencilBits = 0;
+      pfd.iPixelType = PFD_TYPE_RGBA;
+      pfd.iLayerType = PFD_MAIN_PLANE;
+      int pixel_format = ChoosePixelFormat(hDC, &pfd);
+      if(!pixel_format) {
+        error("opengl: ChoosePixelFormat failed");
+      }
 
-    if(!SetPixelFormat(hDC, pixel_format, &pfd)) {
-      error("opengl: SetPixelFormat failed");
-    }
+      if(!SetPixelFormat(hDC, pixel_format, &pfd)) {
+        error("opengl: SetPixelFormat failed");
+      }
 
-    HGLRC hRCFake = wglCreateContext(hDC);
-    wglMakeCurrent(hDC, hRCFake);
+      HGLRC hRCFake = wglCreateContext(hDC);
+      wglMakeCurrent(hDC, hRCFake);
 
-    int context_attributes[] = {
-      WGL_CONTEXT_MAJOR_VERSION_ARB, 3,
-      WGL_CONTEXT_MINOR_VERSION_ARB, 0,
+      int context_attributes[] = {
+        WGL_CONTEXT_MAJOR_VERSION_ARB,
+        3,
+        WGL_CONTEXT_MINOR_VERSION_ARB,
+        0,
 #if L_DBG
-      WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_DEBUG_BIT_ARB,
+        WGL_CONTEXT_FLAGS_ARB,
+        WGL_CONTEXT_DEBUG_BIT_ARB,
 #endif
-      WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
-      0 // End of attributes list
-    };
+        WGL_CONTEXT_PROFILE_MASK_ARB,
+        WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
+        0 // End of attributes list
+      };
 
-    PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB =
-      PFNWGLCREATECONTEXTATTRIBSARBPROC(wglGetProcAddress("wglCreateContextAttribsARB"));
-    HGLRC hRC = wglCreateContextAttribsARB(hDC, 0, context_attributes);
-    if(!hRC) {
-      error("opengl: wglCreateContextAttribsARB failed");
+      PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB =
+        PFNWGLCREATECONTEXTATTRIBSARBPROC(wglGetProcAddress("wglCreateContextAttribsARB"));
+      HGLRC hRC = wglCreateContextAttribsARB(hDC, 0, context_attributes);
+      if(!hRC) {
+        error("opengl: wglCreateContextAttribsARB failed");
+      }
+
+      wglMakeCurrent(hDC, hRC);
+      wglDeleteContext(hRCFake);
+      surface_init_success = true;
     }
+#endif
 
-    wglMakeCurrent(hDC, hRC);
-    wglDeleteContext(hRCFake);
-#elif L_LINUX
+#if L_USE_MODULE_xlib
     ::Window win = (::Window)data2;
     ::Display* dpy = (::Display*)data1;
     GLint attr[] = {GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, 0};
@@ -90,6 +101,11 @@ void OpenGLRenderer::init(const char*, uintptr_t data1, uintptr_t data2) {
     GLXContext glc = glXCreateContext(dpy, vi, nullptr, true);
     glXMakeCurrent(dpy, win, glc);
 #endif
+
+    if(!surface_init_success) {
+      warning("opengl: Could not create surface for window manager: %s", (const char*)generic_window_data->type);
+      return false;
+    }
   }
 
   // Load GL functions
@@ -194,6 +210,8 @@ void OpenGLRenderer::init(const char*, uintptr_t data1, uintptr_t data2) {
   //glClipControl(GL_UPPER_LEFT, GL_ZERO_TO_ONE);
 
   init_render_passes();
+
+  return true;
 }
 void OpenGLRenderer::recreate_swapchain() {
 
@@ -281,7 +299,7 @@ void OpenGLRenderer::begin_present_pass() {
   glDisable(GL_DEPTH_TEST);
 }
 void OpenGLRenderer::end_present_pass() {
-#if L_WINDOWS
+#if L_USE_MODULE_window_win
   SwapBuffers((HDC)_hdc);
 #endif
 }

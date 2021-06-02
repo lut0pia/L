@@ -7,4 +7,5 @@ add_module(
   vulkan
   INCLUDE_DIRS ${Vulkan_INCLUDE_DIRS}
   LIBRARIES ${Vulkan_LIBRARIES}
+  OPT_MOD_DEPENDENCIES window_win xlib
 )

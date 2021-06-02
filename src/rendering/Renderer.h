@@ -104,6 +104,10 @@ namespace L {
     ShaderStage stage = ShaderStage::Undefined;
   };
 
+  struct GenericWindowData {
+    Symbol type;
+  };
+
   struct DescriptorSetImpl {};
   struct FramebufferImpl {};
   struct MeshImpl {};
@@ -128,7 +132,7 @@ namespace L {
 
     void init_render_passes();
 
-    virtual void init(const char* wmid, uintptr_t data1, uintptr_t data2) = 0;
+    virtual bool init(GenericWindowData* window_data) = 0;
     virtual void recreate_swapchain() = 0;
     virtual void draw(
       RenderCommandBuffer*,

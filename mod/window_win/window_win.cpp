@@ -1,13 +1,18 @@
+#include "window_win.h"
+
+#include <windows.h>
+
 #include <L/src/engine/Engine.h>
 #include <L/src/parallelism/TaskSystem.h>
 #include <L/src/rendering/Renderer.h>
 #include <L/src/system/Window.h>
 #include <L/src/text/encoding.h>
 
-#include <windows.h>
 #include <windowsx.h>
 
 using namespace L;
+
+Symbol win32_window_type("win32");
 
 class WinAPIWindow : public Window {
 protected:
@@ -16,15 +21,15 @@ protected:
 
 public:
   inline WinAPIWindow() {
-    L_ASSERT(_win_instance==nullptr);
+    L_ASSERT(_win_instance == nullptr);
     _win_instance = this;
   }
   inline WinAPIWindow::~WinAPIWindow() {
-    L_ASSERT(_win_instance!=nullptr);
+    L_ASSERT(_win_instance != nullptr);
     _win_instance = nullptr;
   }
   static LRESULT CALLBACK MainWndProc(HWND hwnd, uint32_t uMsg, WPARAM wParam, LPARAM lParam) {
-    Window::Event e {};
+    Window::Event e{};
     switch(uMsg) {
       case WM_CREATE:
         return 0;
@@ -60,7 +65,7 @@ public:
         return DefWindowProc(hwnd, uMsg, wParam, lParam);
         break;
     }
-    if(e.type!=Event::Type::None) {
+    if(e.type != Event::Type::None) {
       _win_instance->_events.push(e);
     }
     return 0;
@@ -82,11 +87,11 @@ public:
 
   void open(const char* title, uint32_t width, uint32_t height, uint32_t flags) override {
     L_SCOPE_MARKER("Window::open");
-    if(opened()) return;
+    if(opened())
+      return;
     _width = width;
     _height = height;
     _flags = flags;
-
 
     { // Register class
       WNDCLASS wc;
@@ -104,15 +109,13 @@ public:
     }
 
     // Create window style
-    DWORD wStyle = ((flags & borderless) ? (WS_POPUP) : (WS_CAPTION | WS_MINIMIZEBOX))
-      | ((flags & resizable) ? (WS_MAXIMIZEBOX | WS_SIZEBOX) : 0)
-      | WS_VISIBLE;
+    DWORD wStyle = ((flags & borderless) ? (WS_POPUP) : (WS_CAPTION | WS_MINIMIZEBOX)) | ((flags & resizable) ? (WS_MAXIMIZEBOX | WS_SIZEBOX) : 0) | WS_VISIBLE;
 
     // Find out needed window size for wanted client area size
-    RECT rect = {0,0,(int)width,(int)height};
+    RECT rect = {0, 0, (int)width, (int)height};
     AdjustWindowRect(&rect, wStyle, false);
-    width = rect.right-rect.left;
-    height = rect.bottom-rect.top;
+    width = rect.right - rect.left;
+    height = rect.bottom - rect.top;
 
     // Create window
     HINSTANCE hInstance(GetModuleHandle(nullptr));
@@ -120,7 +123,12 @@ public:
       CW_USEDEFAULT, CW_USEDEFAULT, width, height,
       nullptr, nullptr, hInstance, nullptr);
 
-    Renderer::get()->init("Win32", (uintptr_t)GetModuleHandle(nullptr), (uintptr_t)hWND);
+    Win32WindowData window_data;
+    window_data.type = win32_window_type;
+    window_data.module = GetModuleHandle(nullptr);
+    window_data.window = hWND;
+
+    Renderer::get()->init(&window_data);
     _opened = true;
   }
   void close() override {
@@ -135,7 +143,7 @@ public:
   }
   void resize(uint32_t width, uint32_t height) override {
     L_ASSERT(opened());
-    SetWindowPos(hWND, HWND_NOTOPMOST, 0, 0, width, height, SWP_NOMOVE|SWP_NOZORDER);
+    SetWindowPos(hWND, HWND_NOTOPMOST, 0, 0, width, height, SWP_NOMOVE | SWP_NOZORDER);
   }
 };
 
