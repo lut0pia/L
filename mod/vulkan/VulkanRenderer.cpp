@@ -48,7 +48,7 @@ bool VulkanRenderer::init(GenericWindowData* generic_window_data) {
     }
 #endif
 #if L_USE_MODULE_xlib
-    if(!window_manager_ext && !strcmp(wmid, "Xlib")) {
+    if(!window_manager_ext && generic_window_data->type == xlib_window_type) {
       window_manager_ext = VK_KHR_XLIB_SURFACE_EXTENSION_NAME;
     }
 #endif
@@ -143,11 +143,12 @@ bool VulkanRenderer::init(GenericWindowData* generic_window_data) {
     }
 #endif
 #if L_USE_MODULE_xlib
-    if(!surface && !strcmp(wmid, "Xlib")) {
+    if(!surface && generic_window_data->type == xlib_window_type) {
+      XlibWindowData* win_data = (XlibWindowData*)generic_window_data;
       VkXlibSurfaceCreateInfoKHR create_info {};
       create_info.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
-      create_info.dpy = (Display*)data1;
-      create_info.window = (::Window)data2;
+      create_info.dpy = win_data->display;
+      create_info.window = win_data->window;
       L_VK_CHECKED(vkCreateXlibSurfaceKHR(instance, &create_info, nullptr, &surface));
     }
 #endif
@@ -502,7 +503,7 @@ void VulkanRenderer::end_render_command_buffer() {
   for(const FlyingPipeline& pipeline : garbage_pipelines) {
     vkDestroyPipeline(_device, pipeline.pipeline, nullptr);
     vkDestroyPipelineLayout(_device, pipeline.layout, nullptr);
-    
+
     // Destroy all related descriptor sets
     for(uintptr_t i = 0; i < free_sets.size(); i++) {
       const FlyingSet& flying_set = free_sets[i];

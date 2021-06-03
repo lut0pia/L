@@ -5,9 +5,13 @@
 #include <X11/X.h>
 #include <X11/Xlib.h>
 
+#include "xlib.h"
+
 #undef None
 
 static class XWindow* instance(nullptr);
+
+L::Symbol xlib_window_type("xlib");
 
 class XWindow : public L::Window {
 protected:
@@ -81,7 +85,12 @@ public:
     }
     _opened = true;
 
-    L::Renderer::get()->init("Xlib", (uintptr_t)_xdisplay, (uintptr_t)_xwindow);
+    XlibWindowData window_data;
+    window_data.type = xlib_window_type;
+    window_data.display = _xdisplay;
+    window_data.window = _xwindow;
+
+    L::Renderer::get()->init(&window_data);
   }
   void close() override {
     L_ASSERT(_opened);

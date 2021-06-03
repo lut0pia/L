@@ -6,6 +6,7 @@
 #endif
 #if L_USE_MODULE_xlib
 #include <GL/glx.h>
+#include "xlib.h"
 #undef None
 #undef Always
 #undef Window
@@ -94,12 +95,14 @@ bool OpenGLRenderer::init(GenericWindowData* generic_window_data) {
 #endif
 
 #if L_USE_MODULE_xlib
-    ::Window win = (::Window)data2;
-    ::Display* dpy = (::Display*)data1;
-    GLint attr[] = {GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, 0};
-    XVisualInfo* vi = glXChooseVisual(dpy, 0, attr);
-    GLXContext glc = glXCreateContext(dpy, vi, nullptr, true);
-    glXMakeCurrent(dpy, win, glc);
+    if(generic_window_data->type == xlib_window_type) {
+      XlibWindowData* win_data = (XlibWindowData*)generic_window_data;
+      GLint attr[] = {GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, 0};
+      XVisualInfo* vi = glXChooseVisual(win_data->display, 0, attr);
+      GLXContext glc = glXCreateContext(win_data->display, vi, nullptr, true);
+      glXMakeCurrent(win_data->display, win_data->window, glc);
+      surface_init_success = true;
+    }
 #endif
 
     if(!surface_init_success) {
