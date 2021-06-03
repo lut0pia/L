@@ -18,6 +18,7 @@ namespace L {
   inline bool ntos_valid(float v) { return !std::isnan(v); }
 
   template <class T> inline void digits_negate(T& v) { v = -v; }
+  inline void digits_negate(uint16_t&) {}
   inline void digits_negate(uint32_t&) {}
   inline void digits_negate(uint64_t&) {}
 

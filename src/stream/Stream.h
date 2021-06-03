@@ -27,11 +27,12 @@ namespace L {
     inline Stream& operator<<(char* v) { write(v,strlen(v)); return *this; }
     inline Stream& operator<<(unsigned char v) { return *this << ntos<16>((unsigned int)v,2); }
     inline Stream& operator<<(const char* v) { write(v,strlen(v)); return *this; }
-    inline Stream& operator<<(short v) { return *this << ntos(v); }
-    inline Stream& operator<<(int v) { return *this << ntos(v); }
-    inline Stream& operator<<(unsigned int v) { return *this << ntos(v); }
-    inline Stream& operator<<(long long v) { return *this << ntos(v); }
-    inline Stream& operator<<(unsigned long long v) { return *this << ntos(v); }
+    inline Stream& operator<<(int16_t v) { return *this << ntos(v); }
+    inline Stream& operator<<(uint16_t v) { return *this << ntos(v); }
+    inline Stream& operator<<(int32_t v) { return *this << ntos(v); }
+    inline Stream& operator<<(uint32_t v) { return *this << ntos(v); }
+    inline Stream& operator<<(int64_t v) { return *this << ntos(v); }
+    inline Stream& operator<<(uint64_t v) { return *this << ntos(v); }
     inline Stream& operator<<(float v) { return *this << ntos(v); }
     inline Stream& operator<<(double v) { return *this << ntos(v); }
 
