@@ -142,7 +142,7 @@ function(add_module NAME)
   set(OPTARGS "")
   set(SINGLEARGS CONDITION)
   set(MULTIARGS
-    LINK_DIRS INCLUDE_DIRS SYSTEM_INCLUDE_DIRS
+    INCLUDE_DIRS SYSTEM_INCLUDE_DIRS
     LIBRARIES DBG_LIBRARIES RLS_LIBRARIES
     DEPENDENCIES MOD_DEPENDENCIES OPT_MOD_DEPENDENCIES
   )
@@ -165,7 +165,6 @@ function(add_module NAME)
   # Core definition and link
   add_compile_definitions(L_USE_MODULE_${NAME}=${M_CONDITION}) # Define for everyone
   target_link_libraries(core PRIVATE $<${M_CONDITION}:mod_${NAME}>)
-  target_link_directories(core PRIVATE ${M_LINK_DIRS})
 
   # Module directories
   target_include_directories(mod_${NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/mod/${NAME}/include) # Own include directory
