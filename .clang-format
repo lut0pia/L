@@ -10,9 +10,11 @@ AlignAfterOpenBracket: DontAlign
 AlignEscapedNewlines: DontAlign
 AlignTrailingComments: false
 AllowShortCaseLabelsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: Inline
 BreakBeforeBraces: Attach
 FixNamespaceComments: false
 IndentCaseLabels: true
+MaxEmptyLinesToKeep: 1
 NamespaceIndentation: All
 PointerAlignment: Left
 SpaceBeforeParens: Never
