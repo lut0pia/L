@@ -62,8 +62,8 @@ namespace L {
       const char* subs[] ={ "class ","struct ", " " };
       for(const char* sub : subs) {
         while(char* found = strstr(name, sub)) {
-          size_t sub_len(strlen(sub));
-          memmove(found, found+sub_len, strlen(name)-(found-name)+sub_len+1);
+          const size_t sub_len = strlen(sub);
+          memmove(found, found + sub_len, strlen(found) - sub_len + 1);
         }
       }
       wtr = name;
