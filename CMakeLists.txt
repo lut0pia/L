@@ -28,6 +28,8 @@ set(CMAKE_EXE_LINKER_FLAGS_DEVELOPMENT ${CMAKE_EXE_LINKER_FLAGS_DEBUG} CACHE INT
 
 # Compiler options
 
+option(L_USE_ASAN "Use address sanitizer" OFF)
+
 function(add_compile_options_safe)
   foreach(OPT ${ARGV})
     check_cxx_compiler_flag(${OPT} HAS_COMPILER_OPTION_${OPT})
@@ -56,6 +58,10 @@ if(MSVC)
   add_link_options(
     $<$<CONFIG:Release>:/SUBSYSTEM:WINDOWS>
   )
+
+  if(${L_USE_ASAN})
+    add_compile_options(/fsanitize=address)
+  endif()
 else()
   add_compile_options(
     -fno-operator-names
@@ -71,6 +77,10 @@ else()
     -Wno-type-limits
     -Wno-unused-function
   )
+
+  if(${L_USE_ASAN})
+    add_compile_options(-fsanitize=address)
+  endif()
 endif()
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/..)
 
