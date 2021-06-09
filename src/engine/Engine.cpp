@@ -22,10 +22,9 @@ Array<void(*)(const Camera&)> Engine::_guis;
 Array<void(*)(const L::Window::Event&)> Engine::_win_events;
 Array<Engine::DeferredAction> Engine::_deferred_actions;
 Timer Engine::_timer;
-const Time Engine::_sub_delta(0, 10);
 L::Time Engine::_real_delta_time, Engine::_delta_time, Engine::_accumulator(0), Engine::_average_frame_work_duration, Engine::_max_frame_work_duration;
 L::Time Engine::_frame_work_durations[64];
-float Engine::_real_delta_seconds, Engine::_delta_seconds, Engine::_sub_delta_seconds(Engine::_sub_delta.seconds_float()), Engine::_timescale(1.f);
+float Engine::_real_delta_seconds, Engine::_delta_seconds, Engine::_timescale(1.f);
 uint32_t Engine::_frame(0);
 
 void Engine::init() {
@@ -92,7 +91,6 @@ void Engine::update() {
   {
     L_SCOPE_MARKER("Sub updates");
     _accumulator += _delta_time;
-    _sub_delta_seconds = _sub_delta.seconds_float();
     while(_sub_delta < _accumulator) {
       for(const auto& sub_update : _sub_updates)
         sub_update();
