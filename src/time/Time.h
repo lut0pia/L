@@ -1,57 +1,64 @@
 #pragma once
 
-#include <cstdint> 
+#include <cstdint>
 
 namespace L {
-  class String;
   class Stream;
   class Time {
   protected:
-    int64_t usec;
+    int64_t _us = 0;
+
   public:
-    inline Time() = default;
-    constexpr Time(int64_t us) : usec(us) {}
-    constexpr Time(long us,long ms,long s = 0,long m = 0,long h = 0,long d = 0)
-      : usec(us+ms*1000LL+s*1000000LL+m*60000000LL+h*3600000000LL+d*86400000000LL) {}
+    constexpr Time() {}
+    constexpr Time(int64_t us)
+        : _us(us) {}
+    constexpr Time(long us, long ms, long s = 0, long m = 0, long h = 0, long d = 0)
+        : _us(us + ms * 1000LL + s * 1000000LL + m * 60000000LL + h * 3600000000LL + d * 86400000000LL) {}
 
-    inline Time operator+(const Time& other) const{ return Time(usec+other.usec); }
-    inline Time operator-(const Time& other) const{ return Time(usec-other.usec); }
-    inline Time operator-() const{ return Time(-usec); }
-    inline Time operator*(const Time& other) const{ return Time(usec*other.usec); }
-    inline Time operator/(const Time& other) const{ return Time(usec/other.usec); }
-    inline Time operator*(float other) const{ return Time(int64_t(usec*other)); }
-    inline Time operator*(int64_t other) const{ return Time(usec*other); }
-    inline Time operator/(int64_t other) const{ return Time(usec/other); }
-    inline Time& operator+=(const Time& other){ usec += other.usec; return *this; }
-    inline Time& operator-=(const Time& other){ usec -= other.usec; return *this; }
-    inline Time& operator*=(const Time& other){ usec *= other.usec; return *this; }
-    inline Time& operator/=(const Time& other){ usec /= other.usec; return *this; }
-    inline bool operator==(const Time& other) const { return usec == other.usec; }
-    inline bool operator!=(const Time& other) const { return usec != other.usec; }
-    inline bool operator>(const Time& other) const { return usec > other.usec; }
-    inline bool operator<(const Time& other) const { return usec < other.usec; }
-    inline bool operator>=(const Time& other) const { return usec >= other.usec; }
-    inline bool operator<=(const Time& other) const { return usec <= other.usec; }
+    constexpr Time operator+(const Time& other) const { return Time(_us + other._us); }
+    constexpr Time operator-(const Time& other) const { return Time(_us - other._us); }
+    constexpr Time operator-() const { return Time(-_us); }
+    constexpr Time operator*(const Time& other) const { return Time(_us * other._us); }
+    constexpr Time operator/(const Time& other) const { return Time(_us / other._us); }
+    constexpr Time operator*(float other) const { return Time(int64_t(_us * other)); }
+    constexpr Time operator*(int64_t other) const { return Time(_us * other); }
+    constexpr Time operator/(int64_t other) const { return Time(_us / other); }
+    constexpr Time& operator+=(const Time& other) {
+      _us += other._us;
+      return *this;
+    }
+    constexpr Time& operator-=(const Time& other) {
+      _us -= other._us;
+      return *this;
+    }
+    constexpr Time& operator*=(const Time& other) {
+      _us *= other._us;
+      return *this;
+    }
+    constexpr Time& operator/=(const Time& other) {
+      _us /= other._us;
+      return *this;
+    }
+    constexpr bool operator==(const Time& other) const { return _us == other._us; }
+    constexpr bool operator!=(const Time& other) const { return _us != other._us; }
+    constexpr bool operator>(const Time& other) const { return _us > other._us; }
+    constexpr bool operator<(const Time& other) const { return _us < other._us; }
+    constexpr bool operator>=(const Time& other) const { return _us >= other._us; }
+    constexpr bool operator<=(const Time& other) const { return _us <= other._us; }
 
-    inline int64_t days() const { return usec/86400000000LL; }
-    inline int64_t hours() const { return usec/3600000000LL; }
-    inline int64_t minutes() const { return usec/60000000LL; }
-    inline int64_t seconds() const { return usec/1000000LL; }
-    inline int64_t milliseconds() const { return usec/1000LL; }
-    inline int64_t microseconds() const { return usec; }
+    constexpr int64_t days() const { return _us / 86400000000LL; }
+    constexpr int64_t hours() const { return _us / 3600000000LL; }
+    constexpr int64_t minutes() const { return _us / 60000000LL; }
+    constexpr int64_t seconds() const { return _us / 1000000LL; }
+    constexpr int64_t milliseconds() const { return _us / 1000LL; }
+    constexpr int64_t microseconds() const { return _us; }
 
-    inline float seconds_float() const { return float(seconds())+(float(microseconds()%1000000LL)/1000000.f); }
+    constexpr float seconds_float() const { return float(seconds()) + (float(microseconds() % 1000000LL) / 1000000.f); }
 
     static Time now();
 
-    friend Stream& operator<<(Stream &s, const Time& v);
+    friend Stream& operator<<(Stream& s, const Time& v);
   };
 
-  Stream& operator<<(Stream &s, const Time& v);
+  Stream& operator<<(Stream& s, const Time& v);
 }
-
-
-
-
-
-
