@@ -5,10 +5,6 @@
 
 using namespace L;
 
-String::String(const char* str) {
-  do Array<char>::push(*str);
-  while(*str++!='\0');
-}
 String::String(const char* buffer, size_t length) : Array<char>(length+1) {
   memcpy(&operator[](0),buffer,length);
   operator[](length) = '\0';
