@@ -4,15 +4,16 @@
 #include "../math/math.h"
 
 namespace L {
-  template <int n, class T>
+  template <intptr_t n, class T>
   class Queue {
     private:
-      T _array[n];
-      int _w, _r;
+      T _array[n] = {};
+      intptr_t _w = 0;
+      intptr_t _r = 0;
 
     public:
-      inline Queue() : _w(0), _r(0) {}
-      inline int index(int i) const {return pmod(i,n);}
+      constexpr Queue() {}
+      inline intptr_t index(intptr_t i) const { return pmod(i, n); }
       inline bool full() const {return _w==index(_r-1);}
       inline bool empty() const {return _w==_r;}
       int size() const {return ((_r<=_w)?(_w-_r):(n-(_r-_w)));}
