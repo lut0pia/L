@@ -12,7 +12,7 @@ namespace L {
     void sleep(int milliseconds);
     void sleep(const Time&);
     String pwd();
-    Vector2i screenSize();
+    Vector2i screen_size();
 
     String formatPath(String);
     String pathDirectory(const String&);

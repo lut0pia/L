@@ -14,7 +14,7 @@ String System::pwd() {
   wtr[wtr.size()-1] = slash; // Because there's a \n at the end
   return wtr;
 }
-Vector2i System::screenSize() {
+Vector2i System::screen_size() {
   return Vector2i(GetSystemMetrics(SM_CXSCREEN),GetSystemMetrics(SM_CYSCREEN));
 }
 String System::formatPath(String path) {

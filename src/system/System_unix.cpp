@@ -16,7 +16,7 @@ String System::pwd() {
   wtr[wtr.size()-1] = '/'; // Because there's a \n at the end
   return wtr;
 }
-Vector2i System::screenSize() {
+Vector2i System::screen_size() {
   String tmp;
   call("xdpyinfo | grep 'dimensions:' | grep -o '[[:digit:]]\\+'", tmp);
   Array<String> res(tmp.explode('\n'));
