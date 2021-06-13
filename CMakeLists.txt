@@ -18,9 +18,10 @@ project(L)
 # Configuration types
 
 set(DEV_DBG $<NOT:$<CONFIG:Release>>)
+set(RLS $<OR:$<CONFIG:Release>,$<CONFIG:MinSizeRel>>)
 add_compile_definitions(
   L_DBG=$<CONFIG:Debug>
-  L_RLS=$<OR:$<CONFIG:Release>,$<CONFIG:MinSizeRel>>
+  L_RLS=${RLS}
   L_LINUX=$<PLATFORM_ID:Linux>
   L_WINDOWS=$<PLATFORM_ID:Windows>
 )
