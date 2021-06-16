@@ -1,9 +1,10 @@
 #include "audio/AudioEngine.h"
-#include "engine/Engine.h"
 #include "engine/debug_draw.h"
+#include "engine/Engine.h"
 #include "engine/Resource.inl"
 #include "engine/Settings.h"
 #include "network/Network.h"
+#include "system/Arguments.h"
 #include "system/File.h"
 
 #include "component/AudioListenerComponent.h"
@@ -50,6 +51,8 @@ void mainjob(void*) {
 #endif
 }
 int main(int argc, const char* argv[]) {
+  Arguments::init(argc, argv);
+
 #if !L_RLS
   init_log_file();
   init_debug_draw();
