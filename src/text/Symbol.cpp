@@ -20,7 +20,6 @@ Symbol::Symbol(const char* str, size_t length) {
   if(const char** found = _symbols.find(hash))
     _string = *found;
   else {
-    L_ASSERT(strcspn(str, " \t\n\v\f\r")>=length);
     if(size_t(_blob_end)-size_t(_blob_next)<=(length+1)) {
       _blob_next = (char*)Memory::virtual_alloc(blob_size);
       _blob_end = _blob_next+blob_size;
