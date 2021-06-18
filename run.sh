@@ -5,6 +5,7 @@
 mode=${1:-build}
 config=${2:-dev} # Configuration is development by default
 (uname -s | grep -iqE "mingw|cygwin|msys|windows") && windows=true || windows=false
+shift 2
 
 # Stats action
 
@@ -55,7 +56,7 @@ if (cd bld && cmake -DCMAKE_BUILD_TYPE=$config ..) ; then # Run CMake
   success=$?
 
   if [ $success = 0 ] && [ $mode = "run" ] ; then
-    (cd smp && ./$exe) # Execute program
+    (cd smp && ./$exe $*) # Execute program
     success=$?
   fi
 
