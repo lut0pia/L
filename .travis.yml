@@ -23,6 +23,7 @@ git:
 script:
   - ./run.sh stats
   - ./run.sh build ${CONFIGURATION}
+  - if [ $CONFIGURATION != rls ]; then ./run.sh run ${CONFIGURATION} --run_all_tests ; fi
 
 jobs:
   include:
