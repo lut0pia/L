@@ -69,6 +69,19 @@ namespace L {
     inline Array operator+(const Array& other) { Array wtr(*this); return wtr += other; }
     inline Array& operator+=(const Array& other) { push_array(other.begin(), other.size()); return *this; }
 
+    bool operator==(const Array& other) const {
+      if(size() != other.size()) {
+        return false;
+      }
+      for(uintptr_t i = 0; i < size(); i++) {
+        if((*this)[i] != other[i]) {
+          return false;
+        }
+      }
+      return true;
+    }
+    inline bool operator!=(const Array& other) const { return !operator==(other); }
+
     inline size_t size() const { return _size; }
     inline size_t capacity() const { return _capacity; }
     inline bool empty() const { return size() == 0; }
