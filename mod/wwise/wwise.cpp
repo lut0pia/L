@@ -5,7 +5,7 @@
 #include <L/src/engine/Engine.h>
 #include <L/src/text/String.h>
 
-#if L_RLS
+#if !L_DBG
 #define AK_OPTIMIZED
 #endif
 
