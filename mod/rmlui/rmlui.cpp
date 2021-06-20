@@ -29,12 +29,12 @@ static void rmlui_gui(const class Camera& camera) {
 }
 
 void rmlui_module_init() {
-  Rml::Core::SetFileInterface(&file_implementation);
-  Rml::Core::SetFontEngineInterface(&font_engine_implementation);
-  Rml::Core::SetRenderInterface(&render_implementation);
-  Rml::Core::SetSystemInterface(&system_implementation);
+  Rml::SetFileInterface(&file_implementation);
+  Rml::SetFontEngineInterface(&font_engine_implementation);
+  Rml::SetRenderInterface(&render_implementation);
+  Rml::SetSystemInterface(&system_implementation);
 
-  if(!Rml::Core::Initialise()) {
+  if(!Rml::Initialise()) {
     warning("rmlui: Could not initialize");
     return;
   }

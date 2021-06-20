@@ -18,7 +18,7 @@ static Ref<InputMap> input_map = ref<InputMap>(Array<InputMapEntry>{
       if(c.param_count() < NARGS) { \
         c.warning("Too few arguments in method call '%s.%s'", "RmlUiElement", NAME); \
       } \
-      if(Rml::Core::Element* element = rmlui_native_element(c.current_self())) { \
+      if(Rml::Element* element = rmlui_native_element(c.current_self())) { \
         PREFIX(element->__VA_ARGS__); \
       } else { \
         c.warning("Calling method '%s.%s' on invalid value of type '%s'", "RmlUiElement", NAME, c.current_self().type()->name); \
@@ -27,15 +27,15 @@ static Ref<InputMap> input_map = ref<InputMap>(Array<InputMapEntry>{
 #define RMLUI_SCRIPT_METHOD(NAME, NARGS, ...) RMLUI_SCRIPT_METHOD_INTERNAL(, NAME, NARGS, __VA_ARGS__)
 #define RMLUI_SCRIPT_RETURN_METHOD(NAME, NARGS, ...) RMLUI_SCRIPT_METHOD_INTERNAL(c.return_value() = rmlui_script_type, NAME, NARGS, __VA_ARGS__)
 
-static RmlUiSafeElement rmlui_script_type(Rml::Core::Element* element) { return element ? element->GetObserverPtr() : nullptr; }
-static Ref<Rml::Core::ElementPtr> rmlui_script_type(Rml::Core::ElementPtr element_ptr) { return ref_move<Rml::Core::ElementPtr>(static_cast<Rml::Core::ElementPtr&&>(element_ptr)); }
-static String rmlui_script_type(Rml::Core::String string) { return String(string.c_str(), string.size()); }
+static RmlUiSafeElement rmlui_script_type(Rml::Element* element) { return element ? element->GetObserverPtr() : nullptr; }
+static Ref<Rml::ElementPtr> rmlui_script_type(Rml::ElementPtr element_ptr) { return ref_move<Rml::ElementPtr>(static_cast<Rml::ElementPtr&&>(element_ptr)); }
+static String rmlui_script_type(Rml::String string) { return String(string.c_str(), string.size()); }
 static bool rmlui_script_type(bool v) { return v; }
 
-static Rml::Core::Element* rmlui_native_element(Var v) {
+static Rml::Element* rmlui_native_element(Var v) {
   if(RmlUiSafeElement* safe_element = v.try_as<RmlUiSafeElement>()) {
     return safe_element->get();
-  } else if(Ref<Rml::Core::ElementPtr>* element_ptr_ref = v.try_as<Ref<Rml::Core::ElementPtr>>()) {
+  } else if(Ref<Rml::ElementPtr>* element_ptr_ref = v.try_as<Ref<Rml::ElementPtr>>()) {
     return (*element_ptr_ref)->get();
   }
   return nullptr;
@@ -43,16 +43,16 @@ static Rml::Core::Element* rmlui_native_element(Var v) {
 
 static void register_rmlui_script_method(const char* name, ScriptNativeFunction func) {
   register_script_method<RmlUiSafeElement>(name, func);
-  register_script_method<Ref<Rml::Core::ElementPtr>>(name, func);
+  register_script_method<Ref<Rml::ElementPtr>>(name, func);
 }
 
-void RmlUiComponent::EventListener::ProcessEvent(Rml::Core::Event& event) {
+void RmlUiComponent::EventListener::ProcessEvent(Rml::Event& event) {
   script_context.self() = event.GetCurrentElement()->GetObserverPtr();
   script_context.execute(function);
 }
 
 RmlUiComponent::RmlUiComponent() {
-  _context = Rml::Core::CreateContext("main", Rml::Core::Vector2i(128, 128));
+  _context = Rml::CreateContext("main", Rml::Vector2i(128, 128));
   if(_context == nullptr) {
     error("rmlui: Could not create context");
   }
@@ -64,7 +64,7 @@ RmlUiComponent::RmlUiComponent() {
 }
 
 RmlUiComponent::~RmlUiComponent() {
-  Rml::Core::RemoveContext(_context->GetName());
+  Rml::RemoveContext(_context->GetName());
 }
 
 void RmlUiComponent::update_components() {
@@ -94,14 +94,14 @@ void RmlUiComponent::script_registration() {
   RMLUI_SCRIPT_RETURN_METHOD("has_child_nodes", 0, HasChildNodes());
   RMLUI_SCRIPT_RETURN_METHOD("remove_child", 0, RemoveChild(rmlui_native_element(c.param(0))));
 
-  RMLUI_SCRIPT_METHOD("set_attribute", 1, SetAttribute(c.param(0).get<String>().begin(), Rml::Core::String(c.param(1).get<String>().begin())));
+  RMLUI_SCRIPT_METHOD("set_attribute", 1, SetAttribute(c.param(0).get<String>().begin(), Rml::String(c.param(1).get<String>().begin())));
   RMLUI_SCRIPT_METHOD("set_class", 1, SetClass(c.param(0).get<String>().begin(), c.param(1)));
   RMLUI_SCRIPT_METHOD("set_id", 1, SetId(c.param(0).get<String>().begin()));
   RMLUI_SCRIPT_METHOD("set_inner_rml", 1, SetInnerRML(c.param(0).get<String>().begin()));
 
   register_rmlui_script_method("add_event_listener",
     [](ScriptContext& c) {
-      if(Rml::Core::Element* element = rmlui_native_element(c.current_self())) {
+      if(Rml::Element* element = rmlui_native_element(c.current_self())) {
         EventListener* listener = Memory::new_type<EventListener>();
         listener->element = element->GetObserverPtr();
         listener->function = c.param(1);
@@ -112,8 +112,8 @@ void RmlUiComponent::script_registration() {
 
   register_rmlui_script_method("get_element_by_id",
     [](ScriptContext& c) {
-      if(Rml::Core::Element* element = rmlui_native_element(c.current_self())) {
-        if(Rml::Core::Element* found_element = element->GetElementById(c.param(0).get<String>().begin())) {
+      if(Rml::Element* element = rmlui_native_element(c.current_self())) {
+        if(Rml::Element* found_element = element->GetElementById(c.param(0).get<String>().begin())) {
           c.return_value() = rmlui_script_type(found_element);
         }
       }
@@ -121,11 +121,11 @@ void RmlUiComponent::script_registration() {
 
   register_rmlui_script_method("get_elements_by_tag_name",
     [](ScriptContext& c) {
-      if(Rml::Core::Element* element = rmlui_native_element(c.current_self())) {
-        Rml::Core::ElementList element_list;
+      if(Rml::Element* element = rmlui_native_element(c.current_self())) {
+        Rml::ElementList element_list;
         element->GetElementsByTagName(element_list, c.param(0).get<String>().begin());
         Array<Var>& array = c.return_value().make<Ref<Array<Var>>>().make();
-        for(Rml::Core::Element* tag_element : element_list) {
+        for(Rml::Element* tag_element : element_list) {
           array.push(rmlui_script_type(tag_element));
         }
       }
@@ -133,11 +133,11 @@ void RmlUiComponent::script_registration() {
 
   register_rmlui_script_method("get_elements_by_class_name",
     [](ScriptContext& c) {
-      if(Rml::Core::Element* element = rmlui_native_element(c.current_self())) {
-        Rml::Core::ElementList element_list;
+      if(Rml::Element* element = rmlui_native_element(c.current_self())) {
+        Rml::ElementList element_list;
         element->GetElementsByClassName(element_list, c.param(0).get<String>().begin());
         Array<Var>& array = c.return_value().make<Ref<Array<Var>>>().make();
-        for(Rml::Core::Element* tag_element : element_list) {
+        for(Rml::Element* tag_element : element_list) {
           array.push(rmlui_script_type(tag_element));
         }
       }
@@ -145,7 +145,7 @@ void RmlUiComponent::script_registration() {
 
   register_rmlui_script_method("get_children",
     [](ScriptContext& c) {
-      if(Rml::Core::Element* element = rmlui_native_element(c.current_self())) {
+      if(Rml::Element* element = rmlui_native_element(c.current_self())) {
         int num_children = element->GetNumChildren();
         Array<Var>& array = c.return_value().make<Ref<Array<Var>>>().make();
         for(int i = 0; i < num_children; i++) {
@@ -156,9 +156,9 @@ void RmlUiComponent::script_registration() {
 
   register_rmlui_script_method("append_child",
     [](ScriptContext& c) {
-      if(Rml::Core::Element* element = rmlui_native_element(c.current_self())) {
-        if(Ref<Rml::Core::ElementPtr>* child_element_ref = c.param(0).try_as<Ref<Rml::Core::ElementPtr>>()) {
-          c.return_value() = rmlui_script_type(element->AppendChild(static_cast<Rml::Core::ElementPtr&&>(**child_element_ref)));
+      if(Rml::Element* element = rmlui_native_element(c.current_self())) {
+        if(Ref<Rml::ElementPtr>* child_element_ref = c.param(0).try_as<Ref<Rml::ElementPtr>>()) {
+          c.return_value() = rmlui_script_type(element->AppendChild(static_cast<Rml::ElementPtr&&>(**child_element_ref)));
         }
       }
     });
@@ -167,7 +167,7 @@ void RmlUiComponent::script_registration() {
 void RmlUiComponent::update() {
   { // Update dimensions
     const Vector2i viewport_size = _camera->viewport_pixel().size();
-    _context->SetDimensions(Rml::Core::Vector2i(viewport_size.x(), viewport_size.y()));
+    _context->SetDimensions(Rml::Vector2i(viewport_size.x(), viewport_size.y()));
   }
 
   { // Update input
@@ -175,15 +175,15 @@ void RmlUiComponent::update() {
     const bool shift_modifier = _input_context.get_raw_button(Device::Button::LeftShift) || _input_context.get_raw_button(Device::Button::RightShift);
     const bool alt_modifier = _input_context.get_raw_button(Device::Button::LeftAlt) || _input_context.get_raw_button(Device::Button::RightAlt);
     const int key_modifier_state =
-      (ctrl_modifier ? Rml::Core::Input::KeyModifier::KM_CTRL : 0) |
-      (shift_modifier ? Rml::Core::Input::KeyModifier::KM_SHIFT : 0) |
-      (alt_modifier ? Rml::Core::Input::KeyModifier::KM_ALT : 0);
+      (ctrl_modifier ? Rml::Input::KeyModifier::KM_CTRL : 0) |
+      (shift_modifier ? Rml::Input::KeyModifier::KM_SHIFT : 0) |
+      (alt_modifier ? Rml::Input::KeyModifier::KM_ALT : 0);
 
     // Mouse move
     _context->ProcessMouseMove(Window::cursor_x(), Window::cursor_y(), key_modifier_state);
 
     // Block mouse input if outstanding element is hovered
-    Rml::Core::Element* hover_el = _context->GetHoverElement();
+    Rml::Element* hover_el = _context->GetHoverElement();
     _input_context.set_block_mode(hover_el && hover_el->GetTagName() != "body" ? InputBlockMode::Used : InputBlockMode::None);
 
     { // Mouse buttons
@@ -208,7 +208,7 @@ void RmlUiComponent::update() {
 }
 
 RmlUiSafeElement RmlUiComponent::load_document(const char* path) {
-  if(Rml::Core::ElementDocument* document = _context->LoadDocument(path)) {
+  if(Rml::ElementDocument* document = _context->LoadDocument(path)) {
     return document->GetObserverPtr();
   }
   return RmlUiSafeElement();
@@ -216,14 +216,11 @@ RmlUiSafeElement RmlUiComponent::load_document(const char* path) {
 
 #if !L_RLS
 void RmlUiComponent::refresh() {
-  Rml::Core::Factory::ClearStyleSheetCache();
   const int num_docs = _context->GetNumDocuments();
   for(int i = 0; i < num_docs; i++) {
-    Rml::Core::ElementDocument* document = _context->GetDocument(i);
+    Rml::ElementDocument* document = _context->GetDocument(i);
     if(!document->GetSourceURL().empty()) {
-      Rml::Core::ElementDocument* tmp_doc = _context->LoadDocument(document->GetSourceURL());
-      document->SetStyleSheet(tmp_doc->GetStyleSheet());
-      _context->UnloadDocument(tmp_doc);
+      document->ReloadStyleSheet();
     }
   }
 }

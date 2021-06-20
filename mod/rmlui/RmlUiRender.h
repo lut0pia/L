@@ -6,7 +6,7 @@
 #include "rmlui.h"
 #include "RmlUiComponent.h"
 
-class RmlUiRender : public Rml::Core::RenderInterface {
+class RmlUiRender : public Rml::RenderInterface {
 protected:
   struct MaterialTransform {
     L::Handle<RmlUiComponent> component;
@@ -14,7 +14,7 @@ protected:
     L::Matrix44f transform;
   };
 
-  L::Array<Rml::Core::Vertex> _vertices;
+  L::Array<Rml::Vertex> _vertices;
   L::Array<uint16_t> _indices;
   L::Resource<L::Mesh> _mesh;
 
@@ -31,10 +31,10 @@ protected:
 
 public:
   RmlUiRender();
-  virtual void RenderGeometry(Rml::Core::Vertex* vertices, int num_vertices, int* indices, int num_indices, Rml::Core::TextureHandle resource, const Rml::Core::Vector2f& translation) override;
+  virtual void RenderGeometry(Rml::Vertex* vertices, int num_vertices, int* indices, int num_indices, Rml::TextureHandle resource, const Rml::Vector2f& translation) override;
   virtual void EnableScissorRegion(bool enable) override;
   virtual void SetScissorRegion(int x, int y, int width, int height) override;
-  virtual bool LoadTexture(Rml::Core::TextureHandle& texture_handle, Rml::Core::Vector2i& texture_dimensions, const Rml::Core::String& source) override;
+  virtual bool LoadTexture(Rml::TextureHandle& texture_handle, Rml::Vector2i& texture_dimensions, const Rml::String& source) override;
 
   void Init();
   void Shutdown();

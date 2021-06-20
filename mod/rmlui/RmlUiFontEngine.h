@@ -6,11 +6,11 @@
 
 #include "rmlui.h"
 
-class RmlUiFontEngine : public Rml::Core::FontEngineInterface {
+class RmlUiFontEngine : public Rml::FontEngineInterface {
 protected:
   struct FontFace {
     L::Resource<L::Font> font;
-    Rml::Core::Texture* texture;
+    Rml::Texture* texture;
     int size, x_height, line_height, baseline;
     float underline;
   };
@@ -19,15 +19,15 @@ protected:
 
 public:
   RmlUiFontEngine();
-  virtual bool LoadFontFace(const Rml::Core::String& file_name, bool fallback_face) override;
-  virtual bool LoadFontFace(const Rml::Core::byte* data, int data_size, const Rml::Core::String& family, Rml::Core::Style::FontStyle style, Rml::Core::Style::FontWeight weight, bool fallback_face) override;
-  virtual Rml::Core::FontFaceHandle GetFontFaceHandle(const Rml::Core::String& family, Rml::Core::Style::FontStyle style, Rml::Core::Style::FontWeight weight, int size) override;
+  virtual bool LoadFontFace(const Rml::String& file_name, bool fallback_face) override;
+  virtual bool LoadFontFace(const Rml::byte* data, int data_size, const Rml::String& family, Rml::Style::FontStyle style, Rml::Style::FontWeight weight, bool fallback_face) override;
+  virtual Rml::FontFaceHandle GetFontFaceHandle(const Rml::String& family, Rml::Style::FontStyle style, Rml::Style::FontWeight weight, int size) override;
 
-  virtual int GetSize(Rml::Core::FontFaceHandle handle) override;
-  virtual int GetXHeight(Rml::Core::FontFaceHandle handle) override;
-  virtual int GetLineHeight(Rml::Core::FontFaceHandle handle) override;
-  virtual int GetBaseline(Rml::Core::FontFaceHandle handle) override;
-  virtual float GetUnderline(Rml::Core::FontFaceHandle handle, float& thickness) override;
-  virtual int GetStringWidth(Rml::Core::FontFaceHandle handle, const Rml::Core::String& string, Rml::Core::Character) override;
-  virtual int GenerateString(Rml::Core::FontFaceHandle handle, Rml::Core::FontEffectsHandle font_effects_handle, const Rml::Core::String& string, const Rml::Core::Vector2f& position, const Rml::Core::Colourb& colour, Rml::Core::GeometryList& geometry_list) override;
+  virtual int GetSize(Rml::FontFaceHandle handle) override;
+  virtual int GetXHeight(Rml::FontFaceHandle handle) override;
+  virtual int GetLineHeight(Rml::FontFaceHandle handle) override;
+  virtual int GetBaseline(Rml::FontFaceHandle handle) override;
+  virtual float GetUnderline(Rml::FontFaceHandle handle, float& thickness) override;
+  virtual int GetStringWidth(Rml::FontFaceHandle handle, const Rml::String& string, Rml::Character) override;
+  virtual int GenerateString(Rml::FontFaceHandle handle, Rml::FontEffectsHandle font_effects_handle, const Rml::String& string, const Rml::Vector2f& position, const Rml::Colourb& colour, Rml::GeometryList& geometry_list) override;
 };

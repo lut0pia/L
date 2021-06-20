@@ -8,16 +8,16 @@
 
 class RmlUiComponent : public L::TComponent<RmlUiComponent> {
 protected:
-  struct EventListener : public Rml::Core::EventListener {
+  struct EventListener : public Rml::EventListener {
     RmlUiSafeElement element;
     L::Ref<L::ScriptFunction> function;
     L::ScriptContext script_context;
 
-    virtual void ProcessEvent(Rml::Core::Event& event) override;
+    virtual void ProcessEvent(Rml::Event& event) override;
   };
   static L::Array<EventListener*> _event_listeners;
   L::Camera* _camera;
-  Rml::Core::Context* _context;
+  Rml::Context* _context;
   L::InputContext _input_context;
 
 public:
@@ -31,7 +31,7 @@ public:
 
   RmlUiSafeElement load_document(const char* path);
 
-  inline Rml::Core::Context* get_context() { return _context; }
+  inline Rml::Context* get_context() { return _context; }
 
 #if !L_RLS
   void refresh();

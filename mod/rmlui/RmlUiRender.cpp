@@ -18,7 +18,7 @@ static Array<VertexAttribute> vertex_attributes = {
 RmlUiRender::RmlUiRender() {
   _textures.push(); // Nothing for null handle
 }
-void RmlUiRender::RenderGeometry(Rml::Core::Vertex* vertices, int num_vertices, int* indices, int num_indices, Rml::Core::TextureHandle resource, const Rml::Core::Vector2f& translation) {
+void RmlUiRender::RenderGeometry(Rml::Vertex* vertices, int num_vertices, int* indices, int num_indices, Rml::TextureHandle resource, const Rml::Vector2f& translation) {
   _material_transforms.push();
   MaterialTransform& material_transform = _material_transforms.back();
   material_transform.component = _current_component;
@@ -59,7 +59,7 @@ void RmlUiRender::EnableScissorRegion(bool enable) {
 void RmlUiRender::SetScissorRegion(int x, int y, int width, int height) {
   _scissor = Interval2i(Vector2i(x, y), Vector2i(x + width, y + height));
 }
-bool RmlUiRender::LoadTexture(Rml::Core::TextureHandle& texture_handle, Rml::Core::Vector2i& texture_dimensions, const Rml::Core::String& source) {
+bool RmlUiRender::LoadTexture(Rml::TextureHandle& texture_handle, Rml::Vector2i& texture_dimensions, const Rml::String& source) {
   if(source.substr(0, 5) == "font:") {
     Resource<Font> font_res = source.substr(5).c_str();
     if(const Font* font = font_res.force_load()) {
@@ -95,7 +95,7 @@ void RmlUiRender::Init() {
       }
 
       intermediate.attributes = vertex_attributes;
-      intermediate.vertices = Buffer(sizeof(Rml::Core::Vertex));
+      intermediate.vertices = Buffer(sizeof(Rml::Vertex));
 
       return true;
     });
@@ -187,7 +187,7 @@ void RmlUiRender::Update() {
     mesh_mut->load(
       _vertices.size(),
       _vertices.begin(),
-      _vertices.size() * sizeof(Rml::Core::Vertex),
+      _vertices.size() * sizeof(Rml::Vertex),
       vertex_attributes.begin(), vertex_attributes.size(),
       _indices.begin(), _indices.size());
   }

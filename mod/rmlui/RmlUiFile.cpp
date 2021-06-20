@@ -4,7 +4,7 @@
 
 using namespace L;
 
-Rml::Core::FileHandle RmlUiFile::Open(const Rml::Core::String& path) {
+Rml::FileHandle RmlUiFile::Open(const Rml::String& path) {
   File file;
   file.resource = path.c_str();
   if(!_resources.find(file.resource)) {
@@ -13,11 +13,11 @@ Rml::Core::FileHandle RmlUiFile::Open(const Rml::Core::String& path) {
   _files[_next_handle] = file;
   return _next_handle++;
 }
-void RmlUiFile::Close(Rml::Core::FileHandle handle) {
+void RmlUiFile::Close(Rml::FileHandle handle) {
   _files.remove(handle);
 }
 
-size_t RmlUiFile::Read(void* dst, size_t size, Rml::Core::FileHandle handle) {
+size_t RmlUiFile::Read(void* dst, size_t size, Rml::FileHandle handle) {
   File& file = _files[handle];
   if(const Buffer* buffer = file.resource.force_load()) {
     const void* data = buffer->data();
@@ -28,7 +28,7 @@ size_t RmlUiFile::Read(void* dst, size_t size, Rml::Core::FileHandle handle) {
   }
   return 0;
 }
-bool RmlUiFile::Seek(Rml::Core::FileHandle handle, long offset, int origin) {
+bool RmlUiFile::Seek(Rml::FileHandle handle, long offset, int origin) {
   File& file = _files[handle];
   if(const Buffer* buffer = file.resource.force_load()) {
     switch(origin) {
@@ -41,12 +41,12 @@ bool RmlUiFile::Seek(Rml::Core::FileHandle handle, long offset, int origin) {
   }
   return false;
 }
-size_t RmlUiFile::Tell(Rml::Core::FileHandle handle) {
+size_t RmlUiFile::Tell(Rml::FileHandle handle) {
   File& file = _files[handle];
   return file.offset;
 }
 
-size_t RmlUiFile::Length(Rml::Core::FileHandle handle) {
+size_t RmlUiFile::Length(Rml::FileHandle handle) {
   File& file = _files[handle];
   if(const Buffer* buffer = file.resource.force_load()) {
     return buffer->size();
