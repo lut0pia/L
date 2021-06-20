@@ -83,6 +83,9 @@ void* Memory::alloc(size_t size) {
     if(cas((uintptr_t*)freelists + index, uintptr_t(ptr), *(uintptr_t*)ptr) == uintptr_t(ptr)) {
       unused -= padded_size;
       L_COUNT_MARKER("Unused memory", unused);
+#if L_DBG
+      memset(ptr, 0xcd, padded_size);
+#endif
       return ptr;
     }
   }
@@ -133,6 +136,9 @@ void Memory::free(void* ptr, size_t size) {
   uintptr_t index;
   size_t padded_size;
   freelist_index_size(size, index, padded_size);
+#if L_DBG
+  memset(ptr, 0xdd, padded_size);
+#endif
   do {
     L_ASSERT(freelists[index] == nullptr || (freelists[index] >= alloc_block_start && freelists[index] < alloc_block_start + alloc_block_size));
     *((void**)ptr) = freelists[index];
