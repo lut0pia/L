@@ -104,7 +104,7 @@ namespace L {
         return true;
       } else {
         slot.mtime = Date::now();
-        slot.state = ResourceSlot::Failed;
+        slot.state = ResourceState::Failed;
         warning("Unable to load %s from: %s", slot.type, slot.id);
       }
       return false;
@@ -119,7 +119,7 @@ namespace L {
     }
     static void store(ResourceSlot& slot, typename T::Intermediate& intermediate) {
       slot.value = Memory::new_type<T>(static_cast<typename T::Intermediate&&>(intermediate));
-      slot.state = ResourceSlot::Loaded;
+      slot.state = ResourceState::Loaded;
     }
   };
   template <class T> Array<typename ResourceLoading<T>::Loader> ResourceLoading<T>::_loaders;

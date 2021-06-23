@@ -12,7 +12,7 @@ using namespace L;
 static bool opened = false;
 
 static Table<Symbol, Color> type_colors;
-static uint32_t state_mask = (1 << ResourceSlot::Loading) | (1 << ResourceSlot::Failed);
+static uint32_t state_mask = (1 << uint32_t(ResourceState::Loading)) | (1 << uint32_t(ResourceState::Failed));
 
 static void imgui_resources_update() {
   if(imgui_begin_main_menu_bar()) {
@@ -35,10 +35,10 @@ static void imgui_resources_update() {
   Array<ResourceSlot*> slots = ResourceSlot::slots();
 
   if(ImGui::BeginPopup("State Filter")) {
-    ImGui::CheckboxFlags("Unloaded", &state_mask, 1 << ResourceSlot::Unloaded);
-    ImGui::CheckboxFlags("Loading", &state_mask, 1 << ResourceSlot::Loading);
-    ImGui::CheckboxFlags("Loaded", &state_mask, 1 << ResourceSlot::Loaded);
-    ImGui::CheckboxFlags("Failed", &state_mask, 1 << ResourceSlot::Failed);
+    ImGui::CheckboxFlags("Unloaded", &state_mask, 1 << uint32_t(ResourceState::Unloaded));
+    ImGui::CheckboxFlags("Loading", &state_mask, 1 << uint32_t(ResourceState::Loading));
+    ImGui::CheckboxFlags("Loaded", &state_mask, 1 << uint32_t(ResourceState::Loaded));
+    ImGui::CheckboxFlags("Failed", &state_mask, 1 << uint32_t(ResourceState::Failed));
     ImGui::EndPopup();
   }
 
@@ -64,7 +64,7 @@ static void imgui_resources_update() {
   ImGui::Separator();
 
   for(ResourceSlot* slot : slots) {
-    if(((1 << slot->state) & state_mask) == 0) {
+    if(((1 << uint32_t(slot->state.load())) & state_mask) == 0) {
       continue;
     }
 
@@ -77,10 +77,10 @@ static void imgui_resources_update() {
     ImColor state_color = ImColor(1.f, 1.f, 1.f);
     const char* state = "Unknown";
     switch(slot->state) {
-      case ResourceSlot::Unloaded: state = "Unloaded"; state_color = ImColor(0.5f, 0.5f, 0.5f);  break;
-      case ResourceSlot::Loading: state = "Loading"; state_color = ImColor(1.f, 0.5f, 0.f);  break;
-      case ResourceSlot::Loaded: state = "Loaded"; state_color = ImColor(0.f, 1.f, 0.f); break;
-      case ResourceSlot::Failed: state = "Failed"; state_color = ImColor(1.f, 0.f, 0.f); break;
+      case ResourceState::Unloaded: state = "Unloaded"; state_color = ImColor(0.5f, 0.5f, 0.5f);  break;
+      case ResourceState::Loading: state = "Loading"; state_color = ImColor(1.f, 0.5f, 0.f);  break;
+      case ResourceState::Loaded: state = "Loaded"; state_color = ImColor(0.f, 1.f, 0.f); break;
+      case ResourceState::Failed: state = "Failed"; state_color = ImColor(1.f, 0.f, 0.f); break;
     }
 
     ImGui::TextColored(im_type_color, "%s", (const char*)slot->type);

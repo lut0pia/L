@@ -1,5 +1,7 @@
 #pragma once
 
+#include <atomic>
+
 #include "../container/Buffer.h"
 #include "../container/Table.h"
 #include "../dynamic/Type.h"
@@ -9,6 +11,13 @@
 #include "../time/Date.h"
 
 namespace L {
+  enum class ResourceState : uint32_t {
+    Unloaded,
+    Loading,
+    Loaded,
+    Failed,
+  };
+
   struct ResourceSlot {
     Table<Symbol, Symbol> parameters;
     Symbol type, id, path, ext;
@@ -17,12 +26,7 @@ namespace L {
     Array<String> source_files;
     Date mtime;
 
-    enum : uint32_t { // 32bits because of atomic operations
-      Unloaded,
-      Loading,
-      Loaded,
-      Failed,
-    } state = Unloaded;
+    std::atomic<ResourceState> state = ResourceState::Unloaded;
     void (*load_function)(ResourceSlot&);
     void* value = nullptr;
 
@@ -74,7 +78,7 @@ namespace L {
     inline bool is_loaded() const {
       if(_slot) {
         _slot->load();
-        return _slot->state == ResourceSlot::Loaded && _slot->value;
+        return _slot->state == ResourceState::Loaded && _slot->value;
       } else
         return false;
     }
@@ -117,7 +121,7 @@ namespace L {
     friend inline uint32_t hash(const Resource& v) {
       uint32_t h = hash(v.slot());
       hash_combine(h, v.slot() ? v.slot()->value : nullptr);
-      hash_combine(h, v.slot() ? v.slot()->state : ResourceSlot::Unloaded);
+      hash_combine(h, v.slot() ? v.slot()->state.load() : ResourceState::Unloaded);
       return h;
     }
   };

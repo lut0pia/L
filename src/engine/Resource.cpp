@@ -79,7 +79,8 @@ bool ResourceSlot::parameter(const Symbol& key, float& param_value) const {
 }
 
 void ResourceSlot::load() {
-  if(state == ResourceSlot::Unloaded && cas((uint32_t*)&state, ResourceSlot::Unloaded, ResourceSlot::Loading) == ResourceSlot::Unloaded) {
+  ResourceState expected_state = ResourceState::Unloaded;
+  if(state.compare_exchange_strong(expected_state, ResourceState::Loading)) {
     const uint32_t thread_mask = TaskSystem::thread_count() > 1 ? uint32_t(-2) : uint32_t(-1);
     TaskSystem::push([](void* p) {
       ResourceSlot& slot(*(ResourceSlot*)p);
@@ -89,11 +90,11 @@ void ResourceSlot::load() {
   }
 }
 bool ResourceSlot::flush() {
-  if(state != ResourceSlot::Loaded) {
+  if(state != ResourceState::Loaded) {
     L_SCOPE_MARKERF("Resource flush (%s)", (const char*)id);
     load();
     TaskSystem::yield_until([](void* data) {
-      return ((ResourceSlot*)data)->state == ResourceSlot::Loaded;
+      return ((ResourceSlot*)data)->state == ResourceState::Loaded;
     }, this);
   }
   return value != nullptr;
@@ -200,9 +201,9 @@ void ResourceSlot::update() {
     L_SCOPE_MARKER("Resource update");
     static uintptr_t index = 0;
     ResourceSlot& slot(*_slots[index%_slots.size()]);
-    if((slot.state == Loaded || slot.state == Failed) // No reload if it hasn't been loaded in the first place
+    if((slot.state == ResourceState::Loaded || slot.state == ResourceState::Failed) // No reload if it hasn't been loaded in the first place
       && slot.is_out_of_date()) {
-      slot.state = Unloaded;
+      slot.state = ResourceState::Unloaded;
       slot.mtime = Date::now();
     }
     index++;
