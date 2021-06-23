@@ -1,7 +1,8 @@
 #include "Handle.h"
 
+#include <atomic>
+
 #include "../system/Memory.h"
-#include "../system/intrinsics.h"
 
 using namespace L;
 
@@ -11,20 +12,19 @@ static constexpr uint64_t version_bits = 16;
 static constexpr uint64_t version_mask = (1ull << version_bits) - 1;
 
 static uint64_t* handle_objects = nullptr;
-static int64_t next_index = 0;
-static uint64_t freelist = address_mask;
+static std::atomic<uint64_t> next_index = 0;
+static std::atomic<uint64_t> freelist = address_mask;
 
 GenericHandle::GenericHandle(void* ptr) {
   L_ASSERT((uint64_t(ptr) & address_mask) == uint64_t(ptr));
 
-  while(freelist != address_mask) {
-    const uint64_t freeslot_index = freelist;
+  for(uint64_t freeslot_index; freeslot_index = freelist, freelist != address_mask;) {
     const uint64_t freeslot = handle_objects[freeslot_index];
     const uint64_t version = freeslot >> address_bits;
     const uint64_t new_freeslot_index = freeslot & address_mask;
 
     _ver_index = (version << address_bits) | freeslot_index;
-    if(cas(&freelist, freeslot_index, new_freeslot_index) != freeslot_index) {
+    if(!freelist.compare_exchange_strong(freeslot_index, new_freeslot_index)) {
       continue;
     }
     handle_objects[freeslot_index] = (version << address_bits) | (uint64_t)ptr;
@@ -37,7 +37,7 @@ GenericHandle::GenericHandle(void* ptr) {
   }
 
   // Allocate new handle slot
-  _ver_index = atomic_add(&next_index, int64_t(1));
+  _ver_index = next_index++;
   handle_objects[_ver_index] = uint64_t(ptr);
 }
 
@@ -69,7 +69,7 @@ void GenericHandle::release() {
       do {
         old_freeslot = freelist;
         handle_objects[new_freeslot_index] = ((version + 1) << address_bits) | old_freeslot;
-      } while(cas(&freelist, old_freeslot, new_freeslot_index) != old_freeslot);
+      } while(!freelist.compare_exchange_strong(old_freeslot, new_freeslot_index));
     }
 
     _ver_index = UINT64_MAX;
