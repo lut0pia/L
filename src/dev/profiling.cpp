@@ -2,17 +2,18 @@
 
 #if L_PROFILING
 
+#include <atomic>
+
 #include "../parallelism/TaskSystem.h"
 #include "../rendering/Renderer.h"
 #include "../stream/CFileStream.h"
-#include "../system/intrinsics.h"
 #include "../system/Memory.h"
 #include "../text/String.h"
 
 using namespace L;
 
 static ProfilingEvent events[2 << 20]{};
-static int64_t event_index = 0;
+static std::atomic<uintptr_t> event_index = 0;
 
 ScopeMarker::ScopeMarker(const char* name, RenderCommandBuffer* cmd) : _cmd(cmd) {
   if(name) {
@@ -27,7 +28,7 @@ ScopeMarker::~ScopeMarker() {
   }
 }
 void ScopeMarker::add_event(const char* name, size_t alloc_size) {
-  const uint64_t index = atomic_add(&event_index, int64_t(1));
+  const uintptr_t index = event_index++;
   _event = events + (index % L_COUNT_OF(events));
 
   if(_event->alloc_size > 0) {
@@ -60,13 +61,11 @@ struct ProfilingCounterEvent {
   int64_t value;
 };
 ProfilingCounterEvent counter_events[2 << 20]{};
-uint32_t counter_event_index(0);
+std::atomic<uintptr_t> counter_event_index = 0;
 void L::count_marker(const char* name, int64_t value) {
-  uint32_t index;
-  do {
-    index = counter_event_index;
-  } while(cas(&counter_event_index, index, (index + 1) % L_COUNT_OF(counter_events)) != index);
-  counter_events[index] = {name, Time::now(), value};
+  const uintptr_t index = counter_event_index++;
+  ProfilingCounterEvent* counter_event = counter_events + (index % L_COUNT_OF(counter_events));
+  *counter_event = {name, Time::now(), value};
 }
 
 void L::flush_profiling() {
