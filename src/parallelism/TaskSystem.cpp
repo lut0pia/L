@@ -1,5 +1,7 @@
 #include "TaskSystem.h"
 
+#include <atomic>
+
 #include "../dev/profiling.h"
 #include "../macros.h"
 #include "Semaphore.h"
@@ -26,7 +28,7 @@ const uint32_t actual_thread_count(core_count());
 const uint32_t actual_fiber_count = max<uint32_t>(actual_thread_count*fiber_per_thread_count, 12);
 Semaphore semaphore(0);
 
-enum FiberState : uint32_t {
+enum class FiberState : uint32_t {
   Empty = 0,
   PreReady,
   Ready,
@@ -39,9 +41,9 @@ struct FiberSlot {
   void* data;
   void* cond_data;
   FiberSlot* parent;
-  uint32_t state;
+  std::atomic<FiberState> state;
+  std::atomic<uint32_t> counter;
   uint32_t thread_mask;
-  int32_t counter;
 
   inline bool check_condition() {
     if(cond_func && cond_func(cond_data))
@@ -72,7 +74,9 @@ void fiber_func(void* arg) {
   while(true) {
     if(slot.func) {
       slot.func(slot.data); // Execute task
-      if(slot.parent) atomic_add(&slot.parent->counter, -1); // Notify task done
+      if(slot.parent) {
+        slot.parent->counter -= 1; // Notify task done
+      }
       while(slot.counter) // Wait for child tasks
         yield_internal();
       slot.func = nullptr;
@@ -89,7 +93,8 @@ void thread_func(void* arg) {
   uint32_t starve_count(0);
   while(fibers[0].func) { // Exit when original task is over
     FiberSlot& slot(fibers[current_fiber]);
-    if(slot.state==Ready && cas((uint32_t*)&slot.state, Ready, Running)==Ready) {
+    FiberState expected_state = FiberState::Ready;
+    if(slot.state.compare_exchange_strong(expected_state, FiberState::Running)) {
       if(slot.thread_mask&(1<<local_thread_index)
          && slot.check_condition()) {
         switch_to_fiber(slot.handle);
@@ -99,7 +104,7 @@ void thread_func(void* arg) {
         // and the other threads may be asleep, wake them
         semaphore.put();
       }
-      slot.state = (slot.func==nullptr ? Empty : Ready);
+      slot.state = (slot.func == nullptr ? FiberState::Empty : FiberState::Ready);
     }
 
     // May sleep if unsollicited and not main thread
@@ -139,17 +144,18 @@ void TaskSystem::push(Func f, void* d, uint32_t thread_mask, uint32_t flags) {
   FiberSlot* parent;
   if(initialized && !(flags&NoParent)) {
     parent = fibers+current_fiber;
-    atomic_add(&parent->counter, 1);
+    parent->counter += 1;
   } else parent = nullptr;
   while(true) {
     for(uintptr_t i(0); i<actual_fiber_count; i++) {
       FiberSlot& slot(fibers[i]);
-      if(slot.state==Empty && Empty==cas((uint32_t*)&slot.state, Empty, PreReady)) {
+      FiberState expected_state = FiberState::Empty;
+      if(slot.state.compare_exchange_strong(expected_state, FiberState::PreReady)) {
         slot.func = f;
         slot.data = d;
         slot.thread_mask = thread_mask;
         slot.parent = parent;
-        slot.state = Ready;
+        slot.state = FiberState::Ready;
         semaphore.put();
         return;
       }
