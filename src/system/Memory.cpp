@@ -1,5 +1,6 @@
 #include "Memory.h"
 
+#include <atomic>
 #include <cstdlib>
 #include <cstring>
 #include "../dev/profiling.h"
@@ -44,10 +45,10 @@ void Memory::free(void* ptr, size_t) { ::free(ptr); }
 static constexpr size_t max_size = 1 << 20;
 static constexpr size_t alloc_block_size = 1ull << 29;
 
-static void* freelists[128] = {};
+static std::atomic<void*> freelists[128] = {};
 static size_t allocated(0), unused(0), wasted(0);
 static uint8_t* alloc_block_start = nullptr;
-static uint8_t* next = nullptr;
+static std::atomic<uint8_t*> next = nullptr;
 
 // Cannot allocate less than 8 bytes for alignment purposes
 inline uintptr_t freelist_index(size_t size) {
@@ -80,7 +81,7 @@ void* Memory::alloc(size_t size) {
   L_COUNT_MARKER("Allocated memory", allocated);
 
   while(void* ptr = freelists[index]) { // There's a free space available
-    if(cas((uintptr_t*)freelists + index, uintptr_t(ptr), *(uintptr_t*)ptr) == uintptr_t(ptr)) {
+    if(freelists[index].compare_exchange_strong(ptr, *(void**)ptr)) {
       unused -= padded_size;
       L_COUNT_MARKER("Unused memory", unused);
 #if L_DBG
@@ -94,7 +95,7 @@ void* Memory::alloc(size_t size) {
   if(alloc_block_start == nullptr) {
     alloc_block_start = next = (uint8_t*)Memory::virtual_alloc(1ull << 29);
   }
-  return (void*)atomic_add((intptr_t*)&next, padded_size);
+  return next.fetch_add(padded_size);
 }
 void* Memory::alloc_zero(size_t size) {
   void* ptr = alloc(size);
@@ -140,9 +141,10 @@ void Memory::free(void* ptr, size_t size) {
   memset(ptr, 0xdd, padded_size);
 #endif
   do {
-    L_ASSERT(freelists[index] == nullptr || (freelists[index] >= alloc_block_start && freelists[index] < alloc_block_start + alloc_block_size));
-    *((void**)ptr) = freelists[index];
-  } while(cas((uintptr_t*)freelists + index, *(uintptr_t*)ptr, uintptr_t(ptr)) != *(uintptr_t*)ptr);
+    void* freelist = freelists[index];
+    L_ASSERT(freelist == nullptr || (freelist >= alloc_block_start && freelist < alloc_block_start + alloc_block_size));
+    *((void**)ptr) = freelist;
+  } while(!freelists[index].compare_exchange_strong(*(void**)ptr, ptr));
   unused += padded_size;
   L_COUNT_MARKER("Unused memory", unused);
   wasted -= padded_size - size;
