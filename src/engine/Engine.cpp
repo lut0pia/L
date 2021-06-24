@@ -29,6 +29,7 @@ float Engine::_real_delta_seconds, Engine::_delta_seconds, Engine::_timescale(1.
 uint32_t Engine::_frame(0);
 
 void Engine::init() {
+  L_SCOPE_MARKER("Engine initialization");
   Resource<ScriptFunction> ini_script_res = "ini.ls";
   if(const ScriptFunction* ini_script = ini_script_res.force_load()) {
     ScriptContext().execute(ref<ScriptFunction>(*ini_script));
@@ -37,6 +38,7 @@ void Engine::init() {
   }
 }
 void Engine::shutdown() {
+  L_SCOPE_MARKER("Engine shutdown");
   for(const auto& shutdown : _shutdowns) {
     shutdown();
   }
@@ -200,5 +202,6 @@ void Engine::update() {
   _frame++;
 }
 void Engine::clear() {
+  L_SCOPE_MARKER("Engine clear");
   Entity::clear();
 }
