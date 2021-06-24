@@ -40,11 +40,11 @@ void mainjob(void*) {
   log("exit: clear material cache");
   Material::clear_cache();
 
-  log("exit: shutdown engine");
-  Engine::shutdown();
-
   log("exit: join all tasks");
   TaskSystem::join_all();
+
+  log("exit: shutdown engine");
+  Engine::shutdown();
 
 #if L_PROFILING
   log("exit: flush profiling");
