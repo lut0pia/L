@@ -2,6 +2,7 @@
 
 #include "Component.h"
 #include "NameComponent.h"
+#include "GroupComponent.h"
 #include "../stream/CFileStream.h"
 
 using namespace L;
@@ -37,6 +38,7 @@ void Entity::remove(Handle<Component> c) {
 Handle<Entity> Entity::create() {
   Entity* entity_ptr = new(entity_pool.allocate())Entity();
   Handle<Entity> entity = entity_ptr->handle();
+  GroupComponent::notify_entity_created(entity);
   return entity;
 }
 Handle<Entity> Entity::copy(Handle<Entity> other) {

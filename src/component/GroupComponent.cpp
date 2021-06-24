@@ -2,7 +2,7 @@
 
 using namespace L;
 
-static GroupComponent* group_context = nullptr;
+static Handle<GroupComponent> group_context;
 
 GroupComponent::~GroupComponent() {
   for(Handle<Entity> linked_entity : _entities) {
@@ -10,7 +10,7 @@ GroupComponent::~GroupComponent() {
   }
 }
 void GroupComponent::update() {
-  L_ASSERT(group_context == nullptr);
+  L_ASSERT(!group_context.is_valid());
   // Check if the level script has loaded or changed since last execution
   const ScriptFunction* level_script = _level_script.try_load();
   if(level_script && _level_script.slot()->value != _level_script_value) {
@@ -19,7 +19,7 @@ void GroupComponent::update() {
       Entity::destroy(linked_entity);
     }
 
-    group_context = this;
+    group_context = handle();
     ScriptContext().execute(ref<ScriptFunction>(*level_script));
     group_context = nullptr;
 
@@ -32,9 +32,6 @@ void GroupComponent::script_registration() {
   L_SCRIPT_METHOD(GroupComponent, "unlink", 1, unlink(c.param(0).get<Handle<Entity>>()));
   L_SCRIPT_METHOD(GroupComponent, "unlink_all", 1, unlink_all());
   L_SCRIPT_METHOD(GroupComponent, "level_script", 1, level_script(c.param(0).get<String>()));
-  ScriptGlobal("group_entity_create") = (ScriptNativeFunction)([](ScriptContext& c) {
-    c.return_value() = entity_create();
-  });
 }
 
 void GroupComponent::link(Handle<Entity> entity) {
@@ -49,14 +46,8 @@ void GroupComponent::unlink_all() {
   _entities.clear();
 }
 
-Handle<Entity> GroupComponent::entity_create() {
-  Handle<Entity> entity = Entity::create();
-
+void GroupComponent::notify_entity_created(Handle<Entity> entity) {
   if(group_context) {
     group_context->link(entity);
-  } else {
-    warning("Creating group entity but no group context was set");
   }
-
-  return entity;
 }

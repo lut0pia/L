@@ -1,5 +1,5 @@
 (local make_box (fn (do
-  (local entity (group_entity_create))
+  (local entity (entity_make))
   (local transform (entity.require_transform))
   (local primitive (entity.add_primitive))
   (local light (entity.add_primitive))
@@ -34,7 +34,7 @@
 )))
 
 (local make_static_box (fn position size (do
-  (local entity (group_entity_create))
+  (local entity (entity_make))
   (entity.require_transform|.move position)
   (entity.require_collider|.box size)
   (entity.require_primitive|.scale size)
@@ -54,7 +54,7 @@
 )))
 
 (local make_mesh (fn mat pos (do
-  (local entity (group_entity_create))
+  (local entity (entity_make))
   (set last_mesh entity)
   (local transform (entity.require_transform))
   (local primitive (entity.require_primitive))
@@ -63,28 +63,28 @@
   entity
 )))
 
-(group_entity_create|.add_script|.load "script/sink.ls")
+(entity_make|.add_script|.load "script/sink.ls")
 
 ; Make ambient light
-(local amblight_entity (group_entity_create))
+(local amblight_entity (entity_make))
 (amblight_entity.require_primitive|.material|.parent "material/ssao.ls")
 (amblight_entity.require_primitive|.scale 99999)
 (amblight_entity.require_primitive|.material|.color 'color (color 0.2 0.2 0.2))
 
 ; Make directional light
-(local dirlight_entity (group_entity_create))
+(local dirlight_entity (entity_make))
 (dirlight_entity.require_transform|.rotate (euler_degrees -40 0 90))
 (dirlight_entity.require_primitive|.material|.parent "material/dirlight.ls")
 (dirlight_entity.require_primitive|.scale 99999)
 (dirlight_entity.require_primitive|.material|.scalar 'intensity 2)
 
 ; Make sky
-(local sky_entity (group_entity_create))
+(local sky_entity (entity_make))
 (sky_entity.require_primitive|.material|.parent "material/sky.ls")
 (sky_entity.require_primitive|.scale 99999)
 
 ; Make terrain
-(local terrain_entity (group_entity_create))
+(local terrain_entity (entity_make))
 (terrain_entity.require_transform|.move (vec -20 0 0))
 (terrain_entity.require_primitive|.scale (vec 10 10 4))
 (terrain_entity.require_primitive|.material|.parent "material/terrain.ls")
@@ -99,7 +99,7 @@
 (last_mesh.require_primitive|.scale 10)
 (last_mesh.require_transform|.rotate_absolute (euler_degrees 180 0 0))
 
-(local sprite (group_entity_create))
+(local sprite (entity_make))
 (sprite.require_transform|.move (vec -9.4 0 5))
 (sprite.require_transform|.rotate (euler_degrees 0 0 90))
 (sprite.require_primitive|.material|.parent "material/sprite.ls")
@@ -113,7 +113,7 @@
   (set box_count (- box_count 1))
 ))
 
-;(group_entity_create|.add_group|.level_script "scene/test.glb")
+;(entity_make|.add_group|.level_script "scene/test.glb")
 
 (local fox "material/Fox.glb")
 (make_mesh fox (vec -20 0 1))
