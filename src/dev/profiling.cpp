@@ -78,9 +78,10 @@ void L::flush_profiling() {
       continue;
     }
 
-    const String escaped_event_name(String(event.name) // Need some escaping to put into json
-      .replace_all("\n", "\\n")
-      .replace_all("\"", "\\\""));
+    const String escaped_event_name =
+      String(event.name) // Need some escaping to put into json
+        .replace_all("\n", "\\n")
+        .replace_all("\"", "\\\"");
     file_stream
       << (first ? ' ' : ',')
       << "{\"ph\":\"X\",\"tid\": " << event.fiber_id << ",\"pid\":" << 0 << ",\"name\":\"" << escaped_event_name
@@ -88,11 +89,15 @@ void L::flush_profiling() {
     first = false;
   }
 
-  for(uint32_t i(0); i < counter_event_index; i++) {
-    const ProfilingCounterEvent& event(counter_events[i]);
-    const String escaped_event_name(String(event.name) // Need some escaping to put into json
-      .replace_all("\n", "\\n")
-      .replace_all("\"", "\\\""));
+  for(uintptr_t i = 0; i < L_COUNT_OF(events); i++) {
+    const ProfilingCounterEvent& event = counter_events[i];
+    if(event.name == nullptr) {
+      continue;
+    }
+    const String escaped_event_name =
+      String(event.name) // Need some escaping to put into json
+        .replace_all("\n", "\\n")
+        .replace_all("\"", "\\\"");
     if(event.time.microseconds() > 0) {
       file_stream
         << (first ? ' ' : ',')
