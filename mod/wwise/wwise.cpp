@@ -57,6 +57,7 @@ protected:
 
 public:
   virtual void init() override {
+    L_SCOPE_MARKER("Wwise initialization");
     AkMemSettings mem_settings;
     AK::MemoryMgr::GetDefaultSettings(mem_settings);
     if(AK::MemoryMgr::Init(&mem_settings) != AK_Success) {
@@ -115,6 +116,19 @@ public:
     AkBankID bank_id;
     AK::SoundEngine::LoadBank(AKTEXT("Init"), bank_id);
     AK::SoundEngine::LoadBank(AKTEXT("Main"), bank_id);
+  }
+  void shutdown() {
+#ifndef AK_OPTIMIZED
+    AK::Comm::Term();
+#endif // AK_OPTIMIZED
+
+    AK::MusicEngine::Term();
+    AK::SoundEngine::Term();
+    low_level_io.Term();
+    if(AK::IAkStreamMgr::Get()) {
+      AK::IAkStreamMgr::Get()->Destroy();
+    }
+    AK::MemoryMgr::Term();
   }
   void update() {
     { // Update objects
@@ -189,5 +203,8 @@ void wwise_module_init() {
   static WwiseAudioEngine wwise_audio_engine;
   Engine::add_late_update([]() {
     wwise_audio_engine.update();
+  });
+  Engine::add_shutdown([]() {
+    wwise_audio_engine.shutdown();
   });
 }
