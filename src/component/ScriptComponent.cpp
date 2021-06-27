@@ -61,6 +61,15 @@ void ScriptComponent::script_registration() {
       c.return_value() = Var(); 
     }
   });
+  ScriptGlobal("read_value") = (ScriptNativeFunction)([](ScriptContext& c) {
+    L_ASSERT(c.param_count() == 1);
+    Resource<Var> var_resource = c.param(0).get<String>();
+    if(const Var* var = var_resource.force_load()) {
+      c.return_value() = *var;
+    } else {
+      c.return_value() = Var();
+    }
+  });
   ScriptGlobal("setting") = (ScriptNativeFunction)([](ScriptContext& c) {
     L_ASSERT(c.param_count()==2);
     Settings::set(c.param(0), c.param(1));
