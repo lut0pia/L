@@ -17,6 +17,7 @@ namespace L {
     template <class T> inline const T* value() const { return (T*)(local<T>() ? &_data : _p); }
 
   public:
+    typedef Variable Intermediate;
     inline Variable() : _td(Type<void>::description()) {}
     template <class T> Variable(const T& v) : _td(Type<T>::description()) {
       if(local<T>())  // Value is to be contained locally
@@ -103,7 +104,9 @@ namespace L {
     friend Stream& operator>(Stream& s, Variable& v);
     friend Stream& operator<=(Stream& s, const Variable& v);
     friend Stream& operator>=(Stream& s, Variable& v);
-    friend inline uint32_t hash(const Variable& v){ return v.type()->hash(v.value()); }
+    friend inline uint32_t hash(const Variable& v) { return v.type()->hash(v.value()); }
+    friend inline void resource_write(Stream& s, const Variable& v) { s <= v; }
+    friend inline void resource_read(Stream& s, Variable& v) { s >= v; }
   };
 
   Stream& operator<(Stream& s, const Variable& v);
