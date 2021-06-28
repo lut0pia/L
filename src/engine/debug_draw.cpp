@@ -72,8 +72,8 @@ void L::init_debug_draw() {
 }
 
 void L::debug_draw_line(const Vector3f& a, const Vector3f& b, const Color& color) {
-  static Resource<Shader> debug_draw_x_vert_shader_res = debug_draw_x_vert_shader;
-  static Resource<Shader> debug_draw_color_frag_shader_res = debug_draw_color_frag_shader;
+  static Resource<Shader> debug_draw_x_vert_shader_res = (const char*)debug_draw_x_vert_shader;
+  static Resource<Shader> debug_draw_color_frag_shader_res = (const char*)debug_draw_color_frag_shader;
   debug_drawings.push();
   DebugDrawing& debug_drawing = debug_drawings.back();
   debug_drawing.material.shader(ShaderStage::Vertex, debug_draw_x_vert_shader_res);
