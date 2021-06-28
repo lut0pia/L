@@ -3,6 +3,7 @@
 #include "../system/Memory.h"
 #include "../system/System.h"
 
+#include <atomic>
 #include <cstdlib>
 #include <pthread.h>
 #include <ucontext.h>
@@ -14,7 +15,7 @@ static const size_t fiber_stack_size = 1 << 17;
 static thread_local ucontext_t* current_context;
 static uint8_t* memory_pool = nullptr;
 static size_t memory_pool_size = 0;
-static uint32_t memory_index = 0;
+static std::atomic<uint32_t> memory_index = {0};
 
 inline static void* local_alloc(uint32_t size) {
   if(!memory_pool) {
@@ -22,11 +23,7 @@ inline static void* local_alloc(uint32_t size) {
       * (sizeof(ucontext_t) + fiber_stack_size + sizeof(void*) * 2);
     memory_pool = (uint8_t*)Memory::alloc(memory_pool_size);
   }
-  uint32_t index;
-  do {
-    index = memory_index;
-    L_ASSERT(index + size < memory_pool_size);
-  } while(cas(&memory_index, index, (index + size)) != index);
+  const uint32_t index = memory_index.fetch_add(size);
   return (void*)(memory_pool + index);
 }
 template <class T> inline static T* local_alloc_type() {

@@ -26,7 +26,7 @@ namespace L {
     Array<String> source_files;
     Date mtime;
 
-    std::atomic<ResourceState> state = ResourceState::Unloaded;
+    std::atomic<ResourceState> state = {ResourceState::Unloaded};
     void (*load_function)(ResourceSlot&);
     void* value = nullptr;
 

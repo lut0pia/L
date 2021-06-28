@@ -13,7 +13,7 @@
 using namespace L;
 
 static ProfilingEvent events[2 << 20]{};
-static std::atomic<uintptr_t> event_index = 0;
+static std::atomic<uintptr_t> event_index = {0};
 
 ScopeMarker::ScopeMarker(const char* name, RenderCommandBuffer* cmd) : _cmd(cmd) {
   if(name) {
@@ -61,7 +61,7 @@ struct ProfilingCounterEvent {
   int64_t value;
 };
 ProfilingCounterEvent counter_events[2 << 20]{};
-std::atomic<uintptr_t> counter_event_index = 0;
+std::atomic<uintptr_t> counter_event_index = {0};
 void L::count_marker(const char* name, int64_t value) {
   const uintptr_t index = counter_event_index++;
   ProfilingCounterEvent* counter_event = counter_events + (index % L_COUNT_OF(counter_events));

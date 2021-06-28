@@ -12,8 +12,8 @@ static constexpr uint64_t version_bits = 16;
 static constexpr uint64_t version_mask = (1ull << version_bits) - 1;
 
 static uint64_t* handle_objects = nullptr;
-static std::atomic<uint64_t> next_index = 0;
-static std::atomic<uint64_t> freelist = address_mask;
+static std::atomic<uint64_t> next_index = {0};
+static std::atomic<uint64_t> freelist = {address_mask};
 
 GenericHandle::GenericHandle(void* ptr) {
   L_ASSERT((uint64_t(ptr) & address_mask) == uint64_t(ptr));

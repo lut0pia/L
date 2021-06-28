@@ -48,7 +48,7 @@ static constexpr size_t alloc_block_size = 1ull << 29;
 static std::atomic<void*> freelists[128] = {};
 static size_t allocated(0), unused(0), wasted(0);
 static uint8_t* alloc_block_start = nullptr;
-static std::atomic<uint8_t*> next = nullptr;
+static std::atomic<uint8_t*> next = {nullptr};
 
 // Cannot allocate less than 8 bytes for alignment purposes
 inline uintptr_t freelist_index(size_t size) {
