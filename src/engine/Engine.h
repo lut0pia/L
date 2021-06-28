@@ -22,15 +22,14 @@ namespace L {
     static Timer _timer;
     static Time _real_delta_time, _delta_time, _accumulator, _average_frame_work_duration, _max_frame_work_duration;
     static Time _frame_work_durations[64];
-    static constexpr Time _sub_delta = Time(0, 10);
-    static constexpr float _sub_delta_seconds = _sub_delta.seconds_float();
+    static Time _sub_delta;
     static float _real_delta_seconds, _delta_seconds, _timescale;
     static uint32_t _frame;
   public:
     static inline float real_delta_seconds() { return _real_delta_seconds; }
     static inline const Time& delta_time() { return _delta_time; }
     static inline float delta_seconds() { return _delta_seconds; }
-    static inline float sub_delta_seconds() { return _sub_delta_seconds; }
+    static inline float sub_delta_seconds() { return _sub_delta.seconds_float(); }
     static inline float timescale() { return _timescale; }
     static inline void timescale(float ts) { _timescale = ts; }
     static inline uint32_t frame() { return _frame; }

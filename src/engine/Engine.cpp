@@ -24,6 +24,7 @@ Array<Engine::DeferredAction> Engine::_deferred_actions;
 Timer Engine::_timer;
 L::Time Engine::_real_delta_time, Engine::_delta_time, Engine::_accumulator(0), Engine::_average_frame_work_duration, Engine::_max_frame_work_duration;
 L::Time Engine::_frame_work_durations[64];
+L::Time Engine::_sub_delta(0, 10);
 float Engine::_real_delta_seconds, Engine::_delta_seconds, Engine::_timescale(1.f);
 uint32_t Engine::_frame(0);
 
