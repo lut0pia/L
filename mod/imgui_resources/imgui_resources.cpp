@@ -3,7 +3,7 @@
 #include <L/src/engine/Resource.inl>
 #include <L/src/rendering/Color.h>
 
-#include <imgui.h>
+#include <imgui_integration.h>
 
 using namespace L;
 

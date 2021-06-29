@@ -2,6 +2,7 @@
 #include <L/src/input/InputContext.h>
 
 #include <imgui.h>
+#include <imgui_integration.h>
 
 using namespace L;
 

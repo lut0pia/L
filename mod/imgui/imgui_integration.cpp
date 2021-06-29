@@ -1,13 +1,18 @@
 #include <L/src/dev/profiling.h>
 #include <L/src/engine/Engine.h>
 #include <L/src/engine/Resource.h>
-#include <L/src/engine/Resource.inl>
 #include <L/src/input/InputContext.h>
 #include <L/src/rendering/Material.h>
 #include <L/src/rendering/Mesh.h>
 #include <L/src/rendering/Texture.h>
+#include <imgui_integration.h>
 
-#include <imgui.h>
+#include <L/src/engine/Resource.inl>
+#include <imgui.cpp>
+#include <imgui_demo.cpp>
+#include <imgui_draw.cpp>
+#include <imgui_tables.cpp>
+#include <imgui_widgets.cpp>
 
 using namespace L;
 
