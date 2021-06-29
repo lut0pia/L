@@ -1,0 +1,42 @@
+
+if(MSVC)
+  if(MSVC_TOOLSET_VERSION)
+    set(ASSIMP_LIB_SUFFIX "-vc${MSVC_TOOLSET_VERSION}-mt")
+  else()
+    if(MSVC12)
+      set(ASSIMP_LIB_SUFFIX "-vc120-mt")
+    elseif(MSVC14)
+      set(ASSIMP_LIB_SUFFIX "-vc140-mt")
+    elseif(MSVC15)
+      set(ASSIMP_LIB_SUFFIX "-vc141-mt")
+    endif(MSVC12)
+  endif()
+endif()
+
+set(ASSIMP_RLS_LIBRARIES
+  lib/assimp${ASSIMP_LIB_SUFFIX}
+  lib/IrrXML
+  lib/zlibstatic
+)
+set(ASSIMP_DBG_LIBRARIES ${ASSIMP_RLS_LIBRARIES})
+
+if(MSVC)
+  list(TRANSFORM ASSIMP_DBG_LIBRARIES APPEND "d")
+endif()
+
+add_external(
+  assimp
+  CMAKE
+  GIT_REPOSITORY https://github.com/assimp/assimp.git
+  GIT_TAG 8f0c6b04b2257a520aaab38421b2e090204b69df # v5.0.1
+  INCLUDE_DIRS include
+  DBG_LIBRARIES ${ASSIMP_DBG_LIBRARIES}
+  RLS_LIBRARIES ${ASSIMP_RLS_LIBRARIES}
+  CMAKE_ARGS
+    -DCMAKE_BUILD_TYPE=$<IF:$<CONFIG:Debug>,DEBUG,RELEASE>
+    -DBUILD_SHARED_LIBS=OFF
+    -DASSIMP_BUILD_ZLIB=ON
+    -DASSIMP_NO_EXPORT=ON
+    -DASSIMP_BUILD_ASSIMP_TOOLS=OFF
+    -DASSIMP_BUILD_TESTS=OFF
+)
