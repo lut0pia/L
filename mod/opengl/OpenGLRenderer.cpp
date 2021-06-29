@@ -1,7 +1,7 @@
 #include "OpenGLRenderer.h"
 
 #if L_USE_MODULE_win32
-#include "wglext.h"
+#include <GL/wglext.h>
 #include "win32.h"
 #endif
 #if L_USE_MODULE_xlib

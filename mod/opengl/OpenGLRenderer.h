@@ -6,7 +6,7 @@
 
 #include <GL/gl.h>
 #ifndef __glext_h_ // Only include bundled glext.h if necessary
-#include "glext.h"
+#include <GL/glext.h>
 #endif
 
 #include <L/src/container/Array.h>
