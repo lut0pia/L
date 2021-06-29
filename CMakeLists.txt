@@ -136,6 +136,69 @@ target_compile_definitions(core PRIVATE L_USE_DEBUG_ALLOC=$<BOOL:${L_USE_DEBUG_A
 target_compile_definitions(core PRIVATE L_USE_MALLOC=$<BOOL:${L_USE_MALLOC}>)
 target_compile_definitions(core PRIVATE L_USE_COMPRESSION=$<BOOL:${L_USE_COMPRESSION}>)
 
+# Externals - function
+
+function(add_external NAME)
+  set(OPTARGS
+    CMAKE
+    CONFIG_INSTALL_DIR)
+  set(SINGLEARGS
+    GIT_REPOSITORY
+    GIT_TAG)
+  set(MULTIARGS
+    INCLUDE_DIRS
+    LIBRARIES DBG_LIBRARIES RLS_LIBRARIES
+    CMAKE_ARGS
+  )
+  cmake_parse_arguments(E "${OPTARGS}" "${SINGLEARGS}" "${MULTIARGS}" ${ARGN})
+
+  # Setup install directory
+  set(EXT_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/ext/${NAME})
+  if(E_CONFIG_INSTALL_DIR)
+    # External needs multiple install directories for each config
+    set(EXT_INSTALL_DIR ${EXT_INSTALL_DIR}/$<CONFIG>)
+  endif()
+
+  if(E_CMAKE) # Build with CMake via ExternalProject
+    ExternalProject_Add(
+      ext_${NAME}
+      GIT_REPOSITORY ${E_GIT_REPOSITORY}
+      GIT_TAG ${E_GIT_TAG}
+      GIT_SHALLOW true
+      UPDATE_COMMAND ""
+      CMAKE_ARGS
+        -DCMAKE_INSTALL_PREFIX=${EXT_INSTALL_DIR}
+        ${E_CMAKE_ARGS}
+    )
+  else() # No build process, only fetch from git
+    ExternalProject_Add(
+      ext_${NAME}
+      GIT_REPOSITORY ${E_GIT_REPOSITORY}
+      GIT_TAG ${E_GIT_TAG}
+      GIT_SHALLOW true
+      CONFIGURE_COMMAND ""
+      BUILD_COMMAND ""
+      UPDATE_COMMAND ""
+      INSTALL_COMMAND ""
+      SOURCE_DIR ${EXT_INSTALL_DIR}
+    )
+  endif()
+
+  # Include directories
+  if(DEFINED E_INCLUDE_DIRS)
+    list(TRANSFORM E_INCLUDE_DIRS PREPEND ${EXT_INSTALL_DIR}/)
+    set_property(GLOBAL PROPERTY EXT_${NAME}_INCLUDE_DIRS ${E_INCLUDE_DIRS})
+  else()
+    set_property(GLOBAL PROPERTY EXT_${NAME}_INCLUDE_DIRS ${EXT_INSTALL_DIR})
+  endif()
+
+  # Libraries
+  foreach(LIBS IN ITEMS LIBRARIES DBG_LIBRARIES RLS_LIBRARIES)
+    list(TRANSFORM E_${LIBS} PREPEND ${EXT_INSTALL_DIR}/)
+    set_property(GLOBAL PROPERTY EXT_${NAME}_${LIBS} ${E_${LIBS}})
+  endforeach()
+endfunction()
+
 # Modules - function
 
 set(MODULE_LIST "")
@@ -145,7 +208,9 @@ function(add_module NAME)
   set(MULTIARGS
     INCLUDE_DIRS SYSTEM_INCLUDE_DIRS
     LIBRARIES DBG_LIBRARIES RLS_LIBRARIES
-    DEPENDENCIES MOD_DEPENDENCIES OPT_MOD_DEPENDENCIES
+    DEPENDENCIES
+    MOD_DEPENDENCIES OPT_MOD_DEPENDENCIES
+    EXT_DEPENDENCIES
   )
   cmake_parse_arguments(M "${OPTARGS}" "${SINGLEARGS}" "${MULTIARGS}" ${ARGN})
   if(NOT DEFINED M_CONDITION)
@@ -167,6 +232,35 @@ function(add_module NAME)
   add_compile_definitions(L_USE_MODULE_${NAME}=${M_CONDITION}) # Define for everyone
   target_link_libraries(core PRIVATE $<${M_CONDITION}:mod_${NAME}>)
 
+  # Dependencies
+  if(DEFINED M_DEPENDENCIES)
+    add_dependencies(mod_${NAME} ${M_DEPENDENCIES})
+  endif()
+  foreach(MOD_DEP ${M_MOD_DEPENDENCIES})
+    target_include_directories(mod_${NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/mod/${MOD_DEP}/include)
+    target_link_libraries(mod_${NAME} mod_${MOD_DEP})
+  endforeach()
+  foreach(MOD_DEP ${M_OPT_MOD_DEPENDENCIES})
+    target_include_directories(mod_${NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/mod/${MOD_DEP}/include)
+  endforeach()
+  foreach(EXT_DEP ${M_EXT_DEPENDENCIES})
+    # Read external definition if not already defined
+    if(NOT TARGET ext_${EXT_DEP})
+      include(${CMAKE_CURRENT_SOURCE_DIR}/ext/${EXT_DEP}.cmake)
+    endif()
+    add_dependencies(mod_${NAME} ext_${EXT_DEP})
+
+    # Include directories
+    get_property(EXT_INCLUDE_DIRS GLOBAL PROPERTY EXT_${EXT_DEP}_INCLUDE_DIRS)
+    list(APPEND M_INCLUDE_DIRS ${EXT_INCLUDE_DIRS})
+
+    # Libraries
+    foreach(LIBS IN ITEMS LIBRARIES DBG_LIBRARIES RLS_LIBRARIES)
+      get_property(EXT_LIBRARIES GLOBAL PROPERTY EXT_${EXT_DEP}_${LIBS})
+      list(APPEND M_${LIBS} ${EXT_LIBRARIES})
+    endforeach()
+  endforeach()
+
   # Module directories
   target_include_directories(mod_${NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/mod/${NAME}/include) # Own include directory
   target_include_directories(mod_${NAME} PRIVATE ${M_INCLUDE_DIRS})
@@ -184,18 +278,6 @@ function(add_module NAME)
   endforeach()
   foreach(LIB ${M_RLS_LIBRARIES})
     target_link_libraries(mod_${NAME} optimized ${LIB})
-  endforeach()
-
-  # Dependencies
-  if(DEFINED M_DEPENDENCIES)
-    add_dependencies(mod_${NAME} ${M_DEPENDENCIES})
-  endif()
-  foreach(MOD_DEP ${M_MOD_DEPENDENCIES})
-    target_include_directories(mod_${NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/mod/${MOD_DEP}/include)
-    target_link_libraries(mod_${NAME} mod_${MOD_DEP})
-  endforeach()
-  foreach(MOD_DEP ${M_OPT_MOD_DEPENDENCIES})
-    target_include_directories(mod_${NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/mod/${MOD_DEP}/include)
   endforeach()
 
   set(MODULE_LIST ${MODULE_LIST} ${NAME} PARENT_SCOPE)

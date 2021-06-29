@@ -3,7 +3,7 @@
 # Build folder
 /bld
 # External project folder
-/ext
+/ext/*/
 # Sample folder
 smp/Ldev
 smp/Ldbg
