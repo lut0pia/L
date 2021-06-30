@@ -1,6 +1,7 @@
 Language: Cpp
 
 ColumnLimit: 0
+ConstructorInitializerIndentWidth: 2
 ContinuationIndentWidth: 2
 IndentWidth: 2
 TabWidth: 2
@@ -11,6 +12,7 @@ AlignEscapedNewlines: DontAlign
 AlignTrailingComments: false
 AllowShortCaseLabelsOnASingleLine: true
 AllowShortFunctionsOnASingleLine: Inline
+AllowShortLambdasOnASingleLine: All
 BreakBeforeBraces: Attach
 FixNamespaceComments: false
 IndentCaseLabels: true
@@ -23,12 +25,10 @@ SpaceBeforeParens: Never
 IncludeBlocks: Regroup
 IncludeCategories:
   - Regex: '.*\.(cpp|inl)'
-    Priority: 3
+    Priority: 4
   - Regex: '<Windows.h>'
     Priority: 1
-    SortPriority: 1
   - Regex: '<[[:alnum:].]+>'
-    Priority: 1
-    SortPriority: 2
-  - Regex: '.*'
     Priority: 2
+  - Regex: '.*'
+    Priority: 3
