@@ -61,12 +61,14 @@ void test_memory_module_init() {
     L_ASSERT(total_allocated == 0);
     L_ASSERT(blocks.size() == 0);
 
-    String alloc_time_str = to_string(alloc_time / alloc_count);
-    String free_time_str = to_string(free_time / free_count);
+    String alloc_time_avg_str = to_string(alloc_time / alloc_count);
+    String free_time_avg_str = to_string(free_time / free_count);
+    String alloc_time_total_str = to_string(alloc_time);
+    String free_time_total_str = to_string(free_time);
 
     log("test_memory: max memory allocated: %d bytes", max_allocated);
-    log("test_memory: %d alloc (avg %s)", alloc_count, alloc_time_str.begin());
-    log("test_memory: %d free (avg %s)", free_count, free_time_str.begin());
+    log("test_memory: %d alloc (avg %s, total %s)", alloc_count, alloc_time_avg_str.begin(), alloc_time_total_str.begin());
+    log("test_memory: %d free (avg %s, total %s)", free_count, free_time_avg_str.begin(), free_time_total_str.begin());
 
     return success;
   };
