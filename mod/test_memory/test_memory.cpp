@@ -9,6 +9,7 @@ using namespace L;
 
 constexpr uintptr_t iterations = 1 << 20;
 constexpr size_t max_block_size = 1 << 18;
+constexpr size_t max_allocated_limit = 1 << 29;
 
 void test_memory_module_init() {
   Test test_memory{};
@@ -29,7 +30,9 @@ void test_memory_module_init() {
     log("test_memory: doing %d iterations", iterations);
 
     for(uintptr_t i = 0; i < iterations; i++) {
-      if((iterations - i) > blocks.size() && (blocks.size() == 0 || Rand::next_float() < 0.5f)) {
+      if((iterations - i) > blocks.size() // Need to free everything by the end
+         && total_allocated + max_block_size < max_allocated_limit // Need not to allocate over limit
+         && (blocks.size() == 0 || Rand::next_float() < 0.5f)) {
         const size_t block_size = Rand::next(size_t(8), max_block_size);
 
         Timer alloc_timer;
@@ -60,6 +63,7 @@ void test_memory_module_init() {
 
     L_ASSERT(total_allocated == 0);
     L_ASSERT(blocks.size() == 0);
+    L_ASSERT(max_allocated < max_allocated_limit);
 
     String alloc_time_avg_str = to_string(alloc_time / alloc_count);
     String free_time_avg_str = to_string(free_time / free_count);
