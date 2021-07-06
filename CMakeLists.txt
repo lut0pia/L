@@ -260,7 +260,7 @@ function(add_module NAME)
 
     # Include directories
     get_property(EXT_INCLUDE_DIRS GLOBAL PROPERTY EXT_${EXT_DEP}_INCLUDE_DIRS)
-    list(APPEND M_INCLUDE_DIRS ${EXT_INCLUDE_DIRS})
+    list(APPEND M_SYSTEM_INCLUDE_DIRS ${EXT_INCLUDE_DIRS})
 
     # Libraries
     foreach(LIBS IN ITEMS LIBRARIES DBG_LIBRARIES RLS_LIBRARIES)
