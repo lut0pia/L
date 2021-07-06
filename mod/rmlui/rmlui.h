@@ -8,6 +8,7 @@ L_PUSH_NO_WARNINGS
 #define RMLUI_USE_CUSTOM_RTTI
 #define RMLUI_NO_THIRDPARTY_CONTAINERS
 #include <RmlUi/Core.h>
+#include <RmlUi/Debugger.h>
 
 L_POP_NO_WARNINGS
 

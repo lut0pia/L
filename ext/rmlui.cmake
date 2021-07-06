@@ -1,6 +1,6 @@
 set(RMLUI_LIBRARIES
   lib/RmlCore
-  #lib/RmlDebugger
+  lib/RmlDebugger
 )
 
 add_external(
@@ -8,7 +8,7 @@ add_external(
   CMAKE
   CONFIG_INSTALL_DIR
   GIT_REPOSITORY https://github.com/mikke89/RmlUi.git
-  GIT_TAG 31e567ce88fe73c3d05b32d30b1911bda159a6bb # v4.1
+  GIT_TAG 38d63558afbac60e7c6fd16d4fa17ae9d80799b2
   INCLUDE_DIRS include
   LIBRARIES ${RMLUI_LIBRARIES}
   CMAKE_ARGS
