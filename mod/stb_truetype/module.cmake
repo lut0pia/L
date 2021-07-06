@@ -1,6 +1,6 @@
 add_module(
   stb_truetype
   CONDITION ${DEV_DBG}
-  SYSTEM_INCLUDE_DIRS ${CMAKE_CURRENT_LIST_DIR}
+  EXT_DEPENDENCIES stb
   MOD_DEPENDENCIES font_tools
 )

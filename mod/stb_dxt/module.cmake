@@ -1,5 +1,5 @@
 add_module(
   stb_dxt
   CONDITION ${DEV_DBG}
-  SYSTEM_INCLUDE_DIRS ${CMAKE_CURRENT_LIST_DIR}
+  EXT_DEPENDENCIES stb
 )
