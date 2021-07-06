@@ -21,4 +21,4 @@ jobs:
     - name: Test
       if: ${{ matrix.build_type != 'Release' && matrix.build_type != 'MinSizeRel' }}
       working-directory: ${{github.workspace}}/build
-      run: ctest -C ${{matrix.build_type}}
+      run: ctest -V -C ${{matrix.build_type}}
