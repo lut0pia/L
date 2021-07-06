@@ -136,6 +136,14 @@ target_compile_definitions(core PRIVATE L_USE_DEBUG_ALLOC=$<BOOL:${L_USE_DEBUG_A
 target_compile_definitions(core PRIVATE L_USE_MALLOC=$<BOOL:${L_USE_MALLOC}>)
 target_compile_definitions(core PRIVATE L_USE_COMPRESSION=$<BOOL:${L_USE_COMPRESSION}>)
 
+# Testing
+
+enable_testing()
+add_test(
+  NAME all_tests
+  COMMAND $<TARGET_FILE:core> --run_all_tests
+)
+
 # Externals - function
 
 function(add_external NAME)
