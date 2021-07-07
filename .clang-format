@@ -28,7 +28,7 @@ IncludeCategories:
     Priority: 4
   - Regex: '<Windows.h>'
     Priority: 1
-  - Regex: '<[[:alnum:].]+>'
+  - Regex: '<.+>'
     Priority: 2
   - Regex: '.*'
     Priority: 3
