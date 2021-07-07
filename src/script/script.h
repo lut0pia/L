@@ -106,7 +106,9 @@ namespace L {
     script_write(s, *v.script);
   }
   inline void resource_read(Stream& s, ScriptFunction& v) {
-    v.script = ref<Script>();
+    if(!v.script.is_valid()) {
+      v.script = ref<Script>();
+    }
     script_read(s, *v.script);
     v.offset = 0;
   }
@@ -118,7 +120,9 @@ namespace L {
     script_write_dev(s, *v.script);
   }
   inline void resource_read_dev(Stream& s, ScriptFunction& v) {
-    v.script = ref<Script>();
+    if(!v.script.is_valid()) {
+      v.script = ref<Script>();
+    }
     script_read_dev(s, *v.script);
     v.offset = 0;
   }
