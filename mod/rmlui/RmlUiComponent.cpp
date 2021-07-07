@@ -11,7 +11,9 @@ static Ref<InputMap> input_map = ref<InputMap>(Array<InputMapEntry>{
   InputMapEntry{"MouseRight", Device::Button::MouseRight},
   InputMapEntry{"MouseMiddle", Device::Button::MouseMiddle},
 });
+#if L_RMLUI_WITH_DEBUGGER
 static bool debugger_init = false;
+#endif
 
 #define RMLUI_SCRIPT_METHOD_INTERNAL(PREFIX, NAME, NARGS, ...) \
   register_rmlui_script_method(NAME, \
@@ -58,11 +60,13 @@ RmlUiComponent::RmlUiComponent() {
     error("rmlui: Could not create context");
   }
 
+#if L_RMLUI_WITH_DEBUGGER
   if(debugger_init) {
     Rml::Debugger::Shutdown();
   }
   Rml::Debugger::Initialise(_context);
   debugger_init = true;
+#endif
 
   _context->SetDensityIndependentPixelRatio(1.0f);
 
@@ -193,10 +197,12 @@ void RmlUiComponent::update() {
     Rml::Element* hover_el = _context->GetHoverElement();
     _input_context.set_block_mode(hover_el && hover_el->GetTagName() != "body" ? InputBlockMode::Used : InputBlockMode::None);
 
+#if L_RMLUI_WITH_DEBUGGER
     // Toggle debugger
     if(ctrl_modifier && _input_context.get_raw_button_pressed(Device::Button::F8)) {
       Rml::Debugger::SetVisible(!Rml::Debugger::IsVisible());
     }
+#endif
 
     { // Mouse buttons
       Device::Button mouse_buttons[] = {

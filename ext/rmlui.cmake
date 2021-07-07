@@ -1,6 +1,12 @@
 set(RMLUI_LIBRARIES
   lib/RmlCore
-  lib/RmlDebugger
+)
+if(WIN32)
+  list(APPEND RMLUI_LIBRARIES lib/RmlDebugger)
+endif()
+
+add_compile_definitions(
+  L_RMLUI_WITH_DEBUGGER=$<PLATFORM_ID:WIN32>
 )
 
 add_external(
