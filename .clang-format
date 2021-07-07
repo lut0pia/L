@@ -13,6 +13,7 @@ AlignTrailingComments: false
 AllowShortCaseLabelsOnASingleLine: true
 AllowShortFunctionsOnASingleLine: Inline
 AllowShortLambdasOnASingleLine: All
+AlwaysBreakTemplateDeclarations: No
 BreakBeforeBraces: Attach
 FixNamespaceComments: false
 IndentCaseLabels: true
