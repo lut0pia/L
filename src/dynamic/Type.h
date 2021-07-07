@@ -83,6 +83,8 @@ namespace L {
         print,out_text,in_text,out_bin,in_bin,
         Type<T>::hash,0
       };
+      conditional_add_cast<bool>();
+      wtr.casts = td.casts;
       types[wtr.name] = &td;
       return wtr;
     }
@@ -108,6 +110,12 @@ namespace L {
     static inline void addcast(const TypeDescription* otd, Cast cast) { td.casts[otd] = cast; }
     template <class R> static inline void addcast(Cast cast){ addcast(Type<R>::description(),cast); }
     template <class R> static inline void addcast(){ addcast<R>([](void* dst,const void* src){new(dst)R(R(*(T*)src)); }); }
+    template <typename R>
+    static typename std::enable_if<std::is_convertible<T, R>::value, void>::type
+    conditional_add_cast() { addcast<R>(); }
+    template <typename R>
+    static typename std::enable_if<!std::is_convertible<T, R>::value, void>::type
+    conditional_add_cast() { }
 
     // Operator setters
     static inline void useadd(void(*add)(void*,const void*)){ td.add = add; }
