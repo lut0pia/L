@@ -12,24 +12,32 @@ Renderer::Renderer() {
 }
 
 void Renderer::init_render_passes() {
-  RenderFormat geometry_formats[] = {
-    RenderFormat::R8G8B8A8_UNorm, // Color+Metal
-    RenderFormat::R16G16B16A16_UNorm, // Normal+Roughness+Emission
-    RenderFormat::D24_UNorm_S8_UInt, // Depth
-  };
+  if(_geometry_pass == nullptr) {
+    RenderFormat geometry_formats[] = {
+      RenderFormat::R8G8B8A8_UNorm, // Color+Metal
+      RenderFormat::R16G16B16A16_UNorm, // Normal+Roughness+Emission
+      RenderFormat::D24_UNorm_S8_UInt, // Depth
+    };
 
-  RenderFormat light_formats[] = {
-    RenderFormat::R16G16B16A16_SFloat, // Light
-    RenderFormat::D24_UNorm_S8_UInt, // Depth
-  };
+    _geometry_pass = create_render_pass(geometry_formats, L_COUNT_OF(geometry_formats), false, true);
+  }
 
-  RenderFormat present_formats[] = {
-    RenderFormat::B8G8R8A8_UNorm, // Final color
-  };
+  if(_light_pass == nullptr) {
+    RenderFormat light_formats[] = {
+      RenderFormat::R16G16B16A16_SFloat, // Light
+      RenderFormat::D24_UNorm_S8_UInt, // Depth
+    };
 
-  _geometry_pass = create_render_pass(geometry_formats, L_COUNT_OF(geometry_formats), false, true);
-  _light_pass = create_render_pass(light_formats, L_COUNT_OF(light_formats), false, false);
-  _present_pass = create_render_pass(present_formats, L_COUNT_OF(present_formats), true, false);
+    _light_pass = create_render_pass(light_formats, L_COUNT_OF(light_formats), false, false);
+  }
+
+  if(_present_pass == nullptr) {
+    RenderFormat present_formats[] = {
+      RenderFormat::B8G8R8A8_UNorm, // Final color
+    };
+
+    _present_pass = create_render_pass(present_formats, L_COUNT_OF(present_formats), true, false);
+  }
 }
 
 size_t Renderer::format_size(RenderFormat format) {
