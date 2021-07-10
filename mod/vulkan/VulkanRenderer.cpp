@@ -7,14 +7,14 @@
 #include "xlib.h"
 #endif
 
-#include "VulkanRenderer.h"
-
 #include <L/src/dev/debug.h>
 #include <L/src/dev/profiling.h>
 #include <L/src/macros.h>
 #include <L/src/system/Window.h>
+#include <L/src/text/format.h>
 
 #include "VulkanBuffer.h"
+#include "VulkanRenderer.h"
 
 using namespace L;
 
@@ -128,7 +128,7 @@ bool VulkanRenderer::init(GenericWindowData* generic_window_data) {
       VK_VERSION_MINOR(physical_device_properties.apiVersion),
       VK_VERSION_PATCH(physical_device_properties.apiVersion));
     log("GPU: %s", physical_device_properties.deviceName);
-    log("GPU memory: %dMB", (best_physical_device_memory >> 20));
+    log("GPU memory: %s", format_memory_amount(best_physical_device_memory).begin());
   }
 
   { // Create surface
