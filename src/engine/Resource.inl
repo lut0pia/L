@@ -48,18 +48,16 @@ namespace L {
         look_in_archive = false; // No dev info on resource, assume reload needed
       }
 #endif
+      const Compression& comp = get_compression();
 
       if(look_in_archive) {
-#if L_USE_COMPRESSION
         if(Buffer compressed_buffer = slot.read_archive()) { // Look in the archive for that resource
           Buffer buffer;
           {
             L_SCOPE_MARKER("Resource decompress");
-            buffer = lz_decompress(compressed_buffer.data(), compressed_buffer.size());
+            buffer = comp.decompress(compressed_buffer.data(), compressed_buffer.size());
           }
-#else
-        if(Buffer buffer = slot.read_archive()) { // Look in the archive for that resource
-#endif
+
           {
             L_SCOPE_MARKER("Resource unserialize");
             BufferStream stream((char*)buffer.data(), buffer.size());
@@ -94,15 +92,11 @@ namespace L {
         slot.write_archive_dev(dev_stream.string().begin(), dev_stream.string().size());
 #endif
         store(slot, intermediate);
-#if L_USE_COMPRESSION
         {
           L_SCOPE_MARKER("Resource compress");
-          lz_compress(uncompressed_stream.string().begin(), uncompressed_stream.string().size(), compressed_stream);
+          comp.compress(uncompressed_stream.string().begin(), uncompressed_stream.string().size(), compressed_stream);
         }
         slot.write_archive(compressed_stream.string().begin(), compressed_stream.string().size());
-#else
-        slot.write_archive(uncompressed_stream.string().begin(), uncompressed_stream.string().size());
-#endif
         return true;
       } else {
         slot.mtime = Date::now();
