@@ -11,6 +11,8 @@
 namespace L {
   template <class T> inline void resource_write_dev(Stream&, const T&) {}
   template <class T> inline void resource_read_dev(Stream&, T&) {}
+  template <class T> inline size_t resource_cpu_size(const T& v) { return get_cpu_size(v); }
+  template <class T> inline size_t resource_gpu_size(const T&) { return 0; }
   template <class T>
   class ResourceLoading {
     typedef bool(*Loader)(ResourceSlot&, typename T::Intermediate&);
@@ -119,6 +121,8 @@ namespace L {
     }
     static void store(ResourceSlot& slot, typename T::Intermediate& intermediate) {
       slot.value = Memory::new_type<T>(static_cast<typename T::Intermediate&&>(intermediate));
+      slot.cpu_size = resource_cpu_size(intermediate);
+      slot.gpu_size = resource_gpu_size(intermediate);
       slot.state = ResourceState::Loaded;
     }
   };

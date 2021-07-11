@@ -29,5 +29,6 @@ namespace L {
 
     friend inline void resource_write(Stream& s, const Intermediate& v) { s <= v.binary <= v.stage <= v.bindings; }
     friend inline void resource_read(Stream& s, Intermediate& v) { s >= v.binary >= v.stage >= v.bindings; }
+    friend inline size_t resource_gpu_size(Intermediate& v) { return v.binary.size(); }
   };
 }

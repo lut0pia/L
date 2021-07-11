@@ -38,5 +38,6 @@ namespace L {
 
     friend inline void resource_write(Stream& s, const Intermediate& v) { s <= v.vertices <= v.indices <= v.attributes; }
     friend inline void resource_read(Stream& s, Intermediate& v) { s >= v.vertices >= v.indices >= v.attributes; }
+    friend inline size_t resource_gpu_size(const Intermediate& v) { return v.vertices.size() + v.indices.size(); }
   };
 }

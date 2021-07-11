@@ -48,5 +48,6 @@ namespace L {
     friend inline Stream& operator>=(Stream& s, Buffer& v) { size_t size; s >= size; v.~Buffer(); new(&v)Buffer(size); s.read(v._data, size); return s; }
     friend inline void resource_write(Stream& s, const Intermediate& v) { s <= v; }
     friend inline void resource_read(Stream& s, Intermediate& v) { s >= v; }
+    friend inline size_t resource_cpu_size(Intermediate& v) { return v.size(); }
   };
 }

@@ -34,4 +34,6 @@ namespace L {
       count -= bufsize;
     }
   }
+
+  template <class T> inline size_t get_cpu_size(const T& v) { return sizeof(v); }
 }

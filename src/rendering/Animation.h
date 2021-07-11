@@ -54,10 +54,13 @@ namespace L {
 
   inline Stream& operator<=(Stream& s, const AnimationChannel& v) { return s <= v.times <= v.values <= v.joint_name <= v.joint_index <= v.type <= v.interpolation; }
   inline Stream& operator>=(Stream& s, AnimationChannel& v) { return s >= v.times >= v.values >= v.joint_name >= v.joint_index >= v.type >= v.interpolation; }
+  inline size_t get_cpu_size(const AnimationChannel& v) { return get_cpu_size(v.times) + get_cpu_size(v.values); }
   inline void resource_write(Stream& s, const Animation& v) { s <= v.channels <= v.duration; }
   inline void resource_read(Stream& s, Animation& v) { s >= v.channels >= v.duration; }
+  inline size_t resource_cpu_size(const Animation& v) { return get_cpu_size(v.channels); }
   inline Stream& operator<=(Stream& s, const SkeletonJoint& v) { return s <= v.inv_bind_pose <= v.name <= v.parent; }
   inline Stream& operator>=(Stream& s, SkeletonJoint& v) { return s >= v.inv_bind_pose >= v.name >= v.parent; }
   inline void resource_write(Stream& s, const Skeleton& v) { s <= v.joints; }
   inline void resource_read(Stream& s, Skeleton& v) { s >= v.joints; }
+  inline size_t resource_cpu_size(const Skeleton& v) { return get_cpu_size(v.joints); }
 }

@@ -15,5 +15,6 @@ namespace L {
 
     friend inline void resource_write(Stream& s, const Intermediate& v) { s <= v.format <= v.samples <= v.sample_count <= v.sample_format; }
     friend inline void resource_read(Stream& s, Intermediate& v) { s >= v.format >= v.samples >= v.sample_count >= v.sample_format; }
+    friend inline size_t resource_cpu_size(Intermediate& v) { return v.samples.size(); }
   };
 }

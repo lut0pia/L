@@ -18,5 +18,6 @@ namespace L {
 
     friend inline void resource_write(Stream& s, const Intermediate& v) { s <= v.events; }
     friend inline void resource_read(Stream& s, Intermediate& v) { s >= v.events; }
+    friend inline size_t resource_cpu_size(Intermediate& v) { return get_cpu_size(v.events); }
   };
 }

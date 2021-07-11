@@ -56,5 +56,7 @@ namespace L {
       resource_read(s, v.texture_intermediate);
       s >= v.glyphs >= v.line_height >= v.ascent;
     }
+    friend inline size_t resource_cpu_size(Intermediate& v) { return v.glyphs.size() * sizeof(Table<uint32_t, Glyph>::Slot); }
+    friend inline size_t resource_gpu_size(Intermediate& v) { return resource_gpu_size(v.texture_intermediate); }
   };
 }

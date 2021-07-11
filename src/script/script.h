@@ -127,6 +127,11 @@ namespace L {
     v.offset = 0;
   }
 #endif
+  inline size_t resource_cpu_size(ScriptFunction& v) {
+    return get_cpu_size(v.script->constants) +
+           get_cpu_size(v.script->globals) +
+           get_cpu_size(v.script->bytecode);
+  }
 
   void init_script_standard_functions();
 }
