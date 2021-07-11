@@ -1,9 +1,11 @@
 #include <L/src/engine/Engine.h>
 #include <L/src/engine/Resource.h>
-#include <L/src/engine/Resource.inl>
+#include <L/src/math/math.h>
 #include <L/src/rendering/Color.h>
-
+#include <L/src/text/format.h>
 #include <imgui_integration.h>
+
+#include <L/src/engine/Resource.inl>
 
 using namespace L;
 
@@ -42,11 +44,13 @@ static void imgui_resources_update() {
     ImGui::EndPopup();
   }
 
-  ImGui::Columns(3, "Columns");
+  ImGui::Columns(5, "Columns");
 
   ImGui::SetColumnWidth(0, 128);
-  ImGui::SetColumnWidth(1, ImGui::GetWindowContentRegionWidth() - 128 - 64);
+  ImGui::SetColumnWidth(1, max(16.f, ImGui::GetWindowContentRegionWidth() - 128 - 64 - 64 - 64));
   ImGui::SetColumnWidth(2, 64);
+  ImGui::SetColumnWidth(3, 64);
+  ImGui::SetColumnWidth(4, 64);
 
   ImGui::Separator();
 
@@ -54,6 +58,12 @@ static void imgui_resources_update() {
   ImGui::NextColumn();
 
   ImGui::Text("Id");
+  ImGui::NextColumn();
+
+  ImGui::Text("CPU");
+  ImGui::NextColumn();
+
+  ImGui::Text("GPU");
   ImGui::NextColumn();
 
   if(ImGui::Button("State")) {
@@ -77,16 +87,43 @@ static void imgui_resources_update() {
     ImColor state_color = ImColor(1.f, 1.f, 1.f);
     const char* state = "Unknown";
     switch(slot->state) {
-      case ResourceState::Unloaded: state = "Unloaded"; state_color = ImColor(0.5f, 0.5f, 0.5f);  break;
-      case ResourceState::Loading: state = "Loading"; state_color = ImColor(1.f, 0.5f, 0.f);  break;
-      case ResourceState::Loaded: state = "Loaded"; state_color = ImColor(0.f, 1.f, 0.f); break;
-      case ResourceState::Failed: state = "Failed"; state_color = ImColor(1.f, 0.f, 0.f); break;
+      case ResourceState::Unloaded:
+        state = "Unloaded";
+        state_color = ImColor(0.5f, 0.5f, 0.5f);
+        break;
+      case ResourceState::Loading:
+        state = "Loading";
+        state_color = ImColor(1.f, 0.5f, 0.f);
+        break;
+      case ResourceState::Loaded:
+        state = "Loaded";
+        state_color = ImColor(0.f, 1.f, 0.f);
+        break;
+      case ResourceState::Failed:
+        state = "Failed";
+        state_color = ImColor(1.f, 0.f, 0.f);
+        break;
     }
 
-    ImGui::TextColored(im_type_color, "%s", (const char*)slot->type);
+    String type = String(slot->type).replace_all("L::", "");
+    ImGui::TextColored(im_type_color, "%s", type.begin());
     ImGui::NextColumn();
 
     ImGui::Text("%s", (const char*)slot->id);
+    ImGui::NextColumn();
+
+    if(slot->cpu_size > 0) {
+      String cpu_size = format_memory_amount(slot->cpu_size);
+      ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetColumnWidth() - ImGui::CalcTextSize(cpu_size.begin()).x - ImGui::GetScrollX() - 2 * ImGui::GetStyle().ItemSpacing.x);
+      ImGui::Text("%s", cpu_size.begin());
+    }
+    ImGui::NextColumn();
+
+    if(slot->gpu_size > 0) {
+      String gpu_size = format_memory_amount(slot->gpu_size);
+      ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetColumnWidth() - ImGui::CalcTextSize(gpu_size.begin()).x - ImGui::GetScrollX() - 2 * ImGui::GetStyle().ItemSpacing.x);
+      ImGui::Text("%s", format_memory_amount(slot->gpu_size).begin());
+    }
     ImGui::NextColumn();
 
     ImGui::TextColored(state_color, "%s", state);
@@ -103,4 +140,3 @@ void imgui_resources_module_init() {
   Engine::add_update(imgui_resources_update);
 #endif
 }
-
