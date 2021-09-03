@@ -172,7 +172,6 @@ function(add_external NAME)
       ext_${NAME}
       GIT_REPOSITORY ${E_GIT_REPOSITORY}
       GIT_TAG ${E_GIT_TAG}
-      GIT_SHALLOW true
       UPDATE_COMMAND ""
       CMAKE_ARGS
         -DCMAKE_INSTALL_PREFIX=${EXT_INSTALL_DIR}
@@ -183,7 +182,6 @@ function(add_external NAME)
       ext_${NAME}
       GIT_REPOSITORY ${E_GIT_REPOSITORY}
       GIT_TAG ${E_GIT_TAG}
-      GIT_SHALLOW true
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
       UPDATE_COMMAND ""
