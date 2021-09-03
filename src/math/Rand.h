@@ -29,7 +29,7 @@ namespace L {
       static float gauss(uint32_t);
       static uint64_t next(uint64_t ave); // Random exp with an average n
 
-      inline static const uint64_t& gState() {return last;}
-      inline static void sState(const uint64_t& s) {last = s;}
+      inline static const uint64_t& get_state() { return last; }
+      inline static void set_state(const uint64_t& s) { last = s; }
   };
 }
