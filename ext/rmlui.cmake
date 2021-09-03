@@ -14,7 +14,7 @@ add_external(
   CMAKE
   CONFIG_INSTALL_DIR
   GIT_REPOSITORY https://github.com/mikke89/RmlUi.git
-  GIT_TAG 38d63558afbac60e7c6fd16d4fa17ae9d80799b2
+  GIT_TAG d3e97d8e4d94ea5031bb50a4969d1c0fcf3dc9e6 # 4.2
   INCLUDE_DIRS include
   LIBRARIES ${RMLUI_LIBRARIES}
   CMAKE_ARGS
