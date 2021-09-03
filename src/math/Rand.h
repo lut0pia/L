@@ -5,10 +5,6 @@
 
 namespace L {
   class Rand {
-    private:
-      static const uint64_t a, b;
-      static uint64_t last;
-
     public:
       static uint64_t next();
       static uint8_t next_byte();
@@ -29,7 +25,7 @@ namespace L {
       static float gauss(uint32_t);
       static uint64_t next(uint64_t ave); // Random exp with an average n
 
-      inline static const uint64_t& get_state() { return last; }
-      inline static void set_state(const uint64_t& s) { last = s; }
+      static uint64_t get_state();
+      static void set_state(uint64_t s);
   };
 }

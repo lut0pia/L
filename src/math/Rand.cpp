@@ -4,9 +4,8 @@
 
 using namespace L;
 
-//const ullong Rand::a(6364136223846793005LL), Rand::b(1442695040888963407LL);
-const uint64_t Rand::a(2862933555777941757LL), Rand::b(3037000493LL);
-uint64_t Rand::last(time(nullptr));
+constexpr uint64_t a = 2862933555777941757LL, b = 3037000493LL;
+static uint64_t last = time(nullptr);
 
 uint64_t Rand::next() {
   return last = last*a+b;
@@ -49,4 +48,11 @@ uint64_t Rand::next(uint64_t ave) {
     while(next()>thres) wtr++;
     return wtr;
   } else return 0;
+}
+
+uint64_t Rand::get_state() {
+  return last;
+}
+void Rand::set_state(uint64_t s) {
+  last = s;
 }
