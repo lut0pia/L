@@ -126,7 +126,10 @@ void* Memory::realloc(void* ptr, size_t oldsize, size_t newsize) {
   }
 }
 void Memory::free(void* ptr, size_t size) {
-  L_ASSERT(ptr != nullptr);
+  if(ptr == nullptr) {
+    warning("memory: nullptr provided to free function");
+    return;
+  }
   if(size >= max_size) { // Big allocations go directly to the system
     virtual_free(ptr, size);
     allocated -= size;
