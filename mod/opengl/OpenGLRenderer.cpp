@@ -7,9 +7,6 @@
 #if L_USE_MODULE_xlib
 #include <GL/glx.h>
 #include "xlib.h"
-#undef None
-#undef Always
-#undef Window
 #endif
 
 #include <L/src/dev/debug.h>

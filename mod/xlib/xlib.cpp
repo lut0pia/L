@@ -2,12 +2,7 @@
 #include <L/src/rendering/Renderer.h>
 #include <L/src/system/Window.h>
 
-#include <X11/X.h>
-#include <X11/Xlib.h>
-
 #include "xlib.h"
-
-#undef None
 
 static class XWindow* instance(nullptr);
 
