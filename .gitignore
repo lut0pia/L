@@ -2,6 +2,9 @@
 /bin
 # Build folder
 /bld
+/build
+# CMake tests
+/Testing
 # External project folder
 /ext/*/
 # Sample folder
