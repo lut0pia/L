@@ -1,6 +1,9 @@
-set(ZLIB_RLS_LIBRARIES
-  lib/zlibstatic
-)
+if(UNIX)
+  set(ZLIB_RLS_LIBRARIES lib/z)
+else()
+  set(ZLIB_RLS_LIBRARIES lib/zlibstatic)
+endif()
+
 set(ZLIB_DBG_LIBRARIES ${ZLIB_RLS_LIBRARIES})
 
 if(MSVC)
