@@ -10,18 +10,18 @@ static uint64_t last = time(nullptr);
 uint64_t Rand::next() {
   return last = last*a+b;
 }
-int Rand::next_int() {
-  return next()>>32;
-}
 uint8_t Rand::next_byte() {
   return uint8_t(next()>>48);
 }
 float Rand::next_float() {
-  return next()/(float)(uint64_t)-1;
+  return next() / float(UINT64_MAX);
 }
 
-uint64_t Rand::next(uint64_t min,uint64_t max) {
-  return (next()%(max-min+1))+min;
+uint64_t Rand::next(uint64_t max) {
+  return next() % max;
+}
+uint64_t Rand::next(uint64_t min, uint64_t max) {
+  return (next(max - min + 1)) + min;
 }
 int Rand::next(int min, int max) {
   return ((next()>>32)%(max-min+1))+min;
@@ -42,12 +42,17 @@ float Rand::gauss(uint32_t i) {
     wtr += next_float();
   return wtr/i;
 }
-uint64_t Rand::next(uint64_t ave) {
+uint64_t Rand::next_exp(uint64_t ave) {
   if(ave) {
-    uint64_t wtr(0), thres(((uint64_t)-1)/(ave+1));
-    while(next()>thres) wtr++;
+    uint64_t wtr = 0;
+    uint64_t thres = UINT64_MAX / (ave + 1);
+    while(next() > thres) {
+      wtr++;
+    }
     return wtr;
-  } else return 0;
+  } else {
+    return 0;
+  }
 }
 
 uint64_t Rand::get_state() {
