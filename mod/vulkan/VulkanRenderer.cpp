@@ -67,12 +67,36 @@ bool VulkanRenderer::init(GenericWindowData* generic_window_data) {
     create_info.ppEnabledExtensionNames = required_extensions;
 
 #if !L_RLS
-    const char* validation_layers[] = {
-      "VK_LAYER_LUNARG_standard_validation",
-      //"VK_LAYER_RENDERDOC_Capture",
-    };
-    create_info.enabledLayerCount = L_COUNT_OF(validation_layers);
-    create_info.ppEnabledLayerNames = validation_layers;
+    { // Layers
+      // Enumerate all available layers
+      VkLayerProperties layer_properties[32];
+      uint32_t layer_property_count = L_COUNT_OF(layer_properties);
+      vkEnumerateInstanceLayerProperties(&layer_property_count, layer_properties);
+
+      // List wanted layers
+      const char* wanted_layers[] = {
+        "VK_LAYER_LUNARG_standard_validation",
+        "VK_LAYER_KHRONOS_validation",
+      };
+      uint32_t wanted_layer_count = L_COUNT_OF(wanted_layers);
+
+      // Remove wanted layers that are not available
+      for(uintptr_t i = 0; i < wanted_layer_count; i++) {
+        bool found_layer = false;
+        for(uintptr_t j = 0; j < layer_property_count; j++) {
+          if(!strcmp(layer_properties[j].layerName, wanted_layers[i])) {
+            found_layer = true;
+            break;
+          }
+        }
+        if(!found_layer) {
+          wanted_layers[i] = wanted_layers[--wanted_layer_count];
+        }
+      }
+
+      create_info.enabledLayerCount = wanted_layer_count;
+      create_info.ppEnabledLayerNames = wanted_layers;
+    }
 #endif
 
     L_VK_CHECKED(vkCreateInstance(&create_info, nullptr, &instance));
