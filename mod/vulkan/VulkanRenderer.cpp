@@ -91,17 +91,18 @@ bool VulkanRenderer::init(GenericWindowData* generic_window_data) {
 
   { // Select physical device
     VkPhysicalDevice physical_devices[16];
-    uint32_t count(0);
-    vkEnumeratePhysicalDevices(instance, &count, nullptr);
-    L_ASSERT(count < L_COUNT_OF(physical_devices));
-    vkEnumeratePhysicalDevices(instance, &count, physical_devices);
-    L_ASSERT(count > 0);
+    uint32_t physical_device_count = L_COUNT_OF(physical_devices);
+    vkEnumeratePhysicalDevices(instance, &physical_device_count, physical_devices);
+    if(physical_device_count == 0) {
+      warning("vulkan: No physical device");
+      return false;
+    }
 
     uintptr_t best_physical_device(0);
     size_t best_physical_device_memory(0);
 
     { // Choose best physical device based on dedicated memory
-      for(uintptr_t i(0); i < count; i++) {
+      for(uintptr_t i(0); i < physical_device_count; i++) {
         size_t physical_device_memory(0);
         vkGetPhysicalDeviceMemoryProperties(physical_devices[i], &physical_device_memory_properties);
         for(uintptr_t j(0); j < physical_device_memory_properties.memoryHeapCount; j++) {
