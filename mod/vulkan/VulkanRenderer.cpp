@@ -26,9 +26,6 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debug_callback(VkDebugReportFlagsEXT, VkDe
 #endif
 
 bool VulkanRenderer::init(GenericWindowData* generic_window_data) {
-#if L_WINDOWS
-  _putenv("DISABLE_VK_LAYER_VALVE_steam_overlay_1=1");
-#endif
   L_SCOPE_MARKER("VulkanRenderer::init");
 
   { // Create instance
