@@ -94,10 +94,42 @@ bool OpenGLRenderer::init(GenericWindowData* generic_window_data) {
 #if L_USE_MODULE_xlib
     if(generic_window_data->type == xlib_window_type) {
       XlibWindowData* win_data = (XlibWindowData*)generic_window_data;
-      GLint attr[] = {GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, 0};
-      XVisualInfo* vi = glXChooseVisual(win_data->display, 0, attr);
-      GLXContext glc = glXCreateContext(win_data->display, vi, nullptr, true);
-      glXMakeCurrent(win_data->display, win_data->window, glc);
+      ::Display* display = win_data->display;
+      ::Window window = win_data->window;
+
+      PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribsARB =
+        PFNGLXCREATECONTEXTATTRIBSARBPROC(glXGetProcAddressARB((const GLubyte*)"glXCreateContextAttribsARB"));
+
+      int visual_attribs[] = {
+        GLX_X_RENDERABLE, True,
+        GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
+        GLX_RENDER_TYPE, GLX_RGBA_BIT,
+        GLX_X_VISUAL_TYPE, GLX_TRUE_COLOR,
+        GLX_RED_SIZE, 8,
+        GLX_GREEN_SIZE, 8,
+        GLX_BLUE_SIZE, 8,
+        GLX_ALPHA_SIZE, 8,
+        GLX_DEPTH_SIZE, 24,
+        GLX_STENCIL_SIZE, 8,
+        GLX_DOUBLEBUFFER, True,
+        0
+      };
+
+      int context_attributes[] = {
+        GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
+        GLX_CONTEXT_MINOR_VERSION_ARB, 1,
+  #if L_DBG
+        GLX_CONTEXT_FLAGS_ARB, GLX_CONTEXT_DEBUG_BIT_ARB,
+  #endif
+        GLX_CONTEXT_PROFILE_MASK_ARB, GLX_CONTEXT_CORE_PROFILE_BIT_ARB,
+        0
+      };
+
+      int fbcount;
+      GLXFBConfig* fbc = glXChooseFBConfig(display, DefaultScreen(display), visual_attribs, &fbcount);
+      GLXFBConfig bestFbc = fbc[0];
+      GLXContext context = glXCreateContextAttribsARB(display, bestFbc, 0, True, context_attributes);
+      glXMakeCurrent(display, window, context);
       surface_init_success = true;
     }
 #endif
