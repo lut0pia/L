@@ -5,11 +5,14 @@
 
 using namespace L;
 
-Archive::Archive(const char* path) : _path(path), _entries((Entry*)Memory::alloc(table_size_bytes)) {
+Archive::Archive(const char* path)
+  : _path(path), _entries((Entry*)Memory::alloc(table_size_bytes)) {
   CFileStream read_stream(_path, "rb");
-  if(read_stream)
+  if(read_stream) {
+    verbose("Opening archive %s", _path.begin());
     read_stream.read(_entries, table_size_bytes);
-  else {
+  } else {
+    verbose("Creating archive %s", _path.begin());
     CFileStream write_stream(_path, "wb");
     memset(_entries, 0, table_size_bytes);
     write_stream.write(_entries, table_size_bytes);
@@ -32,7 +35,8 @@ Archive::Entry& Archive::find(uint32_t key_hash) {
 void Archive::store(const char* key, const void* data, size_t size) {
   L_ASSERT(size>0);
   L_SCOPED_LOCK(_lock);
-  CFileStream file_stream(_path, "rb+");
+  verbose("Storing value of %d bytes to key %s in archive %s", size, key, _path.begin());
+  CFileStream file_stream(_path.begin(), "rb+");
   const uint32_t key_hash(hash(key));
   Entry& e(find(key_hash));
 

@@ -28,6 +28,7 @@ static Date program_mtime = 0;
 
 ResourceSlot::ResourceSlot(const Symbol& type, const char* url)
   : type(type), id(url), path(url, min<size_t>(strlen(url), strchr(url, '?') - url)) {
+  verbose("Creating resource slot of type %s for url %s", type, url);
   // Extract file extension from path
   const char* dot = strrchr(path, '.');
   ext = dot ? dot + 1 : (const char*)path;

@@ -13,16 +13,18 @@ namespace L {
     Executed,
   };
 
-  void init_log_file();
+  void init_logging();
 
   void error(const char* msg, ...); // Fatal, dumps callstack
   void warning(const char* msg, ...); // Non-fatal, no callstack
-  void log(const char* msg, ...);
+  void log(const char* msg, ...); // Simple log
+  void verbose(const char* msg, ...); // Silent log unless -v or --verbose
 
   // va_list versions
   void verror(const char* msg, va_list);
   void vwarning(const char* msg, va_list);
   void vlog(const char* msg, va_list);
+  void vverbose(const char* msg, va_list);
 
   // System-dependent
   void debugbreak();

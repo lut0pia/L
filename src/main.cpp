@@ -55,7 +55,7 @@ int main(int argc, const char* argv[]) {
   Arguments::init(argc, argv);
 
 #if !L_RLS
-  init_log_file();
+  init_logging();
   init_debug_draw();
   Engine::add_parallel_update(ResourceSlot::update);
   ResourceLoading<Buffer>::add_loader(

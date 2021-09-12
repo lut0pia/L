@@ -1,21 +1,24 @@
 #include "debug.h"
 
-#include <stdlib.h>
 #include <stdarg.h>
+#include <stdlib.h>
 
+#include "../system/Arguments.h"
 #include "../system/File.h"
 
 using namespace L;
 
 static FILE* log_file = nullptr;
+static bool verbose_enabled = false;
 
-void L::init_log_file() {
+void L::init_logging() {
   File("logs").make();
-  char filepath[128] {};
+  char filepath[128]{};
   const Date date = Date::now();
   sprintf(filepath, "logs/%04d_%02d_%02d_%02d_%02d_%02d.log",
     date.year(), date.month(), date.day(), date.hour(), date.minute(), date.second());
   log_file = fopen(filepath, "w");
+  verbose_enabled = Arguments::has("v") || Arguments::has("verbose");
 }
 
 void L::error(const char* msg, ...) {
@@ -35,6 +38,15 @@ void L::log(const char* msg, ...) {
   va_start(args, msg);
   vlog(msg, args);
   va_end(args);
+}
+
+void L::verbose(const char* msg, ...) {
+  if(verbose_enabled) {
+    va_list args;
+    va_start(args, msg);
+    vlog(msg, args);
+    va_end(args);
+  }
 }
 
 void L::verror(const char* msg, va_list args1) {
@@ -82,5 +94,10 @@ void L::vlog(const char* msg, va_list args1) {
   if(log_file) {
     vfprintf(log_file, msg, args2);
     putc('\n', log_file);
+  }
+}
+void L::vverbose(const char* msg, va_list args1) {
+  if(verbose_enabled) {
+    vlog(msg, args1);
   }
 }
