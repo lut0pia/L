@@ -12,14 +12,10 @@ namespace L {
     void sleep(int milliseconds);
     void sleep(const Time&);
     String pwd();
-    Vector2i screen_size();
 
     String formatPath(String);
     String pathDirectory(const String&);
     String pathFile(const String&);
-
-    void* alloc(size_t);
-    void dealloc(void*);
 
 #if L_WINDOWS
     const char slash = '\\';
