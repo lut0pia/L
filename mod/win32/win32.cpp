@@ -23,6 +23,9 @@ public:
   inline Win32Window() {
     L_ASSERT(_win_instance == nullptr);
     _win_instance = this;
+
+     _screen_width = GetSystemMetrics(SM_CXSCREEN);
+     _screen_height = GetSystemMetrics(SM_CYSCREEN);
   }
   inline Win32Window::~Win32Window() {
     L_ASSERT(_win_instance != nullptr);
@@ -86,9 +89,11 @@ public:
   }
 
   void open(const char* title, uint32_t width, uint32_t height, uint32_t flags) override {
-    L_SCOPE_MARKER("Window::open");
-    if(opened())
-      return;
+    L_SCOPE_MARKER("Win32Window::open");
+    if(opened()) {
+      error("win32: Trying to reopen window");
+    }
+
     _width = width;
     _height = height;
     _flags = flags;

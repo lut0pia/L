@@ -10,6 +10,5 @@ Window::Window() {
   _instance = this;
 }
 void Window::open_fullscreen(const char* title, uint32_t flags) {
-  const Vector2i screen_size = System::screen_size();
-  open(title, screen_size.x(), screen_size.y(), borderless | flags);
+  open(title, _screen_width, _screen_height, borderless | flags);
 }

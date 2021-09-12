@@ -19,7 +19,7 @@ namespace L {
   protected:
     static Window* _instance;
     Array<Event> _events;
-    uint32_t _width, _height, _flags, _cursor_x, _cursor_y;
+    uint32_t _width, _height, _flags, _cursor_x, _cursor_y, _screen_width, _screen_height;
     bool _opened = false;
 
   public:
