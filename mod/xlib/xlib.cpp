@@ -1,5 +1,6 @@
 #include <L/src/engine/Engine.h>
 #include <L/src/rendering/Renderer.h>
+#include <L/src/system/System.h>
 #include <L/src/system/Window.h>
 #include <L/src/text/String.h>
 
@@ -16,12 +17,12 @@ protected:
 
 public:
   XWindow() {
-    String tmp;
-    System::call("xdpyinfo | grep 'dimensions:' | grep -o '[[:digit:]]\\+'", tmp);
-    Array<String> res(tmp.explode('\n'));
+    L::String tmp;
+    L::System::call("xdpyinfo | grep 'dimensions:' | grep -o '[[:digit:]]\\+'", tmp);
+    L::Array<L::String> res(tmp.explode('\n'));
     if(res.size() >= 2) {
-      _screen_width = ston<10, uint32_t>(res[0]);
-      _screen_height = ston<10, uint32_t>(res[1]);
+      _screen_width = L::ston<10, uint32_t>(res[0]);
+      _screen_height = L::ston<10, uint32_t>(res[1]);
     }
   }
   void update() {
@@ -57,7 +58,7 @@ public:
   void open(const char* title, uint32_t width, uint32_t height, uint32_t flags) override {
     L_SCOPE_MARKER("XWindow::open");
     if(opened()) {
-      error("xlib: Trying to reopen window");
+      L::error("xlib: Trying to reopen window");
     }
 
     _width = width;
