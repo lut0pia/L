@@ -45,7 +45,7 @@ static void imgui_new_frame() {
   io.DisplaySize.x = float(Window::width());
   io.DisplaySize.y = float(Window::height());
 
-  if(io.WantCaptureKeyboard || io.WantCaptureMouse || io.WantTextInput) {
+  if(io.WantCaptureKeyboard || io.WantCaptureMouse || io.WantTextInput || menu_open) {
     input_context.set_block_mode(InputBlockMode::All);
   } else {
     input_context.set_block_mode(InputBlockMode::None);
