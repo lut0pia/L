@@ -184,7 +184,7 @@ function(add_external NAME)
       GIT_TAG ${E_GIT_TAG}
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
-      UPDATE_COMMAND ""
+      UPDATE_COMMAND git fetch --all && git reset --hard ${E_GIT_TAG}
       INSTALL_COMMAND ""
       SOURCE_DIR ${EXT_INSTALL_DIR}
     )
