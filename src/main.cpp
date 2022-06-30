@@ -107,6 +107,10 @@ int main(int argc, const char* argv[]) {
     return run_all_tests();
   } 
 
+  if(Window::instance() == nullptr) {
+    error("No window module available");
+  }
+
   Engine::init();
   AudioEngine::init_instance();
 
