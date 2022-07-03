@@ -77,6 +77,9 @@ void ScriptComponent::script_registration() {
   // Entity ///////////////////////////////////////////////////////////////////
   ScriptGlobal("entity_make") = (ScriptNativeFunction)([](ScriptContext& c) {
     c.return_value() = Entity::create();
+    if(c.param_count() >= 1 && c.param(0).canbe<Symbol>()) {
+      c.return_value().as<Handle<Entity>>()->require_component<NameComponent>()->set_name(c.param(0).get<Symbol>());
+    }
   });
   ScriptGlobal("entity_copy") = (ScriptNativeFunction)([](ScriptContext& c) {
     if(c.param_count() && c.param(0).is<Handle<Entity>>())
