@@ -10,12 +10,12 @@ namespace L {
     static Table<Symbol, NameComponent*> _components;
     Symbol _name;
   public:
-    inline NameComponent() { name(ntos<16>(Rand::next(), sizeof(uint64_t)*2)); }
+    inline NameComponent() { set_name(ntos<16>(Rand::next(), sizeof(uint64_t)*2)); }
     inline ~NameComponent() { _components.remove(_name); }
 
     static void script_registration();
 
-    inline void name(const Symbol& name) {
+    inline void set_name(const Symbol& name) {
       _components.remove(_name);
       if(_components.find(name)) {
         error("Name already in use");
@@ -24,7 +24,7 @@ namespace L {
         _components[_name] = this;
       }
     }
-    inline const Symbol& name() const { return _name; }
+    inline const Symbol& get_name() const { return _name; }
 
     static NameComponent* find(const Symbol&);
   };
