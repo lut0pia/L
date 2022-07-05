@@ -27,10 +27,10 @@
   (primitive.scale (vec 0.5 0.5 0.5))
   (primitive.material|.color 'color color)
   ; Light
-  (light.material|.parent "material/pointlight.ls")
+  (light.material|.parent (if cel_shading "material/pointlight_cel.ls" "material/pointlight.ls"))
   (light.material|.color 'color color)
-  (light.material|.scalar 'intensity 4)
-  (light.scale 8)
+  (light.material|.scalar 'intensity (if cel_shading 1 4))
+  (light.scale (if cel_shading 2 8))
 )))
 
 (local make_static_box (fn position size (do
@@ -65,18 +65,18 @@
 
 (entity_make|.add_script|.load "script/sink.ls")
 
-; Make ambient light
+; Make SSAO/outline
 (local amblight_entity (entity_make))
-(amblight_entity.require_primitive|.material|.parent "material/ssao.ls")
+(amblight_entity.require_primitive|.material|.parent (if cel_shading "material/outline.ls" "material/ssao.ls"))
 (amblight_entity.require_primitive|.scale 99999)
 (amblight_entity.require_primitive|.material|.color 'color (color 0.2 0.2 0.2))
 
 ; Make directional light
 (local dirlight_entity (entity_make))
-(dirlight_entity.require_transform|.rotate (euler_degrees -40 0 90))
-(dirlight_entity.require_primitive|.material|.parent "material/dirlight.ls")
+(dirlight_entity.require_transform|.rotate (euler_degrees -40 0 70))
+(dirlight_entity.require_primitive|.material|.parent (if cel_shading "material/dirlight_cel.ls" "material/dirlight.ls"))
 (dirlight_entity.require_primitive|.scale 99999)
-(dirlight_entity.require_primitive|.material|.scalar 'intensity 2)
+(dirlight_entity.require_primitive|.material|.scalar 'intensity (if cel_shading 1 2))
 
 ; Make sky
 (local sky_entity (entity_make))

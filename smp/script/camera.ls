@@ -68,6 +68,12 @@
     (cursor.require_primitive|.material|.vector 'color (vec 0 0 0 0))
   )
 
+  ; Rendering
+  (if (input.get_button_pressed 'CelShading) (do
+    (set cel_shading (not cel_shading))
+    (entity_get "scene"|.require_group|.reload_level_script)
+  ))
+
   ; Other actions
   (if (input.get_button_pressed 'Bach)
     (if (bach_source.is_playing)

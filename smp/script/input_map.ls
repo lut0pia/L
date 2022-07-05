@@ -92,4 +92,8 @@
     'name 'Mozart
     'button 'M
   }
+  {
+    'name 'CelShading
+    'button 'C
+  }
 ])

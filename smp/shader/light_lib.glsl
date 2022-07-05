@@ -36,3 +36,21 @@ vec3 specular(float NDF, float G, vec3 F, vec3 N, vec3 V, vec3 L) {
   float denominator = 4 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001f;
   return nominator / denominator;
 }
+
+vec4 cel_shading(GBufferSample gbuffer, vec3 light_color, vec3 to_light_dir, float dist_factor) {
+  vec4 result = vec4(0.f);
+  vec3 view_dir = normalize(eye.xyz - gbuffer.position);
+  vec3 halfway = normalize(view_dir + to_light_dir);
+
+  float NdotL = dot(gbuffer.normal, to_light_dir);
+  float factor = NdotL > -0.1f ? 0.7f : 0.01; // Normal lighting
+  factor *= 1.f - min(floor(dist_factor * 2.f) / 2.f, 1.f); // Distance attenuation
+
+  if(gbuffer.roughness < 0.75f && dot(halfway, gbuffer.normal) > 1.f - gbuffer.roughness * 0.25f) {
+    factor = 1.f; // Specular sort of
+  }
+
+  vec3 radiance = light_color * gbuffer.color;
+  result.rgb = radiance * factor;
+  return result;
+}

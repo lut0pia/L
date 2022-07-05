@@ -5,7 +5,7 @@
 ;(engine_gravity (vec 0 0 0))
 ;(engine_timescale 0.1)
 (entity_make|.add_script|.load "script/camera.ls")
-(entity_make|.add_group|.level_script "script/scene.ls")
+(entity_make "scene"|.add_group|.level_script "script/scene.ls")
 
 (set mozart_source (entity_make|.require_midi_source))
 (mozart_source.sequence "audio/mozart.mid")
