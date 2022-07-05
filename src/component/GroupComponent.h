@@ -22,6 +22,7 @@ namespace L {
 
     inline const Array<Handle<Entity>>& entities() const { return _entities; }
     inline void level_script(const char* filepath) { _level_script = filepath; }
+    void reload_level_script();
 
     static void notify_entity_created(Handle<Entity> entity);
   };
