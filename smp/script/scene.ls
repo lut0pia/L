@@ -1,4 +1,4 @@
-(local make_box (fn (do
+(local make_physical_shape (fn (do
   (local entity (entity_make))
   (local transform (entity.require_transform))
   (local primitive (entity.add_primitive))
@@ -12,7 +12,7 @@
   ; Add rigid body
   (entity.require_rigidbody|.add_velocity (vec (rand_range -2 2) (rand_range -2 2) (rand_range 1 2)))
   ; Add collider
-  (if (< (rand) 0.0)
+  (if (< (rand) 0.5)
     (do
       (primitive.material|.parent "material/sphere.ls")
       (entity.require_collider|.sphere 0.5)
@@ -109,7 +109,7 @@
 ; Create all boxes
 (local box_count 16)
 (while (< 0 box_count) (do
-  (make_box)
+  (make_physical_shape)
   (set box_count (- box_count 1))
 ))
 
