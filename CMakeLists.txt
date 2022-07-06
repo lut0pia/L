@@ -361,6 +361,11 @@ add_test(
   COMMAND $<TARGET_FILE:prj_tests> --run_all_tests
 )
 
+set_target_properties(
+  prj_tests PROPERTIES
+  VS_DEBUGGER_COMMAND_ARGUMENTS "--run_all_tests"
+)
+
 # Projects - iterate
 
 set(L_PROJECTS "${CMAKE_CURRENT_SOURCE_DIR}/smp" CACHE PATH "Project paths (separated by semicolons)")
