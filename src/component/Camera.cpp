@@ -9,7 +9,10 @@
 
 using namespace L;
 
-static const float& screen_percentage(Settings::get_float("screen-percentage", 1.0f));
+static float get_screen_percentage() {
+  static const float& screen_percentage = Settings::get_float("screen_percentage", 1.0f);
+  return screen_percentage;
+}
 
 Camera::Camera() :
   _viewport(Vector2f(0.f, 0.f), Vector2f(1.f, 1.f)),
@@ -73,8 +76,8 @@ void Camera::resize_buffers() {
   destroy_buffers();
 
   const Vector2f viewport_size = _viewport.size();
-  const uint32_t viewport_width = uint32_t(Window::width() * viewport_size.x() * screen_percentage);
-  const uint32_t viewport_height = uint32_t(Window::height() * viewport_size.y() * screen_percentage);
+  const uint32_t viewport_width = uint32_t(Window::width() * viewport_size.x() * get_screen_percentage());
+  const uint32_t viewport_height = uint32_t(Window::height() * viewport_size.y() * get_screen_percentage());
 
   if(viewport_width == 0 || viewport_height == 0) {
     return; // No space to render
@@ -103,8 +106,8 @@ void Camera::prerender(RenderCommandBuffer* cmd_buffer) {
   static const Matrix44f cam_nz2y = orientation_matrix(Vector3f(1.f, 0.f, 0.f), Vector3f(0.f, 0.f, 1.f), Vector3f(0.f, -1.f, 0.f)).transpose();
   const Matrix44f orientation = orientation_matrix(_transform->right(), _transform->forward(), _transform->up());
   const Vector2f viewport_size = _viewport.size();
-  const uint32_t viewport_width = uint32_t(Window::width() * viewport_size.x() * screen_percentage);
-  const uint32_t viewport_height = uint32_t(Window::height() * viewport_size.y() * screen_percentage);
+  const uint32_t viewport_width = uint32_t(Window::width() * viewport_size.x() * get_screen_percentage());
+  const uint32_t viewport_height = uint32_t(Window::height() * viewport_size.y() * get_screen_percentage());
 
   _view = cam_nz2y * _transform->matrix().inverse();
   _prev_view_projection = _view_projection;
