@@ -1,5 +1,6 @@
 add_project(
   sample
+  SCRIPT_INIT_FILE ini.ls
   # This project purposefully depends on a lot of modules because it tries to showcase as many of them as possible
   MOD_DEPENDENCIES
     alsa # Audio on Linux

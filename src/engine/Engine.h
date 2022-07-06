@@ -25,6 +25,7 @@ namespace L {
     static Time _sub_delta;
     static float _real_delta_seconds, _delta_seconds, _timescale;
     static uint32_t _frame;
+    static const char* _init_script;
   public:
     static inline float real_delta_seconds() { return _real_delta_seconds; }
     static inline const Time& delta_time() { return _delta_time; }
@@ -33,6 +34,7 @@ namespace L {
     static inline float timescale() { return _timescale; }
     static inline void timescale(float ts) { _timescale = ts; }
     static inline uint32_t frame() { return _frame; }
+    static inline void set_init_script(const char* init_script) { _init_script = init_script; }
 
     static void init();
     static void shutdown();

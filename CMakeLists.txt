@@ -288,8 +288,12 @@ endfunction()
 
 function(add_project NAME)
   message(STATUS "Adding project ${NAME}")
-  set(OPTARGS CPP_INIT)
-  set(SINGLEARGS DIRECTORY)
+  set(OPTARGS "")
+  set(SINGLEARGS
+    DIRECTORY
+    CPP_INIT_FUNCTION
+    SCRIPT_INIT_FILE
+  )
   set(MULTIARGS
     MOD_DEPENDENCIES
   )
@@ -314,7 +318,12 @@ function(add_project NAME)
   endif()
   add_executable(${PRJ_NAME} ${PRJ_SOURCES})
   set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PRJ_NAME})
-  target_compile_definitions(${PRJ_NAME} PRIVATE L_INIT_PROJECT=${P_CPP_INIT})
+  if(DEFINED P_CPP_INIT_FUNCTION)
+    target_compile_definitions(${PRJ_NAME} PRIVATE L_CPP_INIT_FUNCTION=${P_CPP_INIT_FUNCTION})
+  endif()
+  if(DEFINED P_SCRIPT_INIT_FILE)
+    target_compile_definitions(${PRJ_NAME} PRIVATE L_SCRIPT_INIT_FILE="${P_SCRIPT_INIT_FILE}")
+  endif()
   target_link_libraries(${PRJ_NAME} core)
   set_target_properties(
     ${PRJ_NAME} PROPERTIES

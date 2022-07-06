@@ -27,14 +27,17 @@ L::Time Engine::_frame_work_durations[64];
 L::Time Engine::_sub_delta(0, 10);
 float Engine::_real_delta_seconds, Engine::_delta_seconds, Engine::_timescale(1.f);
 uint32_t Engine::_frame(0);
+const char* Engine::_init_script = nullptr;
 
 void Engine::init() {
-  L_SCOPE_MARKER("Engine initialization");
-  Resource<ScriptFunction> ini_script_res = "ini.ls";
-  if(const ScriptFunction* ini_script = ini_script_res.force_load()) {
-    ScriptContext().execute(ref<ScriptFunction>(*ini_script));
-  } else {
-    error("Could not load init script");
+  if(_init_script != nullptr) {
+    L_SCOPE_MARKERF("Initializing script: %s", _init_script);
+    Resource<ScriptFunction> init_script_res = _init_script;
+    if(const ScriptFunction* init_script = init_script_res.force_load()) {
+      ScriptContext().execute(ref<ScriptFunction>(*init_script));
+    } else {
+      error("Could not load init script: %s", _init_script);
+    }
   }
 }
 void Engine::shutdown() {
