@@ -218,7 +218,7 @@ function(add_module NAME)
   )
 
   # Dependencies
-  add_dependencies(mod_${NAME} core)
+  target_link_libraries(mod_${NAME} core)
   foreach(MOD_DEP ${M_MOD_DEPENDENCIES})
     target_module_dependency(mod_${NAME} ${MOD_DEP} TRUE)
   endforeach()
