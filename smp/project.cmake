@@ -8,6 +8,7 @@ add_project(
     audio_win # Audio on Windows
     glslang
     imgui_console
+    imgui_game_platform
     imgui_input
     imgui_resources
     lasm # script/proxy.lasm
