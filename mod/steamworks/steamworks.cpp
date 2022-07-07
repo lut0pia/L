@@ -64,6 +64,21 @@ void steamworks_module_init() {
     exit(1);
   }
 #endif
+
+  // Write steam_appid.txt in non-release with sensible values
+#if !L_RLS
+  if(FILE* steam_appid_file = fopen("steam_appid.txt", "w")) {
+    fprintf(steam_appid_file, "%d",
+#if defined(L_STEAM_APPID)
+      L_STEAM_APPID
+#else
+      480 // Spacewar debug project
+#endif
+    );
+    fclose(steam_appid_file);
+  }
+#endif
+
   if(!SteamAPI_Init()) {
     warning("steamworks: Failed to init");
     return;
