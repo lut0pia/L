@@ -21,6 +21,7 @@ smp/*.lib
 smp/*.manifest
 smp/trace.json
 smp/imgui.ini
+smp/steam_appid.txt
 # Generated source
 *.gen
 # Generated logs
