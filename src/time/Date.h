@@ -18,6 +18,7 @@ namespace L {
     inline uint32_t hour() const { return localtime(&_time)->tm_hour; }
     inline uint32_t minute() const { return localtime(&_time)->tm_min; }
     inline uint32_t second() const { return localtime(&_time)->tm_sec; }
+    inline time_t get_time() const { return _time; }
 
     inline static Date now() { return time(nullptr); }
 
