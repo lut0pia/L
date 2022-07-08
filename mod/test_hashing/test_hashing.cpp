@@ -42,10 +42,10 @@ static size_t size_for_index(uint32_t index) {
   return 1ull << index;
 }
 
-static size_t iterations_for_index(uint32_t index) {
-  return min(
-    max(1ull, max_iterations >> index),
-    1ull << (min(7ull, size_for_index(index)) * 8));
+static size_t iterations_for_index(size_t index) {
+  return min<size_t>(
+    max<size_t>(1ull, max_iterations >> index),
+    1ull << (min<size_t>(7ull, size_for_index(index)) * 8));
 }
 
 static void hash_word(uint32_t index) {
@@ -77,7 +77,7 @@ void test_hashing_module_init() {
     bool success = true;
     total_collisions = 0;
 
-    for(uint32_t index = 0; index < max_index; index++) {
+    for(size_t index = 0; index < max_index; index++) {
       const size_t word_size = size_for_index(index);
       const size_t iterations = iterations_for_index(index);
       collisions.push(0);
@@ -87,7 +87,7 @@ void test_hashing_module_init() {
         hash_word(index);
       }
 
-      const String time_per_mb = to_string((times[index] * 1024ll * 1024ll) / (word_size * iterations));
+      const String time_per_mb = to_string((times[index] * int64_t(1ll << 20)) / (word_size * iterations));
       log("test_hashing: %d chars | %d cols / %d iters | %s/MB",
         word_size, collisions[index], iterations, time_per_mb.begin());
     }
