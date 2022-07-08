@@ -22,14 +22,15 @@ static Resource<Shader> shader_vert, shader_frag;
 static Array<Material> materials;
 static const Symbol imgui_symbol = "imgui", frag_symbol = "frag", vert_symbol = "vert";
 static Array<VertexAttribute> vertex_attributes = {
-  VertexAttribute {RenderFormat::R32G32_SFloat, VertexAttributeType::Position},
-  VertexAttribute {RenderFormat::R32G32_SFloat, VertexAttributeType::TexCoord},
-  VertexAttribute {RenderFormat::R8G8B8A8_UNorm, VertexAttributeType::Color},
+  VertexAttribute{RenderFormat::R32G32_SFloat, VertexAttributeType::Position},
+  VertexAttribute{RenderFormat::R32G32_SFloat, VertexAttributeType::TexCoord},
+  VertexAttribute{RenderFormat::R8G8B8A8_UNorm, VertexAttributeType::Color},
 };
 static String text_input;
 static InputContext input_context;
 static bool menu_open = false;
 static bool demo_open = false;
+static Table<String, bool> window_open;
 
 bool imgui_begin_main_menu_bar() {
   return menu_open && ImGui::BeginMainMenuBar();
@@ -37,6 +38,28 @@ bool imgui_begin_main_menu_bar() {
 
 void imgui_end_main_menu_bar() {
   ImGui::EndMainMenuBar();
+}
+
+bool imgui_begin_toggleable_window(const char* path) {
+  bool new_window;
+  bool* opened = window_open.find_or_create(path, &new_window);
+
+  if(new_window) {
+    *opened = false;
+  }
+
+  if(imgui_begin_main_menu_bar()) {
+    if(ImGui::BeginMenu("Window")) {
+      ImGui::MenuItem(path, "", opened);
+      ImGui::EndMenu();
+    }
+    imgui_end_main_menu_bar();
+  }
+
+  return *opened && ImGui::Begin(path, opened);
+}
+void imgui_end_toggleable_window() {
+  ImGui::End();
 }
 
 static void imgui_new_frame() {
@@ -101,10 +124,10 @@ static void imgui_update() {
         material.cull_mode(CullMode::None);
       }
       Material& material = materials[material_count++];
-      material.scissor(Interval2i {
+      material.scissor(Interval2i{
         Vector2i{int(cmd.ClipRect.x), int(cmd.ClipRect.y)},
         Vector2i{int(cmd.ClipRect.z), int(cmd.ClipRect.w)},
-        });
+      });
       material.vertex_count(cmd.ElemCount);
       material.index_offset(cmd.IdxOffset + global_idx_offset);
     }
@@ -296,7 +319,7 @@ void imgui_module_init() {
   ImGui::NewFrame();
 
   // Defer init because we need resources and task system up
-  Engine::add_deferred_action(Engine::DeferredAction {
+  Engine::add_deferred_action(Engine::DeferredAction{
     [](void*) {
       font_tex = ".imgui";
       mesh = ".imgui";
@@ -306,7 +329,7 @@ void imgui_module_init() {
       Engine::add_gui(imgui_gui, true);
       Engine::add_window_event(imgui_window_event);
     }});
-  
+
   Engine::add_shutdown(
     []() {
       materials.clear();

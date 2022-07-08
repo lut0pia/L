@@ -11,26 +11,11 @@ using namespace L;
 
 #if !L_RLS
 
-static bool opened = false;
-
 static Table<Symbol, Color> type_colors;
 static uint32_t state_mask = (1 << uint32_t(ResourceState::Loading)) | (1 << uint32_t(ResourceState::Failed));
 
 static void imgui_resources_update() {
-  if(imgui_begin_main_menu_bar()) {
-    if(ImGui::BeginMenu("Window")) {
-      ImGui::MenuItem("Resources", "", &opened);
-      ImGui::EndMenu();
-    }
-    imgui_end_main_menu_bar();
-  }
-
-  if(!opened) {
-    return;
-  }
-
-  if(!ImGui::Begin("Resources", &opened)) {
-    ImGui::End();
+  if(!imgui_begin_toggleable_window("Resources")) {
     return;
   }
 
@@ -152,7 +137,7 @@ static void imgui_resources_update() {
 
   ImGui::EndTable();
 
-  ImGui::End();
+  imgui_end_toggleable_window();
 }
 #endif
 

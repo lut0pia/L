@@ -6,23 +6,8 @@
 
 using namespace L;
 
-static bool opened = false;
-
 static void imgui_input_update() {
-  if(imgui_begin_main_menu_bar()) {
-    if(ImGui::BeginMenu("Window")) {
-      ImGui::MenuItem("Input", "", &opened);
-      ImGui::EndMenu();
-    }
-    imgui_end_main_menu_bar();
-  }
-
-  if(!opened) {
-    return;
-  }
-
-  if(!ImGui::Begin("Input", &opened)) {
-    ImGui::End();
+  if(!imgui_begin_toggleable_window("Input")) {
     return;
   }
 
@@ -64,7 +49,7 @@ static void imgui_input_update() {
     }
   }
 
-  ImGui::End();
+  imgui_end_toggleable_window();
 }
 
 void imgui_input_module_init() {
