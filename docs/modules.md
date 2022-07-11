@@ -7,7 +7,7 @@ Modules can register loading functions to the resource mechanism to create resou
 - `blue_noise`: Generate blue noise textures using the void and cluster algorithm
 - `glslang`: Load shaders from `.vert` and `.frag` files using `glslang`
 - `lasm`: Load scripts from `.lasm` files
-- [`ls`](module/ls.md): Load scripts from `.ls` files
+- [`ls`](../mod/ls): Load scripts from `.ls` files
 - `mid`: Load midi sequences from `.mid` and `.midi` files
 - `pixel_font`: Generate a very simple debug font
 - `script_material`: Load materials from any script file
