@@ -19,6 +19,7 @@ Modules can register loading functions to the resource mechanism to create resou
 - `stb_vorbis`: Load audio streams from `.ogg` files
 - `wav`: Load audio streams from `.wav` files
 - `wavefront_obj`: Load meshes from `.obj` files
+- `yaml`: Load objects from `.yaml` files
 
 ## Transformers
 Modules can register transform functions to the resource mechanism to transform resources after being loaded. Here's a list of such modules already included:
@@ -29,21 +30,39 @@ Modules can register transform functions to the resource mechanism to transform 
 
 ## Interfaces
 Modules can register objects or mechanisms to interact with an external system. Here's a list of such modules already included:
+
+### Audio Output
 - `alsa`: Render audio to ALSA
 - `audio_win`: Render audio to WASAPI
+
+### Compression
+- `lz`: Custom LZ compression
+- `zlib`: zlib compression
+
+### Game Platform
+- `steamworks`: Steam
+
+### Input
 - `joystick_unix`: Register `/dev/input` joysticks as devices
-- `midi_win`: Play Midi events to Windows MidiOut
-- `opengl`: Implement OpenGL renderer
 - `rawinput`: Register Windows HIDs as devices
-- `vulkan`: Implement Vulkan renderer
-- `window_win`: Open Windows windows
 - `xinput_unix`: Register X XInput2 devices as devices
 - `xinput_win`: Register Windows XInput devices as devices
-- `xlib`: Open X windows
+
+### Midi
+- `midi_win`: Play Midi events to Windows MidiOut
+
+### Renderer
+- `opengl`: Implement OpenGL renderer
+- `vulkan`: Implement Vulkan renderer
+
+### Window
+- `win32`: Windows windows
+- `xlib`: X windows
 
 ## Debug
 - `imgui`: Dear ImGui integration
 - `imgui_console`: Add a console for executing script (opens with Ctrl+F12)
+- `imgui_game_platform`: Display game platform achievements
 - `imgui_input`: Display input context stack and input values
 - `imgui_resources`: Display resources along with their loading status
 - `script_server`: Implement telnet server to execute script remotely
