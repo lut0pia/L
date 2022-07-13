@@ -16,6 +16,8 @@ void AudioEngine::init_instance() {
   if(implementations.size() == 0) {
     log("No audio engine implementation available");
     return;
+  } else if(implementations.size() > 1) {
+    warning("Multiple audio engine implementations available, only one will be used");
   }
   
   script_registration();
