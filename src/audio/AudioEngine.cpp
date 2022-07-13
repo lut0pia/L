@@ -43,13 +43,13 @@ void AudioEngine::script_registration() {
 
   register_script_function("post_audio_event", [](ScriptContext& c) {
     if(_instance && c.param_count() > 0) {
-      _instance->post_event(c.param(0).get<String>(), get_optional_entity(c, 1));
+      _instance->post_event(c.param(0).get<Symbol>(), get_optional_entity(c, 1));
     }
   });
 
   register_script_function("set_audio_parameter", [](ScriptContext& c) {
     if(_instance && c.param_count() > 0) {
-      _instance->set_parameter(c.param(0).get<String>(), c.param(1).get<float>(), get_optional_entity(c, 2));
+      _instance->set_parameter(c.param(0).get<Symbol>(), c.param(1).get<float>(), get_optional_entity(c, 2));
     }
   });
 }

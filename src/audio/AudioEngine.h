@@ -13,8 +13,8 @@ namespace L {
     virtual void init() = 0;
 
     virtual void set_listener(Handle<Entity> entity) = 0;
-    virtual void post_event(const char* name, Handle<Entity> entity = nullptr) = 0;
-    virtual void set_parameter(const char* name, float value, Handle<Entity> entity = nullptr) = 0;
+    virtual void post_event(const Symbol& name, Handle<Entity> entity = nullptr) = 0;
+    virtual void set_parameter(const Symbol& name, float value, Handle<Entity> entity = nullptr) = 0;
 
     inline static AudioEngine* get() { return _instance; }
     static void init_instance();

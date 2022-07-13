@@ -158,7 +158,7 @@ public:
     _listener_object_id = get_goid_for_entity(entity);
     AK::SoundEngine::SetDefaultListeners(&_listener_object_id, 1);
   }
-  virtual void post_event(const char* name, Handle<Entity> entity) override {
+  virtual void post_event(const Symbol& name, Handle<Entity> entity) override {
     AkGameObjectID goid = get_goid_for_entity(entity);
     if(goid == AK_INVALID_GAME_OBJECT) {
       // Default to listener game object for convenience
@@ -167,7 +167,7 @@ public:
     }
     AK::SoundEngine::PostEvent(name, goid);
   }
-  virtual void set_parameter(const char* name, float value, Handle<Entity> entity) override {
+  virtual void set_parameter(const Symbol& name, float value, Handle<Entity> entity) override {
     AK::SoundEngine::SetRTPCValue(name, value, get_goid_for_entity(entity));
   }
 
@@ -178,7 +178,7 @@ public:
     } else if(entity.is_valid()) {
       goid = _next_goid;
       if(NameComponent* name_component = entity->get_component<NameComponent>()) {
-        AK::SoundEngine::RegisterGameObj(_next_goid++, name_component->name());
+        AK::SoundEngine::RegisterGameObj(_next_goid++, name_component->get_name());
       } else {
         AK::SoundEngine::RegisterGameObj(_next_goid++);
       }
