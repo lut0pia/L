@@ -49,6 +49,8 @@ using namespace L;
 
 CAkFilePackageLowLevelIOBlocking low_level_io;
 
+static class WwiseAudioEngine* wwise_audio_engine = nullptr;
+
 class WwiseAudioEngine : public AudioEngine {
 protected:
   Table<Handle<Entity>, AkGameObjectID> _objects;
@@ -116,6 +118,13 @@ public:
     AkBankID bank_id;
     AK::SoundEngine::LoadBank(AKTEXT("Init"), bank_id);
     AK::SoundEngine::LoadBank(AKTEXT("Main"), bank_id);
+
+    Engine::add_late_update([]() {
+      wwise_audio_engine->update();
+    });
+    Engine::add_shutdown([]() {
+      wwise_audio_engine->shutdown();
+    });
   }
   void shutdown() {
 #ifndef AK_OPTIMIZED
@@ -200,11 +209,5 @@ public:
 };
 
 void wwise_module_init() {
-  static WwiseAudioEngine wwise_audio_engine;
-  Engine::add_late_update([]() {
-    wwise_audio_engine.update();
-  });
-  Engine::add_shutdown([]() {
-    wwise_audio_engine.shutdown();
-  });
+  wwise_audio_engine = Memory::new_type<WwiseAudioEngine>();
 }
