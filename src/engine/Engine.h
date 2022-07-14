@@ -47,6 +47,7 @@ namespace L {
     static void add_late_update(void(*late_update)()) { _late_updates.push(late_update); }
     static void add_shutdown(void(*shutdown)()) { _shutdowns.push(shutdown); }
     static void add_render(void(*render)(const class Camera&, const RenderPassImpl*)) { _renders.push(render); }
+    static void add_audio_render(void (*audio_render)(void*, uint32_t)) { _audio_renders.push(audio_render); }
     static void add_gui(void(*gui)(const class Camera&), bool debug = false) { debug ? _guis.push(gui) : _guis.insert(0, gui); }
     static void add_window_event(void(*win_event)(const struct Window::Event&)) { _win_events.push((void(*)(const struct Window::Event&))win_event); }
     template <class T> inline static void register_component() {
