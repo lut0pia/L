@@ -112,7 +112,7 @@ bool assimp_shader_loader(ResourceSlot& slot, Shader::Intermediate& intermediate
     }
     source += "metal_rough *= metal_rough_factor;\n";
 
-    source += "ocolor.rgb = linearize(color.rgb);\n";
+    source += "ocolor.rgb = color.rgb;\n";
     source += "ocolor.a = metal_rough.b;\n"; // Metalness
     source += "onormal.xy = encodeNormal(normal);\n";
     source += "onormal.z = metal_rough.g;\n"; // Roughness
