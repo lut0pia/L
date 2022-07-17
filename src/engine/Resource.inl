@@ -2,6 +2,7 @@
 
 #include "Resource.h"
 #include "../container/Buffer.h"
+#include "../container/KeyValue.h"
 #include "../container/Table.h"
 #include "../dev/profiling.h"
 #include "../stream/BufferStream.h"
@@ -13,18 +14,32 @@ namespace L {
   template <class T> inline void resource_read_dev(Stream&, T&) {}
   template <class T> inline size_t resource_cpu_size(const T& v) { return get_cpu_size(v); }
   template <class T> inline size_t resource_gpu_size(const T&) { return 0; }
+  enum class ResourceTransformPhase {
+    VeryEarly,
+    Early,
+    Default,
+    Late,
+    VeryLate,
+  };
   template <class T>
   class ResourceLoading {
     typedef bool(*Loader)(ResourceSlot&, typename T::Intermediate&);
     typedef void(*Transformer)(const ResourceSlot&, typename T::Intermediate&);
+    
     static Array<Loader> _loaders;
-    static Array<Transformer> _transformers;
+    static Array<KeyValue<ResourceTransformPhase, Transformer>> _transformers;
   public:
     static void add_loader(Loader loader) {
       _loaders.push(loader);
     }
-    static void add_transformer(Transformer transformer) {
-      _transformers.push(transformer);
+    static void add_transformer(Transformer transformer, ResourceTransformPhase phase = ResourceTransformPhase::Default) {
+      for(uintptr_t i = 0; i < _transformers.size(); i++) {
+        if(_transformers[i].key() >= phase) {
+          _transformers.insert(i, key_value(phase, transformer));
+          return;
+        }
+      }
+      _transformers.push(key_value(phase, transformer));
     }
     static bool load(ResourceSlot& slot) {
       if(slot.value) {
@@ -70,8 +85,8 @@ namespace L {
 
       // Try to load it from source
       if(load_internal(slot, intermediate)) {
-        for(Transformer transformer : _transformers) {
-          transformer(slot, intermediate);
+        for(KeyValue<ResourceTransformPhase, Transformer> transformer : _transformers) {
+          transformer.value()(slot, intermediate);
         }
 
         StringStream uncompressed_stream, compressed_stream;
@@ -121,7 +136,7 @@ namespace L {
     }
   };
   template <class T> Array<typename ResourceLoading<T>::Loader> ResourceLoading<T>::_loaders;
-  template <class T> Array<typename ResourceLoading<T>::Transformer> ResourceLoading<T>::_transformers;
+  template <class T> Array<KeyValue<ResourceTransformPhase, typename ResourceLoading<T>::Transformer>> ResourceLoading<T>::_transformers;
 
   template <class T> void Resource<T>::load_function(ResourceSlot& slot) {
     ResourceLoading<T>::load(slot);
