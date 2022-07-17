@@ -21,6 +21,7 @@ namespace L {
   template <class T> inline constexpr T abs(const T& n) { return (n<0) ? -n : n; }
   template <class T> inline constexpr T sqr(const T& x) { return x*x; }
   inline constexpr uint32_t bitmask(uint32_t bits) { return ~(~0u<<bits); }
+  template <class T> inline constexpr T is_pot(const T& x) { return x != 0 && !(x & (x - 1)); }
 
   template <class T> T pmod(T x, const T& m) {
     while(x>=m)x -= m;
