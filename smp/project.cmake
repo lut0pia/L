@@ -6,6 +6,7 @@ add_project(
     alsa # Audio on Linux
     assimp # .glb files
     audio_win # Audio on Windows
+    cro_mipmap # Generate mipmaps for textures
     glslang
     imgui_console
     imgui_game_platform
