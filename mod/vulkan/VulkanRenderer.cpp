@@ -311,7 +311,7 @@ bool VulkanRenderer::init(GenericWindowData* generic_window_data) {
     samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
     samplerInfo.mipLodBias = 0.0f;
     samplerInfo.minLod = 0.0f;
-    samplerInfo.maxLod = 0.0f;
+    samplerInfo.maxLod = 256.0f;
 
     L_VK_CHECKED(vkCreateSampler(VulkanRenderer::device(), &samplerInfo, nullptr, &_sampler));
   }

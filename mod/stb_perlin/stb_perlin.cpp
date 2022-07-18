@@ -66,7 +66,7 @@ static bool perlin_noise_loader(ResourceSlot& slot, Texture::Intermediate& inter
   intermediate.width = size;
   intermediate.height = size;
   intermediate.format = RenderFormat::R8_UNorm;
-  intermediate.binary = Buffer(size*size);
+  intermediate.mips.push(Buffer(size*size));
 
   const float mult = float(span) / size;
 
@@ -74,14 +74,14 @@ static bool perlin_noise_loader(ResourceSlot& slot, Texture::Intermediate& inter
     for(uint32_t x(0); x < size; x++) {
       for(uint32_t y(0); y < size; y++) {
         const float noise = ridge(x * mult, y * mult, lacunarity, gain, octaves, wrap);
-        ((uint8_t*)intermediate.binary.data())[x*size + y] = uint8_t(noise * 255.f);
+        ((uint8_t*)intermediate.mips[0].data())[x*size + y] = uint8_t(noise * 255.f);
       }
     }
   } else {
     for(uint32_t x(0); x < size; x++) {
       for(uint32_t y(0); y < size; y++) {
         const float noise = turbulence(x * mult, y * mult, lacunarity, gain, octaves, wrap);
-        ((uint8_t*)intermediate.binary.data())[x*size + y] = uint8_t(noise * 255.f);
+        ((uint8_t*)intermediate.mips[0].data())[x*size + y] = uint8_t(noise * 255.f);
       }
     }
   }

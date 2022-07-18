@@ -305,7 +305,7 @@ void imgui_module_init() {
       unsigned char* pixels;
       int width, height;
       io.Fonts->GetTexDataAsAlpha8(&pixels, &width, &height);
-      intermediate.binary = Buffer(pixels, width * height);
+      intermediate.mips.push(Buffer(pixels, width * height));
       intermediate.width = width;
       intermediate.height = height;
       intermediate.format = RenderFormat::R8_UNorm;

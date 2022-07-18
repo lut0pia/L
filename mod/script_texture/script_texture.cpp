@@ -20,16 +20,17 @@ public:
 
 protected:
   inline void set_pixel_internal(uintptr_t x, uintptr_t y, const Color& c) {
-    *(Color*)_texture.binary.data((x + y * _texture.width) * sizeof(Color)) = c;
+    *(Color*)_texture.mips[0].data((x + y * _texture.width) * sizeof(Color)) = c;
   }
 };
 
 void ScriptTexture::create(float fwidth, float fheight) {
   _texture.width = uint32_t(fwidth);
   _texture.height = uint32_t(fheight);
-  _texture.binary = Buffer(_texture.width*_texture.height * 4);
+  _texture.mips.clear();
+  _texture.mips.push(Buffer(_texture.width*_texture.height * 4));
   _texture.format = RenderFormat::R8G8B8A8_UNorm;
-  memset(_texture.binary.data(), 0, _texture.binary.size());
+  memset(_texture.mips[0].data(), 0, _texture.mips[0].size());
 }
 void ScriptTexture::set_pixel(float x, float y, const Color& c) {
   set_pixel_internal(uintptr_t(x), uintptr_t(y), c);

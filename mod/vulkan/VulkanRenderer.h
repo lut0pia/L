@@ -22,7 +22,7 @@ struct VulkanTexture : public L::TextureImpl {
   VkDeviceMemory memory;
   VkImage image;
   VkImageView view;
-  uint32_t width, height, layer_count;
+  uint32_t width, height, layer_count, mip_count;
   bool is_depth;
 };
 
@@ -178,8 +178,8 @@ public:
     L::DepthFunc depth_func) override;
   virtual void destroy_pipeline(L::PipelineImpl*) override;
 
-  virtual L::TextureImpl* create_texture(uint32_t width, uint32_t height, L::RenderFormat format, const void* data, size_t size) override;
-  virtual void load_texture(L::TextureImpl* texture, const void* data, size_t size, const L::Vector3i& offset, const L::Vector3i& extent) override;
+  virtual L::TextureImpl* create_texture(uint32_t width, uint32_t height, L::RenderFormat format, const void** mip_data, size_t* mip_size, size_t mip_count) override;
+  virtual void load_texture(L::TextureImpl* texture, const void* data, size_t size, const L::Vector3i& offset, const L::Vector3i& extent, uint32_t mip_level) override;
   virtual void destroy_texture(L::TextureImpl* texture) override;
 
   virtual L::MeshImpl* create_mesh(size_t count, const void* data, size_t size, const L::VertexAttribute* attributes, size_t acount, const uint16_t* iarray, size_t icount) override;

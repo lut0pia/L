@@ -42,7 +42,7 @@ bool stb_image_loader(ResourceSlot& slot, Texture::Intermediate& intermediate) {
     intermediate.width = width;
     intermediate.height = height;
     intermediate.format = RenderFormat::R8G8B8A8_UNorm;
-    intermediate.binary = Buffer(img, width * height * 4);
+    intermediate.mips.push(Buffer(img, width * height * 4));
     stbi_image_free(img);
     return true;
   } else {

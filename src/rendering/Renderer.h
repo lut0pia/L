@@ -190,8 +190,8 @@ namespace L {
       DepthFunc depth_func) = 0;
     virtual void destroy_pipeline(PipelineImpl*) = 0;
 
-    virtual TextureImpl* create_texture(uint32_t width, uint32_t height, RenderFormat format, const void* data = nullptr, size_t size = 0) = 0;
-    virtual void load_texture(TextureImpl* texture, const void* data, size_t size, const Vector3i& offset, const Vector3i& extent) = 0;
+    virtual TextureImpl* create_texture(uint32_t width, uint32_t height, RenderFormat format, const void** mip_data = nullptr, size_t* mip_sizes = 0, size_t mip_count = 1) = 0;
+    virtual void load_texture(TextureImpl* texture, const void* data, size_t size, const Vector3i& offset, const Vector3i& extent, uint32_t mip_level = 0) = 0;
     virtual void destroy_texture(TextureImpl* texture) = 0;
 
     virtual MeshImpl* create_mesh(size_t count, const void* data, size_t size, const VertexAttribute* attributes, size_t acount, const uint16_t* iarray, size_t icount) = 0;

@@ -15,7 +15,7 @@ static void transition_layout(VulkanTexture* tex, VkCommandBuffer cmd_buffer, Vk
   barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
   barrier.image = tex->image;
   barrier.subresourceRange.baseMipLevel = 0;
-  barrier.subresourceRange.levelCount = 1;
+  barrier.subresourceRange.levelCount = tex->mip_count;
   barrier.subresourceRange.baseArrayLayer = 0;
   barrier.subresourceRange.layerCount = tex->layer_count;
 
@@ -66,7 +66,7 @@ static void transition_layout(VulkanTexture* tex, VkCommandBuffer cmd_buffer, Vk
 }
 
 
-TextureImpl* VulkanRenderer::create_texture(uint32_t width, uint32_t height, L::RenderFormat format, const void* data, size_t size) {
+TextureImpl* VulkanRenderer::create_texture(uint32_t width, uint32_t height, L::RenderFormat format, const void** mip_data, size_t* mip_size, size_t mip_count) {
   const bool depth_texture(Renderer::is_depth_format(format));
   const bool compressed_texture(Renderer::is_block_format(format));
   const bool cubemap(width*6==height);
@@ -74,6 +74,7 @@ TextureImpl* VulkanRenderer::create_texture(uint32_t width, uint32_t height, L::
   VulkanTexture* tex = Memory::new_type<VulkanTexture>();
   tex->width = width;
   tex->height = height;
+  tex->mip_count = uint32_t(mip_count);
   tex->is_depth = depth_texture;
 
   VkImageCreateInfo image_info = {};
@@ -82,7 +83,7 @@ TextureImpl* VulkanRenderer::create_texture(uint32_t width, uint32_t height, L::
   image_info.extent.width = width;
   image_info.extent.height = height = cubemap ? width : height;
   image_info.extent.depth = 1;
-  image_info.mipLevels = 1;
+  image_info.mipLevels = tex->mip_count;
   image_info.arrayLayers = tex->layer_count = cubemap ? 6 : 1;
   image_info.format = tex->format = to_vk_format(format);
   image_info.tiling = VK_IMAGE_TILING_OPTIMAL;
@@ -115,14 +116,16 @@ TextureImpl* VulkanRenderer::create_texture(uint32_t width, uint32_t height, L::
   viewInfo.format = tex->format;
   viewInfo.subresourceRange.aspectMask = depth_texture ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT;
   viewInfo.subresourceRange.baseMipLevel = 0;
-  viewInfo.subresourceRange.levelCount = 1;
+  viewInfo.subresourceRange.levelCount = tex->mip_count;
   viewInfo.subresourceRange.baseArrayLayer = 0;
   viewInfo.subresourceRange.layerCount = tex->layer_count;
 
   L_VK_CHECKED(vkCreateImageView(_device, &viewInfo, nullptr, &tex->view));
 
-  if(data) { // Optional loading of texture data
-    load_texture(tex, data, size, 0, Vector3i(width, height, 1));
+  if(mip_data) { // Optional loading of texture data
+    for(uint32_t mip_level = 0; mip_level < mip_count; mip_level++) {
+      load_texture(tex, mip_data[mip_level], mip_size[mip_level], 0, Vector3i(width >> mip_level, height >> mip_level, 1), mip_level);
+    }
   }
 
   return tex;
@@ -133,7 +136,7 @@ void VulkanRenderer::destroy_texture(TextureImpl* tex) {
   Memory::delete_type(vk_tex);
 }
 
-void VulkanRenderer::load_texture(TextureImpl* tex, const void* data, size_t size, const L::Vector3i& offset, const L::Vector3i& extent) {
+void VulkanRenderer::load_texture(TextureImpl* tex, const void* data, size_t size, const L::Vector3i& offset, const L::Vector3i& extent, uint32_t mip_level) {
   VulkanTexture* vk_tex = (VulkanTexture*)tex;
   VulkanBuffer buffer(size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT);
 
@@ -151,7 +154,7 @@ void VulkanRenderer::load_texture(TextureImpl* tex, const void* data, size_t siz
   region.bufferImageHeight = 0;
 
   region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-  region.imageSubresource.mipLevel = 0;
+  region.imageSubresource.mipLevel = mip_level;
   region.imageSubresource.baseArrayLayer = 0;
   region.imageSubresource.layerCount = vk_tex->layer_count;
 

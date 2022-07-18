@@ -24,7 +24,7 @@ bool assimp_texture_loader(ResourceSlot& slot, Texture::Intermediate& intermedia
     slot.source_buffer = Buffer(texture->pcData, texture->mWidth);
     return ResourceLoading<Texture>::load_internal(slot, intermediate);
   } else {
-    intermediate.binary = Buffer(texture->pcData, texture->mWidth * texture->mHeight * 4);
+    intermediate.mips.push(Buffer(texture->pcData, texture->mWidth * texture->mHeight * 4));
     intermediate.width = texture->mWidth;
     intermediate.height = texture->mHeight;
     intermediate.format = RenderFormat::R8G8B8A8_UNorm;

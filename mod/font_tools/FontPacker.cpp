@@ -7,13 +7,14 @@
 using namespace L;
 
 FontPacker::FontPacker(Font::Intermediate& intermediate) : _intermediate(intermediate) {
+  _intermediate.texture_intermediate.mips.size(1);
   _xs.insert(0);
   _ys.insert(0);
 }
 void FontPacker::grow() {
   const uint32_t old_size(_intermediate.texture_intermediate.width);
   const uint32_t new_size(max(old_size, 8u)*2);
-  Buffer& old_binary(_intermediate.texture_intermediate.binary);
+  Buffer& old_binary(_intermediate.texture_intermediate.mips[0]);
   Buffer new_binary(new_size*new_size);
   memset(new_binary.data(), 0xff, new_binary.size()); // Max distance
   if(old_size) { // Copy old values
@@ -44,7 +45,7 @@ Interval2i FontPacker::add_bmp(const uint8_t* data, uint32_t width, uint32_t hei
       {
         const uint32_t atlas_size(_intermediate.texture_intermediate.width);
         for(uint32_t row(0); row<height; row++) {
-          memcpy((uint8_t*)_intermediate.texture_intermediate.binary.data()+atlas_size*(row+pos.y())+pos.x(), data+width*row, width);
+          memcpy((uint8_t*)_intermediate.texture_intermediate.mips[0].data()+atlas_size*(row+pos.y())+pos.x(), data+width*row, width);
         }
       }
       _parts.insert(candidate, true);
