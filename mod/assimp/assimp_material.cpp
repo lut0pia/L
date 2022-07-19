@@ -45,16 +45,16 @@ bool assimp_material_loader(ResourceSlot& slot, Material::Intermediate& intermed
   const bool textured = has_color_texture || has_normal_texture || has_metal_rough_texture;
 
   if(has_color_texture) {
-    intermediate.texture("color_texture", slot.path + "?comp=bc1&texture=" + (color_texture_path.C_Str() + 1));
+    intermediate.texture("color_texture", slot.path + "?texture=" + (color_texture_path.C_Str() + 1));
     shader_options += "&color_texture";
   }
   if(has_normal_texture) {
-    intermediate.texture("normal_texture", slot.path + "?comp=bc1&texture=" + (normal_texture_path.C_Str() + 1));
+    intermediate.texture("normal_texture", slot.path + "?texture=" + (normal_texture_path.C_Str() + 1));
     shader_options += "&normal_texture";
     mesh_format += "t"; // Need tangents
   }
   if(has_metal_rough_texture) {
-    intermediate.texture("metal_rough_texture", slot.path + "?comp=bc1&texture=" + (metal_rough_texture_path.C_Str() + 1));
+    intermediate.texture("metal_rough_texture", slot.path + "?texture=" + (metal_rough_texture_path.C_Str() + 1));
     shader_options += "&metal_rough_texture";
   }
   if(textured) {

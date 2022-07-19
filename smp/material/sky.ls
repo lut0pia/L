@@ -2,4 +2,4 @@
 (self.shader 'vertex "shader/sky.vert")
 (self.mesh "mesh/sphere.ls?fmt=n")
 (self.cull_mode 'front)
-(self.texture 'cubemap "texture/skybox.png?comp=bc1")
+(self.texture 'cubemap "texture/skybox.png")

@@ -1,5 +1,5 @@
 (self.shader 'fragment "shader/staticmesh.frag")
 (self.shader 'vertex "shader/staticmesh.vert")
 (self.mesh "mesh/jerrican.obj?fmt=pnu")
-(self.texture 'tex "texture/jerrican.png?comp=bc1")
+(self.texture 'tex "texture/jerrican.png")
 (self.texture 'mat_tex "texture/jerrican_mat.png")

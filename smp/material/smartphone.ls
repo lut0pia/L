@@ -1,5 +1,5 @@
 (self.shader 'fragment "shader/staticmesh.frag")
 (self.shader 'vertex "shader/staticmesh.vert")
 (self.mesh "mesh/smartphone.obj?fmt=pnu")
-(self.texture 'tex "texture/smartphone.png?comp=bc1")
+(self.texture 'tex "texture/smartphone.png")
 (self.texture 'mat_tex "texture/smartphone_mat.png")

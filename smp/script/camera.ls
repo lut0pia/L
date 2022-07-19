@@ -33,7 +33,7 @@
   (self.logo_gui.material|.shader 'fragment "shader/texture.frag")
   (self.logo_gui.material|.shader 'vertex "shader/quad.vert")
   (self.logo_gui.material|.render_pass 'present)
-  (self.logo_gui.material|.texture 'tex "texture/logo.ls?comp=bc3")
+  (self.logo_gui.material|.texture 'tex "texture/logo.ls")
   (self.logo_gui.material|.vertex_count 6)
   (self.logo_gui.offset 10 10)
 )))
