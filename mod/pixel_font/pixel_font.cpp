@@ -39,6 +39,8 @@ bool pixel_font_loader(ResourceSlot& slot, Font::Intermediate& intermediate) {
 #include "glyphs.def"
 #undef MAKE_GLYPH
 
+  ResourceLoading<Texture>::transform_internal(slot, intermediate.texture_intermediate);
+  
   return true;
 }
 

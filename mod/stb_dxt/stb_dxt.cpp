@@ -27,15 +27,43 @@ static bool uses_alpha(const Texture::Intermediate& intermediate) {
   return false;
 }
 
-void stb_dxt_transformer(const ResourceSlot& slot, Texture::Intermediate& intermediate) {
-  if(intermediate.format == RenderFormat::R8G8B8A8_UNorm &&
-     intermediate.width % 4 == 0 &&
-     intermediate.height % 4 == 0) {
+static RenderFormat get_destination_format(const Texture::Intermediate& intermediate) {
+  if(intermediate.width % 4 == 0 && intermediate.height % 4 == 0) {
+    if(intermediate.format == RenderFormat::R8G8B8A8_UNorm) {
+      if(uses_alpha(intermediate)) {
+        return RenderFormat::BC3_UNorm_Block;
+      } else {
+        return RenderFormat::BC1_RGB_UNorm_Block;
+      }
+    } else if(intermediate.format == RenderFormat::R8_UNorm) {
+      return RenderFormat::BC4_UNorm_Block;
+    }
+  }
+  return RenderFormat::Undefined;
+}
+
+static size_t get_block_size(const RenderFormat& fmt) {
+  switch(fmt) {
+    case RenderFormat::BC1_RGB_UNorm_Block:
+    case RenderFormat::BC4_UNorm_Block:
+      return 8;
+    case RenderFormat::BC3_UNorm_Block:
+      return 16;
+    default:
+      return 0;
+  }
+}
+
+void stb_dxt_transformer(const ResourceSlot&, Texture::Intermediate& intermediate) {
+  const RenderFormat dest_format = get_destination_format(intermediate);
+  if(dest_format != RenderFormat::Undefined) {
+    L_SCOPE_MARKER("stb_dxt");
 
     const bool alpha = uses_alpha(intermediate);
-    const uintptr_t block_size_bytes(alpha ? 16 : 8);
-    const uintptr_t block_size_pixels(16);
-    intermediate.format = alpha ? RenderFormat::BC3_UNorm_Block : RenderFormat::BC1_RGB_UNorm_Block;
+    const uintptr_t block_size_bytes = get_block_size(dest_format);
+    const uintptr_t pixel_bytes = Renderer::format_size(intermediate.format);
+    const uintptr_t block_size_pixels = 16;
+    intermediate.format = dest_format;
 
     for(uintptr_t mip = 0; mip < intermediate.mips.size(); mip++) {
       const uint32_t mip_width = intermediate.width >> mip;
@@ -45,15 +73,25 @@ void stb_dxt_transformer(const ResourceSlot& slot, Texture::Intermediate& interm
         Buffer compressed = (mip_width * mip_height * block_size_bytes) / block_size_pixels;
         const uint32_t width_block(mip_width / 4), height_block(mip_height / 4);
 
-        L_SCOPE_MARKER("stb_compress_dxt_block");
         for(uint32_t x(0); x < width_block; x++) {
           for(uint32_t y(0); y < height_block; y++) {
             uint8_t src_block[block_size_pixels * 4];
-            const uint8_t* src((const uint8_t*)uncompressed.data() + (x * 4 + y * mip_width * 4) * 4);
-            for(uint32_t row(0); row < 4; row++) {
-              memcpy(src_block + row * 4 * 4, src + row * mip_width * 4, 4 * 4);
+            const uint8_t* src = (const uint8_t*)uncompressed.data() + (x * 4 + y * mip_width * 4) * pixel_bytes;
+            for(uint32_t row = 0; row < 4; row++) {
+              memcpy(src_block + row * 4 * pixel_bytes, src + row * mip_width * pixel_bytes, 4 * pixel_bytes);
             }
-            stb_compress_dxt_block((uint8_t*)compressed.data() + (x + y * width_block) * block_size_bytes, src_block, alpha, STB_DXT_HIGHQUAL);
+            uint8_t* dst_block = (uint8_t*)compressed.data() + (x + y * width_block) * block_size_bytes;
+            switch(dest_format) {
+              case RenderFormat::BC1_RGB_UNorm_Block:
+                stb_compress_dxt_block(dst_block, src_block, false, STB_DXT_HIGHQUAL);
+                break;
+              case RenderFormat::BC3_UNorm_Block:
+                stb_compress_dxt_block(dst_block, src_block, true, STB_DXT_HIGHQUAL);
+                break;
+              case RenderFormat::BC4_UNorm_Block:
+                stb_compress_bc4_block(dst_block, src_block);
+                break;
+            }
           }
         }
 

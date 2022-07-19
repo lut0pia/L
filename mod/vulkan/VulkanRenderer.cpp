@@ -731,6 +731,7 @@ VkFormat VulkanRenderer::to_vk_format(L::RenderFormat format) {
 
     case RenderFormat::BC1_RGB_UNorm_Block: return VK_FORMAT_BC1_RGB_UNORM_BLOCK;
     case RenderFormat::BC3_UNorm_Block: return VK_FORMAT_BC3_UNORM_BLOCK;
+    case RenderFormat::BC4_UNorm_Block: return VK_FORMAT_BC4_UNORM_BLOCK;
     default: L::error("vulkan: Unknown render format");
   }
 

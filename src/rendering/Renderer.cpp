@@ -81,6 +81,7 @@ bool Renderer::is_block_format(RenderFormat format) {
   switch(format) {
     case RenderFormat::BC1_RGB_UNorm_Block:
     case RenderFormat::BC3_UNorm_Block:
+    case RenderFormat::BC4_UNorm_Block:
       return true;
     default: return false;
   }

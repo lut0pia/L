@@ -467,6 +467,7 @@ GLint OpenGLRenderer::to_gl_internal_format(L::RenderFormat format) {
 
     case RenderFormat::BC1_RGB_UNorm_Block: return GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
     case RenderFormat::BC3_UNorm_Block: return GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+    case RenderFormat::BC4_UNorm_Block: return GL_COMPRESSED_RED_RGTC1_EXT;
 
     default: L::error("opengl: Unknown internal format for render format");
   }

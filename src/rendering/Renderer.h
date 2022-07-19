@@ -50,6 +50,7 @@ namespace L {
 
     BC1_RGB_UNorm_Block,
     BC3_UNorm_Block,
+    BC4_UNorm_Block,
   };
 
   enum class ShaderStage : uint8_t {

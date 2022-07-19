@@ -55,6 +55,8 @@ bool stb_truetype_loader(ResourceSlot& slot, Font::Intermediate& intermediate) {
     helper.add_glyph(bmp, w, h, glyph);
   }
 
+  ResourceLoading<Texture>::transform_internal(slot, intermediate.texture_intermediate);
+
   return true;
 }
 
