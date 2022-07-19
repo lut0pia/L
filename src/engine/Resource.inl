@@ -85,9 +85,7 @@ namespace L {
 
       // Try to load it from source
       if(load_internal(slot, intermediate)) {
-        for(KeyValue<ResourceTransformPhase, Transformer> transformer : _transformers) {
-          transformer.value()(slot, intermediate);
-        }
+        transform_internal(slot, intermediate);
 
         StringStream uncompressed_stream, compressed_stream;
         {
@@ -127,6 +125,11 @@ namespace L {
         }
       }
       return false;
+    }
+    static void transform_internal(ResourceSlot& slot, typename T::Intermediate& intermediate) {
+      for(KeyValue<ResourceTransformPhase, Transformer> transformer : _transformers) {
+        transformer.value()(slot, intermediate);
+      }
     }
     static void store(ResourceSlot& slot, typename T::Intermediate& intermediate) {
       slot.value = Memory::new_type<T>(static_cast<typename T::Intermediate&&>(intermediate));
