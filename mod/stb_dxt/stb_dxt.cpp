@@ -59,7 +59,6 @@ void stb_dxt_transformer(const ResourceSlot&, Texture::Intermediate& intermediat
   if(dest_format != RenderFormat::Undefined) {
     L_SCOPE_MARKER("stb_dxt");
 
-    const bool alpha = uses_alpha(intermediate);
     const uintptr_t block_size_bytes = get_block_size(dest_format);
     const uintptr_t pixel_bytes = Renderer::format_size(intermediate.format);
     const uintptr_t block_size_pixels = 16;
@@ -91,6 +90,8 @@ void stb_dxt_transformer(const ResourceSlot&, Texture::Intermediate& intermediat
               case RenderFormat::BC4_UNorm_Block:
                 stb_compress_bc4_block(dst_block, src_block);
                 break;
+              default:
+                error("stb_dxt: Unhandled compression format");
             }
           }
         }

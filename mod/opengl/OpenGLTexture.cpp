@@ -30,7 +30,7 @@ TextureImpl* OpenGLRenderer::create_texture(uint32_t width, uint32_t height, L::
     }
   };
 
-  for(GLint mip = 0; mip < mip_count; mip++) {
+  for(uint32_t mip = 0; mip < mip_count; mip++) {
     if(tex->target == GL_TEXTURE_2D) { // Regular texture
       load(GL_TEXTURE_2D, mip, mip_data ? mip_data[mip] : nullptr, mip_size ? mip_size[mip] : 0);
     } else { // Cubemap
