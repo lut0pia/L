@@ -90,7 +90,7 @@ bool VulkanRenderer::init(GenericWindowData* generic_window_data) {
           }
         }
         if(!found_layer) {
-          wanted_layers[i] = wanted_layers[--wanted_layer_count];
+          wanted_layers[i--] = wanted_layers[--wanted_layer_count];
         }
       }
 
