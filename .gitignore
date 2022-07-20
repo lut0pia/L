@@ -11,6 +11,8 @@
 smp/Ldev
 smp/Ldbg
 smp/L
+smp/sample_*
+smp/tests_*
 smp/*.bin
 smp/*.dll
 smp/*.exe
