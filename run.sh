@@ -24,15 +24,15 @@ fi
 
 case $config in
   "dbg")
-    exe="Ldbg"
+    exe="sample_dbg"
     config=Debug
   ;;
   "dev")
-    exe="Ldev"
+    exe="sample_dev"
     config=RelWithDebInfo
   ;;
   "rls")
-    exe="L"
+    exe="sample"
     config=Release
   ;;
   *)
