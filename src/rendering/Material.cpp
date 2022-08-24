@@ -64,25 +64,20 @@ void Material::State::apply(const State& patch) {
 }
 
 uint32_t Material::State::pipeline_hash() const {
-  uint32_t h = 0;
-  hash_combine(h, pipeline.shaders);
-  hash_combine(h, pipeline.render_pass);
-  hash_combine(h, pipeline.polygon_mode);
-  hash_combine(h, pipeline.cull_mode);
-  hash_combine(h, pipeline.topology);
-  hash_combine(h, pipeline.blend_mode);
+  uint32_t h = hash(
+    pipeline.shaders,
+    pipeline.render_pass,
+    pipeline.polygon_mode,
+    pipeline.cull_mode,
+    pipeline.topology,
+    pipeline.blend_mode);
   if(const Mesh* mesh_ptr = mesh.try_load()) {
     hash_combine(h, mesh_ptr->attributes());
   }
   return h;
 }
 uint32_t Material::State::descriptor_hash() const {
-  uint32_t h = 0;
-  hash_combine(h, textures);
-  hash_combine(h, vectors);
-  hash_combine(h, scalars);
-  hash_combine(h, font);
-  return h;
+  return hash(textures, vectors, scalars, font);
 }
 
 uint32_t Material::chain_hash() const {

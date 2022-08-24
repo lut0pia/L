@@ -28,7 +28,7 @@ namespace L {
     friend inline Stream& operator<=(Stream& s, const KeyValue& v) { return s <= v._key <= v._value; }
     friend inline Stream& operator>=(Stream& s, KeyValue& v) { return s >= v._key >= v._value; }
 
-    friend inline uint32_t hash(const KeyValue& v) { uint32_t h = hash(v.key()); hash_combine(h, v.value()); return h; }
+    friend inline uint32_t hash(const KeyValue& v) { return hash(v.key(), v.value()); }
   };
   template <class K, class V>
   inline KeyValue<K, V> key_value(const K& k, const V& v) {

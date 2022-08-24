@@ -62,6 +62,10 @@ namespace L {
 #if !L_RLS
     static Array<ResourceSlot*> slots();
 #endif
+
+    friend inline uint32_t hash(const ResourceSlot& v) {
+      return hash(&v, v.value, v.state.load(), v.mtime);
+    }
   };
 
   template <class T>
@@ -121,10 +125,7 @@ namespace L {
     }
 
     friend inline uint32_t hash(const Resource& v) {
-      uint32_t h = hash(v.slot());
-      hash_combine(h, v.slot() ? v.slot()->value : nullptr);
-      hash_combine(h, v.slot() ? v.slot()->state.load() : ResourceState::Unloaded);
-      return h;
+      return v.slot() ? hash(*v.slot()) : hash();
     }
   };
 }
