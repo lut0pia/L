@@ -239,6 +239,11 @@ void Material::update() {
     }
   }
 
+  // Ensure we load relevant shaders
+  for(const KeyValue<ShaderStage, Resource<Shader>>& shader : _final_state.pipeline.shaders) {
+    shader.value().try_load();
+  }
+
   const uint32_t pipeline_h = _final_state.pipeline_hash();
   if(pipeline_h != _last_pipeline_hash) {
     _last_pipeline_hash = pipeline_h;
