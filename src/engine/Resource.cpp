@@ -13,17 +13,19 @@
 #include "../stream/CFileStream.h"
 #include "../stream/StringStream.h"
 #include "../system/File.h"
+#include "../system/FileWatch.h"
 
 using namespace L;
 
 static Archive archive("data.bin");
-#if !L_RLS
-static Archive archive_dev("dev.bin");
-#endif
 static Lock lock;
 static Pool<ResourceSlot> _pool;
 static Array<ResourceSlot*> _slots;
 static Table<Symbol, ResourceSlot*> _table;
+#if !L_RLS
+static Archive archive_dev("dev.bin");
+static Table<String, Array<ResourceSlot*>> _source_file_resources;
+#endif
 static Date program_mtime = 0;
 
 ResourceSlot::ResourceSlot(const Symbol& type, const char* url)
@@ -161,10 +163,15 @@ void ResourceSlot::write_archive_dev(const void* data, size_t size) {
   const Symbol typed_id = make_typed_id(type, id);
   archive_dev.store(typed_id, data, size);
 }
-#endif
-
+void ResourceSlot::update_source_file_table() {
+  L_SCOPED_LOCK(lock);
+  for(const String& source_file : source_files) {
+    if(_source_file_resources[source_file].find(this) == nullptr) {
+      _source_file_resources[source_file].push(this);
+    }
+  }
+}
 bool ResourceSlot::is_out_of_date() const {
-#if !L_RLS
   if(mtime < program_mtime) {
     return true;
   }
@@ -174,9 +181,9 @@ bool ResourceSlot::is_out_of_date() const {
       return true;
     }
   }
-#endif
   return false;
 }
+#endif
 
 Symbol ResourceSlot::make_typed_id(const Symbol& type, const char* url) {
   return Symbol(type + ":" + url);
@@ -197,20 +204,24 @@ ResourceSlot* ResourceSlot::find(const Symbol& type, const char* url) {
 void ResourceSlot::set_program_mtime(Date mtime) {
   program_mtime = mtime;
 }
-void ResourceSlot::update() {
-  if(!_slots.empty()) {
-    L_SCOPE_MARKER("Resource update");
-    static uintptr_t index = 0;
-    ResourceSlot& slot(*_slots[index%_slots.size()]);
-    if((slot.state == ResourceState::Loaded || slot.state == ResourceState::Failed) // No reload if it hasn't been loaded in the first place
-      && slot.is_out_of_date()) {
-      slot.state = ResourceState::Unloaded;
-      slot.mtime = Date::now();
-    }
-    index++;
-  }
-}
 #if !L_RLS
+void ResourceSlot::update() {
+  L_SCOPE_MARKER("Resource update");
+  L_SCOPED_LOCK(lock);
+  static FileWatch file_watch(".");
+  file_watch.update();
+  for(const String& changed_file : file_watch.get_changes()) {
+    if(const Array<ResourceSlot*>* resources = _source_file_resources.find(changed_file)) {
+      for(ResourceSlot* slot : *resources) {
+        // No reload if it hasn't been loaded in the first place
+        if(slot->state == ResourceState::Loaded || slot->state == ResourceState::Failed) {
+          slot->state = ResourceState::Unloaded;
+        }
+      }
+    }
+  }
+  file_watch.clear();
+}
 Array<ResourceSlot*> ResourceSlot::slots() {
   L_SCOPED_LOCK(lock);
   return _slots;

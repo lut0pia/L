@@ -132,6 +132,9 @@ namespace L {
       }
     }
     static void store(ResourceSlot& slot, typename T::Intermediate& intermediate) {
+#if !L_RLS
+      slot.update_source_file_table();
+#endif
       slot.value = Memory::new_type<T>(static_cast<typename T::Intermediate&&>(intermediate));
       slot.cpu_size = resource_cpu_size(intermediate);
       slot.gpu_size = resource_gpu_size(intermediate);

@@ -51,15 +51,15 @@ namespace L {
     void write(Stream&) const;
     Buffer read_archive_dev();
     void write_archive_dev(const void* data, size_t size);
-#endif
-
+    void update_source_file_table();
     bool is_out_of_date() const;
+#endif
 
     static Symbol make_typed_id(const Symbol& type, const char* url);
     static ResourceSlot* find(const Symbol& type, const char* url);
     static void set_program_mtime(Date mtime);
-    static void update();
 #if !L_RLS
+    static void update();
     static Array<ResourceSlot*> slots();
 #endif
 
