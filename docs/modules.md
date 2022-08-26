@@ -6,6 +6,7 @@ Modules can register loading functions to the resource mechanism to create resou
 - `assimp`: Load meshes, materials, scenes, textures and shaders using `assimp`
 - `blue_noise`: Generate blue noise textures using the void and cluster algorithm
 - `glslang`: Load shaders from `.vert` and `.frag` files using `glslang`
+- `json`: Load objects from `.json` files
 - `lasm`: Load scripts from `.lasm` files
 - [`ls`](../mod/ls): Load scripts from `.ls` files
 - `mid`: Load midi sequences from `.mid` and `.midi` files
@@ -23,10 +24,11 @@ Modules can register loading functions to the resource mechanism to create resou
 
 ## Transformers
 Modules can register transform functions to the resource mechanism to transform resources after being loaded. Here's a list of such modules already included:
-- `stb_dxt`: Compress textures in BC1 or BC3
+- `cro_mipmap`: Create mips for power of two textures
 - `mesh_format`: Modify mesh vertex format and compute normals and tangents if necessary
 - `script_optimize`: Optimize script by using more complex opcodes
 - `shader_reflect`: Read SPIR-V to deduce inputs and outputs of shaders
+- `stb_dxt`: Compress textures in BC1 or BC3
 
 ## Interfaces
 Modules can register objects or mechanisms to interact with an external system. Here's a list of such modules already included:
@@ -34,6 +36,9 @@ Modules can register objects or mechanisms to interact with an external system. 
 ### Audio Output
 - `alsa`: Render audio to ALSA
 - `audio_win`: Render audio to WASAPI
+
+### Audio Engine
+- `wwise`: Send audio events to and load audio banks from Wwise
 
 ### Compression
 - `lz`: Custom LZ compression
@@ -66,3 +71,10 @@ Modules can register objects or mechanisms to interact with an external system. 
 - `imgui_input`: Display input context stack and input values
 - `imgui_resources`: Display resources along with their loading status
 - `script_server`: Implement telnet server to execute script remotely
+
+## Tests
+- `test_compression`: Test compressing and decompressing gives correct results and output timings
+- `test_hashing`: Test hashing collisions with words of various sizes
+- `test_memory`: Test memory allocating and freeing
+- `test_random`: Test uniformity of random distribution
+- `test_serialization`: Test serialization and deserialization gives correct results
